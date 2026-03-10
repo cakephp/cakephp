@@ -817,7 +817,6 @@ class FormHelper extends Helper
             'content' => $error,
             'id' => $this->_domId($field) . '-error',
             'inputId' => $this->_domId($field),
-            'name' => $this->_fieldName($field),
         ]);
     }
 
@@ -1191,7 +1190,6 @@ class FormHelper extends Helper
             'label' => $label,
             'options' => $options,
             'inputId' => $this->_domId($fieldName),
-            'name' => $this->_fieldName($fieldName),
         ]);
 
         if ($newTemplates) {
@@ -1240,7 +1238,6 @@ class FormHelper extends Helper
             'error' => $options['error'],
             'inputId' => $options['inputId'] ?? '',
             'label' => $options['label'] ?? '',
-            'name' => $options['name'] ?? '',
             'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
             'containerClass' => $this->templater()->get('containerClass'),
