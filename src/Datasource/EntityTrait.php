@@ -592,15 +592,8 @@ trait EntityTrait
     public function hasValue(string $field): bool
     {
         $value = $this->get($field);
-        if (
-            $value === null ||
-            $value === [] ||
-            $value === ''
-        ) {
-            return false;
-        }
 
-        return true;
+        return !in_array($value, [null, [], ''], true);
     }
 
     /**
