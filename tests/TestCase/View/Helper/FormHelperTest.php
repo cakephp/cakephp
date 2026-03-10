@@ -637,6 +637,69 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that `{{inputId}}` template variable is available in inputContainer template.
+     */
+    public function testControlInputIdTemplateVar(): void
+    {
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="title"', $result);
+
+        // Test nested field name
+        $result = $this->Form->control('User.email', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-email"', $result);
+
+        // Test deeply nested field name
+        $result = $this->Form->control('User.address.city', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-address-city"', $result);
+    }
+
+    /**
+     * Test that `{{inputId}}` template variable is available in error template.
+     */
+    public function testErrorInputIdTemplateVar(): void
+    {
+        $this->article['errors'] = [
+            'title' => ['error message'],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="title"', $result);
+        $this->assertStringContainsString('error message', $result);
+
+        // Test nested field name
+        $this->article['errors'] = [
+            'author' => [
+                'name' => ['Author name is required'],
+            ],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('author.name', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="author-name"', $result);
+    }
+
+    /**
      * Test ensuring template variables work in template files loaded
      * during control().
      */
