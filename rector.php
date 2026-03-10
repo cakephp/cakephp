@@ -119,6 +119,7 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector::class,
         \Rector\TypeDeclaration\Rector\While_\WhileNullableToInstanceofRector::class,
         \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class,
+        \Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector::class,
 
         // Manual - only appliable for part of the code
         \Rector\CodeQuality\Rector\Equal\UseIdenticalOverEqualWithSameTypeRector::class,
