@@ -27,9 +27,9 @@ class TestableArticlesFixture extends TestFixture
     /**
      * Skip schema reflection for testing purposes.
      */
-    protected function _schemaFromReflection(): void
+    protected function schemaFromReflection(): void
     {
-        $this->_schema = new TableSchema('articles', []);
+        $this->schema = new TableSchema('articles', []);
     }
 
     /**
@@ -37,6 +37,6 @@ class TestableArticlesFixture extends TestFixture
      */
     public function getAliasFromClass(): string
     {
-        return $this->_aliasFromClass();
+        return $this->aliasFromClass();
     }
 }
