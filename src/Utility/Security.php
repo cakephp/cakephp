@@ -231,14 +231,18 @@ class Security
     }
 
     /**
-     * Generate a key for encryption.
+     * Generate a key pair of encryption and authentication tokens.
      *
      * Encapsulates the two key generation implementations we support.
-     * Raw keys are more secure as they are twice as long.
+     * The previous implementation has a keyspace reduction weakness.
+     *
+     * It is recommended to enable `Security.encryptWithRawKey` in new applications,
+     * to take advantage of longer keys that are longer and have derived encryption
+     * and authentication keys.
      *
      * @param string $key The bare key to use.
      * @param string $hmacSalt The hmac salt to use.
-     * @return array{string, string} A list of $encryption, $authentication keys for encryption purposes.
+     * @return array{string, string} A list of $encryption, $authentication keys intended for encrypt() and decrypt().
      */
     protected static function _makeEncryptionKeys(string $key, string $hmacSalt): array
     {
