@@ -13,15 +13,33 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 		-
 			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
 
 		-
-			message: "#^Result of && is always false\\.$#"
+			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
 			count: 1
-			path: Type/EnumType.php
+			path: Driver/Mysql.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			message: '#^Access to constant ATTR_SSL_CERT on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
 			count: 1
-			path: Type/EnumType.php
+			path: Driver/Mysql.php
+
+		-
+			message: '#^Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: Driver/Mysql.php
+
+		-
+			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: Driver/Mysql.php
+
+		-
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: Type/DateTimeType.php

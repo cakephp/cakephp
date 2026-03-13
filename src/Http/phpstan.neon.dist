@@ -15,8 +15,6 @@ parameters:
 			identifier: trait.unused
 		-
 			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 		- '#Call to static method getRequest\(\) on an unknown class Cake\\Routing\\Router.#'

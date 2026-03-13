@@ -12,8 +12,6 @@ parameters:
 			identifier: trait.unused
 		-
 			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
 		- '#^PHPDoc tag @var with type callable\(\): mixed is not subtype of native type Closure\(string\): string\.$#'

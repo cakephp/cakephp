@@ -809,6 +809,7 @@ class FormHelper extends Helper
         return $this->formatTemplate('error', [
             'content' => $error,
             'id' => $this->domId($field) . '-error',
+            'inputId' => $this->domId($field),
         ]);
     }
 
@@ -1182,6 +1183,7 @@ class FormHelper extends Helper
             'errorSuffix' => $errorSuffix,
             'label' => $label,
             'options' => $options,
+            'inputId' => $this->domId($fieldName),
         ]);
 
         if ($newTemplates) {
@@ -1241,6 +1243,7 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
+            'inputId' => $options['inputId'] ?? '',
             'label' => $options['label'] ?? '',
             'type' => $options['options']['type'],
             'containerClass' => $containerClass,
@@ -2448,14 +2451,7 @@ class FormHelper extends Helper
         }
 
         if (!isset($options['name'])) {
-            $endsWithBrackets = '';
-            if (str_ends_with($field, '[]')) {
-                $field = substr($field, 0, -2);
-                $endsWithBrackets = '[]';
-            }
-            $parts = explode('.', $field);
-            $first = array_shift($parts);
-            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $this->fieldName($field);
         }
 
         if (isset($options['value']) && !isset($options['val'])) {
@@ -2487,6 +2483,29 @@ class FormHelper extends Helper
         }
 
         return $options;
+    }
+
+    /**
+     * Generate the HTML name attribute value from a field name.
+     *
+     * Converts dot notation field names to bracket notation used in HTML forms.
+     * For example, "User.email" becomes "User[email]" and "User.address.city"
+     * becomes "User[address][city]".
+     *
+     * @param string $field Field name in dot notation.
+     * @return string HTML name attribute value.
+     */
+    protected function fieldName(string $field): string
+    {
+        $endsWithBrackets = '';
+        if (str_ends_with($field, '[]')) {
+            $field = substr($field, 0, -2);
+            $endsWithBrackets = '[]';
+        }
+        $parts = explode('.', $field);
+        $first = array_shift($parts);
+
+        return $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
     }
 
     /**
