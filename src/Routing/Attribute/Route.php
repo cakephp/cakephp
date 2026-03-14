@@ -22,7 +22,7 @@ use Attribute;
  * Declares a route for a controller action using PHP attributes.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Route
+readonly class Route
 {
     /**
      * Initializes a route attribute definition.

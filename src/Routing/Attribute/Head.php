@@ -22,7 +22,7 @@ use Attribute;
  * Declares a HEAD-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Head extends Route
+readonly class Head extends Route
 {
     /**
      * Initializes a HEAD route attribute definition.

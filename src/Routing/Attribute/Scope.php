@@ -22,7 +22,7 @@ use Attribute;
  * Declares shared path, name, and option defaults for controller routes.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-class Scope
+readonly class Scope
 {
     /**
      * Initializes a scope attribute definition.

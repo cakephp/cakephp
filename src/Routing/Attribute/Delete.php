@@ -22,7 +22,7 @@ use Attribute;
  * Declares a DELETE-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Delete extends Route
+readonly class Delete extends Route
 {
     /**
      * Initializes a DELETE route attribute definition.

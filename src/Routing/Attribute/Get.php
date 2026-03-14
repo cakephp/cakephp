@@ -22,7 +22,7 @@ use Attribute;
  * Declares a GET-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Get extends Route
+readonly class Get extends Route
 {
     /**
      * Initializes a GET route attribute definition.

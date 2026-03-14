@@ -22,7 +22,7 @@ use Attribute;
  * Declares an OPTIONS-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Options extends Route
+readonly class Options extends Route
 {
     /**
      * Initializes an OPTIONS route attribute definition.

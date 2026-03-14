@@ -22,7 +22,7 @@ use Attribute;
  * Declares a routing prefix and optional path override for a controller.
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class Prefix
+readonly class Prefix
 {
     /**
      * Initializes a controller prefix attribute definition.

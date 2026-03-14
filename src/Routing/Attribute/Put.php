@@ -22,7 +22,7 @@ use Attribute;
  * Declares a PUT-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Put extends Route
+readonly class Put extends Route
 {
     /**
      * Initializes a PUT route attribute definition.

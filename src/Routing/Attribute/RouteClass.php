@@ -22,7 +22,7 @@ use Attribute;
  * Declares the default route class used by attribute routes on a controller.
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class RouteClass
+readonly class RouteClass
 {
     /**
      * Initializes a default route class attribute definition.

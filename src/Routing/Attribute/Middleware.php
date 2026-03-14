@@ -22,7 +22,7 @@ use Attribute;
  * Declares middleware names that should be applied to matching routes.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Middleware
+readonly class Middleware
 {
     /**
      * @var array<string>

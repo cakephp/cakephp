@@ -22,7 +22,7 @@ use Attribute;
  * Declares a PATCH-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Patch extends Route
+readonly class Patch extends Route
 {
     /**
      * Initializes a PATCH route attribute definition.

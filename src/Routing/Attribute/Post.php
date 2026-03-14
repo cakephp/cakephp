@@ -22,7 +22,7 @@ use Attribute;
  * Declares a POST-only route for a controller action.
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Post extends Route
+readonly class Post extends Route
 {
     /**
      * Initializes a POST route attribute definition.

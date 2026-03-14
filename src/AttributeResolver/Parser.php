@@ -310,7 +310,7 @@ class Parser
     /**
      * Detect declaring class kind from reflection.
      *
-     * @param \ReflectionClass $reflection Class reflection
+     * @param \ReflectionClass<object> $reflection Class reflection
      * @return \Cake\AttributeResolver\Enum\DeclaringClassType
      */
     protected function getDeclaringClassType(ReflectionClass $reflection): DeclaringClassType

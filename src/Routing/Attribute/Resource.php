@@ -22,7 +22,7 @@ use Attribute;
  * Declares REST resource routes for a controller.
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class Resource
+readonly class Resource
 {
     /**
      * Initializes a resource attribute definition.

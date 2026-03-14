@@ -22,7 +22,7 @@ use Attribute;
  * Declares supported file extensions for generated routes.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
-class Extensions
+readonly class Extensions
 {
     /**
      * Initializes an extensions attribute definition.
