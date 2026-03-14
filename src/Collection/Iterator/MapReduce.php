@@ -52,13 +52,6 @@ class MapReduce implements IteratorAggregate
     protected bool $executed = false;
 
     /**
-     * Holds the original data that needs to be processed
-     *
-     * @var iterable
-     */
-    protected iterable $data;
-
-    /**
      * A callable that will be executed for each record in the original data
      *
      * @var callable
@@ -115,9 +108,11 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(iterable $data, callable $mapper, ?callable $reducer = null)
-    {
-        $this->data = $data;
+    public function __construct(
+        protected iterable $data,
+        callable $mapper,
+        ?callable $reducer = null,
+    ) {
         $this->mapper = $mapper;
         $this->reducer = $reducer;
     }

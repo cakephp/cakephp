@@ -25,27 +25,6 @@ use Cake\Console\Exception\ConsoleException;
 class Arguments
 {
     /**
-     * Positional argument name map
-     *
-     * @var array<int, string>
-     */
-    protected array $argNames;
-
-    /**
-     * Positional arguments.
-     *
-     * @var array<int, array<string>|string>
-     */
-    protected array $args;
-
-    /**
-     * Named options
-     *
-     * @var array<string, array<string>|string|bool|null>
-     */
-    protected array $options;
-
-    /**
      * Constructor
      *
      * @param array<int, array<string>|string> $args Positional arguments
@@ -53,11 +32,11 @@ class Arguments
      * @param array<int, string> $argNames List of argument names. Order is expected to be
      *  the same as $args.
      */
-    public function __construct(array $args, array $options, array $argNames)
-    {
-        $this->args = $args;
-        $this->options = $options;
-        $this->argNames = $argNames;
+    public function __construct(
+        protected array $args,
+        protected array $options,
+        protected array $argNames,
+    ) {
     }
 
     /**

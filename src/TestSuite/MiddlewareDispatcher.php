@@ -31,20 +31,12 @@ use Psr\Http\Message\ResponseInterface;
 class MiddlewareDispatcher
 {
     /**
-     * The application that is being dispatched.
-     *
-     * @var \Cake\Core\HttpApplicationInterface
-     */
-    protected HttpApplicationInterface $app;
-
-    /**
      * Constructor
      *
-     * @param \Cake\Core\HttpApplicationInterface $app The test case to run.
+     * @param \Cake\Core\HttpApplicationInterface $app The application that is being dispatched.
      */
-    public function __construct(HttpApplicationInterface $app)
+    public function __construct(protected HttpApplicationInterface $app)
     {
-        $this->app = $app;
     }
 
     /**

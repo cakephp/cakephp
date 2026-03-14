@@ -56,12 +56,6 @@ class Digest
         self::ALGO_SHA_256_SESS => 'sha256',
         self::ALGO_SHA_512_256_SESS => 'sha512/256',
     ];
-    /**
-     * Instance of Cake\Http\Client
-     *
-     * @var \Cake\Http\Client
-     */
-    protected Client $client;
 
     /**
      * Algorithm
@@ -89,9 +83,8 @@ class Digest
      *
      * @param \Cake\Http\Client $client Http client object.
      */
-    public function __construct(Client $client)
+    public function __construct(protected Client $client)
     {
-        $this->client = $client;
     }
 
     /**

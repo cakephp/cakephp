@@ -37,23 +37,14 @@ class PaginatedResultSet implements JsonSerializable, PaginatedInterface
     protected Traversable $results;
 
     /**
-     * Paging params.
-     *
-     * @var array
-     */
-    protected array $params = [];
-
-    /**
      * Constructor
      *
      * @param iterable<TKey, TValue> $results Resultset instance.
      * @param array $params Paging params.
      */
-    public function __construct(iterable $results, array $params)
+    public function __construct(iterable $results, protected array $params)
     {
         $this->results = is_array($results) ? new ArrayIterator($results) : $results;
-
-        $this->params = $params;
 
         if (!isset($this->params['count']) && is_countable($results)) {
             $this->params['count'] = count($results);

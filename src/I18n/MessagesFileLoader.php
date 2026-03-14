@@ -32,32 +32,11 @@ use function Cake\Core\pluginSplit;
 class MessagesFileLoader
 {
     /**
-     * The package (domain) name.
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
      * The package (domain) plugin
      *
      * @var string|null
      */
     protected ?string $plugin = null;
-
-    /**
-     * The locale to load for the given package.
-     *
-     * @var string
-     */
-    protected string $locale;
-
-    /**
-     * The extension name.
-     *
-     * @var string
-     */
-    protected string $extension;
 
     /**
      * Creates a translation file loader. The file to be loaded corresponds to
@@ -100,9 +79,11 @@ class MessagesFileLoader
      * @param string $extension The file extension to use. This will also be mapped
      * to a messages parser class.
      */
-    public function __construct(string $name, string $locale, string $extension = 'po')
-    {
-        $this->name = $name;
+    public function __construct(
+        protected string $name,
+        protected string $locale,
+        protected string $extension = 'po',
+    ) {
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->name));
         if (strpos($this->name, '.')) {
@@ -110,8 +91,6 @@ class MessagesFileLoader
         } elseif (Plugin::isLoaded($pluginName)) {
             $this->plugin = $pluginName;
         }
-        $this->locale = $locale;
-        $this->extension = $extension;
     }
 
     /**

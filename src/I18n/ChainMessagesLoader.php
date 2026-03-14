@@ -25,21 +25,13 @@ use Cake\Core\Exception\CakeException;
 class ChainMessagesLoader
 {
     /**
-     * The list of callables to execute one after another for loading messages
-     *
-     * @var array<callable>
-     */
-    protected array $loaders = [];
-
-    /**
      * Receives a list of callable functions or objects that will be executed
      * one after another until one of them returns a non-empty translations package
      *
-     * @param array<callable> $loaders List of callables to execute
+     * @param array<callable> $loaders The list of callables to execute one after another for loading messages
      */
-    public function __construct(array $loaders)
+    public function __construct(protected array $loaders)
     {
-        $this->loaders = $loaders;
     }
 
     /**

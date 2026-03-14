@@ -45,23 +45,16 @@ class YearWidget extends BasicWidget
     ];
 
     /**
-     * Select box widget.
-     *
-     * @var \Cake\View\Widget\SelectBoxWidget
-     */
-    protected SelectBoxWidget $select;
-
-    /**
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
-     * @param \Cake\View\Widget\SelectBoxWidget $selectBox Selectbox widget instance.
+     * @param \Cake\View\Widget\SelectBoxWidget $select Selectbox widget instance.
      */
-    public function __construct(StringTemplate $templates, SelectBoxWidget $selectBox)
-    {
+    public function __construct(
+        StringTemplate $templates,
+        protected SelectBoxWidget $select,
+    ) {
         parent::__construct($templates);
-
-        $this->select = $selectBox;
     }
 
     /**

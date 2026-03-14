@@ -25,13 +25,6 @@ use Cake\Utility\Hash;
 class IsUnique
 {
     /**
-     * The list of fields to check
-     *
-     * @var array<string>
-     */
-    protected array $fields;
-
-    /**
      * The unique check options
      *
      * @var array<string, mixed>
@@ -50,9 +43,8 @@ class IsUnique
      * @param array<string> $fields The list of fields to check uniqueness for
      * @param array<string, mixed> $options The options for unique checks.
      */
-    public function __construct(array $fields, array $options = [])
+    public function __construct(protected array $fields, array $options = [])
     {
-        $this->fields = $fields;
         $this->options = $options + $this->options;
     }
 

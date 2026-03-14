@@ -44,13 +44,6 @@ class ValuesExpression implements ExpressionInterface
     protected array $values = [];
 
     /**
-     * List of columns to ensure are part of the insert.
-     *
-     * @var array
-     */
-    protected array $columns = [];
-
-    /**
      * The Query object to use as a values expression
      *
      * @var \Cake\Database\Query|null
@@ -71,9 +64,10 @@ class ValuesExpression implements ExpressionInterface
      * @param array $columns The list of columns that are going to be part of the values.
      * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
      */
-    public function __construct(array $columns, TypeMap $typeMap)
-    {
-        $this->columns = $columns;
+    public function __construct(
+        protected array $columns,
+        TypeMap $typeMap,
+    ) {
         $this->setTypeMap($typeMap);
     }
 

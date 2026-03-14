@@ -29,13 +29,6 @@ use Cake\View\StringTemplate;
 class BasicWidget implements WidgetInterface
 {
     /**
-     * StringTemplate instance.
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $templates;
-
-    /**
      * Data defaults.
      *
      * @var array<string, mixed>
@@ -53,9 +46,8 @@ class BasicWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(StringTemplate $templates)
+    public function __construct(protected StringTemplate $templates)
     {
-        $this->templates = $templates;
     }
 
     /**

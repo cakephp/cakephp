@@ -43,20 +43,6 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface, Typed
     protected mixed $value;
 
     /**
-     * The type to be used for casting the value to a database representation
-     *
-     * @var string|null
-     */
-    protected ?string $type = null;
-
-    /**
-     * The operator used for comparing field and value
-     *
-     * @var string
-     */
-    protected string $operator = '=';
-
-    /**
      * Whether the value in this expression is a traversable
      *
      * @var bool
@@ -76,19 +62,17 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface, Typed
      *
      * @param \Cake\Database\ExpressionInterface|string $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
-     * @param string|null $type the type name used to cast the value
+     * @param string|null $type the type name used to cast the value to a database representation
      * @param string $operator the operator used for comparing field and value
      */
     public function __construct(
         ExpressionInterface|string $field,
         mixed $value,
-        ?string $type = null,
-        string $operator = '=',
+        protected ?string $type = null,
+        protected string $operator = '=',
     ) {
-        $this->type = $type;
         $this->setField($field);
         $this->setValue($value);
-        $this->operator = $operator;
         $this->returnType = 'boolean';
     }
 

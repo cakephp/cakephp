@@ -31,27 +31,15 @@ use Closure;
 class IdentifierExpression implements ExpressionInterface
 {
     /**
-     * Holds the identifier string
-     *
-     * @var string
-     */
-    protected string $identifier;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $collation = null;
-
-    /**
      * Constructor
      *
      * @param string $identifier The identifier this expression represents
      * @param string|null $collation The identifier collation
      */
-    public function __construct(string $identifier, ?string $collation = null)
-    {
-        $this->identifier = $identifier;
-        $this->collation = $collation;
+    public function __construct(
+        protected string $identifier,
+        protected ?string $collation = null,
+    ) {
     }
 
     /**

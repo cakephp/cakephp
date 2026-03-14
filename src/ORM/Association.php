@@ -146,13 +146,6 @@ abstract class Association
     protected bool $cascadeCallbacks = false;
 
     /**
-     * Source table instance
-     *
-     * @var \Cake\ORM\Table
-     */
-    protected Table $sourceTable;
-
-    /**
      * Target table instance
      *
      * @var \Cake\ORM\Table
@@ -209,10 +202,8 @@ abstract class Association
      * @param \Cake\ORM\Table $sourceTable The table instance for the source side of the association.
      * @param array<string, mixed> $options A list of properties to be set on this object
      */
-    public function __construct(string $alias, Table $sourceTable, array $options = [])
+    public function __construct(string $alias, protected Table $sourceTable, array $options = [])
     {
-        $this->sourceTable = $sourceTable;
-
         if (isset($options['cascadeCallbacks'])) {
             $this->cascadeCallbacks = $options['cascadeCallbacks'];
         }

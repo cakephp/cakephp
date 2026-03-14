@@ -29,34 +29,6 @@ class Translator
     public const string PLURAL_PREFIX = 'p:';
 
     /**
-     * A fallback translator.
-     *
-     * @var \Cake\I18n\Translator|null
-     */
-    protected ?self $fallback = null;
-
-    /**
-     * The formatter to use when translating messages.
-     *
-     * @var \Cake\I18n\FormatterInterface
-     */
-    protected FormatterInterface $formatter;
-
-    /**
-     * The locale being used for translations.
-     *
-     * @var string
-     */
-    protected string $locale;
-
-    /**
-     * The Package containing keys and translations.
-     *
-     * @var \Cake\I18n\Package
-     */
-    protected Package $package;
-
-    /**
      * Constructor
      *
      * @param string $locale The locale being used.
@@ -65,15 +37,11 @@ class Translator
      * @param \Cake\I18n\Translator|null $fallback A fallback translator.
      */
     public function __construct(
-        string $locale,
-        Package $package,
-        FormatterInterface $formatter,
-        ?self $fallback = null,
+        protected string $locale,
+        protected Package $package,
+        protected FormatterInterface $formatter,
+        protected ?Translator $fallback = null,
     ) {
-        $this->locale = $locale;
-        $this->package = $package;
-        $this->formatter = $formatter;
-        $this->fallback = $fallback;
     }
 
     /**

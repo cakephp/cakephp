@@ -131,13 +131,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public const string ACTION_SET_DEFAULT = ForeignKey::SET_DEFAULT;
 
     /**
-     * The name of the table
-     *
-     * @var string
-     */
-    protected string $table;
-
-    /**
      * Columns in the table.
      *
      * @var array<string, \Cake\Database\Schema\Column>
@@ -340,9 +333,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @param string $table The table name.
      * @param array<string, array|string> $columns The list of columns for the schema.
      */
-    public function __construct(string $table, array $columns = [])
-    {
-        $this->table = $table;
+    public function __construct(
+        protected string $table,
+        array $columns = [],
+    ) {
         foreach ($columns as $field => $definition) {
             $this->addColumn($field, $definition);
         }

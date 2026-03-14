@@ -10,16 +10,13 @@ use RuntimeException;
 
 class FakeConnection implements ConnectionInterface
 {
-    protected $config = [];
-
     /**
      * Constructor.
      *
      * @param array $config configuration for connecting to database
      */
-    public function __construct($config = [])
+    public function __construct(protected $config = [])
     {
-        $this->config = $config;
     }
 
     /**

@@ -35,13 +35,6 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     use TypedResultTrait;
 
     /**
-     * The name of the function to be constructed when generating the SQL string
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
      * Constructor. Takes a name for the function to be invoked and a list of params
      * to be passed into the function. Optionally you can pass a list of types to
      * be used for each bound param.
@@ -59,16 +52,19 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * Will produce `CONCAT(name, ' rules')`
      *
-     * @param string $name the name of the function to be constructed
+     * @param string $name the name of the function to be constructed when generating the SQL string
      * @param array $params list of arguments to be passed to the function
      * If associative the key would be used as argument when value is 'literal'
      * @param array<string, string>|array<string|null> $types Associative array of types to be associated with the
      * passed arguments
      * @param string $returnType The return type of this expression
      */
-    public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
-    {
-        $this->name = $name;
+    public function __construct(
+        protected string $name,
+        array $params = [],
+        array $types = [],
+        string $returnType = 'string',
+    ) {
         $this->returnType = $returnType;
         parent::__construct($params, $types, ',');
     }

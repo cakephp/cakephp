@@ -28,34 +28,6 @@ use SimpleXMLElement;
 class ConsoleInputOption
 {
     /**
-     * Name of the option
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * Short (1 character) alias for the option.
-     *
-     * @var string
-     */
-    protected string $short;
-
-    /**
-     * Help text for the option.
-     *
-     * @var string
-     */
-    protected string $help;
-
-    /**
-     * Is the option a boolean option. Boolean options do not consume a parameter.
-     *
-     * @var bool
-     */
-    protected bool $boolean;
-
-    /**
      * Default value for the option
      *
      * @var string|bool|null
@@ -63,47 +35,12 @@ class ConsoleInputOption
     protected string|bool|null $default = null;
 
     /**
-     * Can the option accept multiple value definition.
-     *
-     * @var bool
-     */
-    protected bool $multiple;
-
-    /**
-     * An array of choices for the option.
-     *
-     * @var array<string>
-     */
-    protected array $choices;
-
-    /**
-     * The prompt string
-     *
-     * @var string|null
-     */
-    protected ?string $prompt = null;
-
-    /**
-     * Is the option required.
-     *
-     * @var bool
-     */
-    protected bool $required;
-
-    /**
-     * The multiple separator.
-     *
-     * @var string|null
-     */
-    protected ?string $separator = null;
-
-    /**
      * Make a new Input Option
      *
      * @param string $name The long name of the option, or an array with all the properties.
-     * @param string $short The short alias for this option
+     * @param string $short The short (1 character) alias for this option
      * @param string $help The help text for this option
-     * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
+     * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
      * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
@@ -112,28 +49,18 @@ class ConsoleInputOption
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        string $name,
-        string $short = '',
-        string $help = '',
-        bool $isBoolean = false,
+        protected string $name,
+        protected string $short = '',
+        protected string $help = '',
+        protected bool $boolean = false,
         string|bool|null $default = null,
-        array $choices = [],
-        bool $multiple = false,
-        bool $required = false,
-        ?string $prompt = null,
-        ?string $separator = null,
+        protected array $choices = [],
+        protected bool $multiple = false,
+        protected bool $required = false,
+        protected ?string $prompt = null,
+        protected ?string $separator = null,
     ) {
-        $this->name = $name;
-        $this->short = $short;
-        $this->help = $help;
-        $this->boolean = $isBoolean;
-        $this->choices = $choices;
-        $this->multiple = $multiple;
-        $this->required = $required;
-        $this->prompt = $prompt;
-        $this->separator = $separator;
-
-        if ($isBoolean) {
+        if ($this->boolean) {
             $this->default = (bool)$default;
         } elseif ($default !== null) {
             $this->default = (string)$default;

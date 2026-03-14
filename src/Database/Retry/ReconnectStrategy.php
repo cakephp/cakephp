@@ -53,22 +53,14 @@ class ReconnectStrategy implements RetryStrategyInterface
     ];
 
     /**
-     * The connection to check for validity
-     *
-     * @var \Cake\Database\Connection
-     */
-    protected Connection $connection;
-
-    /**
      * Creates the ReconnectStrategy object by storing a reference to the
      * passed connection. This reference will be used to automatically
      * reconnect to the server in case of failure.
      *
-     * @param \Cake\Database\Connection $connection The connection to check
+     * @param \Cake\Database\Connection $connection The connection to check for validity
      */
-    public function __construct(Connection $connection)
+    public function __construct(protected Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**

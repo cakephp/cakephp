@@ -30,19 +30,13 @@ abstract class ContentsBase extends Constraint
     protected string $contents;
 
     /**
-     * @var string
-     */
-    protected string $output;
-
-    /**
      * Constructor
      *
      * @param array<string> $contents Contents
      * @param string $output Output type
      */
-    public function __construct(array $contents, string $output)
+    public function __construct(array $contents, protected string $output)
     {
         $this->contents = implode(PHP_EOL, $contents);
-        $this->output = $output;
     }
 }

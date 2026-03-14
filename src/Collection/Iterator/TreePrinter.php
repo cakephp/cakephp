@@ -57,13 +57,6 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
     protected mixed $current = null;
 
     /**
-     * The string to use for prefixing the values according to their depth in the tree.
-     *
-     * @var string
-     */
-    protected string $spacer;
-
-    /**
      * Constructor
      *
      * @param \RecursiveIterator<mixed, mixed> $items The iterator to flatten.
@@ -80,13 +73,12 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
         RecursiveIterator $items,
         callable|string $valuePath,
         callable|string $keyPath,
-        string $spacer,
+        protected string $spacer,
         int $mode = RecursiveIteratorIterator::SELF_FIRST,
     ) {
         parent::__construct($items, $mode);
         $this->value = $this->propertyExtractor($valuePath);
         $this->key = $this->propertyExtractor($keyPath);
-        $this->spacer = $spacer;
     }
 
     /**

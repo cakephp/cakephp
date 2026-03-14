@@ -18,11 +18,6 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     use ContainerAwareTrait;
 
     /**
-     * @var bool
-     */
-    protected bool $cacheResolutions;
-
-    /**
      * @var array
      */
     protected array $cache = [];
@@ -30,9 +25,8 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     /**
      * @param bool $cacheResolutions
      */
-    public function __construct(bool $cacheResolutions = false)
+    public function __construct(protected bool $cacheResolutions = false)
     {
-        $this->cacheResolutions = $cacheResolutions;
     }
 
     /**
