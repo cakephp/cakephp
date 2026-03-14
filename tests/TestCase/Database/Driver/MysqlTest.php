@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Driver\Mysql;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
@@ -234,14 +234,14 @@ class MysqlTest extends TestCase
         foreach ($featureVersions[$serverType] as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature)),
+                $driver->supports(DriverFeature::from($feature)),
             );
         }
 
-        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
 
-        $this->assertFalse($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertFalse($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
     }
 
     /**

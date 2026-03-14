@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Driver\Mysql;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use PDOException;
 
@@ -635,7 +635,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeCheckConstraints(string $tableName): array
     {
-        if (!$this->_driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS)) {
+        if (!$this->_driver->supports(DriverFeature::CHECK_CONSTRAINTS)) {
             return [];
         }
 
@@ -710,7 +710,7 @@ SQL;
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
-        $nativeJson = $this->_driver->supports(DriverFeatureEnum::JSON);
+        $nativeJson = $this->_driver->supports(DriverFeature::JSON);
 
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',

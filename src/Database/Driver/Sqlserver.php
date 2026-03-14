@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -276,20 +276,20 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(DriverFeatureEnum $feature): bool
+    public function supports(DriverFeature $feature): bool
     {
         return match ($feature) {
-            DriverFeatureEnum::CTE,
-            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            DriverFeatureEnum::SAVEPOINT,
-            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeatureEnum::WINDOW => true,
-            DriverFeatureEnum::INTERSECT => true,
-            DriverFeatureEnum::INTERSECT_ALL => false,
-            DriverFeatureEnum::JSON => false,
-            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
-            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
-            DriverFeatureEnum::CHECK_CONSTRAINTS => false,
+            DriverFeature::CTE,
+            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeature::SAVEPOINT,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeature::WINDOW => true,
+            DriverFeature::INTERSECT => true,
+            DriverFeature::INTERSECT_ALL => false,
+            DriverFeature::JSON => false,
+            DriverFeature::SET_OPERATIONS_ORDER_BY => false,
+            DriverFeature::OPTIMIZER_HINT_COMMENT => false,
+            DriverFeature::CHECK_CONSTRAINTS => false,
         };
     }
 

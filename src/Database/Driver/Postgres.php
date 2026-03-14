@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\StringExpression;
@@ -198,20 +198,20 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(DriverFeatureEnum $feature): bool
+    public function supports(DriverFeature $feature): bool
     {
         return match ($feature) {
-            DriverFeatureEnum::CTE,
-            DriverFeatureEnum::JSON,
-            DriverFeatureEnum::SAVEPOINT,
-            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeatureEnum::WINDOW => true,
-            DriverFeatureEnum::INTERSECT => true,
-            DriverFeatureEnum::INTERSECT_ALL => true,
-            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
-            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
-            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
-            DriverFeatureEnum::CHECK_CONSTRAINTS => true,
+            DriverFeature::CTE,
+            DriverFeature::JSON,
+            DriverFeature::SAVEPOINT,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeature::WINDOW => true,
+            DriverFeature::INTERSECT => true,
+            DriverFeature::INTERSECT_ALL => true,
+            DriverFeature::SET_OPERATIONS_ORDER_BY => true,
+            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
+            DriverFeature::OPTIMIZER_HINT_COMMENT => true,
+            DriverFeature::CHECK_CONSTRAINTS => true,
         };
     }
 

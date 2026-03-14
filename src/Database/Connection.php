@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
@@ -553,7 +554,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->_useSavePoints = false;
         } else {
-            $this->_useSavePoints = $this->getWriteDriver()->supports(DriverFeatureEnum::SAVEPOINT);
+            $this->_useSavePoints = $this->getWriteDriver()->supports(DriverFeature::SAVEPOINT);
         }
 
         return $this;

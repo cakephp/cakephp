@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\DatabaseException;
@@ -908,10 +909,10 @@ abstract class Driver implements LoggerAwareInterface
      *
      * Should return false for unknown features.
      *
-     * @param \Cake\Database\DriverFeatureEnum $feature Driver feature
+     * @param \Cake\Database\Enum\DriverFeature $feature Driver feature
      * @return bool
      */
-    abstract public function supports(DriverFeatureEnum $feature): bool;
+    abstract public function supports(DriverFeature $feature): bool;
 
     /**
      * Transforms the passed query to this Driver's dialect and returns an instance

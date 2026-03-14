@@ -19,7 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\Query\SelectQuery;
@@ -61,7 +61,7 @@ class WindowQueryTest extends TestCase
             $driver instanceof Mysql ||
             $driver instanceof Sqlite
         ) {
-            $this->skipTests = !$this->connection->getDriver()->supports(DriverFeatureEnum::WINDOW);
+            $this->skipTests = !$this->connection->getDriver()->supports(DriverFeature::WINDOW);
         } else {
             $this->skipTests = false;
         }

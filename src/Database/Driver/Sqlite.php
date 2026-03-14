@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Schema\SchemaDialect;
@@ -189,26 +189,26 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(DriverFeatureEnum $feature): bool
+    public function supports(DriverFeature $feature): bool
     {
         return match ($feature) {
-            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            DriverFeatureEnum::SAVEPOINT,
-            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => true,
+            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeature::SAVEPOINT,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS => true,
 
-            DriverFeatureEnum::JSON => false,
+            DriverFeature::JSON => false,
 
-            DriverFeatureEnum::CTE,
-            DriverFeatureEnum::WINDOW => version_compare(
+            DriverFeature::CTE,
+            DriverFeature::WINDOW => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature->value],
                 '>=',
             ),
-            DriverFeatureEnum::INTERSECT => true,
-            DriverFeatureEnum::INTERSECT_ALL => false,
-            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
-            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
-            DriverFeatureEnum::CHECK_CONSTRAINTS => true,
+            DriverFeature::INTERSECT => true,
+            DriverFeature::INTERSECT_ALL => false,
+            DriverFeature::SET_OPERATIONS_ORDER_BY => false,
+            DriverFeature::OPTIMIZER_HINT_COMMENT => false,
+            DriverFeature::CHECK_CONSTRAINTS => true,
         };
     }
 
