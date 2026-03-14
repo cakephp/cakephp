@@ -290,7 +290,7 @@ class ResponseTest extends TestCase
 
         $this->assertEquals($expected, $new->getHeaders());
 
-        DateTime::setTestNow(null);
+        DateTime::setTestNow();
     }
 
     /**
