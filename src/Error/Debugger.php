@@ -115,7 +115,7 @@ class Debugger
             $instance[0] = new $class();
         }
         if (!$instance) {
-            $instance[0] = new Debugger();
+            $instance[0] = new self();
         }
 
         /** @var static */
@@ -339,7 +339,7 @@ class Debugger
         $backtrace = debug_backtrace();
         array_shift($backtrace);
 
-        return Debugger::formatTrace($backtrace, $options);
+        return self::formatTrace($backtrace, $options);
     }
 
     /**
@@ -392,7 +392,7 @@ class Debugger
                 if ($options['args'] && isset($frame['args'])) {
                     $args = [];
                     foreach ($frame['args'] as $arg) {
-                        $args[] = Debugger::exportVar($arg);
+                        $args[] = self::exportVar($arg);
                     }
                     $reference .= implode(', ', $args);
                 }

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace TestApp\Attribute\Resolver\Fixture;
 
+use TestApp\Attribute\Resolver\Enum\TestPriority;
 use TestApp\Attribute\Resolver\TestComplexArgument;
-use TestApp\Attribute\Resolver\TestPriority;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class TestComplexArguments

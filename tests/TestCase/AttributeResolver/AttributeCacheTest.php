@@ -24,7 +24,7 @@ use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use stdClass;
-use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\Enum\TestPriority;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class AttributeCacheTest extends TestCase

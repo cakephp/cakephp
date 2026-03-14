@@ -112,12 +112,12 @@ class Router
      * @var array<string, string>
      */
     protected static array $namedExpressions = [
-        'Action' => Router::ACTION,
-        'Year' => Router::YEAR,
-        'Month' => Router::MONTH,
-        'Day' => Router::DAY,
-        'ID' => Router::ID,
-        'UUID' => Router::UUID,
+        'Action' => self::ACTION,
+        'Year' => self::YEAR,
+        'Month' => self::MONTH,
+        'Day' => self::DAY,
+        'ID' => self::ID,
+        'UUID' => self::UUID,
     ];
 
     /**

@@ -9,7 +9,7 @@ class ProBar implements BarInterface
     {
     }
 
-    public static function factory(): ProBar
+    public static function factory(): self
     {
         return new self();
     }

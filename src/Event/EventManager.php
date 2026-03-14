@@ -39,7 +39,7 @@ class EventManager implements EventManagerInterface
      *
      * @var \Cake\Event\EventManager|null
      */
-    protected static ?EventManager $generalManager = null;
+    protected static ?self $generalManager = null;
 
     /**
      * List of listener callbacks associated to
@@ -80,13 +80,13 @@ class EventManager implements EventManagerInterface
      * @param \Cake\Event\EventManager|null $manager Event manager instance.
      * @return \Cake\Event\EventManager The global event manager
      */
-    public static function instance(?EventManager $manager = null): EventManager
+    public static function instance(?self $manager = null): self
     {
         if ($manager === null && static::$generalManager) {
             return static::$generalManager;
         }
 
-        if ($manager instanceof EventManager) {
+        if ($manager instanceof self) {
             static::$generalManager = $manager;
         }
         static::$generalManager ??= new static();

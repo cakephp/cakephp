@@ -98,7 +98,7 @@ class Helper implements EventListenerInterface
      * @param string $name Name of the property being accessed.
      * @return \Cake\View\Helper<\Cake\View\View>|null Helper instance if helper with provided name exists
      */
-    public function __get(string $name): ?Helper
+    public function __get(string $name): ?self
     {
         if (isset($this->helperInstances[$name])) {
             return $this->helperInstances[$name];

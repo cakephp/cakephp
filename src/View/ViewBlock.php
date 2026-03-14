@@ -85,7 +85,7 @@ class ViewBlock
      * @throws \Cake\Core\Exception\CakeException When starting a block twice
      * @return void
      */
-    public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
+    public function start(string $name, string $mode = self::OVERRIDE): void
     {
         if (array_key_exists($name, $this->active)) {
             throw new CakeException(sprintf('A view block with the name `%s` is already/still open.', $name));
@@ -116,7 +116,7 @@ class ViewBlock
         $mode = end($this->active);
         $active = key($this->active);
         $content = (string)ob_get_clean();
-        if ($mode === ViewBlock::OVERRIDE) {
+        if ($mode === self::OVERRIDE) {
             $this->blocks[$active] = $content;
         } else {
             $this->concat($active, $content, $mode);
@@ -139,7 +139,7 @@ class ViewBlock
      *   If ViewBlock::PREPEND it will be prepended.
      * @return void
      */
-    public function concat(string $name, mixed $value = null, string $mode = ViewBlock::APPEND): void
+    public function concat(string $name, mixed $value = null, string $mode = self::APPEND): void
     {
         if ($value === null) {
             $this->start($name, $mode);
@@ -150,7 +150,7 @@ class ViewBlock
         if (!isset($this->blocks[$name])) {
             $this->blocks[$name] = '';
         }
-        if ($mode === ViewBlock::PREPEND) {
+        if ($mode === self::PREPEND) {
             $this->blocks[$name] = $value . $this->blocks[$name];
         } else {
             $this->blocks[$name] .= $value;

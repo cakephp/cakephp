@@ -239,9 +239,9 @@ class ConsoleOptionParser
      * @param \Cake\Console\ConsoleOptionParser|array $spec ConsoleOptionParser or spec to merge with.
      * @return $this
      */
-    public function merge(ConsoleOptionParser|array $spec): static
+    public function merge(self|array $spec): static
     {
-        if ($spec instanceof ConsoleOptionParser) {
+        if ($spec instanceof self) {
             $spec = $spec->toArray();
         }
         if (!empty($spec['arguments'])) {
