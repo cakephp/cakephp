@@ -51,7 +51,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\ArticleStatusLabelInterface;
+use TestApp\Model\Enum\ArticleStatusLabel;
 use TestApp\Model\Enum\Priority;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -564,6 +564,69 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that `{{inputId}}` template variable is available in inputContainer template.
+     */
+    public function testControlInputIdTemplateVar(): void
+    {
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="title"', $result);
+
+        // Test nested field name
+        $result = $this->Form->control('User.email', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-email"', $result);
+
+        // Test deeply nested field name
+        $result = $this->Form->control('User.address.city', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-address-city"', $result);
+    }
+
+    /**
+     * Test that `{{inputId}}` template variable is available in error template.
+     */
+    public function testErrorInputIdTemplateVar(): void
+    {
+        $this->article['errors'] = [
+            'title' => ['error message'],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="title"', $result);
+        $this->assertStringContainsString('error message', $result);
+
+        // Test nested field name
+        $this->article['errors'] = [
+            'author' => [
+                'name' => ['Author name is required'],
+            ],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('author.name', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="author-name"', $result);
     }
 
     /**
@@ -3815,7 +3878,7 @@ class FormHelperTest extends TestCase
 
         $articlesTable->getSchema()->setColumnType(
             'published',
-            EnumType::from(ArticleStatusLabelInterface::class),
+            EnumType::from(ArticleStatusLabel::class),
         );
 
         $this->Form->create($articlesTable->newEmptyEntity());

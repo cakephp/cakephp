@@ -102,7 +102,7 @@ class SmtpTransport extends AbstractTransport
     /**
      * Returns only serializable properties
      *
-     * @return array<string>
+     * @return array
      */
     public function __serialize(): array
     {

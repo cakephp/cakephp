@@ -31,6 +31,8 @@ use RecursiveIteratorIterator;
  * - LESS_THAN_OR_EQUAL: Depth must be <= value
  * - GREATER_THAN: Depth must be greater than value
  * - GREATER_THAN_OR_EQUAL: Depth must be >= value
+ *
+ * @extends \FilterIterator<string, \SplFileInfo, \Iterator<string, \SplFileInfo>>
  */
 final class DepthFilterIterator extends FilterIterator
 {

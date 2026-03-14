@@ -1,0 +1,34 @@
+name: Split Packages
+
+on:
+  push:
+    branches:
+      - '5.x'
+      - '5.next'
+      - '6.x'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  split-packages:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure git to use token over HTTPS
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SPLIT_PACKAGES_WRITE_TOKEN }}
+        run: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+
+      - name: Push split packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SPLIT_PACKAGES_WRITE_TOKEN }}
+        run: |
+          make CURRENT_BRANCH=${{ github.ref_name }} components
+          make clean-components-branches

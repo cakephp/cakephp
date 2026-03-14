@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use PDOException;
@@ -134,11 +135,15 @@ class MysqlSchemaDialect extends SchemaDialect
                 'comment' => $row['Comment'],
                 'length' => null,
             ];
-            $extra = $row['Extra'] ?? '';
+            $extra = trim($row['Extra'] ?? '');
             if ($extra === 'auto_increment') {
                 $field['autoIncrement'] = true;
             }
-            if ($extra === 'on update CURRENT_TIMESTAMP' || $extra === 'on update current_timestamp()') {
+            // Depending on the MySQL Version the extra column can contain/start with DEFAULT_GENERATED as well
+            if (
+                str_ends_with($extra, 'on update CURRENT_TIMESTAMP') ||
+                str_ends_with($extra, 'on update current_timestamp()')
+            ) {
                 $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
 
@@ -198,7 +203,12 @@ class MysqlSchemaDialect extends SchemaDialect
                 $type,
                 array_merge(
                     TableSchema::GEOSPATIAL_TYPES,
-                    [TableSchema::TYPE_BINARY, TableSchema::TYPE_JSON, TableSchema::TYPE_TEXT],
+                    [
+                        TableSchema::TYPE_BINARY,
+                        TableSchema::TYPE_VARBINARY,
+                        TableSchema::TYPE_JSON,
+                        TableSchema::TYPE_TEXT,
+                    ],
                 ),
             )
         ) {
@@ -215,6 +225,14 @@ class MysqlSchemaDialect extends SchemaDialect
                 "\\1'\\3')",
                 $default,
             );
+        }
+
+        if (
+            $this->driver instanceof Mysql &&
+            $this->driver->isMariaDb() &&
+            $default === 'current_timestamp()'
+        ) {
+            return 'CURRENT_TIMESTAMP';
         }
 
         return $default;
@@ -381,16 +399,14 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_NATIVE_UUID, 'length' => null];
         }
-        if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'])) {
+        if (str_contains($col, 'blob') || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
-            $result = ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
-            if ($col === 'binary') {
-                $result['fixed'] = true;
-            }
-
-            return $result;
+            return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+        }
+        if ($col === 'varbinary') {
+            return ['type' => TableSchemaInterface::TYPE_VARBINARY, 'length' => $length];
         }
         if (str_contains($col, 'float') || str_contains($col, 'double')) {
             return [
@@ -579,6 +595,7 @@ SQL;
             'text' => true,
             'char' => true,
             'binary' => true,
+            'varbinary' => true,
         ];
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
@@ -618,11 +635,10 @@ SQL;
                         break;
                     }
 
-                    if (!empty($column['fixed'])) {
-                        $out .= ' BINARY';
-                    } else {
-                        $out .= ' VARBINARY';
-                    }
+                    $out .= ' BINARY';
+                    break;
+                case TableSchemaInterface::TYPE_VARBINARY:
+                    $out .= ' VARBINARY';
                     break;
             }
         }
@@ -633,6 +649,7 @@ SQL;
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_VARBINARY,
             TableSchemaInterface::TYPE_BIT,
         ];
         if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
@@ -713,7 +730,12 @@ SQL;
 
         $defaultExpressionTypes = array_merge(
             TableSchemaInterface::GEOSPATIAL_TYPES,
-            [TableSchemaInterface::TYPE_BINARY, TableSchemaInterface::TYPE_TEXT, TableSchemaInterface::TYPE_JSON],
+            [
+                TableSchemaInterface::TYPE_BINARY,
+                TableSchemaInterface::TYPE_VARBINARY,
+                TableSchemaInterface::TYPE_TEXT,
+                TableSchemaInterface::TYPE_JSON,
+            ],
         );
         if (in_array($column['type'], $defaultExpressionTypes) && isset($column['default'])) {
             // Geospatial, blob and text types need to be wrapped in () to create an expression.

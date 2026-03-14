@@ -592,6 +592,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_INTEGER => ' INT',
             TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
             TableSchemaInterface::TYPE_BINARY => ' BYTEA',
+            TableSchemaInterface::TYPE_VARBINARY => ' BYTEA',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',

@@ -202,7 +202,7 @@ class BodyParserMiddleware implements MiddlewareInterface
         try {
             $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);
             // We might not get child nodes if there are nested inline entities.
-            /** @var \DOMNodeList $domNodeList */
+            /** @var \DOMNodeList<\DOMNode> $domNodeList */
             $domNodeList = $xml->childNodes;
             if ((int)$domNodeList->length > 0) {
                 return Xml::toArray($xml);

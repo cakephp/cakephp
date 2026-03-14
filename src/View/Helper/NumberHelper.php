@@ -31,6 +31,7 @@ use function Cake\Core\h;
  * @method string toReadableSize(string|float|int $size) See Number::toReadableSize()
  * @link https://book.cakephp.org/5/en/views/helpers/number.html
  * @see \Cake\I18n\Number
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class NumberHelper extends Helper
 {

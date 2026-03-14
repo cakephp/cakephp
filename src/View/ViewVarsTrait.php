@@ -22,6 +22,9 @@ use Cake\Event\EventDispatcherInterface;
  *
  * Once collected context data can be passed to another object.
  * This is done in Controller, TemplateTask and View for example.
+ *
+ * @property \Cake\Http\ServerRequest|null $request The request being handled.
+ * @property \Cake\Http\Response|null $response The response being built.
  */
 trait ViewVarsTrait
 {

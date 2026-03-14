@@ -12,10 +12,22 @@ parameters:
 			identifier: trait.unused
 		-
 			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
-		- "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
 		- '#Class Cake\\Database\\Driver\\.+ not found.#'
 		- '#Class Cake\\Database\\Connection not found.#'
 		- '#Method Cake\\Datasource\\QueryInterface::aliasFields\(\) has invalid return type Cake\\Database\\Expression\\IdentifierExpression.#'
 		- '#Parameter \$fields of method Cake\\Datasource\\QueryInterface::aliasFields\(\) has invalid type Cake\\Database\\Expression\\IdentifierExpression.#'
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 2
+			path: Paging/SortableFieldsBuilder.php
+		-
+			message: '#^Template type TKey of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: QueryInterface.php
+		-
+			message: '#^Template type TValue of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: QueryInterface.php

@@ -350,5 +350,4 @@ jobs:
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
       - name: Run phpstan for split packages
-        continue-on-error: true
         run: php contrib/validate-split-packages-phpstan.php

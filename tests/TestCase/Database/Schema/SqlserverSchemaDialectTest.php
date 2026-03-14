@@ -208,11 +208,11 @@ SQL;
             ],
             [
                 'VARBINARY(30)',
-                ['type' => 'binary', 'length' => 30],
+                ['type' => 'varbinary', 'length' => 30],
             ],
             [
                 'VARBINARY(MAX)',
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
+                ['type' => 'varbinary', 'length' => TableSchema::LENGTH_LONG],
             ],
             // Geospatial types
             [
@@ -749,7 +749,7 @@ SQL;
                 ['type' => 'float', 'length' => 11, 'precision' => 3],
                 '[value] FLOAT(3)',
             ],
-            // Binary
+            // Binary (fixed-length, but MAX lengths fall back to VARBINARY)
             [
                 'img',
                 ['type' => 'binary', 'length' => null],
@@ -758,7 +758,7 @@ SQL;
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
-                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY),
+                sprintf('[img] BINARY(%s)', TableSchema::LENGTH_TINY),
             ],
             [
                 'img',
@@ -773,12 +773,28 @@ SQL;
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
-                '[bytes] VARBINARY(5)',
+                '[bytes] BINARY(5)',
             ],
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 1],
                 '[bytes] BINARY(1)',
+            ],
+            // Varbinary (variable-length)
+            [
+                'data',
+                ['type' => 'varbinary', 'length' => null],
+                '[data] VARBINARY(MAX)',
+            ],
+            [
+                'data',
+                ['type' => 'varbinary', 'length' => 20],
+                '[data] VARBINARY(20)',
+            ],
+            [
+                'data',
+                ['type' => 'varbinary', 'length' => TableSchema::LENGTH_LONG],
+                '[data] VARBINARY(MAX)',
             ],
             // Boolean
             [

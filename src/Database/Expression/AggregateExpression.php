@@ -238,7 +238,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * Clone this object and its subtree of expressions.
      */
-    public function __clone(): void
+    public function __clone()
     {
         parent::__clone();
         if ($this->filter !== null) {

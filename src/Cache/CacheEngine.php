@@ -30,7 +30,7 @@ use function Cake\Core\triggerWarning;
 /**
  * Storage engine for CakePHP caching
  *
- * @template TSubject of \Cake\Cache\CacheEngine
+ * @template TSubject of object
  * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 abstract class CacheEngine implements CacheInterface, CacheEngineInterface, EventDispatcherInterface

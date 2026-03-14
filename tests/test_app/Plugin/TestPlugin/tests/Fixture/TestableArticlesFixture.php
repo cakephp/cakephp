@@ -11,19 +11,32 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         4.0.0
+ * @since         5.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Validation;
+namespace TestPlugin\Test\Fixture;
 
-class CustomProvider
+use Cake\Database\Schema\TableSchema;
+use Cake\TestSuite\Fixture\TestFixture;
+
+/**
+ * Test fixture for verifying plugin alias detection.
+ */
+class TestableArticlesFixture extends TestFixture
 {
     /**
-     * @param mixed $value
-     * @param mixed $context
+     * Skip schema reflection for testing purposes.
      */
-    public function validate($value, $context): bool
+    protected function schemaFromReflection(): void
     {
-        return is_bool($value);
+        $this->schema = new TableSchema('articles', []);
+    }
+
+    /**
+     * Expose the protected _aliasFromClass method for testing.
+     */
+    public function getAliasFromClass(): string
+    {
+        return $this->aliasFromClass();
     }
 }

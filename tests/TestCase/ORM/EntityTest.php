@@ -1214,6 +1214,47 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that setError with dotted paths creates nested structure
+     */
+    public function testSetErrorDottedPath(): void
+    {
+        $entity = new Entity();
+        $entity->setError('patients._ids', ['dummyRule' => 'Error message']);
+
+        // Should create nested structure that can be retrieved with dotted path
+        $expected = ['dummyRule' => 'Error message'];
+        $this->assertEquals($expected, $entity->getError('patients._ids'));
+
+        // Should also work with getErrors()
+        $expected = [
+            'patients' => [
+                '_ids' => ['dummyRule' => 'Error message'],
+            ],
+        ];
+        $this->assertEquals($expected, $entity->getErrors());
+
+        // Test deeper nesting
+        $entity = new Entity();
+        $entity->setError('foo.bar.baz', 'deep error');
+
+        $this->assertEquals(['deep error'], $entity->getError('foo.bar.baz'));
+        $expected = [
+            'foo' => [
+                'bar' => [
+                    'baz' => ['deep error'],
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $entity->getErrors());
+
+        // Test with string error message
+        $entity = new Entity();
+        $entity->setError('field.subfield', 'simple message');
+
+        $this->assertEquals(['simple message'], $entity->getError('field.subfield'));
+    }
+
+    /**
      * Tests reading errors from nested validator
      */
     public function testGetErrorNested(): void

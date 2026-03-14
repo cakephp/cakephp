@@ -34,7 +34,7 @@ use SplFixedArray;
 class ResultSetFactory
 {
     /**
-     * @var class-string<\Cake\Datasource\ResultSetInterface>
+     * @var class-string<\Cake\Datasource\ResultSetInterface<array-key, mixed>>
      */
     protected string $resultSetClass = ResultSet::class;
 
@@ -42,8 +42,8 @@ class ResultSetFactory
      * Create a result set instance.
      *
      * @param iterable $results Results.
-     * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
-     * @return \Cake\Datasource\ResultSetInterface
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query Query from where results came.
+     * @return \Cake\Datasource\ResultSetInterface<array-key, mixed>
      */
     public function createResultSet(iterable $results, ?SelectQuery $query = null): ResultSetInterface
     {
@@ -71,7 +71,7 @@ class ResultSetFactory
      * Get repository and its associations data for nesting results key and
      * entity hydration.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query from where to derive the data.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query from where to derive the data.
      * @return array{primaryAlias: string, registryAlias: string, entityClass: class-string<\Cake\Datasource\EntityInterface>, hydrate: bool, autoFields: bool|null, matchingColumns: array, dtoClass: class-string|null, matchingAssoc: array, containAssoc: array, fields: array}
      */
     protected function collectData(SelectQuery $query): array
@@ -338,12 +338,12 @@ class ResultSetFactory
     /**
      * Set the ResultSet class to use.
      *
-     * @param class-string<\Cake\Datasource\ResultSetInterface> $resultSetClass Class name.
+     * @param class-string<\Cake\Datasource\ResultSetInterface<array-key, mixed>> $resultSetClass Class name.
      * @return $this
      */
     public function setResultSetClass(string $resultSetClass): static
     {
-        if (!is_a($resultSetClass, ResultSetInterface::class, true)) {
+        if (!is_subclass_of($resultSetClass, ResultSetInterface::class)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid ResultSet class `%s`. It must implement `%s`',
                 $resultSetClass,
@@ -359,7 +359,7 @@ class ResultSetFactory
     /**
      * Get the ResultSet class to use.
      *
-     * @return class-string<\Cake\Datasource\ResultSetInterface>
+     * @return class-string<\Cake\Datasource\ResultSetInterface<array-key, mixed>>
      */
     public function getResultSetClass(): string
     {

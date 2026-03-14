@@ -79,9 +79,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 
                 return true;
             }
-        }
 
-        if (isset($exception)) {
             throw $exception;
         }
 
@@ -92,7 +90,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return \Cake\View\Helper|null
+     * @return \Cake\View\Helper<\Cake\View\View>|null
      */
     public function __get(string $name): ?Helper
     {
@@ -110,11 +108,11 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return class-string<\Cake\View\Helper>|null Either the correct class name or null.
+     * @return class-string<\Cake\View\Helper<\Cake\View\View>>|null Either the correct class name or null.
      */
     protected function resolveClassName(string $class): ?string
     {
-        /** @var class-string<\Cake\View\Helper>|null */
+        /** @var class-string<\Cake\View\Helper<\Cake\View\View>>|null */
         return App::className($class, 'View/Helper', 'Helper');
     }
 
@@ -143,10 +141,10 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      * Enabled helpers will be registered with the event manager.
      *
-     * @param \Cake\View\Helper|class-string<\Cake\View\Helper> $class The class to create.
+     * @param \Cake\View\Helper<\Cake\View\View>|class-string<\Cake\View\Helper<\Cake\View\View>> $class The class to create.
      * @param string $alias The alias of the loaded helper.
      * @param array<string, mixed> $config An array of settings to use for the helper.
-     * @return \Cake\View\Helper The constructed helper class.
+     * @return \Cake\View\Helper<\Cake\View\View> The constructed helper class.
      */
     protected function create(object|string $class, string $alias, array $config): Helper
     {

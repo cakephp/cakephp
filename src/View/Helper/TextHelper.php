@@ -35,6 +35,7 @@ use function Cake\Core\h;
  * @method string truncate(string $text, int $length = 100, array $options = []) See Text::truncate()
  * @link https://book.cakephp.org/5/en/views/helpers/text.html
  * @see \Cake\Utility\Text
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class TextHelper extends Helper
 {

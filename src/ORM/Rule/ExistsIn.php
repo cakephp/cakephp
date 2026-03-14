@@ -98,7 +98,6 @@ class ExistsIn
         }
 
         $fields = $this->fields;
-        $source = $this->repository;
         $target = $this->repository;
         if ($target instanceof Association) {
             $bindingKey = (array)$target->getBindingKey();

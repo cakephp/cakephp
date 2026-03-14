@@ -23,6 +23,8 @@ use Cake\View\Helper;
  *
  * After setting messages in your controllers with FlashComponent, you can use
  * this class to output your flash messages in your views.
+ *
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class FlashHelper extends Helper
 {

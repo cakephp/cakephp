@@ -21,9 +21,23 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
+use TestPlugin\Test\Fixture\TestableArticlesFixture;
 
 class TestFixtureTest extends TestCase
 {
+    /**
+     * Test that plugin fixtures automatically get their plugin prefix in the alias.
+     */
+    public function testAliasFromClassWithPlugin(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        // Plugin fixture class should automatically get plugin prefix in alias
+        $pluginFixture = new TestableArticlesFixture();
+        $this->assertSame('TestPlugin.TestableArticles', $pluginFixture->getAliasFromClass());
+        $this->assertSame('TestPlugin.TestableArticles', $pluginFixture->tableAlias);
+    }
+
     public function testStrictFields(): void
     {
         $fixture = new class extends TestFixture {

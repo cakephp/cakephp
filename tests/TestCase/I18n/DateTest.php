@@ -310,7 +310,7 @@ class DateTest extends TestCase
             'accuracy' => ['year' => 'year'],
             'end' => '+2 months',
         ]);
-        $expected = 'exactly on ' . date('n/j/y', strtotime('+4 months +2 weeks +3 days'));
+        $expected = 'exactly on ' . $date->format('n/j/y');
         $this->assertSame($expected, $result);
     }
 
@@ -386,7 +386,7 @@ class DateTest extends TestCase
 
         $date = new Date('+2 months +2 days');
         $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
-        $this->assertSame('on ' . date('Y-m-d', strtotime('+2 months +2 days')), $result);
+        $this->assertSame('on ' . $date->format('Y-m-d'), $result);
     }
 
     /**
@@ -404,7 +404,7 @@ class DateTest extends TestCase
 
         $date = new Date('-2 months -2 days');
         $result = $date->timeAgoInWords(['end' => '1 month', 'format' => 'yyyy-MM-dd']);
-        $this->assertSame('on ' . date('Y-m-d', strtotime('-2 months -2 days')), $result);
+        $this->assertSame('on ' . $date->format('Y-m-d'), $result);
 
         $date = new Date('-2 years -5 months -2 days');
         $result = $date->timeAgoInWords(['end' => '3 years']);

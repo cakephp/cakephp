@@ -27,6 +27,8 @@ use Iterator;
  * - `src/**\/*.php` - Recursive matching
  * - `tests/**\/*Test.php` - Files ending with Test.php
  * - `*.md` - Files in root directory
+ *
+ * @extends \FilterIterator<string, \SplFileInfo, \Iterator<string, \SplFileInfo>>
  */
 final class GlobFilterIterator extends FilterIterator
 {

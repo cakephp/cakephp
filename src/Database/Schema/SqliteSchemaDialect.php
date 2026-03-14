@@ -125,8 +125,11 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
-        if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
+        if (in_array($col, ['blob', 'clob', 'binary'])) {
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+        }
+        if ($col === 'varbinary') {
+            return ['type' => TableSchemaInterface::TYPE_VARBINARY, 'length' => $length];
         }
 
         $datetimeTypes = [
@@ -631,6 +634,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $typeMap = [
             TableSchemaInterface::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchemaInterface::TYPE_BINARY => ' BLOB',
+            TableSchemaInterface::TYPE_VARBINARY => ' BLOB',
             TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_STRING => ' VARCHAR',

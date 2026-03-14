@@ -56,6 +56,7 @@ class TimeHelperTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        DateTime::setTestNow();
         DateTime::setDefaultLocale();
         I18n::setLocale(I18n::getDefaultLocale());
     }
@@ -65,8 +66,13 @@ class TimeHelperTest extends TestCase
      */
     public function testTimeAgoInWords(): void
     {
+        // Freeze time to avoid flaky tests when running around midnight
+        $now = new DateTime('2024-01-15 12:00:00');
+        DateTime::setTestNow($now);
+
         $Time = new TimeHelper($this->View);
-        $timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
+        $futureDate = new DateTime('+8 years, +4 months +2 weeks +3 days');
+        $timestamp = (int)$futureDate->format('U');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
             'element' => 'span',
@@ -76,7 +82,7 @@ class TimeHelperTest extends TestCase
                 'title' => $timestamp,
                 'class' => 'time-ago-in-words',
             ],
-            'on ' . date('n/j/y', $timestamp),
+            'on ' . $futureDate->format('n/j/y'),
             '/span',
         ];
         $this->assertHtml($expected, $result);
@@ -94,12 +100,13 @@ class TimeHelperTest extends TestCase
                 'class' => 'time-ago-in-words',
                 'rel' => 'test',
             ],
-            'on ' . date('n/j/y', $timestamp),
+            'on ' . $futureDate->format('n/j/y'),
             '/span',
         ];
         $this->assertHtml($expected, $result);
 
-        $timestamp = strtotime('+2 weeks');
+        $twoWeeksDate = new DateTime('+2 weeks');
+        $timestamp = (int)$twoWeeksDate->format('U');
         $result = $Time->timeAgoInWords(
             $timestamp,
             ['end' => '1 years', 'element' => 'div'],

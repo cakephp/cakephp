@@ -1634,7 +1634,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Get result set factory.
      *
-     * @return \Cake\ORM\ResultSetFactory
+     * @return \Cake\ORM\ResultSetFactory<\Cake\Datasource\EntityInterface|array>
      */
     public function resultSetFactory(): ResultSetFactory
     {

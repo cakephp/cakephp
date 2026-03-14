@@ -323,7 +323,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * Clone this object and its subtree of expressions.
      */
-    public function __clone(): void
+    public function __clone()
     {
         $this->name = clone $this->name;
         foreach ($this->partitions as $i => $partition) {

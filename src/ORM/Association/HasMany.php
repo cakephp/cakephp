@@ -550,6 +550,7 @@ class HasMany extends Association
                         }
                     }
                 });
+                /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $query */
                 $query = $this->find()->where($conditions);
 
                 $return = $target->deleteMany($query->all(), $options);

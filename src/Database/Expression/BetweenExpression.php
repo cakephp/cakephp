@@ -135,7 +135,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface, TypedRes
     /**
      * Do a deep clone of this expression.
      */
-    public function __clone(): void
+    public function __clone()
     {
         foreach (['field', 'from', 'to'] as $part) {
             if ($this->{$part} instanceof ExpressionInterface) {

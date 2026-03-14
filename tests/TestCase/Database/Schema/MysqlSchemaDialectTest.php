@@ -156,15 +156,15 @@ class MysqlSchemaDialectTest extends TestCase
             ],
             [
                 'BINARY(1)',
-                ['type' => 'binary', 'length' => 1, 'fixed' => true],
+                ['type' => 'binary', 'length' => 1],
             ],
             [
                 'BINARY(20)',
-                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'VARBINARY(20)',
-                ['type' => 'binary', 'length' => 20],
+                ['type' => 'varbinary', 'length' => 20],
             ],
             [
                 'TEXT',
@@ -370,7 +370,7 @@ SQL;
                 config JSON,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
-                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -599,10 +599,10 @@ SQL;
             'updated' => [
                 'type' => 'datetime',
                 'null' => true,
-                'default' => null,
+                'default' => 'CURRENT_TIMESTAMP',
                 'length' => null,
                 'precision' => null,
-                'comment' => null,
+                'comment' => '',
                 'onUpdate' => 'CURRENT_TIMESTAMP',
             ],
         ];
@@ -1325,18 +1325,28 @@ SQL;
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
-                '`bytes` VARBINARY(5)',
+                '`bytes` BINARY(5)',
             ],
             [
                 'bit',
                 ['type' => 'binary', 'length' => 1],
-                '`bit` VARBINARY(1)',
+                '`bit` BINARY(1)',
             ],
-            // Fixed binary (BINARY vs VARBINARY)
             [
                 'hash',
-                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+                ['type' => 'binary', 'length' => 20],
                 '`hash` BINARY(20)',
+            ],
+            // Variable-length binary (VARBINARY)
+            [
+                'data',
+                ['type' => 'varbinary', 'length' => 20],
+                '`data` VARBINARY(20)',
+            ],
+            [
+                'bytes',
+                ['type' => 'varbinary', 'length' => 5],
+                '`bytes` VARBINARY(5)',
             ],
             // Integers
             [
