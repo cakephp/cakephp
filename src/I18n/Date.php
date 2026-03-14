@@ -43,10 +43,10 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
      * as specified in (https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classSimpleDateFormat.html#details)
      *
-     * @var string|int
+     * @var array|string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
-    protected static string|int $_toStringFormat = IntlDateFormatter::SHORT;
+    protected static string|int|array $toStringFormat = IntlDateFormatter::SHORT;
 
     /**
      * The format to use when converting this object to JSON.
@@ -118,7 +118,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      */
     public static function setToStringFormat(string|int $format): void
     {
-        static::$_toStringFormat = $format;
+        static::$toStringFormat = $format;
     }
 
     /**
@@ -243,7 +243,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
             throw new InvalidArgumentException('UNIT_TIMESTAMP_FORMAT is not supported for Date.');
         }
 
-        $format ??= static::$_toStringFormat;
+        $format ??= static::$toStringFormat;
         $format = is_int($format) ? [$format, IntlDateFormatter::NONE] : $format;
         $locale = $locale ?: DateTime::getDefaultLocale();
 
