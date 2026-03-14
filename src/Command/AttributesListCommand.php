@@ -18,7 +18,7 @@ namespace Cake\Command;
 
 use Cake\AttributeResolver\AttributeCollection;
 use Cake\AttributeResolver\AttributeResolver;
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Console\ConsoleOptionParser;
 
@@ -152,7 +152,7 @@ class AttributesListCommand extends Command
 
         $type = $this->args->getOption('type');
         if ($type) {
-            $targetType = AttributeTargetType::tryFrom((string)$type);
+            $targetType = AttributeTargetTypeEnum::tryFrom((string)$type);
             if ($targetType) {
                 $collection = $collection->withTargetType($targetType);
             } else {

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility\Fs\Iterator;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Fs\Enum\DepthOperator;
+use Cake\Utility\Fs\Enum\DepthOperatorEnum;
 use Cake\Utility\Fs\Iterator\ContainsPathFilterIterator;
 use Cake\Utility\Fs\Iterator\DepthFilterIterator;
 use Cake\Utility\Fs\Iterator\FilenameFilterIterator;
@@ -153,7 +153,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::EQUAL, 0);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::EQUAL, 0);
 
         $files = [];
         foreach ($filtered as $file) {
@@ -176,7 +176,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::GREATER_THAN, 1);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::GREATER_THAN, 1);
 
         $files = [];
         foreach ($filtered as $file) {
@@ -201,7 +201,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::LESS_THAN_OR_EQUAL, 0);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::LESS_THAN_OR_EQUAL, 0);
 
         $files = [];
         foreach ($filtered as $file) {
@@ -226,7 +226,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::NOT_EQUAL, 0);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::NOT_EQUAL, 0);
 
         $files = [];
         foreach ($filtered as $file) {
@@ -253,7 +253,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::LESS_THAN, 1);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::LESS_THAN, 1);
 
         $files = [];
         foreach ($filtered as $file) {
@@ -278,7 +278,7 @@ class PatternFilterIteratorTest extends TestCase
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
-        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperator::GREATER_THAN_OR_EQUAL, 2);
+        $filtered = new DepthFilterIterator($recursiveIterator, DepthOperatorEnum::GREATER_THAN_OR_EQUAL, 2);
 
         $files = [];
         foreach ($filtered as $file) {

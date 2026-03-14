@@ -273,7 +273,7 @@ class Container implements DefinitionContainerInterface
      * @param mixed $id
      * @param bool $new
      * @param array<string, mixed> $args
-     * @return mixed|object|array|null|void
+     * @return mixed
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\AttributeResolver;
 
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Generator;
@@ -253,7 +253,7 @@ class Parser
             $filePath,
             $startLine === false ? 0 : $startLine,
             $fileTime,
-            new AttributeTarget(AttributeTargetType::CLASS_TYPE, $className),
+            new AttributeTarget(AttributeTargetTypeEnum::CLASS_TYPE, $className),
             $pluginName,
         );
 
@@ -292,7 +292,7 @@ class Parser
     ): Generator {
         $startLine = $method->getStartLine();
         $target = new AttributeTarget(
-            AttributeTargetType::METHOD,
+            AttributeTargetTypeEnum::METHOD,
             $method->getName(),
             $className,
         );
@@ -337,7 +337,7 @@ class Parser
         ?string $pluginName,
     ): Generator {
         $target = new AttributeTarget(
-            AttributeTargetType::PROPERTY,
+            AttributeTargetTypeEnum::PROPERTY,
             $property->getName(),
             $className,
         );
@@ -376,7 +376,7 @@ class Parser
         $startLine = $declaringFunction instanceof ReflectionMethod ? $declaringFunction->getStartLine() : false;
 
         $target = new AttributeTarget(
-            AttributeTargetType::PARAMETER,
+            AttributeTargetTypeEnum::PARAMETER,
             $parameter->getName(),
             $className . '::' . $methodName,
         );
@@ -410,7 +410,7 @@ class Parser
         ?string $pluginName,
     ): Generator {
         $target = new AttributeTarget(
-            AttributeTargetType::CONSTANT,
+            AttributeTargetTypeEnum::CONSTANT,
             $constant->getName(),
             $className,
         );

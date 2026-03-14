@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
 use Attribute;
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
@@ -61,7 +61,7 @@ class AttributeInfoTest extends TestCase
     public function testConstructor(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'index',
             declaringClass: 'App\Controller\UsersController',
         );
@@ -93,7 +93,7 @@ class AttributeInfoTest extends TestCase
     public function testConstructorDefaults(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'MyClass',
         );
 
@@ -116,7 +116,7 @@ class AttributeInfoTest extends TestCase
     public function testToArray(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::PROPERTY,
+            type: AttributeTargetTypeEnum::PROPERTY,
             name: 'title',
             declaringClass: 'App\Model\Entity\Article',
         );
@@ -177,7 +177,7 @@ class AttributeInfoTest extends TestCase
         $this->assertSame(['value' => 'index'], $info->arguments);
         $this->assertSame('/app/src/Controller/ArticlesController.php', $info->filePath);
         $this->assertSame(50, $info->lineNumber);
-        $this->assertSame(AttributeTargetType::METHOD, $info->target->type);
+        $this->assertSame(AttributeTargetTypeEnum::METHOD, $info->target->type);
         $this->assertSame('index', $info->target->name);
         $this->assertSame(1111111111, $info->fileTime);
         $this->assertSame('Admin', $info->pluginName);
@@ -189,7 +189,7 @@ class AttributeInfoTest extends TestCase
     public function testRoundTripSerialization(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::PARAMETER,
+            type: AttributeTargetTypeEnum::PARAMETER,
             name: 'userId',
             declaringClass: 'App\Controller\UsersController',
         );
@@ -217,7 +217,7 @@ class AttributeInfoTest extends TestCase
     public function testGetInstance(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -243,7 +243,7 @@ class AttributeInfoTest extends TestCase
     public function testGetInstanceWithExpectedClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -270,7 +270,7 @@ class AttributeInfoTest extends TestCase
         $this->expectExceptionMessage('Attribute class "NonExistent\Class" does not exist');
 
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -295,7 +295,7 @@ class AttributeInfoTest extends TestCase
         $this->expectExceptionMessageMatches('/is not an instance of/');
 
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -317,7 +317,7 @@ class AttributeInfoTest extends TestCase
     public function testIsInstanceOf(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -340,7 +340,7 @@ class AttributeInfoTest extends TestCase
     public function testPhpSerializeRoundTrip(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'view',
             declaringClass: 'App\Controller\ArticlesController',
         );
@@ -381,7 +381,7 @@ class AttributeInfoTest extends TestCase
     public function testPhpSerializeWithNullPluginName(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'MyClass',
         );
 
@@ -409,7 +409,7 @@ class AttributeInfoTest extends TestCase
     public function testJsonEncode(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'index',
             declaringClass: 'App\Controller\UsersController',
         );

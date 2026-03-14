@@ -18,13 +18,13 @@ namespace Cake\Test\TestCase\AttributeResolver;
 
 use Cake\AttributeResolver\AttributeCache;
 use Cake\AttributeResolver\AttributeCollection;
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use stdClass;
-use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\TestPriorityEnum;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class AttributeCacheTest extends TestCase
@@ -76,7 +76,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/app/src/TestClass.php',
                 lineNumber: 10,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'TestClass',
                     declaringClass: 'App\\TestClass',
                 ),
@@ -114,7 +114,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test1.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'TestClass1',
                     declaringClass: 'TestClass1',
                 ),
@@ -127,7 +127,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test2.php',
                 lineNumber: 5,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::METHOD,
+                    type: AttributeTargetTypeEnum::METHOD,
                     name: 'testMethod',
                     declaringClass: 'TestClass2',
                 ),
@@ -175,7 +175,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'Test',
                     declaringClass: 'Test',
                 ),
@@ -210,7 +210,7 @@ class AttributeCacheTest extends TestCase
                 filePath: $sourceFile,
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -257,7 +257,7 @@ class AttributeCacheTest extends TestCase
                 filePath: $sourceFile,
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -316,7 +316,7 @@ class AttributeCacheTest extends TestCase
             arguments: [
                 'path' => '/users/{id}',
                 'methods' => ['GET', 'POST'],
-                'targetType' => AttributeTargetType::METHOD,
+                'targetType' => AttributeTargetTypeEnum::METHOD,
                 'options' => [
                     'auth' => true,
                     'roles' => ['admin', 'user'],
@@ -328,7 +328,7 @@ class AttributeCacheTest extends TestCase
             filePath: '/app/src/Controller/UsersController.php',
             lineNumber: 25,
             target: new AttributeTarget(
-                type: AttributeTargetType::METHOD,
+                type: AttributeTargetTypeEnum::METHOD,
                 name: 'show',
                 declaringClass: 'App\\Controller\\UsersController',
             ),
@@ -365,7 +365,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -396,7 +396,7 @@ class AttributeCacheTest extends TestCase
             filePath: '/non/existent/file.php',
             lineNumber: 1,
             target: new AttributeTarget(
-                type: AttributeTargetType::CLASS_TYPE,
+                type: AttributeTargetTypeEnum::CLASS_TYPE,
                 name: 'TestClass',
                 declaringClass: 'TestClass',
             ),
@@ -426,7 +426,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test1.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetTypeEnum::CLASS_TYPE,
                     name: 'Class1',
                     declaringClass: 'Class1',
                 ),
@@ -439,7 +439,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test2.php',
                 lineNumber: 2,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::METHOD,
+                    type: AttributeTargetTypeEnum::METHOD,
                     name: 'testMethod',
                     declaringClass: 'Class2',
                 ),
@@ -458,8 +458,8 @@ class AttributeCacheTest extends TestCase
         $this->assertInstanceOf(AttributeInfo::class, $items[1]);
         $this->assertSame('Class1', $items[0]->className);
         $this->assertSame('Class2', $items[1]->className);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $items[0]->target->type);
-        $this->assertSame(AttributeTargetType::METHOD, $items[1]->target->type);
+        $this->assertSame(AttributeTargetTypeEnum::CLASS_TYPE, $items[0]->target->type);
+        $this->assertSame(AttributeTargetTypeEnum::METHOD, $items[1]->target->type);
     }
 
     /**
@@ -512,7 +512,7 @@ class AttributeCacheTest extends TestCase
                     filePath: $sourceFile1,
                     lineNumber: 1,
                     target: new AttributeTarget(
-                        type: AttributeTargetType::CLASS_TYPE,
+                        type: AttributeTargetTypeEnum::CLASS_TYPE,
                         name: 'Test1',
                         declaringClass: 'Test1',
                     ),
@@ -525,7 +525,7 @@ class AttributeCacheTest extends TestCase
                     filePath: $sourceFile2,
                     lineNumber: 1,
                     target: new AttributeTarget(
-                        type: AttributeTargetType::CLASS_TYPE,
+                        type: AttributeTargetTypeEnum::CLASS_TYPE,
                         name: 'Test2',
                         declaringClass: 'Test2',
                     ),
@@ -587,7 +587,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::METHOD,
+                    type: AttributeTargetTypeEnum::METHOD,
                     name: 'testMethod',
                     declaringClass: 'TestClass',
                 ),
@@ -633,7 +633,7 @@ class AttributeCacheTest extends TestCase
             filePath: '/app/src/Controller/UsersController.php',
             lineNumber: 10,
             target: new AttributeTarget(
-                type: AttributeTargetType::METHOD,
+                type: AttributeTargetTypeEnum::METHOD,
                 name: 'index',
                 declaringClass: 'App\\Controller\\UsersController',
             ),
@@ -665,13 +665,13 @@ class AttributeCacheTest extends TestCase
             className: 'App\\Service\\TaskService',
             attributeName: 'App\\Attribute\\TestComplexArgument',
             arguments: [
-                'priority' => TestPriority::HIGH,
-                'status' => TestPriority::CRITICAL,
+                'priority' => TestPriorityEnum::HIGH,
+                'status' => TestPriorityEnum::CRITICAL,
             ],
             filePath: '/app/src/Service/TaskService.php',
             lineNumber: 15,
             target: new AttributeTarget(
-                type: AttributeTargetType::METHOD,
+                type: AttributeTargetTypeEnum::METHOD,
                 name: 'execute',
                 declaringClass: 'App\\Service\\TaskService',
             ),
@@ -688,10 +688,10 @@ class AttributeCacheTest extends TestCase
         // Verify enum arguments are preserved
         $this->assertArrayHasKey('priority', $first->arguments);
         $this->assertArrayHasKey('status', $first->arguments);
-        $this->assertInstanceOf(TestPriority::class, $first->arguments['priority']);
-        $this->assertInstanceOf(TestPriority::class, $first->arguments['status']);
-        $this->assertSame(TestPriority::HIGH, $first->arguments['priority']);
-        $this->assertSame(TestPriority::CRITICAL, $first->arguments['status']);
+        $this->assertInstanceOf(TestPriorityEnum::class, $first->arguments['priority']);
+        $this->assertInstanceOf(TestPriorityEnum::class, $first->arguments['status']);
+        $this->assertSame(TestPriorityEnum::HIGH, $first->arguments['priority']);
+        $this->assertSame(TestPriorityEnum::CRITICAL, $first->arguments['status']);
     }
 
     /**
@@ -716,7 +716,7 @@ class AttributeCacheTest extends TestCase
             filePath: '/app/src/Model/Entity/User.php',
             lineNumber: 20,
             target: new AttributeTarget(
-                type: AttributeTargetType::PROPERTY,
+                type: AttributeTargetTypeEnum::PROPERTY,
                 name: 'settings',
                 declaringClass: 'App\\Model\\Entity\\User',
             ),

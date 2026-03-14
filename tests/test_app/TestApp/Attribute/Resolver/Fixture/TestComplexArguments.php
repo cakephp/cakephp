@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\Attribute\Resolver\Fixture;
 
 use TestApp\Attribute\Resolver\TestComplexArgument;
-use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\TestPriorityEnum;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class TestComplexArguments
@@ -15,7 +15,7 @@ class TestComplexArguments
     #[TestComplexArgument(
         value: 'simple_string',
         object: new TestConfig('database', ['host' => 'localhost', 'port' => 3306]),
-        enum: TestPriority::HIGH,
+        enum: TestPriorityEnum::HIGH,
         constant: self::DEFAULT_TIMEOUT,
     )]
     public function methodWithComplexAttributes(): void
@@ -24,7 +24,7 @@ class TestComplexArguments
 
     #[TestComplexArgument(
         object: new TestConfig('cache', ['driver' => 'redis']),
-        enum: TestPriority::CRITICAL,
+        enum: TestPriorityEnum::CRITICAL,
     )]
     public string $propertyWithObject;
 
@@ -43,7 +43,7 @@ class TestComplexArguments
     }
 
     #[TestComplexArgument(constant: self::MAX_RETRIES)]
-    #[TestComplexArgument(enum: TestPriority::LOW)]
+    #[TestComplexArgument(enum: TestPriorityEnum::LOW)]
     #[TestComplexArgument(object: new TestConfig('multi', []))]
     public function multipleAttributes(): void
     {

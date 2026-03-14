@@ -24,10 +24,10 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
 use TestApp\Model\Entity\Article;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\Gender;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\GenderEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 use ValueError;
 
 /**
@@ -81,14 +81,14 @@ class EnumTypeTest extends TestCase
         $this->driver = ConnectionManager::get('test')->getDriver();
 
         $this->originalMap = TypeFactory::getMap();
-        $this->stringType = TypeFactory::build(EnumType::from(ArticleStatus::class));
-        $this->intType = TypeFactory::build(EnumType::from(Priority::class));
+        $this->stringType = TypeFactory::build(EnumType::from(ArticleStatusEnum::class));
+        $this->intType = TypeFactory::build(EnumType::from(PriorityEnum::class));
 
         $this->Articles = $this->getTableLocator()->get('Articles');
-        $this->Articles->getSchema()->setColumnType('published', EnumType::from(ArticleStatus::class));
+        $this->Articles->getSchema()->setColumnType('published', EnumType::from(ArticleStatusEnum::class));
 
         $this->FeaturedTags = $this->getTableLocator()->get('FeaturedTags');
-        $this->FeaturedTags->getSchema()->setColumnType('priority', EnumType::from(Priority::class));
+        $this->FeaturedTags->getSchema()->setColumnType('priority', EnumType::from(PriorityEnum::class));
     }
 
     /**
@@ -127,9 +127,9 @@ class EnumTypeTest extends TestCase
     public function testInvalidEnumWithoutBackingType(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Unable to use enum `TestApp\Model\Enum\NonBacked` for type `invalid`, must be a backed enum');
+        $this->expectExceptionMessage('Unable to use enum `TestApp\Model\Enum\NonBackedEnum` for type `invalid`, must be a backed enum');
 
-        new EnumType('invalid', NonBacked::class);
+        new EnumType('invalid', NonBackedEnum::class);
     }
 
     /**
@@ -137,8 +137,8 @@ class EnumTypeTest extends TestCase
      */
     public function testGetEnumClassString(): void
     {
-        $this->assertSame(ArticleStatus::class, $this->stringType->getEnumClassName());
-        $this->assertSame(Priority::class, $this->intType->getEnumClassName());
+        $this->assertSame(ArticleStatusEnum::class, $this->stringType->getEnumClassName());
+        $this->assertSame(PriorityEnum::class, $this->intType->getEnumClassName());
     }
 
     /**
@@ -147,28 +147,28 @@ class EnumTypeTest extends TestCase
     public function testToDatabaseEnum(): void
     {
         $this->assertNull($this->stringType->toDatabase(null, $this->driver));
-        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::Published, $this->driver));
-        $this->assertSame(3, $this->intType->toDatabase(Priority::High, $this->driver));
+        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatusEnum::Published, $this->driver));
+        $this->assertSame(3, $this->intType->toDatabase(PriorityEnum::High, $this->driver));
     }
 
     public function testToDatabaseValidValue(): void
     {
-        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::Published->value, $this->driver));
-        $this->assertSame(3, $this->intType->toDatabase(Priority::High->value, $this->driver));
+        $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatusEnum::Published->value, $this->driver));
+        $this->assertSame(3, $this->intType->toDatabase(PriorityEnum::High->value, $this->driver));
         $this->assertSame(3, $this->intType->toDatabase('3', $this->driver));
     }
 
     public function testToDatabaseInValidValue(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('`invalid` is not a valid value for `TestApp\Model\Enum\ArticleStatus`');
+        $this->expectExceptionMessage('`invalid` is not a valid value for `TestApp\Model\Enum\ArticleStatusEnum`');
         $this->stringType->toDatabase('invalid', $this->driver);
     }
 
     public function testToDatabaseInValidValueType(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Given value `1` of type `int` does not match associated `string` backed enum in `TestApp\Model\Enum\ArticleStatus`');
+        $this->expectExceptionMessage('Given value `1` of type `int` does not match associated `string` backed enum in `TestApp\Model\Enum\ArticleStatusEnum`');
         $this->stringType->toDatabase(1, $this->driver);
     }
 
@@ -178,7 +178,7 @@ class EnumTypeTest extends TestCase
     public function testToPHPStringEnum(): void
     {
         $this->assertNull($this->stringType->toPHP(null, $this->driver));
-        $this->assertSame(ArticleStatus::Published, $this->stringType->toPHP('Y', $this->driver));
+        $this->assertSame(ArticleStatusEnum::Published, $this->stringType->toPHP('Y', $this->driver));
     }
 
     /**
@@ -187,8 +187,8 @@ class EnumTypeTest extends TestCase
     public function testToPHPIntEnum(): void
     {
         $this->assertNull($this->intType->toPHP(null, $this->driver));
-        $this->assertSame(Priority::High, $this->intType->toPHP(3, $this->driver));
-        $this->assertSame(Priority::High, $this->intType->toPHP('3', $this->driver));
+        $this->assertSame(PriorityEnum::High, $this->intType->toPHP(3, $this->driver));
+        $this->assertSame(PriorityEnum::High, $this->intType->toPHP('3', $this->driver));
     }
 
     public function testToPHPInvalidEnumValue(): void
@@ -213,11 +213,11 @@ class EnumTypeTest extends TestCase
     {
         $this->assertNull($this->stringType->marshal(null));
         $this->assertNull($this->stringType->marshal(''));
-        $this->assertSame(ArticleStatus::Published, $this->stringType->marshal('Y'));
-        $this->assertSame(ArticleStatus::Published, $this->stringType->marshal(ArticleStatus::Published));
+        $this->assertSame(ArticleStatusEnum::Published, $this->stringType->marshal('Y'));
+        $this->assertSame(ArticleStatusEnum::Published, $this->stringType->marshal(ArticleStatusEnum::Published));
 
-        $genderType = TypeFactory::build(EnumType::from(Gender::class));
-        $this->assertSame(Gender::NoSelection, $genderType->marshal(''));
+        $genderType = TypeFactory::build(EnumType::from(GenderEnum::class));
+        $this->assertSame(GenderEnum::NoSelection, $genderType->marshal(''));
 
         // Invalid value returns null
         $this->assertNull($this->stringType->marshal('X'));
@@ -231,9 +231,9 @@ class EnumTypeTest extends TestCase
     {
         $this->assertNull($this->intType->marshal(null));
         $this->assertNull($this->intType->marshal(''));
-        $this->assertSame(Priority::Low, $this->intType->marshal(1));
-        $this->assertSame(Priority::Low, $this->intType->marshal('1'));
-        $this->assertSame(Priority::Medium, $this->intType->marshal(Priority::Medium));
+        $this->assertSame(PriorityEnum::Low, $this->intType->marshal(1));
+        $this->assertSame(PriorityEnum::Low, $this->intType->marshal('1'));
+        $this->assertSame(PriorityEnum::Medium, $this->intType->marshal(PriorityEnum::Medium));
 
         // Invalid value returns null
         $this->assertNull($this->intType->marshal(10));
@@ -250,13 +250,13 @@ class EnumTypeTest extends TestCase
             'author_id' => 1,
             'title' => 'My Title',
             'body' => 'My post',
-            'published' => ArticleStatus::Published,
+            'published' => ArticleStatusEnum::Published,
         ]);
         $saved = $this->Articles->save($entity);
         $this->assertNotFalse($saved);
-        $this->assertSame(ArticleStatus::Published, $entity->published);
+        $this->assertSame(ArticleStatusEnum::Published, $entity->published);
 
-        $this->assertSame(ArticleStatus::Published, $this->Articles->get(4)->published);
+        $this->assertSame(ArticleStatusEnum::Published, $this->Articles->get(4)->published);
     }
 
     /**
@@ -273,9 +273,9 @@ class EnumTypeTest extends TestCase
         ]);
         $saved = $this->Articles->save($entity);
         $this->assertNotFalse($saved);
-        $this->assertSame(ArticleStatus::Published, $entity->published);
+        $this->assertSame(ArticleStatusEnum::Published, $entity->published);
 
-        $this->assertSame(ArticleStatus::Published, $this->Articles->get(4)->published);
+        $this->assertSame(ArticleStatusEnum::Published, $this->Articles->get(4)->published);
     }
 
     /**
@@ -286,13 +286,13 @@ class EnumTypeTest extends TestCase
         /** @var \Cake\Datasource\EntityInterface $entity */
         $entity = $this->FeaturedTags->newEntity([
             'tag_id' => 4,
-            'priority' => Priority::Medium,
+            'priority' => PriorityEnum::Medium,
         ]);
         $saved = $this->FeaturedTags->save($entity);
         $this->assertNotFalse($saved);
-        $this->assertSame(Priority::Medium, $entity->priority);
+        $this->assertSame(PriorityEnum::Medium, $entity->priority);
 
-        $this->assertSame(Priority::Medium, $this->FeaturedTags->get(4)->priority);
+        $this->assertSame(PriorityEnum::Medium, $this->FeaturedTags->get(4)->priority);
     }
 
     /**
@@ -307,9 +307,9 @@ class EnumTypeTest extends TestCase
         ]);
         $saved = $this->FeaturedTags->save($entity);
         $this->assertNotFalse($saved);
-        $this->assertSame(Priority::Medium, $entity->priority);
+        $this->assertSame(PriorityEnum::Medium, $entity->priority);
 
-        $this->assertSame(Priority::Medium, $this->FeaturedTags->get(4)->priority);
+        $this->assertSame(PriorityEnum::Medium, $this->FeaturedTags->get(4)->priority);
     }
 
     /**
@@ -317,13 +317,13 @@ class EnumTypeTest extends TestCase
      */
     public function testUpdateEnumField(): void
     {
-        $this->assertSame(ArticleStatus::Published, $this->Articles->get(1)->published);
+        $this->assertSame(ArticleStatusEnum::Published, $this->Articles->get(1)->published);
 
         $entity = $this->Articles->get(1);
-        $entity->published = ArticleStatus::Unpublished;
+        $entity->published = ArticleStatusEnum::Unpublished;
         $this->Articles->save($entity);
-        $this->assertSame(ArticleStatus::Unpublished, $entity->published);
+        $this->assertSame(ArticleStatusEnum::Unpublished, $entity->published);
 
-        $this->assertSame(ArticleStatus::Unpublished, $this->Articles->get(1)->published);
+        $this->assertSame(ArticleStatusEnum::Unpublished, $this->Articles->get(1)->published);
     }
 }

@@ -17,7 +17,7 @@ namespace TestApp\Model\Enum;
 use Cake\Database\Type\EnumLabelInterface;
 use Cake\Utility\Inflector;
 
-enum ArticleStatusLabel: string implements EnumLabelInterface
+enum ArticleStatusLabelEnum: string implements EnumLabelInterface
 {
     case Published = 'Y';
     case Unpublished = 'N';

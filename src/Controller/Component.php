@@ -141,7 +141,7 @@ class Component implements EventListenerInterface
      * @param string $name Name of component to get.
      * @return \Cake\Controller\Component|null A Component object or null.
      */
-    public function __get(string $name): ?Component
+    public function __get(string $name): ?self
     {
         if (isset($this->componentInstances[$name])) {
             return $this->componentInstances[$name];

@@ -28,9 +28,9 @@ use DOMDocument;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 use TypeError;
 
 /**
@@ -1150,9 +1150,9 @@ XML;
             'root' => [
                 'tag' => [
                     'xmlns:pref' => 'http://cakephp.org',
-                    'backed-int' => Priority::Medium,
-                    'backend-string' => ArticleStatus::Published,
-                    'non-backed' => NonBacked::Basic,
+                    'backed-int' => PriorityEnum::Medium,
+                    'backend-string' => ArticleStatusEnum::Published,
+                    'non-backed' => NonBackedEnum::Basic,
                 ],
             ],
         ];

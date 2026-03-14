@@ -21,9 +21,9 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Stringable;
-use TestApp\Model\Enum\Gender;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\GenderEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 
 /**
  * TreeHelper test.
@@ -114,7 +114,7 @@ class TreeHelperTest extends TestCase
 
     public function testEnumValue(): void
     {
-        $this->helper->output([NonBacked::Basic, Gender::NoSelection, Priority::Low]);
+        $this->helper->output([NonBackedEnum::Basic, GenderEnum::NoSelection, PriorityEnum::Low]);
         $this->assertEquals([
             '├── Basic',
             '├── ',

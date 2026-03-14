@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Attribute\Resolver;
 
-enum TestPriority: int
+enum TestPriorityEnum: int
 {
     case LOW = 1;
     case MEDIUM = 2;

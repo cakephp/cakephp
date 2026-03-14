@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 
@@ -31,12 +31,12 @@ class AttributeTargetTest extends TestCase
     public function testConstructor(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'myMethod',
             declaringClass: 'App\Controller\UsersController',
         );
 
-        $this->assertSame(AttributeTargetType::METHOD, $target->type);
+        $this->assertSame(AttributeTargetTypeEnum::METHOD, $target->type);
         $this->assertSame('myMethod', $target->name);
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
     }
@@ -47,11 +47,11 @@ class AttributeTargetTest extends TestCase
     public function testConstructorNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'MyClass',
         );
 
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $target->type);
+        $this->assertSame(AttributeTargetTypeEnum::CLASS_TYPE, $target->type);
         $this->assertSame('MyClass', $target->name);
         $this->assertNull($target->declaringClass);
     }
@@ -62,7 +62,7 @@ class AttributeTargetTest extends TestCase
     public function testToArray(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::PROPERTY,
+            type: AttributeTargetTypeEnum::PROPERTY,
             name: 'title',
             declaringClass: 'App\Model\Entity\Article',
         );
@@ -82,7 +82,7 @@ class AttributeTargetTest extends TestCase
     public function testToArrayNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'TestClass',
         );
 
@@ -108,7 +108,7 @@ class AttributeTargetTest extends TestCase
 
         $target = AttributeTarget::fromArray($data);
 
-        $this->assertSame(AttributeTargetType::METHOD, $target->type);
+        $this->assertSame(AttributeTargetTypeEnum::METHOD, $target->type);
         $this->assertSame('index', $target->name);
         $this->assertSame('App\Controller\ArticlesController', $target->declaringClass);
     }
@@ -126,7 +126,7 @@ class AttributeTargetTest extends TestCase
 
         $target = AttributeTarget::fromArray($data);
 
-        $this->assertSame(AttributeTargetType::PARAMETER, $target->type);
+        $this->assertSame(AttributeTargetTypeEnum::PARAMETER, $target->type);
         $this->assertSame('userId', $target->name);
         $this->assertNull($target->declaringClass);
     }
@@ -137,7 +137,7 @@ class AttributeTargetTest extends TestCase
     public function testRoundTripSerialization(): void
     {
         $original = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'save',
             declaringClass: 'App\Model\Table\ArticlesTable',
         );
@@ -157,7 +157,7 @@ class AttributeTargetTest extends TestCase
     public function testPhpSerializeRoundTrip(): void
     {
         $original = new AttributeTarget(
-            type: AttributeTargetType::PROPERTY,
+            type: AttributeTargetTypeEnum::PROPERTY,
             name: 'email',
             declaringClass: 'App\Model\Entity\User',
         );
@@ -177,7 +177,7 @@ class AttributeTargetTest extends TestCase
     public function testPhpSerializeWithNullDeclaringClass(): void
     {
         $original = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetTypeEnum::CLASS_TYPE,
             name: 'MyClass',
         );
 
@@ -185,7 +185,7 @@ class AttributeTargetTest extends TestCase
         $restored = unserialize($serialized);
 
         $this->assertInstanceOf(AttributeTarget::class, $restored);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $restored->type);
+        $this->assertSame(AttributeTargetTypeEnum::CLASS_TYPE, $restored->type);
         $this->assertSame('MyClass', $restored->name);
         $this->assertNull($restored->declaringClass);
     }
@@ -196,7 +196,7 @@ class AttributeTargetTest extends TestCase
     public function testJsonEncode(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::METHOD,
+            type: AttributeTargetTypeEnum::METHOD,
             name: 'index',
             declaringClass: 'App\Controller\UsersController',
         );

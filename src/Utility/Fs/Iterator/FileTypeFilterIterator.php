@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility\Fs\Iterator;
 
-use Cake\Utility\Fs\Enum\FinderMode;
+use Cake\Utility\Fs\Enum\FinderModeEnum;
 use FilterIterator;
 use Iterator;
 
@@ -30,11 +30,11 @@ class FileTypeFilterIterator extends FilterIterator
 {
     /**
      * @param \Iterator $iterator The iterator to filter
-     * @param \Cake\Utility\Fs\Enum\FinderMode $mode The mode (FILES, DIRECTORIES, or ALL)
+     * @param \Cake\Utility\Fs\Enum\FinderModeEnum $mode The mode (FILES, DIRECTORIES, or ALL)
      */
     public function __construct(
         Iterator $iterator,
-        protected readonly FinderMode $mode,
+        protected readonly FinderModeEnum $mode,
     ) {
         parent::__construct($iterator);
     }
@@ -48,9 +48,9 @@ class FileTypeFilterIterator extends FilterIterator
         $current = $this->current();
 
         return match ($this->mode) {
-            FinderMode::FILES => $current->isFile(),
-            FinderMode::DIRECTORIES => $current->isDir(),
-            FinderMode::ALL => true,
+            FinderModeEnum::FILES => $current->isFile(),
+            FinderModeEnum::DIRECTORIES => $current->isDir(),
+            FinderModeEnum::ALL => true,
         };
     }
 }

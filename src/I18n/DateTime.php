@@ -68,7 +68,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\DateTime::i18nFormat()
      */
-    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
+    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT]; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
     /**
      * The format to use when converting this object to JSON.
@@ -429,7 +429,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         DateTimeZone|string|null $timezone = null,
         ?string $locale = null,
     ): string|int {
-        if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
+        if ($format === self::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
         }
 
@@ -441,7 +441,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
 
         $format ??= static::$_toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
-        $locale = $locale ?: DateTime::getDefaultLocale();
+        $locale = $locale ?: self::getDefaultLocale();
 
         return $this->formatObject($time, $format, $locale);
     }

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\AttributeResolver;
 
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Countable;
 use IteratorAggregate;
@@ -119,7 +119,7 @@ class AttributeCollection implements IteratorAggregate, Countable
             ? $item['target']['type']
             : $item['target']->type->value;
 
-        if ($targetType instanceof AttributeTargetType) {
+        if ($targetType instanceof AttributeTargetTypeEnum) {
             $targetType = $targetType->value;
         }
 
@@ -294,10 +294,10 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Filter by target type(s). Uses index for fast lookup.
      *
-     * @param \Cake\AttributeResolver\Enum\AttributeTargetType|array<\Cake\AttributeResolver\Enum\AttributeTargetType> $types Target type(s) to filter by
+     * @param \Cake\AttributeResolver\Enum\AttributeTargetTypeEnum|array<\Cake\AttributeResolver\Enum\AttributeTargetTypeEnum> $types Target type(s) to filter by
      * @return static
      */
-    public function withTargetType(AttributeTargetType|array $types): static
+    public function withTargetType(AttributeTargetTypeEnum|array $types): static
     {
         $types = is_array($types) ? $types : [$types];
         $matchingIds = [];

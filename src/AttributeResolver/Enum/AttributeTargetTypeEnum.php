@@ -26,7 +26,7 @@ namespace Cake\AttributeResolver\Enum;
  * - Parameters
  * - Class constants
  */
-enum AttributeTargetType: string
+enum AttributeTargetTypeEnum: string
 {
     /**
      * Attribute attached to a class

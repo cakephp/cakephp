@@ -32,9 +32,9 @@ use Laminas\Diactoros\UploadedFile;
 use Locale;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 
 require_once __DIR__ . '/stubs.php';
 
@@ -2084,34 +2084,34 @@ class ValidationTest extends TestCase
 
     public function testEnum(): void
     {
-        $this->assertTrue(Validation::enum(ArticleStatus::Published, ArticleStatus::class));
-        $this->assertTrue(Validation::enum('Y', ArticleStatus::class));
+        $this->assertTrue(Validation::enum(ArticleStatusEnum::Published, ArticleStatusEnum::class));
+        $this->assertTrue(Validation::enum('Y', ArticleStatusEnum::class));
 
-        $this->assertTrue(Validation::enum(Priority::Low, Priority::class));
-        $this->assertTrue(Validation::enum(1, Priority::class));
+        $this->assertTrue(Validation::enum(PriorityEnum::Low, PriorityEnum::class));
+        $this->assertTrue(Validation::enum(1, PriorityEnum::class));
 
-        $this->assertFalse(Validation::enum(Priority::Low, ArticleStatus::class));
-        $this->assertFalse(Validation::enum(1, ArticleStatus::class));
-        $this->assertFalse(Validation::enum('non-existent', ArticleStatus::class));
+        $this->assertFalse(Validation::enum(PriorityEnum::Low, ArticleStatusEnum::class));
+        $this->assertFalse(Validation::enum(1, ArticleStatusEnum::class));
+        $this->assertFalse(Validation::enum('non-existent', ArticleStatusEnum::class));
 
-        $this->assertFalse(Validation::enum(ArticleStatus::Published, Priority::class));
-        $this->assertFalse(Validation::enum('wrong type', Priority::class));
-        $this->assertFalse(Validation::enum(123, Priority::class));
+        $this->assertFalse(Validation::enum(ArticleStatusEnum::Published, PriorityEnum::class));
+        $this->assertFalse(Validation::enum('wrong type', PriorityEnum::class));
+        $this->assertFalse(Validation::enum(123, PriorityEnum::class));
 
-        $this->assertTrue(Validation::enum('1', Priority::class));
-        $this->assertFalse(Validation::enum('a1', Priority::class));
+        $this->assertTrue(Validation::enum('1', PriorityEnum::class));
+        $this->assertFalse(Validation::enum('a1', PriorityEnum::class));
     }
 
     public function testEnumOnly(): void
     {
-        $this->assertTrue(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Published]));
-        $this->assertFalse(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+        $this->assertTrue(Validation::enumOnly(ArticleStatusEnum::Published, [ArticleStatusEnum::Published]));
+        $this->assertFalse(Validation::enumOnly(ArticleStatusEnum::Published, [ArticleStatusEnum::Unpublished]));
     }
 
     public function testEnumExcept(): void
     {
-        $this->assertFalse(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Published]));
-        $this->assertTrue(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+        $this->assertFalse(Validation::enumExcept(ArticleStatusEnum::Published, [ArticleStatusEnum::Published]));
+        $this->assertTrue(Validation::enumExcept(ArticleStatusEnum::Published, [ArticleStatusEnum::Unpublished]));
     }
 
     public function testEnumNonBacked(): void
@@ -2119,7 +2119,7 @@ class ValidationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
 
-        Validation::enum(NonBacked::Basic, NonBacked::class);
+        Validation::enum(NonBackedEnum::Basic, NonBackedEnum::class);
     }
 
     public function testEnumNonEnum(): void

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility\Fs;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Fs\Enum\DepthOperator;
+use Cake\Utility\Fs\Enum\DepthOperatorEnum;
 use Cake\Utility\Fs\Finder;
 use Iterator;
 use org\bovigo\vfs\vfsStream;
@@ -158,7 +158,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(3, DepthOperator::LESS_THAN)
+            ->depth(3, DepthOperatorEnum::LESS_THAN)
             ->files();
 
         $count = 0;
@@ -259,7 +259,7 @@ class FinderTest extends TestCase
             ->in(vfsStream::url('root/src'))
             ->name('*.php')
             ->exclude('View')
-            ->depth(3, DepthOperator::LESS_THAN);
+            ->depth(3, DepthOperatorEnum::LESS_THAN);
 
         $this->assertInstanceOf(Finder::class, $result);
     }
@@ -1101,7 +1101,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(0, DepthOperator::NOT_EQUAL)
+            ->depth(0, DepthOperatorEnum::NOT_EQUAL)
             ->files();
 
         $paths = [];
@@ -1123,7 +1123,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(0, DepthOperator::GREATER_THAN)
+            ->depth(0, DepthOperatorEnum::GREATER_THAN)
             ->files();
 
         $paths = [];
@@ -1144,7 +1144,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(1, DepthOperator::LESS_THAN_OR_EQUAL)
+            ->depth(1, DepthOperatorEnum::LESS_THAN_OR_EQUAL)
             ->files();
 
         $paths = [];
@@ -1165,7 +1165,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(1, DepthOperator::GREATER_THAN_OR_EQUAL)
+            ->depth(1, DepthOperatorEnum::GREATER_THAN_OR_EQUAL)
             ->files();
 
         $paths = [];
@@ -1185,8 +1185,8 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(vfsStream::url('root/src'))
-            ->depth(0, DepthOperator::GREATER_THAN) // Greater than 0
-            ->depth(2, DepthOperator::LESS_THAN) // Less than 2
+            ->depth(0, DepthOperatorEnum::GREATER_THAN) // Greater than 0
+            ->depth(2, DepthOperatorEnum::LESS_THAN) // Less than 2
             ->files();
 
         $paths = [];

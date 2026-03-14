@@ -126,7 +126,7 @@ class Security
     public static function randomString(int $length = 64): string
     {
         return substr(
-            bin2hex(Security::randomBytes((int)ceil($length / 2))),
+            bin2hex(self::randomBytes((int)ceil($length / 2))),
             0,
             $length,
         );

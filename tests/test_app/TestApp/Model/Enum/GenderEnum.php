@@ -9,25 +9,14 @@ declare(strict_types=1);
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         5.0.0
+ * @since         5.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Model\Enum;
 
-use Cake\Database\Type\EnumLabelInterface;
-use Cake\Utility\Inflector;
-
-enum Priority: int implements EnumLabelInterface
+enum GenderEnum: string
 {
-    case Low = 1;
-    case Medium = 2;
-    case High = 3;
-
-    /**
-     * @return string
-     */
-    public function label(): string
-    {
-        return 'Is ' . Inflector::humanize(Inflector::underscore($this->name));
-    }
+    case NoSelection = '';
+    case Male = 'Male';
+    case Female = 'Female';
 }

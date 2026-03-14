@@ -50,9 +50,9 @@ use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\ArticleStatusLabel;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\ArticleStatusLabelEnum;
+use TestApp\Model\Enum\PriorityEnum;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -3855,7 +3855,7 @@ class FormHelperTest extends TestCase
         $articlesTable = $this->getTableLocator()->get('Articles');
         $articlesTable->getSchema()->setColumnType(
             'published',
-            EnumType::from(ArticleStatus::class),
+            EnumType::from(ArticleStatusEnum::class),
         );
         $this->Form->create($articlesTable->newEmptyEntity());
         $result = $this->Form->control('published');
@@ -3878,7 +3878,7 @@ class FormHelperTest extends TestCase
 
         $articlesTable->getSchema()->setColumnType(
             'published',
-            EnumType::from(ArticleStatusLabel::class),
+            EnumType::from(ArticleStatusLabelEnum::class),
         );
 
         $this->Form->create($articlesTable->newEmptyEntity());
@@ -3903,7 +3903,7 @@ class FormHelperTest extends TestCase
         $articlePriosTable = $this->getTableLocator()->get('ArticlePrios');
         $articlePriosTable->getSchema()->setColumnType(
             'priority',
-            EnumType::from(Priority::class),
+            EnumType::from(PriorityEnum::class),
         );
 
         $this->Form->create($articlePriosTable->newEmptyEntity());
@@ -4803,7 +4803,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::Unpublished,
+            'status' => ArticleStatusEnum::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->radio('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -5015,7 +5015,7 @@ class FormHelperTest extends TestCase
         $articlesTable = $this->getTableLocator()->get('Articles');
         $articlesTable->getSchema()->setColumnType(
             'published',
-            EnumType::from(ArticleStatus::class),
+            EnumType::from(ArticleStatusEnum::class),
         );
         $this->Form->create($articlesTable->newEmptyEntity());
         $result = $this->Form->control('published', [
@@ -5231,7 +5231,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::Unpublished,
+            'status' => ArticleStatusEnum::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->select('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -6812,7 +6812,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::Unpublished,
+            'status' => ArticleStatusEnum::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->hidden('status');

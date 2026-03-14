@@ -88,7 +88,7 @@ class ExceptionTrap
      *
      * @var \Cake\Error\ExceptionTrap|null
      */
-    protected static ?ExceptionTrap $registeredTrap = null;
+    protected static ?self $registeredTrap = null;
 
     /**
      * Track if this trap was removed from the global handler.

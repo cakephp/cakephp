@@ -1188,7 +1188,7 @@ abstract class Association
      * @return self
      * @throws \RuntimeException if no association with such a name exists
      */
-    public function __get(string $property): Association
+    public function __get(string $property): self
     {
         return $this->getTarget()->{$property};
     }

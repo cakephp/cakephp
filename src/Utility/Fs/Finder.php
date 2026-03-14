@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Utility\Fs;
 
 use AppendIterator;
-use Cake\Utility\Fs\Enum\DepthOperator;
-use Cake\Utility\Fs\Enum\FinderMode;
+use Cake\Utility\Fs\Enum\DepthOperatorEnum;
+use Cake\Utility\Fs\Enum\FinderModeEnum;
 use Cake\Utility\Fs\Iterator\CallbackFilterIterator;
 use Cake\Utility\Fs\Iterator\ContainsPathFilterIterator;
 use Cake\Utility\Fs\Iterator\DepthFilterIterator;
@@ -116,7 +116,7 @@ class Finder
     /**
      * Depth conditions
      *
-     * @var array<array{0: \Cake\Utility\Fs\Enum\DepthOperator, 1: int}>
+     * @var array<array{0: \Cake\Utility\Fs\Enum\DepthOperatorEnum, 1: int}>
      */
     protected array $depths = [];
 
@@ -137,9 +137,9 @@ class Finder
     /**
      * The iteration mode (files, directories, or all)
      *
-     * @var \Cake\Utility\Fs\Enum\FinderMode|null
+     * @var \Cake\Utility\Fs\Enum\FinderModeEnum|null
      */
-    protected ?FinderMode $mode = null;
+    protected ?FinderModeEnum $mode = null;
 
     /**
      * Custom filter callbacks
@@ -266,10 +266,10 @@ class Finder
      * Add a depth condition.
      *
      * @param int $level The depth level (0 = top-level directory)
-     * @param \Cake\Utility\Fs\Enum\DepthOperator $operator The comparison operator (default: EQUAL)
+     * @param \Cake\Utility\Fs\Enum\DepthOperatorEnum $operator The comparison operator (default: EQUAL)
      * @return $this
      */
-    public function depth(int $level, DepthOperator $operator = DepthOperator::EQUAL)
+    public function depth(int $level, DepthOperatorEnum $operator = DepthOperatorEnum::EQUAL)
     {
         $this->depths[] = [$operator, $level];
 
@@ -308,7 +308,7 @@ class Finder
      */
     public function files(): Iterator
     {
-        $this->mode = FinderMode::FILES;
+        $this->mode = FinderModeEnum::FILES;
 
         return $this->iterate();
     }
@@ -320,7 +320,7 @@ class Finder
      */
     public function directories(): Iterator
     {
-        $this->mode = FinderMode::DIRECTORIES;
+        $this->mode = FinderModeEnum::DIRECTORIES;
 
         return $this->iterate();
     }
@@ -332,7 +332,7 @@ class Finder
      */
     public function all(): Iterator
     {
-        $this->mode = FinderMode::ALL;
+        $this->mode = FinderModeEnum::ALL;
 
         return $this->iterate();
     }
@@ -394,14 +394,14 @@ class Finder
 
         // Use SELF_FIRST when looking for directories to include them in iteration
         // Use LEAVES_ONLY when looking for files only for optimization
-        $iteratorMode = $this->mode === FinderMode::FILES
+        $iteratorMode = $this->mode === FinderModeEnum::FILES
             ? RecursiveIteratorIterator::LEAVES_ONLY
             : RecursiveIteratorIterator::SELF_FIRST;
 
         $iterator = new RecursiveIteratorIterator($directory, $iteratorMode);
 
         // Apply file type filtering
-        if ($this->mode !== null && $this->mode !== FinderMode::ALL) {
+        if ($this->mode !== null && $this->mode !== FinderModeEnum::ALL) {
             $iterator = new FileTypeFilterIterator($iterator, $this->mode);
         }
 
@@ -415,7 +415,7 @@ class Finder
 
         // Apply depth filtering (handles non-recursive mode when recursive=false)
         if (!$this->recursive) {
-            $iterator = new DepthFilterIterator($iterator, DepthOperator::EQUAL, 0);
+            $iterator = new DepthFilterIterator($iterator, DepthOperatorEnum::EQUAL, 0);
         }
         foreach ($this->depths as [$operator, $level]) {
             $iterator = new DepthFilterIterator($iterator, $operator, $level);

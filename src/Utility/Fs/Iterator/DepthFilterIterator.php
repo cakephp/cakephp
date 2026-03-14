@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility\Fs\Iterator;
 
-use Cake\Utility\Fs\Enum\DepthOperator;
+use Cake\Utility\Fs\Enum\DepthOperatorEnum;
 use FilterIterator;
 use Iterator;
 use RecursiveIteratorIterator;
@@ -38,12 +38,12 @@ final class DepthFilterIterator extends FilterIterator
 {
     /**
      * @param \Iterator $iterator The iterator to filter (typically RecursiveIteratorIterator)
-     * @param \Cake\Utility\Fs\Enum\DepthOperator $operator Comparison operator
+     * @param \Cake\Utility\Fs\Enum\DepthOperatorEnum $operator Comparison operator
      * @param int $value Depth value to compare against
      */
     public function __construct(
         Iterator $iterator,
-        protected readonly DepthOperator $operator,
+        protected readonly DepthOperatorEnum $operator,
         protected readonly int $value,
     ) {
         parent::__construct($iterator);
@@ -76,12 +76,12 @@ final class DepthFilterIterator extends FilterIterator
         }
 
         return match ($this->operator) {
-            DepthOperator::EQUAL => $depth === $this->value,
-            DepthOperator::NOT_EQUAL => $depth !== $this->value,
-            DepthOperator::LESS_THAN => $depth < $this->value,
-            DepthOperator::LESS_THAN_OR_EQUAL => $depth <= $this->value,
-            DepthOperator::GREATER_THAN => $depth > $this->value,
-            DepthOperator::GREATER_THAN_OR_EQUAL => $depth >= $this->value,
+            DepthOperatorEnum::EQUAL => $depth === $this->value,
+            DepthOperatorEnum::NOT_EQUAL => $depth !== $this->value,
+            DepthOperatorEnum::LESS_THAN => $depth < $this->value,
+            DepthOperatorEnum::LESS_THAN_OR_EQUAL => $depth <= $this->value,
+            DepthOperatorEnum::GREATER_THAN => $depth > $this->value,
+            DepthOperatorEnum::GREATER_THAN_OR_EQUAL => $depth >= $this->value,
         };
     }
 }

@@ -26,9 +26,9 @@ use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
 use stdClass;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 use Traversable;
 
 /**
@@ -2753,20 +2753,20 @@ class ValidatorTest extends TestCase
     public function testEnum(): void
     {
         $validator = new Validator();
-        $validator->enum('status', ArticleStatus::class);
+        $validator->enum('status', ArticleStatusEnum::class);
 
-        $this->assertEmpty($validator->validate(['status' => ArticleStatus::Published]));
+        $this->assertEmpty($validator->validate(['status' => ArticleStatusEnum::Published]));
         $this->assertEmpty($validator->validate(['status' => 'Y']));
 
-        $this->assertNotEmpty($validator->validate(['status' => Priority::Low]));
+        $this->assertNotEmpty($validator->validate(['status' => PriorityEnum::Low]));
         $this->assertNotEmpty($validator->validate(['status' => 'wrong type']));
         $this->assertNotEmpty($validator->validate(['status' => 123]));
-        $this->assertNotEmpty($validator->validate(['status' => NonBacked::Basic]));
+        $this->assertNotEmpty($validator->validate(['status' => NonBackedEnum::Basic]));
 
         $fieldName = 'status';
         $rule = 'enum';
         $expectedMessage = 'The provided value must be one of `Y`, `N`';
-        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, ArticleStatus::class);
+        $this->assertValidationMessage($fieldName, $rule, $expectedMessage, ArticleStatusEnum::class);
     }
 
     public function testEnumNonBacked(): void
@@ -2775,7 +2775,7 @@ class ValidatorTest extends TestCase
         $this->expectExceptionMessage('The `$enumClassName` argument must be the classname of a valid backed enum.');
 
         $validator = new Validator();
-        $validator->enum('status', NonBacked::class);
+        $validator->enum('status', NonBackedEnum::class);
     }
 
     public function testEnumNonEnum(): void

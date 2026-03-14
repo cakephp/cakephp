@@ -20,9 +20,9 @@ use Cake\Core\Exception\CakeException;
 use Cake\Routing\Route\EntityRoute;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\Article;
-use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\NonBacked;
-use TestApp\Model\Enum\Priority;
+use TestApp\Model\Enum\ArticleStatusEnum;
+use TestApp\Model\Enum\NonBackedEnum;
+use TestApp\Model\Enum\PriorityEnum;
 
 /**
  * Test case for EntityRoute
@@ -87,7 +87,7 @@ class EntityRouteTest extends TestCase
     {
         $entity = new Article([
             'category_id' => 2,
-            'published' => ArticleStatus::Published,
+            'published' => ArticleStatusEnum::Published,
         ]);
 
         $route = new EntityRoute(
@@ -112,7 +112,7 @@ class EntityRouteTest extends TestCase
     {
         $entity = new Article([
             'category_id' => 2,
-            'prio' => Priority::High,
+            'prio' => PriorityEnum::High,
         ]);
 
         $route = new EntityRoute(
@@ -137,7 +137,7 @@ class EntityRouteTest extends TestCase
     {
         $entity = new Article([
             'category_id' => 2,
-            'level' => NonBacked::Advanced,
+            'level' => NonBackedEnum::Advanced,
         ]);
 
         $route = new EntityRoute(

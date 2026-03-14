@@ -17,39 +17,24 @@ declare(strict_types=1);
 namespace Cake\Utility\Fs\Enum;
 
 /**
- * Enum for depth comparison operators
+ * Enum for Finder iteration modes
  *
- * Defines the comparison operators that can be used with Finder::depth()
+ * Defines what type of filesystem items to iterate over.
  */
-enum DepthOperator: string
+enum FinderModeEnum
 {
     /**
-     * Equal to (==)
+     * Iterate only files
      */
-    case EQUAL = '==';
+    case FILES;
 
     /**
-     * Not equal to (!=)
+     * Iterate only directories
      */
-    case NOT_EQUAL = '!=';
+    case DIRECTORIES;
 
     /**
-     * Less than (<)
+     * Iterate both files and directories
      */
-    case LESS_THAN = '<';
-
-    /**
-     * Greater than (>)
-     */
-    case GREATER_THAN = '>';
-
-    /**
-     * Less than or equal to (<=)
-     */
-    case LESS_THAN_OR_EQUAL = '<=';
-
-    /**
-     * Greater than or equal to (>=)
-     */
-    case GREATER_THAN_OR_EQUAL = '>=';
+    case ALL;
 }

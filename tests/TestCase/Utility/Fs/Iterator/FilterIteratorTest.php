@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility\Fs\Iterator;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Fs\Enum\FinderMode;
+use Cake\Utility\Fs\Enum\FinderModeEnum;
 use Cake\Utility\Fs\Iterator\CallbackFilterIterator;
 use Cake\Utility\Fs\Iterator\ExcludeDirectoryFilterIterator;
 use Cake\Utility\Fs\Iterator\FileTypeFilterIterator;
@@ -96,7 +96,7 @@ class FilterIteratorTest extends TestCase
             FilesystemIterator::SKIP_DOTS,
         );
 
-        $filtered = new FileTypeFilterIterator($directory, FinderMode::FILES);
+        $filtered = new FileTypeFilterIterator($directory, FinderModeEnum::FILES);
 
         $items = [];
         foreach ($filtered as $file) {
@@ -115,7 +115,7 @@ class FilterIteratorTest extends TestCase
             FilesystemIterator::SKIP_DOTS,
         );
 
-        $filtered = new FileTypeFilterIterator($directory, FinderMode::DIRECTORIES);
+        $filtered = new FileTypeFilterIterator($directory, FinderModeEnum::DIRECTORIES);
 
         $items = [];
         foreach ($filtered as $file) {
@@ -135,7 +135,7 @@ class FilterIteratorTest extends TestCase
             FilesystemIterator::SKIP_DOTS,
         );
 
-        $filtered = new FileTypeFilterIterator($directory, FinderMode::ALL);
+        $filtered = new FileTypeFilterIterator($directory, FinderModeEnum::ALL);
 
         $items = [];
         foreach ($filtered as $file) {
@@ -198,7 +198,7 @@ class FilterIteratorTest extends TestCase
         $filtered = new HiddenFileFilterIterator($directory);
         $filtered = new ExcludeDirectoryFilterIterator($filtered, ['vendor']);
         $iterator = new RecursiveIteratorIterator($filtered);
-        $filtered = new FileTypeFilterIterator($iterator, FinderMode::FILES);
+        $filtered = new FileTypeFilterIterator($iterator, FinderModeEnum::FILES);
 
         $files = [];
         foreach ($filtered as $file) {

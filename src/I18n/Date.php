@@ -46,7 +46,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * @var string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
-    protected static string|int $_toStringFormat = IntlDateFormatter::SHORT;
+    protected static string|int $_toStringFormat = IntlDateFormatter::SHORT; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
     /**
      * The format to use when converting this object to JSON.

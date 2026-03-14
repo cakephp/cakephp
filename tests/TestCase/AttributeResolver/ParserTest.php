@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver;
 
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
 use SplFileInfo;
-use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\TestPriorityEnum;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class ParserTest extends TestCase
@@ -44,7 +44,7 @@ class ParserTest extends TestCase
         // Should find 1 class attribute + 4 method attributes
         $this->assertCount(5, $results);
 
-        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::CLASS_TYPE);
         $this->assertCount(1, $classAttrs);
 
         $classAttr = array_values($classAttrs)[0];
@@ -57,11 +57,11 @@ class ParserTest extends TestCase
         $filePath = $this->testDataPath . 'TestController.php';
         $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::METHOD);
         $this->assertCount(4, $methodAttrs);
 
         foreach ($methodAttrs as $attr) {
-            $this->assertSame(AttributeTargetType::METHOD, $attr->target->type);
+            $this->assertSame(AttributeTargetTypeEnum::METHOD, $attr->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $attr->attributeName);
         }
     }
@@ -74,7 +74,7 @@ class ParserTest extends TestCase
         $this->assertCount(3, $results);
 
         foreach ($results as $result) {
-            $this->assertSame(AttributeTargetType::PROPERTY, $result->target->type);
+            $this->assertSame(AttributeTargetTypeEnum::PROPERTY, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestColumn', $result->attributeName);
         }
     }
@@ -87,7 +87,7 @@ class ParserTest extends TestCase
         $this->assertCount(2, $results);
 
         foreach ($results as $result) {
-            $this->assertSame(AttributeTargetType::PARAMETER, $result->target->type);
+            $this->assertSame(AttributeTargetTypeEnum::PARAMETER, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestInject', $result->attributeName);
         }
     }
@@ -100,7 +100,7 @@ class ParserTest extends TestCase
         $this->assertCount(2, $results);
 
         foreach ($results as $result) {
-            $this->assertSame(AttributeTargetType::CONSTANT, $result->target->type);
+            $this->assertSame(AttributeTargetTypeEnum::CONSTANT, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestStatus', $result->attributeName);
         }
     }
@@ -180,7 +180,7 @@ class ParserTest extends TestCase
         $this->assertCount(3, $results);
 
         foreach ($results as $result) {
-            $this->assertSame(AttributeTargetType::PROPERTY, $result->target->type);
+            $this->assertSame(AttributeTargetTypeEnum::PROPERTY, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestColumn', $result->attributeName);
         }
     }
@@ -227,8 +227,8 @@ class ParserTest extends TestCase
 
         $attr = array_values($withEnum)[0];
         $this->assertArrayHasKey('enum', $attr->arguments);
-        $this->assertInstanceOf(TestPriority::class, $attr->arguments['enum']);
-        $this->assertSame(TestPriority::HIGH, $attr->arguments['enum']);
+        $this->assertInstanceOf(TestPriorityEnum::class, $attr->arguments['enum']);
+        $this->assertSame(TestPriorityEnum::HIGH, $attr->arguments['enum']);
     }
 
     public function testComplexArgumentsWithConstants(): void
@@ -308,10 +308,10 @@ class ParserTest extends TestCase
         // Should find interface-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::CLASS_TYPE);
         $this->assertCount(1, $interfaceAttrs);
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::METHOD);
         $this->assertCount(1, $methodAttrs);
     }
 
@@ -323,10 +323,10 @@ class ParserTest extends TestCase
         // Should find trait-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::CLASS_TYPE);
         $this->assertCount(1, $traitAttrs);
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::METHOD);
         $this->assertCount(1, $methodAttrs);
     }
 
@@ -338,11 +338,11 @@ class ParserTest extends TestCase
         // Should find enum-level and case attributes
         $this->assertGreaterThan(0, count($results));
 
-        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::CLASS_TYPE);
         $this->assertCount(1, $enumAttrs);
 
         // Enum cases are treated as class constants
-        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT);
+        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetTypeEnum::CONSTANT);
         $this->assertCount(2, $caseAttrs);
     }
 

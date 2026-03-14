@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver\Enum;
 
-use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetTypeEnum;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,14 +29,14 @@ class AttributeTargetTypeTest extends TestCase
      */
     public function testEnumCases(): void
     {
-        $cases = AttributeTargetType::cases();
+        $cases = AttributeTargetTypeEnum::cases();
 
         $this->assertCount(5, $cases);
-        $this->assertContains(AttributeTargetType::CLASS_TYPE, $cases);
-        $this->assertContains(AttributeTargetType::METHOD, $cases);
-        $this->assertContains(AttributeTargetType::PROPERTY, $cases);
-        $this->assertContains(AttributeTargetType::PARAMETER, $cases);
-        $this->assertContains(AttributeTargetType::CONSTANT, $cases);
+        $this->assertContains(AttributeTargetTypeEnum::CLASS_TYPE, $cases);
+        $this->assertContains(AttributeTargetTypeEnum::METHOD, $cases);
+        $this->assertContains(AttributeTargetTypeEnum::PROPERTY, $cases);
+        $this->assertContains(AttributeTargetTypeEnum::PARAMETER, $cases);
+        $this->assertContains(AttributeTargetTypeEnum::CONSTANT, $cases);
     }
 
     /**
@@ -44,11 +44,11 @@ class AttributeTargetTypeTest extends TestCase
      */
     public function testEnumValues(): void
     {
-        $this->assertSame('class', AttributeTargetType::CLASS_TYPE->value);
-        $this->assertSame('method', AttributeTargetType::METHOD->value);
-        $this->assertSame('property', AttributeTargetType::PROPERTY->value);
-        $this->assertSame('parameter', AttributeTargetType::PARAMETER->value);
-        $this->assertSame('constant', AttributeTargetType::CONSTANT->value);
+        $this->assertSame('class', AttributeTargetTypeEnum::CLASS_TYPE->value);
+        $this->assertSame('method', AttributeTargetTypeEnum::METHOD->value);
+        $this->assertSame('property', AttributeTargetTypeEnum::PROPERTY->value);
+        $this->assertSame('parameter', AttributeTargetTypeEnum::PARAMETER->value);
+        $this->assertSame('constant', AttributeTargetTypeEnum::CONSTANT->value);
     }
 
     /**
@@ -56,11 +56,11 @@ class AttributeTargetTypeTest extends TestCase
      */
     public function testFromValue(): void
     {
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, AttributeTargetType::from('class'));
-        $this->assertSame(AttributeTargetType::METHOD, AttributeTargetType::from('method'));
-        $this->assertSame(AttributeTargetType::PROPERTY, AttributeTargetType::from('property'));
-        $this->assertSame(AttributeTargetType::PARAMETER, AttributeTargetType::from('parameter'));
-        $this->assertSame(AttributeTargetType::CONSTANT, AttributeTargetType::from('constant'));
+        $this->assertSame(AttributeTargetTypeEnum::CLASS_TYPE, AttributeTargetTypeEnum::from('class'));
+        $this->assertSame(AttributeTargetTypeEnum::METHOD, AttributeTargetTypeEnum::from('method'));
+        $this->assertSame(AttributeTargetTypeEnum::PROPERTY, AttributeTargetTypeEnum::from('property'));
+        $this->assertSame(AttributeTargetTypeEnum::PARAMETER, AttributeTargetTypeEnum::from('parameter'));
+        $this->assertSame(AttributeTargetTypeEnum::CONSTANT, AttributeTargetTypeEnum::from('constant'));
     }
 
     /**
@@ -68,6 +68,6 @@ class AttributeTargetTypeTest extends TestCase
      */
     public function testTryFromInvalidValue(): void
     {
-        $this->assertNull(AttributeTargetType::tryFrom('invalid'));
+        $this->assertNull(AttributeTargetTypeEnum::tryFrom('invalid'));
     }
 }
