@@ -10,5 +10,5 @@ use Cake\ORM\Entity;
  */
 class ProtectedUser extends Entity
 {
-    protected array $_hidden = ['password'];
+    protected array $hidden = ['password'];
 }
