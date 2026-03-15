@@ -204,7 +204,7 @@ class Security
         $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
-        [$encryptionKey, $hmacKey] = static::_makeEncryptionKeys($key, $hmacSalt);
+        [$encryptionKey, $hmacKey] = static::makeEncryptionKeys($key, $hmacSalt);
 
         $crypto = static::engine();
         $ciphertext = $crypto->encrypt($plain, $encryptionKey);
@@ -244,7 +244,7 @@ class Security
      * @param string $hmacSalt The hmac salt to use.
      * @return array{string, string} A list of $encryption, $authentication keys intended for encrypt() and decrypt().
      */
-    protected static function _makeEncryptionKeys(string $key, string $hmacSalt): array
+    protected static function makeEncryptionKeys(string $key, string $hmacSalt): array
     {
         if (Configure::read('Security.encryptWithRawKey') === true) {
             $encryption = hash_hkdf('sha256', $key, 32, 'encryption', $hmacSalt);
@@ -278,7 +278,7 @@ class Security
         $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
-        [$encryptionKey, $hmacKey] = static::_makeEncryptionKeys($key, $hmacSalt);
+        [$encryptionKey, $hmacKey] = static::makeEncryptionKeys($key, $hmacSalt);
 
         // Split out hmac for comparison
         $macSize = 64;
