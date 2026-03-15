@@ -580,7 +580,7 @@ class Response implements ResponseInterface, Stringable
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', CakeDateTime::parse(time())->toRfc7231String())
+            ->withHeader('Last-Modified', CakeDateTime::now()->toRfc7231String())
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 

@@ -67,21 +67,21 @@ class FunctionsTest extends TestCase
             '(string) empty string' => ['', DateTimeInterface::ATOM, null],
             '(string) space' => [' ', DateTimeInterface::ATOM, null],
             '(string) non-date string' => ['abc', DateTimeInterface::ATOM, null],
-            '(string) double 0' => ['00', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
-            '(string) single 0' => ['0', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
+            '(string) double 0' => ['00', DateTimeInterface::ATOM, DateTime::createFromTimestamp(0)],
+            '(string) single 0' => ['0', DateTimeInterface::ATOM, DateTime::createFromTimestamp(0)],
             '(string) false' => ['false', DateTimeInterface::ATOM, null],
             '(string) true' => ['true', DateTimeInterface::ATOM, null],
             '(string) partially valid date' => ['2024-07-01T14:30:00', 'Y-m-d\TH:i:s', DateTime::createFromFormat('Y-m-d\TH:i:s', '2024-07-01T14:30:00')],
 
             // int input types
             '(int) valid timestamp' => [$timestamp, DateTimeInterface::ATOM, $date],
-            '(int) negative timestamp' => [-1000, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '-1000')],
-            '(int) large timestamp' => [2147483647, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '2147483647')],
-            '(int) zero' => [0, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '0')],
+            '(int) negative timestamp' => [-1000, DateTimeInterface::ATOM, DateTime::createFromTimestamp(-1000)],
+            '(int) large timestamp' => [2147483647, DateTimeInterface::ATOM, DateTime::createFromTimestamp(2147483647)],
+            '(int) zero' => [0, DateTimeInterface::ATOM, DateTime::createFromTimestamp(0)],
 
             // float input types
-            '(float) positive' => [5.5, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '5')->microsecond(500000)],
-            '(float) round' => [5.0, DateTimeInterface::ATOM, DateTime::createFromFormat('U', '5')],
+            '(float) positive' => [5.5, DateTimeInterface::ATOM, DateTime::createFromTimestamp(5.5)],
+            '(float) round' => [5.0, DateTimeInterface::ATOM, DateTime::createFromTimestamp(5)],
             '(float) NaN' => [NAN, DateTimeInterface::ATOM, null],
             '(float) INF' => [INF, DateTimeInterface::ATOM, null],
             '(float) -INF' => [-INF, DateTimeInterface::ATOM, null],
@@ -96,7 +96,7 @@ class FunctionsTest extends TestCase
 
             // mixed valid cases
             '(mixed) DateTimeImmutable string input' => ['2024-07-01T14:30:00Z', DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, '2024-07-01T14:30:00Z')],
-            '(mixed) integer string input' => ['1719844200', DateTimeInterface::ATOM, DateTime::createFromFormat('U', '1719844200')],
+            '(mixed) integer string input' => ['1719844200', DateTimeInterface::ATOM, DateTime::createFromTimestamp(1719844200)],
 
             // Custom format cases
             '(custom format) valid date' => ['01-07-2024', 'd-m-Y', DateTime::createFromFormat('d-m-Y', '01-07-2024')],
