@@ -5,6 +5,10 @@
     <file>tests/</file>
 
     <rule ref="CakePHP"/>
+    <arg value="nps"/>
+    <arg name="colors"/>
+    <arg name="parallel" value="8"/>
+    <arg name="cache" value=".phpcs.cache"/>
 
     <!-- Disable standalone true/false/null type hints for BC -->
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">

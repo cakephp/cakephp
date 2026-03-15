@@ -122,8 +122,8 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors --parallel=16 -p",
-        "cs-fix": "phpcbf --colors --parallel=16 -p",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
         "stan": "tools/phpstan analyse",
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",
