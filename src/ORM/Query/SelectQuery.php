@@ -234,7 +234,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface<array-key, \Cake\Datasource\EntityInterface|array>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, TSubject>
      */
     public function getIterator(): ResultSetInterface
     {
@@ -397,7 +397,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Returns an array representation of the results after executing the query.
      *
-     * @return array
+     * @return array<array-key, TSubject>
      */
     public function toArray(): array
     {
@@ -1519,13 +1519,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Disabling hydration will cause array results to be returned for the query
      * instead of entities.
      *
-     * @return $this
+     * @return static<array<string,mixed>>
      */
     public function disableHydration(): static
     {
         $this->dirty();
         $this->hydrate = false;
 
+        /** @phpstan-ignore return.type */
         return $this;
     }
 
