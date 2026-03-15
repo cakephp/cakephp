@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
@@ -201,12 +202,13 @@ class Security
         self::checkKey($key, 'encrypt()');
 
         $hmacSalt ??= static::getSalt();
+
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        [$encryptionKey, $hmacKey] = static::_makeEncryptionKeys($key, $hmacSalt);
 
         $crypto = static::engine();
-        $ciphertext = $crypto->encrypt($plain, $key);
-        $hmac = hash_hmac('sha256', $ciphertext, $key);
+        $ciphertext = $crypto->encrypt($plain, $encryptionKey);
+        $hmac = hash_hmac('sha256', $ciphertext, $hmacKey);
 
         return $hmac . $ciphertext;
     }
@@ -229,6 +231,35 @@ class Security
     }
 
     /**
+     * Generate a key pair of encryption and authentication tokens.
+     *
+     * Encapsulates the two key generation implementations we support.
+     * The previous implementation has a keyspace reduction weakness.
+     *
+     * It is recommended to enable `Security.encryptWithRawKey` in new applications,
+     * to take advantage of longer keys that are longer and have derived encryption
+     * and authentication keys.
+     *
+     * @param string $key The bare key to use.
+     * @param string $hmacSalt The hmac salt to use.
+     * @return array{string, string} A list of $encryption, $authentication keys intended for encrypt() and decrypt().
+     */
+    protected static function _makeEncryptionKeys(string $key, string $hmacSalt): array
+    {
+        if (Configure::read('Security.encryptWithRawKey') === true) {
+            $encryption = hash_hkdf('sha256', $key, 32, 'encryption', $hmacSalt);
+            $authentication = hash_hkdf('sha256', $key, 32, 'authentication', $hmacSalt);
+
+            return [$encryption, $authentication];
+        }
+
+        $hashKey = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+
+        // The old implementation both keys were the same.
+        return [$hashKey, $hashKey];
+    }
+
+    /**
      * Decrypt a value using AES-256.
      *
      * @param string $cipher The ciphertext to decrypt.
@@ -247,21 +278,21 @@ class Security
         $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        [$encryptionKey, $hmacKey] = static::_makeEncryptionKeys($key, $hmacSalt);
 
         // Split out hmac for comparison
         $macSize = 64;
         $hmac = mb_substr($cipher, 0, $macSize, '8bit');
         $cipher = mb_substr($cipher, $macSize, null, '8bit');
 
-        $compareHmac = hash_hmac('sha256', $cipher, $key);
+        $compareHmac = hash_hmac('sha256', $cipher, $hmacKey);
         if (!static::constantEquals($hmac, $compareHmac)) {
             return null;
         }
 
         $crypto = static::engine();
 
-        return $crypto->decrypt($cipher, $key);
+        return $crypto->decrypt($cipher, $encryptionKey);
     }
 
     /**

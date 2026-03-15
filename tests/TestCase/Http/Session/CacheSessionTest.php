@@ -28,7 +28,7 @@ use InvalidArgumentException;
  */
 class CacheSessionTest extends TestCase
 {
-    protected static $_sessionBackup;
+    protected static $sessionBackup;
 
     /**
      * @var \Cake\Http\Session\CacheSession

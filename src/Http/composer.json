@@ -68,7 +68,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-6.x": "6.0.x-dev"
+            "6.x-dev": "6.0.x-dev"
         }
     }
 }

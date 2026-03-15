@@ -521,7 +521,10 @@ class Marshaller
             $filter = [$primaryKey[0] . ' IN' => $ids];
         }
 
-        return $target->find()->where($filter)->toArray();
+        /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $query */
+        $query = $target->find()->where($filter);
+
+        return $query->toArray();
     }
 
     /**
