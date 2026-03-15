@@ -21,5 +21,5 @@ use Cake\ORM\Table;
 
 class PostsTable extends Table
 {
-    protected ?string $_table = 'posts';
+    protected ?string $table = 'posts';
 }

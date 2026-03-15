@@ -619,6 +619,7 @@ class BelongsToMany extends Association
         $table = $this->junction();
         $hasMany = $this->getSource()->getAssociation($table->getAlias());
         if ($this->cascadeCallbacks) {
+            /** @var \Cake\Datasource\EntityInterface $related */
             foreach ($hasMany->find('all')->where($conditions)->toArray() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
@@ -1450,9 +1451,12 @@ class BelongsToMany extends Association
 
         $unions = [];
         foreach ($missing as $key) {
-            $unions[] = $hasMany->find()
+            /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $unionQuery */
+            $unionQuery = $hasMany->find()
                 ->where(array_combine($foreignKey, $sourceKey))
                 ->where(array_combine($assocForeignKey, $key));
+
+            $unions[] = $unionQuery;
         }
 
         $query = array_shift($unions);
