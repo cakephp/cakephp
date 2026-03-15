@@ -15,3 +15,9 @@ parameters:
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
 		- '#^PHPDoc tag @var with type callable\(\): mixed is not subtype of native type Closure\(string\): string\.$#'
+
+		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: EagerLoader.php
