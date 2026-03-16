@@ -770,7 +770,7 @@ trait IntegrationTestTrait
             // the inverse.
             $this->_session[$this->_csrfKeyName] = $token;
             $this->_cookie[$this->_csrfKeyName] = $token;
-            if (!isset($data['_csrfToken']) && !in_array($method, ['GET', 'OPTIONS'])) {
+            if (!isset($data['_csrfToken']) && !in_array($method, ['GET', 'OPTIONS'], true)) {
                 $data['_csrfToken'] = $token;
             }
         }

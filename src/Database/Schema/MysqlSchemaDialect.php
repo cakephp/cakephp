@@ -215,6 +215,7 @@ class MysqlSchemaDialect extends SchemaDialect
                     TableSchema::GEOSPATIAL_TYPES,
                     [TableSchema::TYPE_BINARY, TableSchema::TYPE_JSON, TableSchema::TYPE_TEXT],
                 ),
+                true,
             )
         ) {
             // The default that comes back from MySQL for these types prefixes the collation type and
@@ -379,10 +380,10 @@ class MysqlSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time', 'year'])) {
+        if (in_array($col, ['date', 'time', 'year'], true)) {
             return ['type' => $col, 'length' => null];
         }
-        if (in_array($col, ['datetime', 'timestamp'])) {
+        if (in_array($col, ['datetime', 'timestamp'], true)) {
             $typeName = $col;
             if ($length > 0) {
                 $typeName = $col . 'fractional';
@@ -409,7 +410,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'smallint') {
             return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
-        if (in_array($col, ['int', 'integer', 'mediumint'])) {
+        if (in_array($col, ['int', 'integer', 'mediumint'], true)) {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'char' && $length === 36) {
@@ -433,7 +434,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_NATIVE_UUID, 'length' => null];
         }
-        if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'])) {
+        if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'], true)) {
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
@@ -464,7 +465,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if (str_contains($col, 'json')) {
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
-        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
+        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES, true)) {
             // TODO how can srid be preserved? It doesn't come back
             // in the output of show full columns from ...
             return [

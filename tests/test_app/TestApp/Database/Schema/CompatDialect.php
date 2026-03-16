@@ -96,7 +96,7 @@ class CompatDialect extends SchemaDialect
                 'unsigned' => $unsigned,
             ];
         }
-        if (in_array($col, ['float', 'real', 'double'])) {
+        if (in_array($col, ['float', 'real', 'double'], true)) {
             return [
                 'type' => TableSchemaInterface::TYPE_FLOAT,
                 'length' => $length,
@@ -122,7 +122,7 @@ class CompatDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
-        if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
+        if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'], true)) {
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
         }
 
@@ -135,7 +135,7 @@ class CompatDialect extends SchemaDialect
             'datetime',
             'datetimefractional',
         ];
-        if (in_array($col, $datetimeTypes)) {
+        if (in_array($col, $datetimeTypes, true)) {
             return ['type' => $col, 'length' => null];
         }
 
@@ -147,7 +147,7 @@ class CompatDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
 
-        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
+        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES, true)) {
             // TODO how can srid be preserved? It doesn't come back
             // in the output of show full columns from ...
             return [

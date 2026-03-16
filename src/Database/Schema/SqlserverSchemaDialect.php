@@ -137,7 +137,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time'])) {
+        if (in_array($col, ['date', 'time'], true)) {
             return ['type' => $col, 'length' => null];
         }
 

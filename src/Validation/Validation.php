@@ -345,7 +345,7 @@ class Validation
     {
         if (
             (!is_numeric($check1) || !is_numeric($check2)) &&
-            !in_array($operator, static::COMPARE_STRING)
+            !in_array($operator, static::COMPARE_STRING, true)
         ) {
             return false;
         }

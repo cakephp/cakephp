@@ -195,7 +195,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
 
-        if (in_array($col, ['geometry', 'geography'])) {
+        if (in_array($col, ['geometry', 'geography'], true)) {
             return ['type' => $col, 'length' => null];
         }
 

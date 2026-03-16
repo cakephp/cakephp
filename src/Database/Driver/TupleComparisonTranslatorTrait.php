@@ -58,7 +58,7 @@ trait TupleComparisonTranslatorTrait
         }
 
         $operator = strtoupper($expression->getOperator());
-        if (!in_array($operator, ['IN', '='])) {
+        if (!in_array($operator, ['IN', '='], true)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Tuple comparison transform only supports the `IN` and `=` operators, `%s` given.',
