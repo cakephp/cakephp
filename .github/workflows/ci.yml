@@ -128,7 +128,7 @@ jobs:
         sudo locale-gen de_DE.UTF-8
 
     - name: Composer install
-      uses: ramsey/composer-install@v3
+      uses: ramsey/composer-install@v4
       with:
         dependency-versions: ${{ matrix.dependencies }}
         composer-options: "${{ matrix.composer-options }}"
@@ -217,7 +217,7 @@ jobs:
         sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
 
     - name: Composer install
-      uses: ramsey/composer-install@v3
+      uses: ramsey/composer-install@v4
 
     - name: Run PHPUnit
       env:
@@ -257,7 +257,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Composer install
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
         uses: actions/cache@v5
@@ -346,7 +346,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Composer install
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
         uses: actions/cache@v5
