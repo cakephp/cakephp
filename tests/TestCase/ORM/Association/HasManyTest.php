@@ -233,13 +233,14 @@ class HasManyTest extends TestCase
     public function testRequiresKeys(): void
     {
         $assoc = new HasMany('Test');
-        $this->assertTrue($assoc->requiresKeys());
-
-        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
+        // Default strategy is now subquery, which doesn't require keys
         $this->assertFalse($assoc->requiresKeys());
 
         $assoc->setStrategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+
+        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
+        $this->assertFalse($assoc->requiresKeys());
     }
 
     /**
@@ -334,7 +335,7 @@ class HasManyTest extends TestCase
             'sort' => ['id' => 'ASC'],
             'strategy' => 'select',
         ];
-        $this->article->hasMany('Comments');
+        $this->article->hasMany('Comments', ['strategy' => 'select']);
 
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
@@ -574,6 +575,8 @@ class HasManyTest extends TestCase
     public function testEagerloaderNoForeignKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
+        // Use select strategy explicitly to test that it throws when foreign key is missing
+        $authors->Articles->setStrategy(Association::STRATEGY_SELECT);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key in `Authors`');
