@@ -201,13 +201,18 @@ class Number
      *
      * @param string $value A numeric string.
      * @param array<string, mixed> $options An array with options.
-     * @return float point number
+     * @return float|null Parsed float or null if parsing failed.
      */
-    public static function parseFloat(string $value, array $options = []): float
+    public static function parseFloat(string $value, array $options = []): ?float
     {
         $formatter = static::formatter($options);
+        $result = $formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
 
-        return (float)$formatter->parse($value, NumberFormatter::TYPE_DOUBLE);
+        if ($result === false) {
+            return null;
+        }
+
+        return (float)$result;
     }
 
     /**

@@ -129,6 +129,17 @@ class NumberTest extends TestCase
     }
 
     /**
+     * testParseFloatReturnsNullOnFailure method
+     */
+    public function testParseFloatReturnsNullOnFailure(): void
+    {
+        I18n::setLocale('en_US');
+        $this->assertNull($this->Number->parseFloat('abc'));
+        $this->assertNull($this->Number->parseFloat('invalid'));
+        $this->assertNull($this->Number->parseFloat(''));
+    }
+
+    /**
      * testFormatDelta method
      */
     public function testFormatDelta(): void

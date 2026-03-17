@@ -175,12 +175,17 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * the locale aware parser.
      *
      * @param string $value The value to parse and convert to an float.
-     * @return string
+     * @return string|null
      */
-    protected function _parseValue(string $value): string
+    protected function _parseValue(string $value): ?string
     {
         $class = static::$numberClass;
+        $result = $class::parseFloat($value);
 
-        return (string)$class::parseFloat($value);
+        if ($result === null) {
+            return null;
+        }
+
+        return (string)$result;
     }
 }
