@@ -23,6 +23,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -833,5 +834,22 @@ class RouteCollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Cannot add 'bad' middleware to group 'group'. It has not been registered.");
         $this->collection->middlewareGroup('group', ['bad']);
+    }
+
+    /**
+     * Test that getMiddleware passes through Closure instances directly.
+     */
+    public function testGetMiddlewarePassesThroughClosures(): void
+    {
+        $closure = static function ($request, $handler) {
+            return $handler->handle($request);
+        };
+
+        $this->collection->registerMiddleware('named', 'SomeMiddleware');
+        $result = $this->collection->getMiddleware(['named', $closure]);
+
+        $this->assertSame('SomeMiddleware', $result[0]);
+        $this->assertInstanceOf(Closure::class, $result[1]);
+        $this->assertSame($closure, $result[1]);
     }
 }

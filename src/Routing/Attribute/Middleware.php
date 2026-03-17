@@ -17,9 +17,14 @@ declare(strict_types=1);
 namespace Cake\Routing\Attribute;
 
 use Attribute;
+use Closure;
 
 /**
- * Declares middleware names that should be applied to matching routes.
+ * Declares middleware names or inline closures that should be applied to matching routes.
+ *
+ * String arguments reference registered middleware or middleware group names.
+ * Closure arguments define inline middleware with the signature:
+ * `static function(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface`
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 readonly class Middleware
@@ -30,12 +35,27 @@ readonly class Middleware
     public array $names;
 
     /**
+     * @var array<\Closure>
+     */
+    public array $closures;
+
+    /**
      * Initializes a middleware attribute definition.
      *
-     * @param string ...$names Middleware or middleware group names.
+     * @param \Closure|string ...$middleware Middleware names, group names, or inline closures.
      */
-    public function __construct(string ...$names)
+    public function __construct(Closure|string ...$middleware)
     {
+        $names = [];
+        $closures = [];
+        foreach ($middleware as $item) {
+            if ($item instanceof Closure) {
+                $closures[] = $item;
+            } else {
+                $names[] = $item;
+            }
+        }
         $this->names = $names;
+        $this->closures = $closures;
     }
 }

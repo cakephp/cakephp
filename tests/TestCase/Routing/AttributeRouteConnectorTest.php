@@ -23,6 +23,9 @@ use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
+use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
+use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Attribute\Extensions;
 use Cake\Routing\Attribute\Middleware;
@@ -36,6 +39,10 @@ use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use Closure;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionProperty;
 
 /**
@@ -853,6 +860,169 @@ class AttributeRouteConnectorTest extends TestCase
         $this->assertTrue($result['options']['_https']);
         $this->assertSame('https', $result['options']['_scheme']);
         $this->assertArrayNotHasKey('_ext', $result['options']);
+    }
+
+    /**
+     * Tests that closure middleware from class-level attributes flows through to routes.
+     *
+     * @return void
+     */
+    public function testConnectAppliesClosureMiddlewareFromClassAttribute(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+
+        $className = 'TestApp\\Controller\\AttributeRoutingController';
+        $closureMiddleware = static function ($request, $handler) {
+            return $handler->handle($request);
+        };
+        $attributes = [
+            new AttributeInfo(
+                className: $className,
+                attributeName: Middleware::class,
+                arguments: ['sample', $closureMiddleware],
+                filePath: __FILE__,
+                lineNumber: 50,
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
+            ),
+            new AttributeInfo(
+                className: $className,
+                attributeName: Route::class,
+                arguments: ['/closure-test', 'closureTest', ['GET']],
+                filePath: __FILE__,
+                lineNumber: 51,
+                target: new AttributeTarget(AttributeTargetType::METHOD, 'index', $className),
+            ),
+        ];
+
+        $this->injectResolverCollection('injected-closure-class', new AttributeCollection($attributes));
+
+        $helper->connect('injected-closure-class');
+
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/closure-test',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+
+        $this->assertSame('AttributeRouting', $result['controller']);
+        $this->assertSame('index', $result['action']);
+        $this->assertCount(2, $result['_middleware']);
+        $this->assertSame('sample', $result['_middleware'][0]);
+        $this->assertInstanceOf(Closure::class, $result['_middleware'][1]);
+        $this->assertSame($closureMiddleware, $result['_middleware'][1]);
+    }
+
+    /**
+     * Tests that closure middleware from method-level attributes merges with class-level middleware.
+     *
+     * @return void
+     */
+    public function testConnectAppliesClosureMiddlewareFromMethodAttribute(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+
+        $className = 'TestApp\\Controller\\AttributeRoutingController';
+        $classClosureMiddleware = static function ($request, $handler) {
+            return $handler->handle($request);
+        };
+        $methodClosureMiddleware = static function ($request, $handler) {
+            $response = $handler->handle($request);
+
+            return $response->withHeader('X-Test', 'value');
+        };
+        $attributes = [
+            new AttributeInfo(
+                className: $className,
+                attributeName: Middleware::class,
+                arguments: [$classClosureMiddleware],
+                filePath: __FILE__,
+                lineNumber: 60,
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
+            ),
+            new AttributeInfo(
+                className: $className,
+                attributeName: Route::class,
+                arguments: ['/closure-method', 'closureMethod', ['POST']],
+                filePath: __FILE__,
+                lineNumber: 61,
+                target: new AttributeTarget(AttributeTargetType::METHOD, 'index', $className),
+            ),
+            new AttributeInfo(
+                className: $className,
+                attributeName: Middleware::class,
+                arguments: ['named', $methodClosureMiddleware],
+                filePath: __FILE__,
+                lineNumber: 62,
+                target: new AttributeTarget(AttributeTargetType::METHOD, 'index', $className),
+            ),
+        ];
+
+        $this->injectResolverCollection('injected-closure-method', new AttributeCollection($attributes));
+
+        $helper->connect('injected-closure-method');
+
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/closure-method',
+            'environment' => ['REQUEST_METHOD' => 'POST'],
+        ]));
+
+        $this->assertSame('AttributeRouting', $result['controller']);
+        $this->assertSame('index', $result['action']);
+        $this->assertCount(3, $result['_middleware']);
+        $this->assertInstanceOf(Closure::class, $result['_middleware'][0]);
+        $this->assertSame($classClosureMiddleware, $result['_middleware'][0]);
+        $this->assertSame('named', $result['_middleware'][1]);
+        $this->assertInstanceOf(Closure::class, $result['_middleware'][2]);
+        $this->assertSame($methodClosureMiddleware, $result['_middleware'][2]);
+    }
+
+    /**
+     * Test that closure middleware from a Middleware attribute instance executes
+     * through the getMiddleware → MiddlewareQueue → Runner pipeline.
+     */
+    public function testClosureMiddlewareFromAttributeExecutesThroughPipeline(): void
+    {
+        $classClosure = static function ($request, $handler) {
+            $response = $handler->handle($request);
+
+            return $response->withHeader('X-Class-Closure', '1');
+        };
+        $methodClosure = static function ($request, $handler) {
+            $response = $handler->handle($request);
+
+            return $response->withHeader('X-Method-Closure', '1');
+        };
+
+        // Simulate what AttributeRouteConnector does: instantiate the Middleware
+        // attribute and merge its names and closures into the route middleware list.
+        $classAttr = new Middleware('auth', $classClosure);
+        $methodAttr = new Middleware($methodClosure);
+
+        $this->collection->registerMiddleware('auth', static function ($request, $handler) {
+            $response = $handler->handle($request);
+
+            return $response->withHeader('X-Auth', '1');
+        });
+
+        $routeMiddleware = array_merge($classAttr->names, $classAttr->closures, $methodAttr->closures);
+        $resolved = $this->collection->getMiddleware($routeMiddleware);
+
+        $queue = new MiddlewareQueue($resolved);
+        $runner = new Runner();
+        $request = new ServerRequest(['url' => '/']);
+        $fallback = new class implements RequestHandlerInterface {
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response();
+            }
+        };
+
+        $response = $runner->run($queue, $request, $fallback);
+
+        $this->assertSame('1', $response->getHeaderLine('X-Auth'));
+        $this->assertSame('1', $response->getHeaderLine('X-Class-Closure'));
+        $this->assertSame('1', $response->getHeaderLine('X-Method-Closure'));
     }
 
     /**

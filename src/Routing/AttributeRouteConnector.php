@@ -35,6 +35,7 @@ use Cake\Routing\Attribute\Route as RouteAttribute;
 use Cake\Routing\Attribute\RouteClass as RouteClassAttribute;
 use Cake\Routing\Attribute\Scope;
 use Cake\Utility\Inflector;
+use Closure;
 
 /**
  * Connector class that resolves and connects routes declared via PHP attributes.
@@ -157,7 +158,7 @@ class AttributeRouteConnector
      *     scopePatterns: array<string, mixed>,
      *     scopeHost: string|null,
      *     routeClass: string,
-     *     classMiddleware: array<int, string>,
+     *     classMiddleware: array<int, string|\Closure>,
      *     classExtensions: array<int, string>,
      *     resourceAttributes: array<int, \Cake\Routing\Attribute\Resource>,
      *     prefixName: string|null,
@@ -214,7 +215,7 @@ class AttributeRouteConnector
      *     scopePatterns: array<string, mixed>,
      *     scopeHost: string|null,
      *     routeClass: string,
-     *     classMiddleware: array<int, string>,
+     *     classMiddleware: array<int, string|\Closure>,
      *     classExtensions: array<int, string>,
      *     resourceAttributes: array<int, \Cake\Routing\Attribute\Resource>,
      *     prefixName: string|null,
@@ -250,7 +251,11 @@ class AttributeRouteConnector
             return;
         }
         if ($instance instanceof Middleware) {
-            $state['classMiddleware'] = $this->mergeUniqueStrings($state['classMiddleware'], $instance->names);
+            $state['classMiddleware'] = $this->mergeMiddleware(
+                $state['classMiddleware'],
+                $instance->names,
+                $instance->closures,
+            );
 
             return;
         }
@@ -275,7 +280,7 @@ class AttributeRouteConnector
      *     scopePatterns: array<string, mixed>,
      *     scopeHost: string|null,
      *     routeClass: string,
-     *     classMiddleware: array<int, string>,
+     *     classMiddleware: array<int, string|\Closure>,
      *     classExtensions: array<int, string>,
      *     resourceAttributes: array<int, \Cake\Routing\Attribute\Resource>,
      *     prefixName: string|null,
@@ -303,7 +308,7 @@ class AttributeRouteConnector
             if ($classState['routeClass'] !== '' && !isset($connectOptions['routeClass'])) {
                 $connectOptions['routeClass'] = $classState['routeClass'];
             }
-            $resourceMiddleware = $this->mergeUniqueStrings(
+            $resourceMiddleware = $this->mergeMiddleware(
                 $this->routeBuilder->getMiddleware(),
                 $classState['classMiddleware'],
             );
@@ -354,7 +359,7 @@ class AttributeRouteConnector
      *     scopePatterns: array<string, mixed>,
      *     scopeHost: string|null,
      *     routeClass: string,
-     *     classMiddleware: array<int, string>,
+     *     classMiddleware: array<int, string|\Closure>,
      *     classExtensions: array<int, string>,
      *     resourceAttributes: array<int, \Cake\Routing\Attribute\Resource>,
      *     prefixName: string|null,
@@ -444,7 +449,7 @@ class AttributeRouteConnector
      * Builds method-level route state from a method's attribute metadata.
      *
      * @param array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo> $infos Method attribute metadata.
-     * @return array{routeAttributes: array<int, \Cake\Routing\Attribute\Route>, methodMiddleware: array<int, string>, methodExtensions: array<int, string>|null}
+     * @return array{routeAttributes: array<int, \Cake\Routing\Attribute\Route>, methodMiddleware: array<int, string|\Closure>, methodExtensions: array<int, string>|null}
      */
     protected function buildMethodRouteState(array $infos): array
     {
@@ -460,7 +465,7 @@ class AttributeRouteConnector
                 continue;
             }
             if ($instance instanceof Middleware) {
-                $methodMiddleware = $this->mergeUniqueStrings($methodMiddleware, $instance->names);
+                $methodMiddleware = $this->mergeMiddleware($methodMiddleware, $instance->names, $instance->closures);
 
                 continue;
             }
@@ -489,13 +494,13 @@ class AttributeRouteConnector
      *     scopePatterns: array<string, mixed>,
      *     scopeHost: string|null,
      *     routeClass: string,
-     *     classMiddleware: array<int, string>,
+     *     classMiddleware: array<int, string|\Closure>,
      *     classExtensions: array<int, string>,
      *     resourceAttributes: array<int, \Cake\Routing\Attribute\Resource>,
      *     prefixName: string|null,
      *     prefixPath: string
      * } $classState Class route state.
-     * @param array{routeAttributes: array<int, \Cake\Routing\Attribute\Route>, methodMiddleware: array<int, string>, methodExtensions: array<int, string>|null} $methodState Method route state.
+     * @param array{routeAttributes: array<int, \Cake\Routing\Attribute\Route>, methodMiddleware: array<int, string|\Closure>, methodExtensions: array<int, string>|null} $methodState Method route state.
      * @return void
      */
     protected function connectMethodRoute(
@@ -556,7 +561,7 @@ class AttributeRouteConnector
             $options['_ext'] = $effectiveExtensions;
         }
 
-        $middleware = $this->mergeUniqueStrings(
+        $middleware = $this->mergeMiddleware(
             $this->routeBuilder->getMiddleware(),
             $classState['classMiddleware'],
             $methodState['methodMiddleware'],
@@ -689,18 +694,25 @@ class AttributeRouteConnector
     }
 
     /**
-     * Merge multiple string lists while preserving order and uniqueness.
+     * Merge multiple middleware lists while preserving order.
      *
-     * @param array<int, string> ...$lists Input lists.
-     * @return array<int, string>
+     * String middleware names are deduplicated by value. Closures are always appended
+     * since they cannot be meaningfully compared for equality.
+     *
+     * @param array<int, string|\Closure> ...$lists Input lists of middleware names or closures.
+     * @return array<int, string|\Closure>
      */
-    protected function mergeUniqueStrings(array ...$lists): array
+    protected function mergeMiddleware(array ...$lists): array
     {
         $seen = [];
         $result = [];
 
         foreach ($lists as $list) {
             foreach ($list as $value) {
+                if ($value instanceof Closure) {
+                    $result[] = $value;
+                    continue;
+                }
                 if (isset($seen[$value])) {
                     continue;
                 }

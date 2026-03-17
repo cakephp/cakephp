@@ -448,7 +448,8 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array<string> $names The names of the middleware or groups to fetch
+     * @param array<string|\Closure|\Psr\Http\Server\MiddlewareInterface> $names The names of the middleware or groups to fetch.
+     *   Closure and MiddlewareInterface instances are passed through directly.
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \InvalidArgumentException when a requested middleware does not exist.
@@ -457,6 +458,10 @@ class RouteCollection
     {
         $out = [];
         foreach ($names as $name) {
+            if ($name instanceof Closure || $name instanceof MiddlewareInterface) {
+                $out[] = $name;
+                continue;
+            }
             if ($this->hasMiddlewareGroup($name)) {
                 $out = array_merge($out, $this->getMiddleware($this->middlewareGroups[$name]));
                 continue;
