@@ -277,10 +277,13 @@ class ResponseTest extends TestCase
      */
     public function testWithDisabledCache(): void
     {
+        $now = DateTime::now();
+        DateTime::setTestNow($now);
+
         $response = new Response();
         $expected = [
             'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
-            'Last-Modified' => [DateTime::parse(time())->toRfc7231String()],
+            'Last-Modified' => [$now->toRfc7231String()],
             'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
             'Content-Type' => ['text/html; charset=UTF-8'],
         ];
@@ -288,6 +291,8 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Expires'), 'Old instance not mutated.');
 
         $this->assertEquals($expected, $new->getHeaders());
+
+        DateTime::setTestNow();
     }
 
     /**

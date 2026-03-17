@@ -151,7 +151,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-5.next": "6.0.x-dev"
+            "6.x-dev": "6.0.x-dev"
         }
     }
 }

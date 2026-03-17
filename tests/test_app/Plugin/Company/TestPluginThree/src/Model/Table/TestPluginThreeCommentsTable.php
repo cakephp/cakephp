@@ -23,5 +23,5 @@ use Cake\ORM\Table;
  */
 class TestPluginThreeCommentsTable extends Table
 {
-    protected ?string $_table = 'test_plugin_three_comments';
+    protected ?string $table = 'test_plugin_three_comments';
 }
