@@ -68,7 +68,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      * @var array<int>|string|int
      * @see \Cake\I18n\DateTime::i18nFormat()
      */
-    protected static array|string|int $_toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
+    protected static array|string|int $toStringFormat = [IntlDateFormatter::SHORT, IntlDateFormatter::SHORT];
 
     /**
      * The format to use when converting this object to JSON.
@@ -212,7 +212,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      */
     public static function setToStringFormat(array|string|int $format): void
     {
-        static::$_toStringFormat = $format;
+        static::$toStringFormat = $format;
     }
 
     /**
@@ -281,7 +281,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         array|string|int|null $format = null,
         DateTimeZone|string|null $tz = null,
     ): ?static {
-        $format ??= static::$_toStringFormat;
+        $format ??= static::$toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
 
         return static::processDateTime($time, $format, $tz);
@@ -439,7 +439,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
             $time = $time->setTimezone($timezone);
         }
 
-        $format ??= static::$_toStringFormat;
+        $format ??= static::$toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
         $locale = $locale ?: self::getDefaultLocale();
 
