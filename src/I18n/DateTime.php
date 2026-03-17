@@ -429,7 +429,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         DateTimeZone|string|null $timezone = null,
         ?string $locale = null,
     ): string|int {
-        if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
+        if ($format === self::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
         }
 
@@ -441,7 +441,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
 
         $format ??= static::$_toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
-        $locale = $locale ?: DateTime::getDefaultLocale();
+        $locale = $locale ?: self::getDefaultLocale();
 
         return $this->formatObject($time, $format, $locale);
     }

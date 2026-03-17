@@ -33,7 +33,7 @@ class Translator
      *
      * @var \Cake\I18n\Translator|null
      */
-    protected ?Translator $fallback = null;
+    protected ?self $fallback = null;
 
     /**
      * The formatter to use when translating messages.
@@ -68,7 +68,7 @@ class Translator
         string $locale,
         Package $package,
         FormatterInterface $formatter,
-        ?Translator $fallback = null,
+        ?self $fallback = null,
     ) {
         $this->locale = $locale;
         $this->package = $package;

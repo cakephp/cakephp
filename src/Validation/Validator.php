@@ -568,7 +568,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function addNested(
         string $field,
-        Validator $validator,
+        self $validator,
         ?string $message = null,
         Closure|string|null $when = null,
     ): static {
@@ -619,7 +619,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function addNestedMany(
         string $field,
-        Validator $validator,
+        self $validator,
         ?string $message = null,
         Closure|string|null $when = null,
     ): static {

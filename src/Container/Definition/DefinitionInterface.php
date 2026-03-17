@@ -12,32 +12,32 @@ interface DefinitionInterface extends ContainerAwareInterface
      * @param string|null $name
      * @return $this
      */
-    public function addArgument(mixed $arg, ?string $name = null): DefinitionInterface;
+    public function addArgument(mixed $arg, ?string $name = null): self;
 
     /**
      * @param array $args
      * @return $this
      */
-    public function addArguments(array $args): DefinitionInterface;
+    public function addArguments(array $args): self;
 
     /**
      * @param string $method
      * @param array $args
      * @return $this
      */
-    public function addMethodCall(string $method, array $args = []): DefinitionInterface;
+    public function addMethodCall(string $method, array $args = []): self;
 
     /**
      * @param array $methods
      * @return $this
      */
-    public function addMethodCalls(array $methods = []): DefinitionInterface;
+    public function addMethodCalls(array $methods = []): self;
 
     /**
      * @param string $tag
      * @return $this
      */
-    public function addTag(string $tag): DefinitionInterface;
+    public function addTag(string $tag): self;
 
     /**
      * @return string
@@ -74,17 +74,17 @@ interface DefinitionInterface extends ContainerAwareInterface
      * @param string $id
      * @return $this
      */
-    public function setAlias(string $id): DefinitionInterface;
+    public function setAlias(string $id): self;
 
     /**
      * @param mixed $concrete
      * @return $this
      */
-    public function setConcrete(mixed $concrete): DefinitionInterface;
+    public function setConcrete(mixed $concrete): self;
 
     /**
      * @param bool $shared
      * @return $this
      */
-    public function setShared(bool $shared): DefinitionInterface;
+    public function setShared(bool $shared): self;
 }

@@ -701,7 +701,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 $this->table,
             ));
         }
-        if ($attrs['type'] !== TableSchema::CONSTRAINT_CHECK) {
+        if ($attrs['type'] !== self::CONSTRAINT_CHECK) {
             if (empty($attrs['columns'])) {
                 throw new DatabaseException(sprintf(
                     'Constraints in table `%s` must have at least one column.',

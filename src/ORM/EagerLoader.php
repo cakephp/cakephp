@@ -84,7 +84,7 @@ class EagerLoader
      *
      * @var \Cake\ORM\EagerLoader|null
      */
-    protected ?EagerLoader $matching = null;
+    protected ?self $matching = null;
 
     /**
      * A map of table aliases pointing to the association objects they represent

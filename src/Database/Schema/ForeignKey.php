@@ -250,12 +250,12 @@ class ForeignKey extends Constraint
     protected function normalizeDeferrable(string $deferrable): string
     {
         $mapping = [
-            'DEFERRED' => ForeignKey::DEFERRED,
-            'IMMEDIATE' => ForeignKey::IMMEDIATE,
-            'NOT DEFERRED' => ForeignKey::NOT_DEFERRED,
-            ForeignKey::DEFERRED => ForeignKey::DEFERRED,
-            ForeignKey::IMMEDIATE => ForeignKey::IMMEDIATE,
-            ForeignKey::NOT_DEFERRED => ForeignKey::NOT_DEFERRED,
+            'DEFERRED' => self::DEFERRED,
+            'IMMEDIATE' => self::IMMEDIATE,
+            'NOT DEFERRED' => self::NOT_DEFERRED,
+            self::DEFERRED => self::DEFERRED,
+            self::IMMEDIATE => self::IMMEDIATE,
+            self::NOT_DEFERRED => self::NOT_DEFERRED,
         ];
         $normalized = strtoupper(str_replace('_', ' ', $deferrable));
         if (array_key_exists($normalized, $mapping)) {
