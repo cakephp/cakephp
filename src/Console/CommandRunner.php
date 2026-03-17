@@ -21,6 +21,7 @@ use Cake\Console\Command\HelpCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
@@ -322,7 +323,6 @@ class CommandRunner implements EventDispatcherInterface
     protected function resolveName(CommandCollection $commands, ConsoleIoInterface $io, ?string $name): string
     {
         if (!$name) {
-            $io->error('No command provided. Choose one of the available commands.', 2);
             $name = 'help';
         }
         $name = $this->aliases[$name] ?? $name;

@@ -44,7 +44,7 @@ class CollectionOf
      * @param class-string $class The DTO class for collection elements
      */
     public function __construct(
-        public string $class,
+        public readonly string $class,
     ) {
     }
 }
