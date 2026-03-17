@@ -227,17 +227,17 @@ interface CookieInterface
     /**
      * Get the SameSite attribute.
      *
-     * @return \Cake\Http\Cookie\SameSiteEnum|null
+     * @return \Cake\Http\Cookie\Enum\SameSite|null
      */
-    public function getSameSite(): ?SameSiteEnum;
+    public function getSameSite(): ?Enum\SameSite;
 
     /**
      * Create a cookie with an updated SameSite option.
      *
-     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite Value for to set for Samesite option.
+     * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite Value for to set for Samesite option.
      * @return static
      */
-    public function withSameSite(SameSiteEnum|string|null $sameSite): static;
+    public function withSameSite(Enum\SameSite|string|null $sameSite): static;
 
     /**
      * Get cookie options

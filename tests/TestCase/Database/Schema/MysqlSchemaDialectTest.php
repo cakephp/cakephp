@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -385,7 +385,7 @@ SQL;
 SQL;
         $connection->execute($table);
 
-        if ($connection->getDriver()->supports(DriverFeatureEnum::JSON)) {
+        if ($connection->getDriver()->supports(DriverFeature::JSON)) {
             $table = <<<SQL
                 CREATE TABLE schema_json (
                     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -1058,7 +1058,7 @@ SQL;
         $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
-        $this->skipIf(!$driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS), 'This test requires check constraint support');
+        $this->skipIf(!$driver->supports(DriverFeature::CHECK_CONSTRAINTS), 'This test requires check constraint support');
 
         $connection->execute('DROP TABLE IF EXISTS schema_constraints');
         $table = <<<SQL
@@ -2109,7 +2109,7 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->createTables($connection);
-        $this->skipIf(!$connection->getDriver()->supports(DriverFeatureEnum::JSON), 'Does not support native json');
+        $this->skipIf(!$connection->getDriver()->supports(DriverFeature::JSON), 'Does not support native json');
         $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);

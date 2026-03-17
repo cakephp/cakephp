@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Mockery;
@@ -50,7 +50,7 @@ trait BaseDriverTrait
         return new SqliteSchemaDialect($this);
     }
 
-    public function supports(DriverFeatureEnum $feature): bool
+    public function supports(DriverFeature $feature): bool
     {
         return true;
     }

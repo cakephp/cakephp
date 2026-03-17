@@ -553,7 +553,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->useSavePoints = false;
         } else {
-            $this->useSavePoints = $this->getWriteDriver()->supports(DriverFeatureEnum::SAVEPOINT);
+            $this->useSavePoints = $this->getWriteDriver()->supports(Enum\DriverFeature::SAVEPOINT);
         }
 
         return $this;
