@@ -263,6 +263,10 @@ class CommandRunner implements EventDispatcherInterface
             $instance = $this->createCommand($instance);
         }
 
+        if ($instance instanceof HelpCommand && $this->app instanceof ConsoleHelpHeaderProviderInterface) {
+            $instance->setHeaderLine($this->app->getConsoleHelpHeader());
+        }
+
         assert($instance instanceof BaseCommand);
         $instance->setName("{$this->root} {$name}");
         $instance->setIo($io);
