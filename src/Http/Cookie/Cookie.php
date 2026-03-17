@@ -165,7 +165,7 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly ?? static::$defaults['httponly'];
         $this->path = $path ?? static::$defaults['path'];
         $this->secure = $secure ?? static::$defaults['secure'];
-        $this->sameSite = static::resolveEnum\SameSite($sameSite ?? static::$defaults['samesite']);
+        $this->sameSite = static::resolveSameSite($sameSite ?? static::$defaults['samesite']);
 
         if ($expiresAt) {
             if ($expiresAt instanceof DateTime) {
@@ -201,7 +201,7 @@ class Cookie implements CookieInterface
             $options['expires'] = static::dateTimeInstance($options['expires']);
         }
         if (isset($options['samesite'])) {
-            $options['samesite'] = static::resolveEnum\SameSite($options['samesite']);
+            $options['samesite'] = static::resolveSameSite($options['samesite']);
         }
 
         static::$defaults = $options + static::$defaults;
@@ -310,7 +310,7 @@ class Cookie implements CookieInterface
         // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
         if (isset($data['samesite'])) {
             try {
-                $data['samesite'] = static::resolveEnum\SameSite($data['samesite']);
+                $data['samesite'] = static::resolveSameSite($data['samesite']);
             } catch (ValueError) {
                 unset($data['samesite']);
             }
@@ -639,18 +639,18 @@ class Cookie implements CookieInterface
     public function withSameSite(Enum\SameSite|string|null $sameSite): static
     {
         $new = clone $this;
-        $new->sameSite = static::resolveEnum\SameSite($sameSite);
+        $new->sameSite = static::resolveSameSite($sameSite);
 
         return $new;
     }
 
     /**
-     * Create Enum\SameSite instance.
+     * Create SameSite instance.
      *
      * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite SameSite value
      * @return \Cake\Http\Cookie\Enum\SameSite|null
      */
-    protected static function resolveEnum\SameSite(Enum\SameSite|string|null $sameSite): ?Enum\SameSite
+    protected static function resolveSameSite(Enum\SameSite|string|null $sameSite): ?Enum\SameSite
     {
         return match (true) {
             $sameSite === null => $sameSite,
