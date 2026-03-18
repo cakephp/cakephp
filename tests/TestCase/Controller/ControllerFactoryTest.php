@@ -562,6 +562,108 @@ class ControllerFactoryTest extends TestCase
         $this->factory->invoke($controller);
     }
 
+    public function testInvokeRequestToDtoAttribute(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'dependencies/requestDto',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requestDto',
+            ],
+            'post' => [
+                'title' => 'Map Request',
+                'count' => '3',
+            ],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['title' => 'Map Request', 'count' => '3'], $data);
+    }
+
+    public function testInvokeRequestToDtoBodySource(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'dependencies/requestDtoBody',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requestDtoBody',
+            ],
+            'post' => [
+                'title' => 'Body Data',
+            ],
+            'query' => [
+                'ignored' => 'query param',
+            ],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['title' => 'Body Data'], $data);
+    }
+
+    public function testInvokeRequestToDtoQuerySource(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'dependencies/requestDtoQuery',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requestDtoQuery',
+            ],
+            'post' => [
+                'ignored' => 'post data',
+            ],
+            'query' => [
+                'search' => 'query value',
+            ],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['search' => 'query value'], $data);
+    }
+
+    public function testInvokeRequestToDtoRequestSource(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'dependencies/requestDtoRequest',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requestDtoRequest',
+            ],
+            'post' => [
+                'title' => 'Post Title',
+            ],
+            'query' => [
+                'page' => '2',
+            ],
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['page' => '2', 'title' => 'Post Title'], $data);
+    }
+
     public function testInvokeInjectParametersRequiredMissingUntyped(): void
     {
         $request = new ServerRequest([
