@@ -211,7 +211,7 @@ class EnumType extends BaseType
     public static function from(string $enumClassName): string
     {
         $typeName = 'enum-' . strtolower(Text::slug($enumClassName));
-        $instance = new EnumType($typeName, $enumClassName);
+        $instance = new self($typeName, $enumClassName);
         TypeFactory::set($typeName, $instance);
 
         return $typeName;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace TestApp\Attribute\Resolver;
+namespace TestApp\Attribute\Resolver\Enum;
 
 enum TestPriority: int
 {

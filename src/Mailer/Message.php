@@ -910,7 +910,7 @@ class Message implements JsonSerializable
         $headersMultipleEmails = ['to', 'cc', 'bcc', 'replyTo'];
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
-                if (in_array($var, $headersMultipleEmails)) {
+                if (in_array($var, $headersMultipleEmails, true)) {
                     $headers[$header] = implode(', ', $this->formatAddress($this->{$var}));
                 } else {
                     $headers[$header] = (string)current($this->formatAddress($this->{$var}));

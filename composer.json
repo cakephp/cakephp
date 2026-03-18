@@ -27,7 +27,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "brick/varexporter": "^0.7.0",
-        "cakephp/chronos": "^3.3",
+        "cakephp/chronos": "4.x-dev",
         "composer/ca-bundle": "^1.5",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
@@ -61,7 +61,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^5.3",
+        "cakephp/cakephp-codesniffer": "6.x-dev",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6.12",
@@ -130,8 +130,8 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors --parallel=16 -p",
-        "cs-fix": "phpcbf --colors --parallel=16 -p",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
         "stan": "tools/phpstan analyse",
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",

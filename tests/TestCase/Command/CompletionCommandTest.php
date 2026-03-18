@@ -74,7 +74,6 @@ class CompletionCommandTest extends TestCase
             'unique',
             'welcome',
             'cache',
-            'help',
             'i18n',
             'plugin',
             'routes',

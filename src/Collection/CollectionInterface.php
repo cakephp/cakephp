@@ -79,7 +79,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   If left null, a callback that filters out falsey values will be used.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function filter(?callable $callback = null): CollectionInterface;
+    public function filter(?callable $callback = null): self;
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -105,7 +105,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   If left null, a callback that filters out truthy values will be used.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function reject(?callable $callback = null): CollectionInterface;
+    public function reject(?callable $callback = null): self;
 
     /**
      * Loops through each value in the collection and returns a new collection
@@ -118,7 +118,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   the value used to determine uniqueness. If left null, the element values themselves are used.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function unique(?callable $callback = null): CollectionInterface;
+    public function unique(?callable $callback = null): self;
 
     /**
      * Returns true if all values in this collection pass the truth test provided
@@ -219,7 +219,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   returns the transformed value for each element.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function map(callable $callback): CollectionInterface;
+    public function map(callable $callback): self;
 
     /**
      * Folds the values in this collection to a single value, as the result of
@@ -279,7 +279,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * of doing that.
      * @return \Cake\Collection\CollectionInterface<TKey, mixed>
      */
-    public function extract(callable|string $path): CollectionInterface;
+    public function extract(callable|string $path): self;
 
     /**
      * Returns the top element in this collection after being sorted by a property.
@@ -432,7 +432,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
         callable|string $path,
         int $order = SORT_DESC,
         int $sort = SORT_NUMERIC,
-    ): CollectionInterface;
+    ): self;
 
     /**
      * Splits a collection into sets, grouped by the result of running each value
@@ -475,7 +475,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * or a function returning the grouping key out of the provided element
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
-    public function groupBy(callable|string $path): CollectionInterface;
+    public function groupBy(callable|string $path): self;
 
     /**
      * Given a list and a callback function that returns a key for each element
@@ -514,7 +514,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * or a function returning the indexing key out of the provided element
      * @return \Cake\Collection\CollectionInterface<mixed, TValue>
      */
-    public function indexBy(callable|string $path): CollectionInterface;
+    public function indexBy(callable|string $path): self;
 
     /**
      * Sorts a list into groups and returns a count for the number of elements
@@ -552,7 +552,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * or a function returning the indexing key out of the provided element
      * @return \Cake\Collection\CollectionInterface<mixed, int>
      */
-    public function countBy(callable|string $path): CollectionInterface;
+    public function countBy(callable|string $path): self;
 
     /**
      * Returns the total sum of all the values extracted with $matcher
@@ -587,7 +587,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return \Cake\Collection\CollectionInterface<int, TValue>
      */
-    public function shuffle(): CollectionInterface;
+    public function shuffle(): self;
 
     /**
      * Returns a new collection with maximum $length random elements
@@ -597,7 +597,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * take from this collection
      * @return \Cake\Collection\CollectionInterface<int, TValue>
      */
-    public function sample(int $length = 10): CollectionInterface;
+    public function sample(int $length = 10): self;
 
     /**
      * Returns a new collection with maximum $length elements in the internal
@@ -609,7 +609,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param int $offset A positional offset from where to take the elements
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function take(int $length = 1, int $offset = 0): CollectionInterface;
+    public function take(int $length = 1, int $offset = 0): self;
 
     /**
      * Returns the last N elements of a collection
@@ -628,7 +628,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param int $length The number of elements at the end of the collection
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function takeLast(int $length): CollectionInterface;
+    public function takeLast(int $length): self;
 
     /**
      * Returns a new collection that will skip the specified amount of elements
@@ -637,7 +637,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param int $length The number of elements to skip.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function skip(int $length): CollectionInterface;
+    public function skip(int $length): self;
 
     /**
      * Looks through each value in the list, returning a Collection of all the
@@ -664,7 +664,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   and the value is the expected value to match against.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function match(array $conditions): CollectionInterface;
+    public function match(array $conditions): self;
 
     /**
      * Returns the first result matching all the key-value pairs listed in
@@ -699,7 +699,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param iterable $items Items list.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function append(iterable $items): CollectionInterface;
+    public function append(iterable $items): self;
 
     /**
      * Append a single item creating a new collection.
@@ -708,7 +708,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param mixed $key The key to append the item with. If null a key will be generated.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function appendItem(mixed $item, mixed $key = null): CollectionInterface;
+    public function appendItem(mixed $item, mixed $key = null): self;
 
     /**
      * Prepend a set of items to a collection creating a new collection
@@ -716,7 +716,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param iterable $items The items to prepend.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function prepend(iterable $items): CollectionInterface;
+    public function prepend(iterable $items): self;
 
     /**
      * Prepend a single item creating a new collection.
@@ -725,7 +725,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param mixed $key The key to prepend the item with. If null a key will be generated.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function prependItem(mixed $item, mixed $key = null): CollectionInterface;
+    public function prependItem(mixed $item, mixed $key = null): self;
 
     /**
      * Returns a new collection where the values extracted based on a value path
@@ -771,7 +771,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
         callable|string $keyPath,
         callable|string $valuePath,
         callable|string|null $groupPath = null,
-    ): CollectionInterface;
+    ): self;
 
     /**
      * Returns a new collection where the values are nested in a tree-like structure
@@ -788,7 +788,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
         callable|string $idPath,
         callable|string $parentPath,
         string $nestingKey = 'children',
-    ): CollectionInterface;
+    ): self;
 
     /**
      * Returns a new collection containing each of the elements found in `$values` as
@@ -826,7 +826,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * values are matched with the elements in this collection by its positional index.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function insert(string $path, mixed $values): CollectionInterface;
+    public function insert(string $path, mixed $values): self;
 
     /**
      * Returns an array representation of the results
@@ -890,7 +890,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * can help getting all items if keys are not important in the result.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function compile(bool $keepKeys = true): CollectionInterface;
+    public function compile(bool $keepKeys = true): self;
 
     /**
      * Returns a new collection where any operations chained after it are guaranteed
@@ -900,7 +900,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function lazy(): CollectionInterface;
+    public function lazy(): self;
 
     /**
      * Returns a new collection where the operations performed by this collection.
@@ -911,7 +911,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function buffered(): CollectionInterface;
+    public function buffered(): self;
 
     /**
      * Returns a new collection with each of the elements of this collection
@@ -955,7 +955,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function listNested(
         string|int $order = 'desc',
         callable|string $nestingKey = 'children',
-    ): CollectionInterface;
+    ): self;
 
     /**
      * Creates a new collection that when iterated will stop yielding results if
@@ -990,7 +990,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * and the value the condition against with each element will be matched.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function stopWhen(callable|array $condition): CollectionInterface;
+    public function stopWhen(callable|array $condition): self;
 
     /**
      * Creates a new collection where the items are the
@@ -1025,7 +1025,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
-    public function unfold(?callable $callback = null): CollectionInterface;
+    public function unfold(?callable $callback = null): self;
 
     /**
      * Passes this collection through a callable as its first argument.
@@ -1044,7 +1044,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * this collection as first argument.
      * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
-    public function through(callable $callback): CollectionInterface;
+    public function through(callable $callback): self;
 
     /**
      * Combines the elements of this collection with each of the elements of the
@@ -1060,7 +1060,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param iterable ...$items The collections to zip.
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
-    public function zip(iterable ...$items): CollectionInterface;
+    public function zip(iterable ...$items): self;
 
     // phpcs:disable
     /**
@@ -1100,7 +1100,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param int $chunkSize The maximum size for each chunk
      * @return \Cake\Collection\CollectionInterface<TKey, array<TValue>>
      */
-    public function chunk(int $chunkSize): CollectionInterface;
+    public function chunk(int $chunkSize): self;
 
     /**
      * Breaks the collection into smaller arrays of the given size.
@@ -1117,7 +1117,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param bool $keepKeys If the keys of the array should be kept
      * @return \Cake\Collection\CollectionInterface<TKey, array<TKey, TValue>>
      */
-    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface;
+    public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): self;
 
     /**
      * Returns whether there are elements in this collection
@@ -1172,7 +1172,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return \Cake\Collection\CollectionInterface<int, array<mixed>>
      */
-    public function transpose(): CollectionInterface;
+    public function transpose(): self;
 
     /**
      * Returns the amount of elements in the collection.
@@ -1252,5 +1252,5 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   of the final results.
      * @return \Cake\Collection\CollectionInterface<int, array<mixed>>
      */
-    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface;
+    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): self;
 }

@@ -21,24 +21,24 @@ interface InflectorInterface
      * @param array $args
      * @return $this
      */
-    public function invokeMethod(string $name, array $args): InflectorInterface;
+    public function invokeMethod(string $name, array $args): self;
 
     /**
      * @param array $methods
      * @return $this
      */
-    public function invokeMethods(array $methods): InflectorInterface;
+    public function invokeMethods(array $methods): self;
 
     /**
      * @param array $properties
      * @return $this
      */
-    public function setProperties(array $properties): InflectorInterface;
+    public function setProperties(array $properties): self;
 
     /**
      * @param string $property
      * @param mixed $value
      * @return $this
      */
-    public function setProperty(string $property, mixed $value): InflectorInterface;
+    public function setProperty(string $property, mixed $value): self;
 }

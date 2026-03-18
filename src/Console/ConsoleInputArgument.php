@@ -121,7 +121,7 @@ class ConsoleInputArgument
      * @param \Cake\Console\ConsoleInputArgument $argument ConsoleInputArgument to compare to.
      * @return bool
      */
-    public function isEqualTo(ConsoleInputArgument $argument): bool
+    public function isEqualTo(self $argument): bool
     {
         return $this->name() === $argument->name() &&
             $this->usage() === $argument->usage();

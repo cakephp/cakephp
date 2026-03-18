@@ -27,5 +27,5 @@ interface ServiceProviderInterface extends ContainerAwareInterface
      * @param string $id
      * @return $this
      */
-    public function setIdentifier(string $id): ServiceProviderInterface;
+    public function setIdentifier(string $id): self;
 }

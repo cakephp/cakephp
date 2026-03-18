@@ -25,7 +25,7 @@ use IntlDateFormatter;
 /**
  * Trait for date formatting methods shared by both Time & Date.
  *
- * This trait expects that the implementing class define static::$_toStringFormat.
+ * This trait expects that the implementing class define static::$toStringFormat.
  */
 trait DateFormatTrait
 {

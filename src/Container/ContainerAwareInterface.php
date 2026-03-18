@@ -14,5 +14,5 @@ interface ContainerAwareInterface
      * @param \Cake\Container\DefinitionContainerInterface $container
      * @return $this
      */
-    public function setContainer(DefinitionContainerInterface $container): ContainerAwareInterface;
+    public function setContainer(DefinitionContainerInterface $container): self;
 }

@@ -282,7 +282,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     public static function replaceToken(ServerRequest $request, string $key = 'csrfToken'): ServerRequest
     {
-        $middleware = new SessionCsrfProtectionMiddleware(['key' => $key]);
+        $middleware = new self(['key' => $key]);
 
         $token = $middleware->createToken();
         $request->getSession()->write($key, $token);

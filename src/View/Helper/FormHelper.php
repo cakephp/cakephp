@@ -210,7 +210,7 @@ class FormHelper extends Helper
      *
      * @var string|null
      */
-    public ?string $requestType = null;
+    protected ?string $requestType = null;
 
     /**
      * Locator for input widgets.

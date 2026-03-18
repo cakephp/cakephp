@@ -23,7 +23,7 @@ use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
 use SplFileInfo;
-use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\Enum\TestPriority;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class ParserTest extends TestCase

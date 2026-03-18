@@ -15,7 +15,7 @@ interface ServiceProviderAggregateInterface extends ContainerAwareInterface, Ite
      * @param \Cake\Container\ServiceProvider\ServiceProviderInterface $provider
      * @return $this
      */
-    public function add(ServiceProviderInterface $provider): ServiceProviderAggregateInterface;
+    public function add(ServiceProviderInterface $provider): self;
 
     /**
      * @param string $id
