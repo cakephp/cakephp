@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Core\Attribute;
 
+use Cake\Core\CakeContainer;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Test\TestCase\Core\Attribute\Configure\FakeClient;
@@ -35,5 +36,15 @@ class ConfigureTest extends TestCase
         $container->delegate(new ReflectionContainer());
         $this->expectException(TypeError::class);
         $container->get(FakeClient::class);
+    }
+
+    public function testValidConfigBuiltInContainer(): void
+    {
+        $apiKey = '987654321';
+        Configure::write('Star.apiKey', $apiKey);
+        $container = new CakeContainer();
+        $client = $container->get(FakeClient::class);
+        $this->assertInstanceOf(FakeClient::class, $client);
+        $this->assertSame($apiKey, $client->apiKey);
     }
 }

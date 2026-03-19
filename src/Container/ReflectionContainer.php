@@ -7,20 +7,34 @@ use Cake\Container\Argument\ArgumentResolverInterface;
 use Cake\Container\Argument\ArgumentResolverTrait;
 use Cake\Container\Exception\ContainerException;
 use Cake\Container\Exception\NotFoundException;
+use League\Container\Attribute\AttributeInterface;
 use Psr\Container\ContainerInterface;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionFunctionAbstract;
 use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
 
 class ReflectionContainer implements ArgumentResolverInterface, ContainerInterface
 {
     use ArgumentResolverTrait;
     use ContainerAwareTrait;
 
+    public const AUTO_WIRING = 0x01;
+    public const ATTRIBUTE_RESOLUTION = 0x02;
+
     /**
      * @var bool
      */
     protected bool $cacheResolutions;
+
+    /**
+     * @var int
+     */
+    protected int $mode;
 
     /**
      * @var array
@@ -30,9 +44,29 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     /**
      * @param bool $cacheResolutions
      */
-    public function __construct(bool $cacheResolutions = false)
-    {
+    public function __construct(
+        bool $cacheResolutions = false,
+        int $mode = self::AUTO_WIRING | self::ATTRIBUTE_RESOLUTION,
+    ) {
         $this->cacheResolutions = $cacheResolutions;
+        $this->mode = $mode;
+    }
+
+    /**
+     * @param int $mode
+     * @return void
+     */
+    public function setMode(int $mode): void
+    {
+        $this->mode = $mode;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMode(): int
+    {
+        return $this->mode;
     }
 
     /**
@@ -159,6 +193,114 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
         throw new NotFoundException(sprintf(
             'Callable (%s) is not a valid callable',
             $callable,
+        ));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function reflectArguments(ReflectionFunctionAbstract $method, array $args = []): array
+    {
+        $params = $method->getParameters();
+        $arguments = [];
+
+        foreach ($params as $param) {
+            $name = $param->getName();
+
+            if (array_key_exists($name, $args)) {
+                $arguments[] = new Argument\LiteralArgument($args[$name]);
+                continue;
+            }
+
+            if ($this->mode & self::ATTRIBUTE_RESOLUTION) {
+                foreach ($param->getAttributes() as $attribute) {
+                    $argument = $this->resolveArgumentFromAttribute($attribute);
+                    if ($argument !== null) {
+                        $arguments[] = $argument;
+                        continue 2;
+                    }
+                }
+            }
+
+            $type = $param->getType();
+
+            if ($type instanceof ReflectionUnionType) {
+                $this->throwParameterException(
+                    $param,
+                    'Union types are not supported',
+                );
+            }
+
+            if (($this->mode & self::AUTO_WIRING) && $type instanceof ReflectionNamedType) {
+                if ($type->getName() === 'mixed') {
+                    $this->throwParameterException(
+                        $param,
+                        'Mixed types are not supported',
+                    );
+                }
+
+                $typeHint = ltrim($type->getName(), '?');
+
+                if ($param->isDefaultValueAvailable()) {
+                    $arguments[] = new Argument\DefaultValueArgument($typeHint, $param->getDefaultValue());
+                    continue;
+                }
+
+                $arguments[] = new Argument\ResolvableArgument($typeHint);
+                continue;
+            }
+
+            if ($param->isDefaultValueAvailable()) {
+                $arguments[] = new Argument\LiteralArgument($param->getDefaultValue());
+                continue;
+            }
+
+            $this->throwParameterException(
+                $param,
+                'No default value available and no type hint to resolve',
+            );
+        }
+
+        return $this->resolveArguments($arguments);
+    }
+
+    /**
+     * @param \ReflectionAttribute<object> $attribute
+     * @return \Cake\Container\Argument\LiteralArgument|null
+     */
+    protected function resolveArgumentFromAttribute(ReflectionAttribute $attribute): ?Argument\LiteralArgument
+    {
+        $attributeClass = $attribute->getName();
+        if (!is_subclass_of($attributeClass, AttributeInterface::class)) {
+            return null;
+        }
+
+        $instance = $attribute->newInstance();
+        if ($instance instanceof ContainerAwareInterface) {
+            $instance->setContainer($this->getContainer());
+        }
+
+        /** @var \League\Container\Attribute\AttributeInterface $instance */
+        return new Argument\LiteralArgument($instance->resolve());
+    }
+
+    /**
+     * @param \ReflectionParameter $parameter
+     * @param string $message
+     * @return void
+     */
+    protected function throwParameterException(ReflectionParameter $parameter, string $message): void
+    {
+        $function = $parameter->getDeclaringFunction();
+        $class = $parameter->getDeclaringClass()?->getName();
+        $suffix = $function instanceof ReflectionMethod && $function->isClosure() ? ' [closure]' : '';
+
+        throw new NotFoundException(sprintf(
+            'Unable to resolve parameter ($%s) in %s%s()%s',
+            $parameter->getName(),
+            $class ? $class . '::' : '',
+            $function->getName(),
+            $suffix ? ' - ' . trim($message . $suffix) : ' - ' . $message,
         ));
     }
 }

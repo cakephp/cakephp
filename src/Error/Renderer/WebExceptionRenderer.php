@@ -20,7 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Container;
+use Cake\Core\ContainerFactory;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\HttpErrorCodeInterface;
 use Cake\Core\Exception\MissingPluginException;
@@ -155,7 +155,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
 
-            $factory = new ControllerFactory(new Container());
+            $factory = new ControllerFactory(ContainerFactory::create());
             // Check including plugin + prefix
             $class = $factory->getControllerClass($request->withAttribute('params', $params));
 

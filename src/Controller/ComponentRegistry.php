@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Container\ReflectionContainer;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
@@ -23,12 +24,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use League\Container\Argument\ArgumentReflectorTrait;
-use League\Container\Argument\ArgumentResolverTrait;
-use League\Container\Argument\LiteralArgument;
-use League\Container\Argument\ResolvableArgument;
-use League\Container\Exception\NotFoundException;
-use League\Container\ReflectionContainer;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -50,10 +46,6 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
-
-    use ArgumentResolverTrait;
-
-    use ArgumentReflectorTrait;
 
     /**
      * The controller that this collection is associated with.
@@ -180,7 +172,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             try {
                 $this->container->extend($class);
                 $hasDefinition = true;
-            } catch (NotFoundException) {
+            } catch (NotFoundExceptionInterface) {
                 // No definition exists yet
             }
 
@@ -245,7 +237,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
 
             // If we have a literal value for this parameter, use it
             if (array_key_exists($name, $args)) {
-                $arguments[] = new LiteralArgument($args[$name]);
+                $arguments[] = $args[$name];
                 continue;
             }
 
@@ -253,13 +245,13 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             $type = $param->getType();
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                 // Type-hinted parameter - resolve from container
-                $arguments[] = new ResolvableArgument($type->getName());
+                $arguments[] = $type->getName();
                 continue;
             }
 
             // Check for default value
             if ($param->isDefaultValueAvailable()) {
-                $arguments[] = new LiteralArgument($param->getDefaultValue());
+                $arguments[] = $param->getDefaultValue();
                 continue;
             }
 
@@ -277,7 +269,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             );
         }
 
-        return $this->resolveArguments($arguments);
+        return $arguments;
     }
 
     /**

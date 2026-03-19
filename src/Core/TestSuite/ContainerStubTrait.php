@@ -22,9 +22,9 @@ use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
 use Closure;
-use League\Container\Exception\NotFoundException;
 use LogicException;
 use PHPUnit\Framework\Attributes\After;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * A set of methods used for defining container services
@@ -163,7 +163,7 @@ trait ContainerStubTrait
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException) {
+                } catch (NotFoundExceptionInterface) {
                     $container->add($key, $factory);
                 }
             } else {

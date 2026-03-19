@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\CakeContainer;
 use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
 use LogicException;
@@ -44,6 +45,17 @@ class ServiceProviderTest extends TestCase
         $container = new Container();
         $container->addServiceProvider(new PersonServiceProvider());
 
+        $this->assertTrue($container->has('sally'), 'Should have service');
+        $this->assertSame('sally', $container->get('sally')->name);
+    }
+
+    public function testBuiltInContainerSupportsServiceProviders(): void
+    {
+        $container = new CakeContainer();
+        $container->addServiceProvider(new PersonServiceProvider());
+
+        $this->assertTrue($container->has('boot'), 'Should have service defined in bootstrap.');
+        $this->assertSame('boot', $container->get('boot')->name);
         $this->assertTrue($container->has('sally'), 'Should have service');
         $this->assertSame('sally', $container->get('sally')->name);
     }

@@ -48,12 +48,16 @@ class Container implements DefinitionContainerInterface
     /**
      * @inheritDoc
      */
-    public function add(string $id, $concrete = null): DefinitionInterface
+    public function add(string $id, $concrete = null, bool $overwrite = false): DefinitionInterface
     {
         $concrete ??= $id;
 
+        if ($overwrite && $this->definitions->has($id)) {
+            return $this->definitions->getDefinition($id)->setConcrete($concrete);
+        }
+
         if ($this->defaultToShared) {
-            return $this->addShared($id, $concrete);
+            return $this->addShared($id, $concrete, $overwrite);
         }
 
         return $this->definitions->add($id, $concrete);
@@ -62,9 +66,15 @@ class Container implements DefinitionContainerInterface
     /**
      * @inheritDoc
      */
-    public function addShared(string $id, $concrete = null): DefinitionInterface
+    public function addShared(string $id, $concrete = null, bool $overwrite = false): DefinitionInterface
     {
         $concrete ??= $id;
+
+        if ($overwrite && $this->definitions->has($id)) {
+            return $this->definitions->getDefinition($id)
+                ->setConcrete($concrete)
+                ->setShared(true);
+        }
 
         return $this->definitions->addShared($id, $concrete);
     }
@@ -147,8 +157,16 @@ class Container implements DefinitionContainerInterface
     /**
      * @inheritDoc
      */
-    public function addServiceProvider(ServiceProviderInterface $provider): DefinitionContainerInterface
+    public function addServiceProvider(mixed $provider): DefinitionContainerInterface
     {
+        if (!$provider instanceof ServiceProviderInterface) {
+            throw new ContainerException(sprintf(
+                'Service provider must implement `%s`, got `%s` instead.',
+                ServiceProviderInterface::class,
+                get_debug_type($provider),
+            ));
+        }
+
         $this->providers->add($provider);
 
         return $this;
@@ -244,6 +262,8 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
+     * Add a container delegate.
+     *
      * @param \Psr\Container\ContainerInterface $container
      * @return $this
      */
@@ -251,7 +271,7 @@ class Container implements DefinitionContainerInterface
     {
         $this->delegates[] = $container;
 
-        if ($container instanceof ContainerAwareInterface) {
+        if ($container instanceof ReflectionContainer) {
             $container->setContainer($this);
         }
 
@@ -259,15 +279,21 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
+     * Enable autowiring by delegating to the reflection container.
+     *
      * @param bool $cache
      * @return void
      */
     public function enableAutoWiring(bool $cache = true): void
     {
-        $this->delegate(new ReflectionContainer($cache));
+        $reflectionContainer = new ReflectionContainer($cache);
+        $reflectionContainer->setContainer($this);
+        $this->delegate($reflectionContainer);
     }
 
     /**
+     * Disable autowiring by clearing delegates.
+     *
      * @return void
      */
     public function disableAutoWiring(): void
@@ -276,58 +302,65 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
-     * @param mixed $id
+     * @param string $id
      * @param bool $new
      * @param array<string, mixed> $args
-     * @return mixed|object|array|null|void
+     * @return mixed
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    protected function resolve(mixed $id, bool $new = false, array $args = []): mixed
+    protected function resolve(string $id, bool $new = false, array $args = []): mixed
     {
         if ($this->definitions->has($id)) {
-            $resolved = $new ? $this->definitions->resolveNew($id) : $this->definitions->resolve($id);
+            $definition = $this->definitions->getDefinition($id);
+            if ($args !== []) {
+                $definition = clone $definition;
+                $definition->addArguments($args);
+            }
 
-            return $this->inflectors->inflect($resolved);
+            $instance = $new ? $definition->resolveNew() : $definition->resolve();
+            $this->inflectors->inflect($instance);
+
+            return $instance;
         }
 
         if ($this->definitions->hasTag($id)) {
-            $arrayOf = $new
-                ? $this->definitions->resolveTaggedNew($id)
-                : $this->definitions->resolveTagged($id);
-
-            array_walk($arrayOf, function (object &$resolved): void {
+            $instances = $new ? $this->definitions->resolveTaggedNew($id) : $this->definitions->resolveTagged($id);
+            array_walk($instances, function (object &$resolved): void {
                 $resolved = $this->inflectors->inflect($resolved);
             });
 
-            return $arrayOf;
+            return $instances;
         }
 
         if ($this->providers->provides($id)) {
             $this->providers->register($id);
 
-            if (!$this->definitions->has($id) && !$this->definitions->hasTag($id)) {
+            try {
+                return $this->resolve($id, $new, $args);
+            } catch (NotFoundException) {
                 throw new ContainerException(sprintf('Service provider lied about providing (%s) service', $id));
             }
-
-            return $this->resolve($id, $new, $args);
         }
 
         foreach ($this->delegates as $delegate) {
             if ($delegate->has($id)) {
-                // Use getNew() for ReflectionContainer when $new is true or args are provided
                 if ($delegate instanceof ReflectionContainer) {
-                    $resolved = $new || $args !== []
+                    $instance = $new || $args !== []
                         ? $delegate->getNew($id, $args)
                         : $delegate->get($id, $args);
                 } else {
-                    $resolved = $delegate->get($id);
+                    $instance = $delegate->get($id);
                 }
+                $this->inflectors->inflect($instance);
 
-                return $this->inflectors->inflect($resolved);
+                return $instance;
             }
         }
 
-        throw new NotFoundException(sprintf('Alias (%s) is not being managed by the container or delegates', $id));
+        throw new NotFoundException(sprintf(
+            'Alias (%s) is not being managed by the container or delegates',
+            $id,
+        ));
     }
 }

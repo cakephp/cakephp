@@ -90,6 +90,14 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     /**
      * @inheritDoc
      */
+    public function getTags(): array
+    {
+        return array_keys($this->tags);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setAlias(string $id): DefinitionInterface
     {
         $id = static::normaliseAlias($id);

@@ -20,8 +20,10 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
+use Cake\Core\CakeContainer;
 use Cake\Core\Configure;
 use Cake\Core\Container;
+use Cake\Core\ContainerFactory;
 use Cake\Core\ContainerInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManagerInterface;
@@ -262,6 +264,29 @@ class BaseApplicationTest extends TestCase
 
         $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertSame($container, $app->getContainer(), 'Should return a reference');
+    }
+
+    public function testGetContainerBuiltIn(): void
+    {
+        Configure::write('App.container', 'cake');
+
+        $app = $this->app;
+        $container = $app->getContainer();
+
+        $this->assertInstanceOf(CakeContainer::class, $container);
+        $this->assertSame($container, $app->getContainer(), 'Should return a reference');
+    }
+
+    public function testContainerFactoryLegacyDefault(): void
+    {
+        $this->assertInstanceOf(Container::class, ContainerFactory::create());
+    }
+
+    public function testContainerFactoryBuiltIn(): void
+    {
+        Configure::write('App.container', 'cake');
+
+        $this->assertInstanceOf(CakeContainer::class, ContainerFactory::create());
     }
 
     public function testBuildContainerEvent(): void

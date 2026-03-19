@@ -20,8 +20,8 @@ namespace Cake\Http;
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
+use Cake\Core\ContainerFactory;
 use Cake\Core\ContainerInterface;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
@@ -295,7 +295,7 @@ abstract class BaseApplication implements
      */
     protected function buildContainer(): ContainerInterface
     {
-        $container = new Container();
+        $container = ContainerFactory::create();
         $this->services($container);
         foreach ($this->plugins->with('services') as $plugin) {
             $plugin->services($container);

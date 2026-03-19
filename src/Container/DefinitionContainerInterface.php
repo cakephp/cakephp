@@ -5,7 +5,6 @@ namespace Cake\Container;
 
 use Cake\Container\Definition\DefinitionInterface;
 use Cake\Container\Inflector\InflectorInterface;
-use Cake\Container\ServiceProvider\ServiceProviderInterface;
 use Psr\Container\ContainerInterface;
 
 interface DefinitionContainerInterface extends ContainerInterface
@@ -15,7 +14,7 @@ interface DefinitionContainerInterface extends ContainerInterface
      * @param mixed $concrete
      * @return \Cake\Container\Definition\DefinitionInterface
      */
-    public function add(string $id, mixed $concrete = null): DefinitionInterface;
+    public function add(string $id, mixed $concrete = null, bool $overwrite = false): DefinitionInterface;
 
     /**
      * Add multiple definitions at once.
@@ -34,18 +33,19 @@ interface DefinitionContainerInterface extends ContainerInterface
      * @param \Cake\Container\ServiceProvider\ServiceProviderInterface $provider
      * @return self
      */
-    public function addServiceProvider(ServiceProviderInterface $provider): self;
+    public function addServiceProvider(mixed $provider): self;
 
     /**
      * @param string $id
      * @param mixed $concrete
      * @return \Cake\Container\Definition\DefinitionInterface
      */
-    public function addShared(string $id, mixed $concrete = null): DefinitionInterface;
+    public function addShared(string $id, mixed $concrete = null, bool $overwrite = false): DefinitionInterface;
 
     /**
      * @param string $id
      * @return \Cake\Container\Definition\DefinitionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function extend(string $id): DefinitionInterface;
 

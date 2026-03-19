@@ -21,6 +21,7 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Core\CakeContainer;
 use Cake\Core\Container;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
@@ -115,6 +116,20 @@ class ComponentRegistryTest extends TestCase
         $controller = new Controller(new ServerRequest());
         $container = new Container();
         $container->delegate(new ReflectionContainer());
+        $components = new ComponentRegistry($controller, $container);
+
+        $container->add(ComponentRegistry::class, $components);
+
+        $component = $components->load(ConfiguredComponent::class, ['key' => 'customFlash']);
+
+        $this->assertInstanceOf(ConfiguredComponent::class, $component);
+        $this->assertSame(['key' => 'customFlash'], $component->configCopy);
+    }
+
+    public function testLoadWithBuiltInContainerAutoWiring(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new CakeContainer();
         $components = new ComponentRegistry($controller, $container);
 
         $container->add(ComponentRegistry::class, $components);
