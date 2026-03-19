@@ -294,6 +294,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function __get(string $name): mixed
     {
         if ($this->defaultTable) {
+            deprecationWarning('5.4', 'Using Controller::$defaultTable to fetch default table is deprecated and will be removed in 6.0. Use Controller::fetchTable() instead.');
+
             if (str_contains($this->defaultTable, '\\')) {
                 $class = App::shortName($this->defaultTable, 'Model/Table', 'Table');
             } else {
