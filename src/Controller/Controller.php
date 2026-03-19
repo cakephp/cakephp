@@ -47,6 +47,7 @@ use ReflectionException;
 use ReflectionMethod;
 use function Cake\Core\namespaceSplit;
 use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * Application controller class for organization of business logic.
@@ -282,6 +283,28 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
+        [, $alias] = pluginSplit($name);
+
+        if ($this->defaultTable) {
+            if (str_contains($this->defaultTable, '\\')) {
+                $tableAlias = App::shortName($this->defaultTable, 'Model/Table', 'Table');
+            } else {
+                [, $tableAlias] = pluginSplit($this->defaultTable, true);
+            }
+
+            if ($alias === $tableAlias) {
+                triggerWarning(sprintf(
+                    'Component alias `%s` clashes with the default table name `%s`. ' .
+                    'The table name will take precedence when accessing `$this->%s`. ' .
+                    'Consider using a different component alias or set `Controller::$defaultTable` to ' .
+                    "an empty string if the controller doesn't use a table.",
+                    $alias,
+                    $this->defaultTable,
+                    $alias,
+                ));
+            }
+        }
+
         return $this->components()->load($name, $config);
     }
 
