@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Exception\ComponentAndDefaultTableCollissionException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
@@ -303,6 +304,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if ($class === $name) {
+                if ($this->components()->has($name)) {
+                    throw new ComponentAndDefaultTableCollissionException(['name' => $name]);
+                }
+
                 return $this->fetchTable();
             }
         }
