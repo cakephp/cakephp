@@ -200,7 +200,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn'],
+            ['notLike'], ['in'], ['notIn'], ['isDistinctFrom'], ['isNotDistinctFrom'],
         ];
     }
 
@@ -249,6 +249,82 @@ class QueryExpressionTest extends TestCase
         $expr->notInOrNull('test', ['one', 'two']);
         $this->assertEqualsSql(
             '(test NOT IN (:c0,:c1) OR (test) IS NULL)',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
+     * Tests isDistinctFrom()
+     */
+    public function testIsDistinctFrom(): void
+    {
+        $expr = new QueryExpression();
+        $expr->isDistinctFrom('deleted_at', '2021-01-01');
+        $this->assertEqualsSql(
+            'deleted_at IS DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+
+        $expr = new QueryExpression();
+        $expr->isDistinctFrom('deleted_at', null);
+        $this->assertEqualsSql(
+            'deleted_at IS DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
+     * Tests isNotDistinctFrom()
+     */
+    public function testIsNotDistinctFrom(): void
+    {
+        $expr = new QueryExpression();
+        $expr->isNotDistinctFrom('deleted_at', '2021-01-01');
+        $this->assertEqualsSql(
+            'deleted_at IS NOT DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+
+        $expr = new QueryExpression();
+        $expr->isNotDistinctFrom('deleted_at', null);
+        $this->assertEqualsSql(
+            'deleted_at IS NOT DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
+     * Tests parsing IS DISTINCT FROM in array conditions
+     */
+    public function testParseIsDistinctFrom(): void
+    {
+        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => '2021-01-01']);
+        $this->assertEqualsSql(
+            'deleted_at IS DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+
+        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => null]);
+        $this->assertEqualsSql(
+            'deleted_at IS DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
+     * Tests parsing IS NOT DISTINCT FROM in array conditions
+     */
+    public function testParseIsNotDistinctFrom(): void
+    {
+        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => '2021-01-01']);
+        $this->assertEqualsSql(
+            'deleted_at IS NOT DISTINCT FROM :c0',
+            $expr->sql(new ValueBinder()),
+        );
+
+        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => null]);
+        $this->assertEqualsSql(
+            'deleted_at IS NOT DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
         );
     }

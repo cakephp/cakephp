@@ -18,6 +18,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Expression\DistinctComparisonExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -31,6 +32,33 @@ use Pdo\Mysql as PdoMysql;
  */
 class Mysql extends Driver
 {
+    /**
+     * @inheritDoc
+     */
+    protected function _expressionTranslators(): array
+    {
+        return [
+            DistinctComparisonExpression::class => '_transformDistinctComparisonExpression',
+        ];
+    }
+
+    /**
+     * Translates IS [NOT] DISTINCT FROM into MySQL-specific syntax.
+     *
+     * @param \Cake\Database\Expression\DistinctComparisonExpression $expression The expression to translate.
+     * @return void
+     */
+    protected function _transformDistinctComparisonExpression(DistinctComparisonExpression $expression): void
+    {
+        $operator = strtoupper($expression->getOperator());
+        if ($operator === 'IS NOT DISTINCT FROM') {
+            $expression->setOperator('<=>');
+        } elseif ($operator === 'IS DISTINCT FROM') {
+            $expression->setOperator('<=>');
+            $expression->setNot(true);
+        }
+    }
+
     /**
      * @inheritDoc
      */
