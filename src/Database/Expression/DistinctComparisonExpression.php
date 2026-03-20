@@ -72,4 +72,3 @@ class DistinctComparisonExpression extends ComparisonExpression
         return $this->isNot ? "NOT ({$sql})" : $sql;
     }
 }
-
