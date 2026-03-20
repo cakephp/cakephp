@@ -1011,6 +1011,22 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test that loading a component with the same name as defaultTable triggers a warning.
+     */
+    public function testLoadComponentNameClashWithDefaultTable(): void
+    {
+        $request = new ServerRequest(['url' => '/']);
+        $controller = new WithDefaultTableController($request);
+
+        $this->expectWarningMessageMatches(
+            '/Component alias `Posts` clashes with the default table name `Posts`/',
+            function () use ($controller): void {
+                $controller->loadComponent('Posts');
+            },
+        );
+    }
+
+    /**
      * Test the isAction method.
      */
     public function testIsAction(): void
