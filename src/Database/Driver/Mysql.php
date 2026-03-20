@@ -38,7 +38,7 @@ class Mysql extends Driver
     protected function _expressionTranslators(): array
     {
         return [
-            DistinctComparisonExpression::class => '_transformDistinctComparisonExpression',
+            DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
         ];
     }
 
@@ -48,7 +48,7 @@ class Mysql extends Driver
      * @param \Cake\Database\Expression\DistinctComparisonExpression $expression The expression to translate.
      * @return void
      */
-    protected function _transformDistinctComparisonExpression(DistinctComparisonExpression $expression): void
+    protected function transformDistinctComparisonExpression(DistinctComparisonExpression $expression): void
     {
         $operator = strtoupper($expression->getOperator());
         if ($operator === 'IS NOT DISTINCT FROM') {
@@ -363,3 +363,4 @@ class Mysql extends Driver
         return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_USE_BUFFERED_QUERY : PdoMysql::ATTR_USE_BUFFERED_QUERY;
     }
 }
+

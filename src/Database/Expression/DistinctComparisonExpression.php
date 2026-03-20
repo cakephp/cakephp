@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.1.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Expression;
@@ -30,7 +30,7 @@ class DistinctComparisonExpression extends ComparisonExpression
      *
      * @var bool
      */
-    protected bool $_isNot = false;
+    protected bool $isNot = false;
 
     /**
      * Sets whether to wrap the expression in `NOT (...)`
@@ -40,7 +40,7 @@ class DistinctComparisonExpression extends ComparisonExpression
      */
     public function setNot(bool $not)
     {
-        $this->_isNot = $not;
+        $this->isNot = $not;
 
         return $this;
     }
@@ -69,6 +69,7 @@ class DistinctComparisonExpression extends ComparisonExpression
         /** @var string $field */
         $sql = sprintf($template, $field, $this->_operator, $value);
 
-        return $this->_isNot ? "NOT ({$sql})" : $sql;
+        return $this->isNot ? "NOT ({$sql})" : $sql;
     }
 }
+
