@@ -336,11 +336,11 @@ class Container implements DefinitionContainerInterface
         if ($this->providers->provides($id)) {
             $this->providers->register($id);
 
-            try {
-                return $this->resolve($id, $new, $args);
-            } catch (NotFoundException) {
+            if (!$this->providerRegisteredDefinition($id)) {
                 throw new ContainerException(sprintf('Service provider lied about providing (%s) service', $id));
             }
+
+            return $this->resolve($id, $new, $args);
         }
 
         foreach ($this->delegates as $delegate) {
@@ -362,5 +362,16 @@ class Container implements DefinitionContainerInterface
             'Alias (%s) is not being managed by the container or delegates',
             $id,
         ));
+    }
+
+    /**
+     * Check whether registering a service provider materialized a definition or tag.
+     *
+     * @param string $id
+     * @return bool
+     */
+    protected function providerRegisteredDefinition(string $id): bool
+    {
+        return $this->definitions->has($id) || $this->definitions->hasTag($id);
     }
 }
