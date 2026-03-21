@@ -205,13 +205,15 @@ class Postgres extends Driver
             DriverFeatureEnum::JSON,
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeatureEnum::WINDOW => true,
+            DriverFeatureEnum::WINDOW,
+            DriverFeatureEnum::STRING_AGG => true,
             DriverFeatureEnum::INTERSECT => true,
             DriverFeatureEnum::INTERSECT_ALL => true,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
             DriverFeatureEnum::CHECK_CONSTRAINTS => true,
+            DriverFeatureEnum::GROUP_CONCAT => false,
         };
     }
 

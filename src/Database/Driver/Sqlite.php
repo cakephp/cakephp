@@ -102,6 +102,8 @@ class Sqlite extends Driver
     protected array $featureVersions = [
         'cte' => '3.8.3',
         'window' => '3.28.0',
+        'string-agg' => '3.44.0',
+        'group-concat' => '3.44.0',
     ];
 
     /**
@@ -199,7 +201,9 @@ class Sqlite extends Driver
             DriverFeatureEnum::JSON => false,
 
             DriverFeatureEnum::CTE,
-            DriverFeatureEnum::WINDOW => version_compare(
+            DriverFeatureEnum::WINDOW,
+            DriverFeatureEnum::STRING_AGG,
+            DriverFeatureEnum::GROUP_CONCAT => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature->value],
                 '>=',
@@ -303,6 +307,12 @@ class Sqlite extends Driver
                 break;
             case 'JSON_VALUE':
                 $expression->setName('JSON_EXTRACT');
+                break;
+            case 'STRING_AGG':
+                // For SQLite < 3.44, transform STRING_AGG to GROUP_CONCAT
+                if (!$this->supports(DriverFeatureEnum::STRING_AGG)) {
+                    $expression->setName('GROUP_CONCAT');
+                }
                 break;
         }
     }

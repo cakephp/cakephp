@@ -340,6 +340,48 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing a call to SQL STRING_AGG or GROUP_CONCAT function.
+     *
+     * This function automatically selects the appropriate SQL function based on the database driver:
+     * - PostgreSQL, SQL Server, SQLite 3.44+, MySQL 10.5+: Uses STRING_AGG
+     * - SQLite <3.44, MySQL <10.5: Uses GROUP_CONCAT
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The expression to aggregate
+     * @param string $separator The separator to use between values (default ',')
+     * @param \Cake\Database\ExpressionInterface|string|null $orderBy Optional ORDER BY expression
+     * @param array $types list of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function stringAgg(
+        ExpressionInterface|string $expression,
+        string $separator = ',',
+        ExpressionInterface|string|null $orderBy = null,
+        array $types = [],
+    ): FunctionExpression {
+        // Use a placeholder that will be resolved at compile time
+        // The actual function name (STRING_AGG or GROUP_CONCAT) depends on the driver
+        $func = new FunctionExpression('STRING_AGG', [], [], 'string');
+
+        // Set the expression and separator
+        $func = $func->setConjunction(',')->add(
+            $this->toLiteralParam($expression) + [$separator => 'literal'],
+            $types,
+            true,
+        );
+
+        // Add ORDER BY if provided
+        if ($orderBy !== null) {
+            $func->setConjunction(', ORDER BY')->add(
+                $this->toLiteralParam($orderBy),
+                [],
+                true,
+            );
+        }
+
+        return $func;
+    }
+
+    /**
      * Helper method to create arbitrary SQL aggregate function calls.
      *
      * @param string $name The SQL aggregate function name

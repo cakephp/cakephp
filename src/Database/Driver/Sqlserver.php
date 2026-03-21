@@ -290,6 +290,8 @@ class Sqlserver extends Driver
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
             DriverFeatureEnum::CHECK_CONSTRAINTS => false,
+            DriverFeatureEnum::STRING_AGG => true,
+            DriverFeatureEnum::GROUP_CONCAT => false,
         };
     }
 
