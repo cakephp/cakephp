@@ -51,15 +51,28 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     protected mixed $_type;
 
     /**
+     * Whether this is a NOT BETWEEN expression
+     *
+     * @var bool
+     */
+    protected bool $_not = false;
+
+    /**
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values in between the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type The data type name to bind the values with.
+     * @param bool $not Whether this is a NOT BETWEEN expression.
      */
-    public function __construct(ExpressionInterface|string $field, mixed $from, mixed $to, ?string $type = null)
-    {
+    public function __construct(
+        ExpressionInterface|string $field,
+        mixed $from,
+        mixed $to,
+        ?string $type = null,
+        bool $not = false,
+    ) {
         if ($type !== null) {
             $from = $this->_castToExpression($from, $type);
             $to = $this->_castToExpression($to, $type);
@@ -69,6 +82,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         $this->_from = $from;
         $this->_to = $to;
         $this->_type = $type;
+        $this->_not = $not;
     }
 
     /**
@@ -95,7 +109,9 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         }
         assert(is_string($field));
 
-        return sprintf('%s BETWEEN %s AND %s', $field, $parts['from'], $parts['to']);
+        $operator = $this->_not ? 'NOT BETWEEN' : 'BETWEEN';
+
+        return sprintf('%s %s %s AND %s', $field, $operator, $parts['from'], $parts['to']);
     }
 
     /**

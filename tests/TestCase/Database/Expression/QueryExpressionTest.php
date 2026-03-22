@@ -254,6 +254,32 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
+     * Tests that between() generates correct SQL.
+     */
+    public function testBetween(): void
+    {
+        $expr = new QueryExpression();
+        $expr->between('age', 18, 65);
+        $this->assertEqualsSql(
+            'age BETWEEN :c0 AND :c1',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
+     * Tests that notBetween() generates correct SQL.
+     */
+    public function testNotBetween(): void
+    {
+        $expr = new QueryExpression();
+        $expr->notBetween('age', 18, 65);
+        $this->assertEqualsSql(
+            'age NOT BETWEEN :c0 AND :c1',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
      * Tests isDistinctFrom()
      */
     public function testIsDistinctFrom(): void
