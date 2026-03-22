@@ -200,7 +200,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn'], ['isDistinctFrom'], ['isNotDistinctFrom'],
+            ['notLike'], ['in'], ['notIn'], ['inOrNull'], ['notInOrNull'], ['isDistinctFrom'], ['isNotDistinctFrom'],
         ];
     }
 
@@ -238,6 +238,19 @@ class QueryExpressionTest extends TestCase
 
         $expr = new QueryExpression(['OR' => []]);
         $this->assertCount(0, $expr);
+    }
+
+    /**
+     * Tests that both conditions are generated for inOrNull().
+     */
+    public function testInOrNull(): void
+    {
+        $expr = new QueryExpression();
+        $expr->inOrNull('test', ['one', 'two']);
+        $this->assertEqualsSql(
+            '(test IN (:c0,:c1) OR (test) IS NULL)',
+            $expr->sql(new ValueBinder()),
+        );
     }
 
     /**

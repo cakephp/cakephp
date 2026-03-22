@@ -397,6 +397,28 @@ class QueryExpression implements ExpressionInterface, Countable
 
     /**
      * Adds a new condition to the expression object in the form
+     * "(field IN (value1, value2) OR field IS NULL".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param \Cake\Database\ExpressionInterface|array|string $values the value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function inOrNull(
+        ExpressionInterface|string $field,
+        ExpressionInterface|array|string $values,
+        ?string $type = null,
+    ) {
+        $or = new static([], $this->getTypeMap(), 'OR');
+        $or
+            ->in($field, $values, $type)
+            ->isNull($field);
+
+        return $this->add($or);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form
      * "(field NOT IN (value1, value2) OR field IS NULL".
      *
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
@@ -409,7 +431,7 @@ class QueryExpression implements ExpressionInterface, Countable
         ExpressionInterface|array|string $values,
         ?string $type = null,
     ) {
-        $or = new static([], [], 'OR');
+        $or = new static([], $this->getTypeMap(), 'OR');
         $or
             ->notIn($field, $values, $type)
             ->isNull($field);
