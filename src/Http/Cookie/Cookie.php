@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
+use Cake\Http\Cookie\Enum\SameSite;
 use Cake\Utility\Hash;
 use DateTime;
 use DateTimeImmutable;
@@ -112,7 +113,7 @@ class Cookie implements CookieInterface
      *
      * @var \Cake\Http\Cookie\Enum\SameSite|null
      */
-    protected ?Enum\SameSite $sameSite = null;
+    protected ?SameSite $sameSite = null;
 
     /**
      * Default attributes for a cookie.
@@ -154,7 +155,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        Enum\SameSite|string|null $sameSite = null,
+        SameSite|string|null $sameSite = null,
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -628,7 +629,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getSameSite(): ?Enum\SameSite
+    public function getSameSite(): ?SameSite
     {
         return $this->sameSite;
     }
@@ -636,7 +637,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSameSite(Enum\SameSite|string|null $sameSite): static
+    public function withSameSite(SameSite|string|null $sameSite): static
     {
         $new = clone $this;
         $new->sameSite = static::resolveSameSite($sameSite);
@@ -650,12 +651,12 @@ class Cookie implements CookieInterface
      * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite SameSite value
      * @return \Cake\Http\Cookie\Enum\SameSite|null
      */
-    protected static function resolveSameSite(Enum\SameSite|string|null $sameSite): ?Enum\SameSite
+    protected static function resolveSameSite(SameSite|string|null $sameSite): ?SameSite
     {
         return match (true) {
             $sameSite === null => $sameSite,
-            $sameSite instanceof Enum\SameSite => $sameSite,
-            default => Enum\SameSite::from(ucfirst(strtolower($sameSite))),
+            $sameSite instanceof SameSite => $sameSite,
+            default => SameSite::from(ucfirst(strtolower($sameSite))),
         };
     }
 
