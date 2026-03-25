@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -230,16 +230,16 @@ class PostgresTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!$driver instanceof Postgres);
 
-        $this->assertTrue($driver->supports(DriverFeatureEnum::CTE));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::JSON));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
+        $this->assertTrue($driver->supports(DriverFeature::CTE));
+        $this->assertTrue($driver->supports(DriverFeature::JSON));
+        $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeature::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeature::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeature::INTERSECT_ALL));
+        $this->assertTrue($driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY));
 
-        $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertFalse($driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
     }
 
     /**

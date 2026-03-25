@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
@@ -238,7 +238,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
-    public function supports(DriverFeatureEnum $feature): bool
+    public function supports(DriverFeature $feature): bool
     {
         $versionCompare = function () use ($feature) {
             return version_compare(
@@ -249,19 +249,19 @@ class Mysql extends Driver
         };
 
         return match ($feature) {
-            DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            DriverFeatureEnum::SAVEPOINT => true,
+            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeature::SAVEPOINT => true,
 
-            DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS => false,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS => false,
 
-            DriverFeatureEnum::CTE,
-            DriverFeatureEnum::JSON,
-            DriverFeatureEnum::WINDOW => $versionCompare(),
-            DriverFeatureEnum::INTERSECT => $versionCompare(),
-            DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
-            DriverFeatureEnum::CHECK_CONSTRAINTS => $versionCompare(),
-            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
-            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
+            DriverFeature::CTE,
+            DriverFeature::JSON,
+            DriverFeature::WINDOW => $versionCompare(),
+            DriverFeature::INTERSECT => $versionCompare(),
+            DriverFeature::INTERSECT_ALL => $versionCompare(),
+            DriverFeature::CHECK_CONSTRAINTS => $versionCompare(),
+            DriverFeature::SET_OPERATIONS_ORDER_BY => true,
+            DriverFeature::OPTIMIZER_HINT_COMMENT => true,
         };
     }
 

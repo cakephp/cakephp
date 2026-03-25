@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
+use Cake\Http\Cookie\Enum\SameSite;
 use Cake\Utility\Hash;
 use DateTime;
 use DateTimeImmutable;
@@ -110,9 +111,9 @@ class Cookie implements CookieInterface
     /**
      * Samesite
      *
-     * @var \Cake\Http\Cookie\SameSiteEnum|null
+     * @var \Cake\Http\Cookie\Enum\SameSite|null
      */
-    protected ?SameSiteEnum $sameSite = null;
+    protected ?SameSite $sameSite = null;
 
     /**
      * Default attributes for a cookie.
@@ -144,7 +145,7 @@ class Cookie implements CookieInterface
      * @param string|null $domain Domain
      * @param bool|null $secure Is secure
      * @param bool|null $httpOnly HTTP Only
-     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite Samesite
+     * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite Samesite
      */
     public function __construct(
         string $name,
@@ -154,7 +155,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        SameSiteEnum|string|null $sameSite = null,
+        SameSite|string|null $sameSite = null,
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -165,7 +166,7 @@ class Cookie implements CookieInterface
         $this->httpOnly = $httpOnly ?? static::$defaults['httponly'];
         $this->path = $path ?? static::$defaults['path'];
         $this->secure = $secure ?? static::$defaults['secure'];
-        $this->sameSite = static::resolveSameSiteEnum($sameSite ?? static::$defaults['samesite']);
+        $this->sameSite = static::resolveSameSite($sameSite ?? static::$defaults['samesite']);
 
         if ($expiresAt) {
             if ($expiresAt instanceof DateTime) {
@@ -201,7 +202,7 @@ class Cookie implements CookieInterface
             $options['expires'] = static::dateTimeInstance($options['expires']);
         }
         if (isset($options['samesite'])) {
-            $options['samesite'] = static::resolveSameSiteEnum($options['samesite']);
+            $options['samesite'] = static::resolveSameSite($options['samesite']);
         }
 
         static::$defaults = $options + static::$defaults;
@@ -310,7 +311,7 @@ class Cookie implements CookieInterface
         // https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1
         if (isset($data['samesite'])) {
             try {
-                $data['samesite'] = static::resolveSameSiteEnum($data['samesite']);
+                $data['samesite'] = static::resolveSameSite($data['samesite']);
             } catch (ValueError) {
                 unset($data['samesite']);
             }
@@ -628,7 +629,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getSameSite(): ?SameSiteEnum
+    public function getSameSite(): ?SameSite
     {
         return $this->sameSite;
     }
@@ -636,26 +637,26 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSameSite(SameSiteEnum|string|null $sameSite): static
+    public function withSameSite(SameSite|string|null $sameSite): static
     {
         $new = clone $this;
-        $new->sameSite = static::resolveSameSiteEnum($sameSite);
+        $new->sameSite = static::resolveSameSite($sameSite);
 
         return $new;
     }
 
     /**
-     * Create SameSiteEnum instance.
+     * Create SameSite instance.
      *
-     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite SameSite value
-     * @return \Cake\Http\Cookie\SameSiteEnum|null
+     * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite SameSite value
+     * @return \Cake\Http\Cookie\Enum\SameSite|null
      */
-    protected static function resolveSameSiteEnum(SameSiteEnum|string|null $sameSite): ?SameSiteEnum
+    protected static function resolveSameSite(SameSite|string|null $sameSite): ?SameSite
     {
         return match (true) {
             $sameSite === null => $sameSite,
-            $sameSite instanceof SameSiteEnum => $sameSite,
-            default => SameSiteEnum::from(ucfirst(strtolower($sameSite))),
+            $sameSite instanceof SameSite => $sameSite,
+            default => SameSite::from(ucfirst(strtolower($sameSite))),
         };
     }
 

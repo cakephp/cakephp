@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
@@ -206,18 +206,18 @@ class SqliteTest extends TestCase
         foreach ($featureVersions as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature)),
+                $driver->supports(DriverFeature::from($feature)),
             );
         }
 
-        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeature::INTERSECT));
 
-        $this->assertFalse($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
-        $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
-        $this->assertFalse($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
+        $this->assertFalse($driver->supports(DriverFeature::INTERSECT_ALL));
+        $this->assertFalse($driver->supports(DriverFeature::JSON));
+        $this->assertFalse($driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY));
     }
 
     /**

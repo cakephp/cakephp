@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Http\Cookie;
 use Cake\Chronos\Chronos;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
-use Cake\Http\Cookie\SameSiteEnum;
+use Cake\Http\Cookie\Enum\SameSite;
 use Cake\TestSuite\TestCase;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -151,7 +151,7 @@ class CookieTest extends TestCase
         $this->assertStringNotContainsString('samesite=Lax', $cookie->toHeaderValue(), 'old instance not modified');
         $this->assertStringContainsString('samesite=Lax', $new->toHeaderValue());
 
-        $new = $cookie->withSameSite(SameSiteEnum::STRICT);
+        $new = $cookie->withSameSite(SameSite::STRICT);
         $this->assertStringContainsString('samesite=Strict', $new->toHeaderValue());
     }
 
@@ -169,7 +169,7 @@ class CookieTest extends TestCase
     public function testGetSameSite(): void
     {
         $cookie = new Cookie(name: 'cakephp', value: 'cakephp-rocks', sameSite: 'NONE');
-        $this->assertSame(SameSiteEnum::NONE, $cookie->getSameSite());
+        $this->assertSame(SameSite::NONE, $cookie->getSameSite());
     }
 
     /**

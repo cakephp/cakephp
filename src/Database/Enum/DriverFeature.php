@@ -14,9 +14,9 @@ declare(strict_types=1);
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Database\Enum;
 
-enum DriverFeatureEnum: string
+enum DriverFeature: string
 {
     /**
      * Common Table Expressions (with clause) support.

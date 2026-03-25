@@ -907,10 +907,10 @@ abstract class Driver implements LoggerAwareInterface
      *
      * Should return false for unknown features.
      *
-     * @param \Cake\Database\DriverFeatureEnum $feature Driver feature
+     * @param \Cake\Database\Enum\DriverFeature $feature Driver feature
      * @return bool
      */
-    abstract public function supports(DriverFeatureEnum $feature): bool;
+    abstract public function supports(Enum\DriverFeature $feature): bool;
 
     /**
      * Transforms the passed query to this Driver's dialect and returns an instance
