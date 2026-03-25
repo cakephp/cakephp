@@ -40,7 +40,7 @@ class Translator
         protected string $locale,
         protected Package $package,
         protected FormatterInterface $formatter,
-        protected ?Translator $fallback = null,
+        protected ?self $fallback = null,
     ) {
     }
 
