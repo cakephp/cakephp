@@ -24,7 +24,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDOException;
-use ReflectionMethod;
+use TestApp\Log\Engine\TestAppLog;
 
 /**
  * ErrorLogger Test
@@ -84,8 +84,12 @@ class ErrorLoggerTest extends TestCase
         $this->assertStringContainsString('Something went wrong', $logs[0]);
     }
 
-    public function testGetExceptionContextWithQueryException(): void
+    public function testLogExceptionContextWithQueryException(): void
     {
+        Log::setConfig('test_error', [
+            'className' => TestAppLog::class,
+        ]);
+
         $driver = $this->createMock(Mysql::class);
         $driver->method('config')->willReturn(['name' => 'my_connection']);
 
@@ -94,20 +98,26 @@ class ErrorLoggerTest extends TestCase
 
         $exception = new QueryException($query, new PDOException('Test error'));
 
-        $method = new ReflectionMethod($this->logger, 'getExceptionContext');
-        $context = $method->invoke($this->logger, $exception);
+        $this->logger->logException($exception);
 
-        $this->assertArrayHasKey('connection', $context);
-        $this->assertSame('my_connection', $context['connection']);
+        /** @var \TestApp\Log\Engine\TestAppLog $engine */
+        $engine = Log::engine('test_error');
+        $this->assertArrayHasKey('connection', $engine->passedScope);
+        $this->assertSame('my_connection', $engine->passedScope['connection']);
     }
 
-    public function testGetExceptionContextWithRegularException(): void
+    public function testLogExceptionContextWithRegularException(): void
     {
+        Log::setConfig('test_error', [
+            'className' => TestAppLog::class,
+        ]);
+
         $exception = new InvalidArgumentException('Test');
 
-        $method = new ReflectionMethod($this->logger, 'getExceptionContext');
-        $context = $method->invoke($this->logger, $exception);
+        $this->logger->logException($exception);
 
-        $this->assertEmpty($context);
+        /** @var \TestApp\Log\Engine\TestAppLog $engine */
+        $engine = Log::engine('test_error');
+        $this->assertArrayNotHasKey('connection', $engine->passedScope);
     }
 }
