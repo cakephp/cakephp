@@ -721,7 +721,7 @@ SQL;
             $this->markTestSkipped('PostGIS extension is not available');
         }
 
-        // GEOMETRY defaults to srid 0 while GEOGRAPHY defaults to srid 4326
+        // Unconstrained columns default to srid 0, typed columns default to 4326 for geography
         $sql = <<<SQL
             CREATE TABLE ref_table (
                 geometry_geometry GEOMETRY,
@@ -780,7 +780,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'geometryType' => 'Geometry',
-                'srid' => 4326,
+                'srid' => 0,
             ],
             'geography_point' => [
                 'type' => 'geography',
@@ -800,7 +800,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'geometryType' => 'Point',
-                'srid' => 0,
+                'srid' => 4326,
             ],
         ];
 

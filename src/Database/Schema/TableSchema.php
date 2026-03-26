@@ -172,15 +172,23 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             'unsigned' => null,
         ],
         'geometry' => [
+            'geometryType' => null,
+            'srid' => null,
+        ],
+        'geography' => [
+            'geometryType' => null,
             'srid' => null,
         ],
         'point' => [
+            'geometryType' => null,
             'srid' => null,
         ],
         'linestring' => [
+            'geometryType' => null,
             'srid' => null,
         ],
         'polygon' => [
+            'geometryType' => null,
             'srid' => null,
         ],
         'datetime' => [
