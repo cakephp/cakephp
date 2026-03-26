@@ -356,6 +356,12 @@ class PostgresSchemaDialect extends SchemaDialect
                 $field['generated'] = $row['identity_generation'];
             }
 
+            // Add PostGIS metadata for geometry/geography columns
+            if (isset($postgisColumns[$row['name']])) {
+                $field['geometryType'] = $postgisColumns[$row['name']]['type'];
+                $field['srid'] = $postgisColumns[$row['name']]['srid'];
+            }
+
             $columns[] = $field;
         }
 
