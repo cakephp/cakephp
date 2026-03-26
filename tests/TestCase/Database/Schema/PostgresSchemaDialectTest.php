@@ -749,7 +749,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Geometry',
+                'srid' => 0,
             ],
             'geometry_point' => [
                 'type' => 'geometry',
@@ -758,7 +759,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Point',
+                'srid' => 0,
             ],
             'geometry_point_4236' => [
                 'type' => 'geometry',
@@ -767,7 +769,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Point',
+                'srid' => 4236,
             ],
             'geography_geometry' => [
                 'type' => 'geography',
@@ -776,6 +779,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Geometry',
+                'srid' => 4326,
             ],
             'geography_point' => [
                 'type' => 'geography',
@@ -784,6 +789,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Point',
+                'srid' => 4326,
             ],
             'geography_point_0' => [
                 'type' => 'geography',
@@ -792,6 +799,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Point',
+                'srid' => 0,
             ],
         ];
 
