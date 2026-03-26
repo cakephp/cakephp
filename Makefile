@@ -171,10 +171,9 @@ component-%:
 	git checkout $(CURRENT_BRANCH) > /dev/null
 	- (git remote add pkg-$* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
-	git checkout -b $*
-	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
+	git branch $* $(CURRENT_BRANCH)
+	python3 contrib/git-filter-repo --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") --refs refs/heads/$* --force
 	git push -f pkg-$* $*:$(CURRENT_BRANCH)
-	git checkout $(CURRENT_BRANCH) > /dev/null
 
 tag-component-%: component-% guard-VERSION guard-GITHUB_TOKEN
 	@echo "Creating tag for the $* component"
