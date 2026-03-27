@@ -24,8 +24,9 @@ use Cake\Log\Log;
 /**
  * A response class for streaming large JSON datasets memory-efficiently.
  *
- * Supports both standard JSON arrays and NDJSON (newline-delimited JSON) formats.
- * Uses generators to yield JSON chunks, keeping only one item in memory at a time.
+ * Uses true streaming - data is flushed to the client as each item is encoded,
+ * keeping memory usage constant regardless of dataset size. Supports both
+ * standard JSON arrays and NDJSON (newline-delimited JSON) formats.
  *
  * ### Usage
  *
@@ -52,6 +53,13 @@ use Cake\Log\Log;
  * // Avoid - formatters like map(), combine() buffer results internally
  * $query = $this->Articles->find()->map(fn($row) => $row); // Breaks streaming
  * ```
+ *
+ * ### Memory Profile
+ *
+ * With true streaming, memory usage stays constant:
+ * - 10,000 rows @ 1KB each: ~1KB memory (not ~10MB)
+ * - 100,000 rows @ 1KB each: ~1KB memory (not ~100MB)
+ * - Time to first byte: after first row (not after all rows)
  */
 class JsonStreamResponse extends Response
 {
@@ -120,32 +128,38 @@ class JsonStreamResponse extends Response
         parent::__construct(['stream' => $stream]);
 
         $this->_setHeader('Content-Type', $contentType);
+        // Prevent proxy/nginx buffering for true streaming
+        $this->_setHeader('X-Accel-Buffering', 'no');
     }
 
     /**
      * Create the streaming callback.
      *
+     * The callback uses echo + flush for true streaming, sending data
+     * to the client as each item is encoded rather than buffering everything.
+     *
      * @return callable
      */
     protected function createStreamCallback(): callable
     {
-        return function (): string {
+        return function (): void {
             if ($this->streamOptions['format'] === 'ndjson') {
-                return $this->streamNdjson();
+                $this->streamNdjson();
+            } else {
+                $this->streamJson();
             }
-
-            return $this->streamJson();
         };
     }
 
     /**
      * Stream data as standard JSON.
      *
-     * @return string
+     * Uses echo + flush to send data immediately to the client.
+     *
+     * @return void
      */
-    protected function streamJson(): string
+    protected function streamJson(): void
     {
-        $output = '';
         $flags = $this->streamOptions['flags'];
         $transform = $this->streamOptions['transform'];
         $root = $this->streamOptions['root'];
@@ -156,19 +170,19 @@ class JsonStreamResponse extends Response
 
         if ($hasWrapper) {
             if ($envelope !== []) {
-                $output .= '{';
+                $this->output('{');
                 $parts = [];
                 foreach ($envelope as $key => $value) {
                     $parts[] = json_encode($key, $flags) . ':' . json_encode($value, $flags);
                 }
-                $output .= implode(',', $parts);
-                $output .= ',' . json_encode($root ?? $dataKey, $flags) . ':';
+                $this->output(implode(',', $parts));
+                $this->output(',' . json_encode($root ?? $dataKey, $flags) . ':');
             } else {
-                $output .= '{' . json_encode($root, $flags) . ':';
+                $this->output('{' . json_encode($root, $flags) . ':');
             }
         }
 
-        $output .= '[';
+        $this->output('[');
         $first = true;
         $index = 0;
 
@@ -183,42 +197,41 @@ class JsonStreamResponse extends Response
                 $this->logStreamError($errorMessage, $index);
 
                 if (!$first) {
-                    $output .= ',';
+                    $this->output(',');
                 }
-                $output .= json_encode([
+                $this->output(json_encode([
                     '__streamError' => [
                         'message' => $errorMessage,
                         'index' => $index,
                     ],
-                ], JSON_THROW_ON_ERROR);
+                ], JSON_THROW_ON_ERROR));
                 break;
             }
 
             if (!$first) {
-                $output .= ',';
+                $this->output(',');
             }
-            $output .= $encoded;
+            $this->outputAndFlush($encoded);
             $first = false;
             $index++;
         }
 
-        $output .= ']';
+        $this->output(']');
 
         if ($hasWrapper) {
-            $output .= '}';
+            $this->output('}');
         }
-
-        return $output;
     }
 
     /**
      * Stream data as NDJSON (newline-delimited JSON).
      *
-     * @return string
+     * Uses echo + flush to send each line immediately to the client.
+     *
+     * @return void
      */
-    protected function streamNdjson(): string
+    protected function streamNdjson(): void
     {
-        $output = '';
         $flags = $this->streamOptions['flags'];
         $transform = $this->streamOptions['transform'];
         $index = 0;
@@ -233,20 +246,55 @@ class JsonStreamResponse extends Response
                 $errorMessage = json_last_error_msg();
                 $this->logStreamError($errorMessage, $index);
 
-                $output .= json_encode([
+                $this->outputAndFlush(json_encode([
                     '__streamError' => [
                         'message' => $errorMessage,
                         'index' => $index,
                     ],
-                ], JSON_THROW_ON_ERROR) . "\n";
+                ], JSON_THROW_ON_ERROR) . "\n");
                 break;
             }
 
-            $output .= $encoded . "\n";
+            $this->outputAndFlush($encoded . "\n");
             $index++;
         }
+    }
 
-        return $output;
+    /**
+     * Output data without flushing.
+     *
+     * Used for structural elements like brackets that don't need immediate flushing.
+     *
+     * @param string $data The data to output.
+     * @return void
+     */
+    protected function output(string $data): void
+    {
+        echo $data;
+    }
+
+    /**
+     * Output data and flush to client immediately.
+     *
+     * This ensures data is sent to the client right away rather than
+     * being buffered, enabling true streaming behavior.
+     *
+     * @param string $data The data to output and flush.
+     * @return void
+     */
+    protected function outputAndFlush(string $data): void
+    {
+        echo $data;
+
+        // Only flush if we're at the implicit output buffer level (1) or no buffering.
+        // Higher levels indicate explicit buffering (e.g., tests) that we shouldn't disturb.
+        $level = ob_get_level();
+        if ($level <= 1) {
+            if ($level === 1) {
+                ob_flush();
+            }
+            flush();
+        }
     }
 
     /**

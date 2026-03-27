@@ -43,6 +43,23 @@ class JsonStreamResponseTest extends TestCase
         Configure::write('debug', $this->originalDebug);
     }
 
+    /**
+     * Get the streamed body content.
+     *
+     * Since JsonStreamResponse uses echo for true streaming,
+     * we need to capture the output with output buffering.
+     *
+     * @param \Cake\Http\Response\JsonStreamResponse $response The response to stream.
+     * @return string The captured output.
+     */
+    protected function getStreamedBody(JsonStreamResponse $response): string
+    {
+        ob_start();
+        // Trigger the stream by converting to string (calls __toString -> getContents -> callback)
+        (string)$response->getBody();
+        return ob_get_clean() ?: '';
+    }
+
     public function testSimpleArrayStreaming(): void
     {
         $data = [
@@ -51,10 +68,11 @@ class JsonStreamResponseTest extends TestCase
         ];
 
         $response = new JsonStreamResponse($data);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]', $body);
         $this->assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('no', $response->getHeaderLine('X-Accel-Buffering'));
     }
 
     public function testWithRootWrapper(): void
@@ -65,7 +83,7 @@ class JsonStreamResponseTest extends TestCase
         ];
 
         $response = new JsonStreamResponse($data, ['root' => 'articles']);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('{"articles":[{"id":1,"title":"First"},{"id":2,"title":"Second"}]}', $body);
     }
@@ -80,7 +98,7 @@ class JsonStreamResponseTest extends TestCase
             'envelope' => ['meta' => ['total' => 100, 'page' => 1]],
             'dataKey' => 'articles',
         ]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $decoded = json_decode($body, true);
         $this->assertSame(['total' => 100, 'page' => 1], $decoded['meta']);
@@ -95,7 +113,7 @@ class JsonStreamResponseTest extends TestCase
         ];
 
         $response = new JsonStreamResponse($data, ['format' => 'ndjson']);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $expected = "{\"id\":1,\"name\":\"Alice\"}\n{\"id\":2,\"name\":\"Bob\"}\n";
         $this->assertSame($expected, $body);
@@ -112,7 +130,7 @@ class JsonStreamResponseTest extends TestCase
         $response = new JsonStreamResponse($data, [
             'transform' => fn($item) => ['id' => $item->id, 'name' => $item->name],
         ]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('[{"id":1,"name":"Alice"},{"id":2,"name":"Bob"}]', $body);
         $this->assertStringNotContainsString('secret', $body);
@@ -121,7 +139,7 @@ class JsonStreamResponseTest extends TestCase
     public function testEmptyIterable(): void
     {
         $response = new JsonStreamResponse([]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('[]', $body);
     }
@@ -129,7 +147,7 @@ class JsonStreamResponseTest extends TestCase
     public function testEmptyIterableWithRoot(): void
     {
         $response = new JsonStreamResponse([], ['root' => 'data']);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('{"data":[]}', $body);
     }
@@ -137,7 +155,7 @@ class JsonStreamResponseTest extends TestCase
     public function testEmptyIterableNdjson(): void
     {
         $response = new JsonStreamResponse([], ['format' => 'ndjson']);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('', $body);
     }
@@ -151,7 +169,7 @@ class JsonStreamResponseTest extends TestCase
         };
 
         $response = new JsonStreamResponse($generator());
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         $this->assertSame('[{"id":1},{"id":2},{"id":3}]', $body);
     }
@@ -168,9 +186,11 @@ class JsonStreamResponseTest extends TestCase
         $response = new JsonStreamResponse($data);
 
         try {
+            ob_start();
             $this->expectException(JsonException::class);
             (string)$response->getBody();
         } finally {
+            ob_end_clean();
             fclose($resource);
         }
     }
@@ -190,7 +210,7 @@ class JsonStreamResponseTest extends TestCase
         $response = new JsonStreamResponse($generator(), [
             'flags' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
         ]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         fclose($resource);
 
@@ -216,7 +236,7 @@ class JsonStreamResponseTest extends TestCase
             'format' => 'ndjson',
             'flags' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
         ]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         fclose($resource);
 
@@ -236,8 +256,8 @@ class JsonStreamResponseTest extends TestCase
         $this->assertNull($response->getStreamOptions()['root']);
         $this->assertSame('items', $newResponse->getStreamOptions()['root']);
 
-        $this->assertSame('[{"id":1}]', (string)$response->getBody());
-        $this->assertSame('{"items":[{"id":1}]}', (string)$newResponse->getBody());
+        $this->assertSame('[{"id":1}]', $this->getStreamedBody($response));
+        $this->assertSame('{"items":[{"id":1}]}', $this->getStreamedBody($newResponse));
     }
 
     public function testCustomJsonFlags(): void
@@ -248,12 +268,12 @@ class JsonStreamResponseTest extends TestCase
         $response = new JsonStreamResponse($data, [
             'flags' => JSON_THROW_ON_ERROR,
         ]);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
         $this->assertStringContainsString('<script>', $body);
 
         // With default flags (hex encoded)
         $response = new JsonStreamResponse($data);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
         $this->assertStringNotContainsString('<script>', $body);
         $this->assertStringContainsString('\u003C', $body);
     }
@@ -264,7 +284,7 @@ class JsonStreamResponseTest extends TestCase
 
         $data = [['id' => 1, 'name' => 'Test']];
         $response = new JsonStreamResponse($data);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         // Pretty print adds newlines and indentation
         $this->assertStringContainsString("\n", $body);
@@ -277,7 +297,7 @@ class JsonStreamResponseTest extends TestCase
 
         $data = [['id' => 1, 'name' => 'Test']];
         $response = new JsonStreamResponse($data);
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
 
         // No pretty print - no extra newlines
         $this->assertSame('[{"id":1,"name":"Test"}]', $body);
@@ -316,7 +336,7 @@ class JsonStreamResponseTest extends TestCase
             ],
         ]);
 
-        $body = (string)$response->getBody();
+        $body = $this->getStreamedBody($response);
         $decoded = json_decode($body, true);
 
         $this->assertSame(['total' => 3, 'page' => 1], $decoded['meta']);
