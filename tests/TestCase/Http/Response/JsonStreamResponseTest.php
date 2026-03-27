@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http\Response;
 
 use Cake\Http\Response\JsonStreamResponse;
 use Cake\TestSuite\TestCase;
+use JsonException;
 
 class JsonStreamResponseTest extends TestCase
 {
@@ -132,5 +133,20 @@ class JsonStreamResponseTest extends TestCase
         $body = (string)$response->getBody();
 
         $this->assertSame('[{"id":1},{"id":2},{"id":3}]', $body);
+    }
+
+    public function testFirstItemValidationThrows(): void
+    {
+        $resource = fopen('php://memory', 'r');
+        $data = [
+            ['id' => 1, 'resource' => $resource],
+        ];
+
+        $response = new JsonStreamResponse($data);
+
+        $this->expectException(JsonException::class);
+        (string)$response->getBody();
+
+        fclose($resource);
     }
 }
