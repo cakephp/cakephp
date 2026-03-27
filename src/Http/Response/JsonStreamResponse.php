@@ -18,6 +18,7 @@ namespace Cake\Http\Response;
 
 use Cake\Http\CallbackStream;
 use Cake\Http\Response;
+use Cake\Log\Log;
 
 /**
  * A response class for streaming large JSON datasets memory-efficiently.
@@ -150,17 +151,36 @@ class JsonStreamResponse extends Response
 
         $output .= '[';
         $first = true;
+        $index = 0;
 
         foreach ($this->data as $item) {
             if ($transform !== null) {
                 $item = $transform($item);
             }
 
+            $encoded = json_encode($item, $flags);
+            if ($encoded === false) {
+                $errorMessage = json_last_error_msg();
+                $this->logStreamError($errorMessage, $index);
+
+                if (!$first) {
+                    $output .= ',';
+                }
+                $output .= json_encode([
+                    '__streamError' => [
+                        'message' => $errorMessage,
+                        'index' => $index,
+                    ],
+                ], JSON_THROW_ON_ERROR);
+                break;
+            }
+
             if (!$first) {
                 $output .= ',';
             }
-            $output .= json_encode($item, $flags);
+            $output .= $encoded;
             $first = false;
+            $index++;
         }
 
         $output .= ']';
@@ -192,6 +212,22 @@ class JsonStreamResponse extends Response
         }
 
         return $output;
+    }
+
+    /**
+     * Log a streaming error.
+     *
+     * @param string $message Error message.
+     * @param int $index Item index where error occurred.
+     * @return void
+     */
+    protected function logStreamError(string $message, int $index): void
+    {
+        Log::error(sprintf(
+            'JsonStreamResponse encoding failed at index %d: %s',
+            $index,
+            $message,
+        ));
     }
 
     /**

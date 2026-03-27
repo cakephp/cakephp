@@ -149,4 +149,30 @@ class JsonStreamResponseTest extends TestCase
 
         fclose($resource);
     }
+
+    public function testMidStreamErrorMarker(): void
+    {
+        $resource = fopen('php://memory', 'r');
+
+        $generator = function () use ($resource) {
+            yield ['id' => 1, 'name' => 'Valid'];
+            yield ['id' => 2, 'name' => 'Also valid'];
+            yield ['id' => 3, 'resource' => $resource]; // Will fail
+        };
+
+        // Use flags without JSON_THROW_ON_ERROR for mid-stream handling
+        $response = new JsonStreamResponse($generator(), [
+            'flags' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
+        ]);
+        $body = (string)$response->getBody();
+
+        fclose($resource);
+
+        // Should contain error marker
+        $this->assertStringContainsString('__streamError', $body);
+        $this->assertStringContainsString('"index":2', $body);
+        // Should still be valid JSON
+        $decoded = json_decode($body, true);
+        $this->assertNotNull($decoded);
+    }
 }
