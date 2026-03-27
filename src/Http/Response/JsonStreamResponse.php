@@ -27,7 +27,6 @@ use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
 use JsonException;
-use Traversable;
 
 /**
  * A response class for streaming large JSON datasets memory-efficiently.
@@ -117,6 +116,13 @@ class JsonStreamResponse extends Response
     protected array $streamOptions = [];
 
     /**
+     * Number of streamed rows since the last flush.
+     *
+     * @var int
+     */
+    protected int $rowsSinceLastFlush = 0;
+
+    /**
      * Default streaming options.
      *
      * @var array<string, mixed>
@@ -128,6 +134,7 @@ class JsonStreamResponse extends Response
         'format' => self::FORMAT_JSON,
         'transform' => null,
         'flags' => self::DEFAULT_JSON_FLAGS,
+        'flushEvery' => 1,
     ];
 
     /**
@@ -141,6 +148,7 @@ class JsonStreamResponse extends Response
      *   - `format`: Output format - 'json' or 'ndjson' (string, default: 'json')
      *   - `transform`: Transform each item before encoding (callable|null, default: null)
      *   - `flags`: JSON encode flags (int, default: DEFAULT_JSON_FLAGS)
+     *   - `flushEvery`: Flush output buffers every N items (int, default: 1)
      */
     public function __construct(iterable $data, array $options = [])
     {
@@ -209,7 +217,7 @@ class JsonStreamResponse extends Response
                 $encoded = $this->encodeStreamItem($iterator->current(), $flags, $index);
             } catch (JsonException $exception) {
                 $this->output(',');
-                $this->output($this->buildStreamErrorMarker($exception->getMessage(), $index));
+                $this->outputAndFlush($this->buildStreamErrorMarker($exception->getMessage(), $index), force: true);
                 break;
             }
 
@@ -221,6 +229,7 @@ class JsonStreamResponse extends Response
 
         $this->output(']');
         $this->outputJsonSuffix($hasWrapper);
+        $this->flushOutputBuffers();
     }
 
     /**
@@ -255,13 +264,15 @@ class JsonStreamResponse extends Response
             $iterator->next();
             $index++;
         }
+
+        $this->flushOutputBuffers();
     }
 
     /**
      * Convert iterable data to a rewindable iterator.
      *
      * @param iterable $data Data to iterate over.
-     * @return \Iterator
+     * @return \Iterator<mixed>
      */
     protected function getIterator(iterable $data): Iterator
     {
@@ -275,18 +286,22 @@ class JsonStreamResponse extends Response
         }
         if ($data instanceof IteratorAggregate) {
             $iterator = $data->getIterator();
+            if ($iterator instanceof Iterator) {
+                $iterator->rewind();
+
+                return $iterator;
+            }
+
+            $iterator = new IteratorIterator($iterator);
             $iterator->rewind();
 
             return $iterator;
         }
-        if ($data instanceof Traversable) {
-            $iterator = new IteratorIterator($data);
-            $iterator->rewind();
 
-            return $iterator;
-        }
+        $iterator = new IteratorIterator($data);
+        $iterator->rewind();
 
-        return new ArrayIterator(iterator_to_array($data));
+        return $iterator;
     }
 
     /**
@@ -409,6 +424,9 @@ class JsonStreamResponse extends Response
         if (Configure::read('debug') && !isset($originalOptions['flags'])) {
             $options['flags'] |= JSON_PRETTY_PRINT;
         }
+        if (!is_int($options['flushEvery']) || $options['flushEvery'] < 1) {
+            throw new InvalidArgumentException('`flushEvery` must be an integer greater than or equal to 1');
+        }
 
         return $options;
     }
@@ -449,11 +467,27 @@ class JsonStreamResponse extends Response
      * being buffered, enabling true streaming behavior.
      *
      * @param string $data The data to output and flush.
+     * @param bool $force Whether to force an immediate flush regardless of threshold.
      * @return void
      */
-    protected function outputAndFlush(string $data): void
+    protected function outputAndFlush(string $data, bool $force = false): void
     {
         echo $data;
+        $this->rowsSinceLastFlush++;
+
+        if ($force || $this->rowsSinceLastFlush >= $this->streamOptions['flushEvery']) {
+            $this->flushOutputBuffers();
+        }
+    }
+
+    /**
+     * Flush output buffers when it is safe to do so.
+     *
+     * @return void
+     */
+    protected function flushOutputBuffers(): void
+    {
+        $this->rowsSinceLastFlush = 0;
 
         // Only flush if we're at the implicit output buffer level (1) or no buffering.
         // Higher levels indicate explicit buffering (e.g., tests) that we shouldn't disturb.

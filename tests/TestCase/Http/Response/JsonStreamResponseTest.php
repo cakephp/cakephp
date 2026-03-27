@@ -315,6 +315,38 @@ class JsonStreamResponseTest extends TestCase
         $response->withStreamOptions(['format' => 'xml']);
     }
 
+    public function testFlushEveryOptionFlushesInBatches(): void
+    {
+        $response = new class ([
+            ['id' => 1],
+            ['id' => 2],
+            ['id' => 3],
+        ], [
+            'flushEvery' => 2,
+        ]) extends JsonStreamResponse {
+            public int $flushCalls = 0;
+
+            protected function flushOutputBuffers(): void
+            {
+                $this->flushCalls++;
+                parent::flushOutputBuffers();
+            }
+        };
+
+        $body = $this->getStreamedBody($response);
+
+        $this->assertSame('[{"id":1},{"id":2},{"id":3}]', $body);
+        $this->assertSame(2, $response->flushCalls);
+    }
+
+    public function testInvalidFlushEveryThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`flushEvery` must be an integer greater than or equal to 1');
+
+        new JsonStreamResponse([], ['flushEvery' => 0]);
+    }
+
     public function testCustomJsonFlags(): void
     {
         $data = [['html' => '<script>alert("xss")</script>']];
