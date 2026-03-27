@@ -175,4 +175,27 @@ class JsonStreamResponseTest extends TestCase
         $decoded = json_decode($body, true);
         $this->assertNotNull($decoded);
     }
+
+    public function testNdjsonMidStreamError(): void
+    {
+        $resource = fopen('php://memory', 'r');
+
+        $generator = function () use ($resource) {
+            yield ['id' => 1];
+            yield ['id' => 2, 'resource' => $resource];
+        };
+
+        $response = new JsonStreamResponse($generator(), [
+            'format' => 'ndjson',
+            'flags' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
+        ]);
+        $body = (string)$response->getBody();
+
+        fclose($resource);
+
+        $lines = explode("\n", trim($body));
+        $this->assertCount(2, $lines);
+        $this->assertSame('{"id":1}', $lines[0]);
+        $this->assertStringContainsString('__streamError', $lines[1]);
+    }
 }

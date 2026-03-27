@@ -202,13 +202,29 @@ class JsonStreamResponse extends Response
         $output = '';
         $flags = $this->streamOptions['flags'];
         $transform = $this->streamOptions['transform'];
+        $index = 0;
 
         foreach ($this->data as $item) {
             if ($transform !== null) {
                 $item = $transform($item);
             }
 
-            $output .= json_encode($item, $flags) . "\n";
+            $encoded = json_encode($item, $flags);
+            if ($encoded === false) {
+                $errorMessage = json_last_error_msg();
+                $this->logStreamError($errorMessage, $index);
+
+                $output .= json_encode([
+                    '__streamError' => [
+                        'message' => $errorMessage,
+                        'index' => $index,
+                    ],
+                ], JSON_THROW_ON_ERROR) . "\n";
+                break;
+            }
+
+            $output .= $encoded . "\n";
+            $index++;
         }
 
         return $output;
