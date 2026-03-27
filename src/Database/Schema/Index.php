@@ -299,7 +299,7 @@ class Index
      */
     public function toArray(): array
     {
-        return [
+        $result = [
             'name' => $this->getName(),
             'columns' => $this->getColumns(),
             'type' => $this->getType(),
@@ -307,7 +307,12 @@ class Index
             'order' => $this->getOrder(),
             'include' => $this->getInclude(),
             'where' => $this->getWhere(),
-            'accessMethod' => $this->getAccessMethod(),
         ];
+        // Only include accessMethod when set (PostgreSQL-specific)
+        if ($this->accessMethod !== null) {
+            $result['accessMethod'] = $this->accessMethod;
+        }
+
+        return $result;
     }
 }
