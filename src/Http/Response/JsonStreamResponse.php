@@ -16,12 +16,18 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Response;
 
+use ArrayIterator;
 use Cake\Core\Configure;
 use Cake\Http\CallbackStream;
 use Cake\Http\Response;
 use Cake\Log\Log;
 use Closure;
 use InvalidArgumentException;
+use Iterator;
+use IteratorAggregate;
+use IteratorIterator;
+use JsonException;
+use Traversable;
 
 /**
  * A response class for streaming large JSON datasets memory-efficiently.
@@ -139,33 +145,12 @@ class JsonStreamResponse extends Response
     public function __construct(iterable $data, array $options = [])
     {
         $this->data = $data;
-        $this->streamOptions = $options + $this->defaultStreamOptions;
-
-        // Validate format
-        $format = $this->streamOptions['format'];
-        if (!in_array($format, self::SUPPORTED_FORMATS, true)) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid format `%s`. Supported formats are: %s',
-                $format,
-                implode(', ', self::SUPPORTED_FORMATS),
-            ));
-        }
-
-        // Add pretty print in debug mode (consistent with JsonView)
-        if (Configure::read('debug') && !isset($options['flags'])) {
-            $this->streamOptions['flags'] |= JSON_PRETTY_PRINT;
-        }
-
-        $contentType = $format === self::FORMAT_NDJSON
-            ? 'application/x-ndjson; charset=UTF-8'
-            : 'application/json; charset=UTF-8';
+        $this->streamOptions = $this->normalizeStreamOptions($options + $this->defaultStreamOptions, $options);
 
         $stream = new CallbackStream($this->createStreamCallback());
         parent::__construct(['stream' => $stream]);
 
-        $this->_setHeader('Content-Type', $contentType);
-        // Prevent proxy/nginx buffering for true streaming
-        $this->_setHeader('X-Accel-Buffering', 'no');
+        $this->applyStreamingHeaders();
     }
 
     /**
@@ -197,66 +182,45 @@ class JsonStreamResponse extends Response
     protected function streamJson(): void
     {
         $flags = $this->streamOptions['flags'];
-        $transform = $this->streamOptions['transform'];
         $root = $this->streamOptions['root'];
         $envelope = $this->streamOptions['envelope'];
         $dataKey = $this->streamOptions['dataKey'];
-
         $hasWrapper = $root !== null || $envelope !== [];
+        $iterator = $this->getIterator($this->data);
 
-        if ($hasWrapper) {
-            if ($envelope !== []) {
-                $this->output('{');
-                $parts = [];
-                foreach ($envelope as $key => $value) {
-                    $parts[] = json_encode($key, $flags) . ':' . json_encode($value, $flags);
-                }
-                $this->output(implode(',', $parts));
-                $this->output(',' . json_encode($root ?? $dataKey, $flags) . ':');
-            } else {
-                $this->output('{' . json_encode($root, $flags) . ':');
-            }
+        if (!$iterator->valid()) {
+            $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
+            $this->output('[]');
+            $this->outputJsonSuffix($hasWrapper);
+
+            return;
         }
 
+        $encoded = $this->encodeStreamItem($iterator->current(), $flags, 0);
+
+        $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
         $this->output('[');
-        $first = true;
-        $index = 0;
+        $this->outputAndFlush($encoded);
 
-        foreach ($this->data as $item) {
-            if ($transform !== null) {
-                $item = $transform($item);
-            }
-
-            $encoded = json_encode($item, $flags);
-            if ($encoded === false) {
-                $errorMessage = json_last_error_msg();
-                $this->logStreamError($errorMessage, $index);
-
-                if (!$first) {
-                    $this->output(',');
-                }
-                $this->output(json_encode([
-                    '__streamError' => [
-                        'message' => $errorMessage,
-                        'index' => $index,
-                    ],
-                ], JSON_THROW_ON_ERROR));
+        $iterator->next();
+        $index = 1;
+        while ($iterator->valid()) {
+            try {
+                $encoded = $this->encodeStreamItem($iterator->current(), $flags, $index);
+            } catch (JsonException $exception) {
+                $this->output(',');
+                $this->output($this->buildStreamErrorMarker($exception->getMessage(), $index));
                 break;
             }
 
-            if (!$first) {
-                $this->output(',');
-            }
+            $this->output(',');
             $this->outputAndFlush($encoded);
-            $first = false;
+            $iterator->next();
             $index++;
         }
 
         $this->output(']');
-
-        if ($hasWrapper) {
-            $this->output('}');
-        }
+        $this->outputJsonSuffix($hasWrapper);
     }
 
     /**
@@ -269,31 +233,200 @@ class JsonStreamResponse extends Response
     protected function streamNdjson(): void
     {
         $flags = $this->streamOptions['flags'];
-        $transform = $this->streamOptions['transform'];
-        $index = 0;
+        $iterator = $this->getIterator($this->data);
 
-        foreach ($this->data as $item) {
-            if ($transform !== null) {
-                $item = $transform($item);
-            }
+        if (!$iterator->valid()) {
+            return;
+        }
 
-            $encoded = json_encode($item, $flags);
-            if ($encoded === false) {
-                $errorMessage = json_last_error_msg();
-                $this->logStreamError($errorMessage, $index);
+        $this->outputAndFlush($this->encodeStreamItem($iterator->current(), $flags, 0) . "\n");
 
-                $this->outputAndFlush(json_encode([
-                    '__streamError' => [
-                        'message' => $errorMessage,
-                        'index' => $index,
-                    ],
-                ], JSON_THROW_ON_ERROR) . "\n");
+        $iterator->next();
+        $index = 1;
+        while ($iterator->valid()) {
+            try {
+                $encoded = $this->encodeStreamItem($iterator->current(), $flags, $index);
+            } catch (JsonException $exception) {
+                $this->outputAndFlush($this->buildStreamErrorMarker($exception->getMessage(), $index) . "\n");
                 break;
             }
 
             $this->outputAndFlush($encoded . "\n");
+            $iterator->next();
             $index++;
         }
+    }
+
+    /**
+     * Convert iterable data to a rewindable iterator.
+     *
+     * @param iterable $data Data to iterate over.
+     * @return \Iterator
+     */
+    protected function getIterator(iterable $data): Iterator
+    {
+        if (is_array($data)) {
+            return new ArrayIterator($data);
+        }
+        if ($data instanceof Iterator) {
+            $data->rewind();
+
+            return $data;
+        }
+        if ($data instanceof IteratorAggregate) {
+            $iterator = $data->getIterator();
+            $iterator->rewind();
+
+            return $iterator;
+        }
+        if ($data instanceof Traversable) {
+            $iterator = new IteratorIterator($data);
+            $iterator->rewind();
+
+            return $iterator;
+        }
+
+        return new ArrayIterator(iterator_to_array($data));
+    }
+
+    /**
+     * Encode one stream item and normalize error handling.
+     *
+     * @param mixed $item Item to encode.
+     * @param int $flags JSON encode flags.
+     * @param int $index Item index.
+     * @return string
+     */
+    protected function encodeStreamItem(mixed $item, int $flags, int $index): string
+    {
+        $transform = $this->streamOptions['transform'];
+        if ($transform !== null) {
+            $item = $transform($item);
+        }
+
+        try {
+            $encoded = json_encode($item, $flags);
+        } catch (JsonException $exception) {
+            $this->logStreamError($exception->getMessage(), $index);
+
+            throw $exception;
+        }
+
+        if ($encoded === false) {
+            $message = json_last_error_msg();
+            $this->logStreamError($message, $index);
+
+            throw new JsonException($message);
+        }
+
+        return $encoded;
+    }
+
+    /**
+     * Build the JSON wrapper prefix.
+     *
+     * @param bool $hasWrapper Whether wrapper output is needed.
+     * @param array<string, mixed> $envelope Envelope data.
+     * @param string|null $root Root key.
+     * @param string $dataKey Data key.
+     * @param int $flags JSON encode flags.
+     * @return void
+     */
+    protected function outputJsonPrefix(
+        bool $hasWrapper,
+        array $envelope,
+        ?string $root,
+        string $dataKey,
+        int $flags,
+    ): void {
+        if (!$hasWrapper) {
+            return;
+        }
+
+        if ($envelope !== []) {
+            $this->output('{');
+            $parts = [];
+            foreach ($envelope as $key => $value) {
+                $parts[] = json_encode($key, $flags) . ':' . json_encode($value, $flags);
+            }
+            $this->output(implode(',', $parts));
+            $this->output(',' . json_encode($root ?? $dataKey, $flags) . ':');
+
+            return;
+        }
+
+        $this->output('{' . json_encode($root, $flags) . ':');
+    }
+
+    /**
+     * Output the closing wrapper bytes when needed.
+     *
+     * @param bool $hasWrapper Whether wrapper output is needed.
+     * @return void
+     */
+    protected function outputJsonSuffix(bool $hasWrapper): void
+    {
+        if ($hasWrapper) {
+            $this->output('}');
+        }
+    }
+
+    /**
+     * Build the marker emitted after a mid-stream encoding failure.
+     *
+     * @param string $message Error message.
+     * @param int $index Item index.
+     * @return string
+     */
+    protected function buildStreamErrorMarker(string $message, int $index): string
+    {
+        return json_encode([
+            '__streamError' => [
+                'message' => $message,
+                'index' => $index,
+            ],
+        ], JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Normalize and validate stream options.
+     *
+     * @param array<string, mixed> $options Merged options.
+     * @param array<string, mixed> $originalOptions Original options passed by the caller.
+     * @return array<string, mixed>
+     */
+    protected function normalizeStreamOptions(array $options, array $originalOptions = []): array
+    {
+        $format = $options['format'];
+        if (!in_array($format, self::SUPPORTED_FORMATS, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid format `%s`. Supported formats are: %s',
+                $format,
+                implode(', ', self::SUPPORTED_FORMATS),
+            ));
+        }
+
+        if (Configure::read('debug') && !isset($originalOptions['flags'])) {
+            $options['flags'] |= JSON_PRETTY_PRINT;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Apply headers derived from the active stream options.
+     *
+     * @return void
+     */
+    protected function applyStreamingHeaders(): void
+    {
+        $contentType = $this->streamOptions['format'] === self::FORMAT_NDJSON
+            ? 'application/x-ndjson; charset=UTF-8'
+            : 'application/json; charset=UTF-8';
+
+        $this->_setHeader('Content-Type', $contentType);
+        // Prevent proxy/nginx buffering for true streaming
+        $this->_setHeader('X-Accel-Buffering', 'no');
     }
 
     /**
@@ -370,7 +503,8 @@ class JsonStreamResponse extends Response
     public function withStreamOptions(array $options): static
     {
         $new = clone $this;
-        $new->streamOptions = $options + $new->streamOptions;
+        $new->streamOptions = $this->normalizeStreamOptions($options + $this->streamOptions, $options);
+        $new->applyStreamingHeaders();
 
         return $new->withBody(new CallbackStream($new->createStreamCallback()));
     }

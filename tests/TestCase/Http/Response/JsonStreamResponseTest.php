@@ -21,6 +21,7 @@ use Cake\Http\Response\JsonStreamResponse;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use JsonException;
+use Throwable;
 
 class JsonStreamResponseTest extends TestCase
 {
@@ -56,8 +57,14 @@ class JsonStreamResponseTest extends TestCase
     protected function getStreamedBody(JsonStreamResponse $response): string
     {
         ob_start();
-        // Trigger the stream by converting to string (calls __toString -> getContents -> callback)
-        (string)$response->getBody();
+        try {
+            // Trigger the stream by converting to string (calls __toString -> getContents -> callback)
+            (string)$response->getBody();
+        } catch (Throwable $exception) {
+            ob_end_clean();
+
+            throw $exception;
+        }
 
         return ob_get_clean() ?: '';
     }
@@ -188,9 +195,32 @@ class JsonStreamResponseTest extends TestCase
         $response = new JsonStreamResponse($data);
 
         try {
-            ob_start();
             $this->expectException(JsonException::class);
-            (string)$response->getBody();
+            $this->getStreamedBody($response);
+        } finally {
+            fclose($resource);
+        }
+    }
+
+    public function testFirstItemValidationDoesNotEmitPartialJson(): void
+    {
+        $resource = fopen('php://memory', 'r');
+        $this->assertIsResource($resource);
+
+        $response = new JsonStreamResponse([
+            ['id' => 1, 'resource' => $resource],
+        ], [
+            'root' => 'items',
+        ]);
+
+        try {
+            ob_start();
+            try {
+                (string)$response->getBody();
+                $this->fail('Expected JsonException was not thrown.');
+            } catch (JsonException) {
+                $this->assertSame('', ob_get_contents());
+            }
         } finally {
             ob_end_clean();
             fclose($resource);
@@ -260,6 +290,29 @@ class JsonStreamResponseTest extends TestCase
 
         $this->assertSame('[{"id":1}]', $this->getStreamedBody($response));
         $this->assertSame('{"items":[{"id":1}]}', $this->getStreamedBody($newResponse));
+    }
+
+    public function testWithStreamOptionsRebuildsContentTypeForFormatChange(): void
+    {
+        $response = new JsonStreamResponse([['id' => 1]]);
+
+        $newResponse = $response->withStreamOptions([
+            'format' => JsonStreamResponse::FORMAT_NDJSON,
+        ]);
+
+        $this->assertSame('application/json; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('application/x-ndjson; charset=UTF-8', $newResponse->getHeaderLine('Content-Type'));
+        $this->assertSame("{\"id\":1}\n", $this->getStreamedBody($newResponse));
+    }
+
+    public function testWithStreamOptionsValidatesFormat(): void
+    {
+        $response = new JsonStreamResponse([['id' => 1]]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid format `xml`. Supported formats are: json, ndjson');
+
+        $response->withStreamOptions(['format' => 'xml']);
     }
 
     public function testCustomJsonFlags(): void
