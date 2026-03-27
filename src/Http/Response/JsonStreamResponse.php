@@ -20,6 +20,8 @@ use Cake\Core\Configure;
 use Cake\Http\CallbackStream;
 use Cake\Http\Response;
 use Cake\Log\Log;
+use Closure;
+use InvalidArgumentException;
 
 /**
  * A response class for streaming large JSON datasets memory-efficiently.
@@ -71,6 +73,30 @@ class JsonStreamResponse extends Response
     public const DEFAULT_JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
 
     /**
+     * JSON format constant.
+     *
+     * @var string
+     */
+    public const FORMAT_JSON = 'json';
+
+    /**
+     * NDJSON (newline-delimited JSON) format constant.
+     *
+     * @var string
+     */
+    public const FORMAT_NDJSON = 'ndjson';
+
+    /**
+     * Supported formats.
+     *
+     * @var array<string>
+     */
+    protected const SUPPORTED_FORMATS = [
+        self::FORMAT_JSON,
+        self::FORMAT_NDJSON,
+    ];
+
+    /**
      * The iterable data to stream.
      *
      * @var iterable
@@ -93,7 +119,7 @@ class JsonStreamResponse extends Response
         'root' => null,
         'envelope' => [],
         'dataKey' => 'data',
-        'format' => 'json',
+        'format' => self::FORMAT_JSON,
         'transform' => null,
         'flags' => self::DEFAULT_JSON_FLAGS,
     ];
@@ -115,12 +141,22 @@ class JsonStreamResponse extends Response
         $this->data = $data;
         $this->streamOptions = $options + $this->defaultStreamOptions;
 
+        // Validate format
+        $format = $this->streamOptions['format'];
+        if (!in_array($format, self::SUPPORTED_FORMATS, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid format `%s`. Supported formats are: %s',
+                $format,
+                implode(', ', self::SUPPORTED_FORMATS),
+            ));
+        }
+
         // Add pretty print in debug mode (consistent with JsonView)
         if (Configure::read('debug') && !isset($options['flags'])) {
             $this->streamOptions['flags'] |= JSON_PRETTY_PRINT;
         }
 
-        $contentType = $this->streamOptions['format'] === 'ndjson'
+        $contentType = $format === self::FORMAT_NDJSON
             ? 'application/x-ndjson; charset=UTF-8'
             : 'application/json; charset=UTF-8';
 
@@ -138,12 +174,12 @@ class JsonStreamResponse extends Response
      * The callback uses echo + flush for true streaming, sending data
      * to the client as each item is encoded rather than buffering everything.
      *
-     * @return callable
+     * @return \Closure
      */
-    protected function createStreamCallback(): callable
+    protected function createStreamCallback(): Closure
     {
         return function (): void {
-            if ($this->streamOptions['format'] === 'ndjson') {
+            if ($this->streamOptions['format'] === self::FORMAT_NDJSON) {
                 $this->streamNdjson();
             } else {
                 $this->streamJson();
@@ -306,11 +342,13 @@ class JsonStreamResponse extends Response
      */
     protected function logStreamError(string $message, int $index): void
     {
-        Log::error(sprintf(
-            'JsonStreamResponse encoding failed at index %d: %s',
-            $index,
-            $message,
-        ));
+        if (class_exists(Log::class)) {
+            Log::error(sprintf(
+                'JsonStreamResponse encoding failed at index %d: %s',
+                $index,
+                $message,
+            ));
+        }
     }
 
     /**

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http\Response;
 use Cake\Core\Configure;
 use Cake\Http\Response\JsonStreamResponse;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use JsonException;
 
 class JsonStreamResponseTest extends TestCase
@@ -344,5 +345,19 @@ class JsonStreamResponseTest extends TestCase
         $this->assertCount(3, $decoded['articles']);
         $this->assertSame(['id' => 1, 'title' => 'Article 1'], $decoded['articles'][0]);
         $this->assertArrayNotHasKey('secret', $decoded['articles'][0]);
+    }
+
+    public function testInvalidFormatThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid format `xml`. Supported formats are: json, ndjson');
+
+        new JsonStreamResponse([], ['format' => 'xml']);
+    }
+
+    public function testFormatConstants(): void
+    {
+        $this->assertSame('json', JsonStreamResponse::FORMAT_JSON);
+        $this->assertSame('ndjson', JsonStreamResponse::FORMAT_NDJSON);
     }
 }
