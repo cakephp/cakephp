@@ -13,6 +13,7 @@ use Cake\Database\Query\SelectQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class NullSafeComparisonTest extends TestCase
@@ -30,25 +31,21 @@ class NullSafeComparisonTest extends TestCase
     #[DataProvider('dialectProvider')]
     public function testNullSafeComparisonSql(string $driverClass, string $expectedDistinct, string $expectedNotDistinct): void
     {
-        $driver = $this->getMockBuilder($driverClass)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['connect', 'enabled', 'newCompiler', 'version', 'getRole', 'supports', 'isAutoQuotingEnabled'])
-            ->getMock();
-        $driver->method('enabled')->willReturn(true);
-        $driver->method('newCompiler')->willReturn(new QueryCompiler());
-        $driver->method('version')->willReturn('8.0.0');
-        $driver->method('getRole')->willReturn('write');
-        $driver->method('supports')->willReturn(true);
-        $driver->method('isAutoQuotingEnabled')->willReturn(false);
+        $driver = Mockery::mock($driverClass)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('newCompiler')->andReturn(new QueryCompiler());
+        $driver->shouldReceive('version')->andReturn('8.0.0');
+        $driver->shouldReceive('getRole')->andReturn('write');
+        $driver->shouldReceive('supports')->andReturn(true);
+        $driver->shouldReceive('isAutoQuotingEnabled')->andReturn(false);
 
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getDriver', 'selectQuery', 'role', 'configName'])
-            ->getMock();
-        $connection->method('role')->willReturn('write');
-        $connection->method('configName')->willReturn('test');
-        $connection->method('getDriver')->willReturn($driver);
-        $connection->method('selectQuery')->willReturnCallback(function () use ($connection) {
+        $connection = Mockery::mock(Connection::class);
+        $connection->shouldReceive('role')->andReturn('write');
+        $connection->shouldReceive('configName')->andReturn('test');
+        $connection->shouldReceive('getDriver')->andReturn($driver);
+        $connection->shouldReceive('selectQuery')->andReturnUsing(function () use ($connection) {
             return new SelectQuery($connection);
         });
 
