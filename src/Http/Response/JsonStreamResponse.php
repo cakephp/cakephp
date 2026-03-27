@@ -39,6 +39,19 @@ use Cake\Log\Log;
  * // NDJSON format
  * return new JsonStreamResponse($query, ['format' => 'ndjson']);
  * ```
+ *
+ * ### ORM Integration
+ *
+ * For true streaming benefits, use unbuffered queries and avoid result formatters:
+ *
+ * ```php
+ * // Good - streams one row at a time
+ * $query = $this->Articles->find()->bufferResults(false);
+ * return new JsonStreamResponse($query);
+ *
+ * // Avoid - formatters like map(), combine() buffer results internally
+ * $query = $this->Articles->find()->map(fn($row) => $row); // Breaks streaming
+ * ```
  */
 class JsonStreamResponse extends Response
 {
