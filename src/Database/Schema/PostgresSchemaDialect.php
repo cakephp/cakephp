@@ -375,12 +375,14 @@ class PostgresSchemaDialect extends SchemaDialect
         a.attname,
         i.indisprimary,
         i.indisunique,
-        i.indnkeyatts
+        i.indnkeyatts,
+        am.amname
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
         INNER JOIN pg_catalog.pg_class c2 ON (c2.oid = i.indexrelid)
         INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = c.oid AND i.indrelid::regclass = a.attrelid::regclass)
+        INNER JOIN pg_catalog.pg_am am ON (c2.relam = am.oid)
         WHERE n.nspname = ?
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
@@ -423,6 +425,11 @@ class PostgresSchemaDialect extends SchemaDialect
                 'type' => $type,
                 'columns' => [],
             ];
+            // Include access method for non-btree indexes
+            $accessMethod = $row['amname'] ?? 'btree';
+            if ($accessMethod !== 'btree') {
+                $index['accessMethod'] = $accessMethod;
+            }
         }
         $index['columns'][] = $row['attname'];
         $schema->addIndex($name, $index);
@@ -458,6 +465,11 @@ class PostgresSchemaDialect extends SchemaDialect
                     'columns' => [],
                     'length' => [],
                 ];
+                // Include access method for non-btree indexes
+                $accessMethod = $row['amname'] ?? 'btree';
+                if ($accessMethod !== 'btree') {
+                    $indexes[$name]['accessMethod'] = $accessMethod;
+                }
             }
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
@@ -917,6 +929,14 @@ class PostgresSchemaDialect extends SchemaDialect
             $this->_driver->quoteIdentifier(...),
             (array)$index->getColumns(),
         );
+
+        // Build USING clause for non-btree access methods (gin, gist, spgist, brin, hash)
+        $using = '';
+        $accessMethod = $index->getAccessMethod();
+        if ($accessMethod !== null) {
+            $using = ' USING ' . $accessMethod;
+        }
+
         $include = '';
         if ($index->getInclude()) {
             $included = array_map(
@@ -927,9 +947,10 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)%s',
+            'CREATE INDEX %s ON %s%s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
+            $using,
             implode(', ', $columns),
             $include,
         );
