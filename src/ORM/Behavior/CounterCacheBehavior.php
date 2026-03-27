@@ -347,7 +347,7 @@ class CounterCacheBehavior extends Behavior
 
             if (
                 isset($this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
-                $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field] === true
+                $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]
             ) {
                 continue;
             }
