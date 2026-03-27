@@ -11,11 +11,12 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Response;
 
+use Cake\Core\Configure;
 use Cake\Http\CallbackStream;
 use Cake\Http\Response;
 use Cake\Log\Log;
@@ -92,6 +93,11 @@ class JsonStreamResponse extends Response
     {
         $this->data = $data;
         $this->streamOptions = $options + $this->defaultStreamOptions;
+
+        // Add pretty print in debug mode (consistent with JsonView)
+        if (Configure::read('debug') && !isset($options['flags'])) {
+            $this->streamOptions['flags'] |= JSON_PRETTY_PRINT;
+        }
 
         $contentType = $this->streamOptions['format'] === 'ndjson'
             ? 'application/x-ndjson; charset=UTF-8'

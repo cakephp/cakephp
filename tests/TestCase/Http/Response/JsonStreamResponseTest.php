@@ -16,12 +16,33 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Response;
 
+use Cake\Core\Configure;
 use Cake\Http\Response\JsonStreamResponse;
 use Cake\TestSuite\TestCase;
 use JsonException;
 
 class JsonStreamResponseTest extends TestCase
 {
+    /**
+     * @var bool|null
+     */
+    protected bool|null $originalDebug = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Save and disable debug mode for consistent test output
+        $this->originalDebug = Configure::read('debug');
+        Configure::write('debug', false);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        // Restore debug mode
+        Configure::write('debug', $this->originalDebug);
+    }
+
     public function testSimpleArrayStreaming(): void
     {
         $data = [
@@ -197,5 +218,73 @@ class JsonStreamResponseTest extends TestCase
         $this->assertCount(2, $lines);
         $this->assertSame('{"id":1}', $lines[0]);
         $this->assertStringContainsString('__streamError', $lines[1]);
+    }
+
+    public function testImmutability(): void
+    {
+        $data = [['id' => 1]];
+        $response = new JsonStreamResponse($data);
+        $newResponse = $response->withStreamOptions(['root' => 'items']);
+
+        $this->assertNotSame($response, $newResponse);
+        $this->assertNull($response->getStreamOptions()['root']);
+        $this->assertSame('items', $newResponse->getStreamOptions()['root']);
+
+        $this->assertSame('[{"id":1}]', (string)$response->getBody());
+        $this->assertSame('{"items":[{"id":1}]}', (string)$newResponse->getBody());
+    }
+
+    public function testCustomJsonFlags(): void
+    {
+        $data = [['html' => '<script>alert("xss")</script>']];
+
+        // Without hex encoding
+        $response = new JsonStreamResponse($data, [
+            'flags' => JSON_THROW_ON_ERROR,
+        ]);
+        $body = (string)$response->getBody();
+        $this->assertStringContainsString('<script>', $body);
+
+        // With default flags (hex encoded)
+        $response = new JsonStreamResponse($data);
+        $body = (string)$response->getBody();
+        $this->assertStringNotContainsString('<script>', $body);
+        $this->assertStringContainsString('\u003C', $body);
+    }
+
+    public function testPrettyPrintInDebugMode(): void
+    {
+        Configure::write('debug', true);
+
+        $data = [['id' => 1, 'name' => 'Test']];
+        $response = new JsonStreamResponse($data);
+        $body = (string)$response->getBody();
+
+        // Pretty print adds newlines and indentation
+        $this->assertStringContainsString("\n", $body);
+        $this->assertStringContainsString('    ', $body);
+    }
+
+    public function testNoPrettyPrintInProductionMode(): void
+    {
+        Configure::write('debug', false);
+
+        $data = [['id' => 1, 'name' => 'Test']];
+        $response = new JsonStreamResponse($data);
+        $body = (string)$response->getBody();
+
+        // No pretty print - no extra newlines
+        $this->assertSame('[{"id":1,"name":"Test"}]', $body);
+    }
+
+    public function testContentTypeHeaders(): void
+    {
+        $data = [['id' => 1]];
+
+        $jsonResponse = new JsonStreamResponse($data);
+        $this->assertSame('application/json; charset=UTF-8', $jsonResponse->getHeaderLine('Content-Type'));
+
+        $ndjsonResponse = new JsonStreamResponse($data, ['format' => 'ndjson']);
+        $this->assertSame('application/x-ndjson; charset=UTF-8', $ndjsonResponse->getHeaderLine('Content-Type'));
     }
 }
