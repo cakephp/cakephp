@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Query\SelectQuery;
+use Closure;
 use InvalidArgumentException;
 use SplFixedArray;
 
@@ -257,10 +258,10 @@ class ResultSetFactory
     protected ?DtoMapper $dtoMapper = null;
 
     /**
-     * Cached DTO hydrator callables by class name.
+     * Cached DTO hydrator closures by class name.
      * Avoids method_exists() check on every row.
      *
-     * @var array<class-string, callable(array): object>
+     * @var array<class-string, \Closure(array): object>
      */
     protected static array $dtoHydrators = [];
 
@@ -281,15 +282,15 @@ class ResultSetFactory
     }
 
     /**
-     * Get a cached hydrator callable for a DTO class.
+     * Get a cached hydrator closure for a DTO class.
      *
      * The hydrator is determined once per class and cached to avoid
      * method_exists() checks on every row.
      *
      * @param class-string $dtoClass DTO class name
-     * @return callable(array): object
+     * @return \Closure(array): object
      */
-    public function getDtoHydrator(string $dtoClass): callable
+    public function getDtoHydrator(string $dtoClass): Closure
     {
         if (!isset(static::$dtoHydrators[$dtoClass])) {
             // Check for array style static factory method (cakephp-dto style)
