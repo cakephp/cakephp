@@ -57,6 +57,7 @@ class JsonStreamResponseTest extends TestCase
         ob_start();
         // Trigger the stream by converting to string (calls __toString -> getContents -> callback)
         (string)$response->getBody();
+
         return ob_get_clean() ?: '';
     }
 
