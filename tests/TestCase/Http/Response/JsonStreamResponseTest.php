@@ -159,21 +159,26 @@ class JsonStreamResponseTest extends TestCase
     public function testFirstItemValidationThrows(): void
     {
         $resource = fopen('php://memory', 'r');
+        $this->assertIsResource($resource);
+
         $data = [
             ['id' => 1, 'resource' => $resource],
         ];
 
         $response = new JsonStreamResponse($data);
 
-        $this->expectException(JsonException::class);
-        (string)$response->getBody();
-
-        fclose($resource);
+        try {
+            $this->expectException(JsonException::class);
+            (string)$response->getBody();
+        } finally {
+            fclose($resource);
+        }
     }
 
     public function testMidStreamErrorMarker(): void
     {
         $resource = fopen('php://memory', 'r');
+        $this->assertIsResource($resource);
 
         $generator = function () use ($resource) {
             yield ['id' => 1, 'name' => 'Valid'];
@@ -200,6 +205,7 @@ class JsonStreamResponseTest extends TestCase
     public function testNdjsonMidStreamError(): void
     {
         $resource = fopen('php://memory', 'r');
+        $this->assertIsResource($resource);
 
         $generator = function () use ($resource) {
             yield ['id' => 1];
