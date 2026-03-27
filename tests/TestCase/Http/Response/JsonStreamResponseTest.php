@@ -287,4 +287,35 @@ class JsonStreamResponseTest extends TestCase
         $ndjsonResponse = new JsonStreamResponse($data, ['format' => 'ndjson']);
         $this->assertSame('application/x-ndjson; charset=UTF-8', $ndjsonResponse->getHeaderLine('Content-Type'));
     }
+
+    public function testCompleteIntegration(): void
+    {
+        // Simulate a realistic use case with envelope, transform, and generator
+        $generator = function () {
+            for ($i = 1; $i <= 3; $i++) {
+                yield (object)[
+                    'id' => $i,
+                    'title' => "Article {$i}",
+                    'secret' => 'should-not-appear',
+                ];
+            }
+        };
+
+        $response = new JsonStreamResponse($generator(), [
+            'envelope' => ['meta' => ['total' => 3, 'page' => 1]],
+            'dataKey' => 'articles',
+            'transform' => fn($item) => [
+                'id' => $item->id,
+                'title' => $item->title,
+            ],
+        ]);
+
+        $body = (string)$response->getBody();
+        $decoded = json_decode($body, true);
+
+        $this->assertSame(['total' => 3, 'page' => 1], $decoded['meta']);
+        $this->assertCount(3, $decoded['articles']);
+        $this->assertSame(['id' => 1, 'title' => 'Article 1'], $decoded['articles'][0]);
+        $this->assertArrayNotHasKey('secret', $decoded['articles'][0]);
+    }
 }
