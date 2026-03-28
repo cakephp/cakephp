@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Lock\Engine;
 use Cake\Lock\Engine\RedisLockEngine;
 use Cake\Lock\LockInstance;
 use Cake\TestSuite\TestCase;
+use RedisException;
 use function Cake\Core\env;
 
 /**
@@ -74,10 +75,14 @@ class RedisLockEngineTest extends TestCase
      */
     protected function cleanupTestLocks(): void
     {
-        $redis = $this->engine->getRedis();
-        $keys = $redis->keys('test_lock_*');
-        if (!empty($keys)) {
-            $redis->del($keys);
+        try {
+            $redis = $this->engine->getRedis();
+            $keys = $redis->keys('test_lock_*');
+            if (!empty($keys)) {
+                $redis->del($keys);
+            }
+        } catch (RedisException) {
+            // Connection lost, nothing to clean up
         }
     }
 
