@@ -190,7 +190,7 @@ class RedisLockEngineTest extends TestCase
      */
     public function testForceRelease(): void
     {
-        $lock = $this->engine->acquire('test-resource', 60);
+        $this->engine->acquire('test-resource', 60);
         $this->assertTrue($this->engine->isLocked('test-resource'));
 
         $result = $this->engine->forceRelease('test-resource');
