@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Lock\Engine;
 use Cake\Lock\Engine\MemcachedLockEngine;
 use Cake\Lock\LockInstance;
 use Cake\TestSuite\TestCase;
+use function Cake\Core\env;
 
 /**
  * MemcachedLockEngineTest class
