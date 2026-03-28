@@ -88,7 +88,7 @@ class MemcachedLockEngine extends LockEngine
         }
 
         // Only add servers if not already added (for persistent connections)
-        if (!count($this->_memcached->getServerList())) {
+        if ($this->_memcached->getServerList() === []) {
             $servers = [];
             foreach ($this->_config['servers'] as $server) {
                 $servers[] = [$server[0], (int)($server[1] ?? 11211), 1];

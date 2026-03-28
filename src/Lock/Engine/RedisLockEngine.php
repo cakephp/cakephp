@@ -111,10 +111,8 @@ class RedisLockEngine extends LockEngine
                 return false;
             }
 
-            if ($this->_config['password'] !== false) {
-                if (!$this->_redis->auth($this->_config['password'])) {
-                    return false;
-                }
+            if ($this->_config['password'] !== false && !$this->_redis->auth($this->_config['password'])) {
+                return false;
             }
 
             if ($this->_config['database'] !== 0) {
