@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace TestApp\Controller;
 
+use Cake\Controller\Attribute\Enum\RequestToDtoSource;
+use Cake\Controller\Attribute\RequestToDto;
 use Cake\Controller\Controller;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\ServerRequest;
 use stdClass;
+use TestApp\Dto\RequestDataDto;
 use TestApp\ReflectionDependency;
 
 /**
@@ -90,6 +93,34 @@ class DependenciesController extends Controller
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
         return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+    }
+
+    public function requestDto(
+        #[RequestToDto]
+        RequestDataDto $dto,
+    ) {
+        return $this->response->withStringBody(json_encode($dto->toArray()));
+    }
+
+    public function requestDtoBody(
+        #[RequestToDto(source: RequestToDtoSource::Body)]
+        RequestDataDto $dto,
+    ) {
+        return $this->response->withStringBody(json_encode($dto->toArray()));
+    }
+
+    public function requestDtoQuery(
+        #[RequestToDto(source: RequestToDtoSource::Query)]
+        RequestDataDto $dto,
+    ) {
+        return $this->response->withStringBody(json_encode($dto->toArray()));
+    }
+
+    public function requestDtoRequest(
+        #[RequestToDto(source: RequestToDtoSource::Request)]
+        RequestDataDto $dto,
+    ) {
+        return $this->response->withStringBody(json_encode($dto->toArray()));
     }
 
     /**

@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Cookie;
 
+use Cake\Http\Cookie\Enum\SameSite;
 use DateTimeInterface;
 
 /**
@@ -227,17 +228,17 @@ interface CookieInterface
     /**
      * Get the SameSite attribute.
      *
-     * @return \Cake\Http\Cookie\SameSiteEnum|null
+     * @return \Cake\Http\Cookie\Enum\SameSite|null
      */
-    public function getSameSite(): ?SameSiteEnum;
+    public function getSameSite(): ?SameSite;
 
     /**
      * Create a cookie with an updated SameSite option.
      *
-     * @param \Cake\Http\Cookie\SameSiteEnum|string|null $sameSite Value for to set for Samesite option.
+     * @param \Cake\Http\Cookie\Enum\SameSite|string|null $sameSite Value for to set for Samesite option.
      * @return static
      */
-    public function withSameSite(SameSiteEnum|string|null $sameSite): static;
+    public function withSameSite(SameSite|string|null $sameSite): static;
 
     /**
      * Get cookie options

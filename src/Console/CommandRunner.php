@@ -379,7 +379,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * The wrapper for creating command instances.
      *
-     * @param string $className Command class name.
+     * @param class-string<\Cake\Console\CommandInterface> $className Command class name.
      * @return \Cake\Console\CommandInterface
      */
     protected function createCommand(string $className): CommandInterface

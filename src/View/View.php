@@ -32,6 +32,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
+use Closure;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
@@ -708,12 +709,12 @@ class View implements EventDispatcherInterface
      * This method will attempt to read the cache first. If the cache
      * is empty, the $block will be run and the output stored.
      *
-     * @param callable $block The block of code that you want to cache the output of.
+     * @param \Closure $block The block of code that you want to cache the output of.
      * @param array<string, mixed> $options The options defining the cache key etc.
      * @return string The rendered content.
      * @throws \InvalidArgumentException When $options is lacking a 'key' option.
      */
-    public function cache(callable $block, array $options = []): string
+    public function cache(Closure $block, array $options = []): string
     {
         $options += ['key' => '', 'config' => $this->elementCache];
         if (empty($options['key'])) {

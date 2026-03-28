@@ -19,6 +19,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Database\Exception\QueryException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
@@ -122,7 +123,32 @@ class ErrorLogger implements ErrorLoggerInterface
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
         }
-        $this->error($message);
+
+        $context = $this->getExceptionContext($exception);
+        $this->error($message, $context);
+    }
+
+    /**
+     * Extract additional context from an exception.
+     *
+     * For database exceptions, this includes the connection name
+     * to help identify which database connection caused the error.
+     *
+     * @param \Throwable $exception The exception to extract context from.
+     * @return array<string, mixed> Additional context data.
+     */
+    protected function getExceptionContext(Throwable $exception): array
+    {
+        $context = [];
+
+        if ($exception instanceof QueryException) {
+            $connectionName = $exception->getConnectionName();
+            if ($connectionName !== '') {
+                $context['connection'] = $connectionName;
+            }
+        }
+
+        return $context;
     }
 
     /**

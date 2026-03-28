@@ -329,4 +329,40 @@ class FormProtectionComponentTest extends TestCase
 
         $this->assertSame([], $this->Controller->getRequest()->getParsedBody());
     }
+
+    /**
+     * Test unlockActions() method.
+     */
+    public function testUnlockActions(): void
+    {
+        // Single action as string
+        $this->FormProtection->unlockActions('index');
+        $this->assertSame(['index'], $this->FormProtection->getConfig('unlockedActions'));
+
+        // Multiple actions as array, merges by default
+        $this->FormProtection->unlockActions(['view', 'add']);
+        $this->assertSame(['index', 'view', 'add'], $this->FormProtection->getConfig('unlockedActions'));
+
+        // Replace when merge is false
+        $this->FormProtection->unlockActions('edit', false);
+        $this->assertSame(['edit'], $this->FormProtection->getConfig('unlockedActions'));
+    }
+
+    /**
+     * Test unlockFields() method.
+     */
+    public function testUnlockFields(): void
+    {
+        // Single field as string
+        $this->FormProtection->unlockFields('csrf_token');
+        $this->assertSame(['csrf_token'], $this->FormProtection->getConfig('unlockedFields'));
+
+        // Multiple fields as array, merges by default
+        $this->FormProtection->unlockFields(['debug', 'dynamic_field']);
+        $this->assertSame(['csrf_token', 'debug', 'dynamic_field'], $this->FormProtection->getConfig('unlockedFields'));
+
+        // Replace when merge is false
+        $this->FormProtection->unlockFields('new_field', false);
+        $this->assertSame(['new_field'], $this->FormProtection->getConfig('unlockedFields'));
+    }
 }

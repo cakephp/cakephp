@@ -38,13 +38,13 @@ use Attribute;
  * ```
  */
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY)]
-class CollectionOf
+readonly class CollectionOf
 {
     /**
      * @param class-string $class The DTO class for collection elements
      */
     public function __construct(
-        public readonly string $class,
+        protected string $class,
     ) {
     }
 }

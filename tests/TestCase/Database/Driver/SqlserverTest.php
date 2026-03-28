@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query\InsertQuery;
 use Cake\Database\Query\SelectQuery;
@@ -562,15 +562,15 @@ class SqlserverTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!$driver instanceof Sqlserver);
 
-        $this->assertTrue($driver->supports(DriverFeatureEnum::CTE));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
-        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeature::CTE));
+        $this->assertTrue($driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+        $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeature::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeature::INTERSECT));
 
-        $this->assertFalse($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
-        $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
-        $this->assertFalse($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
+        $this->assertFalse($driver->supports(DriverFeature::INTERSECT_ALL));
+        $this->assertFalse($driver->supports(DriverFeature::JSON));
+        $this->assertFalse($driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY));
     }
 }

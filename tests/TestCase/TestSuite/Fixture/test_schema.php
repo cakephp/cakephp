@@ -27,6 +27,10 @@ return [
                 'columns' => ['relation_id'],
                 'references' => ['schema_generator_comment', 'id'],
             ],
+            'checked_relation_id' => [
+                'type' => 'check',
+                'expression' => 'relation_id > 1',
+            ],
         ],
         'indexes' => [
             'title_idx' => [

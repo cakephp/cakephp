@@ -192,13 +192,14 @@ class BelongsToManyTest extends TestCase
     public function testRequiresKeys(): void
     {
         $assoc = new BelongsToMany('Test', $this->article);
-        $this->assertTrue($assoc->requiresKeys());
-
-        $assoc->setStrategy(BelongsToMany::STRATEGY_SUBQUERY);
+        // Default strategy is now subquery, which doesn't require keys
         $this->assertFalse($assoc->requiresKeys());
 
         $assoc->setStrategy(BelongsToMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+
+        $assoc->setStrategy(BelongsToMany::STRATEGY_SUBQUERY);
+        $this->assertFalse($assoc->requiresKeys());
     }
 
     /**

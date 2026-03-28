@@ -59,7 +59,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected string $strategy = self::STRATEGY_SELECT;
+    protected string $strategy = self::STRATEGY_SUBQUERY;
 
     /**
      * Valid strategies for this type of association

@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Database\Connection;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Log\QueryLogger;
 use Cake\Datasource\ConnectionManager;
 use Closure;
@@ -150,7 +150,7 @@ class ConnectionHelper
      */
     public static function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
-        if ($connection->getWriteDriver()->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
+        if ($connection->getWriteDriver()->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
             $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {

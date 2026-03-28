@@ -1546,11 +1546,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Handles the logic executing of a worker inside a transaction.
      *
-     * @param callable $worker The worker that will run inside the transaction.
+     * @param \Closure $worker The worker that will run inside the transaction.
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
      */
-    protected function executeTransaction(callable $worker, bool $atomic = true): mixed
+    protected function executeTransaction(Closure $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
             return $this->getConnection()->transactional($worker(...));

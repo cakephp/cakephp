@@ -22,7 +22,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -2613,7 +2613,7 @@ class SelectQueryTest extends TestCase
     public function testUnionOrderBy(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            !$this->connection->getDriver()->supports(DriverFeature::SET_OPERATIONS_ORDER_BY),
             'Driver does not support ORDER BY on UNIONed queries.',
         );
 
@@ -2667,7 +2667,7 @@ class SelectQueryTest extends TestCase
     public function testIntersect(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            !$this->connection->getDriver()->supports(DriverFeature::INTERSECT),
             'Driver does not support INTERSECT clause.',
         );
 
@@ -2716,11 +2716,11 @@ class SelectQueryTest extends TestCase
     public function testIntersectOrderBy(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            !$this->connection->getDriver()->supports(DriverFeature::INTERSECT),
             'Driver does not support INTERSECT clause.',
         );
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            !$this->connection->getDriver()->supports(DriverFeature::SET_OPERATIONS_ORDER_BY),
             'Driver does not support ORDER BY on INTERSECTed queries.',
         );
         $intersect = new SelectQuery($this->connection)
@@ -2745,7 +2745,7 @@ class SelectQueryTest extends TestCase
     public function testIntersectAll(): void
     {
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT_ALL),
+            !$this->connection->getDriver()->supports(DriverFeature::INTERSECT_ALL),
             'Driver does not support INTERSECT ALL clause.',
         );
         $intersect = new SelectQuery($this->connection)->select(['id', 'comment'])->from(['c' => 'comments'])->where(['article_id' => 1]);
@@ -3441,7 +3441,7 @@ class SelectQueryTest extends TestCase
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT) is missing.');
+        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing.');
 
         new SelectQuery($this->connection)
             ->select(['name'])

@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Schema\CheckConstraint;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConnectionHelper;
@@ -135,9 +137,23 @@ class SchemaLoaderTest extends TestCase
         $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
 
         $connection = ConnectionManager::get('test_schema_loader');
-        $tables = $connection->getSchemaCollection()->listTables();
+        /** @var \Cake\Database\Schema\Collection $schema */
+        $schema = $connection->getSchemaCollection();
+        $tables = $schema->listTables();
         $this->assertContains('schema_generator', $tables);
         $this->assertContains('schema_generator_comment', $tables);
+
+        $table = $schema->describe('schema_generator');
+
+        $constraint = $table->constraint('checked_relation_id');
+        assert($constraint instanceof CheckConstraint);
+        $this->assertEquals('checked_relation_id', $constraint->getName());
+        $this->assertEquals('relation_id > 1', $constraint->getExpression());
+
+        $key = $table->constraint('relation_fk');
+        assert($key instanceof ForeignKey);
+        $this->assertEquals('relation_fk', $key->getName());
+        $this->assertEquals(['relation_id'], $key->getColumns());
     }
 
     protected function createSchemaFile(string $tableName): string
