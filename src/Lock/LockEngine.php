@@ -78,7 +78,7 @@ abstract class LockEngine implements LockInterface
 
         $key = preg_replace('/[\s]+/', '_', $resource);
 
-        return $this->_config['prefix'] . $key;
+        return $this->getConfig('prefix') . $key;
     }
 
     /**
