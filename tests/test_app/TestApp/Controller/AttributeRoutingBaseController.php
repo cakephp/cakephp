@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Routing\Attribute\Get;
+use Cake\Routing\Attribute\Middleware;
 use Cake\Routing\Attribute\Scope;
 
 /**
  * Base controller fixture for inherited attribute-routing tests.
  */
 #[Scope(path: '/base', namePrefix: 'base:')]
+#[Middleware('auth')]
 abstract class AttributeRoutingBaseController extends AppController
 {
     /**

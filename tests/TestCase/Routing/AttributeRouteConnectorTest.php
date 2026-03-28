@@ -978,6 +978,43 @@ class AttributeRouteConnectorTest extends TestCase
     }
 
     /**
+     * Tests that Middleware attributes on real controller fixtures are resolved
+     * and attached to routes through the full scanner pipeline.
+     *
+     * @return void
+     */
+    public function testConnectAppliesMiddlewareFromControllerFixture(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+        $helper->connect();
+
+        // index action: inherits 'auth' from base + 'csrf' from child class
+        $indexResult = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/base/attr/index',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+        $this->assertSame('index', $indexResult['action']);
+        $this->assertSame(['auth', 'csrf'], $indexResult['_middleware']);
+
+        // view action: class middleware + method-level 'rate-limit'
+        $viewResult = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/base/attr/view/42',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+        $this->assertSame('view', $viewResult['action']);
+        $this->assertSame(['auth', 'csrf', 'rate-limit'], $viewResult['_middleware']);
+
+        // feed action: only class middleware, no method-level
+        $feedResult = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/base/attr/feed',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+        $this->assertSame('feed', $feedResult['action']);
+        $this->assertSame(['auth', 'csrf'], $feedResult['_middleware']);
+    }
+
+    /**
      * Test that closure middleware from a Middleware attribute instance executes
      * through the getMiddleware → MiddlewareQueue → Runner pipeline.
      */

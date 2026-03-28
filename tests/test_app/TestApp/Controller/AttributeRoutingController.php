@@ -5,6 +5,7 @@ namespace TestApp\Controller;
 
 use Cake\Routing\Attribute\Extensions;
 use Cake\Routing\Attribute\Get;
+use Cake\Routing\Attribute\Middleware;
 use Cake\Routing\Attribute\Post;
 use Cake\Routing\Attribute\Route;
 use Cake\Routing\Attribute\Scope;
@@ -14,6 +15,7 @@ use Cake\Routing\Attribute\Scope;
  */
 #[Scope(path: '/attr', namePrefix: 'attr:')]
 #[Extensions(['json'])]
+#[Middleware('csrf')]
 class AttributeRoutingController extends AttributeRoutingBaseController
 {
     /**
@@ -34,6 +36,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      * @return void
      */
     #[Route('/view/{id}', name: 'view', patterns: ['id' => '\\d+'], pass: ['id'])]
+    #[Middleware('rate-limit')]
     public function view(int $id): void
     {
     }
