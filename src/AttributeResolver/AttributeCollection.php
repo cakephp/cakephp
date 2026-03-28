@@ -18,6 +18,7 @@ namespace Cake\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
+use Closure;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -236,10 +237,10 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Filter with a callback. Triggers full hydration.
      *
-     * @param callable $callback Callback to filter elements
+     * @param \Closure $callback Closure to filter elements
      * @return static
      */
-    public function filter(callable $callback): static
+    public function filter(Closure $callback): static
     {
         $matchingIds = [];
         foreach ($this->getActiveIds() as $id) {

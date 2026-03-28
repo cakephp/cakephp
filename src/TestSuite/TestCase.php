@@ -104,10 +104,10 @@ abstract class TestCase extends BaseTestCase
      * Helper method for tests that needs to use error_reporting()
      *
      * @param int $errorLevel value of error_reporting() that needs to use
-     * @param callable $callable callable function that will receive asserts
+     * @param \Closure $callable Closure that will receive asserts
      * @return void
      */
-    public function withErrorReporting(int $errorLevel, callable $callable): void
+    public function withErrorReporting(int $errorLevel, Closure $callable): void
     {
         $default = error_reporting();
         error_reporting($errorLevel);

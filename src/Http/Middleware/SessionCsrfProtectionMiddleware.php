@@ -23,6 +23,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -68,9 +69,9 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *
      * CSRF protection token check will be skipped if the callback returns `true`.
      *
-     * @var callable|null
+     * @var \Closure|null
      */
-    protected $skipCheckCallback;
+    protected ?Closure $skipCheckCallback = null;
 
     /**
      * @var int
@@ -140,10 +141,10 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      * The callback will receive request instance as argument and must return
      * `true` if you want to skip token check for the current request.
      *
-     * @param callable $callback A callable.
+     * @param \Closure $callback A closure.
      * @return $this
      */
-    public function skipCheckCallback(callable $callback): static
+    public function skipCheckCallback(Closure $callback): static
     {
         $this->skipCheckCallback = $callback;
 
