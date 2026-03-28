@@ -96,7 +96,10 @@ class MemcachedLockEngine extends LockEngine
             $this->_memcached->addServers($servers);
         }
 
-        return true;
+        // Verify connection by getting version
+        $versions = $this->_memcached->getVersion();
+
+        return $versions !== false && $versions !== [];
     }
 
     /**
