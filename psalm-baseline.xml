@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="7.0.0-beta15@90bb719c909380be79f7bb788751041f7bc8efb2">
+<files psalm-version="7.0.0-beta17@a7f96f911fc869c40c48ec977e21f01a8ca534bd">
   <file src="src/Command/PluginLoadCommand.php">
     <TaintedSSRF>
       <code><![CDATA[$file]]></code>
@@ -7,9 +7,26 @@
   </file>
   <file src="src/Controller/ComponentRegistry.php">
     <OverriddenMethodAccess>
-      <code><![CDATA[protected function getContainer(): ContainerInterface]]></code>
-      <code><![CDATA[protected function getContainer(): ContainerInterface]]></code>
-      <code><![CDATA[protected function getMode(): int]]></code>
+      <code><![CDATA[protected function getContainer(): ContainerInterface
+    {
+        if ($this->container === null) {
+            throw new CakeException('Container not set.');
+        }
+
+        return $this->container;
+    }]]></code>
+      <code><![CDATA[protected function getContainer(): ContainerInterface
+    {
+        if ($this->container === null) {
+            throw new CakeException('Container not set.');
+        }
+
+        return $this->container;
+    }]]></code>
+      <code><![CDATA[protected function getMode(): int
+    {
+        return ReflectionContainer::AUTO_WIRING;
+    }]]></code>
     </OverriddenMethodAccess>
   </file>
   <file src="src/Core/InstanceConfigTrait.php">
