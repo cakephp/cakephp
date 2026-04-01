@@ -1072,8 +1072,8 @@ trait PaginatorTestTrait
         $expected = [
             'model.created' => 'asc',
         ];
-        $this->assertEquals($expected, $result['order']);
-        $this->assertEquals('created', $result['sort']);
+        $this->assertSame($expected, $result['order']);
+        $this->assertSame('created', $result['sort']);
     }
 
     /**
