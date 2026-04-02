@@ -122,7 +122,3 @@ class TreeHelper extends Helper
         }
     }
 }
-
-// phpcs:disable
-class_alias('Cake\Console\Helper\TreeHelper', 'Cake\Command\Helper\TreeHelper');
-// phpcs:enable

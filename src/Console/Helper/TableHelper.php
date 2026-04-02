@@ -183,7 +183,3 @@ class TableHelper extends Helper
         return '<' . $style . '>' . $text . '</' . $style . '>';
     }
 }
-
-// phpcs:disable
-class_alias('Cake\Console\Helper\TableHelper', 'Cake\Command\Helper\TableHelper');
-// phpcs:enable
