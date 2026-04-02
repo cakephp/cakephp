@@ -109,7 +109,7 @@ class TreeHelper extends Helper
     {
         if ($value instanceof Closure) {
             $this->io->out($prefix . $value());
-        } elseif ($value instanceof EnumLabelInterface) {
+        } elseif (interface_exists(EnumLabelInterface::class) && $value instanceof EnumLabelInterface) {
             $this->io->out($prefix . $value->label());
         } elseif ($value instanceof BackedEnum) {
             $this->io->out($prefix . $value->value);
