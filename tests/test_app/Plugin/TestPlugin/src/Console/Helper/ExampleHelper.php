@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace TestPlugin\Command\Helper;
+namespace TestPlugin\Console\Helper;
 
 use Cake\Console\Helper;
 

@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Helper\ProgressHelper;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
