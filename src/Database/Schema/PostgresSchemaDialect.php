@@ -116,7 +116,7 @@ class PostgresSchemaDialect extends SchemaDialect
             WHERE f_table_name = ? AND f_table_schema = ? AND f_table_catalog = ?
             SQL;
 
-        $columns = $this->_driver->execute($sql, [$table, $schema, $catalog])->fetchAll('assoc');
+        $columns = $this->driver->execute($sql, [$table, $schema, $catalog])->fetchAll('assoc');
 
         return array_combine(array_column($columns, 'name'), $columns);
     }
