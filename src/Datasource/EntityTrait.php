@@ -385,8 +385,12 @@ trait EntityTrait
         if ($this->propertyExists($field)) {
             try {
                 $existing = $this->{$field};
-            } catch (Error) {
-                return true;
+            } catch (Error $error) {
+                if (str_ends_with($error->getMessage(), 'must not be accessed before initialization')) {
+                    return true;
+                }
+
+                throw $error;
             }
         } else {
             if (!array_key_exists($field, $this->dynamicFields)) {
