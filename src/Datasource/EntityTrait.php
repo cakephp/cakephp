@@ -154,25 +154,25 @@ trait EntityTrait
     /**
      * List of properties that are not treated as fields.
      *
-     * @var list<string>
+     * @var array<string, string>
      */
     protected static array $restrictedProperties = [
-        'dynamicFields',
-        'propertyFields',
-        'original',
-        'originalFields',
-        'hidden',
-        'virtual',
-        'dirty',
-        'accessors',
-        'new',
-        'errors',
-        'invalid',
-        'patchable',
-        'registryAlias',
-        'hasBeenVisited',
-        'requireFieldPresence',
-        'restrictedProperties',
+        'dynamicFields' => 'dynamicFields',
+        'propertyFields' => 'propertyFields',
+        'original' => 'original',
+        'originalFields' => 'originalFields',
+        'hidden' => 'hidden',
+        'virtual' => 'virtual',
+        'dirty' => 'dirty',
+        'accessors' => 'accessors',
+        'new' => 'new',
+        'errors' => 'errors',
+        'invalid' => 'invalid',
+        'patchable' => 'patchable',
+        'registryAlias' => 'registryAlias',
+        'hasBeenVisited' => 'hasBeenVisited',
+        'requireFieldPresence' => 'requireFieldPresence',
+        'restrictedProperties' => 'restrictedProperties',
     ];
 
     /**
@@ -1473,7 +1473,7 @@ trait EntityTrait
      */
     protected function propertyExists(string $field): bool
     {
-        return !in_array($field, static::$restrictedProperties, true) && property_exists($this, $field);
+        return !isset(static::$restrictedProperties[$field]) && property_exists($this, $field);
     }
 
     /**
