@@ -177,8 +177,7 @@ class Response extends Message implements ResponseInterface
     protected function _parseHeaders(array $headers): void
     {
         foreach ($headers as $value) {
-            if (str_starts_with($value, 'HTTP/')) {
-                preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
+            if (preg_match('/^HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches)) {
                 $this->protocol = $matches[1];
                 $this->code = (int)$matches[2];
                 $this->reasonPhrase = trim($matches[3]);

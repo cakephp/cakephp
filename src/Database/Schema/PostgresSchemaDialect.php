@@ -112,6 +112,27 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Describes PostGIS specific column information.
+     *
+     * @return array<string, array{name: string, type: string, srid: int}> The column information.
+     */
+    private function describePostgisColumns(string $postgisType, string $table, string $schema, string $catalog): array
+    {
+        $sql = <<<SQL
+            SELECT
+                f_{$postgisType}_column AS name,
+                type,
+                srid
+            FROM public.{$postgisType}_columns
+            WHERE f_table_name = ? AND f_table_schema = ? AND f_table_catalog = ?
+            SQL;
+
+        $columns = $this->_driver->execute($sql, [$table, $schema, $catalog])->fetchAll('assoc');
+
+        return array_combine(array_column($columns, 'name'), $columns);
+    }
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
@@ -279,9 +300,18 @@ class PostgresSchemaDialect extends SchemaDialect
         [$schema, $name] = $this->splitTablename($tableName);
 
         $sql = $this->describeColumnQuery();
-        $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
+        $rows = $this->_driver->execute($sql, [$name, $schema, $config['database']])->fetchAll('assoc');
+
+        $postgisColumns = [];
+        $udtTypes = array_column($rows, 'udt_name');
+        foreach (['geometry', 'geography'] as $postgisType) {
+            if (in_array($postgisType, $udtTypes)) {
+                $postgisColumns += $this->describePostgisColumns($postgisType, $name, $schema, $config['database']);
+            }
+        }
+
         $columns = [];
-        foreach ($statement->fetchAll('assoc') as $row) {
+        foreach ($rows as $row) {
             $type = $row['type'];
             if ($type === 'USER-DEFINED') {
                 $type = $row['udt_name'];
@@ -324,6 +354,12 @@ class PostgresSchemaDialect extends SchemaDialect
             }
             if (isset($row['identity_generation']) && $row['identity_generation']) {
                 $field['generated'] = $row['identity_generation'];
+            }
+
+            // Add PostGIS metadata for geometry/geography columns
+            if (isset($postgisColumns[$row['name']])) {
+                $field['geometryType'] = ucfirst(strtolower($postgisColumns[$row['name']]['type']));
+                $field['srid'] = $postgisColumns[$row['name']]['srid'];
             }
 
             $columns[] = $field;

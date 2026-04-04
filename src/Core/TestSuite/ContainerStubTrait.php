@@ -19,12 +19,14 @@ use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
 use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
 use Closure;
-use League\Container\Exception\NotFoundException;
 use LogicException;
 use PHPUnit\Framework\Attributes\After;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * A set of methods used for defining container services
@@ -39,8 +41,7 @@ trait ContainerStubTrait
     /**
      * The customized application class name.
      *
-     * @phpstan-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
-     * @var string|null
+     * @var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      */
     protected ?string $_appClass = null;
 
@@ -61,10 +62,9 @@ trait ContainerStubTrait
     /**
      * Configure the application class to use in integration tests.
      *
-     * @param string $class The application class name.
+     * @param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      * @return void
-     * @phpstan-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
     {
@@ -88,7 +88,7 @@ trait ContainerStubTrait
         if ($this->_appClass) {
             $appClass = $this->_appClass;
         } else {
-            /** @var class-string<\Cake\Http\BaseApplication> $appClass */
+            /** @var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $appClass */
             $appClass = Configure::read('App.namespace') . '\Application';
         }
         if (!class_exists($appClass)) {
@@ -97,15 +97,17 @@ trait ContainerStubTrait
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
-        if ($this->containerServices && method_exists($app, 'getEventManager')) {
+        if ($this->containerServices && $app instanceof EventDispatcherInterface) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 
-        foreach ($this->appPluginsToLoad as $pluginName => $config) {
-            if (is_array($config)) {
-                $app->addPlugin($pluginName, $config);
-            } else {
-                $app->addPlugin($config);
+        if ($app instanceof PluginApplicationInterface) {
+            foreach ($this->appPluginsToLoad as $pluginName => $config) {
+                if (is_array($config)) {
+                    $app->addPlugin($pluginName, $config);
+                } else {
+                    $app->addPlugin($config);
+                }
             }
         }
 
@@ -163,7 +165,7 @@ trait ContainerStubTrait
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException) {
+                } catch (NotFoundExceptionInterface) {
                     $container->add($key, $factory);
                 }
             } else {

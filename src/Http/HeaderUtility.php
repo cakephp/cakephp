@@ -41,7 +41,7 @@ class HeaderUtility
         $url = $matches[1];
         $parsedParams = ['link' => $url];
 
-        $params = $matches[2];
+        $params = $matches[2] ?? null;
         if (!$params) {
             return $parsedParams;
         }

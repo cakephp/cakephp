@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         5.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Command\Helper;
+namespace Cake\Test\TestCase\Console\Helper;
 
-use Cake\Command\Helper\TreeHelper;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Helper\TreeHelper;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use Stringable;
@@ -31,7 +31,7 @@ use TestApp\Model\Enum\Priority;
 class TreeHelperTest extends TestCase
 {
     /**
-     * @var \Cake\Command\Helper\TreeHelper
+     * @var \Cake\Console\Helper\TreeHelper
      */
     protected TreeHelper $helper;
 
