@@ -41,7 +41,7 @@ trait EntityTrait
     /**
      * Holds field names for initialized properties
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $propertyFields = [];
 
@@ -345,14 +345,14 @@ trait EntityTrait
             if (
                 $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->original) &&
-                in_array($name, $this->propertyFields, true) &&
+                isset($this->propertyFields[$name]) &&
                 $value !== ($this->{$name} ?? null)
             ) {
                 $this->original[$name] = $this->{$name} ?? null;
             }
 
-            if (!in_array($name, $this->propertyFields, true)) {
-                $this->propertyFields[] = $name;
+            if (!isset($this->propertyFields[$name])) {
+                $this->propertyFields[$name] = $name;
             }
 
             $propExists = $this->propertyExists($name);
@@ -526,10 +526,9 @@ trait EntityTrait
     public function getOriginalValues(): array
     {
         $originals = $this->original;
-        $originalKeys = array_keys($originals);
         foreach ($this->propertyFields as $key) {
             if (
-                !in_array($key, $originalKeys, true) &&
+                !array_key_exists($key, $originals) &&
                 $this->isOriginalField($key)
             ) {
                 $originals[$key] = $this->{$key};
@@ -568,7 +567,7 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         return array_all((array)$field, function ($prop) {
-            return !(!in_array($prop, $this->propertyFields) && !static::accessor($prop, 'get'));
+            return !(!isset($this->propertyFields[$prop]) && !static::accessor($prop, 'get'));
         });
     }
 
@@ -617,10 +616,7 @@ trait EntityTrait
                 unset($this->{$p});
             }
 
-            $pos = array_search($p, $this->propertyFields, true);
-            if ($pos !== false) {
-                unset($this->propertyFields[$pos]);
-            }
+            unset($this->propertyFields[$p]);
         }
 
         return $this;
@@ -701,7 +697,7 @@ trait EntityTrait
     {
         $fields = array_merge($this->propertyFields, $this->virtual);
 
-        return array_diff($fields, $this->hidden);
+        return array_values(array_diff($fields, $this->hidden));
     }
 
     /**
@@ -1015,7 +1011,7 @@ trait EntityTrait
         $this->errors = [];
         $this->invalid = [];
         $this->original = [];
-        $this->setOriginalField($this->propertyFields, false);
+        $this->setOriginalField(array_values($this->propertyFields), false);
     }
 
     /**
