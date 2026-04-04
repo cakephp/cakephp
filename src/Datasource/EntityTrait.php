@@ -331,7 +331,9 @@ trait EntityTrait
 
             if ($options['asOriginal'] || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
-            } elseif ($value !== null && !$this->propertyExists($name)) {
+            } elseif (!$this->propertyExists($name)) {
+                continue;
+            } elseif ($value !== null) {
                 continue;
             }
 
