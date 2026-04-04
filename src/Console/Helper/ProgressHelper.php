@@ -161,7 +161,3 @@ class ProgressHelper extends Helper
         return $this;
     }
 }
-
-// phpcs:disable
-class_alias('Cake\Console\Helper\ProgressHelper', 'Cake\Command\Helper\ProgressHelper');
-// phpcs:enable

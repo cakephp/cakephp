@@ -105,7 +105,3 @@ class BannerHelper extends Helper
         $this->io->out($lines);
     }
 }
-
-// phpcs:disable
-class_alias('Cake\Console\Helper\BannerHelper', 'Cake\Command\Helper\BannerHelper');
-// phpcs:enable
