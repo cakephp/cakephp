@@ -260,7 +260,7 @@ class AttributeRouteConnector
             return;
         }
         if ($instance instanceof Extensions) {
-            $state['classExtensions'] = array_values($instance->extensions);
+            $state['classExtensions'] = array_values((array)$instance->extensions);
 
             return;
         }
@@ -470,7 +470,7 @@ class AttributeRouteConnector
                 continue;
             }
             if ($instance instanceof Extensions) {
-                $methodExtensions = $instance->extensions;
+                $methodExtensions = (array)$instance->extensions;
             }
         }
 

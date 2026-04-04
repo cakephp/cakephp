@@ -27,9 +27,9 @@ readonly class Extensions
     /**
      * Initializes an extensions attribute definition.
      *
-     * @param array<string> $extensions File extensions.
+     * @param array<string>|string $extensions File extensions.
      */
-    public function __construct(public array $extensions)
+    public function __construct(public array|string $extensions)
     {
     }
 }
