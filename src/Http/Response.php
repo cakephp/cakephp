@@ -1304,6 +1304,7 @@ class Response implements ResponseInterface, Stringable
 
         preg_match('/^bytes\s*=\s*(\d+)?\s*-\s*(\d+)?$/', $httpRange, $matches);
         if ($matches) {
+            /** @phpstan-ignore offsetAccess.notFound */
             $start = $matches[1];
             $end = $matches[2] ?? '';
         }

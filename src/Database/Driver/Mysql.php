@@ -318,9 +318,8 @@ class Mysql extends Driver
         if ($this->version === null) {
             $this->version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
-            if (str_contains($this->version, 'MariaDB')) {
+            if (preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->version, $matches)) {
                 $this->serverType = static::SERVER_TYPE_MARIADB;
-                preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->version, $matches);
                 $this->version = $matches[1];
             }
         }
