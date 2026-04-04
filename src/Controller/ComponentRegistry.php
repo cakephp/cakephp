@@ -63,22 +63,16 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     protected ?Controller $Controller = null;
 
     /**
-     * @var \Cake\Core\ContainerInterface|null
-     */
-    protected ?ContainerInterface $container = null;
-
-    /**
      * Constructor.
      *
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @param \Cake\Core\ContainerInterface|null $container Container instance.
      */
-    public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
+    public function __construct(?Controller $controller = null, protected ?ContainerInterface $container = null)
     {
         if ($controller !== null) {
             $this->setController($controller);
         }
-        $this->container = $container;
     }
 
     /**

@@ -43,29 +43,21 @@ class EnumType extends BaseType
     protected string $backingType;
 
     /**
-     * The enum classname which is associated to the type instance
-     *
-     * @var class-string<\BackedEnum>
-     */
-    protected string $enumClassName;
-
-    /**
      * @param string $name The name identifying this type
      * @param class-string<\BackedEnum> $enumClassName The associated enum class name
      */
     public function __construct(
         string $name,
-        string $enumClassName,
+        protected string $enumClassName,
     ) {
         parent::__construct($name);
-        $this->enumClassName = $enumClassName;
 
         try {
-            $reflectionEnum = new ReflectionEnum($enumClassName);
+            $reflectionEnum = new ReflectionEnum($this->enumClassName);
         } catch (ReflectionException $e) {
             throw new DatabaseException(sprintf(
                 'Unable to use `%s` for type `%s`. %s.',
-                $enumClassName,
+                $this->enumClassName,
                 $name,
                 $e->getMessage(),
             ));
@@ -74,7 +66,7 @@ class EnumType extends BaseType
         $namedType = $reflectionEnum->getBackingType();
         if ($namedType === null) {
             throw new DatabaseException(
-                sprintf('Unable to use enum `%s` for type `%s`, must be a backed enum.', $enumClassName, $name),
+                sprintf('Unable to use enum `%s` for type `%s`, must be a backed enum.', $this->enumClassName, $name),
             );
         }
 

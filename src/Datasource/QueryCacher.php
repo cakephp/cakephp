@@ -33,29 +33,15 @@ use Traversable;
 class QueryCacher
 {
     /**
-     * The key or function to generate a key.
-     *
-     * @var \Closure|string
-     */
-    protected Closure|string $key;
-
-    /**
-     * Config for cache engine.
-     *
-     * @var \Psr\SimpleCache\CacheInterface|string
-     */
-    protected CacheInterface|string $config;
-
-    /**
      * Constructor.
      *
      * @param \Closure|string $key The key or function to generate a key.
      * @param \Psr\SimpleCache\CacheInterface|string $config The cache config name or cache engine instance.
      */
-    public function __construct(Closure|string $key, CacheInterface|string $config)
-    {
-        $this->key = $key;
-        $this->config = $config;
+    public function __construct(
+        protected Closure|string $key,
+        protected CacheInterface|string $config,
+    ) {
     }
 
     /**

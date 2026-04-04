@@ -31,21 +31,14 @@ class CookieEquals extends ResponseBase
     protected ResponseInterface $response;
 
     /**
-     * @var string
-     */
-    protected string $cookieName;
-
-    /**
      * Constructor.
      *
      * @param \Cake\Http\Response|null $response A response instance.
      * @param string $cookieName Cookie name
      */
-    public function __construct(?Response $response, string $cookieName)
+    public function __construct(?Response $response, protected string $cookieName)
     {
         parent::__construct($response);
-
-        $this->cookieName = $cookieName;
     }
 
     /**

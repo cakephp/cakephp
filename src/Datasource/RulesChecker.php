@@ -92,13 +92,6 @@ class RulesChecker
     protected array $deleteRules = [];
 
     /**
-     * List of options to pass to every callable rule
-     *
-     * @var array
-     */
-    protected array $options = [];
-
-    /**
      * Whether to use I18n functions for translating default error messages
      *
      * @var bool
@@ -110,9 +103,8 @@ class RulesChecker
      *
      * @param array<string, mixed> $options The options to pass to every rule
      */
-    public function __construct(array $options = [])
+    public function __construct(protected array $options = [])
     {
-        $this->options = $options;
         $this->useI18n = function_exists('\Cake\I18n\__d');
     }
 

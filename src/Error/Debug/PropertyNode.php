@@ -22,32 +22,14 @@ namespace Cake\Error\Debug;
 class PropertyNode implements NodeInterface
 {
     /**
-     * @var string
-     */
-    private string $name;
-
-    /**
-     * @var string|null
-     */
-    private ?string $visibility = null;
-
-    /**
-     * @var \Cake\Error\Debug\NodeInterface
-     */
-    private NodeInterface $value;
-
-    /**
      * Constructor
      *
      * @param string $name The property name
      * @param string|null $visibility The visibility of the property.
      * @param \Cake\Error\Debug\NodeInterface $value The property value node.
      */
-    public function __construct(string $name, ?string $visibility, NodeInterface $value)
+    public function __construct(private string $name, private ?string $visibility, private NodeInterface $value)
     {
-        $this->name = $name;
-        $this->visibility = $visibility;
-        $this->value = $value;
     }
 
     /**

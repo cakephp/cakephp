@@ -28,48 +28,6 @@ use SimpleXMLElement;
 class ConsoleInputArgument
 {
     /**
-     * Name of the argument.
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * Help string
-     *
-     * @var string
-     */
-    protected string $help;
-
-    /**
-     * Is this option required?
-     *
-     * @var bool
-     */
-    protected bool $required;
-
-    /**
-     * An array of valid choices for this argument.
-     *
-     * @var array<string>
-     */
-    protected array $choices;
-
-    /**
-     * Default value for this argument.
-     *
-     * @var string|null
-     */
-    protected ?string $default = null;
-
-    /**
-     * The multiple separator.
-     *
-     * @var string|null
-     */
-    protected ?string $separator = null;
-
-    /**
      * Make a new Input Argument
      *
      * @param string $name The long name of the option.
@@ -81,20 +39,13 @@ class ConsoleInputArgument
      * @throws \Cake\Console\Exception\ConsoleException When the separator contains spaces.
      */
     public function __construct(
-        string $name,
-        string $help = '',
-        bool $required = false,
-        array $choices = [],
-        ?string $default = null,
-        ?string $separator = null,
+        protected string $name,
+        protected string $help = '',
+        protected bool $required = false,
+        protected array $choices = [],
+        protected ?string $default = null,
+        protected ?string $separator = null,
     ) {
-        $this->name = $name;
-        $this->help = $help;
-        $this->required = $required;
-        $this->choices = $choices;
-        $this->default = $default;
-        $this->separator = $separator;
-
         if ($this->separator !== null && str_contains($this->separator, ' ')) {
             throw new ConsoleException(
                 sprintf(

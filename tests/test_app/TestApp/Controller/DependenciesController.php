@@ -17,16 +17,13 @@ use TestApp\ReflectionDependency;
  */
 class DependenciesController extends Controller
 {
-    public ?stdClass $inject;
-
     public function __construct(
         ?ServerRequest $request = null,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?stdClass $inject = null,
+        public ?stdClass $inject = null,
     ) {
         parent::__construct($request, $name, $eventManager);
-        $this->inject = $inject;
     }
 
     /**

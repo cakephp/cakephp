@@ -55,13 +55,6 @@ class Route
     public array $defaults = [];
 
     /**
-     * The routes template string.
-     *
-     * @var string
-     */
-    public string $template;
-
-    /**
      * Is this route a greedy route? Greedy routes have a `/*` in their
      * template
      *
@@ -132,7 +125,7 @@ class Route
      * @param array<string, mixed> $options Array of additional options for the Route
      * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
-    public function __construct(string $template, array $defaults = [], array $options = [])
+    public function __construct(public string $template, array $defaults = [], array $options = [])
     {
         $checker = function () use ($defaults): bool {
             foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
@@ -148,8 +141,6 @@ class Route
         };
 
         assert($checker());
-
-        $this->template = $template;
         $this->defaults = $defaults;
         $this->options = $options + ['_ext' => [], '_middleware' => []];
         $this->setExtensions((array)$this->options['_ext']);

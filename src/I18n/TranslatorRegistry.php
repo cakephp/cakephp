@@ -47,20 +47,6 @@ class TranslatorRegistry
     protected string $locale;
 
     /**
-     * A package locator.
-     *
-     * @var \Cake\I18n\PackageLocator
-     */
-    protected PackageLocator $packages;
-
-    /**
-     * A formatter locator.
-     *
-     * @var \Cake\I18n\FormatterLocator
-     */
-    protected FormatterLocator $formatters;
-
-    /**
      * A list of loader functions indexed by domain name. Loaders are
      * callables that are invoked as a default for building translation
      * packages where none can be found for the combination of translator
@@ -101,12 +87,10 @@ class TranslatorRegistry
      * @param string $locale The default locale code to use.
      */
     public function __construct(
-        PackageLocator $packages,
-        FormatterLocator $formatters,
+        protected PackageLocator $packages,
+        protected FormatterLocator $formatters,
         string $locale,
     ) {
-        $this->packages = $packages;
-        $this->formatters = $formatters;
         $this->setLocale($locale);
 
         $this->registerLoader(static::FALLBACK_LOADER, function ($name, $locale) {

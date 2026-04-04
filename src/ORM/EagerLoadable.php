@@ -29,13 +29,6 @@ use Cake\Database\Exception\DatabaseException;
 class EagerLoadable
 {
     /**
-     * The name of the association to load.
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
      * A list of other associations to load from this level.
      *
      * @var array<string, \Cake\ORM\EagerLoadable>
@@ -130,9 +123,8 @@ class EagerLoadable
      * @param string $name The Association name.
      * @param array<string, mixed> $config The list of properties to set.
      */
-    public function __construct(string $name, array $config = [])
+    public function __construct(protected string $name, array $config = [])
     {
-        $this->name = $name;
         if (isset($config['associations'])) {
             $this->associations = $config['associations'];
         }

@@ -28,13 +28,6 @@ use InvalidArgumentException;
 class TupleComparison extends ComparisonExpression
 {
     /**
-     * The type to be used for casting the value to a database representation
-     *
-     * @var array<string|null>
-     */
-    protected array $types;
-
-    /**
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|array|string $fields the fields to use to form a tuple
@@ -46,10 +39,9 @@ class TupleComparison extends ComparisonExpression
     public function __construct(
         ExpressionInterface|array|string $fields,
         ExpressionInterface|array $values,
-        array $types = [],
+        protected array $types = [],
         string $conjunction = '=',
     ) {
-        $this->types = $types;
         $this->setField($fields);
         $this->operator = $conjunction;
         $this->setValue($values);

@@ -25,21 +25,14 @@ use Psr\Http\Message\ResponseInterface;
 class HeaderEquals extends ResponseBase
 {
     /**
-     * @var string
-     */
-    protected string $headerName;
-
-    /**
      * Constructor.
      *
      * @param \Psr\Http\Message\ResponseInterface $response A response instance.
      * @param string $headerName Header name
      */
-    public function __construct(ResponseInterface $response, string $headerName)
+    public function __construct(ResponseInterface $response, protected string $headerName)
     {
         parent::__construct($response);
-
-        $this->headerName = $headerName;
     }
 
     /**

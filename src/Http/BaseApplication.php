@@ -83,13 +83,6 @@ abstract class BaseApplication implements
     protected PluginCollection $plugins;
 
     /**
-     * Controller factory
-     *
-     * @var \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>|null
-     */
-    protected ?ControllerFactoryInterface $controllerFactory = null;
-
-    /**
      * Container
      *
      * @var \Cake\Core\ContainerInterface|null
@@ -106,12 +99,11 @@ abstract class BaseApplication implements
     public function __construct(
         string $configDir,
         ?EventManagerInterface $eventManager = null,
-        ?ControllerFactoryInterface $controllerFactory = null,
+        protected ?ControllerFactoryInterface $controllerFactory = null,
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = new PluginCollection();
         $this->eventManager = $eventManager ?: EventManager::instance();
-        $this->controllerFactory = $controllerFactory;
         Plugin::setCollection($this->plugins);
     }
 

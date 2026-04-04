@@ -74,32 +74,11 @@ class RouteBuilder
     protected array $extensions = [];
 
     /**
-     * The path prefix scope that this collection uses.
-     *
-     * @var string
-     */
-    protected string $path;
-
-    /**
-     * The scope parameters if there are any.
-     *
-     * @var array
-     */
-    protected array $params;
-
-    /**
      * Name prefix for connected routes.
      *
      * @var string
      */
     protected string $namePrefix = '';
-
-    /**
-     * The route collection routes should be added to.
-     *
-     * @var \Cake\Routing\RouteCollection
-     */
-    protected RouteCollection $collection;
 
     /**
      * The list of middleware that routes in this builder get
@@ -132,14 +111,11 @@ class RouteBuilder
      * @param array<string, mixed> $options Options list.
      */
     public function __construct(
-        RouteCollection $collection,
-        string $path = '/',
-        array $params = [],
+        protected RouteCollection $collection,
+        protected string $path = '/',
+        protected array $params = [],
         array $options = [],
     ) {
-        $this->collection = $collection;
-        $this->path = $path;
-        $this->params = $params;
         if (isset($options['routeClass'])) {
             $this->routeClass = $options['routeClass'];
         }

@@ -74,21 +74,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected ?ExceptionTrap $exceptionTrap = null;
 
     /**
-     * @var \Cake\Routing\RoutingApplicationInterface|null
-     */
-    protected ?RoutingApplicationInterface $app = null;
-
-    /**
      * Constructor
      *
      * @param \Cake\Error\ExceptionTrap|array $config The error handler instance
      *  or config array.
      * @param \Cake\Routing\RoutingApplicationInterface|null $app Application instance.
      */
-    public function __construct(ExceptionTrap|array $config = [], ?RoutingApplicationInterface $app = null)
+    public function __construct(ExceptionTrap|array $config = [], protected ?RoutingApplicationInterface $app = null)
     {
-        $this->app = $app;
-
         if (Configure::read('debug')) {
             ini_set('zend.exception_ignore_args', '0');
         }

@@ -25,32 +25,14 @@ use PHPUnit\Framework\Constraint\Constraint;
 class ExitCode extends Constraint
 {
     /**
-     * @var int|null
-     */
-    private ?int $exitCode = null;
-
-    /**
-     * @var array
-     */
-    private array $out = [];
-
-    /**
-     * @var array
-     */
-    private array $err = [];
-
-    /**
      * Constructor
      *
      * @param int|null $exitCode Exit code
      * @param array $out stdout stream
      * @param array $err stderr stream
      */
-    public function __construct(?int $exitCode, array $out, array $err)
+    public function __construct(private ?int $exitCode, private array $out, private array $err)
     {
-        $this->exitCode = $exitCode;
-        $this->out = $out;
-        $this->err = $err;
     }
 
     /**

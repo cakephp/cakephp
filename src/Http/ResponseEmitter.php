@@ -32,20 +32,12 @@ use Psr\Link\LinkInterface;
 class ResponseEmitter
 {
     /**
-     * Maximum output buffering size for each iteration.
-     *
-     * @var int
-     */
-    protected int $maxBufferLength;
-
-    /**
      * Constructor
      *
      * @param int $maxBufferLength Maximum output buffering size for each iteration.
      */
-    public function __construct(int $maxBufferLength = 8192)
+    public function __construct(protected int $maxBufferLength = 8192)
     {
-        $this->maxBufferLength = $maxBufferLength;
     }
 
     /**

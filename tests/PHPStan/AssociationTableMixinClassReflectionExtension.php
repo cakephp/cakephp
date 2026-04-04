@@ -14,15 +14,8 @@ use PHPStan\Reflection\ReflectionProvider;
 
 class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension
 {
-    /**
-     * @var \PHPStan\Reflection\ReflectionProvider
-     */
-    private ReflectionProvider $reflectionProvider;
-
-    public function __construct(
-        ReflectionProvider $reflectionProvider,
-    ) {
-        $this->reflectionProvider = $reflectionProvider;
+    public function __construct(private ReflectionProvider $reflectionProvider)
+    {
     }
 
     protected function getTableReflection(): ClassReflection

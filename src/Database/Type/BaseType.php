@@ -26,20 +26,12 @@ use PDO;
 abstract class BaseType implements TypeInterface
 {
     /**
-     * Identifier name for this type
-     *
-     * @var string|null
-     */
-    protected ?string $name = null;
-
-    /**
      * Constructor
      *
      * @param string|null $name The name identifying this type
      */
-    public function __construct(?string $name = null)
+    public function __construct(protected ?string $name = null)
     {
-        $this->name = $name;
     }
 
     /**

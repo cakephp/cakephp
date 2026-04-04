@@ -43,38 +43,17 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
     use CookieCryptTrait;
 
     /**
-     * The list of cookies to encrypt/decrypt
-     *
-     * @var array<string>
-     */
-    protected array $cookieNames;
-
-    /**
-     * Encryption key to use.
-     *
-     * @var string
-     */
-    protected string $key;
-
-    /**
-     * Encryption type.
-     *
-     * @var string
-     */
-    protected string $cipherType;
-
-    /**
      * Constructor
      *
      * @param array<string> $cookieNames The list of cookie names that should have their values encrypted.
      * @param string $key The encryption key to use.
      * @param string $cipherType The cipher type to use. Defaults to 'aes'.
      */
-    public function __construct(array $cookieNames, string $key, string $cipherType = 'aes')
-    {
-        $this->cookieNames = $cookieNames;
-        $this->key = $key;
-        $this->cipherType = $cipherType;
+    public function __construct(
+        protected array $cookieNames,
+        protected string $key,
+        protected string $cipherType = 'aes',
+    ) {
     }
 
     /**

@@ -43,20 +43,14 @@ class FlashMessage
     ];
 
     /**
-     * @var \Cake\Http\Session
-     */
-    protected Session $session;
-
-    /**
      * Constructor
      *
      * @param \Cake\Http\Session $session Session instance.
      * @param array<string, mixed> $config Config array.
      * @see FlashMessage::set() For list of valid config keys.
      */
-    public function __construct(Session $session, array $config = [])
+    public function __construct(protected Session $session, array $config = [])
     {
-        $this->session = $session;
         $this->setConfig($config);
     }
 

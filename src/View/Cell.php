@@ -64,22 +64,6 @@ abstract class Cell implements EventDispatcherInterface, Stringable
     protected View $View;
 
     /**
-     * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
-     * This object contains all the information about a request and several methods for reading
-     * additional information about the request.
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    protected ServerRequest $request;
-
-    /**
-     * An instance of a Response object that contains information about the impending response
-     *
-     * @var \Cake\Http\Response
-     */
-    protected Response $response;
-
-    /**
      * The cell's action to invoke.
      *
      * @var string
@@ -125,16 +109,14 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * @param array<string, mixed> $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request,
-        Response $response,
+        protected ServerRequest $request,
+        protected Response $response,
         ?EventManagerInterface $eventManager = null,
         array $cellOptions = [],
     ) {
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
-        $this->request = $request;
-        $this->response = $response;
 
         $this->validCellOptions = array_merge(['action', 'args', 'plugin'], $this->validCellOptions);
         foreach ($this->validCellOptions as $var) {

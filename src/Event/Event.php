@@ -25,27 +25,6 @@ namespace Cake\Event;
 class Event implements EventInterface
 {
     /**
-     * Name of the event
-     *
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * The object this event applies to (usually the same object that generates the event)
-     *
-     * @var TSubject|null
-     */
-    protected ?object $subject = null;
-
-    /**
-     * Custom data for the method that receives the event
-     *
-     * @var array
-     */
-    protected array $data;
-
-    /**
      * Property used to retain the result value of the event listeners
      *
      * Use setResult() and getResult() to set and get the result.
@@ -78,11 +57,11 @@ class Event implements EventInterface
      *   with this event to it can be read by listeners.
      * @phpstan-param TSubject|null $subject
      */
-    public function __construct(string $name, ?object $subject = null, array $data = [])
-    {
-        $this->name = $name;
-        $this->subject = $subject;
-        $this->data = $data;
+    public function __construct(
+        protected string $name,
+        protected ?object $subject = null,
+        protected array $data = [],
+    ) {
     }
 
     /**

@@ -30,20 +30,6 @@ use Closure;
 class RuleInvoker
 {
     /**
-     * The rule name
-     *
-     * @var string|null
-     */
-    protected ?string $name = null;
-
-    /**
-     * Rule options
-     *
-     * @var array<string, mixed>
-     */
-    protected array $options = [];
-
-    /**
      * Rule callable
      *
      * @var callable
@@ -66,11 +52,12 @@ class RuleInvoker
      * @param string|null $name The name of the rule. Used in error messages.
      * @param array<string, mixed> $options The options for the rule. See above.
      */
-    public function __construct(callable $rule, ?string $name, array $options = [])
-    {
+    public function __construct(
+        callable $rule,
+        protected ?string $name,
+        protected array $options = [],
+    ) {
         $this->rule = $rule;
-        $this->name = $name;
-        $this->options = $options;
     }
 
     /**
