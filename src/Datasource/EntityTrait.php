@@ -20,8 +20,8 @@ use Cake\Collection\Collection;
 use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use Error;
 use InvalidArgumentException;
+use ReflectionProperty;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -92,6 +92,13 @@ trait EntityTrait
     protected static array $accessors = [];
 
     /**
+     * Per-class cache of ReflectionProperty instances for concrete field properties.
+     *
+     * @var array<class-string, array<string, \ReflectionProperty|null>>
+     */
+    protected static array $reflectionCache = [];
+
+    /**
      * Indicates whether this entity is yet to be persisted.
      * Entities default to assuming they are new. You can use Table::persisted()
      * to set the new flag on an entity based on records in the database.
@@ -159,6 +166,7 @@ trait EntityTrait
     protected static array $restrictedProperties = [
         'dynamicFields' => 'dynamicFields',
         'propertyFields' => 'propertyFields',
+        'reflectionCache' => 'reflectionCache',
         'original' => 'original',
         'originalFields' => 'originalFields',
         'hidden' => 'hidden',
@@ -347,19 +355,27 @@ trait EntityTrait
             if (
                 $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->original) &&
-                isset($this->propertyFields[$name]) &&
-                $value !== ($this->{$name} ?? null)
+                isset($this->propertyFields[$name])
             ) {
-                $this->original[$name] = $this->{$name} ?? null;
+                $existing = $this->getRawValue($name);
+                if ($value !== $existing) {
+                    $this->original[$name] = $existing;
+                }
             }
 
             if (!isset($this->propertyFields[$name])) {
                 $this->propertyFields[$name] = $name;
             }
 
-            $propExists = $this->propertyExists($name);
-            if ($propExists) {
-                $this->{$name} = $value;
+            if ($options['setter']) {
+                $propExists = $this->propertyExists($name);
+                if ($propExists) {
+                    $this->{$name} = $value;
+
+                    continue;
+                }
+            } else {
+                $this->setRawValue($name, $value);
 
                 continue;
             }
@@ -384,16 +400,12 @@ trait EntityTrait
      */
     protected function isModified(string $field, mixed $value): bool
     {
-        if ($this->propertyExists($field)) {
-            try {
-                $existing = $this->{$field};
-            } catch (Error $error) {
-                if (str_ends_with($error->getMessage(), 'must not be accessed before initialization')) {
-                    return true;
-                }
-
-                throw $error;
+        $ref = static::getReflectionProperty($field);
+        if ($ref !== null) {
+            if (!$ref->isInitialized($this)) {
+                return true;
             }
+            $existing = $ref->getRawValue($this);
         } else {
             if (!array_key_exists($field, $this->dynamicFields)) {
                 return true;
@@ -537,7 +549,7 @@ trait EntityTrait
                 !array_key_exists($key, $originals) &&
                 $this->isOriginalField($key)
             ) {
-                $originals[$key] = $this->{$key};
+                $originals[$key] = $this->getRawValue($key);
             }
         }
 
@@ -1072,7 +1084,7 @@ trait EntityTrait
         $this->hasBeenVisited = true;
         try {
             foreach ($this->propertyFields as $field) {
-                $value = $this->{$field};
+                $value = $this->getRawValue($field);
 
                 if ($this->readHasErrors($value)) {
                     return true;
@@ -1100,7 +1112,7 @@ trait EntityTrait
         $diff = array_diff($this->propertyFields, array_keys($this->errors));
         $values = [];
         foreach ($diff as $field) {
-            $values[$field] = $this->{$field};
+            $values[$field] = $this->getRawValue($field);
         }
 
         $this->hasBeenVisited = true;
@@ -1475,7 +1487,90 @@ trait EntityTrait
      */
     protected function propertyExists(string $field): bool
     {
-        return !isset(static::$restrictedProperties[$field]) && property_exists($this, $field);
+        return static::getReflectionProperty($field) !== null;
+    }
+
+    /**
+     * Get cached ReflectionProperty for a concrete field property.
+     *
+     * Returns null if the property doesn't exist, is a restricted
+     * (infrastructure) property, or is static.
+     *
+     * @param string $field The field name.
+     * @return \ReflectionProperty|null
+     */
+    protected static function getReflectionProperty(string $field): ?ReflectionProperty
+    {
+        $class = static::class;
+
+        if (!isset(static::$reflectionCache[$class])) {
+            static::$reflectionCache[$class] = [];
+        }
+
+        if (!array_key_exists($field, static::$reflectionCache[$class])) {
+            if (isset(static::$restrictedProperties[$field]) || !property_exists(static::class, $field)) {
+                static::$reflectionCache[$class][$field] = null;
+            } else {
+                $ref = new ReflectionProperty(static::class, $field);
+                static::$reflectionCache[$class][$field] = $ref->isStatic() ? null : $ref;
+            }
+        }
+
+        return static::$reflectionCache[$class][$field];
+    }
+
+    /**
+     * Set a property's raw value, bypassing any property hooks.
+     *
+     * Uses ReflectionProperty::setRawValue() to avoid triggering `set` hooks.
+     * Falls back to $dynamicFields for fields without a concrete property.
+     *
+     * @param string $field The field name.
+     * @param mixed $value The value to set.
+     * @return void
+     */
+    protected function setRawValue(string $field, mixed $value): void
+    {
+        $ref = static::getReflectionProperty($field);
+
+        if ($ref === null) {
+            $this->dynamicFields[$field] = $value;
+
+            return;
+        }
+
+        $ref->setRawValue($this, $value);
+    }
+
+    /**
+     * Get a property's raw value, bypassing any property `get` hooks.
+     *
+     * Falls back to $dynamicFields for fields without a concrete property.
+     *
+     * @param string $field The field name.
+     * @return mixed
+     */
+    protected function getRawValue(string $field): mixed
+    {
+        $ref = static::getReflectionProperty($field);
+
+        if ($ref === null) {
+            return $this->dynamicFields[$field] ?? null;
+        }
+
+        return $ref->getRawValue($this);
+    }
+
+    /**
+     * Clear the reflection cache.
+     *
+     * Useful for testing where entity classes may be dynamically defined.
+     *
+     * @return void
+     */
+    public static function clearReflectionCache(): void
+    {
+        static::$reflectionCache = [];
     }
 
     /**
@@ -1488,7 +1583,7 @@ trait EntityTrait
     {
         $fields = [];
         foreach ($this->propertyFields as $field) {
-            $fields[$field] = $this->{$field};
+            $fields[$field] = $this->getRawValue($field);
         }
         $fields += $this->dynamicFields;
 

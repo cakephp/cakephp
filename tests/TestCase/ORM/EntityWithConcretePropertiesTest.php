@@ -1694,4 +1694,250 @@ class EntityWithConcretePropertiesTest extends TestCase
 
         $this->assertSame($properties, $restrictedProperties);
     }
+
+    /**
+     * Tests getReflectionProperty returns a ReflectionProperty for concrete fields
+     */
+    public function testGetReflectionProperty(): void
+    {
+        $entity = new class extends Entity {
+            protected int $id;
+            protected string $title;
+        };
+
+        $ref = new ReflectionClass($entity);
+        $method = $ref->getMethod('getReflectionProperty');
+
+        $this->assertInstanceOf(\ReflectionProperty::class, $method->invoke(null, 'id'));
+        $this->assertInstanceOf(\ReflectionProperty::class, $method->invoke(null, 'title'));
+        $this->assertNull($method->invoke(null, 'nonexistent'));
+        // Restricted properties should return null
+        $this->assertNull($method->invoke(null, 'dirty'));
+        $this->assertNull($method->invoke(null, 'reflectionCache'));
+    }
+
+    /**
+     * Tests setRawValue bypasses property hooks
+     */
+    public function testSetRawValueBypassesHooks(): void
+    {
+        $entity = new class extends Entity {
+            protected string $title {
+                set(string $value) {
+                    $this->title = strtolower($value);
+                }
+            }
+        };
+
+        // Via set() (hooks fire)
+        $entity->set('title', 'HELLO');
+        $this->assertSame('hello', $entity->title);
+
+        // Via raw value (hooks bypassed) - simulate hydration
+        $ref = new ReflectionClass($entity);
+        $method = $ref->getMethod('setRawValue');
+        $method->invoke($entity, 'title', 'WORLD');
+        $this->assertSame('WORLD', $entity->title);
+    }
+
+    /**
+     * Tests getRawValue bypasses property get hooks
+     */
+    public function testGetRawValueBypassesGetHooks(): void
+    {
+        $entity = new class extends Entity {
+            protected string $title {
+                get => strtoupper($this->title);
+            }
+        };
+
+        // Set raw value first
+        $ref = new ReflectionClass($entity);
+        $setMethod = $ref->getMethod('setRawValue');
+        $setMethod->invoke($entity, 'title', 'hello');
+
+        // get() goes through hooks
+        $this->assertSame('HELLO', $entity->get('title'));
+
+        // getRawValue() bypasses hooks
+        $getMethod = $ref->getMethod('getRawValue');
+        $this->assertSame('hello', $getMethod->invoke($entity, 'title'));
+    }
+
+    /**
+     * Tests that ORM-style hydration (useSetters=false) bypasses property hooks
+     */
+    public function testHydrationBypassesPropertyHooks(): void
+    {
+        $entity = new class (['title' => 'HELLO'], [
+            'useSetters' => false,
+            'markClean' => true,
+            'markNew' => false,
+        ]) extends Entity {
+            protected string $title {
+                set(string $value) {
+                    $this->title = strtolower($value);
+                }
+            }
+        };
+
+        // Value should NOT have been lowercased during hydration
+        $this->assertSame('HELLO', $entity->title);
+        $this->assertFalse($entity->isDirty('title'));
+
+        // Application writes should trigger hooks
+        $entity->title = 'WORLD';
+        $this->assertSame('world', $entity->title);
+        $this->assertTrue($entity->isDirty('title'));
+    }
+
+    /**
+     * Tests that useSetters=true (default) fires property hooks
+     */
+    public function testConstructorWithSettersFiresHooks(): void
+    {
+        $entity = new class (['title' => 'HELLO'], [
+            'useSetters' => true,
+        ]) extends Entity {
+            protected string $title {
+                set(string $value) {
+                    $this->title = strtolower($value);
+                }
+            }
+        };
+
+        // Hook should have fired
+        $this->assertSame('hello', $entity->title);
+    }
+
+    /**
+     * Tests isModified with property hooks uses raw values
+     */
+    public function testIsModifiedUsesRawValues(): void
+    {
+        $entity = new class extends Entity {
+            protected string $title {
+                get => strtoupper($this->title);
+            }
+        };
+
+        $entity->set('title', 'hello', ['asOriginal' => true]);
+        $entity->clean();
+
+        // Setting same raw value should not mark as dirty
+        $entity->set('title', 'hello');
+        $this->assertFalse($entity->isDirty('title'));
+
+        // Setting different value should mark as dirty
+        $entity->set('title', 'world');
+        $this->assertTrue($entity->isDirty('title'));
+    }
+
+    /**
+     * Tests combined get/set hooks work correctly
+     */
+    public function testCombinedHooks(): void
+    {
+        $entity = new class extends Entity {
+            protected string $email {
+                get => $this->email;
+                set(string $value) {
+                    $this->email = strtolower(trim($value));
+                }
+            }
+        };
+
+        $entity->set('email', '  FOO@BAR.COM  ');
+        $this->assertSame('foo@bar.com', $entity->email);
+        $this->assertSame('foo@bar.com', $entity->get('email'));
+    }
+
+    /**
+     * Tests virtual computed property via get hook
+     */
+    public function testVirtualPropertyGetHook(): void
+    {
+        $entity = new class (['title' => 'Hello', 'author_name' => 'World'], [
+            'useSetters' => false,
+        ]) extends Entity {
+            protected string $title;
+            protected string $author_name;
+
+            protected string $full_title {
+                get => $this->title . ' by ' . $this->author_name;
+            }
+        };
+
+        $entity->setVirtual(['full_title']);
+        $this->assertSame('Hello by World', $entity->get('full_title'));
+    }
+
+    /**
+     * Tests clearReflectionCache works
+     */
+    public function testClearReflectionCache(): void
+    {
+        $entity = new class extends Entity {
+            protected string $title;
+        };
+
+        // Access a property to populate cache
+        $entity->set('title', 'hello');
+
+        // Clear should not cause errors
+        $entity::clearReflectionCache();
+
+        // Should still work after clearing
+        $entity->set('title', 'world');
+        $this->assertSame('world', $entity->title);
+    }
+
+    /**
+     * Tests dynamic fields work with getRawValue/setRawValue
+     */
+    public function testRawValueWithDynamicFields(): void
+    {
+        $entity = new class extends Entity {
+            protected int $id;
+        };
+
+        $ref = new ReflectionClass($entity);
+        $setMethod = $ref->getMethod('setRawValue');
+        $getMethod = $ref->getMethod('getRawValue');
+
+        // Dynamic field (no property)
+        $setMethod->invoke($entity, 'dynamic_field', 'value');
+        $this->assertSame('value', $getMethod->invoke($entity, 'dynamic_field'));
+    }
+
+    /**
+     * Tests getOriginalValues uses raw values (bypasses get hooks)
+     */
+    public function testGetOriginalValuesBypassesGetHooks(): void
+    {
+        $entity = new class extends Entity {
+            protected string $title {
+                get => strtoupper($this->title);
+            }
+        };
+
+        $entity->set('title', 'hello', ['asOriginal' => true]);
+        $entity->clean();
+
+        $originals = $entity->getOriginalValues();
+        // Should return raw value, not hooked value
+        $this->assertSame('hello', $originals['title']);
+    }
+
+    /**
+     * Tests restricted properties includes reflectionCache
+     */
+    public function testReflectionCacheIsRestricted(): void
+    {
+        $ref = new ReflectionClass(Entity::class);
+        $prop = $ref->getProperty('restrictedProperties');
+        $restricted = $prop->getValue();
+
+        $this->assertArrayHasKey('reflectionCache', $restricted);
+    }
 }
