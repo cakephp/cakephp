@@ -55,7 +55,7 @@ trait EntityTrait
     /**
      * Holds all fields that have been initially set on instantiation, or after marking as clean
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $originalFields = [];
 
@@ -306,16 +306,16 @@ trait EntityTrait
      * ```
      *
      * @param array<string, mixed> $values Map of fields with their respective values.
-     * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
-     * keys are `setter`, `guard` and `asOriginal`
+     * @param array{setter?: bool, guard?: bool, asOriginal?: bool} $options Options to be used for setting the field.
      * @return $this
      * @throws \InvalidArgumentException
      */
     public function patch(array $values, array $options = []): static
     {
         $options += ['setter' => true, 'guard' => true, 'asOriginal' => false];
+        $asOriginal = $options['asOriginal'];
 
-        if ($options['asOriginal'] === true) {
+        if ($asOriginal) {
             $this->setOriginalField(array_keys($values));
         }
 
@@ -325,11 +325,11 @@ trait EntityTrait
                 throw new InvalidArgumentException('Cannot set an empty field');
             }
 
-            if ($options['guard'] === true && !$this->isPatchable($name)) {
+            if ($options['guard'] && !$this->isPatchable($name)) {
                 continue;
             }
 
-            if ($options['asOriginal'] || $this->isModified($name, $value)) {
+            if ($asOriginal || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
             } elseif (!$this->propertyExists($name)) {
                 continue;
@@ -637,14 +637,14 @@ trait EntityTrait
      */
     public function setHidden(array $fields, bool $merge = false): static
     {
-        if ($merge === false) {
-            $this->hidden = $fields;
+        if ($merge) {
+            $fields = array_merge($this->hidden, $fields);
+            $this->hidden = array_unique($fields);
 
             return $this;
         }
 
-        $fields = array_merge($this->hidden, $fields);
-        $this->hidden = array_unique($fields);
+        $this->hidden = $fields;
 
         return $this;
     }
@@ -668,14 +668,14 @@ trait EntityTrait
      */
     public function setVirtual(array $fields, bool $merge = false): static
     {
-        if ($merge === false) {
-            $this->virtual = $fields;
+        if ($merge) {
+            $fields = array_merge($this->virtual, $fields);
+            $this->virtual = array_unique($fields);
 
             return $this;
         }
 
-        $fields = array_merge($this->virtual, $fields);
-        $this->virtual = array_unique($fields);
+        $this->virtual = $fields;
 
         return $this;
     }
@@ -916,7 +916,7 @@ trait EntityTrait
      */
     public function isOriginalField(string $name): bool
     {
-        return in_array($name, $this->originalFields, true);
+        return isset($this->originalFields[$name]);
     }
 
     /**
@@ -927,7 +927,7 @@ trait EntityTrait
      */
     public function getOriginalFields(): array
     {
-        return $this->originalFields;
+        return array_values($this->originalFields);
     }
 
     /**
@@ -940,19 +940,16 @@ trait EntityTrait
      */
     protected function setOriginalField(string|array $field, bool $merge = true): static
     {
-        if (!$merge) {
-            $this->originalFields = (array)$field;
+        $field = (array)$field;
+        $field = array_combine($field, $field);
+
+        if ($merge) {
+            $this->originalFields += $field;
 
             return $this;
         }
 
-        $fields = (array)$field;
-        foreach ($fields as $field) {
-            $field = (string)$field;
-            if (!$this->isOriginalField($field)) {
-                $this->originalFields[] = $field;
-            }
-        }
+        $this->originalFields = $field;
 
         return $this;
     }
@@ -967,16 +964,15 @@ trait EntityTrait
      */
     public function setDirty(string $field, bool $isDirty = true): static
     {
-        if ($isDirty === false) {
-            $this->setOriginalField($field);
-
-            unset($this->dirty[$field], $this->original[$field]);
+        if ($isDirty) {
+            $this->dirty[$field] = true;
+            unset($this->errors[$field], $this->invalid[$field]);
 
             return $this;
         }
 
-        $this->dirty[$field] = true;
-        unset($this->errors[$field], $this->invalid[$field]);
+        $this->setOriginalField($field);
+        unset($this->dirty[$field], $this->original[$field]);
 
         return $this;
     }
@@ -1017,7 +1013,7 @@ trait EntityTrait
         $this->errors = [];
         $this->invalid = [];
         $this->original = [];
-        $this->setOriginalField(array_values($this->propertyFields), false);
+        $this->setOriginalField($this->propertyFields, false);
     }
 
     /**
@@ -1069,7 +1065,7 @@ trait EntityTrait
             return true;
         }
 
-        if ($includeNested === false) {
+        if (!$includeNested) {
             return false;
         }
 
@@ -1505,7 +1501,7 @@ trait EntityTrait
             '[patchable]' => $this->patchable,
             '[dirty]' => $this->dirty,
             '[original]' => $this->original,
-            '[originalFields]' => $this->originalFields,
+            '[originalFields]' => array_values($this->originalFields),
             '[virtual]' => $this->virtual,
             '[hasErrors]' => $this->hasErrors(),
             '[errors]' => $this->errors,
