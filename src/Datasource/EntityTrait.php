@@ -327,6 +327,8 @@ trait EntityTrait
             $this->setOriginalField(array_keys($values));
         }
 
+        $useSetter = $options['setter'];
+
         foreach ($values as $name => $value) {
             $name = (string)$name;
             if ($name === '') {
@@ -337,15 +339,17 @@ trait EntityTrait
                 continue;
             }
 
+            $isDynamic = array_key_exists($name, $this->dynamicFields);
+            $ref = $isDynamic ? null : static::getReflectionProperty($name);
+
+
             if ($asOriginal || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
-            } elseif (!$this->propertyExists($name)) {
-                continue;
-            } elseif ($value !== null) {
+            } elseif ($isDynamic || $ref === null || $value !== null) {
                 continue;
             }
 
-            if ($options['setter']) {
+            if ($useSetter) {
                 $setter = static::accessor($name, 'set');
                 if ($setter) {
                     $value = $this->{$setter}($value);
@@ -357,7 +361,7 @@ trait EntityTrait
                 !array_key_exists($name, $this->original) &&
                 isset($this->propertyFields[$name])
             ) {
-                $existing = $this->getRawValue($name);
+                $existing = $isDynamic ? $this->dynamicFields[$name] : $ref?->getRawValue($this);
                 if ($value !== $existing) {
                     $this->original[$name] = $existing;
                 }
@@ -367,20 +371,17 @@ trait EntityTrait
                 $this->propertyFields[$name] = $name;
             }
 
-            if ($options['setter']) {
-                $propExists = $this->propertyExists($name);
-                if ($propExists) {
+            if ($useSetter) {
+                if ($ref !== null) {
                     $this->{$name} = $value;
-
-                    continue;
+                } else {
+                    $this->dynamicFields[$name] = $value;
                 }
+            } elseif ($ref !== null) {
+                $ref->setRawValue($this, $value);
             } else {
-                $this->setRawValue($name, $value);
-
-                continue;
+                $this->dynamicFields[$name] = $value;
             }
-
-            $this->dynamicFields[$name] = $value;
         }
 
         return $this;
@@ -400,18 +401,14 @@ trait EntityTrait
      */
     protected function isModified(string $field, mixed $value): bool
     {
-        $ref = static::getReflectionProperty($field);
-        if ($ref !== null) {
-            if (!$ref->isInitialized($this)) {
+        if (array_key_exists($field, $this->dynamicFields)) {
+            $existing = $this->dynamicFields[$field];
+        } else {
+            $ref = static::getReflectionProperty($field);
+            if ($ref === null || !$ref->isInitialized($this)) {
                 return true;
             }
             $existing = $ref->getRawValue($this);
-        } else {
-            if (!array_key_exists($field, $this->dynamicFields)) {
-                return true;
-            }
-
-            $existing = $this->dynamicFields[$field] ?? null;
         }
 
         if (($value === null || is_scalar($value)) && $existing === $value) {
@@ -463,12 +460,12 @@ trait EntityTrait
         $value = null;
         $fieldIsPresent = false;
 
-        if ($this->propertyExists($field)) {
-            $fieldIsPresent = true;
-            $value = $this->{$field} ?? null;
-        } elseif (array_key_exists($field, $this->dynamicFields)) {
+        if (array_key_exists($field, $this->dynamicFields)) {
             $fieldIsPresent = true;
             $value = &$this->dynamicFields[$field];
+        } elseif ($this->propertyExists($field)) {
+            $fieldIsPresent = true;
+            $value = $this->{$field} ?? null;
         }
 
         $method = static::accessor($field, 'get');
@@ -1503,18 +1500,22 @@ trait EntityTrait
     {
         $class = static::class;
 
-        if (!isset(static::$reflectionCache[$class])) {
-            static::$reflectionCache[$class] = [];
+        if (isset(static::$reflectionCache[$class][$field])) {
+            return static::$reflectionCache[$class][$field];
         }
 
-        if (!array_key_exists($field, static::$reflectionCache[$class])) {
-            if (isset(static::$restrictedProperties[$field]) || !property_exists(static::class, $field)) {
-                static::$reflectionCache[$class][$field] = null;
-            } else {
-                $ref = new ReflectionProperty(static::class, $field);
-                static::$reflectionCache[$class][$field] = $ref->isStatic() ? null : $ref;
-            }
+        if (isset(static::$reflectionCache[$class]) && array_key_exists($field, static::$reflectionCache[$class])) {
+            return null;
         }
+
+        if (isset(static::$restrictedProperties[$field]) || !property_exists(static::class, $field)) {
+            static::$reflectionCache[$class][$field] = null;
+
+            return null;
+        }
+
+        $ref = new ReflectionProperty(static::class, $field);
+        static::$reflectionCache[$class][$field] = $ref->isStatic() ? null : $ref;
 
         return static::$reflectionCache[$class][$field];
     }
@@ -1531,6 +1532,12 @@ trait EntityTrait
      */
     protected function setRawValue(string $field, mixed $value): void
     {
+        if (array_key_exists($field, $this->dynamicFields)) {
+            $this->dynamicFields[$field] = $value;
+
+            return;
+        }
+
         $ref = static::getReflectionProperty($field);
 
         if ($ref === null) {
@@ -1552,10 +1559,14 @@ trait EntityTrait
      */
     protected function getRawValue(string $field): mixed
     {
+        if (array_key_exists($field, $this->dynamicFields)) {
+            return $this->dynamicFields[$field];
+        }
+
         $ref = static::getReflectionProperty($field);
 
         if ($ref === null) {
-            return $this->dynamicFields[$field] ?? null;
+            return null;
         }
 
         return $ref->getRawValue($this);
