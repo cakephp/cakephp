@@ -1940,4 +1940,76 @@ class EntityWithConcretePropertiesTest extends TestCase
 
         $this->assertArrayHasKey('reflectionCache', $restricted);
     }
+
+    /**
+     * Tests that restricted properties cannot be get, set, checked, or unset
+     * via entity methods.
+     */
+    public function testRestrictedPropertiesCannotBeAccessedViaEntityMethods(): void
+    {
+        $entity = new class (['id' => 1, 'title' => 'test']) extends Entity {
+            protected int $id;
+            protected string $title;
+        };
+
+        foreach (['accessors', 'dirty'] as $name) {
+            $this->assertNull($entity->get($name), "get('{$name}') should return null");
+            $this->assertFalse($entity->has($name), "has('{$name}') should return false");
+            $this->assertFalse($entity->isDirty($name), "isDirty('{$name}') should return false");
+            $this->assertNull($entity->extract([$name])[$name], "extract(['{$name}']) should return null");
+        }
+    }
+
+    /**
+     * Tests that set() on restricted property names stores them as dynamic
+     * fields and does not corrupt internal state.
+     */
+    public function testSetRestrictedPropertyNameDoesNotCorruptState(): void
+    {
+        $entity = new class (['id' => 1, 'title' => 'test']) extends Entity {
+            protected int $id;
+            protected string $title;
+        };
+
+        // Setting a field named 'dirty' should not overwrite the internal $dirty array
+        $entity->set('dirty', 'some value');
+        $this->assertSame('some value', $entity->get('dirty'));
+        // Internal dirty tracking still works
+        $this->assertTrue($entity->isDirty('dirty'));
+        $this->assertTrue($entity->isDirty('id'));
+
+        // Setting 'errors' should not overwrite internal $errors array
+        $entity->set('errors', 'some error data');
+        $this->assertSame('some error data', $entity->get('errors'));
+        $this->assertSame([], $entity->getErrors());
+
+        // Setting 'new' should not change isNew()
+        $entity->set('new', false);
+        $this->assertTrue($entity->isNew());
+        $this->assertFalse($entity->get('new'));
+    }
+
+    /**
+     * Tests that unset() on restricted property names does not corrupt internal state.
+     */
+    public function testUnsetRestrictedPropertyNameDoesNotCorruptState(): void
+    {
+        $entity = new class (['id' => 1]) extends Entity {
+            protected int $id;
+        };
+
+        // Set then unset a field named after a restricted property
+        $entity->set('dirty', 'value');
+        $this->assertTrue($entity->has('dirty'));
+
+        $entity->unset('dirty');
+        $this->assertFalse($entity->has('dirty'));
+
+        // Internal dirty tracking still works
+        $this->assertTrue($entity->isDirty('id'));
+
+        // Unsetting 'errors' when it was never set as a field should be harmless
+        $entity->unset('errors');
+        $this->assertSame([], $entity->getErrors());
+    }
 }
