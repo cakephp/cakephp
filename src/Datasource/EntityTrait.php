@@ -342,7 +342,6 @@ trait EntityTrait
             $isDynamic = array_key_exists($name, $this->dynamicFields);
             $ref = $isDynamic ? null : static::getReflectionProperty($name);
 
-
             if ($asOriginal || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
             } elseif ($isDynamic || $ref === null || $value !== null) {
