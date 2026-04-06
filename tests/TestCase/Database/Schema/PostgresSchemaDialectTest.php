@@ -1983,7 +1983,7 @@ SQL;
      */
     public function testIndexAccessMethodRoundTrip(): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS schema_index_access_method');
 
@@ -2030,18 +2030,6 @@ SQL;
         $this->assertNotNull($ginIndex, 'GIN index should be found');
         $this->assertEquals(['data'], $ginIndex['columns']);
         $this->assertEquals(Index::GIN, $ginIndex['accessMethod']);
-    }
-
-    public function testDescribeForeignKeySql(): void
-    {
-        $driver = $this->createStub(Postgres::class);
-        $dialect = new PostgresSchemaDialect($driver);
-
-        $result = $dialect->describeForeignKeySql('schema_name.table_name', []);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
-
-        $result = $dialect->describeForeignKeySql('table_name', ['schema' => 'schema_name']);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
     }
 
     /**

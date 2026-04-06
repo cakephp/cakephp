@@ -670,7 +670,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->user->updateAll(['post_count' => 0], []);
         $this->post->getBehavior('CounterCache')->updateCounterCache('Users');
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         // With "return": post_count stays 0 (buggy behavior)
         // With "continue": post_count becomes 2 (correct behavior)
         $this->assertSame(2, $user->get('post_count'));
