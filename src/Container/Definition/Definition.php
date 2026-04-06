@@ -82,6 +82,14 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     /**
      * @inheritDoc
      */
+    public function getTags(): array
+    {
+        return array_keys($this->tags);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function hasTag(string $tag): bool
     {
         return isset($this->tags[$tag]);
