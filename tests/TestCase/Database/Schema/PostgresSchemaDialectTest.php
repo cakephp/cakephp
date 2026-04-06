@@ -1999,7 +1999,7 @@ SQL;
         $connection->execute($sql);
 
         // Create a TableSchema and add a GIN index
-        $table = (new TableSchema('schema_index_access_method'))
+        $table = new TableSchema('schema_index_access_method')
             ->addColumn('id', ['type' => 'integer'])
             ->addColumn('data', ['type' => 'json'])
             ->addColumn('name', ['type' => 'string', 'length' => 255])
@@ -2017,15 +2017,7 @@ SQL;
         // Describe the index and verify access method is reflected
         $indexes = $dialect->describeIndexes('schema_index_access_method');
         $connection->execute('DROP TABLE schema_index_access_method');
-
-        // Find the GIN index in results
-        $ginIndex = null;
-        foreach ($indexes as $index) {
-            if ($index['name'] === 'data_gin_idx') {
-                $ginIndex = $index;
-                break;
-            }
-        }
+        $ginIndex = array_find($indexes, fn($index) => $index['name'] === 'data_gin_idx');
 
         $this->assertNotNull($ginIndex, 'GIN index should be found');
         $this->assertEquals(['data'], $ginIndex['columns']);
