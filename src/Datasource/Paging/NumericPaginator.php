@@ -618,9 +618,19 @@ class NumericPaginator implements PaginatorInterface
 
                 // Merge with existing order - existing order comes AFTER our resolved order
                 $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
+                $modelAlias = $object->getAlias();
                 // Only keep fields from existing order that aren't already in our resolved order
+                // Account for prefixed vs unprefixed field names (e.g., 'modified' vs 'Alerts.modified')
                 foreach ($existingOrder as $field => $dir) {
-                    if (!isset($order[$field])) {
+                    // Check if this field (or its unprefixed version) is already in $order
+                    $alreadyInOrder = isset($order[$field]);
+                    if (!$alreadyInOrder && str_contains($field, '.')) {
+                        [$alias, $fieldName] = explode('.', $field, 2);
+                        if ($alias === $modelAlias && isset($order[$fieldName])) {
+                            $alreadyInOrder = true;
+                        }
+                    }
+                    if (!$alreadyInOrder) {
                         $order[$field] = $dir;
                     }
                 }

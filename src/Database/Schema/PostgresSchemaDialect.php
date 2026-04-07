@@ -354,16 +354,64 @@ class PostgresSchemaDialect extends SchemaDialect
         a.attname,
         i.indisprimary,
         i.indisunique,
-        i.indnkeyatts
+        i.indnkeyatts,
+        am.amname
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
         INNER JOIN pg_catalog.pg_class c2 ON (c2.oid = i.indexrelid)
         INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = c.oid AND i.indrelid::regclass = a.attrelid::regclass)
+        INNER JOIN pg_catalog.pg_am am ON (c2.relam = am.oid)
         WHERE n.nspname = ?
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
         ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexSql(string $tableName, array $config): array
+    {
+        $sql = $this->describeIndexQuery();
+        [$schema, $name] = $this->splitTablename($tableName, $config);
+
+        return [$sql, [$schema, $name]];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function convertIndexDescription(TableSchema $schema, array $row): void
+    {
+        $type = TableSchema::INDEX_INDEX;
+        $name = $row['relname'];
+        if ($row['indisprimary']) {
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
+        }
+        if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
+            $type = TableSchema::CONSTRAINT_UNIQUE;
+        }
+        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
+            $this->convertConstraint($schema, $name, $type, $row);
+
+            return;
+        }
+        $index = $schema->getIndex($name);
+        if (!$index) {
+            $index = [
+                'type' => $type,
+                'columns' => [],
+            ];
+            // Include access method for non-btree indexes
+            $accessMethod = $row['amname'] ?? 'btree';
+            if ($accessMethod !== 'btree') {
+                $index['accessMethod'] = $accessMethod;
+            }
+        }
+        $index['columns'][] = $row['attname'];
+        $schema->addIndex($name, $index);
     }
 
     /**
@@ -396,6 +444,11 @@ class PostgresSchemaDialect extends SchemaDialect
                     'columns' => [],
                     'length' => [],
                 ];
+                // Include access method for non-btree indexes
+                $accessMethod = $row['amname'] ?? 'btree';
+                if ($accessMethod !== 'btree') {
+                    $indexes[$name]['accessMethod'] = $accessMethod;
+                }
             }
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
@@ -829,6 +882,14 @@ class PostgresSchemaDialect extends SchemaDialect
             $this->driver->quoteIdentifier(...),
             (array)$index->getColumns(),
         );
+
+        // Build USING clause for non-btree access methods (gin, gist, spgist, brin, hash)
+        $using = '';
+        $accessMethod = $index->getAccessMethod();
+        if ($accessMethod !== null) {
+            $using = ' USING ' . $accessMethod;
+        }
+
         $include = '';
         if ($index->getInclude()) {
             $included = array_map(
@@ -839,9 +900,10 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)%s',
+            'CREATE INDEX %s ON %s%s (%s)%s',
             $this->driver->quoteIdentifier($name),
             $this->driver->quoteIdentifier($schema->name()),
+            $using,
             implode(', ', $columns),
             $include,
         );
