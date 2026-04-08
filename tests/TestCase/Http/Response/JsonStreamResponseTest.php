@@ -285,8 +285,8 @@ class JsonStreamResponseTest extends TestCase
         $newResponse = $response->withStreamOptions(['root' => 'items']);
 
         $this->assertNotSame($response, $newResponse);
-        $this->assertNull($response->getStreamOptions()['root']);
-        $this->assertSame('items', $newResponse->getStreamOptions()['root']);
+        $this->assertNull($response->getStreamOptions()['root'] ?? null);
+        $this->assertSame('items', $newResponse->getStreamOptions()['root'] ?? null);
 
         $this->assertSame('[{"id":1}]', $this->getStreamedBody($response));
         $this->assertSame('{"items":[{"id":1}]}', $this->getStreamedBody($newResponse));

@@ -16,16 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Response;
 
-use ArrayIterator;
 use Cake\Core\Configure;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Http\CallbackStream;
 use Cake\Http\Response;
 use Cake\Log\Log;
 use Closure;
 use InvalidArgumentException;
-use Iterator;
-use IteratorAggregate;
-use IteratorIterator;
 use JsonException;
 
 /**
@@ -70,6 +67,8 @@ use JsonException;
  */
 class JsonStreamResponse extends Response
 {
+    use InstanceConfigTrait;
+
     /**
      * Default JSON encoding flags (consistent with JsonView).
      *
@@ -109,13 +108,6 @@ class JsonStreamResponse extends Response
     protected iterable $data;
 
     /**
-     * Streaming options.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $streamOptions = [];
-
-    /**
      * Number of streamed rows since the last flush.
      *
      * @var int
@@ -127,7 +119,7 @@ class JsonStreamResponse extends Response
      *
      * @var array<string, mixed>
      */
-    protected array $defaultStreamOptions = [
+    protected array $_defaultConfig = [
         'root' => null,
         'envelope' => [],
         'dataKey' => 'data',
@@ -153,7 +145,7 @@ class JsonStreamResponse extends Response
     public function __construct(iterable $data, array $options = [])
     {
         $this->data = $data;
-        $this->streamOptions = $this->normalizeStreamOptions($options + $this->defaultStreamOptions, $options);
+        $this->setConfig($this->normalizeStreamOptions($options + $this->_defaultConfig, $options), null, false);
 
         $stream = new CallbackStream($this->createStreamCallback());
         parent::__construct(['stream' => $stream]);
@@ -172,7 +164,7 @@ class JsonStreamResponse extends Response
     protected function createStreamCallback(): Closure
     {
         return function (): void {
-            if ($this->streamOptions['format'] === self::FORMAT_NDJSON) {
+            if ($this->getConfigOrFail('format') === self::FORMAT_NDJSON) {
                 $this->streamNdjson();
             } else {
                 $this->streamJson();
@@ -189,32 +181,28 @@ class JsonStreamResponse extends Response
      */
     protected function streamJson(): void
     {
-        $flags = $this->streamOptions['flags'];
-        $root = $this->streamOptions['root'];
-        $envelope = $this->streamOptions['envelope'];
-        $dataKey = $this->streamOptions['dataKey'];
+        $flags = $this->getConfigOrFail('flags');
+        $root = $this->getConfig('root');
+        $envelope = $this->getConfigOrFail('envelope');
+        $dataKey = $this->getConfigOrFail('dataKey');
         $hasWrapper = $root !== null || $envelope !== [];
-        $iterator = $this->getIterator($this->data);
+        $hasItems = false;
+        $index = 0;
 
-        if (!$iterator->valid()) {
-            $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
-            $this->output('[]');
-            $this->outputJsonSuffix($hasWrapper);
+        foreach ($this->data as $item) {
+            if (!$hasItems) {
+                $encoded = $this->encodeStreamItem($item, $flags, $index);
+                $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
+                $this->output('[');
+                $this->outputAndFlush($encoded);
+                $hasItems = true;
+                $index++;
 
-            return;
-        }
+                continue;
+            }
 
-        $encoded = $this->encodeStreamItem($iterator->current(), $flags, 0);
-
-        $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
-        $this->output('[');
-        $this->outputAndFlush($encoded);
-
-        $iterator->next();
-        $index = 1;
-        while ($iterator->valid()) {
             try {
-                $encoded = $this->encodeStreamItem($iterator->current(), $flags, $index);
+                $encoded = $this->encodeStreamItem($item, $flags, $index);
             } catch (JsonException $exception) {
                 $this->output(',');
                 $this->outputAndFlush($this->buildStreamErrorMarker($exception->getMessage(), $index), force: true);
@@ -223,8 +211,15 @@ class JsonStreamResponse extends Response
 
             $this->output(',');
             $this->outputAndFlush($encoded);
-            $iterator->next();
             $index++;
+        }
+
+        if (!$hasItems) {
+            $this->outputJsonPrefix($hasWrapper, $envelope, $root, $dataKey, $flags);
+            $this->output('[]');
+            $this->outputJsonSuffix($hasWrapper);
+
+            return;
         }
 
         $this->output(']');
@@ -241,67 +236,26 @@ class JsonStreamResponse extends Response
      */
     protected function streamNdjson(): void
     {
-        $flags = $this->streamOptions['flags'];
-        $iterator = $this->getIterator($this->data);
+        $flags = $this->getConfigOrFail('flags');
+        $hasItems = false;
+        $index = 0;
 
-        if (!$iterator->valid()) {
-            return;
-        }
-
-        $this->outputAndFlush($this->encodeStreamItem($iterator->current(), $flags, 0) . "\n");
-
-        $iterator->next();
-        $index = 1;
-        while ($iterator->valid()) {
+        foreach ($this->data as $item) {
             try {
-                $encoded = $this->encodeStreamItem($iterator->current(), $flags, $index);
+                $encoded = $this->encodeStreamItem($item, $flags, $index);
             } catch (JsonException $exception) {
                 $this->outputAndFlush($this->buildStreamErrorMarker($exception->getMessage(), $index) . "\n");
                 break;
             }
 
             $this->outputAndFlush($encoded . "\n");
-            $iterator->next();
+            $hasItems = true;
             $index++;
         }
 
-        $this->flushOutputBuffers();
-    }
-
-    /**
-     * Convert iterable data to a rewindable iterator.
-     *
-     * @param iterable $data Data to iterate over.
-     * @return \Iterator<mixed>
-     */
-    protected function getIterator(iterable $data): Iterator
-    {
-        if (is_array($data)) {
-            return new ArrayIterator($data);
+        if ($hasItems) {
+            $this->flushOutputBuffers();
         }
-        if ($data instanceof Iterator) {
-            $data->rewind();
-
-            return $data;
-        }
-        if ($data instanceof IteratorAggregate) {
-            $iterator = $data->getIterator();
-            if ($iterator instanceof Iterator) {
-                $iterator->rewind();
-
-                return $iterator;
-            }
-
-            $iterator = new IteratorIterator($iterator);
-            $iterator->rewind();
-
-            return $iterator;
-        }
-
-        $iterator = new IteratorIterator($data);
-        $iterator->rewind();
-
-        return $iterator;
     }
 
     /**
@@ -314,7 +268,7 @@ class JsonStreamResponse extends Response
      */
     protected function encodeStreamItem(mixed $item, int $flags, int $index): string
     {
-        $transform = $this->streamOptions['transform'];
+        $transform = $this->getConfig('transform');
         if ($transform !== null) {
             $item = $transform($item);
         }
@@ -438,7 +392,7 @@ class JsonStreamResponse extends Response
      */
     protected function applyStreamingHeaders(): void
     {
-        $contentType = $this->streamOptions['format'] === self::FORMAT_NDJSON
+        $contentType = $this->getConfigOrFail('format') === self::FORMAT_NDJSON
             ? 'application/x-ndjson; charset=UTF-8'
             : 'application/json; charset=UTF-8';
 
@@ -475,7 +429,7 @@ class JsonStreamResponse extends Response
         echo $data;
         $this->rowsSinceLastFlush++;
 
-        if ($force || $this->rowsSinceLastFlush >= $this->streamOptions['flushEvery']) {
+        if ($force || $this->rowsSinceLastFlush >= $this->getConfigOrFail('flushEvery')) {
             $this->flushOutputBuffers();
         }
     }
@@ -525,7 +479,7 @@ class JsonStreamResponse extends Response
      */
     public function getStreamOptions(): array
     {
-        return $this->streamOptions;
+        return $this->getConfig();
     }
 
     /**
@@ -537,7 +491,11 @@ class JsonStreamResponse extends Response
     public function withStreamOptions(array $options): static
     {
         $new = clone $this;
-        $new->streamOptions = $this->normalizeStreamOptions($options + $this->streamOptions, $options);
+        $new->setConfig(
+            $this->normalizeStreamOptions($options + $this->getConfig(), $options),
+            null,
+            false,
+        );
         $new->applyStreamingHeaders();
 
         return $new->withBody(new CallbackStream($new->createStreamCallback()));
