@@ -11,13 +11,13 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Lock\Engine;
 
+use Cake\Lock\AcquiredLock;
 use Cake\Lock\Engine\MemcachedLockEngine;
-use Cake\Lock\LockInstance;
 use Cake\TestSuite\TestCase;
 use function Cake\Core\env;
 
@@ -84,13 +84,13 @@ class MemcachedLockEngineTest extends TestCase
     }
 
     /**
-     * Test acquire() returns LockInstance
+     * Test acquire() returns AcquiredLock
      */
     public function testAcquire(): void
     {
         $lock = $this->engine->acquire('test-resource', 60);
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         $this->assertSame('test-resource', $lock->getResource());
         $this->assertSame(60, $lock->getTtl());
         $this->assertNotEmpty($lock->getToken());
@@ -102,7 +102,7 @@ class MemcachedLockEngineTest extends TestCase
     public function testAcquireFailsWhenLocked(): void
     {
         $lock1 = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock1);
+        $this->assertInstanceOf(AcquiredLock::class, $lock1);
 
         $lock2 = $this->engine->acquire('test-resource', 60);
         $this->assertNull($lock2);
@@ -114,14 +114,14 @@ class MemcachedLockEngineTest extends TestCase
     public function testRelease(): void
     {
         $lock = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
 
         $result = $this->engine->release($lock);
         $this->assertTrue($result);
 
         // Should be able to acquire again
         $lock2 = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock2);
+        $this->assertInstanceOf(AcquiredLock::class, $lock2);
     }
 
     /**
@@ -130,10 +130,10 @@ class MemcachedLockEngineTest extends TestCase
     public function testReleaseFailsWithWrongToken(): void
     {
         $lock = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
 
         // Create a fake lock with different token
-        $fakeLock = new LockInstance('test-resource', 'wrong-token', 60, microtime(true));
+        $fakeLock = new AcquiredLock('test-resource', 'wrong-token', 60, microtime(true));
 
         $result = $this->engine->release($fakeLock);
         $this->assertFalse($result);
@@ -162,7 +162,7 @@ class MemcachedLockEngineTest extends TestCase
     public function testRefresh(): void
     {
         $lock = $this->engine->acquire('test-resource', 10);
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
 
         $result = $this->engine->refresh($lock, 120);
         $this->assertTrue($result);
@@ -173,7 +173,8 @@ class MemcachedLockEngineTest extends TestCase
      */
     public function testForceRelease(): void
     {
-        $this->engine->acquire('test-resource', 60);
+        $lock = $this->engine->acquire('test-resource', 60);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         $this->assertTrue($this->engine->isLocked('test-resource'));
 
         $result = $this->engine->forceRelease('test-resource');
@@ -189,7 +190,7 @@ class MemcachedLockEngineTest extends TestCase
     {
         $lock = $this->engine->acquireBlocking('test-resource', 60, 5, 100);
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
     }
 
     /**
@@ -199,7 +200,7 @@ class MemcachedLockEngineTest extends TestCase
     {
         // Acquire lock first
         $lock1 = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock1);
+        $this->assertInstanceOf(AcquiredLock::class, $lock1);
 
         // Try to acquire with short timeout
         $start = microtime(true);
@@ -218,7 +219,7 @@ class MemcachedLockEngineTest extends TestCase
     public function testLockExpiresAfterTtl(): void
     {
         $lock = $this->engine->acquire('test-resource', 1);
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         $this->assertTrue($this->engine->isLocked('test-resource'));
 
         // Wait for lock to expire
@@ -228,7 +229,7 @@ class MemcachedLockEngineTest extends TestCase
 
         // Should be able to acquire again
         $lock2 = $this->engine->acquire('test-resource', 60);
-        $this->assertInstanceOf(LockInstance::class, $lock2);
+        $this->assertInstanceOf(AcquiredLock::class, $lock2);
     }
 
     /**
@@ -240,9 +241,9 @@ class MemcachedLockEngineTest extends TestCase
         $lock2 = $this->engine->acquire('resource-2', 60);
         $lock3 = $this->engine->acquire('resource-3', 60);
 
-        $this->assertInstanceOf(LockInstance::class, $lock1);
-        $this->assertInstanceOf(LockInstance::class, $lock2);
-        $this->assertInstanceOf(LockInstance::class, $lock3);
+        $this->assertInstanceOf(AcquiredLock::class, $lock1);
+        $this->assertInstanceOf(AcquiredLock::class, $lock2);
+        $this->assertInstanceOf(AcquiredLock::class, $lock3);
 
         $this->assertTrue($this->engine->release($lock1));
         $this->assertTrue($this->engine->release($lock2));

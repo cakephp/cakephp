@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock;
@@ -106,14 +106,14 @@ abstract class LockEngine implements LockInterface
      * @param int $ttl Time-to-live in seconds for the lock.
      * @param int $timeout Maximum time in seconds to wait for the lock.
      * @param int $retryInterval Milliseconds to wait between retry attempts.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on timeout.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on timeout.
      */
     public function acquireBlocking(
         string $resource,
         int $ttl = 300,
         int $timeout = 10,
         int $retryInterval = 100,
-    ): ?LockInstance {
+    ): ?AcquiredLock {
         $deadline = microtime(true) + $timeout;
 
         while (microtime(true) < $deadline) {
@@ -126,26 +126,5 @@ abstract class LockEngine implements LockInterface
         }
 
         return null;
-    }
-
-    /**
-     * Check if a resource is currently locked.
-     *
-     * Default implementation that can be overridden by engines.
-     *
-     * @param string $resource The resource identifier to check.
-     * @return bool True if the resource is locked, false otherwise.
-     */
-    public function isLocked(string $resource): bool
-    {
-        // Default implementation: try to acquire and immediately release
-        $lock = $this->acquire($resource, 1);
-        if ($lock === null) {
-            return true;
-        }
-
-        $this->release($lock);
-
-        return false;
     }
 }

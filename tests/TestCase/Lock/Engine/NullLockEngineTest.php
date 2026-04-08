@@ -11,13 +11,13 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Lock\Engine;
 
+use Cake\Lock\AcquiredLock;
 use Cake\Lock\Engine\NullLockEngine;
-use Cake\Lock\LockInstance;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -47,7 +47,7 @@ class NullLockEngineTest extends TestCase
     {
         $lock = $this->engine->acquire('test-resource', 60);
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         $this->assertSame('test-resource', $lock->getResource());
         $this->assertSame(60, $lock->getTtl());
     }
@@ -60,8 +60,8 @@ class NullLockEngineTest extends TestCase
         $lock1 = $this->engine->acquire('test-resource', 60);
         $lock2 = $this->engine->acquire('test-resource', 60);
 
-        $this->assertInstanceOf(LockInstance::class, $lock1);
-        $this->assertInstanceOf(LockInstance::class, $lock2);
+        $this->assertInstanceOf(AcquiredLock::class, $lock1);
+        $this->assertInstanceOf(AcquiredLock::class, $lock2);
         // Tokens should be different
         $this->assertNotSame($lock1->getToken(), $lock2->getToken());
     }
@@ -118,7 +118,7 @@ class NullLockEngineTest extends TestCase
         $lock = $this->engine->acquireBlocking('test-resource', 60, 10);
         $elapsed = microtime(true) - $start;
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         // Should return almost immediately (within 100ms)
         $this->assertLessThan(0.1, $elapsed);
     }

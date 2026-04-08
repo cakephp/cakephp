@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock;
@@ -30,9 +30,9 @@ interface LockInterface
      * @param string $resource The resource identifier to lock.
      * @param int $ttl Time-to-live in seconds. The lock will automatically
      *   expire after this duration to prevent deadlocks.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on failure.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on failure.
      */
-    public function acquire(string $resource, int $ttl = 300): ?LockInstance;
+    public function acquire(string $resource, int $ttl = 300): ?AcquiredLock;
 
     /**
      * Acquire a lock, waiting up to $timeout seconds if necessary.
@@ -43,22 +43,22 @@ interface LockInterface
      * @param int $ttl Time-to-live in seconds for the lock.
      * @param int $timeout Maximum time in seconds to wait for the lock.
      * @param int $retryInterval Milliseconds to wait between retry attempts.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on timeout.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on timeout.
      */
     public function acquireBlocking(
         string $resource,
         int $ttl = 300,
         int $timeout = 10,
         int $retryInterval = 100,
-    ): ?LockInstance;
+    ): ?AcquiredLock;
 
     /**
      * Release a lock.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to release.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to release.
      * @return bool True if the lock was released, false otherwise.
      */
-    public function release(LockInstance $lock): bool;
+    public function release(AcquiredLock $lock): bool;
 
     /**
      * Check if a resource is currently locked.
@@ -77,11 +77,11 @@ interface LockInterface
      * This is useful for long-running operations that need to
      * hold a lock longer than initially anticipated.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to refresh.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to refresh.
      * @param int|null $ttl New TTL in seconds. If null, uses the original TTL.
      * @return bool True if the lock was refreshed, false otherwise.
      */
-    public function refresh(LockInstance $lock, ?int $ttl = null): bool;
+    public function refresh(AcquiredLock $lock, ?int $ttl = null): bool;
 
     /**
      * Force release a lock without ownership verification.

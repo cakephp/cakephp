@@ -11,7 +11,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock;
@@ -39,6 +39,15 @@ use RuntimeException;
  *
  * ### Usage examples
  *
+ * Prefer `synchronized()` when you can, as it guarantees prompt release:
+ *
+ * ```
+ * $result = Lock::synchronized('my-resource', function () {
+ *     // Critical section
+ *     return $computedValue;
+ * });
+ * ```
+ *
  * Acquiring and releasing a lock:
  *
  * ```
@@ -47,18 +56,9 @@ use RuntimeException;
  *     try {
  *         // Critical section
  *     } finally {
- *         Lock::release($lock);
+ *         $lock->release();
  *     }
  * }
- * ```
- *
- * Using the synchronized helper:
- *
- * ```
- * $result = Lock::synchronized('my-resource', function () {
- *     // Critical section
- *     return $computedValue;
- * });
  * ```
  */
 class Lock
@@ -77,13 +77,6 @@ class Lock
         'null' => Engine\NullLockEngine::class,
         'redis' => Engine\RedisLockEngine::class,
     ];
-
-    /**
-     * Flag for tracking whether locking is enabled.
-     *
-     * @var bool
-     */
-    protected static bool $_enabled = true;
 
     /**
      * Lock Registry for managing engine instances.
@@ -149,10 +142,6 @@ class Lock
      */
     public static function engine(string $config): LockInterface
     {
-        if (!static::$_enabled) {
-            return new NullLockEngine();
-        }
-
         $registry = static::getRegistry();
 
         if ($registry->has($config)) {
@@ -167,12 +156,15 @@ class Lock
     /**
      * Acquire a lock for the given resource.
      *
+     * Prefer `synchronized()` when possible. The returned lock can be released
+     * directly and will make a best-effort attempt to release itself on destruction.
+     *
      * @param string $resource The resource identifier to lock.
      * @param int|null $ttl Time-to-live in seconds. Null uses engine default.
      * @param string $config Configuration name. Defaults to 'default'.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on failure.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on failure.
      */
-    public static function acquire(string $resource, ?int $ttl = null, string $config = 'default'): ?LockInstance
+    public static function acquire(string $resource, ?int $ttl = null, string $config = 'default'): ?AcquiredLock
     {
         $ttl ??= static::getConfig($config)['ttl'] ?? 300;
 
@@ -187,7 +179,7 @@ class Lock
      * @param int $timeout Maximum time in seconds to wait for the lock.
      * @param int $retryInterval Milliseconds to wait between retry attempts.
      * @param string $config Configuration name. Defaults to 'default'.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on timeout.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on timeout.
      */
     public static function acquireBlocking(
         string $resource,
@@ -195,7 +187,7 @@ class Lock
         int $timeout = 10,
         int $retryInterval = 100,
         string $config = 'default',
-    ): ?LockInstance {
+    ): ?AcquiredLock {
         $ttl ??= static::getConfig($config)['ttl'] ?? 300;
 
         return static::engine($config)->acquireBlocking($resource, $ttl, $timeout, $retryInterval);
@@ -204,13 +196,12 @@ class Lock
     /**
      * Release a lock.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to release.
-     * @param string $config Configuration name. Defaults to 'default'.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to release.
      * @return bool True if the lock was released, false otherwise.
      */
-    public static function release(LockInstance $lock, string $config = 'default'): bool
+    public static function release(AcquiredLock $lock): bool
     {
-        return static::engine($config)->release($lock);
+        return $lock->release();
     }
 
     /**
@@ -228,14 +219,13 @@ class Lock
     /**
      * Refresh a lock's TTL.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to refresh.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to refresh.
      * @param int|null $ttl New TTL in seconds. If null, uses the original TTL.
-     * @param string $config Configuration name. Defaults to 'default'.
      * @return bool True if the lock was refreshed, false otherwise.
      */
-    public static function refresh(LockInstance $lock, ?int $ttl = null, string $config = 'default'): bool
+    public static function refresh(AcquiredLock $lock, ?int $ttl = null): bool
     {
-        return static::engine($config)->refresh($lock, $ttl);
+        return $lock->refresh($ttl);
     }
 
     /**
@@ -281,39 +271,7 @@ class Lock
         try {
             return $callback();
         } finally {
-            static::release($lock, $config);
+            $lock->release();
         }
-    }
-
-    /**
-     * Re-enable locking.
-     *
-     * @return void
-     */
-    public static function enable(): void
-    {
-        static::$_enabled = true;
-    }
-
-    /**
-     * Disable locking.
-     *
-     * When disabled all lock operations will use NullLockEngine.
-     *
-     * @return void
-     */
-    public static function disable(): void
-    {
-        static::$_enabled = false;
-    }
-
-    /**
-     * Check whether locking is enabled.
-     *
-     * @return bool
-     */
-    public static function enabled(): bool
-    {
-        return static::$_enabled;
     }
 }

@@ -11,13 +11,13 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock\Engine;
 
+use Cake\Lock\AcquiredLock;
 use Cake\Lock\LockEngine;
-use Cake\Lock\LockInstance;
 
 /**
  * File-based lock engine using flock().
@@ -27,8 +27,8 @@ use Cake\Lock\LockInstance;
  * deployments but NOT for distributed systems.
  *
  * Note: This engine does not support TTL-based automatic expiration.
- * Locks are held until explicitly released or the process terminates.
- * A cleanup mechanism is provided for stale lock files.
+ * Locks are held until explicitly released, the acquired lock is destroyed,
+ * or the process terminates. A cleanup mechanism is provided for stale lock files.
  *
  * ### Configuration options:
  *
@@ -100,9 +100,9 @@ class FileLockEngine extends LockEngine
      *
      * @param string $resource The resource identifier to lock.
      * @param int $ttl Time-to-live in seconds (used for stale file cleanup).
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on failure.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on failure.
      */
-    public function acquire(string $resource, int $ttl = 300): ?LockInstance
+    public function acquire(string $resource, int $ttl = 300): ?AcquiredLock
     {
         $file = $this->getLockFile($resource);
         $token = $this->generateToken();
@@ -137,7 +137,7 @@ class FileLockEngine extends LockEngine
         // Store handle for later release
         $this->_handles[$resource] = $handle;
 
-        return new LockInstance($resource, $token, $ttl, microtime(true));
+        return new AcquiredLock($resource, $token, $ttl, microtime(true), $this);
     }
 
     /**
@@ -162,10 +162,10 @@ class FileLockEngine extends LockEngine
     /**
      * Release a lock.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to release.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to release.
      * @return bool True if the lock was released, false otherwise.
      */
-    public function release(LockInstance $lock): bool
+    public function release(AcquiredLock $lock): bool
     {
         $resource = $lock->getResource();
 
@@ -231,11 +231,11 @@ class FileLockEngine extends LockEngine
      *
      * Updates the lock file's metadata with a new TTL.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to refresh.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to refresh.
      * @param int|null $ttl New TTL in seconds. If null, uses the original TTL.
      * @return bool True if the lock was refreshed, false otherwise.
      */
-    public function refresh(LockInstance $lock, ?int $ttl = null): bool
+    public function refresh(AcquiredLock $lock, ?int $ttl = null): bool
     {
         $resource = $lock->getResource();
 

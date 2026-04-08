@@ -11,15 +11,15 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Lock;
 
+use Cake\Lock\AcquiredLock;
 use Cake\Lock\Engine\NullLockEngine;
 use Cake\Lock\Exception\InvalidArgumentException;
 use Cake\Lock\Lock;
-use Cake\Lock\LockInstance;
 use Cake\Lock\LockRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -34,7 +34,7 @@ class LockTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Lock::enable();
+        Lock::setRegistry(new LockRegistry());
     }
 
     /**
@@ -43,6 +43,8 @@ class LockTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        Lock::setRegistry(new LockRegistry());
+        Lock::drop('mock');
         Lock::drop('tests');
         Lock::drop('tests_file');
     }
@@ -78,30 +80,6 @@ class LockTest extends TestCase
     }
 
     /**
-     * Test engine() returns NullLockEngine when disabled
-     */
-    public function testEngineWhenDisabled(): void
-    {
-        Lock::disable();
-        $engine = Lock::engine('default');
-        $this->assertInstanceOf(NullLockEngine::class, $engine);
-    }
-
-    /**
-     * Test enable/disable functionality
-     */
-    public function testEnableDisable(): void
-    {
-        $this->assertTrue(Lock::enabled());
-
-        Lock::disable();
-        $this->assertFalse(Lock::enabled());
-
-        Lock::enable();
-        $this->assertTrue(Lock::enabled());
-    }
-
-    /**
      * Test engine() throws exception for missing config
      */
     public function testEngineThrowsExceptionForMissingConfig(): void
@@ -112,14 +90,14 @@ class LockTest extends TestCase
     }
 
     /**
-     * Test acquire() returns LockInstance
+     * Test acquire() returns AcquiredLock
      */
     public function testAcquire(): void
     {
         $this->_configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
         $this->assertSame('test-resource', $lock->getResource());
     }
 
@@ -131,7 +109,18 @@ class LockTest extends TestCase
         $this->_configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
-        $this->assertTrue(Lock::release($lock, 'tests'));
+        $this->assertTrue(Lock::release($lock));
+    }
+
+    /**
+     * Test acquired lock can release itself
+     */
+    public function testAcquiredLockCanReleaseItself(): void
+    {
+        $this->_configLock();
+        $lock = Lock::acquire('test-resource', 60, 'tests');
+
+        $this->assertTrue($lock->release());
     }
 
     /**
@@ -153,7 +142,7 @@ class LockTest extends TestCase
         $this->_configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
-        $this->assertTrue(Lock::refresh($lock, 120, 'tests'));
+        $this->assertTrue(Lock::refresh($lock, 120));
     }
 
     /**
@@ -185,10 +174,8 @@ class LockTest extends TestCase
      */
     public function testSynchronizedReturnsNullOnFailure(): void
     {
-        // Use a mock engine that fails to acquire
-        $mockEngine = $this->createMock(NullLockEngine::class);
+        $mockEngine = $this->createStub(NullLockEngine::class);
         $mockEngine->method('acquireBlocking')->willReturn(null);
-        $mockEngine->method('getConfig')->willReturn(300);
 
         $registry = new LockRegistry();
         $registry->set('mock', $mockEngine);
@@ -212,7 +199,7 @@ class LockTest extends TestCase
 
         $lock = Lock::acquireBlocking('test-resource', 60, 5, 100, 'tests');
 
-        $this->assertInstanceOf(LockInstance::class, $lock);
+        $this->assertInstanceOf(AcquiredLock::class, $lock);
     }
 
     /**

@@ -11,14 +11,14 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock\Engine;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Lock\AcquiredLock;
 use Cake\Lock\LockEngine;
-use Cake\Lock\LockInstance;
 use Redis;
 use RedisException;
 
@@ -133,9 +133,9 @@ class RedisLockEngine extends LockEngine
      *
      * @param string $resource The resource identifier to lock.
      * @param int $ttl Time-to-live in seconds.
-     * @return \Cake\Lock\LockInstance|null Returns a LockInstance on success, null on failure.
+     * @return \Cake\Lock\AcquiredLock|null Returns an AcquiredLock on success, null on failure.
      */
-    public function acquire(string $resource, int $ttl = 300): ?LockInstance
+    public function acquire(string $resource, int $ttl = 300): ?AcquiredLock
     {
         $key = $this->key($resource);
         $token = $this->generateToken();
@@ -145,7 +145,7 @@ class RedisLockEngine extends LockEngine
             $result = $this->_redis->set($key, $token, ['NX', 'EX' => $ttl]);
 
             if ($result === true) {
-                return new LockInstance($resource, $token, $ttl, microtime(true));
+                return new AcquiredLock($resource, $token, $ttl, microtime(true), $this);
             }
 
             return null;
@@ -160,10 +160,10 @@ class RedisLockEngine extends LockEngine
      * Uses a Lua script for atomic check-and-delete to ensure
      * only the lock owner can release the lock.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to release.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to release.
      * @return bool True if the lock was released, false otherwise.
      */
-    public function release(LockInstance $lock): bool
+    public function release(AcquiredLock $lock): bool
     {
         $key = $this->key($lock->getResource());
 
@@ -208,11 +208,11 @@ class RedisLockEngine extends LockEngine
      *
      * Uses a Lua script to atomically verify ownership and extend TTL.
      *
-     * @param \Cake\Lock\LockInstance $lock The lock instance to refresh.
+     * @param \Cake\Lock\AcquiredLock $lock The lock instance to refresh.
      * @param int|null $ttl New TTL in seconds. If null, uses the original TTL.
      * @return bool True if the lock was refreshed, false otherwise.
      */
-    public function refresh(LockInstance $lock, ?int $ttl = null): bool
+    public function refresh(AcquiredLock $lock, ?int $ttl = null): bool
     {
         $key = $this->key($lock->getResource());
         $ttl ??= $lock->getTtl();

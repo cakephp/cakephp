@@ -11,20 +11,23 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.2.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Lock;
 
 /**
  * Represents an acquired lock.
- *
- * This immutable value object contains all the information needed
- * to identify and release a lock, including the resource name,
- * owner token, and TTL.
  */
-class LockInstance
+class AcquiredLock
 {
+    /**
+     * Whether the lock has already been released.
+     *
+     * @var bool
+     */
+    protected bool $released = false;
+
     /**
      * Constructor.
      *
@@ -32,12 +35,14 @@ class LockInstance
      * @param string $token Unique token identifying the lock owner.
      * @param int $ttl Time-to-live in seconds.
      * @param float $acquiredAt Timestamp when the lock was acquired.
+     * @param \Cake\Lock\LockInterface|null $engine The engine that acquired the lock.
      */
     public function __construct(
         protected readonly string $resource,
         protected readonly string $token,
         protected readonly int $ttl,
         protected readonly float $acquiredAt,
+        protected readonly ?LockInterface $engine = null,
     ) {
     }
 
@@ -85,6 +90,50 @@ class LockInstance
     }
 
     /**
+     * Release the lock with the engine that acquired it.
+     *
+     * @return bool True if the lock was released, false otherwise.
+     */
+    public function release(): bool
+    {
+        if ($this->released || $this->engine === null) {
+            return false;
+        }
+
+        $released = $this->engine->release($this);
+        if ($released) {
+            $this->released = true;
+        }
+
+        return $released;
+    }
+
+    /**
+     * Refresh the lock with the engine that acquired it.
+     *
+     * @param int|null $ttl New TTL in seconds. If null, uses the original TTL.
+     * @return bool True if the lock was refreshed, false otherwise.
+     */
+    public function refresh(?int $ttl = null): bool
+    {
+        if ($this->released || $this->engine === null) {
+            return false;
+        }
+
+        return $this->engine->refresh($this, $ttl);
+    }
+
+    /**
+     * Check whether the lock has already been released.
+     *
+     * @return bool
+     */
+    public function isReleased(): bool
+    {
+        return $this->released;
+    }
+
+    /**
      * Check if the lock has expired based on its TTL.
      *
      * Note: This is a local check based on the original TTL.
@@ -106,5 +155,13 @@ class LockInstance
     public function getRemainingTtl(): float
     {
         return $this->ttl - (microtime(true) - $this->acquiredAt);
+    }
+
+    /**
+     * Attempt to release the lock when it falls out of scope.
+     */
+    public function __destruct()
+    {
+        $this->release();
     }
 }
