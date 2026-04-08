@@ -1244,6 +1244,7 @@ class BelongsToMany extends Association
 
                 // Create a subquery join to ensure we get
                 // the correct entity passed to callbacks.
+                /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $existing */
                 $existing = $junction->selectQuery()
                     ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
