@@ -59,7 +59,17 @@ enum DriverFeatureEnum: string
     case INTERSECT_ALL = 'intersect-all';
 
     /**
-     * Support for order by in set operations (union, intersect)
+     * Except feature support
+     */
+    case EXCEPT = 'except';
+
+    /**
+     * Except all feature support
+     */
+    case EXCEPT_ALL = 'except-all';
+
+    /**
+     * Support for order by in set operations (union, intersect, except)
      */
     case SET_OPERATIONS_ORDER_BY = 'set-operations-order-by';
 

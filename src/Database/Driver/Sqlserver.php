@@ -286,6 +286,8 @@ class Sqlserver extends Driver
             DriverFeatureEnum::WINDOW => true,
             DriverFeatureEnum::INTERSECT => true,
             DriverFeatureEnum::INTERSECT_ALL => false,
+            DriverFeatureEnum::EXCEPT => true,
+            DriverFeatureEnum::EXCEPT_ALL => false,
             DriverFeatureEnum::JSON => false,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,

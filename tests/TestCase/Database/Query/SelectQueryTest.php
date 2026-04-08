@@ -2820,6 +2820,170 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to one or multiple EXCEPT statements in a query
+     */
+    public function testExcept(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::EXCEPT),
+            'Driver does not support EXCEPT clause.',
+        );
+
+        $except = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->except($except)
+            ->execute();
+        $rows = $result->fetchAll();
+        $expectedCount = count((new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->execute()
+            ->fetchAll()) -
+            count($except->execute()->fetchAll());
+
+        $this->assertCount($expectedCount, $rows);
+        $result->closeCursor();
+
+        $except = (new SelectQuery($this->connection))
+            ->select(['foo' => 'id', 'bar' => 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 2])
+            ->orderBy(['foo' => 'desc']);
+        $query = new SelectQuery($this->connection);
+        $expectedCount = count((new SelectQuery($this->connection))
+            ->select(['foo' => 'id', 'bar' => 'comment'])
+            ->from(['c' => 'comments'])
+            ->execute()
+            ->fetchAll()) - count($except->execute()->fetchAll());
+        $query->select(['foo' => 'id', 'bar' => 'comment'])
+            ->from(['c' => 'comments'])
+            ->except($except);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+
+        $except = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->where(['article_id' => 1])
+            ->from(['c' => 'comments']);
+        $query = new SelectQuery($this->connection);
+        $query->select(['id', 'comment'], true)
+            ->from(['c' => 'comments'])
+            ->except($except, true);
+        $result = $query->execute();
+        $rows3 = $result->fetchAll();
+
+        $this->assertCount(
+            count((new SelectQuery($this->connection))
+                ->select(['id', 'comment'])
+                ->from(['c' => 'comments'])
+                ->execute()
+                ->fetchAll()) - count($except->execute()->fetchAll()),
+            $rows3,
+        );
+        $this->assertEquals($rows, $rows3);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests that it is possible to run excepts with order by statements
+     */
+    public function testExceptOrderBy(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::EXCEPT),
+            'Driver does not support EXCEPT clause.',
+        );
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            'Driver does not support ORDER BY on EXCEPTed queries.',
+        );
+        $except = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 1])
+            ->orderBy(['c.id' => 'asc']);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->orderBy(['c.id' => 'asc'])
+            ->except($except)
+            ->execute();
+
+        $this->assertCount(
+            count((new SelectQuery($this->connection))
+                ->select(['id', 'comment'])
+                ->from(['c' => 'comments'])
+                ->execute()
+                ->fetchAll()) -
+                count($except->execute()->fetchAll()),
+            $result->fetchAll(),
+        );
+    }
+
+    /**
+     * Tests that EXCEPT ALL can be built
+     */
+    public function testExceptAll(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::EXCEPT_ALL),
+            'Driver does not support EXCEPT ALL clause.',
+        );
+        $except = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->exceptAll($except)
+            ->execute();
+        $rows = $result->fetchAll('assoc');
+
+        $this->assertCount(
+            count((new SelectQuery($this->connection))
+                ->select(['id', 'comment'])
+                ->from(['c' => 'comments'])
+                ->execute()
+                ->fetchAll()) -
+                count($except->execute()->fetchAll()),
+            $rows,
+        );
+        $result->closeCursor();
+
+        $except = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 2])
+            ->orderBy(['id' => 'desc']);
+        $query = new SelectQuery($this->connection);
+        $expectedCount = count((new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->execute()
+            ->fetchAll()) - count($except->execute()->fetchAll());
+        $query->select(['id', 'comment'], true)
+            ->from(['c' => 'comments'])
+            ->exceptAll($except, true);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+    }
+
+    /**
      * Tests stacking decorators for results and resetting the list of decorators
      */
     public function testDecorateResults(): void

@@ -132,6 +132,8 @@ class Mysql extends Driver
             'window' => '8.0.0',
             'intersect' => '8.0.31',
             'intersect-all' => '8.0.31',
+            'except' => '8.0.31',
+            'except-all' => '8.0.31',
             'check-constraints' => '8.0.16',
         ],
         'mariadb' => [
@@ -140,6 +142,8 @@ class Mysql extends Driver
             'window' => '10.2.0',
             'intersect' => '10.3.0',
             'intersect-all' => '10.5.0',
+            'except' => '10.3.0',
+            'except-all' => '10.5.0',
             'check-constraints' => '10.2.1',
         ],
     ];
@@ -285,6 +289,8 @@ class Mysql extends Driver
             DriverFeatureEnum::WINDOW => $versionCompare(),
             DriverFeatureEnum::INTERSECT => $versionCompare(),
             DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
+            DriverFeatureEnum::EXCEPT => $versionCompare(),
+            DriverFeatureEnum::EXCEPT_ALL => $versionCompare(),
             DriverFeatureEnum::CHECK_CONSTRAINTS => $versionCompare(),
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
