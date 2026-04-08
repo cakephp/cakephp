@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
@@ -220,6 +222,7 @@ class MysqlTest extends TestCase
                 'json' => '5.7.0',
                 'cte' => '8.0.0',
                 'window' => '8.0.0',
+                'string-agg' => '99.0.0',
                 'intersect' => '8.0.31',
                 'intersect-all' => '8.0.31',
             ],
@@ -227,6 +230,7 @@ class MysqlTest extends TestCase
                 'json' => '10.2.7',
                 'cte' => '10.2.1',
                 'window' => '10.2.0',
+                'string-agg' => '10.5.0',
                 'intersect' => '10.3.0',
                 'intersect-all' => '10.5.0',
             ],
@@ -240,8 +244,63 @@ class MysqlTest extends TestCase
 
         $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::GROUP_CONCAT));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+    }
+
+    /**
+     * Tests string aggregation translation for MySQL.
+     */
+    public function testStringAggTranslationForMysql(): void
+    {
+        $driver = Mockery::mock(Mysql::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('8.4.0');
+        $driver->shouldReceive('isMariadb')->andReturn(false);
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'names' => $query->func()->stringAgg('name', ',', ['sort_order' => 'DESC']),
+        ])->from('authors');
+
+        $this->assertSame(
+            'SELECT GROUP_CONCAT(name ORDER BY sort_order DESC SEPARATOR :c0) AS names FROM authors',
+            $query->sql(),
+        );
+    }
+
+    /**
+     * Tests string aggregation translation for MariaDB.
+     */
+    public function testStringAggTranslationForMariadb(): void
+    {
+        $driver = Mockery::mock(Mysql::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('10.5.0');
+        $driver->shouldReceive('isMariadb')->andReturn(true);
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'names' => $query->func()->stringAgg('name', ',', ['sort_order' => 'DESC']),
+        ])->from('authors');
+
+        $this->assertSame(
+            'SELECT STRING_AGG(name, :c0 ORDER BY sort_order DESC) AS names FROM authors',
+            $query->sql(),
+        );
     }
 
     /**

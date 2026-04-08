@@ -72,4 +72,14 @@ enum DriverFeatureEnum: string
      * Support for CHECK constraints.
      */
     case CHECK_CONSTRAINTS = 'check-constraints';
+
+    /**
+     * String aggregation via STRING_AGG support.
+     */
+    case STRING_AGG = 'string-agg';
+
+    /**
+     * String aggregation via GROUP_CONCAT support.
+     */
+    case GROUP_CONCAT = 'group-concat';
 }

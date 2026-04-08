@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\DistinctComparisonExpression;
+use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -38,6 +39,7 @@ class Mysql extends Driver
     protected function _expressionTranslators(): array
     {
         return [
+            StringAggExpression::class => 'transformStringAggExpression',
             DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
         ];
     }
@@ -57,6 +59,27 @@ class Mysql extends Driver
             $expression->setOperator('<=>');
             $expression->setNot(true);
         }
+    }
+
+    /**
+     * Translates portable string aggregation to MySQL/MariaDB specific syntax.
+     *
+     * @param \Cake\Database\Expression\StringAggExpression $expression The expression to translate.
+     * @return void
+     */
+    protected function transformStringAggExpression(StringAggExpression $expression): void
+    {
+        if ($this->supports(DriverFeatureEnum::STRING_AGG)) {
+            $expression
+                ->setName('STRING_AGG')
+                ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
+
+            return;
+        }
+
+        $expression
+            ->setName('GROUP_CONCAT')
+            ->setSyntax(StringAggExpression::SYNTAX_GROUP_CONCAT);
     }
 
     /**
@@ -130,6 +153,7 @@ class Mysql extends Driver
             'json' => '5.7.0',
             'cte' => '8.0.0',
             'window' => '8.0.0',
+            'string-agg' => '99.0.0',
             'intersect' => '8.0.31',
             'intersect-all' => '8.0.31',
             'check-constraints' => '8.0.16',
@@ -138,6 +162,7 @@ class Mysql extends Driver
             'json' => '10.2.7',
             'cte' => '10.2.1',
             'window' => '10.2.0',
+            'string-agg' => '10.5.0',
             'intersect' => '10.3.0',
             'intersect-all' => '10.5.0',
             'check-constraints' => '10.2.1',
@@ -283,6 +308,8 @@ class Mysql extends Driver
             DriverFeatureEnum::CTE,
             DriverFeatureEnum::JSON,
             DriverFeatureEnum::WINDOW => $versionCompare(),
+            DriverFeatureEnum::STRING_AGG => $versionCompare(),
+            DriverFeatureEnum::GROUP_CONCAT => true,
             DriverFeatureEnum::INTERSECT => $versionCompare(),
             DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
             DriverFeatureEnum::CHECK_CONSTRAINTS => $versionCompare(),

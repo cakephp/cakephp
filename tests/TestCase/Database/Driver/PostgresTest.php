@@ -223,6 +223,32 @@ class PostgresTest extends TestCase
     }
 
     /**
+     * Tests string aggregation translation.
+     */
+    public function testStringAggTranslation(): void
+    {
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'names' => $query->func()->stringAgg('name', ',', ['sort_order' => 'DESC']),
+        ])->from('authors');
+
+        $this->assertSame(
+            'SELECT (STRING_AGG(name, :param0 ORDER BY sort_order DESC)) AS "names" FROM authors',
+            $query->sql(),
+        );
+    }
+
+    /**
      * Tests driver-specific feature support check.
      */
     public function testSupports(): void
@@ -235,6 +261,8 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::STRING_AGG));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::GROUP_CONCAT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
         $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));

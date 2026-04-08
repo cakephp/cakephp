@@ -21,6 +21,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
+use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
@@ -284,6 +285,8 @@ class Sqlserver extends Driver
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,
+            DriverFeatureEnum::STRING_AGG => version_compare($this->version(), '14', '>='),
+            DriverFeatureEnum::GROUP_CONCAT => false,
             DriverFeatureEnum::INTERSECT => true,
             DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
@@ -466,9 +469,24 @@ class Sqlserver extends Driver
     protected function _expressionTranslators(): array
     {
         return [
+            StringAggExpression::class => '_transformStringAggExpression',
             FunctionExpression::class => '_transformFunctionExpression',
             TupleComparison::class => '_transformTupleComparison',
         ];
+    }
+
+    /**
+     * Receives a StringAggExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\StringAggExpression $expression The expression to convert to TSQL.
+     * @return void
+     */
+    protected function _transformStringAggExpression(StringAggExpression $expression): void
+    {
+        $expression
+            ->setName('STRING_AGG')
+            ->setSyntax(StringAggExpression::SYNTAX_WITHIN_GROUP);
     }
 
     /**
