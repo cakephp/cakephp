@@ -55,7 +55,7 @@ class StringAggExpression extends AggregateExpression
      */
     public function __construct(array $params = [], array $types = [], ExpressionInterface|array|string|null $orderBy = null)
     {
-        parent::__construct('STRING_AGG', $params, $types, 'string');
+        parent::__construct('STRING_AGG', $params, $types);
         if ($orderBy !== null) {
             $this->setAggregateOrderBy($orderBy);
         }

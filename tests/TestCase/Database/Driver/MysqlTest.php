@@ -26,6 +26,7 @@ use Mockery;
 use PDO;
 use Pdo\Mysql as PdoMysql;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionClass;
 
 /**
  * Tests MySQL driver
@@ -262,7 +263,6 @@ class MysqlTest extends TestCase
         $driver->shouldReceive('connect')->andReturnNull();
         $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
         $driver->shouldReceive('version')->andReturn('8.4.0');
-        $driver->shouldReceive('isMariadb')->andReturn(false);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
         $query = new SelectQuery($connection);
@@ -271,7 +271,7 @@ class MysqlTest extends TestCase
         ])->from('authors');
 
         $this->assertSame(
-            'SELECT GROUP_CONCAT(name ORDER BY sort_order DESC SEPARATOR :c0) AS names FROM authors',
+            'SELECT (GROUP_CONCAT(name ORDER BY sort_order DESC SEPARATOR :param0)) AS names FROM authors',
             $query->sql(),
         );
     }
@@ -285,11 +285,13 @@ class MysqlTest extends TestCase
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct([]);
+        $reflection = new ReflectionClass($driver);
+        $serverType = $reflection->getProperty('serverType');
+        $serverType->setValue($driver, 'mariadb');
         $driver->shouldReceive('enabled')->andReturn(true);
         $driver->shouldReceive('connect')->andReturnNull();
         $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
         $driver->shouldReceive('version')->andReturn('10.5.0');
-        $driver->shouldReceive('isMariadb')->andReturn(true);
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
         $query = new SelectQuery($connection);
@@ -298,7 +300,7 @@ class MysqlTest extends TestCase
         ])->from('authors');
 
         $this->assertSame(
-            'SELECT STRING_AGG(name, :c0 ORDER BY sort_order DESC) AS names FROM authors',
+            'SELECT (STRING_AGG(name, :param0 ORDER BY sort_order DESC)) AS names FROM authors',
             $query->sql(),
         );
     }
