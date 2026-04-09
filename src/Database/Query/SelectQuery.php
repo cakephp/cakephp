@@ -571,9 +571,9 @@ class SelectQuery extends Query implements IteratorAggregate
 
     /**
      * Adds a complete query to be used in conjunction with an EXCEPT operator with
-     * this query. This is used to subtract the result set returned by the passed
-     * query from the result set of this query. You can add as many queries as you
-     * required by calling multiple times this method with different queries.
+     * this query. This is used to subtract the passed query from the result set of this query.
+     * You can add as many queries as you required by calling multiple times 
+     * this method with different queries.
      *
      * By default, the EXCEPT operator will remove duplicate rows, if you wish to include
      * every row for all queries, use exceptAll().
@@ -609,9 +609,9 @@ class SelectQuery extends Query implements IteratorAggregate
 
     /**
      * Adds a complete query to be used in conjunction with the EXCEPT ALL operator with
-     * this query. This is used to subtract the result set returned by the passed
-     * query from the result set of this query. You can add as many queries as you
-     * required by calling multiple times this method with different queries.
+     * this query. This is used to subtract the passed query from the result set of this query.
+     * You can add as many queries as you required by calling multiple times 
+     * this method with different queries.
      *
      * Unlike EXCEPT, EXCEPT ALL will not remove duplicate rows.
      *
