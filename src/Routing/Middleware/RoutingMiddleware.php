@@ -37,20 +37,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RoutingMiddleware implements MiddlewareInterface
 {
     /**
-     * The application that will have its routing hook invoked.
-     *
-     * @var \Cake\Routing\RoutingApplicationInterface
-     */
-    protected RoutingApplicationInterface $app;
-
-    /**
      * Constructor
      *
      * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
      */
-    public function __construct(RoutingApplicationInterface $app)
+    public function __construct(protected RoutingApplicationInterface $app)
     {
-        $this->app = $app;
     }
 
     /**

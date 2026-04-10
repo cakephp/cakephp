@@ -5,15 +5,12 @@ namespace Cake\Container\Argument;
 
 class DefaultValueArgument extends ResolvableArgument implements DefaultValueInterface
 {
-    protected mixed $defaultValue;
-
     /**
      * @param string $value
      * @param mixed|null $defaultValue
      */
-    public function __construct(string $value, mixed $defaultValue = null)
+    public function __construct(string $value, protected mixed $defaultValue = null)
     {
-        $this->defaultValue = $defaultValue;
         parent::__construct($value);
     }
 

@@ -23,42 +23,17 @@ namespace Cake\I18n;
 class Package
 {
     /**
-     * Message keys and translations in this package.
-     *
-     * @var array<array|string>
-     */
-    protected array $messages = [];
-
-    /**
-     * The name of a fallback package to use when a message key does not
-     * exist.
-     *
-     * @var string|null
-     */
-    protected ?string $fallback = null;
-
-    /**
-     * The name of the formatter to use when formatting translated messages.
-     *
-     * @var string
-     */
-    protected string $formatter;
-
-    /**
      * Constructor.
      *
-     * @param string $formatter The name of the formatter to use.
-     * @param string|null $fallback The name of the fallback package to use.
-     * @param array<array|string> $messages The messages in this package.
+     * @param string $formatter The name of the formatter to use when formatting translated messages.
+     * @param string|null $fallback The name of a fallback package to use when a message key does not exist.
+     * @param array<array|string> $messages Message keys and translations in this package.
      */
     public function __construct(
-        string $formatter = 'default',
-        ?string $fallback = null,
-        array $messages = [],
+        protected string $formatter = 'default',
+        protected ?string $fallback = null,
+        protected array $messages = [],
     ) {
-        $this->formatter = $formatter;
-        $this->fallback = $fallback;
-        $this->messages = $messages;
     }
 
     /**

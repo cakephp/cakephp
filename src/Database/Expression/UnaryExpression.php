@@ -40,38 +40,17 @@ class UnaryExpression implements ExpressionInterface
     public const int POSTFIX = 1;
 
     /**
-     * The operator this unary expression represents
-     *
-     * @var string
-     */
-    protected string $operator;
-
-    /**
-     * Holds the value which the unary expression operates
-     *
-     * @var mixed
-     */
-    protected mixed $value;
-
-    /**
-     * Where to place the operator
-     *
-     * @var int
-     */
-    protected int $position;
-
-    /**
      * Constructor
      *
-     * @param string $operator The operator to used for the expression
-     * @param mixed $value the value to use as the operand for the expression
+     * @param string $operator The operator this unary expression represents
+     * @param mixed $value Holds the value which the unary expression operates
      * @param int $position either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct(string $operator, mixed $value, int $position = self::PREFIX)
-    {
-        $this->operator = $operator;
-        $this->value = $value;
-        $this->position = $position;
+    public function __construct(
+        protected string $operator,
+        protected mixed $value,
+        protected int $position = self::PREFIX,
+    ) {
     }
 
     /**

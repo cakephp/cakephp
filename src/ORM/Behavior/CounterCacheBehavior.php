@@ -218,8 +218,8 @@ class CounterCacheBehavior extends Behavior
 
             foreach ($settings as $field => $config) {
                 if ($config instanceof Closure) {
-                    // Cannot update counter cache which use a closure
-                    return;
+                    // Skip counter cache fields that use a closure
+                    continue;
                 }
 
                 if (is_int($field)) {

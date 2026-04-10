@@ -131,13 +131,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public const string ACTION_SET_DEFAULT = ForeignKey::SET_DEFAULT;
 
     /**
-     * The name of the table
-     *
-     * @var string
-     */
-    protected string $table;
-
-    /**
      * Columns in the table.
      *
      * @var array<string, \Cake\Database\Schema\Column>
@@ -305,6 +298,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'constraint' => null,
         'deferrable' => null,
         'expression' => null,
+        'accessMethod' => null,
     ];
 
     /**
@@ -348,9 +342,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @param string $table The table name.
      * @param array<string, array|string> $columns The list of columns for the schema.
      */
-    public function __construct(string $table, array $columns = [])
-    {
-        $this->table = $table;
+    public function __construct(
+        protected string $table,
+        array $columns = [],
+    ) {
         foreach ($columns as $field => $definition) {
             $this->addColumn($field, $definition);
         }
@@ -837,7 +832,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         // Map the backwards compatible attributes in. Need to check for existing instance.
         $attrs['referencedTable'] = $attrs['references'][0];
         $attrs['referencedColumns'] = (array)$attrs['references'][1];
-        unset($attrs['type'], $attrs['references'], $attrs['length'], $attrs['expression']);
+        unset($attrs['type'], $attrs['references'], $attrs['length'], $attrs['expression'], $attrs['accessMethod']);
 
         return $attrs;
     }

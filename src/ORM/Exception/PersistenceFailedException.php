@@ -25,13 +25,6 @@ use Throwable;
 class PersistenceFailedException extends CakeException
 {
     /**
-     * The entity on which the persistence operation failed
-     *
-     * @var \Cake\Datasource\EntityInterface
-     */
-    protected EntityInterface $entity;
-
-    /**
      * @inheritDoc
      */
     protected string $messageTemplate = 'Entity %s failure.';
@@ -46,15 +39,14 @@ class PersistenceFailedException extends CakeException
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
-        EntityInterface $entity,
+        protected EntityInterface $entity,
         array|string $message,
         ?int $code = null,
         ?Throwable $previous = null,
     ) {
-        $this->entity = $entity;
         if (is_array($message)) {
             $errors = [];
-            foreach (Hash::flatten($entity->getErrors()) as $field => $error) {
+            foreach (Hash::flatten($this->entity->getErrors()) as $field => $error) {
                 $errors[] = $field . ': "' . $error . '"';
             }
             if ($errors) {

@@ -26,25 +26,13 @@ namespace Cake\Error\Debug;
 class ReferenceNode implements NodeInterface
 {
     /**
-     * @var string
-     */
-    private string $class;
-
-    /**
-     * @var int
-     */
-    private int $id;
-
-    /**
      * Constructor
      *
      * @param string $class The class name
      * @param int $id The id of the referenced class.
      */
-    public function __construct(string $class, int $id)
+    public function __construct(private string $class, private int $id)
     {
-        $this->class = $class;
-        $this->id = $id;
     }
 
     /**

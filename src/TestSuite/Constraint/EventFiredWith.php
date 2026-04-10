@@ -17,39 +17,17 @@ use PHPUnit\Framework\Constraint\Constraint;
 class EventFiredWith extends Constraint
 {
     /**
-     * Array of fired events
-     *
-     * @var \Cake\Event\EventManager
-     */
-    protected EventManager $eventManager;
-
-    /**
-     * Event data key
-     *
-     * @var string
-     */
-    protected string $dataKey;
-
-    /**
-     * Event data value
-     *
-     * @var mixed
-     */
-    protected mixed $dataValue;
-
-    /**
      * Constructor
      *
      * @param \Cake\Event\EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
      * @param mixed $dataValue Data value
      */
-    public function __construct(EventManager $eventManager, string $dataKey, mixed $dataValue)
-    {
-        $this->eventManager = $eventManager;
-        $this->dataKey = $dataKey;
-        $this->dataValue = $dataValue;
-
+    public function __construct(
+        protected EventManager $eventManager,
+        protected string $dataKey,
+        protected mixed $dataValue,
+    ) {
         if ($this->eventManager->getEventList() === null) {
             throw new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.',

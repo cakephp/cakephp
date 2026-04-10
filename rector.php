@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
+use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 use Rector\Set\ValueObject\SetList;
 
 $cacheDir = getenv('RECTOR_CACHE_DIR') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'rector';
@@ -92,7 +93,6 @@ return RectorConfig::configure()
         \Rector\Php73\Rector\FuncCall\StringifyStrNeedlesRector::class,
         \Rector\Php73\Rector\String_\SensitiveHereNowDocRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
-        \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector::class,
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class,
         \Rector\Php81\Rector\Property\ReadOnlyPropertyRector::class,
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,

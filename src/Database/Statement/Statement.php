@@ -37,11 +37,6 @@ class Statement implements StatementInterface
     ];
 
     /**
-     * @var \Cake\Database\Driver
-     */
-    protected Driver $driver;
-
-    /**
      * Cached bound parameters used for logging
      *
      * @var array<mixed>
@@ -55,10 +50,9 @@ class Statement implements StatementInterface
      */
     public function __construct(
         protected PDOStatement $statement,
-        Driver $driver,
+        protected Driver $driver,
         protected array $resultDecorators = [],
     ) {
-        $this->driver = $driver;
     }
 
     /**

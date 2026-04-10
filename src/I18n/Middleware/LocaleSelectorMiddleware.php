@@ -30,21 +30,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 class LocaleSelectorMiddleware implements MiddlewareInterface
 {
     /**
-     * List of valid locales for the request
-     *
-     * @var array
-     */
-    protected array $locales = [];
-
-    /**
      * Constructor.
      *
      * @param array $locales A list of accepted locales, or ['*'] to accept any
      *   locale header value.
      */
-    public function __construct(array $locales = [])
-    {
-        $this->locales = $locales;
+    public function __construct(
+        protected array $locales = [],
+    ) {
     }
 
     /**

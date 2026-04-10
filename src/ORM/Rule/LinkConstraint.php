@@ -42,13 +42,6 @@ class LinkConstraint
     public const string STATUS_NOT_LINKED = 'notLinked';
 
     /**
-     * The association that should be checked.
-     *
-     * @var \Cake\ORM\Association|string
-     */
-    protected Association|string $association;
-
-    /**
      * The link status that is required to be present in order for the check to succeed.
      *
      * @var string
@@ -62,15 +55,13 @@ class LinkConstraint
      * @param string $requiredLinkStatus The link status that is required to be present in order for the check to
      *  succeed.
      */
-    public function __construct(Association|string $association, string $requiredLinkStatus)
+    public function __construct(protected Association|string $association, string $requiredLinkStatus)
     {
         if (!in_array($requiredLinkStatus, [static::STATUS_LINKED, static::STATUS_NOT_LINKED], true)) {
             throw new InvalidArgumentException(
                 'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.',
             );
         }
-
-        $this->association = $association;
         $this->requiredLinkState = $requiredLinkStatus;
     }
 

@@ -50,6 +50,11 @@ interface DefinitionInterface extends ContainerAwareInterface
     public function getConcrete(): mixed;
 
     /**
+     * @return array<string>
+     */
+    public function getTags(): array;
+
+    /**
      * @param string $tag
      * @return bool
      */

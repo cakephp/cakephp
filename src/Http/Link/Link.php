@@ -42,13 +42,6 @@ class Link implements EvolvableLinkInterface
     private array $rels;
 
     /**
-     * The link attributes.
-     *
-     * @var array<string, string|bool|int|float|array<string>>
-     */
-    private array $attributes;
-
-    /**
      * Constructor.
      *
      * @param string $href The link URI.
@@ -58,10 +51,9 @@ class Link implements EvolvableLinkInterface
     public function __construct(
         private string $href = '',
         string|array $rels = [],
-        array $attributes = [],
+        private array $attributes = [],
     ) {
         $this->rels = is_string($rels) ? [$rels] : $rels;
-        $this->attributes = $attributes;
     }
 
     /**

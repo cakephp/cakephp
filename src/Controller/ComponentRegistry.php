@@ -27,8 +27,8 @@ use League\Container\Argument\ArgumentReflectorTrait;
 use League\Container\Argument\ArgumentResolverTrait;
 use League\Container\Argument\LiteralArgument;
 use League\Container\Argument\ResolvableArgument;
-use League\Container\Exception\NotFoundException;
 use League\Container\ReflectionContainer;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -63,22 +63,16 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     protected ?Controller $Controller = null;
 
     /**
-     * @var \Cake\Core\ContainerInterface|null
-     */
-    protected ?ContainerInterface $container = null;
-
-    /**
      * Constructor.
      *
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @param \Cake\Core\ContainerInterface|null $container Container instance.
      */
-    public function __construct(?Controller $controller = null, ?ContainerInterface $container = null)
+    public function __construct(?Controller $controller = null, protected ?ContainerInterface $container = null)
     {
         if ($controller !== null) {
             $this->setController($controller);
         }
-        $this->container = $container;
     }
 
     /**
@@ -180,7 +174,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             try {
                 $this->container->extend($class);
                 $hasDefinition = true;
-            } catch (NotFoundException) {
+            } catch (NotFoundExceptionInterface) {
                 // No definition exists yet
             }
 

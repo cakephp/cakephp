@@ -29,13 +29,6 @@ use function Cake\Core\h;
 class LabelWidget implements WidgetInterface
 {
     /**
-     * Templates
-     *
-     * @var \Cake\View\StringTemplate
-     */
-    protected StringTemplate $templates;
-
-    /**
      * The template to use.
      *
      * @var string
@@ -52,9 +45,8 @@ class LabelWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(StringTemplate $templates)
+    public function __construct(protected StringTemplate $templates)
     {
-        $this->templates = $templates;
     }
 
     /**

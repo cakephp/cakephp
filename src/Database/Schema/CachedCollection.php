@@ -24,38 +24,17 @@ use Psr\SimpleCache\CacheInterface;
 class CachedCollection implements CollectionInterface
 {
     /**
-     * Cacher instance.
-     *
-     * @var \Psr\SimpleCache\CacheInterface
-     */
-    protected CacheInterface $cacher;
-
-    /**
-     * The decorated schema collection
-     *
-     * @var \Cake\Database\Schema\CollectionInterface
-     */
-    protected CollectionInterface $collection;
-
-    /**
-     * The cache key prefix
-     *
-     * @var string
-     */
-    protected string $prefix;
-
-    /**
      * Constructor.
      *
-     * @param \Cake\Database\Schema\CollectionInterface $collection The collection to wrap.
+     * @param \Cake\Database\Schema\CollectionInterface $collection The decorated schema collection to wrap.
      * @param string $prefix The cache key prefix to use. Typically the connection name.
      * @param \Psr\SimpleCache\CacheInterface $cacher Cacher instance.
      */
-    public function __construct(CollectionInterface $collection, string $prefix, CacheInterface $cacher)
-    {
-        $this->collection = $collection;
-        $this->prefix = $prefix;
-        $this->cacher = $cacher;
+    public function __construct(
+        protected CollectionInterface $collection,
+        protected string $prefix,
+        protected CacheInterface $cacher,
+    ) {
     }
 
     /**

@@ -136,14 +136,6 @@ class Mailer implements EventListenerInterface
     use StaticConfigTrait;
 
     /**
-     * Mailer's name.
-     *
-     * @var string
-     * @deprecated 5.4.0 This property is unused.
-     */
-    public static string $name;
-
-    /**
      * The transport instance to use for sending mail.
      *
      * @var \Cake\Mailer\AbstractTransport|null

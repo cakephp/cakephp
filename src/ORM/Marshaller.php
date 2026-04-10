@@ -42,20 +42,12 @@ class Marshaller
     use AssociationsNormalizerTrait;
 
     /**
-     * The table instance this marshaller is for.
-     *
-     * @var \Cake\ORM\Table
-     */
-    protected Table $table;
-
-    /**
      * Constructor.
      *
      * @param \Cake\ORM\Table $table The table this marshaller is for.
      */
-    public function __construct(Table $table)
+    public function __construct(protected Table $table)
     {
-        $this->table = $table;
     }
 
     /**

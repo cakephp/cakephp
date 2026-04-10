@@ -22,33 +22,6 @@ namespace Cake\Error;
 class PhpError
 {
     /**
-     * @var int
-     */
-    private int $code;
-
-    /**
-     * @var string
-     */
-    private string $message;
-
-    /**
-     * @var string|null
-     */
-    private ?string $file;
-
-    /**
-     * @var int|null
-     */
-    private ?int $line;
-
-    /**
-     * Stack trace data. Each item should have a `reference`, `file` and `line` keys.
-     *
-     * @var array<array<string, int>>
-     */
-    private array $trace;
-
-    /**
      * @var array<int, string>
      */
     private array $levelMap = [
@@ -84,20 +57,15 @@ class PhpError
      * @param string $message The error message.
      * @param string|null $file The filename of the error.
      * @param int|null $line The line number for the error.
-     * @param array $trace The backtrace for the error.
+     * @param array $trace Stack trace data. Each item should have a `reference`, `file` and `line` keys.
      */
     public function __construct(
-        int $code,
-        string $message,
-        ?string $file = null,
-        ?int $line = null,
-        array $trace = [],
+        private int $code,
+        private string $message,
+        private ?string $file = null,
+        private ?int $line = null,
+        private array $trace = [],
     ) {
-        $this->code = $code;
-        $this->message = $message;
-        $this->file = $file;
-        $this->line = $line;
-        $this->trace = $trace;
     }
 
     /**

@@ -34,16 +34,6 @@ class CookieEncryptedEquals extends CookieEquals
     protected ResponseInterface $response;
 
     /**
-     * @var string
-     */
-    protected string $key;
-
-    /**
-     * @var string
-     */
-    protected string $mode;
-
-    /**
      * Constructor.
      *
      * @param \Cake\Http\Response|null $response A response instance.
@@ -51,12 +41,9 @@ class CookieEncryptedEquals extends CookieEquals
      * @param string $mode Mode
      * @param string $key Key
      */
-    public function __construct(?Response $response, string $cookieName, string $mode, string $key)
+    public function __construct(?Response $response, string $cookieName, protected string $mode, protected string $key)
     {
         parent::__construct($response, $cookieName);
-
-        $this->key = $key;
-        $this->mode = $mode;
     }
 
     /**

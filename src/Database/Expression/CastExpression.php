@@ -33,20 +33,6 @@ class CastExpression implements ExpressionInterface, TypedResultInterface
     use TypedResultTrait;
 
     /**
-     * The value to be cast
-     *
-     * @var \Cake\Database\ExpressionInterface|string
-     */
-    protected ExpressionInterface|string $value;
-
-    /**
-     * The target SQL data type
-     *
-     * @var string
-     */
-    protected string $type;
-
-    /**
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|string $value The value or expression to cast
@@ -54,12 +40,10 @@ class CastExpression implements ExpressionInterface, TypedResultInterface
      * @param string $returnType The abstract return type. Defaults to 'string'.
      */
     public function __construct(
-        ExpressionInterface|string $value,
-        string $type,
+        protected ExpressionInterface|string $value,
+        protected string $type,
         string $returnType = 'string',
     ) {
-        $this->value = $value;
-        $this->type = $type;
         $this->returnType = $returnType;
     }
 

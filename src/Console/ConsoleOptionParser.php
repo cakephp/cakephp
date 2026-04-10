@@ -407,7 +407,7 @@ class ConsoleOptionParser
             );
         }
         $this->options[$name] = $option;
-        asort($this->options);
+        ksort($this->options);
         if ($option->short()) {
             if (isset($this->shortOptions[$option->short()])) {
                 throw new LogicException(sprintf(
@@ -418,7 +418,7 @@ class ConsoleOptionParser
             }
 
             $this->shortOptions[$option->short()] = $name;
-            asort($this->shortOptions);
+            ksort($this->shortOptions);
         }
 
         return $this;

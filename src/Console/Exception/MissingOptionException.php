@@ -23,20 +23,6 @@ use Throwable;
 class MissingOptionException extends ConsoleException
 {
     /**
-     * The requested thing that was not found.
-     *
-     * @var string
-     */
-    protected string $requested = '';
-
-    /**
-     * The valid suggestions.
-     *
-     * @var array<string>
-     */
-    protected array $suggestions = [];
-
-    /**
      * Constructor.
      *
      * @param string $message The string message.
@@ -47,13 +33,11 @@ class MissingOptionException extends ConsoleException
      */
     public function __construct(
         string $message,
-        string $requested = '',
-        array $suggestions = [],
+        protected string $requested = '',
+        protected array $suggestions = [],
         ?int $code = null,
         ?Throwable $previous = null,
     ) {
-        $this->suggestions = $suggestions;
-        $this->requested = $requested;
         parent::__construct($message, $code, $previous);
     }
 

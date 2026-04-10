@@ -47,20 +47,6 @@ class BetweenExpression implements ExpressionInterface, FieldInterface, TypedRes
     protected mixed $to;
 
     /**
-     * The data type for the from and to arguments
-     *
-     * @var mixed
-     */
-    protected mixed $type;
-
-    /**
-     * Whether this is a NOT BETWEEN expression
-     *
-     * @var bool
-     */
-    protected bool $not = false;
-
-    /**
      * Constructor
      *
      * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values in between the range.
@@ -73,8 +59,8 @@ class BetweenExpression implements ExpressionInterface, FieldInterface, TypedRes
         ExpressionInterface|string $field,
         mixed $from,
         mixed $to,
-        ?string $type = null,
-        bool $not = false,
+        protected ?string $type = null,
+        protected bool $not = false,
     ) {
         if ($type !== null) {
             $from = $this->castToExpression($from, $type);
@@ -84,8 +70,6 @@ class BetweenExpression implements ExpressionInterface, FieldInterface, TypedRes
         $this->field = $field;
         $this->from = $from;
         $this->to = $to;
-        $this->type = $type;
-        $this->not = $not;
         $this->returnType = 'boolean';
     }
 

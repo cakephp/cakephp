@@ -30,23 +30,11 @@ class StringExpression implements ExpressionInterface, TypedResultInterface
     use TypedResultTrait;
 
     /**
-     * @var string
-     */
-    protected string $string;
-
-    /**
-     * @var string
-     */
-    protected string $collation;
-
-    /**
      * @param string $string String value
      * @param string $collation String collation
      */
-    public function __construct(string $string, string $collation)
+    public function __construct(protected string $string, protected string $collation)
     {
-        $this->string = $string;
-        $this->collation = $collation;
     }
 
     /**
