@@ -17,39 +17,27 @@ declare(strict_types=1);
 namespace Cake\AttributeResolver\Enum;
 
 /**
- * Enum representing the different types of targets that can have attributes.
- *
- * PHP attributes can be attached to various language constructs:
- * - Classes
- * - Methods
- * - Properties
- * - Parameters
- * - Class constants
+ * Enum representing the declaring class kind for an attribute target.
  */
-enum AttributeTargetType: string
+enum DeclaringClassType: string
 {
     /**
-     * Attribute attached to a class
+     * Declaring type is a class.
      */
     case CLASS_ = 'class';
 
     /**
-     * Attribute attached to a method
+     * Declaring type is an interface.
      */
-    case METHOD = 'method';
+    case INTERFACE = 'interface';
 
     /**
-     * Attribute attached to a property
+     * Declaring type is a trait.
      */
-    case PROPERTY = 'property';
+    case TRAIT = 'trait';
 
     /**
-     * Attribute attached to a parameter
+     * Declaring type is an enum.
      */
-    case PARAMETER = 'parameter';
-
-    /**
-     * Attribute attached to a class constant
-     */
-    case CONSTANT = 'constant';
+    case ENUM = 'enum';
 }

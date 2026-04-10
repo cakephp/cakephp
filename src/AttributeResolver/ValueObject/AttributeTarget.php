@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\AttributeResolver\ValueObject;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use JsonSerializable;
 
 /**
@@ -26,6 +28,9 @@ use JsonSerializable;
  * - The type of target (class, method, property, etc.)
  * - The name of the target
  * - The declaring class (if applicable)
+ * - The declaring class kind (class, interface, trait, enum)
+ * - Whether the declaring class is abstract
+ * - Method visibility (for method-related targets)
  *
  * This class is readonly and immutable for safe serialization.
  */
@@ -37,11 +42,17 @@ readonly class AttributeTarget implements JsonSerializable
      * @param \Cake\AttributeResolver\Enum\AttributeTargetType $type Target type
      * @param string $name Target name (e.g., method name, property name)
      * @param string|null $declaringClass Class name that declares this target
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
+     * @param \Cake\AttributeResolver\Enum\MethodVisibility|null $methodVisibility Method visibility
      */
     public function __construct(
         public AttributeTargetType $type,
         public string $name,
         public ?string $declaringClass = null,
+        public bool $isDeclaringClassAbstract = false,
+        public DeclaringClassType $declaringClassType = DeclaringClassType::CLASS_,
+        public ?MethodVisibility $methodVisibility = null,
     ) {
     }
 
@@ -56,6 +67,9 @@ readonly class AttributeTarget implements JsonSerializable
             'type' => $this->type->value,
             'name' => $this->name,
             'declaringClass' => $this->declaringClass,
+            'isDeclaringClassAbstract' => $this->isDeclaringClassAbstract,
+            'declaringClassType' => $this->declaringClassType->value,
+            'methodVisibility' => $this->methodVisibility?->value,
         ];
     }
 
@@ -71,11 +85,22 @@ readonly class AttributeTarget implements JsonSerializable
         if (!$type instanceof AttributeTargetType) {
             $type = AttributeTargetType::from((string)$type);
         }
+        $declaringClassType = $data['declaringClassType'] ?? DeclaringClassType::CLASS_->value;
+        if (!$declaringClassType instanceof DeclaringClassType) {
+            $declaringClassType = DeclaringClassType::from((string)$declaringClassType);
+        }
+        $methodVisibility = $data['methodVisibility'] ?? null;
+        if ($methodVisibility !== null && !$methodVisibility instanceof MethodVisibility) {
+            $methodVisibility = MethodVisibility::from((string)$methodVisibility);
+        }
 
         return new self(
             type: $type,
             name: (string)$data['name'],
             declaringClass: isset($data['declaringClass']) ? (string)$data['declaringClass'] : null,
+            isDeclaringClassAbstract: (bool)($data['isDeclaringClassAbstract'] ?? false),
+            declaringClassType: $declaringClassType,
+            methodVisibility: $methodVisibility,
         );
     }
 
@@ -87,5 +112,27 @@ readonly class AttributeTarget implements JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    /**
+     * Check whether the declaring type can be instantiated as a concrete class.
+     *
+     * @return bool
+     */
+    public function isInstantiableDeclaringType(): bool
+    {
+        return $this->declaringClassType === DeclaringClassType::CLASS_
+            && $this->isDeclaringClassAbstract === false;
+    }
+
+    /**
+     * Check whether the target is a public method target.
+     *
+     * @return bool
+     */
+    public function isPublicMethodTarget(): bool
+    {
+        return $this->type === AttributeTargetType::METHOD
+            && $this->methodVisibility === MethodVisibility::PUBLIC;
     }
 }

@@ -93,7 +93,7 @@ class AttributeInfoTest extends TestCase
     public function testConstructorDefaults(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 
@@ -142,6 +142,9 @@ class AttributeInfoTest extends TestCase
                 'type' => 'property',
                 'name' => 'title',
                 'declaringClass' => 'App\Model\Entity\Article',
+                'isDeclaringClassAbstract' => false,
+                'declaringClassType' => 'class',
+                'methodVisibility' => null,
             ],
             'fileTime' => 9876543210,
             'pluginName' => 'Blog',
@@ -217,7 +220,7 @@ class AttributeInfoTest extends TestCase
     public function testGetInstance(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -243,7 +246,7 @@ class AttributeInfoTest extends TestCase
     public function testGetInstanceWithExpectedClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -270,7 +273,7 @@ class AttributeInfoTest extends TestCase
         $this->expectExceptionMessage('Attribute class "NonExistent\Class" does not exist');
 
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -295,7 +298,7 @@ class AttributeInfoTest extends TestCase
         $this->expectExceptionMessageMatches('/is not an instance of/');
 
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -317,7 +320,7 @@ class AttributeInfoTest extends TestCase
     public function testIsInstanceOf(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -381,7 +384,7 @@ class AttributeInfoTest extends TestCase
     public function testPhpSerializeWithNullPluginName(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 

@@ -17,39 +17,22 @@ declare(strict_types=1);
 namespace Cake\AttributeResolver\Enum;
 
 /**
- * Enum representing the different types of targets that can have attributes.
- *
- * PHP attributes can be attached to various language constructs:
- * - Classes
- * - Methods
- * - Properties
- * - Parameters
- * - Class constants
+ * Enum representing method visibility levels.
  */
-enum AttributeTargetType: string
+enum MethodVisibility: string
 {
     /**
-     * Attribute attached to a class
+     * Public visibility.
      */
-    case CLASS_ = 'class';
+    case PUBLIC = 'public';
 
     /**
-     * Attribute attached to a method
+     * Protected visibility.
      */
-    case METHOD = 'method';
+    case PROTECTED = 'protected';
 
     /**
-     * Attribute attached to a property
+     * Private visibility.
      */
-    case PROPERTY = 'property';
-
-    /**
-     * Attribute attached to a parameter
-     */
-    case PARAMETER = 'parameter';
-
-    /**
-     * Attribute attached to a class constant
-     */
-    case CONSTANT = 'constant';
+    case PRIVATE = 'private';
 }

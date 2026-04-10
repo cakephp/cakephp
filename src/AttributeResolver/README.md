@@ -72,7 +72,7 @@ $adminRoutes = AttributeResolver::withAttribute(Route::class)
 
 // Filter by target type
 $classAttributes = AttributeResolver::withAttribute(MyAttribute::class)
-    ->withTargetType(AttributeTargetType::CLASS_TYPE);
+    ->withTargetType(AttributeTargetType::CLASS_);
 
 // Filter by plugin
 $pluginCommands = AttributeResolver::withAttribute(ConsoleCommand::class)

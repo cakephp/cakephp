@@ -572,6 +572,20 @@ class RouteBuilder
     }
 
     /**
+     * Connect routes declared with routing attributes.
+     *
+     * @param string $config Attribute resolver config name.
+     * @return $this
+     */
+    public function connectAttributes(string $config = 'default'): static
+    {
+        $connector = new AttributeRouteConnector($this);
+        $connector->connect($config);
+
+        return $this;
+    }
+
+    /**
      * Load routes from a plugin.
      *
      * The routes file will have a local variable named `$routes` made available which contains

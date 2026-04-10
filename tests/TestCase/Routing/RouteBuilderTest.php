@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing;
 
 use BadMethodCallException;
+use Cake\AttributeResolver\AttributeResolver;
+use Cake\Cache\Cache;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
@@ -49,6 +51,15 @@ class RouteBuilderTest extends TestCase
     {
         parent::setUp();
         $this->collection = new RouteCollection();
+
+        AttributeResolver::setConfig('default', [
+            'paths' => ['Controller/*Controller.php', 'Controller/**/*Controller.php'],
+            'basePath' => APP,
+            'excludePaths' => [],
+            'excludeAttributes' => [],
+            'cache' => '_cake_attributes_',
+        ]);
+        Cache::clear('_cake_attributes_');
     }
 
     /**
@@ -56,6 +67,8 @@ class RouteBuilderTest extends TestCase
      */
     protected function tearDown(): void
     {
+        AttributeResolver::drop('default');
+        Cache::clear('_cake_attributes_');
         parent::tearDown();
         $this->clearPlugins();
     }
@@ -79,6 +92,9 @@ class RouteBuilderTest extends TestCase
 
         $routes = new RouteBuilder($this->collection, '/path/book{book_id}');
         $this->assertSame('/path/book', $routes->path());
+
+        $routes = new RouteBuilder($this->collection, '/path/:book_id');
+        $this->assertSame('/path/', $routes->path());
     }
 
     /**
@@ -218,6 +234,20 @@ class RouteBuilderTest extends TestCase
         $url = $expected['_matchedRoute'];
         unset($expected['_matchedRoute']);
         $this->assertSame($url, '/' . $this->collection->match($expected, []));
+    }
+
+    /**
+     * Test connect() with an invalid route class.
+     *
+     * @return void
+     */
+    public function testConnectWithInvalidRouteClass(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot find route class NonExistingRouteClass');
+
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect('/broken', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => 'NonExistingRouteClass']);
     }
 
     /**
@@ -1346,5 +1376,26 @@ class RouteBuilderTest extends TestCase
         $route = $this->collection->routes()[0];
         $this->assertEquals('plugin.example.com', $route->options['_host']);
         $this->assertEquals('MyPlugin', $route->defaults['plugin']);
+    }
+
+    /**
+     * Test that method-level attribute routes are connected.
+     *
+     * @return void
+     */
+    public function testConnectAttributesConnectsControllerMethodRoutes(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connectAttributes();
+
+        $request = new ServerRequest([
+            'url' => '/base/attr/index',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]);
+        $result = $this->collection->parseRequest($request);
+
+        $this->assertSame('AttributeRouting', $result['controller']);
+        $this->assertSame('index', $result['action']);
+        $this->assertSame('/base/attr/index', $result['_matchedRoute']);
     }
 }

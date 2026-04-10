@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
@@ -44,12 +46,24 @@ class ParserTest extends TestCase
         // Should find 1 class attribute + 4 method attributes
         $this->assertCount(5, $results);
 
-        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $classAttrs);
 
         $classAttr = array_values($classAttrs)[0];
         $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $classAttr->attributeName);
         $this->assertSame(['path' => '/test'], $classAttr->arguments);
+    }
+
+    public function testParseFileCapturesAbstractClassMetadata(): void
+    {
+        $filePath = TEST_APP . 'TestApp/Controller/AttributeRoutingBaseController.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        $this->assertNotEmpty($results);
+        foreach ($results as $result) {
+            $this->assertTrue($result->target->isDeclaringClassAbstract);
+            $this->assertSame(DeclaringClassType::CLASS_, $result->target->declaringClassType);
+        }
     }
 
     public function testParseMethodAttributes(): void
@@ -64,6 +78,15 @@ class ParserTest extends TestCase
             $this->assertSame(AttributeTargetType::METHOD, $attr->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $attr->attributeName);
         }
+
+        $visibilityByMethod = [];
+        foreach ($methodAttrs as $methodAttr) {
+            $visibilityByMethod[$methodAttr->target->name] = $methodAttr->target->methodVisibility;
+        }
+        $this->assertSame(MethodVisibility::PUBLIC, $visibilityByMethod['publicMethod']);
+        $this->assertSame(MethodVisibility::PROTECTED, $visibilityByMethod['protectedMethod']);
+        $this->assertSame(MethodVisibility::PRIVATE, $visibilityByMethod['privateMethod']);
+        $this->assertSame(MethodVisibility::PUBLIC, $visibilityByMethod['staticMethod']);
     }
 
     public function testParsePropertyAttributes(): void
@@ -308,8 +331,12 @@ class ParserTest extends TestCase
         // Should find interface-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $interfaceAttrs);
+        $this->assertSame(
+            DeclaringClassType::INTERFACE,
+            array_values($interfaceAttrs)[0]->target->declaringClassType,
+        );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
         $this->assertCount(1, $methodAttrs);
@@ -323,8 +350,12 @@ class ParserTest extends TestCase
         // Should find trait-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $traitAttrs);
+        $this->assertSame(
+            DeclaringClassType::TRAIT,
+            array_values($traitAttrs)[0]->target->declaringClassType,
+        );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
         $this->assertCount(1, $methodAttrs);
@@ -338,8 +369,12 @@ class ParserTest extends TestCase
         // Should find enum-level and case attributes
         $this->assertGreaterThan(0, count($results));
 
-        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $enumAttrs);
+        $this->assertSame(
+            DeclaringClassType::ENUM,
+            array_values($enumAttrs)[0]->target->declaringClassType,
+        );
 
         // Enum cases are treated as class constants
         $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT);

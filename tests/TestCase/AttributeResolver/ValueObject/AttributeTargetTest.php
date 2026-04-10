@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 
@@ -39,6 +41,9 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::METHOD, $target->type);
         $this->assertSame('myMethod', $target->name);
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -47,13 +52,16 @@ class AttributeTargetTest extends TestCase
     public function testConstructorNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $target->type);
+        $this->assertSame(AttributeTargetType::CLASS_, $target->type);
         $this->assertSame('MyClass', $target->name);
         $this->assertNull($target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -71,6 +79,9 @@ class AttributeTargetTest extends TestCase
             'type' => 'property',
             'name' => 'title',
             'declaringClass' => 'App\Model\Entity\Article',
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -82,7 +93,7 @@ class AttributeTargetTest extends TestCase
     public function testToArrayNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -90,6 +101,9 @@ class AttributeTargetTest extends TestCase
             'type' => 'class',
             'name' => 'TestClass',
             'declaringClass' => null,
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -104,6 +118,9 @@ class AttributeTargetTest extends TestCase
             'type' => 'method',
             'name' => 'index',
             'declaringClass' => 'App\Controller\ArticlesController',
+            'isDeclaringClassAbstract' => true,
+            'declaringClassType' => 'interface',
+            'methodVisibility' => 'protected',
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -111,6 +128,9 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::METHOD, $target->type);
         $this->assertSame('index', $target->name);
         $this->assertSame('App\Controller\ArticlesController', $target->declaringClass);
+        $this->assertTrue($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::INTERFACE, $target->declaringClassType);
+        $this->assertSame(MethodVisibility::PROTECTED, $target->methodVisibility);
     }
 
     /**
@@ -122,6 +142,9 @@ class AttributeTargetTest extends TestCase
             'type' => 'parameter',
             'name' => 'userId',
             'declaringClass' => null,
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -129,6 +152,9 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::PARAMETER, $target->type);
         $this->assertSame('userId', $target->name);
         $this->assertNull($target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -177,7 +203,7 @@ class AttributeTargetTest extends TestCase
     public function testPhpSerializeWithNullDeclaringClass(): void
     {
         $original = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 
@@ -185,7 +211,7 @@ class AttributeTargetTest extends TestCase
         $restored = unserialize($serialized);
 
         $this->assertInstanceOf(AttributeTarget::class, $restored);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $restored->type);
+        $this->assertSame(AttributeTargetType::CLASS_, $restored->type);
         $this->assertSame('MyClass', $restored->name);
         $this->assertNull($restored->declaringClass);
     }
@@ -205,5 +231,67 @@ class AttributeTargetTest extends TestCase
         $decoded = json_decode($json, true);
 
         $this->assertSame($target->toArray(), $decoded);
+    }
+
+    /**
+     * Test concrete class target is instantiable.
+     */
+    public function testIsInstantiableDeclaringTypeTrue(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::CLASS_,
+            name: 'UsersController',
+            declaringClass: 'App\Controller\UsersController',
+            isDeclaringClassAbstract: false,
+            declaringClassType: DeclaringClassType::CLASS_,
+        );
+
+        $this->assertTrue($target->isInstantiableDeclaringType());
+    }
+
+    /**
+     * Test non-concrete declaring types are not instantiable.
+     */
+    public function testIsInstantiableDeclaringTypeFalseForAbstractOrNonClass(): void
+    {
+        $abstractTarget = new AttributeTarget(
+            type: AttributeTargetType::CLASS_,
+            name: 'BaseController',
+            declaringClass: 'App\Controller\BaseController',
+            isDeclaringClassAbstract: true,
+            declaringClassType: DeclaringClassType::CLASS_,
+        );
+        $interfaceTarget = new AttributeTarget(
+            type: AttributeTargetType::CLASS_,
+            name: 'Contract',
+            declaringClass: 'App\Controller\Contract',
+            isDeclaringClassAbstract: false,
+            declaringClassType: DeclaringClassType::INTERFACE,
+        );
+
+        $this->assertFalse($abstractTarget->isInstantiableDeclaringType());
+        $this->assertFalse($interfaceTarget->isInstantiableDeclaringType());
+    }
+
+    /**
+     * Test public method target helper.
+     */
+    public function testIsPublicMethodTarget(): void
+    {
+        $publicMethodTarget = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+            methodVisibility: MethodVisibility::PUBLIC,
+        );
+        $protectedMethodTarget = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+            methodVisibility: MethodVisibility::PROTECTED,
+        );
+
+        $this->assertTrue($publicMethodTarget->isPublicMethodTarget());
+        $this->assertFalse($protectedMethodTarget->isPublicMethodTarget());
     }
 }
