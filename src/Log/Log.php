@@ -17,6 +17,9 @@ namespace Cake\Log;
 
 use Cake\Core\StaticConfigTrait;
 use Cake\Log\Engine\BaseLog;
+use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Engine\FileLog;
+use Cake\Log\Engine\SyslogLog;
 use Closure;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -167,9 +170,9 @@ class Log
     protected static function initDsnClassMap(): array
     {
         return [
-            'console' => Engine\ConsoleLog::class,
-            'file' => Engine\FileLog::class,
-            'syslog' => Engine\SyslogLog::class,
+            'console' => ConsoleLog::class,
+            'file' => FileLog::class,
+            'syslog' => SyslogLog::class,
         ];
     }
 

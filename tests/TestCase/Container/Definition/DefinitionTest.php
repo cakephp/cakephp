@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Container\Definition;
 
-use Cake\Container\Argument\Literal;
+use Cake\Container\Argument\Literal\StringArgument;
 use Cake\Container\Argument\ResolvableArgument;
 use Cake\Container\Container;
 use Cake\Container\Definition\Definition;
@@ -29,7 +29,7 @@ class DefinitionTest extends TestCase
     public function testDefinitionResolvesClosureReturningRawArgument(): void
     {
         $definition = new Definition('callable', function () {
-            return new Literal\StringArgument('hello world');
+            return new StringArgument('hello world');
         });
 
         $actual = $definition->resolve();
@@ -144,7 +144,7 @@ class DefinitionTest extends TestCase
 
     public function testDefinitionCanGetConcrete(): void
     {
-        $concrete = new Literal\StringArgument(Foo::class);
+        $concrete = new StringArgument(Foo::class);
         $definition = new Definition('class', $concrete);
         self::assertSame($concrete, $definition->getConcrete());
     }
@@ -152,7 +152,7 @@ class DefinitionTest extends TestCase
     public function testDefinitionCanSetConcrete(): void
     {
         $definition = new Definition('class');
-        $concrete = new Literal\StringArgument(Foo::class);
+        $concrete = new StringArgument(Foo::class);
         $definition->setConcrete($concrete);
         self::assertSame($concrete, $definition->getConcrete());
     }

@@ -18,6 +18,10 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Query;
+use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Query\InsertQuery;
+use Cake\Database\Query\SelectQuery;
+use Cake\Database\Query\UpdateQuery;
 use Cake\Database\QueryCompiler;
 use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
@@ -60,10 +64,10 @@ class QueryCompilerTest extends TestCase
     protected function newQuery(string $type): Query
     {
         return match ($type) {
-            Query::TYPE_SELECT => new Query\SelectQuery($this->connection),
-            Query::TYPE_INSERT => new Query\InsertQuery($this->connection),
-            Query::TYPE_UPDATE => new Query\UpdateQuery($this->connection),
-            Query::TYPE_DELETE => new Query\DeleteQuery($this->connection),
+            Query::TYPE_SELECT => new SelectQuery($this->connection),
+            Query::TYPE_INSERT => new InsertQuery($this->connection),
+            Query::TYPE_UPDATE => new UpdateQuery($this->connection),
+            Query::TYPE_DELETE => new DeleteQuery($this->connection),
         };
     }
 

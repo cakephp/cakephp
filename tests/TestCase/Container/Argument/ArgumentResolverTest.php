@@ -5,7 +5,7 @@ namespace Cake\Test\TestCase\Container\Argument;
 
 use Cake\Container\Argument\ArgumentResolverInterface;
 use Cake\Container\Argument\ArgumentResolverTrait;
-use Cake\Container\Argument\Literal;
+use Cake\Container\Argument\Literal\StringArgument;
 use Cake\Container\Container;
 use Cake\Container\ContainerAwareTrait;
 use Cake\Test\TestCase\Container\Asset\Baz;
@@ -71,12 +71,12 @@ class ArgumentResolverTest extends TestCase
             ->expects($this->once())
             ->method('get')
             ->with(self::equalTo('alias1'))
-            ->willReturn(new Literal\StringArgument('value1'));
+            ->willReturn(new StringArgument('value1'));
 
         /** @var Container $container */
         $resolver->setContainer($container);
 
-        $args = $resolver->resolveArguments(['alias1', new Literal\StringArgument('value2')]);
+        $args = $resolver->resolveArguments(['alias1', new StringArgument('value2')]);
 
         self::assertSame('value1', $args[0]);
         self::assertSame('value2', $args[1]);

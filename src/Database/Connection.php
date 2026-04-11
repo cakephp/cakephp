@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
@@ -548,7 +549,7 @@ class Connection implements ConnectionInterface
         if ($enable === false) {
             $this->useSavePoints = false;
         } else {
-            $this->useSavePoints = $this->getWriteDriver()->supports(Enum\DriverFeature::SAVEPOINT);
+            $this->useSavePoints = $this->getWriteDriver()->supports(DriverFeature::SAVEPOINT);
         }
 
         return $this;

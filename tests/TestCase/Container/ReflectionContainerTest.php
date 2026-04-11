@@ -156,9 +156,9 @@ class ReflectionContainerTest extends TestCase
     public function testCallReflectsOnStaticMethodArguments(): void
     {
         $container = new ReflectionContainer();
-        $container->call('Cake\Test\TestCase\Container\Asset\Foo::staticSetBar');
-        self::assertInstanceOf(Bar::class, Asset\Foo::$staticBar);
-        self::assertEquals('hello world', Asset\Foo::$staticHello);
+        $container->call('Cake\Test\TestCase\Container\Foo::staticSetBar');
+        self::assertInstanceOf(Bar::class, Foo::$staticBar);
+        self::assertEquals('hello world', Foo::$staticHello);
     }
 
     public function testCallThrowsWhenArgumentCannotBeResolved(): void

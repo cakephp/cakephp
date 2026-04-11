@@ -19,6 +19,7 @@ namespace Cake\Database;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\QueryException;
@@ -910,7 +911,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Enum\DriverFeature $feature Driver feature
      * @return bool
      */
-    abstract public function supports(Enum\DriverFeature $feature): bool;
+    abstract public function supports(DriverFeature $feature): bool;
 
     /**
      * Transforms the passed query to this Driver's dialect and returns an instance
