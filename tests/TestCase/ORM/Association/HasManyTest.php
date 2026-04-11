@@ -861,6 +861,36 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Subquery strategy when the same alias is referenced by both ORDER BY
+     * and HAVING. The HAVING branch must not re-add an alias already
+     * preserved by the ORDER BY branch.
+     */
+    public function testSubqueryWithHavingAndOrderOnSameAlias(): void
+    {
+        $this->skipIf(
+            ConnectionManager::get('test')->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'name_length' => $query->func()->length(['Authors.name' => 'identifier']),
+            ])
+            ->enableAutoFields()
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['name_length >' => 4], ['name_length' => 'integer'])
+            ->orderBy(['name_length' => 'DESC'])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Subquery strategy + HAVING on an aggregate alias.
      * The aggregate must be preserved in SELECT but skipped in GROUP BY.
      */

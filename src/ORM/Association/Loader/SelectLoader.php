@@ -481,12 +481,7 @@ class SelectLoader
         if ($having instanceof QueryExpression && $having->count() > 0) {
             $reserved = [];
             foreach ($keys as $k) {
-                $stripped = trim((string)$k, '`"[]');
-                $reserved[strtolower($stripped)] = true;
-                $last = strrpos($stripped, '.');
-                if ($last !== false) {
-                    $reserved[strtolower(substr($stripped, $last + 1))] = true;
-                }
+                $reserved[strtolower(trim((string)$k, '`"[]'))] = true;
             }
 
             $havingSql = $having->sql(new ValueBinder());
@@ -495,46 +490,29 @@ class SelectLoader
                     continue;
                 }
                 $cleanAlias = trim($alias, '`"[]');
-                if ($cleanAlias === '' || isset($reserved[strtolower($cleanAlias)])) {
+                if (isset($reserved[strtolower($cleanAlias)])) {
                     continue;
                 }
                 if (preg_match('/\b' . preg_quote($cleanAlias, '/') . '\b/', $havingSql) !== 1) {
                     continue;
                 }
                 $fields[$alias] = $column;
-                if (!$this->_expressionContainsAggregate($column)) {
+
+                $isAggregate = $column instanceof AggregateExpression;
+                if (!$isAggregate && $column instanceof ExpressionInterface) {
+                    $column->traverse(function ($sub) use (&$isAggregate): void {
+                        if ($sub instanceof AggregateExpression) {
+                            $isAggregate = true;
+                        }
+                    });
+                }
+                if (!$isAggregate) {
                     $group[] = $column;
                 }
             }
         }
 
         return ['select' => $fields, 'group' => $group];
-    }
-
-    /**
-     * Returns true if the given expression is, or contains, an aggregate
-     * function. Aggregate expressions must not appear in GROUP BY.
-     *
-     * @param mixed $expression The select column expression to inspect.
-     * @return bool
-     */
-    protected function _expressionContainsAggregate(mixed $expression): bool
-    {
-        if ($expression instanceof AggregateExpression) {
-            return true;
-        }
-        if (!$expression instanceof ExpressionInterface) {
-            return false;
-        }
-
-        $found = false;
-        $expression->traverse(function ($sub) use (&$found): void {
-            if ($sub instanceof AggregateExpression) {
-                $found = true;
-            }
-        });
-
-        return $found;
     }
 
     /**
