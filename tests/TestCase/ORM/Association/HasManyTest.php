@@ -832,6 +832,33 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Tests subquery strategy when the parent query uses HAVING on a SELECT alias.
+     *
+     * The alias must be preserved in the generated subquery SELECT, otherwise the
+     * HAVING clause references a column that no longer exists.
+     */
+    public function testSubqueryWithHavingOnSelectAlias(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'name_length' => $query->func()->length(['Authors.name' => 'identifier']),
+            ])
+            ->enableAutoFields()
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['name_length >' => 5], ['name_length' => 'integer'])
+            ->toArray();
+
+        $names = array_map(fn($author) => $author->name, $result);
+        sort($names);
+        $this->assertSame(['garrett', 'mariano'], $names);
+    }
+
+    /**
      * Assertion method for order by clause contents.
      *
      * @param array $expected The expected join clause.

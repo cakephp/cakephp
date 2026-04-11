@@ -444,6 +444,10 @@ class SelectLoader
      * those columns are also included as the fields may be calculated or constant values,
      * that need to be present to ensure the correct association data is loaded.
      *
+     * When a HAVING clause is present the original SELECT aliases are preserved as
+     * well, since HAVING may reference computed aliases that would otherwise be
+     * dropped from the reduced subquery SELECT list.
+     *
      * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to get fields from.
      * @return array<string, array> The list of fields for the subquery.
      */
@@ -459,15 +463,25 @@ class SelectLoader
         $group = array_values($fields);
         $fields = $group;
 
-        /** @var \Cake\Database\Expression\QueryExpression $order */
+        $columns = $query->clause('select');
+
+        /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
         if ($order) {
-            $columns = $query->clause('select');
             $order->iterateParts(function ($direction, $field) use (&$fields, $columns): void {
                 if (isset($columns[$field])) {
                     $fields[$field] = $columns[$field];
                 }
             });
+        }
+
+        if ($query->clause('having') !== null) {
+            foreach ($columns as $alias => $column) {
+                if (is_string($alias) && !isset($fields[$alias])) {
+                    $fields[$alias] = $column;
+                    $group[] = $column;
+                }
+            }
         }
 
         return ['select' => $fields, 'group' => $group];
