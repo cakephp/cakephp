@@ -842,15 +842,19 @@ class HasManyTest extends TestCase
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
 
+        // Alias 'id' collides with the binding key column name. The collision
+        // guard must skip preserving the alias in the generated subquery to
+        // avoid producing a duplicate 'id' column.
         $query = $Authors->find();
         $result = $query
             ->select([
                 'id' => $query->func()->concat(['x'], ['string']),
+                'cnt' => $query->func()->count($query->identifier('Authors.id')),
             ])
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['Authors.name LIKE' => '%a%'])
+            ->having(['cnt >=' => 1], ['cnt' => 'integer'])
             ->toArray();
 
         $this->assertNotEmpty($result);
