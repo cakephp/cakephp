@@ -848,10 +848,10 @@ class HasManyTest extends TestCase
         $query = $Authors->find();
         $result = $query
             ->select([
+                'Authors.id',
                 'id' => $query->func()->concat(['x'], ['string']),
                 'cnt' => $query->func()->count($query->identifier('Authors.id')),
             ])
-            ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
             ->having(['cnt >=' => 1], ['cnt' => 'integer'])
