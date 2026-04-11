@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
@@ -475,16 +477,50 @@ class SelectLoader
             });
         }
 
-        if ($query->clause('having') !== null) {
+        $having = $query->clause('having');
+        if ($having instanceof QueryExpression && $having->count() > 0) {
+            $havingSql = $having->sql(new ValueBinder());
             foreach ($columns as $alias => $column) {
-                if (is_string($alias) && !isset($fields[$alias])) {
-                    $fields[$alias] = $column;
+                if (!is_string($alias) || isset($fields[$alias])) {
+                    continue;
+                }
+                if (preg_match('/\b' . preg_quote($alias, '/') . '\b/', $havingSql) !== 1) {
+                    continue;
+                }
+                $fields[$alias] = $column;
+                if (!$this->_expressionContainsAggregate($column)) {
                     $group[] = $column;
                 }
             }
         }
 
         return ['select' => $fields, 'group' => $group];
+    }
+
+    /**
+     * Returns true if the given expression is, or contains, an aggregate
+     * function. Aggregate expressions must not appear in GROUP BY.
+     *
+     * @param mixed $expression The select column expression to inspect.
+     * @return bool
+     */
+    protected function _expressionContainsAggregate(mixed $expression): bool
+    {
+        if ($expression instanceof AggregateExpression) {
+            return true;
+        }
+        if (!$expression instanceof ExpressionInterface) {
+            return false;
+        }
+
+        $found = false;
+        $expression->traverse(function ($sub) use (&$found): void {
+            if ($sub instanceof AggregateExpression) {
+                $found = true;
+            }
+        });
+
+        return $found;
     }
 
     /**

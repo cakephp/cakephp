@@ -833,6 +833,31 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Probe: subquery strategy + HAVING on an aggregate alias.
+     * Exercises the audit edge case where the alias expression is an aggregate.
+     */
+    public function testSubqueryWithHavingOnAggregateAlias(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'Authors.id',
+                'Authors.name',
+                'article_count' => $query->func()->count('Articles.id'),
+            ])
+            ->leftJoinWith('Articles')
+            ->contain('Articles')
+            ->groupBy(['Authors.id', 'Authors.name'])
+            ->having(['article_count >' => 0], ['article_count' => 'integer'])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Tests subquery strategy when the parent query uses HAVING on a SELECT alias.
      *
      * The alias must be preserved in the generated subquery SELECT, otherwise the
