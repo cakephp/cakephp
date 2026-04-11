@@ -479,9 +479,21 @@ class SelectLoader
 
         $having = $query->clause('having');
         if ($having instanceof QueryExpression && $having->count() > 0) {
+            $reserved = [];
+            foreach ($keys as $k) {
+                $reserved[strtolower($k)] = true;
+                $last = strrpos($k, '.');
+                if ($last !== false) {
+                    $reserved[strtolower(substr($k, $last + 1))] = true;
+                }
+            }
+
             $havingSql = $having->sql(new ValueBinder());
             foreach ($columns as $alias => $column) {
                 if (!is_string($alias) || isset($fields[$alias])) {
+                    continue;
+                }
+                if (isset($reserved[strtolower($alias)])) {
                     continue;
                 }
                 if (preg_match('/\b' . preg_quote($alias, '/') . '\b/', $havingSql) !== 1) {

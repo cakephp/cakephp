@@ -833,8 +833,32 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * Probe: subquery strategy + HAVING on an aggregate alias.
-     * Exercises the audit edge case where the alias expression is an aggregate.
+     * Subquery strategy when a HAVING-referenced select alias would collide
+     * with the binding key column name. The collision must be avoided to
+     * prevent "Duplicate column name" errors in the generated subquery.
+     */
+    public function testSubqueryWithHavingAliasCollidingWithBindingKey(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'id' => $query->func()->concat(['x'], ['string']),
+            ])
+            ->enableAutoFields()
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['Authors.id >=' => 1])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Subquery strategy + HAVING on an aggregate alias.
+     * The aggregate must be preserved in SELECT but skipped in GROUP BY.
      */
     public function testSubqueryWithHavingOnAggregateAlias(): void
     {
