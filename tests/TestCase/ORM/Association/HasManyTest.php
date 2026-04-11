@@ -26,6 +26,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Cake\ORM\Association;
@@ -839,6 +840,11 @@ class HasManyTest extends TestCase
      */
     public function testSubqueryWithHavingOnSelectAlias(): void
     {
+        $this->skipIf(
+            ConnectionManager::get('test')->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
 
@@ -853,7 +859,7 @@ class HasManyTest extends TestCase
             ->having(['name_length >' => 5], ['name_length' => 'integer'])
             ->toArray();
 
-        $names = array_map(fn($author) => $author->name, $result);
+        $names = array_map(fn(EntityInterface $author): string => $author->name, $result);
         sort($names);
         $this->assertSame(['garrett', 'mariano'], $names);
     }
