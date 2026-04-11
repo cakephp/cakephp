@@ -850,7 +850,7 @@ class HasManyTest extends TestCase
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['Authors.id >=' => 1])
+            ->having(['Authors.name LIKE' => '%a%'])
             ->toArray();
 
         $this->assertNotEmpty($result);
@@ -870,7 +870,7 @@ class HasManyTest extends TestCase
             ->select([
                 'Authors.id',
                 'Authors.name',
-                'article_count' => $query->func()->count('Articles.id'),
+                'article_count' => $query->func()->count($query->identifier('Articles.id')),
             ])
             ->leftJoinWith('Articles')
             ->contain('Articles')

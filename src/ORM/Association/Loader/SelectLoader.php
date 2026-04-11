@@ -481,10 +481,11 @@ class SelectLoader
         if ($having instanceof QueryExpression && $having->count() > 0) {
             $reserved = [];
             foreach ($keys as $k) {
-                $reserved[strtolower($k)] = true;
-                $last = strrpos($k, '.');
+                $stripped = trim((string)$k, '`"[]');
+                $reserved[strtolower($stripped)] = true;
+                $last = strrpos($stripped, '.');
                 if ($last !== false) {
-                    $reserved[strtolower(substr($k, $last + 1))] = true;
+                    $reserved[strtolower(substr($stripped, $last + 1))] = true;
                 }
             }
 
@@ -493,10 +494,11 @@ class SelectLoader
                 if (!is_string($alias) || isset($fields[$alias])) {
                     continue;
                 }
-                if (isset($reserved[strtolower($alias)])) {
+                $cleanAlias = trim($alias, '`"[]');
+                if ($cleanAlias === '' || isset($reserved[strtolower($cleanAlias)])) {
                     continue;
                 }
-                if (preg_match('/\b' . preg_quote($alias, '/') . '\b/', $havingSql) !== 1) {
+                if (preg_match('/\b' . preg_quote($cleanAlias, '/') . '\b/', $havingSql) !== 1) {
                     continue;
                 }
                 $fields[$alias] = $column;
