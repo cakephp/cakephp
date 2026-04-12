@@ -965,15 +965,36 @@ class HasManyTest extends TestCase
             'strategy' => Association::STRATEGY_SUBQUERY,
         ]);
 
+        $Categories->ChildCategories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
         $result = $Categories->find()
             ->where(['Categories.parent_id' => 0])
-            ->contain('ChildCategories')
+            ->contain('ChildCategories.ChildCategories')
             ->toArray();
 
         $this->assertNotEmpty($result);
         foreach ($result as $category) {
             $this->assertIsArray($category->child_categories);
         }
+
+        $nestedPropertyLoaded = false;
+        foreach ($result as $category) {
+            foreach ($category->child_categories as $childCategory) {
+                if (isset($childCategory->child_categories)) {
+                    $this->assertIsArray($childCategory->child_categories);
+                    $nestedPropertyLoaded = true;
+                }
+                if (!empty($childCategory->child_categories)) {
+                    $nestedPropertyLoaded = true;
+                }
+            }
+        }
+
+        $this->assertTrue($nestedPropertyLoaded);
     }
 
     /**

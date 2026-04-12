@@ -336,6 +336,79 @@ class CompositeKeysTest extends TestCase
     }
 
     /**
+     * Tests subquery eager loading with composite keys when the source query
+     * preserves an ORDER BY alias in the reduced subquery select list.
+     *
+     * The join tuple must only use the composite binding key fields, not the
+     * additional ORDER BY alias that is kept for deterministic limiting.
+     */
+    public function testHasManySubqueryCompositeKeysWithOrderAlias(): void
+    {
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $table->hasMany('SiteArticles', [
+            'propertyName' => 'articles',
+            'strategy' => 'subquery',
+            'sort' => ['SiteArticles.id' => 'asc'],
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $query = $table->find();
+        $results = $query
+            ->select(['sort_key' => 'SiteAuthors.name'])
+            ->enableAutoFields()
+            ->contain('SiteArticles')
+            ->orderBy(['sort_key' => 'ASC'])
+            ->limit(2)
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertSame([4, 3], array_column($results, 'id'));
+        $this->assertSame([1, 2], array_column($results, 'site_id'));
+        $this->assertSame([], $results[0]['articles']);
+        $this->assertCount(1, $results[1]['articles']);
+        $this->assertSame(2, $results[1]['articles'][0]['id']);
+    }
+
+    /**
+     * Tests belongsToMany subquery eager loading with composite keys when the
+     * source query preserves an ORDER BY alias in the reduced subquery select list.
+     *
+     * The tuple join against the junction table must ignore preserved aliases and
+     * compare only the composite foreign key pair.
+     */
+    public function testBelongsToManySubqueryCompositeKeysWithOrderAlias(): void
+    {
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $articles->belongsToMany('SiteTags', [
+            'strategy' => 'subquery',
+            'targetTable' => $tags,
+            'propertyName' => 'tags',
+            'through' => 'SiteArticlesTags',
+            'sort' => ['SiteTags.id' => 'asc'],
+            'foreignKey' => ['article_id', 'site_id'],
+            'targetForeignKey' => ['tag_id', 'site_id'],
+        ]);
+
+        $query = $articles->find();
+        $results = $query
+            ->select(['sort_key' => 'SiteArticles.title'])
+            ->enableAutoFields()
+            ->contain('SiteTags')
+            ->orderBy(['sort_key' => 'ASC'])
+            ->limit(2)
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertSame([1, 4], array_column($results, 'id'));
+        $this->assertSame([1, 1], array_column($results, 'site_id'));
+        $this->assertCount(2, $results[0]['tags']);
+        $this->assertCount(1, $results[1]['tags']);
+        $this->assertSame([1, 3], array_column($results[0]['tags'], 'id'));
+        $this->assertSame([1], array_column($results[1]['tags'], 'id'));
+    }
+
+    /**
      * Tests loading hasOne with composite keys
      */
     #[DataProvider('strategiesProviderHasOne')]
