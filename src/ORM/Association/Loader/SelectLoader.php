@@ -298,9 +298,23 @@ class SelectLoader
         $filter = [];
         $aliasedTable = $this->sourceAlias;
 
+        // When source and target use the same alias (self-referential associations
+        // like a tree structure), the subquery join alias would collide with the
+        // outer query's table alias, causing ambiguous column references.
+        // Use a suffixed alias to avoid the collision.
+        if ($aliasedTable === $this->targetAlias) {
+            $aliasedTable = $this->sourceAlias . '_subquery';
+        }
+
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             if (is_int($aliasedField)) {
-                $filter[] = new IdentifierExpression($field);
+                $filter[] = new IdentifierExpression(
+                    preg_replace(
+                        '/^' . preg_quote($this->sourceAlias, '/') . '\./',
+                        $aliasedTable . '.',
+                        $field,
+                    ),
+                );
             } else {
                 $filter[$aliasedField] = $field;
             }

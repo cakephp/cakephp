@@ -53,6 +53,7 @@ class HasManyTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
+        'core.Categories',
         'core.Comments',
         'core.Articles',
         'core.Tags',
@@ -945,6 +946,34 @@ class HasManyTest extends TestCase
         $names = array_map(fn(EntityInterface $author): string => $author->name, $result);
         sort($names);
         $this->assertSame(['garrett', 'mariano'], $names);
+    }
+
+    /**
+     * Subquery strategy with a self-referential HasMany association.
+     *
+     * When source and target alias are the same (e.g. a tree structure
+     * with parent_id), the subquery join alias must not collide with
+     * the outer query's table alias, which would cause
+     * "Column 'X.id' in SELECT is ambiguous" errors.
+     */
+    public function testSubqueryWithSelfReferentialAssociation(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('ChildCategories')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->child_categories);
+        }
     }
 
     /**
