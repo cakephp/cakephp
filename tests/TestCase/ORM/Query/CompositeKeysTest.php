@@ -344,6 +344,11 @@ class CompositeKeysTest extends TestCase
      */
     public function testHasManySubqueryCompositeKeysWithOrderAlias(): void
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'SQL Server does not support ORDER BY on fields not included in GROUP BY',
+        );
+
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'propertyName' => 'articles',
@@ -378,6 +383,11 @@ class CompositeKeysTest extends TestCase
      */
     public function testBelongsToManySubqueryCompositeKeysWithOrderAlias(): void
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'SQL Server does not support ORDER BY on fields not included in GROUP BY',
+        );
+
         $articles = $this->getTableLocator()->get('SiteArticles');
         $tags = $this->getTableLocator()->get('SiteTags');
         $articles->belongsToMany('SiteTags', [
@@ -416,6 +426,11 @@ class CompositeKeysTest extends TestCase
      */
     public function testHasManySubqueryCompositeKeysWithHavingAlias(): void
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
         $table = $this->getTableLocator()->get('SiteAuthors');
         $table->hasMany('SiteArticles', [
             'propertyName' => 'articles',
@@ -453,6 +468,11 @@ class CompositeKeysTest extends TestCase
      */
     public function testBelongsToManySubqueryCompositeKeysWithHavingAlias(): void
     {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
         $articles = $this->getTableLocator()->get('SiteArticles');
         $tags = $this->getTableLocator()->get('SiteTags');
         $articles->belongsToMany('SiteTags', [
