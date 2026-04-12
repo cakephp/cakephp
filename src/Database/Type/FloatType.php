@@ -155,9 +155,9 @@ class FloatType extends BaseType implements BatchCastingInterface
      * aware parser.
      *
      * @param string $value The value to parse and convert to an float.
-     * @return float
+     * @return float|null
      */
-    protected function _parseValue(string $value): float
+    protected function _parseValue(string $value): ?float
     {
         $class = static::$numberClass;
 

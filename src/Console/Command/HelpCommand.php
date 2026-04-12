@@ -33,7 +33,7 @@ use SimpleXMLElement;
 /**
  * Print out command list
  */
-class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
+class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface, CommandHiddenInterface
 {
     /**
      * The command collection to get help on.
@@ -43,11 +43,29 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     protected CommandCollection $commands;
 
     /**
+     * The header line rendered above command listings.
+     *
+     * @var string|null
+     */
+    protected ?string $headerLine = null;
+
+    /**
      * @inheritDoc
      */
     public function setCommandCollection(CommandCollection $commands): void
     {
         $this->commands = $commands;
+    }
+
+    /**
+     * Set the header line rendered above command listings.
+     *
+     * @param string $headerLine Header text including optional console markup.
+     * @return void
+     */
+    public function setHeaderLine(string $headerLine): void
+    {
+        $this->headerLine = $headerLine;
     }
 
     /**
@@ -143,10 +161,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         sort($commandList);
 
+        $headerLine = $this->getHeaderLine();
+        if ($headerLine !== '') {
+            $io->out($headerLine, 2);
+        }
+
         if ($verbose) {
-            $version = Configure::version();
-            $debug = Configure::read('debug') ? 'true' : 'false';
-            $io->out("<info>CakePHP:</info> {$version} (debug: {$debug})", 2);
             $this->outputPaths($io);
             $this->outputGrouped($io, $invert);
         } else {
@@ -162,6 +182,27 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         } else {
             $io->out('', 2);
         }
+    }
+
+    /**
+     * Get the help output header line.
+     *
+     * @return string
+     */
+    protected function getHeaderLine(): string
+    {
+        if ($this->headerLine !== null) {
+            return $this->headerLine;
+        }
+
+        $version = Configure::version();
+        if ($version === 'unknown') {
+            return '';
+        }
+
+        $debug = Configure::read('debug') ? 'true' : 'false';
+
+        return "<info>CakePHP:</info> {$version} (debug: {$debug})";
     }
 
     /**
@@ -212,7 +253,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $io->out("<info>{$prefix}</info>:");
             sort($names);
             foreach ($names as $data) {
-                $io->out(' - ' . $data['name']);
+                $io->out(' - <comment>' . $data['name'] . '</comment>');
                 if ($data['description']) {
                     $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
                 }
@@ -263,7 +304,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($commands as $data) {
             $maxNameLength = max($maxNameLength, strlen($data['name']));
         }
-        $nameColumnWidth = $maxNameLength + 3;
+        $nameColumnWidth = max($maxNameLength + 5, 17);
 
         // Output single commands under "Available Commands:" header
         $isFirst = true;
@@ -272,7 +313,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             foreach ($singleCommands as $prefix => $cmd) {
                 $description = $cmd['description'];
                 $padding = str_repeat(' ', $nameColumnWidth - 2 - strlen($prefix));
-                $linePrefix = '  <info>' . $prefix . '</info>' . $padding;
+                $linePrefix = '  <comment>' . $prefix . '</comment>' . $padding;
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");
@@ -296,7 +337,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 $description = $cmd['description'];
 
                 $padding = str_repeat(' ', $nameColumnWidth - 2 - strlen($fullName));
-                $linePrefix = '  <info>' . $fullName . '</info>' . $padding;
+                $linePrefix = '  <comment>' . $fullName . '</comment>' . $padding;
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");

@@ -19,7 +19,7 @@ namespace Cake\Console;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Utility\Filesystem;
+use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 
@@ -101,9 +101,12 @@ class CommandScanner
         $hide[] = '';
 
         $classPattern = '/Command\.php$/';
-        $fs = new Filesystem();
         /** @var \Iterator<\SplFileInfo> $files */
-        $files = $fs->find($path, $classPattern);
+        $files = (new Finder())
+            ->in($path)
+            ->recursive(false)
+            ->name('*Command.php')
+            ->files();
 
         $commands = [];
         foreach ($files as $fileInfo) {

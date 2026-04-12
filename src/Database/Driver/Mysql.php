@@ -18,6 +18,7 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Expression\DistinctComparisonExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -31,6 +32,33 @@ use Pdo\Mysql as PdoMysql;
  */
 class Mysql extends Driver
 {
+    /**
+     * @inheritDoc
+     */
+    protected function _expressionTranslators(): array
+    {
+        return [
+            DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
+        ];
+    }
+
+    /**
+     * Translates IS [NOT] DISTINCT FROM into MySQL-specific syntax.
+     *
+     * @param \Cake\Database\Expression\DistinctComparisonExpression $expression The expression to translate.
+     * @return void
+     */
+    protected function transformDistinctComparisonExpression(DistinctComparisonExpression $expression): void
+    {
+        $operator = strtoupper($expression->getOperator());
+        if ($operator === 'IS NOT DISTINCT FROM') {
+            $expression->setOperator('<=>');
+        } elseif ($operator === 'IS DISTINCT FROM') {
+            $expression->setOperator('<=>');
+            $expression->setNot(true);
+        }
+    }
+
     /**
      * @inheritDoc
      */
@@ -104,6 +132,8 @@ class Mysql extends Driver
             'window' => '8.0.0',
             'intersect' => '8.0.31',
             'intersect-all' => '8.0.31',
+            'except' => '8.0.31',
+            'except-all' => '8.0.31',
             'check-constraints' => '8.0.16',
         ],
         'mariadb' => [
@@ -112,6 +142,8 @@ class Mysql extends Driver
             'window' => '10.2.0',
             'intersect' => '10.3.0',
             'intersect-all' => '10.5.0',
+            'except' => '10.3.0',
+            'except-all' => '10.5.0',
             'check-constraints' => '10.2.1',
         ],
     ];
@@ -257,6 +289,8 @@ class Mysql extends Driver
             DriverFeatureEnum::WINDOW => $versionCompare(),
             DriverFeatureEnum::INTERSECT => $versionCompare(),
             DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
+            DriverFeatureEnum::EXCEPT => $versionCompare(),
+            DriverFeatureEnum::EXCEPT_ALL => $versionCompare(),
             DriverFeatureEnum::CHECK_CONSTRAINTS => $versionCompare(),
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,

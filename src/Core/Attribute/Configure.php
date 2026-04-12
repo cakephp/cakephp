@@ -42,12 +42,12 @@ use League\Container\Attribute\AttributeInterface;
  * ```
  */
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class Configure implements AttributeInterface
+readonly class Configure implements AttributeInterface
 {
     /**
      * @param string $name
      */
-    public function __construct(private string $name)
+    public function __construct(protected string $name)
     {
     }
 

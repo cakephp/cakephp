@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Utility\Fs\Iterator\HiddenFileFilterIterator;
 use CallbackFilterIterator;
 use Closure;
 use FilesystemIterator;
 use Iterator;
-use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -58,13 +58,19 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
+
         $directory = new FilesystemIterator($path, $flags);
 
+        // Apply filter if provided
         if ($filter === null) {
             return $directory;
         }
 
-        return $this->filterIterator($directory, $filter);
+        if (is_string($filter)) {
+            return new RegexIterator($directory, $filter);
+        }
+
+        return new CallbackFilterIterator($directory, $filter);
     }
 
     /**
@@ -82,40 +88,19 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
+
         $directory = new RecursiveDirectoryIterator($path, $flags);
 
-        $dirFilter = new RecursiveCallbackFilterIterator(
-            $directory,
-            function (SplFileInfo $current) {
-                if (str_starts_with($current->getFilename(), '.') && $current->isDir()) {
-                    return false;
-                }
+        // Filter out hidden directories
+        $filtered = new HiddenFileFilterIterator($directory);
 
-                return true;
-            },
-        );
+        $iterator = new RecursiveIteratorIterator($filtered, RecursiveIteratorIterator::CHILD_FIRST);
 
-        $flatten = new RecursiveIteratorIterator(
-            $dirFilter,
-            RecursiveIteratorIterator::CHILD_FIRST,
-        );
-
+        // Apply custom filter if provided
         if ($filter === null) {
-            return $flatten;
+            return $iterator;
         }
 
-        return $this->filterIterator($flatten, $filter);
-    }
-
-    /**
-     * Wrap iterator in additional filtering iterator.
-     *
-     * @param \Iterator $iterator Iterator
-     * @param \Closure|string $filter Regex string or callback.
-     * @return \Iterator
-     */
-    protected function filterIterator(Iterator $iterator, Closure|string $filter): Iterator
-    {
         if (is_string($filter)) {
             return new RegexIterator($iterator, $filter);
         }

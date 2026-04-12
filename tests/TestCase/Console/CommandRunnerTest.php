@@ -25,6 +25,7 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
+use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -196,9 +197,36 @@ class CommandRunnerTest extends TestCase
 
         $this->assertSame(0, $result, 'help output is success.');
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
+        $this->assertStringNotContainsString('No command provided. Choose one of the available commands', $messages);
         $this->assertStringContainsString('<info>i18n:</info>', $messages);
         $this->assertStringContainsString('Available Commands:', $messages);
+    }
+
+    /**
+     * Test that apps can provide a custom help header.
+     */
+    public function testRunNoCommandWithCustomHeaderProvider(): void
+    {
+        $app = new class ($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function getConsoleHelpHeader(): string
+            {
+                return '<info>Acme CLI:</info> 1.2.3';
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result, 'help output is success.');
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('<info>Acme CLI:</info> 1.2.3', $messages);
     }
 
     /**

@@ -21,9 +21,9 @@ use Cake\Console\HelperRegistry;
 use Cake\Console\TestSuite\StubConsoleInput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
-use TestApp\Command\Helper\CommandHelper;
-use TestApp\Command\Helper\SimpleHelper;
-use TestPlugin\Command\Helper\ExampleHelper;
+use TestApp\Console\Helper\CommandHelper;
+use TestApp\Console\Helper\SimpleHelper;
+use TestPlugin\Console\Helper\ExampleHelper;
 
 /**
  * HelperRegistryTest

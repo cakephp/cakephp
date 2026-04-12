@@ -24,6 +24,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Laminas\Diactoros\RelativeStream;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Link\LinkInterface;
 
 /**
  * Emits a Response to the PHP Server API.
@@ -198,6 +199,73 @@ class ResponseEmitter
         }
 
         $this->emitCookies($cookies);
+        $this->emitLinks($response);
+    }
+
+    /**
+     * Emit PSR-13 links as HTTP Link headers.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response The response to emit.
+     * @return void
+     */
+    protected function emitLinks(ResponseInterface $response): void
+    {
+        if (!$response instanceof Response) {
+            return;
+        }
+
+        $links = $response->getLinks()->getLinks();
+        foreach ($links as $link) {
+            header(sprintf('Link: %s', $this->formatLink($link)), false);
+        }
+    }
+
+    /**
+     * Format a PSR-13 link as an HTTP Link header value.
+     *
+     * @param \Psr\Link\LinkInterface $link The link to format.
+     * @return string The formatted header value.
+     * @link https://www.rfc-editor.org/rfc/rfc8288 Web Linking (RFC 8288)
+     */
+    protected function formatLink(LinkInterface $link): string
+    {
+        $parts = ['<' . $link->getHref() . '>'];
+
+        $rels = $link->getRels();
+        if ($rels) {
+            $parts[] = 'rel="' . implode(' ', $rels) . '"';
+        }
+
+        foreach ($link->getAttributes() as $key => $value) {
+            if (is_bool($value)) {
+                if ($value) {
+                    $parts[] = $key;
+                }
+                continue;
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $v) {
+                    $parts[] = $key . '="' . $this->escapeHeaderValue((string)$v) . '"';
+                }
+                continue;
+            }
+
+            $parts[] = $key . '="' . $this->escapeHeaderValue((string)$value) . '"';
+        }
+
+        return implode('; ', $parts);
+    }
+
+    /**
+     * Escape a header value for use in a quoted string.
+     *
+     * @param string $value The value to escape.
+     * @return string The escaped value.
+     */
+    protected function escapeHeaderValue(string $value): string
+    {
+        return str_replace(['\\', '"'], ['\\\\', '\\"'], $value);
     }
 
     /**

@@ -53,6 +53,7 @@ class PluginConfigTest extends TestCase
     {
         parent::tearDown();
         Configure::delete('plugins');
+        PluginConfig::clearCache();
         $this->clearPlugins();
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
@@ -389,5 +390,183 @@ PHP;
             ],
         ], PluginConfig::getAppConfig());
         unlink($pathToTestPlugin . 'composer.json');
+    }
+
+    public function testGetInstalledPluginsSimple(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/other/path/',
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+return [
+    'TestPlugin',
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        Configure::delete('plugins');
+        $result = PluginConfig::getInstalledPlugins();
+
+        $expected = [
+            'TestPlugin' => [
+                'path' => '/config/path/',
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => false,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'events' => true,
+            ],
+            'OtherPlugin' => [
+                'path' => '/other/path/',
+                'isLoaded' => false,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    public function testGetInstalledPluginsWithOptions(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'DebugPlugin' => '/debug/path/',
+        'CliPlugin' => '/cli/path/',
+        'OptionalPlugin' => '/optional/path/',
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+return [
+    'DebugPlugin' => ['onlyDebug' => true],
+    'CliPlugin' => ['onlyCli' => true],
+    'OptionalPlugin' => ['optional' => true, 'bootstrap' => false],
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        Configure::delete('plugins');
+        $result = PluginConfig::getInstalledPlugins();
+
+        $expected = [
+            'DebugPlugin' => [
+                'path' => '/debug/path/',
+                'isLoaded' => true,
+                'onlyDebug' => true,
+                'onlyCli' => false,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'events' => true,
+            ],
+            'CliPlugin' => [
+                'path' => '/cli/path/',
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => true,
+                'optional' => false,
+                'bootstrap' => true,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'events' => true,
+            ],
+            'OptionalPlugin' => [
+                'path' => '/optional/path/',
+                'isLoaded' => true,
+                'onlyDebug' => false,
+                'onlyCli' => false,
+                'optional' => true,
+                'bootstrap' => false,
+                'console' => true,
+                'middleware' => true,
+                'routes' => true,
+                'services' => true,
+                'events' => true,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    public function testGetInstalledPluginsNoPluginsConfig(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/test/path/',
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        // Delete plugins.php to test fallback
+        if (file_exists($this->pluginsConfigPath)) {
+            unlink($this->pluginsConfigPath);
+        }
+
+        Configure::delete('plugins');
+        $result = PluginConfig::getInstalledPlugins();
+
+        $expected = [
+            'TestPlugin' => [
+                'path' => '/test/path/',
+                'isLoaded' => false,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    public function testGetInstalledPluginsUnknownPlugin(): void
+    {
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/test/path/',
+    ]
+];
+PHP;
+        file_put_contents($this->pluginsListPath, $file);
+
+        $config = <<<PHP
+<?php
+return [
+    'TestPlugin',
+    'UnknownPlugin',
+];
+PHP;
+        file_put_contents($this->pluginsConfigPath, $config);
+
+        Configure::delete('plugins');
+        $result = PluginConfig::getInstalledPlugins();
+
+        $this->assertArrayHasKey('TestPlugin', $result);
+        $this->assertArrayHasKey('UnknownPlugin', $result);
+        $this->assertTrue($result['TestPlugin']['isLoaded']);
+        $this->assertFalse($result['UnknownPlugin']['isLoaded']);
+        $this->assertTrue($result['UnknownPlugin']['isUnknown']);
+        $this->assertArrayNotHasKey('path', $result['UnknownPlugin']);
     }
 }

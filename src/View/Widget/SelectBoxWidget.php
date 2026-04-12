@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\View\Widget;
 
-use ArrayAccess;
 use Cake\View\Form\ContextInterface;
 use Traversable;
 use function Cake\Core\h;
@@ -198,7 +197,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of an optgroup element.
      *
      * @param string $label The optgroup label text
-     * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
+     * @param iterable $optgroup The optgroup data.
      * @param array<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
@@ -207,7 +206,7 @@ class SelectBoxWidget extends BasicWidget
      */
     protected function _renderOptgroup(
         string $label,
-        ArrayAccess|array $optgroup,
+        iterable $optgroup,
         ?array $disabled,
         mixed $selected,
         array $templateVars,
@@ -215,10 +214,10 @@ class SelectBoxWidget extends BasicWidget
     ): string {
         $opts = $optgroup;
         $attrs = [];
-        if (isset($optgroup['options'], $optgroup['text'])) {
+        if (is_array($optgroup) && isset($optgroup['options'], $optgroup['text'])) {
             $opts = $optgroup['options'];
             $label = $optgroup['text'];
-            $attrs = (array)$optgroup;
+            $attrs = $optgroup;
         }
         $groupOptions = $this->_renderOptions($opts, $disabled, $selected, $templateVars, $escape);
 
@@ -268,7 +267,7 @@ class SelectBoxWidget extends BasicWidget
                     )
                 )
             ) {
-                /** @var \ArrayAccess<string, mixed>|array<string, mixed> $val */
+                /** @var iterable $val */
                 $out[] = $this->_renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
             }

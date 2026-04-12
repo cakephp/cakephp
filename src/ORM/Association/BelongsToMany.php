@@ -69,7 +69,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected string $_strategy = self::STRATEGY_SELECT;
+    protected string $_strategy = self::STRATEGY_SUBQUERY;
 
     /**
      * Junction table instance

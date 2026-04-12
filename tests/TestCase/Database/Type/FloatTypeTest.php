@@ -176,6 +176,20 @@ class FloatTypeTest extends TestCase
     }
 
     /**
+     * Tests marshalling invalid numbers returns null when using locale parser
+     */
+    public function testMarshalWithLocaleParsingInvalidReturnsNull(): void
+    {
+        $this->type->useLocaleParser();
+
+        I18n::setLocale('en_US');
+        $this->assertNull($this->type->marshal('invalid'));
+        $this->assertNull($this->type->marshal('abc'));
+
+        $this->type->useLocaleParser(false);
+    }
+
+    /**
      * Test that exceptions are raised on invalid parsers.
      */
     public function testUseLocaleParsingInvalid(): void
