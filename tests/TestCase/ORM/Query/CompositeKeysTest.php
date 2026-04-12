@@ -435,10 +435,14 @@ class CompositeKeysTest extends TestCase
             ->toArray();
 
         $this->assertCount(4, $results);
-        $this->assertSame(1, $results[0]['articles'][0]['id']);
-        $this->assertSame(2, $results[2]['articles'][0]['id']);
-        $this->assertSame([], $results[1]['articles']);
-        $this->assertSame([], $results[3]['articles']);
+        $indexed = [];
+        foreach ($results as $row) {
+            $indexed[$row['id'] . ';' . $row['site_id']] = array_column($row['articles'], 'id');
+        }
+        $this->assertSame([1], $indexed['1;1']);
+        $this->assertSame([], $indexed['2;2']);
+        $this->assertSame([2], $indexed['3;2']);
+        $this->assertSame([], $indexed['4;1']);
     }
 
     /**
@@ -472,10 +476,14 @@ class CompositeKeysTest extends TestCase
             ->toArray();
 
         $this->assertCount(4, $results);
-        $this->assertSame([1, 3], array_column($results[0]['tags'], 'id'));
-        $this->assertSame([4], array_column($results[1]['tags'], 'id'));
-        $this->assertSame([], $results[2]['tags']);
-        $this->assertSame([1], array_column($results[3]['tags'], 'id'));
+        $indexed = [];
+        foreach ($results as $row) {
+            $indexed[$row['id'] . ';' . $row['site_id']] = array_column($row['tags'], 'id');
+        }
+        $this->assertSame([1, 3], $indexed['1;1']);
+        $this->assertSame([4], $indexed['2;2']);
+        $this->assertSame([], $indexed['3;2']);
+        $this->assertSame([1], $indexed['4;1']);
     }
 
     /**

@@ -349,12 +349,14 @@ class SelectLoader
             return $field;
         }
 
+        $identifier = preg_replace(
+            '/^' . preg_quote($this->sourceAlias, '/') . '\./',
+            $aliasedTable . '.' . $this->sourceAlias . '__',
+            $field,
+        );
+
         return new IdentifierExpression(
-            preg_replace(
-                '/^' . preg_quote($this->sourceAlias, '/') . '\./',
-                $aliasedTable . '.' . $this->sourceAlias . '__',
-                $field,
-            ),
+            $identifier ?? $field,
         );
     }
 
