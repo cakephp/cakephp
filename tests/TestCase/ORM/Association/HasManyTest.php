@@ -998,6 +998,43 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Subquery strategy with a self-referential HasMany association whose source
+     * alias already ends in `_subquery`.
+     *
+     * The generated alias for the derived table must not collide with the outer
+     * table alias or SQLite will see ambiguous references.
+     */
+    public function testSubqueryWithSelfReferentialAssociationAliasAlreadyUsingSubquerySuffix(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $Categories->Categories_subquery->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('Categories_subquery.Categories_subquery')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->categories_subquery);
+            foreach ($category->categories_subquery as $childCategory) {
+                $this->assertTrue(isset($childCategory->categories_subquery));
+                $this->assertIsArray($childCategory->categories_subquery);
+            }
+        }
+    }
+
+    /**
      * Assertion method for order by clause contents.
      *
      * @param array $expected The expected join clause.
