@@ -39,7 +39,7 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
-use Mockery\MockInterface;
+use Mockery\LegacyMockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -1111,9 +1111,9 @@ abstract class TestCase extends BaseTestCase
      *
      * @param string $alias The model to get a mock for.
      * @param array<string, mixed> $options The config data for the mock's constructor.
-     * @return \Cake\ORM\Table|\Mockery\MockInterface
+     * @return \Cake\ORM\Table&\Mockery\LegacyMockInterface
      */
-    public function mockModel(string $alias, array $options = []): Table|MockInterface
+    public function mockModel(string $alias, array $options = []): Table&LegacyMockInterface
     {
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
