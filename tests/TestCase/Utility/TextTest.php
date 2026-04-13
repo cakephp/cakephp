@@ -1989,7 +1989,6 @@ HTML;
      * @param int $offset Start position
      * @param int|null $length Length of the masked portion
      * @param string $maskCharacter Mask character
-     * @param string $expected Expected string
      */
     #[DataProvider('maskInvalidCharacterProvider')]
     public function testMaskThrowsOnInvalidMaskCharacter(string $string, int $offset, ?int $length, string $maskCharacter): void
