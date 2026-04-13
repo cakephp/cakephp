@@ -1193,8 +1193,8 @@ class Text
 
     /**
      * Masks a portion of a string with a repeated character.
-     * Replaces characters from $offset to $offset + $length with $maskCharacter.
-     * If $length is null, it will mask until the end of the string.
+     * Replaces $length characters starting at $offset with $maskCharacter.
+     * If $length is null, it masks from $offset to the end of the string.
      *
      * Negative $offset value will count from the end of the string. If the computed $offset is still less than 0, it is clamped to 0.
      * An $offset at or beyond the string length returns the original string unchanged.
