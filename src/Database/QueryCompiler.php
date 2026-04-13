@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Closure;
 use Countable;
@@ -192,7 +193,7 @@ class QueryCompiler
         $select = 'SELECT%s%s %s%s';
         if (
             ($query->clause('union') || $query->clause('intersect')) &&
-            $driver->supports(Enum\DriverFeature::SET_OPERATIONS_ORDER_BY)
+            $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
         ) {
             $select = '(SELECT%s%s %s%s';
         }
@@ -359,7 +360,7 @@ class QueryCompiler
         $setOperationsOrderBy = $query
             ->getConnection()
             ->getDriver($query->getConnectionRole())
-            ->supports(Enum\DriverFeature::SET_OPERATIONS_ORDER_BY);
+            ->supports(DriverFeature::SET_OPERATIONS_ORDER_BY);
 
         $parts = array_map(function (array $p) use ($binder, $setOperationsOrderBy) {
             /** @var \Cake\Database\Expression\IdentifierExpression $expr */
@@ -475,7 +476,7 @@ class QueryCompiler
      */
     protected function buildOptimizerHintPart(array $parts, Query $query, ValueBinder $binder): string
     {
-        if ($parts === [] || !$query->getDriver()->supports(Enum\DriverFeature::OPTIMIZER_HINT_COMMENT)) {
+        if ($parts === [] || !$query->getDriver()->supports(DriverFeature::OPTIMIZER_HINT_COMMENT)) {
             return '';
         }
 

@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Mailer\Transport\DebugTransport;
+use Cake\Mailer\Transport\MailTransport;
+use Cake\Mailer\Transport\SmtpTransport;
 use InvalidArgumentException;
 
 /**
@@ -41,9 +44,9 @@ class TransportFactory
     protected static function initDsnClassMap(): array
     {
         return [
-            'debug' => Transport\DebugTransport::class,
-            'mail' => Transport\MailTransport::class,
-            'smtp' => Transport\SmtpTransport::class,
+            'debug' => DebugTransport::class,
+            'mail' => MailTransport::class,
+            'smtp' => SmtpTransport::class,
         ];
     }
 

@@ -16,7 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Cache;
 
+use Cake\Cache\Engine\ApcuEngine;
+use Cake\Cache\Engine\ArrayEngine;
+use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Engine\MemcachedEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\Engine\RedisEngine;
 use Cake\Cache\Exception\CacheWriteException;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\StaticConfigTrait;
@@ -120,12 +125,12 @@ class Cache
     protected static function initDsnClassMap(): array
     {
         return [
-            'array' => Engine\ArrayEngine::class,
-            'apcu' => Engine\ApcuEngine::class,
-            'file' => Engine\FileEngine::class,
-            'memcached' => Engine\MemcachedEngine::class,
-            'null' => Engine\NullEngine::class,
-            'redis' => Engine\RedisEngine::class,
+            'array' => ArrayEngine::class,
+            'apcu' => ApcuEngine::class,
+            'file' => FileEngine::class,
+            'memcached' => MemcachedEngine::class,
+            'null' => NullEngine::class,
+            'redis' => RedisEngine::class,
         ];
     }
 

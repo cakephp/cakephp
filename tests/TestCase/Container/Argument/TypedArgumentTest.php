@@ -3,7 +3,13 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Container\Argument;
 
-use Cake\Container\Argument\Literal;
+use Cake\Container\Argument\Literal\ArrayArgument;
+use Cake\Container\Argument\Literal\BooleanArgument;
+use Cake\Container\Argument\Literal\CallableArgument;
+use Cake\Container\Argument\Literal\FloatArgument;
+use Cake\Container\Argument\Literal\IntegerArgument;
+use Cake\Container\Argument\Literal\ObjectArgument;
+use Cake\Container\Argument\Literal\StringArgument;
 use Cake\Container\Argument\LiteralArgument;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -13,15 +19,15 @@ class TypedArgumentTest extends TestCase
     public function testLiteralArgumentSetsAndGetsArgument(): void
     {
         $arguments = [
-            Literal\ArrayArgument::class => [],
-            Literal\BooleanArgument::class => true,
-            Literal\CallableArgument::class => function (): void {
+            ArrayArgument::class => [],
+            BooleanArgument::class => true,
+            CallableArgument::class => function (): void {
             },
-            Literal\FloatArgument::class => 1.23,
-            Literal\IntegerArgument::class => 1,
-            Literal\ObjectArgument::class => new class {
+            FloatArgument::class => 1.23,
+            IntegerArgument::class => 1,
+            ObjectArgument::class => new class {
             },
-            Literal\StringArgument::class => 'string',
+            StringArgument::class => 'string',
         ];
 
         foreach ($arguments as $type => $expected) {

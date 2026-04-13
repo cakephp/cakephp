@@ -16,6 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Type\BinaryType;
+use Cake\Database\Type\BinaryUuidType;
+use Cake\Database\Type\BoolType;
+use Cake\Database\Type\DateTimeFractionalType;
+use Cake\Database\Type\DateTimeTimezoneType;
+use Cake\Database\Type\DateTimeType;
+use Cake\Database\Type\DateType;
+use Cake\Database\Type\DecimalType;
+use Cake\Database\Type\FloatType;
+use Cake\Database\Type\IntegerType;
+use Cake\Database\Type\JsonType;
+use Cake\Database\Type\StringType;
+use Cake\Database\Type\TimeType;
+use Cake\Database\Type\UuidType;
+
 /**
  * Factory for building database type classes.
  */
@@ -30,38 +45,38 @@ class TypeFactory
      * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $types = [
-        'biginteger' => Type\IntegerType::class,
-        'binary' => Type\BinaryType::class,
-        'binaryuuid' => Type\BinaryUuidType::class,
-        'varbinary' => Type\BinaryType::class,
-        'boolean' => Type\BoolType::class,
-        'char' => Type\StringType::class,
-        'cidr' => Type\StringType::class,
-        'citext' => Type\StringType::class,
-        'date' => Type\DateType::class,
-        'datetime' => Type\DateTimeType::class,
-        'datetimefractional' => Type\DateTimeFractionalType::class,
-        'decimal' => Type\DecimalType::class,
-        'float' => Type\FloatType::class,
-        'geometry' => Type\StringType::class,
-        'integer' => Type\IntegerType::class,
-        'inet' => Type\StringType::class,
-        'json' => Type\JsonType::class,
-        'linestring' => Type\StringType::class,
-        'macaddr' => Type\StringType::class,
-        'nativeuuid' => Type\UuidType::class,
-        'point' => Type\StringType::class,
-        'polygon' => Type\StringType::class,
-        'smallinteger' => Type\IntegerType::class,
-        'string' => Type\StringType::class,
-        'text' => Type\StringType::class,
-        'time' => Type\TimeType::class,
-        'timestamp' => Type\DateTimeType::class,
-        'timestampfractional' => Type\DateTimeFractionalType::class,
-        'timestamptimezone' => Type\DateTimeTimezoneType::class,
-        'tinyinteger' => Type\IntegerType::class,
-        'uuid' => Type\UuidType::class,
-        'year' => Type\IntegerType::class,
+        'biginteger' => IntegerType::class,
+        'binary' => BinaryType::class,
+        'binaryuuid' => BinaryUuidType::class,
+        'varbinary' => BinaryType::class,
+        'boolean' => BoolType::class,
+        'char' => StringType::class,
+        'cidr' => StringType::class,
+        'citext' => StringType::class,
+        'date' => DateType::class,
+        'datetime' => DateTimeType::class,
+        'datetimefractional' => DateTimeFractionalType::class,
+        'decimal' => DecimalType::class,
+        'float' => FloatType::class,
+        'geometry' => StringType::class,
+        'integer' => IntegerType::class,
+        'inet' => StringType::class,
+        'json' => JsonType::class,
+        'linestring' => StringType::class,
+        'macaddr' => StringType::class,
+        'nativeuuid' => UuidType::class,
+        'point' => StringType::class,
+        'polygon' => StringType::class,
+        'smallinteger' => IntegerType::class,
+        'string' => StringType::class,
+        'text' => StringType::class,
+        'time' => TimeType::class,
+        'timestamp' => DateTimeType::class,
+        'timestampfractional' => DateTimeFractionalType::class,
+        'timestamptimezone' => DateTimeTimezoneType::class,
+        'tinyinteger' => IntegerType::class,
+        'uuid' => UuidType::class,
+        'year' => IntegerType::class,
     ];
 
     /**

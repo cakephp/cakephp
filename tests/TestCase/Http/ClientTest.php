@@ -758,7 +758,7 @@ class ClientTest extends TestCase
     {
         $url = 'http://cakephp.org';
 
-        $adapter = Mockery::mock(Client\Adapter\Stream::class);
+        $adapter = Mockery::mock(Stream::class);
 
         $redirect = new Response([
             'HTTP/1.0 301',
@@ -950,7 +950,7 @@ class ClientTest extends TestCase
      */
     public function testRedirectDifferentSubDomains(): void
     {
-        $adapter = Mockery::mock(Client\Adapter\Stream::class);
+        $adapter = Mockery::mock(Stream::class);
 
         $url = 'http://auth.example.org';
 
