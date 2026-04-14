@@ -62,7 +62,7 @@ class CommandScannerTest extends TestCase
 
         $expected = [
             [
-                'file' => Plugin::classPath('Company/TestPluginThree') . 'Command/CompanyCommand.php',
+                'file' => Plugin::classPath('Company/TestPluginThree') . 'Command' . DIRECTORY_SEPARATOR . 'CompanyCommand.php',
                 'fullName' => 'company/test_plugin_three.company',
                 'name' => 'company',
                 'class' => 'Company\TestPluginThree\Command\CompanyCommand',
