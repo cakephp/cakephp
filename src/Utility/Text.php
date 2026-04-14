@@ -1207,16 +1207,17 @@ class Text
      * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
      */
-    public static function mask(string $string, int $offset, ?int $length = null, string $maskCharacter = '*'): string
+    public static function mask(string $string, int $offset = 0, ?int $length = null, string $maskCharacter = '*'): string
     {
         if (mb_strlen($maskCharacter) !== 1) {
             throw new InvalidArgumentException('Mask character must be a single character.');
         }
 
-        $stringLength = mb_strlen($string);
-        if ($stringLength === 0) {
+        if ($string === '') {
             return $string;
         }
+
+        $stringLength = mb_strlen($string);
 
         if ($offset < 0) {
             $offset = max(0, $stringLength + $offset);
