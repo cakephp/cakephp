@@ -26,8 +26,6 @@ use ReflectionClass;
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
  * for command classes.
- *
- * @internal
  */
 class CommandScanner
 {
@@ -59,7 +57,6 @@ class CommandScanner
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            [],
         );
     }
 
@@ -78,7 +75,7 @@ class CommandScanner
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+        return $this->scanDir($path . 'Command' . DIRECTORY_SEPARATOR, $namespace . '\Command\\', $prefix);
     }
 
     /**
@@ -91,7 +88,7 @@ class CommandScanner
      * @param array<string> $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
-    protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
+    public function scanDir(string $path, string $namespace, string $prefix, array $hide = []): array
     {
         if (!is_dir($path)) {
             return [];
