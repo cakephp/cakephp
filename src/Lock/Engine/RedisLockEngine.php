@@ -28,6 +28,12 @@ use RedisException;
  * Uses Redis SET with NX and EX options for atomic lock acquisition.
  * This provides a reliable distributed locking mechanism.
  *
+ * ### Limitations
+ *
+ * This engine targets a single Redis node (or a primary behind a proxy).
+ * Redis Cluster is not supported out of the box; for cluster setups, use a
+ * custom engine that wraps `RedisCluster` or a Redlock-style client.
+ *
  * ### Configuration options:
  *
  * - `host`: Redis server hostname (default: '127.0.0.1')
@@ -250,15 +256,5 @@ class RedisLockEngine extends LockEngine
         } catch (RedisException) {
             return false;
         }
-    }
-
-    /**
-     * Get the Redis connection for testing purposes.
-     *
-     * @return \Redis
-     */
-    public function getRedis(): Redis
-    {
-        return $this->_redis;
     }
 }

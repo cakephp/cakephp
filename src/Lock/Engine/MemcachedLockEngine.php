@@ -205,14 +205,4 @@ class MemcachedLockEngine extends LockEngine
 
         return $this->_memcached->delete($key);
     }
-
-    /**
-     * Get the Memcached connection for testing purposes.
-     *
-     * @return \Memcached
-     */
-    public function getMemcached(): Memcached
-    {
-        return $this->_memcached;
-    }
 }

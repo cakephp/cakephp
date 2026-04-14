@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Lock\Engine;
 use Cake\Lock\AcquiredLock;
 use Cake\Lock\Engine\RedisLockEngine;
 use Cake\TestSuite\TestCase;
+use Redis;
 use RedisException;
 use function Cake\Core\env;
 
@@ -31,6 +32,11 @@ class RedisLockEngineTest extends TestCase
      * @var \Cake\Lock\Engine\RedisLockEngine|null
      */
     protected ?RedisLockEngine $engine = null;
+
+    /**
+     * @var \Redis|null
+     */
+    protected ?Redis $redis = null;
 
     /**
      * setUp method
@@ -55,6 +61,15 @@ class RedisLockEngineTest extends TestCase
             $this->markTestSkipped('Could not connect to Redis server.');
         }
 
+        $this->redis = new Redis();
+        $connected = $this->redis->connect(
+            env('REDIS_HOST', '127.0.0.1'),
+            (int)env('REDIS_PORT', 6379),
+        );
+        if (!$connected || !$this->redis->select(15)) {
+            $this->markTestSkipped('Could not connect to Redis test database.');
+        }
+
         // Clean up any existing test locks
         $this->cleanupTestLocks();
     }
@@ -76,10 +91,9 @@ class RedisLockEngineTest extends TestCase
     protected function cleanupTestLocks(): void
     {
         try {
-            $redis = $this->engine->getRedis();
-            $keys = $redis->keys('test_lock_*');
+            $keys = $this->redis?->keys('test_lock_*');
             if (!empty($keys)) {
-                $redis->del($keys);
+                $this->redis?->del($keys);
             }
         } catch (RedisException) {
             // Connection lost, nothing to clean up
@@ -171,8 +185,7 @@ class RedisLockEngineTest extends TestCase
         $this->assertTrue($result);
 
         // Verify TTL was extended
-        $redis = $this->engine->getRedis();
-        $ttl = $redis->ttl('test_lock_test-resource');
+        $ttl = $this->redis->ttl('test_lock_test-resource');
         $this->assertGreaterThan(100, $ttl);
     }
 

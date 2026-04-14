@@ -181,12 +181,14 @@ class FileLockEngine extends LockEngine
         if ($content !== false) {
             $data = json_decode($content, true);
             if (isset($data['token']) && $data['token'] !== $lock->getToken()) {
+                fclose($handle);
+                unset($this->_handles[$resource]);
+
                 return false;
             }
         }
 
-        // Release lock and close handle
-        flock($handle, LOCK_UN);
+        // Close handle to release the advisory lock.
         fclose($handle);
         unset($this->_handles[$resource]);
 
@@ -218,9 +220,6 @@ class FileLockEngine extends LockEngine
 
         // Try to acquire lock - if it fails, the resource is locked
         $locked = !flock($handle, LOCK_EX | LOCK_NB);
-        if (!$locked) {
-            flock($handle, LOCK_UN);
-        }
         fclose($handle);
 
         return $locked;
@@ -276,7 +275,6 @@ class FileLockEngine extends LockEngine
 
         // Close handle if we have one
         if (isset($this->_handles[$resource])) {
-            flock($this->_handles[$resource], LOCK_UN);
             fclose($this->_handles[$resource]);
             unset($this->_handles[$resource]);
         }
@@ -295,7 +293,6 @@ class FileLockEngine extends LockEngine
     public function __destruct()
     {
         foreach ($this->_handles as $handle) {
-            flock($handle, LOCK_UN);
             fclose($handle);
         }
         $this->_handles = [];
