@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Enum\DriverFeature;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
@@ -201,6 +202,7 @@ class SqliteTest extends TestCase
 
         $featureVersions = [
             'cte' => '3.8.3',
+            'string-agg' => '3.44.0',
             'window' => '3.28.0',
         ];
         foreach ($featureVersions as $feature => $version) {
@@ -213,11 +215,40 @@ class SqliteTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeature::GROUP_CONCAT));
         $this->assertTrue($driver->supports(DriverFeature::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeature::EXCEPT));
 
         $this->assertFalse($driver->supports(DriverFeature::INTERSECT_ALL));
+        $this->assertFalse($driver->supports(DriverFeature::EXCEPT_ALL));
         $this->assertFalse($driver->supports(DriverFeature::JSON));
         $this->assertFalse($driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY));
+    }
+
+    /**
+     * Tests string aggregation translation.
+     */
+    public function testStringAggTranslation(): void
+    {
+        $driver = Mockery::mock(Sqlite::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('3.43.0');
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'names' => $query->func()->stringAgg('name', ',', ['sort_order' => 'DESC']),
+        ])->from('authors');
+
+        $this->assertSame(
+            'SELECT (GROUP_CONCAT(name, :param0 ORDER BY sort_order DESC)) AS names FROM authors',
+            $query->sql(),
+        );
     }
 
     /**

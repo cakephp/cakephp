@@ -1189,4 +1189,55 @@ class Text
 
         return (string)preg_replace(array_keys($map), $map, $string);
     }
+
+    /**
+     * Masks a portion of a string with a repeated character.
+     * Replaces characters from $offset to $offset + $length with $maskCharacter.
+     *
+     * If $length is null, it will mask until the end of the string.
+     *
+     * Negative $offset value will count from the end of the string. If the computed $offset is still less than 0, it is clamped to 0.
+     * An $offset at or beyond the string length returns the original string unchanged.
+     *
+     * @param string $string The input string.
+     * @param int $offset Start position of the mask. Negative values count from the end.
+     * @param int|null $length Number of characters to mask. Null masks from $offset to end of string.
+     * @param string $maskCharacter The single Unicode code point character to use as the mask. Defaults to '*'.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
+     * @return string
+     */
+    public static function mask(string $string, int $offset = 0, ?int $length = null, string $maskCharacter = '*'): string
+    {
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        if ($string === '') {
+            return $string;
+        }
+
+        $stringLength = mb_strlen($string);
+
+        if ($offset < 0) {
+            $offset = max(0, $stringLength + $offset);
+        }
+
+        if ($offset >= $stringLength) {
+            return $string;
+        }
+
+        if ($length !== null && $length <= 0) {
+            return $string;
+        }
+
+        $length = $length === null
+            ? $stringLength - $offset
+            : min($length, $stringLength - $offset);
+
+        $start = mb_substr($string, 0, $offset);
+        $mask = str_repeat($maskCharacter, $length);
+        $end = mb_substr($string, $offset + $length);
+
+        return $start . $mask . $end;
+    }
 }

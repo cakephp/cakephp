@@ -120,6 +120,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'limit' => null,
         'offset' => null,
         'union' => [],
+        'except' => [],
         'epilog' => null,
         'intersect' => [],
     ];

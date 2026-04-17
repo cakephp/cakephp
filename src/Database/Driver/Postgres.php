@@ -21,6 +21,7 @@ use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query\InsertQuery;
@@ -211,8 +212,12 @@ class Postgres extends Driver
             DriverFeature::SAVEPOINT,
             DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeature::WINDOW => true,
+            DriverFeature::STRING_AGG => true,
+            DriverFeature::GROUP_CONCAT => false,
             DriverFeature::INTERSECT => true,
             DriverFeature::INTERSECT_ALL => true,
+            DriverFeature::EXCEPT => true,
+            DriverFeature::EXCEPT_ALL => true,
             DriverFeature::SET_OPERATIONS_ORDER_BY => true,
             DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
             DriverFeature::OPTIMIZER_HINT_COMMENT => true,
@@ -247,9 +252,24 @@ class Postgres extends Driver
     {
         return [
             IdentifierExpression::class => 'transformIdentifierExpression',
+            StringAggExpression::class => 'transformStringAggExpression',
             FunctionExpression::class => 'transformFunctionExpression',
             StringExpression::class => 'transformStringExpression',
         ];
+    }
+
+    /**
+     * Receives a StringAggExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\StringAggExpression $expression The expression to convert.
+     * @return void
+     */
+    protected function transformStringAggExpression(StringAggExpression $expression): void
+    {
+        $expression
+            ->setName('STRING_AGG')
+            ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
     }
 
     /**

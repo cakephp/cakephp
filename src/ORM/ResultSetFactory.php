@@ -329,11 +329,7 @@ class ResultSetFactory
      */
     public function getDtoMapper(): DtoMapper
     {
-        if ($this->dtoMapper === null) {
-            $this->dtoMapper = new DtoMapper();
-        }
-
-        return $this->dtoMapper;
+        return $this->dtoMapper ??= new DtoMapper();
     }
 
     /**

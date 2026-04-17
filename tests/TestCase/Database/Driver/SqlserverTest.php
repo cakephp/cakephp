@@ -538,6 +538,32 @@ class SqlserverTest extends TestCase
         $this->assertSame($expected, $query->sql());
     }
 
+    /**
+     * Tests string aggregation translation.
+     */
+    public function testStringAggTranslation(): void
+    {
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('version')->andReturn('16');
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'names' => $query->func()->stringAgg('name', ',', ['sort_order' => 'DESC']),
+        ])->from('authors');
+
+        $this->assertSame(
+            'SELECT (STRING_AGG(name, :param0) WITHIN GROUP (ORDER BY sort_order DESC)) AS names FROM authors',
+            $query->sql(),
+        );
+    }
+
     public function testExceedingMaxParameters(): void
     {
         $connection = ConnectionManager::get('test');
@@ -567,9 +593,13 @@ class SqlserverTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeature::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeature::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeature::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeature::STRING_AGG));
+        $this->assertFalse($driver->supports(DriverFeature::GROUP_CONCAT));
         $this->assertTrue($driver->supports(DriverFeature::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeature::EXCEPT));
 
         $this->assertFalse($driver->supports(DriverFeature::INTERSECT_ALL));
+        $this->assertFalse($driver->supports(DriverFeature::EXCEPT_ALL));
         $this->assertFalse($driver->supports(DriverFeature::JSON));
         $this->assertFalse($driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY));
     }

@@ -36,6 +36,7 @@ use InvalidArgumentException;
  * @see \Cake\ORM\Table::newEntities()
  * @see \Cake\ORM\Table::patchEntity()
  * @see \Cake\ORM\Table::patchEntities()
+ * @template TEntity of \Cake\Datasource\EntityInterface
  */
 class Marshaller
 {
@@ -44,7 +45,7 @@ class Marshaller
     /**
      * Constructor.
      *
-     * @param \Cake\ORM\Table $table The table this marshaller is for.
+     * @param \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity> $table The table this marshaller is for.
      */
     public function __construct(protected Table $table)
     {
@@ -186,7 +187,7 @@ class Marshaller
      *
      * @param array<string, mixed> $data The data to hydrate.
      * @param array<string, mixed> $options List of options
-     * @return \Cake\Datasource\EntityInterface
+     * @return TEntity
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$patchable
      */
@@ -363,7 +364,7 @@ class Marshaller
      *
      * @param array $data The data to hydrate.
      * @param array<string, mixed> $options List of options
-     * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
+     * @return array<TEntity> An array of hydrated records.
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$patchable
      */
@@ -559,12 +560,12 @@ class Marshaller
      * ]);
      * ```
      *
-     * @template TEntity of \Cake\Datasource\EntityInterface
-     * @param TEntity $entity the entity that will get the
+     * @template TMergedEntity of \Cake\Datasource\EntityInterface
+     * @param TMergedEntity $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
      * @param array<string, mixed> $options List of options.
-     * @return TEntity
+     * @return TMergedEntity
      * @see \Cake\ORM\Entity::$patchable
      */
     public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
@@ -663,12 +664,12 @@ class Marshaller
      *   the patchable fields list in the entity will be used.
      * - patchableFields: A list of fields to allow or deny in entity patchable fields.
      *
-     * @template TEntity of \Cake\Datasource\EntityInterface
-     * @param iterable<TEntity> $entities the entities that will get the
+     * @template TMergedEntity of \Cake\Datasource\EntityInterface
+     * @param iterable<TMergedEntity> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array<string, mixed> $options List of options.
-     * @return array<TEntity>
+     * @return array<TEntity|TMergedEntity>
      * @see \Cake\ORM\Entity::$patchable
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array

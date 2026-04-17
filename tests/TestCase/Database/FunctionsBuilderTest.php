@@ -19,6 +19,7 @@ use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\CastExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -133,6 +134,20 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('COUNT(*)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a portable STRING_AGG() function
+     */
+    public function testStringAgg(): void
+    {
+        $function = $this->functions->stringAgg('name', ',');
+        $this->assertInstanceOf(StringAggExpression::class, $function);
+        $this->assertSame('STRING_AGG(name, :param0)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+
+        $function = $this->functions->stringAgg('name', ',', ['sort_order' => 'DESC']);
+        $this->assertSame('STRING_AGG(name, :param0 ORDER BY sort_order DESC)', $function->sql(new ValueBinder()));
     }
 
     /**
