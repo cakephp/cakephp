@@ -1256,13 +1256,13 @@ class Text
      */
     public static function maskValue(string $string, array $needles, string $maskCharacter = '*') : string
     {
-        if ($string === '' || empty($needles)) {
+        if ($string === '' || $needles === []) {
             return $string;
         }
 
-        $needles = array_values(array_unique(array_filter($needles, fn($n) => $n !== '')));
+        $needles = array_unique(array_filter($needles, fn($n) => $n !== ''));
 
-        if (empty($needles)) {
+        if ($needles === []) {
             return $string;
         }
 
@@ -1270,7 +1270,7 @@ class Text
             throw new InvalidArgumentException('Mask character must be a single character.');
         }
 
-        $escapedForRegex = array_map(function ($needle) {
+        $escapedForRegex = array_map(function (string $needle) {
             return preg_quote($needle, '/');
         }, $needles);
 
