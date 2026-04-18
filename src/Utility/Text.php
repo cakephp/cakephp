@@ -1251,10 +1251,10 @@ class Text
      * @param string $string The input string.
      * @param string[] $needles List of substrings to search for match (case-sensitive) and mask.
      * @param string $maskCharacter Single masking character.
-     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character. 
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
      */
-    public static function maskValue(string $string, array $needles, string $maskCharacter = '*') : string
+    public static function maskValue(string $string, array $needles, string $maskCharacter = '*'): string
     {
         if ($string === '' || $needles === []) {
             return $string;
@@ -1276,7 +1276,7 @@ class Text
 
         $regexPattern = '/' . implode('|', $escapedForRegex) . '/u';
 
-        return (string) preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
+        return (string)preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
             return str_repeat($maskCharacter, mb_strlen($matches[0]));
         }, $string);
     }
