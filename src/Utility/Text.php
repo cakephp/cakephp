@@ -1241,4 +1241,43 @@ class Text
 
         return $start . $mask . $end;
     }
+
+    /**
+     * Masks all occurrences of given substring(s) within a string using a repeated character.
+     *
+     * Each occurrence of the provided substring(s) will be replaced by a sequence
+     * of the masking character.
+     *
+     * @param string $string The input string.
+     * @param string[] $needles List of substrings to search for match (case-sensitive) and mask.
+     * @param string $maskCharacter Single masking character.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character. 
+     * @return string
+     */
+    public static function maskValue(string $string, array $needles, string $maskCharacter = '*') : string
+    {
+        if ($string === '' || empty($needles)) {
+            return $string;
+        }
+
+        $needles = array_values(array_unique(array_filter($needles, fn($n) => $n !== '')));
+
+        if (empty($needles)) {
+            return $string;
+        }
+
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        $escapedForRegex = array_map(function ($needle) {
+            return preg_quote($needle, '/');
+        }, $needles);
+
+        $regexPattern = '/' . implode('|', $escapedForRegex) . '/u';
+
+        return (string) preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
+            return str_repeat($maskCharacter, mb_strlen($matches[0]));
+        }, $string);
+    }
 }
