@@ -8,11 +8,14 @@ parameters:
 	excludePaths:
 		- vendor/
 	ignoreErrors:
-		- '#Unsafe usage of new static\(\).#'
 		-
 			identifier: notIdentical.alwaysTrue
 		-
 			identifier: missingType.iterableValue
+		-
+			identifier: trait.unused
+
+		-	'#Unsafe usage of new static\(\).#'
 
 		-
 			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
