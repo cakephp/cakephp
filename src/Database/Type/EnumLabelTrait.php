@@ -24,8 +24,7 @@ use function Cake\I18n\__;
 /**
  * Trait EnumLabelTrait
  *
- * Provides a method to get a display label for cases of backed enums
- * base on the case name or a `Label` attribute if it is defined.
+ * Provides a method to get the label for an enum case.
  */
 trait EnumLabelTrait
 {
@@ -47,27 +46,27 @@ trait EnumLabelTrait
 
         $i18n ??= function_exists('\Cake\I18n\__');
 
-        if (isset($labels[$this->value])) {
+        if (isset($labels[$this->name])) {
             if ($i18n) {
-                return __($labels[$this->value]);
+                return __($labels[$this->name]);
             }
 
-            return $labels[$this->value];
+            return $labels[$this->name];
         }
 
         $reflection = new ReflectionClassConstant(static::class, $this->name);
         $enumAttributes = $reflection->getAttributes(Label::class);
 
         if ($enumAttributes === []) {
-            $labels[$this->value] = Inflector::humanize(Inflector::underscore($this->name));
+            $labels[$this->name] = Inflector::humanize(Inflector::underscore($this->name));
         } else {
-            $labels[$this->value] = $enumAttributes[0]->newInstance()->label;
+            $labels[$this->name] = $enumAttributes[0]->newInstance()->label;
         }
 
         if ($i18n) {
-            return __($labels[$this->value]);
+            return __($labels[$this->name]);
         }
 
-        return $labels[$this->value];
+        return $labels[$this->name];
     }
 }

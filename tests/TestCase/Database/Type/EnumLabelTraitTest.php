@@ -90,12 +90,12 @@ class EnumLabelTraitTest extends TestCase
     }
 
     /**
-     * Test that two different enums sharing the same backing value produce independent labels.
+     * Test that two different enums sharing the same case name produce independent labels.
      */
     public function testDifferentEnumsWithSameValueHaveIndependentLabels(): void
     {
-        // Both cases share the same backing value
-        $this->assertSame(ArticleStatusTrait::Published->value, ArticleStatusTraitLabeled::Published->value);
+        // Both cases share the same name
+        $this->assertSame(ArticleStatusTrait::Published->name, ArticleStatusTraitLabeled::Published->name);
 
         // warm up the local static variable cache for both enums
         $this->assertSame('Published', ArticleStatusTrait::Published->label());
