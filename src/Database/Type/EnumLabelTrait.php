@@ -23,7 +23,8 @@ use ReflectionClassConstant;
 /**
  * Trait EnumLabelTrait
  *
- * Provides a method to get the label for an enum case.
+ * Provides a method to get a display label for cases of backed enums
+ * base on the case name or a `Label` attribute if it is defined.
  */
 trait EnumLabelTrait
 {
