@@ -18,7 +18,6 @@ namespace Cake\Database\Type;
 
 use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Inflector;
-use ReflectionAttribute;
 use ReflectionClassConstant;
 
 /**
@@ -46,7 +45,7 @@ trait EnumLabelTrait
         }
 
         $reflection = new ReflectionClassConstant(static::class, $this->name);
-        $enumAttributes = $reflection->getAttributes(Label::class, ReflectionAttribute::IS_INSTANCEOF);
+        $enumAttributes = $reflection->getAttributes(Label::class);
 
         if ($enumAttributes === []) {
             return $labels[$this->value] = Inflector::humanize(Inflector::underscore($this->name));
