@@ -51,7 +51,7 @@ use JsonException;
  *
  * ```php
  * // Good - streams one row at a time
- * $query = $this->Articles->find()->bufferResults(false);
+ * $query = $this->Articles->find()->disableBufferedResults();
  * return new JsonStreamResponse($query);
  *
  * // Avoid - formatters like map(), combine() buffer results internally
@@ -392,9 +392,11 @@ class JsonStreamResponse extends Response
      */
     protected function applyStreamingHeaders(): void
     {
-        $contentType = $this->getConfigOrFail('format') === self::FORMAT_NDJSON
-            ? 'application/x-ndjson; charset=UTF-8'
-            : 'application/json; charset=UTF-8';
+        $charset = Configure::read('App.encoding') ?? 'UTF-8';
+        $mimeType = $this->getConfigOrFail('format') === self::FORMAT_NDJSON
+            ? 'application/x-ndjson'
+            : 'application/json';
+        $contentType = $mimeType . '; charset=' . $charset;
 
         $this->_setHeader('Content-Type', $contentType);
         // Prevent proxy/nginx buffering for true streaming
