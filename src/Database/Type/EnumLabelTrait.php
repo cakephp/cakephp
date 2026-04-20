@@ -19,6 +19,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Inflector;
 use ReflectionClassConstant;
+use function Cake\I18n\__;
 
 /**
  * Trait EnumLabelTrait
@@ -41,7 +42,16 @@ trait EnumLabelTrait
         /** @var array<string, string> $labels */
         static $labels = [];
 
+        /** @var bool $i18n */
+        static $i18n;
+
+        $i18n ??= function_exists('\Cake\I18n\__');
+
         if (isset($labels[$this->value])) {
+            if ($i18n) {
+                return __($labels[$this->value]);
+            }
+
             return $labels[$this->value];
         }
 
@@ -49,9 +59,15 @@ trait EnumLabelTrait
         $enumAttributes = $reflection->getAttributes(Label::class);
 
         if ($enumAttributes === []) {
-            return $labels[$this->value] = Inflector::humanize(Inflector::underscore($this->name));
+            $labels[$this->value] = Inflector::humanize(Inflector::underscore($this->name));
+        } else {
+            $labels[$this->value] = $enumAttributes[0]->newInstance()->label;
         }
 
-        return $labels[$this->value] = $enumAttributes[0]->newInstance()->label;
+        if ($i18n) {
+            return __($labels[$this->value]);
+        }
+
+        return $labels[$this->value];
     }
 }
