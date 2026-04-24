@@ -443,8 +443,6 @@ class JsonStreamResponse extends Response
      */
     protected function flushOutputBuffers(): void
     {
-        $this->rowsSinceLastFlush = 0;
-
         // Only flush if we're at the implicit output buffer level (1) or no buffering.
         // Higher levels indicate explicit buffering (e.g., tests) that we shouldn't disturb.
         $level = ob_get_level();
@@ -453,6 +451,7 @@ class JsonStreamResponse extends Response
                 ob_flush();
             }
             flush();
+            $this->rowsSinceLastFlush = 0;
         }
     }
 

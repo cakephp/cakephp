@@ -330,6 +330,10 @@ class JsonStreamResponseTest extends TestCase
             {
                 $this->flushCalls++;
                 parent::flushOutputBuffers();
+                // Simulate a successful flush. The test wraps output in ob_start(),
+                // so ob_get_level() > 1 and parent::flushOutputBuffers() is a no-op
+                // (and intentionally does not reset the counter in that case).
+                $this->rowsSinceLastFlush = 0;
             }
         };
 
