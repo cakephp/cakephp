@@ -22,6 +22,7 @@ use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use function Cake\I18n\__;
 use function Cake\I18n\__d;
 use function Cake\I18n\__dn;
@@ -50,9 +51,13 @@ class I18nTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        I18n::clear();
         I18n::setDefaultFormatter('default');
         I18n::setLocale(I18n::getDefaultLocale());
+        I18n::clear();
+        I18n::setCachePool(I18n::DEFAULT_CACHE_POOL);
+        if (Cache::getConfig('_i18n_alt_')) {
+            Cache::drop('_i18n_alt_');
+        }
         $this->clearPlugins();
         Cache::clear('_cake_translations_');
     }
@@ -913,5 +918,68 @@ class I18nTest extends TestCase
         $this->assertSame('Standorte', __dn('wa', 'Location', 'Locations', 0));
         $this->assertSame('Standort', __dn('wa', 'Location', 'Locations', 1));
         $this->assertSame('Standorte', __dn('wa', 'Location', 'Locations', 2));
+    }
+
+    /**
+     * Setting the cache pool before the registry is built routes translator
+     * persistence to the configured Cache config.
+     */
+    public function testSetCachePoolRoutesToConfiguredConfig(): void
+    {
+        Cache::setConfig('_i18n_alt_', [
+            'engine' => 'File',
+            'prefix' => 'i18n_alt_',
+            'serialize' => true,
+        ]);
+        Cache::clear('_i18n_alt_');
+
+        I18n::setCachePool('_i18n_alt_');
+
+        I18n::getTranslator();
+
+        $this->assertInstanceOf(
+            Translator::class,
+            Cache::read('translations.default.en_US', '_i18n_alt_'),
+            'Translator must be persisted to the configured alternate pool.',
+        );
+        $this->assertNull(
+            Cache::read('translations.default.en_US', '_cake_translations_'),
+            'Default translations pool must not receive writes when another pool is configured.',
+        );
+    }
+
+    /**
+     * Calling setCachePool() after translators() has already built the
+     * registry throws to surface the ordering bug loudly.
+     */
+    public function testSetCachePoolAfterBuildThrows(): void
+    {
+        I18n::getTranslator();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('setCachePool');
+        I18n::setCachePool('_i18n_alt_');
+    }
+
+    /**
+     * Calling setCachePool() after clear() rebuilds the registry with the
+     * new pool, making the setting usable between requests in long-lived
+     * processes.
+     */
+    public function testSetCachePoolAfterClearRebuilds(): void
+    {
+        Cache::setConfig('_i18n_alt_', [
+            'engine' => 'File',
+            'prefix' => 'i18n_alt_',
+            'serialize' => true,
+        ]);
+        Cache::clear('_i18n_alt_');
+
+        I18n::getTranslator();
+        I18n::clear();
+        I18n::setCachePool('_i18n_alt_');
+        I18n::getTranslator();
+
+        $this->assertInstanceOf(Translator::class, Cache::read('translations.default.en_US', '_i18n_alt_'));
     }
 }
