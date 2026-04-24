@@ -121,8 +121,8 @@ class I18n
     {
         if (static::$_collection !== null) {
             throw new RuntimeException(
-                'I18n::setCachePool() must be called before the translators registry is built. '
-                . 'Call I18n::clear() first, or use I18n::translators()->setCacher() to swap the cacher.',
+                '`I18n::setCachePool()` must be called before the translators registry is built. '
+                . 'Call `I18n::clear()` first, or use `I18n::translators()->setCacher()` to swap the cacher.',
             );
         }
 
