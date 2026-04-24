@@ -304,4 +304,15 @@ class I18n
     {
         static::$_collection = null;
     }
+
+    /**
+     * Sets the context for translation caching isolation.
+     *
+     * @param string $context The context name or identifier.
+     * @return void
+     */
+    public static function setContext(string $context): void
+    {
+        static::translators()->setContext($context);
+    }
 }
