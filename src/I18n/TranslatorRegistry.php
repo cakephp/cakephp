@@ -95,6 +95,13 @@ class TranslatorRegistry
     protected $_cacher;
 
     /**
+     * Context identifier for translations isolation.
+     *
+     * @var string
+     */
+    protected string $_context = '';
+
+    /**
      * Constructor.
      *
      * @param \Cake\I18n\PackageLocator $packages The package locator.
@@ -122,6 +129,17 @@ class TranslatorRegistry
 
             return $package;
         });
+    }
+
+    /**
+     * Sets the context for translations isolation.
+     *
+     * @param string $context The context name or identifier.
+     * @return void
+     */
+    public function setContext(string $context): void
+    {
+        $this->_context = $context;
     }
 
     /**
@@ -191,17 +209,19 @@ class TranslatorRegistry
     {
         $locale ??= $this->getLocale();
 
-        if (isset($this->registry[$name][$locale])) {
-            return $this->registry[$name][$locale];
+        $contextKey = $this->_context ?: '_default_';
+        if (isset($this->registry[$contextKey][$name][$locale])) {
+            return $this->registry[$contextKey][$name][$locale];
         }
 
         if ($this->_cacher === null) {
-            return $this->registry[$name][$locale] = $this->_getTranslator($name, $locale);
+            return $this->registry[$contextKey][$name][$locale] = $this->_getTranslator($name, $locale);
         }
 
         // Cache keys cannot contain / if they go to file engine.
         $keyName = str_replace('/', '.', $name);
-        $key = "translations.{$keyName}.{$locale}";
+        $contextPart = $this->_context ? $this->_context . '.' : '';
+        $key = "translations.{$contextPart}{$keyName}.{$locale}";
         /** @var \Cake\I18n\Translator|null $translator */
         $translator = $this->_cacher->get($key);
 
@@ -210,7 +230,7 @@ class TranslatorRegistry
             $this->_cacher->set($key, $translator);
         }
 
-        return $this->registry[$name][$locale] = $translator;
+        return $this->registry[$contextKey][$name][$locale] = $translator;
     }
 
     /**
