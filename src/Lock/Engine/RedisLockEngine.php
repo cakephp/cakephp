@@ -19,7 +19,10 @@ namespace Cake\Lock\Engine;
 use Cake\Core\Exception\CakeException;
 use Cake\Lock\AcquiredLock;
 use Cake\Lock\LockEngine;
+use Cake\Log\Log;
 use Redis;
+use RedisCluster;
+use RedisClusterException;
 use RedisException;
 
 /**
@@ -28,31 +31,36 @@ use RedisException;
  * Uses Redis SET with NX and EX options for atomic lock acquisition.
  * This provides a reliable distributed locking mechanism.
  *
- * ### Limitations
- *
- * This engine targets a single Redis node (or a primary behind a proxy).
- * Redis Cluster is not supported out of the box; for cluster setups, use a
- * custom engine that wraps `RedisCluster` or a Redlock-style client.
+ * Supports both a single Redis node (or primary behind a proxy) and
+ * Redis Cluster via phpredis' `RedisCluster` client. Cluster mode is
+ * enabled by providing `nodes` (and optionally `clusterName`).
  *
  * ### Configuration options:
  *
- * - `host`: Redis server hostname (default: '127.0.0.1')
- * - `port`: Redis server port (default: 6379)
- * - `password`: Redis server password (default: false)
- * - `database`: Redis database index (default: 0)
- * - `timeout`: Connection timeout in seconds (default: 0)
- * - `persistent`: Use persistent connections (default: true)
- * - `prefix`: Prefix for lock keys (default: 'lock_')
- * - `ttl`: Default lock TTL in seconds (default: 300)
+ * - `host`: Redis server hostname (default: '127.0.0.1'). Non-cluster only.
+ * - `port`: Redis server port (default: 6379). Non-cluster only.
+ * - `password`: Redis server password (default: false).
+ * - `database`: Redis database index (default: 0). Non-cluster only.
+ * - `timeout`: Connection timeout in seconds (default: 0).
+ * - `readTimeout`: Read timeout in seconds (default: 0). Cluster only.
+ * - `persistent`: Use persistent connections (default: true).
+ * - `prefix`: Prefix for lock keys (default: 'lock_').
+ * - `ttl`: Default lock TTL in seconds (default: 300).
+ * - `nodes`: List of `<ip>:<port>` seed nodes for Redis Cluster. Presence
+ *   of this option (or `clusterName`) switches the engine to cluster mode.
+ * - `clusterName`: Named cluster entry configured via `redis.clusters.seeds`.
+ * - `failover`: Cluster failover mode (`distribute`, `distribute_slaves`,
+ *   `error`, `none`). Cluster only.
+ * - `tls`: When true, enables TLS for cluster connections. Cluster only.
  */
 class RedisLockEngine extends LockEngine
 {
     /**
      * Redis connection.
      *
-     * @var \Redis
+     * @var \Redis|\RedisCluster
      */
-    protected Redis $_redis;
+    protected Redis|RedisCluster $_redis;
 
     /**
      * Default configuration.
@@ -65,9 +73,14 @@ class RedisLockEngine extends LockEngine
         'password' => false,
         'database' => 0,
         'timeout' => 0,
+        'readTimeout' => 0,
         'persistent' => true,
         'prefix' => 'lock_',
         'ttl' => 300,
+        'nodes' => [],
+        'clusterName' => null,
+        'failover' => null,
+        'tls' => false,
     ];
 
     /**
@@ -89,11 +102,25 @@ class RedisLockEngine extends LockEngine
     }
 
     /**
-     * Connect to Redis server.
+     * Connect to Redis server or cluster.
      *
      * @return bool True if connection was successful.
      */
     protected function _connect(): bool
+    {
+        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
+            return $this->connectRedisCluster();
+        }
+
+        return $this->connectRedis();
+    }
+
+    /**
+     * Connect to a single Redis server.
+     *
+     * @return bool True if connection was successful.
+     */
+    protected function connectRedis(): bool
     {
         $this->_redis = new Redis();
 
@@ -132,6 +159,78 @@ class RedisLockEngine extends LockEngine
     }
 
     /**
+     * Connect to a Redis Cluster.
+     *
+     * @return bool True if connection was successful.
+     */
+    protected function connectRedisCluster(): bool
+    {
+        if (empty($this->_config['nodes']) && empty($this->_config['clusterName'])) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisLockEngine requires nodes or a clusterName in cluster mode');
+            }
+
+            return false;
+            // @codeCoverageIgnoreEnd
+        }
+
+        // @codeCoverageIgnoreStart
+        $ssl = [];
+        if ($this->_config['tls']) {
+            $map = [
+                'ssl_ca' => 'cafile',
+                'ssl_key' => 'local_pk',
+                'ssl_cert' => 'local_cert',
+                'verify_peer' => 'verify_peer',
+                'verify_peer_name' => 'verify_peer_name',
+                'allow_self_signed' => 'allow_self_signed',
+            ];
+
+            foreach ($map as $configKey => $sslOption) {
+                if (array_key_exists($configKey, $this->_config)) {
+                    $ssl[$sslOption] = $this->_config[$configKey];
+                }
+            }
+        }
+        // @codeCoverageIgnoreEnd
+
+        try {
+            $this->_redis = new RedisCluster(
+                $this->_config['clusterName'],
+                $this->_config['nodes'] ?: null,
+                (float)$this->_config['timeout'],
+                (float)$this->_config['readTimeout'],
+                (bool)$this->_config['persistent'],
+                $this->_config['password'],
+                $this->_config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
+            );
+        } catch (RedisClusterException $e) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisLockEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
+            }
+
+            return false;
+            // @codeCoverageIgnoreEnd
+        }
+
+        $failover = match ($this->_config['failover']) {
+            RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
+            RedisCluster::FAILOVER_NONE, 'none' => RedisCluster::FAILOVER_NONE,
+            default => null,
+        };
+
+        if ($failover !== null) {
+            $this->_redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
+        }
+
+        return true;
+    }
+
+    /**
      * Acquire a lock for the given resource.
      *
      * Uses Redis SET with NX (only set if not exists) and EX (expiry in seconds)
@@ -155,7 +254,7 @@ class RedisLockEngine extends LockEngine
             }
 
             return null;
-        } catch (RedisException) {
+        } catch (RedisException | RedisClusterException) {
             return null;
         }
     }
@@ -187,7 +286,7 @@ class RedisLockEngine extends LockEngine
             $result = $this->_redis->eval($script, [$key, $lock->getToken()], 1);
 
             return $result === 1;
-        } catch (RedisException) {
+        } catch (RedisException | RedisClusterException) {
             return false;
         }
     }
@@ -204,7 +303,8 @@ class RedisLockEngine extends LockEngine
 
         try {
             return $this->_redis->exists($key) === 1;
-        } catch (RedisException) {
+        /** @phpstan-ignore catch.neverThrown */
+        } catch (RedisException | RedisClusterException) {
             return false;
         }
     }
@@ -236,7 +336,7 @@ class RedisLockEngine extends LockEngine
             $result = $this->_redis->eval($script, [$key, $lock->getToken(), $ttl], 1);
 
             return $result === 1;
-        } catch (RedisException) {
+        } catch (RedisException | RedisClusterException) {
             return false;
         }
     }
@@ -253,7 +353,8 @@ class RedisLockEngine extends LockEngine
 
         try {
             return $this->_redis->del($key) >= 0;
-        } catch (RedisException) {
+        /** @phpstan-ignore catch.neverThrown */
+        } catch (RedisException | RedisClusterException) {
             return false;
         }
     }
