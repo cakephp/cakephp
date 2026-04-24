@@ -926,12 +926,7 @@ class I18nTest extends TestCase
      */
     public function testSetCachePoolRoutesToConfiguredConfig(): void
     {
-        Cache::setConfig('_i18n_alt_', [
-            'engine' => 'File',
-            'prefix' => 'i18n_alt_',
-            'serialize' => true,
-        ]);
-        Cache::clear('_i18n_alt_');
+        Cache::setConfig('_i18n_alt_', ['engine' => 'Array']);
 
         I18n::setCachePool('_i18n_alt_');
 
@@ -968,12 +963,7 @@ class I18nTest extends TestCase
      */
     public function testSetCachePoolAfterClearRebuilds(): void
     {
-        Cache::setConfig('_i18n_alt_', [
-            'engine' => 'File',
-            'prefix' => 'i18n_alt_',
-            'serialize' => true,
-        ]);
-        Cache::clear('_i18n_alt_');
+        Cache::setConfig('_i18n_alt_', ['engine' => 'Array']);
 
         I18n::getTranslator();
         I18n::clear();
