@@ -58,6 +58,51 @@ class OrderByExpression extends QueryExpression
     }
 
     /**
+     * Return the ordering as a list of `[field, direction]` pairs.
+     *
+     * `field` is returned as a string for simple column ordering, or as an
+     * `ExpressionInterface` instance for complex expressions where the caller
+     * must resolve the field identity. `direction` is the upper-cased direction,
+     * either `'ASC'` or `'DESC'`.
+     *
+     * Ordering entries that cannot be decomposed into a field/direction pair
+     * (for example a raw SQL fragment expression) are returned with a `null`
+     * direction so the caller can decide how to handle them.
+     *
+     * @return array<int, array{0: \Cake\Database\ExpressionInterface|array|string, 1: 'ASC'|'DESC'|null}>
+     */
+    public function toList(): array
+    {
+        $pairs = [];
+        foreach ($this->_conditions as $key => $value) {
+            if (is_string($key) && (is_string($value) || $value instanceof ExpressionInterface)) {
+                $direction = is_string($value) ? strtoupper($value) : null;
+                if ($direction !== null && !in_array($direction, ['ASC', 'DESC'], true)) {
+                    $direction = null;
+                }
+                $pairs[] = [$key, $direction];
+                continue;
+            }
+
+            if ($value instanceof OrderClauseExpression) {
+                $field = $value->getField();
+                $direction = strtoupper($value->getDirection() ?: '');
+                if (!in_array($direction, ['ASC', 'DESC'], true)) {
+                    $direction = null;
+                }
+                $pairs[] = [$field, $direction];
+                continue;
+            }
+
+            if ($value instanceof ExpressionInterface) {
+                $pairs[] = [$value, null];
+            }
+        }
+
+        return $pairs;
+    }
+
+    /**
      * Auxiliary function used for decomposing a nested array of conditions and
      * building a tree structure inside this object to represent the full SQL expression.
      *

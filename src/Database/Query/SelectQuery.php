@@ -20,11 +20,14 @@ use ArrayIterator;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
+use Cake\Datasource\Paging\CursorEncoder;
+use Cake\Datasource\Paging\Exception\InvalidCursorException;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -421,6 +424,196 @@ class SelectQuery extends Query implements IteratorAggregate
         $this->offset((int)$offset);
 
         return $this;
+    }
+
+    /**
+     * Apply a seek/keyset cursor that returns records *after* the given position
+     * in the current ORDER BY sequence.
+     *
+     * The keys of `$cursor` must match the order clauses already configured on
+     * the query (identical field identifiers and count), and must be applied after
+     * all `orderBy()` calls. The resulting WHERE predicate is an OR-expanded
+     * lexicographic comparison compatible with any supported driver:
+     *
+     * ```
+     * WHERE (col1 < a1)
+     *    OR (col1 = a1 AND col2 < a2)
+     *    OR ...
+     * ```
+     *
+     * The comparison operator per column is derived from the order direction
+     * (`DESC` → `<`, `ASC` → `>`). Seek pagination requires deterministic
+     * ordering — typically ending in a unique tie-breaker column.
+     *
+     * Cursor columns must be `NOT NULL`. SQL's three-valued logic would make
+     * `NULL < x` evaluate to `NULL` (skipping rows from the seek predicate) and
+     * drivers disagree on `NULL` placement in `ORDER BY`, so any `null` in
+     * `$cursor` raises {@see \Cake\Datasource\Paging\Exception\InvalidCursorException}.
+     * Add a `NOT NULL` tie-breaker (typically the primary key) if your leading
+     * order columns are nullable.
+     *
+     * @param array<string, mixed> $cursor Cursor key/value pairs. Keys must match
+     *   order clauses on the query, in the same order.
+     * @return $this
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException When the
+     *   cursor is empty, the query has no order clauses, the cursor keys do
+     *   not match the ordering, or any cursor value is `null`.
+     */
+    public function seekAfter(array $cursor)
+    {
+        return $this->applySeek($cursor, after: true);
+    }
+
+    /**
+     * Apply a seek/keyset cursor that returns records *before* the given position
+     * in the current ORDER BY sequence.
+     *
+     * Semantically mirrors {@see self::seekAfter()} with the comparison direction
+     * flipped. Note that `seekBefore()` only applies the predicate; result ordering
+     * is untouched. Paginators that need newest-first display for backward pages
+     * must reverse the fetched rows themselves (this is what `SeekPaginator` does).
+     *
+     * @param array<string, mixed> $cursor Cursor key/value pairs. Keys must match
+     *   order clauses on the query, in the same order.
+     * @return $this
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     */
+    public function seekBefore(array $cursor)
+    {
+        return $this->applySeek($cursor, after: false);
+    }
+
+    /**
+     * Apply a seek cursor decoded from a signed opaque token.
+     *
+     * @param string $token Signed token previously produced by
+     *   {@see \Cake\Datasource\Paging\CursorEncoder::encode()}.
+     * @return $this
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     */
+    public function seekAfterToken(string $token)
+    {
+        return $this->seekAfter(CursorEncoder::decode($token));
+    }
+
+    /**
+     * Apply a backward seek cursor decoded from a signed opaque token.
+     *
+     * @param string $token Signed token previously produced by
+     *   {@see \Cake\Datasource\Paging\CursorEncoder::encode()}.
+     * @return $this
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     */
+    public function seekBeforeToken(string $token)
+    {
+        return $this->seekBefore(CursorEncoder::decode($token));
+    }
+
+    /**
+     * Shared seek application for {@see self::seekAfter()} / {@see self::seekBefore()}.
+     *
+     * @param array<string, mixed> $cursor Cursor key/value pairs.
+     * @param bool $after Whether the cursor targets records after (true) or before (false)
+     *   the cursor position.
+     * @return $this
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     */
+    protected function applySeek(array $cursor, bool $after)
+    {
+        if ($cursor === []) {
+            throw new InvalidCursorException('Seek cursor must not be empty.');
+        }
+
+        foreach ($cursor as $key => $value) {
+            if ($value === null) {
+                throw new InvalidCursorException(sprintf(
+                    'Seek cursor value for column `%s` is `null`. Seek pagination requires non-nullable cursor '
+                    . 'columns — SQL\'s three-valued logic would silently skip rows, and drivers disagree on '
+                    . '`NULL` placement in `ORDER BY`. Add a `NOT NULL` tie-breaker (typically the primary key) '
+                    . 'or exclude nullable columns from the seek order.',
+                    $key,
+                ));
+            }
+        }
+
+        $order = $this->clause('order');
+        if (!$order instanceof OrderByExpression) {
+            throw new InvalidCursorException(
+                'Seek pagination requires at least one `orderBy()` clause before calling seekAfter/seekBefore.',
+            );
+        }
+
+        $pairs = $order->toList();
+        if ($pairs === []) {
+            throw new InvalidCursorException(
+                'Seek pagination requires at least one `orderBy()` clause before calling seekAfter/seekBefore.',
+            );
+        }
+
+        $cursorKeys = array_keys($cursor);
+        $orderedKeys = [];
+        foreach ($pairs as [$field, $direction]) {
+            if (!is_string($field) || $direction === null) {
+                throw new InvalidCursorException(
+                    'Seek pagination requires simple column ordering with an ASC or DESC direction. '
+                    . 'Complex order expressions are not supported as cursor columns.',
+                );
+            }
+            $orderedKeys[] = $field;
+        }
+
+        if ($cursorKeys !== $orderedKeys) {
+            throw new InvalidCursorException(sprintf(
+                'Seek cursor keys do not match the current ordering. Expected `%s`, received `%s`.',
+                implode('`, `', $orderedKeys),
+                implode('`, `', array_map(fn($k) => (string)$k, $cursorKeys)),
+            ));
+        }
+
+        $cursorValues = array_values($cursor);
+        $disjunction = $this->expr()->setConjunction('OR');
+
+        foreach ($pairs as $i => [$field, $direction]) {
+            assert(is_string($field) && is_string($direction));
+
+            $conjunction = $this->expr();
+            for ($j = 0; $j < $i; $j++) {
+                [$prevField, ] = $pairs[$j];
+                assert(is_string($prevField));
+                $conjunction->eq($prevField, $cursorValues[$j]);
+            }
+
+            $operator = $this->comparisonOperator($direction, $after);
+            match ($operator) {
+                '<' => $conjunction->lt($field, $cursorValues[$i]),
+                '>' => $conjunction->gt($field, $cursorValues[$i]),
+            };
+
+            $disjunction->add($conjunction);
+        }
+
+        $this->where($disjunction);
+
+        return $this;
+    }
+
+    /**
+     * Map an order direction + seek direction to a strict comparison operator.
+     *
+     * - `DESC` + after  → `<` (next page: smaller values)
+     * - `ASC`  + after  → `>`
+     * - `DESC` + before → `>`
+     * - `ASC`  + before → `<`
+     *
+     * @param string $orderDirection `'ASC'` or `'DESC'`.
+     * @param bool $after Whether the seek targets records after the cursor.
+     * @return '<'|'>' Strict comparison operator.
+     */
+    protected function comparisonOperator(string $orderDirection, bool $after): string
+    {
+        $descending = strtoupper($orderDirection) === 'DESC';
+
+        return $descending === $after ? '<' : '>';
     }
 
     /**

@@ -48,6 +48,16 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     }
 
     /**
+     * Get the sort direction.
+     *
+     * @return string Either `'ASC'` or `'DESC'`.
+     */
+    public function getDirection(): string
+    {
+        return $this->_direction;
+    }
+
+    /**
      * @inheritDoc
      */
     public function sql(ValueBinder $binder): string
