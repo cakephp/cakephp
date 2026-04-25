@@ -42,7 +42,7 @@ class I18n
      *
      * @var string
      */
-    public const DEFAULT_CACHE_POOL = '_cake_translations_';
+    public const DEFAULT_CACHE_CONFIG = '_cake_translations_';
 
     /**
      * The translators collection
@@ -63,7 +63,7 @@ class I18n
      *
      * @var string
      */
-    protected static string $_cachePool = self::DEFAULT_CACHE_POOL;
+    protected static string $_cacheConfig = self::DEFAULT_CACHE_CONFIG;
 
     /**
      * Returns the translators collection instance. It can be used
@@ -89,9 +89,9 @@ class I18n
 
         if (class_exists(Cache::class)) {
             try {
-                $pool = Cache::pool(static::$_cachePool);
+                $pool = Cache::pool(static::$_cacheConfig);
             } catch (InvalidArgumentException $e) {
-                if (static::$_cachePool !== self::DEFAULT_CACHE_POOL) {
+                if (static::$_cacheConfig !== self::DEFAULT_CACHE_CONFIG) {
                     throw $e;
                 }
                 $pool = Cache::pool('_cake_core_');
@@ -113,20 +113,20 @@ class I18n
      * cacher after translators have been built, use
      * {@see \Cake\I18n\TranslatorRegistry::setCacher()} directly.
      *
-     * @param string $poolName The Cache config name to use for translator persistence.
+     * @param string $name The Cache config name to use for translator persistence.
      * @return void
      * @throws \RuntimeException When the translators registry has already been built.
      */
-    public static function setCachePool(string $poolName): void
+    public static function setCacheConfig(string $name): void
     {
         if (static::$_collection !== null) {
             throw new RuntimeException(
-                '`I18n::setCachePool()` must be called before the translators registry is built. '
+                '`I18n::setCacheConfig()` must be called before the translators registry is built. '
                 . 'Call `I18n::clear()` first, or use `I18n::translators()->setCacher()` to swap the cacher.',
             );
         }
 
-        static::$_cachePool = $poolName;
+        static::$_cacheConfig = $name;
     }
 
     /**

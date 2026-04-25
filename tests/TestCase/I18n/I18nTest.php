@@ -54,7 +54,7 @@ class I18nTest extends TestCase
         I18n::setDefaultFormatter('default');
         I18n::setLocale(I18n::getDefaultLocale());
         I18n::clear();
-        I18n::setCachePool(I18n::DEFAULT_CACHE_POOL);
+        I18n::setCacheConfig(I18n::DEFAULT_CACHE_CONFIG);
         if (Cache::getConfig('_i18n_alt_')) {
             Cache::drop('_i18n_alt_');
         }
@@ -921,14 +921,14 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Setting the cache pool before the registry is built routes translator
+     * Setting the cache config before the registry is built routes translator
      * persistence to the configured Cache config.
      */
-    public function testSetCachePoolRoutesToConfiguredConfig(): void
+    public function testSetCacheConfigRoutesToConfiguredConfig(): void
     {
         Cache::setConfig('_i18n_alt_', ['engine' => 'Array']);
 
-        I18n::setCachePool('_i18n_alt_');
+        I18n::setCacheConfig('_i18n_alt_');
 
         I18n::getTranslator();
 
@@ -944,30 +944,30 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Calling setCachePool() after translators() has already built the
+     * Calling setCacheConfig() after translators() has already built the
      * registry throws to surface the ordering bug loudly.
      */
-    public function testSetCachePoolAfterBuildThrows(): void
+    public function testSetCacheConfigAfterBuildThrows(): void
     {
         I18n::getTranslator();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('setCachePool');
-        I18n::setCachePool('_i18n_alt_');
+        $this->expectExceptionMessage('setCacheConfig');
+        I18n::setCacheConfig('_i18n_alt_');
     }
 
     /**
-     * Calling setCachePool() after clear() rebuilds the registry with the
+     * Calling setCacheConfig() after clear() rebuilds the registry with the
      * new pool, making the setting usable between requests in long-lived
      * processes.
      */
-    public function testSetCachePoolAfterClearRebuilds(): void
+    public function testSetCacheConfigAfterClearRebuilds(): void
     {
         Cache::setConfig('_i18n_alt_', ['engine' => 'Array']);
 
         I18n::getTranslator();
         I18n::clear();
-        I18n::setCachePool('_i18n_alt_');
+        I18n::setCacheConfig('_i18n_alt_');
         I18n::getTranslator();
 
         $this->assertInstanceOf(Translator::class, Cache::read('translations.default.en_US', '_i18n_alt_'));
