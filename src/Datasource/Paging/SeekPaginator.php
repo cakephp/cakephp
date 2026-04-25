@@ -75,6 +75,8 @@ class SeekPaginator extends NumericPaginator
         'sortableFields' => null,
         'finder' => 'all',
         'scope' => null,
+        'cursor' => null,
+        'direction' => null,
     ];
 
     /**
@@ -121,7 +123,7 @@ class SeekPaginator extends NumericPaginator
                 . '` or `' . RepositoryInterface::class . '`.',
         );
 
-        $this->captureSeekParams($params, $settings);
+        $this->captureSeekParams($target->getAlias(), $params, $settings);
 
         $data = $this->extractData($target, $params, $settings);
 
@@ -169,15 +171,37 @@ class SeekPaginator extends NumericPaginator
      * Read the seek `cursor` and `direction` out of raw request params (before
      * the inherited extractData/validateSort flow mangles or strips them).
      *
+     * Honors the same alias-scoped settings pattern as
+     * {@see \Cake\Datasource\Paging\NumericPaginator::getDefaults()}: when
+     * `$settings[$alias]` is an array, its contents take precedence as the
+     * effective settings for cursor/direction/scope.
+     *
+     * @param string $alias Repository alias for per-model settings unwrapping.
      * @param array<string, mixed> $params Raw request params.
      * @param array<string, mixed> $settings Paginator settings.
      * @return void
      */
-    protected function captureSeekParams(array $params, array $settings): void
+    protected function captureSeekParams(string $alias, array $params, array $settings): void
     {
+        if (isset($settings[$alias]) && is_array($settings[$alias])) {
+            $settings = $settings[$alias] + $settings;
+        }
+
         $scope = $settings['scope'] ?? null;
         if ($scope !== null && isset($params[$scope]) && is_array($params[$scope])) {
             $params = $params[$scope];
+        }
+
+        $cursor = $params['cursor'] ?? $settings['cursor'] ?? null;
+        if ($cursor === null || $cursor === '') {
+            // `direction = before` only makes sense paired with a cursor. Without
+            // one, the caller's intent is "the first page", so normalize to
+            // `after` to avoid flipping ORDER BY without a predicate (which would
+            // return the last page instead).
+            $this->requestedCursor = null;
+            $this->requestedDirection = 'after';
+
+            return;
         }
 
         $direction = $params['direction'] ?? $settings['direction'] ?? 'after';
@@ -185,13 +209,6 @@ class SeekPaginator extends NumericPaginator
             $direction = 'after';
         }
         $this->requestedDirection = $direction;
-
-        $cursor = $params['cursor'] ?? $settings['cursor'] ?? null;
-        if ($cursor === null || $cursor === '') {
-            $this->requestedCursor = null;
-
-            return;
-        }
 
         if (is_array($cursor)) {
             $this->requestedCursor = $cursor;
@@ -375,9 +392,15 @@ class SeekPaginator extends NumericPaginator
      * Read a column value from a row, handling both entities and arrays and
      * stripping any table alias prefix.
      *
+     * Distinguishes "column not selected" from "column present but null" so
+     * misconfigured queries get a precise error instead of being mistaken for
+     * a NULL boundary value.
+     *
      * @param mixed $row Row.
      * @param string $column Column identifier, optionally prefixed with alias.
      * @return mixed
+     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException When the
+     *   column is not present on the row at all (i.e. not selected by the query).
      */
     protected function readRowValue(mixed $row, string $column): mixed
     {
@@ -387,21 +410,26 @@ class SeekPaginator extends NumericPaginator
         }
 
         if (is_array($row)) {
-            return $row[$column] ?? $row[$short] ?? null;
-        }
-        if (is_object($row)) {
-            if (method_exists($row, 'get')) {
-                $value = $row->get($short);
-                if ($value !== null) {
-                    return $value;
-                }
+            if (array_key_exists($column, $row)) {
+                return $row[$column];
             }
-            if (isset($row->{$short})) {
+            if (array_key_exists($short, $row)) {
+                return $row[$short];
+            }
+        } elseif (is_object($row)) {
+            if (method_exists($row, 'has') && $row->has($short)) {
+                return method_exists($row, 'get') ? $row->get($short) : $row->{$short};
+            }
+            if (property_exists($row, $short)) {
                 return $row->{$short};
             }
         }
 
-        return null;
+        throw new InvalidCursorException(sprintf(
+            'Cursor column `%s` is not present on the result row. '
+            . 'Ensure the column is included in the query\'s `select()` (or available via the entity).',
+            $column,
+        ));
     }
 
     /**

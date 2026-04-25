@@ -129,6 +129,44 @@ class SeekPaginatorTest extends TestCase
         $this->assertSame(1, $back->items()->current()->id);
     }
 
+    public function testDirectionBeforeWithoutCursorReturnsFirstPage(): void
+    {
+        // `direction=before` without a cursor is normalized to `after` — otherwise
+        // we would flip ORDER BY without applying any predicate and silently return
+        // the *last* page instead of the first.
+        $result = $this->paginator->paginate(
+            $this->baseQuery(),
+            ['direction' => 'before'],
+            ['limit' => 1],
+        );
+
+        $this->assertCount(1, $result);
+        $this->assertSame(1, $result->items()->current()->id);
+        $this->assertFalse($result->hasPrevPage());
+        $this->assertTrue($result->hasNextPage());
+    }
+
+    public function testAliasScopedSettingsAreHonored(): void
+    {
+        // Settings keyed by repository alias should be unwrapped (matches the
+        // pattern used by NumericPaginator::getDefaults).
+        $first = $this->paginator->paginate($this->baseQuery(), [], ['limit' => 1]);
+
+        $second = $this->paginator->paginate(
+            $this->baseQuery(),
+            [],
+            [
+                'Posts' => [
+                    'cursor' => $first->nextCursorToken(),
+                    'limit' => 1,
+                ],
+            ],
+        );
+
+        $this->assertCount(1, $second);
+        $this->assertSame(2, $second->items()->current()->id);
+    }
+
     public function testInvalidTokenThrows(): void
     {
         $this->expectException(InvalidCursorException::class);
@@ -148,6 +186,27 @@ class SeekPaginatorTest extends TestCase
         $this->expectExceptionMessage('requires an explicit `orderBy()`');
 
         $this->paginator->paginate($query, [], ['limit' => 1]);
+    }
+
+    public function testMissingCursorColumnOnBoundaryRowThrowsClearError(): void
+    {
+        $paginator = new class extends SeekPaginator {
+            /**
+             * @param array<int, string> $columns
+             */
+            public function callBuildCursor(array $columns, mixed $row): array
+            {
+                $this->cursorColumns = $columns;
+
+                return $this->buildCursor($row);
+            }
+        };
+
+        $this->expectException(InvalidCursorException::class);
+        $this->expectExceptionMessage('Cursor column `Posts.body` is not present on the result row');
+
+        // Row is missing `body` entirely — distinct from `body => null`.
+        $paginator->callBuildCursor(['Posts.body', 'Posts.id'], ['id' => 7]);
     }
 
     public function testBoundaryRowWithNullCursorColumnThrows(): void
