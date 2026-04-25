@@ -17,10 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Query;
 
 use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\Paging\CursorEncoder;
-use Cake\Datasource\Paging\Exception\InvalidCursorException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -31,8 +30,6 @@ class SelectQuerySeekTest extends TestCase
     protected array $fixtures = ['core.Articles'];
 
     protected Connection $connection;
-
-    protected string $secret = 'test-cursor-secret-please-use-a-real-salt-in-prod-0123456789';
 
     protected function setUp(): void
     {
@@ -95,22 +92,9 @@ class SelectQuerySeekTest extends TestCase
         $this->assertSame([3, 1], array_map('intval', $ids));
     }
 
-    public function testSeekAfterTokenUsesSignedCursor(): void
-    {
-        $token = CursorEncoder::encode(['id' => 1], $this->secret);
-        $query = $this->newQuery()
-            ->orderBy(['id' => 'ASC']);
-
-        // Swap in our test secret by decoding then seeking — avoids touching Security::getSalt()
-        $query->seekAfter(CursorEncoder::decode($token, $this->secret));
-
-        $ids = array_column($query->execute()->fetchAll('assoc'), 'id');
-        $this->assertSame([2, 3], array_map('intval', $ids));
-    }
-
     public function testSeekAfterWithoutOrderByThrows(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('requires at least one `orderBy()` clause');
 
         $this->newQuery()->seekAfter(['id' => 1]);
@@ -118,7 +102,7 @@ class SelectQuerySeekTest extends TestCase
 
     public function testSeekAfterWithEmptyCursorThrows(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('must not be empty');
 
         $this->newQuery()
@@ -128,7 +112,7 @@ class SelectQuerySeekTest extends TestCase
 
     public function testSeekAfterWithMismatchedKeysThrows(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('do not match the current ordering');
 
         $this->newQuery()
@@ -138,7 +122,7 @@ class SelectQuerySeekTest extends TestCase
 
     public function testSeekAfterWithWrongKeyOrderThrows(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('do not match the current ordering');
 
         $this->newQuery()
@@ -148,7 +132,7 @@ class SelectQuerySeekTest extends TestCase
 
     public function testSeekAfterRejectsNullCursorValue(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Seek cursor value for column `published` is `null`');
 
         $this->newQuery()
@@ -158,7 +142,7 @@ class SelectQuerySeekTest extends TestCase
 
     public function testSeekBeforeRejectsNullCursorValue(): void
     {
-        $this->expectException(InvalidCursorException::class);
+        $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Seek cursor value for column `id` is `null`');
 
         $this->newQuery()

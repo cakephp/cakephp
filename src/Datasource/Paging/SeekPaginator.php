@@ -18,6 +18,7 @@ namespace Cake\Datasource\Paging;
 
 use ArrayIterator;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Query\SelectQuery as DatabaseSelectQuery;
 use Cake\Datasource\Paging\Exception\InvalidCursorException;
@@ -269,10 +270,16 @@ class SeekPaginator extends NumericPaginator
             return;
         }
 
-        if ($this->requestedDirection === 'before') {
-            $query->seekBefore($this->requestedCursor);
-        } else {
-            $query->seekAfter($this->requestedCursor);
+        try {
+            if ($this->requestedDirection === 'before') {
+                $query->seekBefore($this->requestedCursor);
+            } else {
+                $query->seekAfter($this->requestedCursor);
+            }
+        } catch (DatabaseException $e) {
+            // Re-wrap database-layer validation errors as a paging-layer exception
+            // so callers of paginate() only have to catch one type.
+            throw new InvalidCursorException($e->getMessage(), null, $e);
         }
     }
 

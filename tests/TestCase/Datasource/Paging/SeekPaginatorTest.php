@@ -152,23 +152,29 @@ class SeekPaginatorTest extends TestCase
 
     public function testBoundaryRowWithNullCursorColumnThrows(): void
     {
-        // Insert a row with NULL in `body` (nullable column), then page ordering
-        // by that column. The first boundary row will have body=null, which must
-        // trigger the null guard rather than silently emit a corrupt token.
-        $this->postsTable()->save($this->postsTable()->newEntity([
-            'author_id' => 1,
-            'title' => 'Null-body post',
-            'body' => null,
-            'published' => 'Y',
-        ]));
+        // Test the buildCursor() guard directly — driving it via paginate() would
+        // depend on driver NULL-ordering (Postgres: NULLs last in ASC; MySQL: NULLs
+        // first), which determines whether the boundary row even carries the NULL.
+        // The contract being verified is: if a cursor column on the boundary row
+        // is `null`, the paginator refuses to emit a corrupt token.
+        $paginator = new class extends SeekPaginator {
+            /**
+             * @param array<int, string> $columns
+             */
+            public function callBuildCursor(array $columns, mixed $row): array
+            {
+                $this->cursorColumns = $columns;
 
-        $query = $this->postsTable()->find()
-            ->select(['id', 'title', 'body'])
-            ->orderBy(['Posts.body' => 'ASC', 'Posts.id' => 'ASC']);
+                return $this->buildCursor($row);
+            }
+        };
 
         $this->expectException(InvalidCursorException::class);
         $this->expectExceptionMessage('Boundary row has `null` in cursor column `Posts.body`');
 
-        $this->paginator->paginate($query, [], ['limit' => 1]);
+        $paginator->callBuildCursor(
+            ['Posts.body', 'Posts.id'],
+            ['body' => null, 'id' => 7],
+        );
     }
 }

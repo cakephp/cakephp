@@ -19,6 +19,7 @@ namespace Cake\Database\Query;
 use ArrayIterator;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\WindowExpression;
@@ -26,8 +27,6 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
-use Cake\Datasource\Paging\CursorEncoder;
-use Cake\Datasource\Paging\Exception\InvalidCursorException;
 use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -448,16 +447,20 @@ class SelectQuery extends Query implements IteratorAggregate
      * Cursor columns must be `NOT NULL`. SQL's three-valued logic would make
      * `NULL < x` evaluate to `NULL` (skipping rows from the seek predicate) and
      * drivers disagree on `NULL` placement in `ORDER BY`, so any `null` in
-     * `$cursor` raises {@see \Cake\Datasource\Paging\Exception\InvalidCursorException}.
+     * `$cursor` raises {@see \Cake\Database\Exception\DatabaseException}.
      * Add a `NOT NULL` tie-breaker (typically the primary key) if your leading
      * order columns are nullable.
+     *
+     * For opaque/signed cursor tokens, decode them to an array first via the
+     * paging-layer cursor encoder and pass the result here — token decoding is
+     * intentionally kept out of the database layer.
      *
      * @param array<string, mixed> $cursor Cursor key/value pairs. Keys must match
      *   order clauses on the query, in the same order.
      * @return $this
-     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException When the
-     *   cursor is empty, the query has no order clauses, the cursor keys do
-     *   not match the ordering, or any cursor value is `null`.
+     * @throws \Cake\Database\Exception\DatabaseException When the cursor is empty,
+     *   the query has no order clauses, the cursor keys do not match the
+     *   ordering, or any cursor value is `null`.
      */
     public function seekAfter(array $cursor)
     {
@@ -476,37 +479,11 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param array<string, mixed> $cursor Cursor key/value pairs. Keys must match
      *   order clauses on the query, in the same order.
      * @return $this
-     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     public function seekBefore(array $cursor)
     {
         return $this->applySeek($cursor, after: false);
-    }
-
-    /**
-     * Apply a seek cursor decoded from a signed opaque token.
-     *
-     * @param string $token Signed token previously produced by
-     *   {@see \Cake\Datasource\Paging\CursorEncoder::encode()}.
-     * @return $this
-     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
-     */
-    public function seekAfterToken(string $token)
-    {
-        return $this->seekAfter(CursorEncoder::decode($token));
-    }
-
-    /**
-     * Apply a backward seek cursor decoded from a signed opaque token.
-     *
-     * @param string $token Signed token previously produced by
-     *   {@see \Cake\Datasource\Paging\CursorEncoder::encode()}.
-     * @return $this
-     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
-     */
-    public function seekBeforeToken(string $token)
-    {
-        return $this->seekBefore(CursorEncoder::decode($token));
     }
 
     /**
@@ -516,17 +493,17 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param bool $after Whether the cursor targets records after (true) or before (false)
      *   the cursor position.
      * @return $this
-     * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
+     * @throws \Cake\Database\Exception\DatabaseException
      */
     protected function applySeek(array $cursor, bool $after)
     {
         if ($cursor === []) {
-            throw new InvalidCursorException('Seek cursor must not be empty.');
+            throw new DatabaseException('Seek cursor must not be empty.');
         }
 
         foreach ($cursor as $key => $value) {
             if ($value === null) {
-                throw new InvalidCursorException(sprintf(
+                throw new DatabaseException(sprintf(
                     'Seek cursor value for column `%s` is `null`. Seek pagination requires non-nullable cursor '
                     . 'columns — SQL\'s three-valued logic would silently skip rows, and drivers disagree on '
                     . '`NULL` placement in `ORDER BY`. Add a `NOT NULL` tie-breaker (typically the primary key) '
@@ -538,14 +515,14 @@ class SelectQuery extends Query implements IteratorAggregate
 
         $order = $this->clause('order');
         if (!$order instanceof OrderByExpression) {
-            throw new InvalidCursorException(
+            throw new DatabaseException(
                 'Seek pagination requires at least one `orderBy()` clause before calling seekAfter/seekBefore.',
             );
         }
 
         $pairs = $order->toList();
         if ($pairs === []) {
-            throw new InvalidCursorException(
+            throw new DatabaseException(
                 'Seek pagination requires at least one `orderBy()` clause before calling seekAfter/seekBefore.',
             );
         }
@@ -554,7 +531,7 @@ class SelectQuery extends Query implements IteratorAggregate
         $orderedKeys = [];
         foreach ($pairs as [$field, $direction]) {
             if (!is_string($field) || $direction === null) {
-                throw new InvalidCursorException(
+                throw new DatabaseException(
                     'Seek pagination requires simple column ordering with an ASC or DESC direction. '
                     . 'Complex order expressions are not supported as cursor columns.',
                 );
@@ -563,7 +540,7 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         if ($cursorKeys !== $orderedKeys) {
-            throw new InvalidCursorException(sprintf(
+            throw new DatabaseException(sprintf(
                 'Seek cursor keys do not match the current ordering. Expected `%s`, received `%s`.',
                 implode('`, `', $orderedKeys),
                 implode('`, `', array_map(fn($k) => (string)$k, $cursorKeys)),
