@@ -221,6 +221,13 @@ class TranslatorRegistry
      * into this class. An empty result disables prefixing and keeps the
      * legacy cache key format `translations.{domain}.{locale}`.
      *
+     * The Closure receives the requested package name and resolved locale
+     * (`function (string $name, string $locale): string`), so callers may
+     * vary the prefix per package (e.g. skip prefixing for shared packages)
+     * or per locale. Each distinct resolved prefix produces its own
+     * in-memory bucket, so closures that vary by `$name`/`$locale` will
+     * fragment the registry accordingly.
+     *
      * Prefix values must match `[A-Za-z0-9._-]+` to stay safe across every
      * built-in cache engine.
      *
@@ -256,13 +263,15 @@ class TranslatorRegistry
     /**
      * Resolves the current cache key prefix value.
      *
+     * @param string $name The translator package name being resolved.
+     * @param string $locale The locale being resolved.
      * @return string The resolved prefix or an empty string when none is set.
      * @throws \InvalidArgumentException If a Closure prefix returns an invalid value.
      */
-    protected function resolveCacheKeyPrefix(): string
+    protected function resolveCacheKeyPrefix(string $name, string $locale): string
     {
         if ($this->cacheKeyPrefix instanceof Closure) {
-            $value = ($this->cacheKeyPrefix)();
+            $value = ($this->cacheKeyPrefix)($name, $locale);
             if ($value === '') {
                 return '';
             }
@@ -305,7 +314,7 @@ class TranslatorRegistry
     {
         $locale ??= $this->getLocale();
 
-        $prefix = $this->resolveCacheKeyPrefix();
+        $prefix = $this->resolveCacheKeyPrefix($name, $locale);
         $bucket = $prefix !== '' ? $prefix : static::DEFAULT_BUCKET;
 
         if (isset($this->registry[$bucket][$name][$locale])) {
