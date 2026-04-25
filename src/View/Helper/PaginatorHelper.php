@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Datasource\Paging\CursorPaginatedInterface;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\Paging\SortField;
 use Cake\Utility\Hash;
@@ -33,6 +34,10 @@ use function Cake\I18n\__;
  * Pagination Helper class for easy generation of pagination links.
  *
  * PaginationHelper encloses all methods needed when working with pagination.
+ *
+ * For seek/cursor paginated result sets, `prev()` and `next()` generate
+ * `cursor`/`direction` URLs instead of page-number links. Page-number oriented
+ * UI such as `numbers()` is still only meaningful for numeric pagination.
  *
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\NumberHelper $Number
@@ -63,6 +68,7 @@ class PaginatorHelper extends Helper
      * - `url['?']['sort']` the key that the recordset is sorted.
      * - `url['?']['direction']` Direction of the sorting (default: 'asc').
      * - `url['?']['page']` Page number to use in links.
+     * - `url['?']['cursor']` Seek pagination cursor token to use in links.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
      * - `sortFormat` Format for sort URLs: 'separate' (default, ?sort=x&direction=y) or 'combined' (?sort=x-y).
      * - `routePlaceholders` An array specifying which paging params should be
@@ -116,7 +122,7 @@ class PaginatorHelper extends Helper
         parent::__construct($view, $config);
 
         $query = $this->_View->getRequest()->getQueryParams();
-        unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
+        unset($query['page'], $query['limit'], $query['sort'], $query['direction'], $query['cursor']);
         $this->setConfig(
             'options.url',
             array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query]),
@@ -280,10 +286,7 @@ class PaginatorHelper extends Helper
             return $out;
         }
 
-        $url = $this->generateUrl(
-            ['page' => $this->paginated()->currentPage() + $options['step']],
-            $options['url'],
-        );
+        $url = $this->generateUrl($this->buildToggleLinkOptions($options['step']), $options['url']);
 
         $out = $templater->format($template, [
             'url' => $url,
@@ -298,7 +301,32 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Generates a "previous" link for a set of paged records
+     * Build pagination params for prev()/next() style links.
+     *
+     * Numeric pagination advances with `page`, while seek pagination advances
+     * via signed cursor tokens and a direction.
+     *
+     * @param int $step Navigation step. Negative values mean previous, positive mean next.
+     * @return array<string, int|string|null>
+     */
+    protected function buildToggleLinkOptions(int $step): array
+    {
+        $paginated = $this->paginated();
+        if ($paginated instanceof CursorPaginatedInterface) {
+            return [
+                'cursor' => $step < 0 ? $paginated->previousCursorToken() : $paginated->nextCursorToken(),
+                'direction' => $step < 0 ? 'before' : 'after',
+                'page' => null,
+            ];
+        }
+
+        return ['page' => $paginated->currentPage() + $step];
+    }
+
+    /**
+     * Generates a "previous" link for a set of paged records.
+     *
+     * For seek/cursor paginated result sets this emits a cursor-based link.
      *
      * ### Options:
      *
@@ -335,7 +363,24 @@ class PaginatorHelper extends Helper
     }
 
     /**
-     * Generates a "next" link for a set of paged records
+     * Generates a "previous" link for cursor/seek paginated records.
+     *
+     * This is an alias for {@see self::prev()} that makes intent explicit when
+     * working with seek pagination in templates.
+     *
+     * @param string $title Title for the link. Defaults to '<< Previous'.
+     * @param array<string, mixed> $options Options for pagination link.
+     * @return string A "previous" link or a disabled link.
+     */
+    public function seekPrev(string $title = '<< Previous', array $options = []): string
+    {
+        return $this->prev($title, $options);
+    }
+
+    /**
+     * Generates a "next" link for a set of paged records.
+     *
+     * For seek/cursor paginated result sets this emits a cursor-based link.
      *
      * ### Options:
      *
@@ -369,6 +414,21 @@ class PaginatorHelper extends Helper
         ];
 
         return $this->_toggledLink($title, $this->hasNext(), $options, $templates);
+    }
+
+    /**
+     * Generates a "next" link for cursor/seek paginated records.
+     *
+     * This is an alias for {@see self::next()} that makes intent explicit when
+     * working with seek pagination in templates.
+     *
+     * @param string $title Title for the link. Defaults to 'Next >>'.
+     * @param array<string, mixed> $options Options for pagination link.
+     * @return string A "next" link or a disabled link.
+     */
+    public function seekNext(string $title = 'Next >>', array $options = []): string
+    {
+        return $this->next($title, $options);
     }
 
     /**
@@ -513,7 +573,7 @@ class PaginatorHelper extends Helper
     public function generateUrlParams(array $options = [], array $url = []): array
     {
         $paging = $this->params();
-        $paging += ['currentPage' => null, 'sort' => null, 'direction' => null, 'limit' => null];
+        $paging += ['currentPage' => null, 'sort' => null, 'direction' => null, 'limit' => null, 'cursor' => null];
         $paging['page'] = $paging['currentPage'];
         unset($paging['currentPage']);
 
@@ -534,7 +594,7 @@ class PaginatorHelper extends Helper
 
         $options += array_intersect_key(
             $paging,
-            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],
+            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null, 'cursor' => null],
         );
 
         if (!empty($options['page']) && $options['page'] === 1) {
@@ -1195,7 +1255,7 @@ class PaginatorHelper extends Helper
         $hiddenFields = $query;
         if ($scope) {
             // Remove limit and page from scoped params
-            unset($hiddenFields[$scope]['limit'], $hiddenFields[$scope]['page']);
+            unset($hiddenFields[$scope]['limit'], $hiddenFields[$scope]['page'], $hiddenFields[$scope]['cursor']);
             if (isset($hiddenFields[$scope]) && empty($hiddenFields[$scope])) {
                 unset($hiddenFields[$scope]);
             }
@@ -1205,7 +1265,7 @@ class PaginatorHelper extends Helper
             }
         } else {
             // Remove pagination params that will be handled separately
-            unset($hiddenFields['limit'], $hiddenFields['page'], $hiddenFields['sort'], $hiddenFields['direction']);
+            unset($hiddenFields['limit'], $hiddenFields['page'], $hiddenFields['sort'], $hiddenFields['direction'], $hiddenFields['cursor']);
             // Set page to 1 if not on first page
             if ($currentPage > 1) {
                 $hiddenFields['page'] = 1;

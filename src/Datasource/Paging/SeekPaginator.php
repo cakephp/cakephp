@@ -18,12 +18,10 @@ namespace Cake\Datasource\Paging;
 
 use ArrayIterator;
 use Cake\Core\Exception\CakeException;
-use Cake\Database\Exception\DatabaseException;
-use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Query\SelectQuery as DatabaseSelectQuery;
 use Cake\Datasource\Paging\Exception\InvalidCursorException;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
+use Throwable;
 
 /**
  * Seek / keyset pagination strategy.
@@ -53,6 +51,10 @@ use Cake\Datasource\RepositoryInterface;
  * $articles = $this->paginate($query, [
  *     'className' => \Cake\Datasource\Paging\SeekPaginator::class,
  * ]);
+ *
+ * // In templates, use prev()/next() or seekPrev()/seekNext() from PaginatorHelper.
+ * echo $this->Paginator->prev('Previous');
+ * echo $this->Paginator->next('Next');
  * ```
  */
 class SeekPaginator extends NumericPaginator
@@ -128,11 +130,6 @@ class SeekPaginator extends NumericPaginator
         $data = $this->extractData($target, $params, $settings);
 
         $query = $this->getQuery($target, $query, $data);
-        if (!$query instanceof DatabaseSelectQuery) {
-            throw new InvalidCursorException(
-                'Seek pagination is only supported for `Cake\\Database\\Query\\SelectQuery` instances.',
-            );
-        }
         $orderPairs = $this->extractOrderPairs($query);
         $this->cursorColumns = array_map(fn(array $p) => $p[0], $orderPairs);
         $this->applyCursor($query);
@@ -227,14 +224,23 @@ class SeekPaginator extends NumericPaginator
      * Extract `[field, direction]` pairs from the query's ORDER BY clause and
      * validate that every entry is usable as a cursor column.
      *
-     * @param \Cake\Database\Query\SelectQuery<mixed> $query Query instance.
+     * Requires a query implementation that exposes `clause('order')` returning
+     * an object with a `toList()` method, as provided by CakePHP's database
+     * select queries.
+     *
+     * @param \Cake\Datasource\QueryInterface $query Query instance.
      * @return array<int, array{0: string, 1: 'ASC'|'DESC'}>
      * @throws \Cake\Datasource\Paging\Exception\InvalidCursorException
      */
-    protected function extractOrderPairs(DatabaseSelectQuery $query): array
+    protected function extractOrderPairs(QueryInterface $query): array
     {
-        $order = $query->clause('order');
-        if (!$order instanceof OrderByExpression) {
+        if (!is_callable([$query, 'clause'])) {
+            throw new InvalidCursorException(
+                'Seek pagination is only supported for query implementations that expose ordering metadata.',
+            );
+        }
+        $order = call_user_func([$query, 'clause'], 'order');
+        if (!is_object($order) || !is_callable([$order, 'toList'])) {
             throw new InvalidCursorException(
                 'Seek pagination requires an explicit `orderBy()` on the query. '
                 . 'The ordering must be deterministic — typically ending in a unique tie-breaker column.',
@@ -242,7 +248,7 @@ class SeekPaginator extends NumericPaginator
         }
 
         $pairs = [];
-        foreach ($order->toList() as [$field, $direction]) {
+        foreach (call_user_func([$order, 'toList']) as [$field, $direction]) {
             if (!is_string($field) || $direction === null) {
                 throw new InvalidCursorException(
                     'Seek pagination does not support complex order expressions as cursor columns. '
@@ -262,11 +268,11 @@ class SeekPaginator extends NumericPaginator
     /**
      * Replace the query's ORDER BY with the same columns in the opposite direction.
      *
-     * @param \Cake\Database\Query\SelectQuery<mixed> $query Query instance.
+     * @param \Cake\Datasource\QueryInterface $query Query instance.
      * @param array<int, array{0: string, 1: 'ASC'|'DESC'}> $pairs Current order pairs.
      * @return void
      */
-    protected function flipOrdering(DatabaseSelectQuery $query, array $pairs): void
+    protected function flipOrdering(QueryInterface $query, array $pairs): void
     {
         $flipped = [];
         foreach ($pairs as [$field, $direction]) {
@@ -278,24 +284,31 @@ class SeekPaginator extends NumericPaginator
     /**
      * Apply the resolved cursor to the query, if one was provided.
      *
-     * @param \Cake\Database\Query\SelectQuery<mixed> $query Query instance.
+     * @param \Cake\Datasource\QueryInterface $query Query instance.
      * @return void
      */
-    protected function applyCursor(DatabaseSelectQuery $query): void
+    protected function applyCursor(QueryInterface $query): void
     {
         if ($this->requestedCursor === null) {
             return;
         }
 
+        $method = $this->requestedDirection === 'before' ? 'seekBefore' : 'seekAfter';
+        if (!is_callable([$query, $method])) {
+            throw new InvalidCursorException(
+                'Seek pagination is only supported for query implementations that can apply seek cursors.',
+            );
+        }
+        /** @var callable(array<string, mixed>): mixed $callback */
+        $callback = [$query, $method];
+
         try {
-            if ($this->requestedDirection === 'before') {
-                $query->seekBefore($this->requestedCursor);
-            } else {
-                $query->seekAfter($this->requestedCursor);
+            $callback($this->requestedCursor);
+        } catch (Throwable $e) {
+            if ($e instanceof InvalidCursorException) {
+                throw $e;
             }
-        } catch (DatabaseException $e) {
-            // Re-wrap database-layer validation errors as a paging-layer exception
-            // so callers of paginate() only have to catch one type.
+
             throw new InvalidCursorException($e->getMessage(), null, $e);
         }
     }
@@ -427,7 +440,7 @@ class SeekPaginator extends NumericPaginator
 
         throw new InvalidCursorException(sprintf(
             'Cursor column `%s` is not present on the result row. '
-            . 'Ensure the column is included in the query\'s `select()` (or available via the entity).',
+            . "Ensure the column is included in the query's `select()` (or available via the entity).",
             $column,
         ));
     }

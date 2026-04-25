@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Datasource\Paging\CursorPaginatedResultSet;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\Paging\SortField;
 use Cake\Http\ServerRequest;
@@ -112,6 +113,29 @@ class PaginatorHelperTest extends TestCase
         $this->paginatedResult = new PaginatedResultSet(new ResultSet([]), $params);
 
         $this->Paginator->setPaginated($this->paginatedResult);
+    }
+
+    protected function setCursorPaginatedResult(array $params, bool $merge = true): void
+    {
+        if ($merge) {
+            $params += [
+                'alias' => 'Articles',
+                'currentPage' => 1,
+                'count' => 1,
+                'totalCount' => null,
+                'hasPrevPage' => false,
+                'hasNextPage' => true,
+                'pageCount' => null,
+                'start' => 0,
+                'end' => 0,
+                'nextCursor' => ['Articles.id' => 2],
+                'previousCursor' => null,
+                'nextCursorToken' => 'next-token',
+                'previousCursorToken' => null,
+            ];
+        }
+
+        $this->Paginator->setPaginated(new CursorPaginatedResultSet(new ResultSet([]), $params));
     }
 
     /**
@@ -1518,6 +1542,66 @@ class PaginatorHelperTest extends TestCase
 
         $result = $this->Paginator->next('Next >>', ['disabledTitle' => false]);
         $this->assertSame('', $result, 'disabled + no text = no link');
+    }
+
+    public function testPrevWithCursorPagination(): void
+    {
+        $this->setCursorPaginatedResult([
+            'hasPrevPage' => true,
+            'hasNextPage' => true,
+            'previousCursor' => ['Articles.id' => 1],
+            'previousCursorToken' => 'prev-token',
+        ]);
+
+        $result = $this->Paginator->prev('<< Previous');
+        $expected = [
+            'li' => ['class' => 'prev'],
+            'a' => ['href' => '/?cursor=prev-token&amp;direction=before', 'rel' => 'prev'],
+            '&lt;&lt; Previous',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->seekPrev('Prev');
+        $expected = [
+            'li' => ['class' => 'prev'],
+            'a' => ['href' => '/?cursor=prev-token&amp;direction=before', 'rel' => 'prev'],
+            'Prev',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    public function testNextWithCursorPagination(): void
+    {
+        $this->setCursorPaginatedResult([
+            'hasPrevPage' => false,
+            'hasNextPage' => true,
+            'nextCursor' => ['Articles.id' => 2],
+            'nextCursorToken' => 'next-token',
+        ]);
+
+        $result = $this->Paginator->next('Next >>');
+        $expected = [
+            'li' => ['class' => 'next'],
+            'a' => ['href' => '/?cursor=next-token&amp;direction=after', 'rel' => 'next'],
+            'Next &gt;&gt;',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Paginator->seekNext('Next');
+        $expected = [
+            'li' => ['class' => 'next'],
+            'a' => ['href' => '/?cursor=next-token&amp;direction=after', 'rel' => 'next'],
+            'Next',
+            '/a',
+            '/li',
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
