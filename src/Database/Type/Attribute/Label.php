@@ -36,7 +36,7 @@ readonly class Label
      */
     public function __construct(
         public string $label,
-        public string $context = ''
+        public string $context = '',
     ) {
     }
 }
