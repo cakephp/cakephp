@@ -29,4 +29,7 @@ enum ArticleStatusTraitLabeled: string implements EnumLabelInterface
     case Unpublished = 'N';
 
     case PendingReview = 'P';
+
+    #[Label('Article is a draft', context: 'ArticleStatus')]
+    case Draft = 'D';
 }

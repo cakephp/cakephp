@@ -20,6 +20,7 @@ use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Inflector;
 use ReflectionClassConstant;
 use function Cake\I18n\__;
+use function Cake\I18n\__x;
 
 /**
  * Trait EnumLabelTrait

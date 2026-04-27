@@ -139,4 +139,29 @@ class EnumLabelTraitTest extends TestCase
         // Explicit Label attribute values are also translated.
         $this->assertSame("L'article est publié", ArticleStatusTraitLabeled::Published->label());
     }
+
+    /**
+     * Test that label() uses __x() with the context from the Label attribute when present.
+     */
+    public function testLabelWithAttributeContextUsesTranslationContext(): void
+    {
+        Cache::clear('_cake_translations_');
+        I18n::clear();
+
+        I18n::setTranslator('default', function () {
+            $package = new Package();
+            $package->setMessages([
+                'Article is a draft' => [
+                    '_context' => [
+                        'ArticleStatus' => 'Article est un brouillon',
+                    ],
+                ],
+            ]);
+
+            return $package;
+        }, 'fr_FR');
+        I18n::setLocale('fr_FR');
+
+        $this->assertSame('Article est un brouillon', ArticleStatusTraitLabeled::Draft->label());
+    }
 }
