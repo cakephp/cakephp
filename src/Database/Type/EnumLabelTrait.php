@@ -62,15 +62,12 @@ trait EnumLabelTrait
     }
 
     /**
-     * @param string|array{label:string,context:string} $label
+     * Returns the translated label for the enum case.
      *
+     * @param string|array{label:string,context:string} $label
      */
     private function translatedLabel(string|array $label): string
     {
-        if (is_string($label)) {
-            return $label;
-        }
-
         /** @var bool $i18n */
         static $i18n;
 
@@ -78,6 +75,10 @@ trait EnumLabelTrait
 
         if (!$i18n) {
             return $label['label'];
+        }
+
+        if (is_string($label)) {
+            return __($label);
         }
 
         $context = $label['context'] ?? '';
