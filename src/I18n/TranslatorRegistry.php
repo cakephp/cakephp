@@ -255,7 +255,7 @@ class TranslatorRegistry
      *
      * @return void
      */
-    public function clearInMemoryRegistry(): void
+    public function clear(): void
     {
         $this->registry = [];
     }

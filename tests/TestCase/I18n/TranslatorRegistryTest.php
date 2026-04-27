@@ -208,10 +208,10 @@ class TranslatorRegistryTest extends TestCase
     }
 
     /**
-     * clearInMemoryRegistry() drops cached translator instances without
-     * clearing the cacher or resetting configuration.
+     * clear() drops cached translator instances without clearing the cacher
+     * or resetting configuration.
      */
-    public function testClearInMemoryRegistryDropsEntriesOnly(): void
+    public function testClearDropsEntriesOnly(): void
     {
         [$registry, $cacher] = $this->buildRegistryWithRecordingCacher('en_CA');
         $registry->setCacheKeyPrefix('tenant_a');
@@ -220,7 +220,7 @@ class TranslatorRegistryTest extends TestCase
         $cacher->store = [];
         $cacher->reads = [];
 
-        $registry->clearInMemoryRegistry();
+        $registry->clear();
         $registry->get('default');
 
         $this->assertSame(['translations.tenant_a.default.en_CA'], $cacher->reads);
