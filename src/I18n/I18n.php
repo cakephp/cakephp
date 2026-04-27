@@ -63,7 +63,7 @@ class I18n
      *
      * @var string
      */
-    protected static string $_cacheConfig = self::DEFAULT_CACHE_CONFIG;
+    protected static string $cacheConfig = self::DEFAULT_CACHE_CONFIG;
 
     /**
      * Returns the translators collection instance. It can be used
@@ -89,9 +89,9 @@ class I18n
 
         if (class_exists(Cache::class)) {
             try {
-                $pool = Cache::pool(static::$_cacheConfig);
+                $pool = Cache::pool(static::$cacheConfig);
             } catch (InvalidArgumentException $e) {
-                if (static::$_cacheConfig !== self::DEFAULT_CACHE_CONFIG) {
+                if (static::$cacheConfig !== self::DEFAULT_CACHE_CONFIG) {
                     throw $e;
                 }
                 $pool = Cache::pool('_cake_core_');
@@ -126,7 +126,7 @@ class I18n
             );
         }
 
-        static::$_cacheConfig = $name;
+        static::$cacheConfig = $name;
     }
 
     /**
