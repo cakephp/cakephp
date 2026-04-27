@@ -38,7 +38,7 @@ trait EnumLabelTrait
      */
     public function label(): string
     {
-        /** @var array<string,string|array{label:string,context:string}> $labels */
+        /** @var array<string,array{label:string,context:string}> $labels */
         static $labels = [];
 
         if (isset($labels[$this->name])) {
@@ -49,7 +49,10 @@ trait EnumLabelTrait
         $enumAttributes = $reflection->getAttributes(Label::class);
 
         if ($enumAttributes === []) {
-            $labels[$this->name] = Inflector::humanize(Inflector::underscore($this->name));
+            $labels[$this->name] = [
+                'label' => Inflector::humanize(Inflector::underscore($this->name)),
+                'context' => '',
+            ];
         } else {
             $instance = $enumAttributes[0]->newInstance();
             $labels[$this->name] = [
@@ -64,9 +67,9 @@ trait EnumLabelTrait
     /**
      * Returns the translated label for the enum case.
      *
-     * @param string|array{label:string,context:string} $label
+     * @param array{label:string,context:string} $label
      */
-    private function translatedLabel(string|array $label): string
+    private function translatedLabel(array $label): string
     {
         /** @var bool $i18n */
         static $i18n;
@@ -74,11 +77,7 @@ trait EnumLabelTrait
         $i18n ??= function_exists('\Cake\I18n\__');
 
         if (!$i18n) {
-            return is_string($label) ? $label : $label['label'];
-        }
-
-        if (is_string($label)) {
-            return __($label);
+            return $label['label'];
         }
 
         $context = $label['context'] ?? '';
