@@ -464,7 +464,7 @@ class I18nExtractCommand extends Command
                 }
             }
 
-            $this->_extractFileReflection($file, $code);
+            $this->extractFileReflection($file, $code);
 
             if (!$isVerbose) {
                 $progress->increment(1);
@@ -835,9 +835,9 @@ class I18nExtractCommand extends Command
      * @param string $code File contents.
      * @return void
      */
-    protected function _extractFileReflection(string $file, string $code): void
+    protected function extractFileReflection(string $file, string $code): void
     {
-        $fqn = $this->_parseClassName($code);
+        $fqn = $this->parseClassName($code);
         if ($fqn === null) {
             return;
         }
@@ -889,7 +889,7 @@ class I18nExtractCommand extends Command
      * @param string $code PHP source code.
      * @return string|null Fully qualified name, or null if none found.
      */
-    protected function _parseClassName(string $code): ?string
+    protected function parseClassName(string $code): ?string
     {
         $tokens = token_get_all($code);
         $namespace = '';

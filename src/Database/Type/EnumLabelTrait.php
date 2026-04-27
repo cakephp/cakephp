@@ -38,20 +38,11 @@ trait EnumLabelTrait
      */
     public function label(): string
     {
-        /** @var array<string, string> $labels */
+        /** @var array<string,string|array{label:string,context:string}> $labels */
         static $labels = [];
 
-        /** @var bool $i18n */
-        static $i18n;
-
-        $i18n ??= function_exists('\Cake\I18n\__');
-
         if (isset($labels[$this->name])) {
-            if ($i18n) {
-                return __($labels[$this->name]);
-            }
-
-            return $labels[$this->name];
+            return $this->translatedLabel($labels[$this->name]);
         }
 
         $reflection = new ReflectionClassConstant(static::class, $this->name);
@@ -60,13 +51,41 @@ trait EnumLabelTrait
         if ($enumAttributes === []) {
             $labels[$this->name] = Inflector::humanize(Inflector::underscore($this->name));
         } else {
-            $labels[$this->name] = $enumAttributes[0]->newInstance()->label;
+            $instance = $enumAttributes[0]->newInstance();
+            $labels[$this->name] = [
+                'label' => $instance->label,
+                'context' => $instance->context,
+            ];
         }
 
-        if ($i18n) {
-            return __($labels[$this->name]);
+        return $this->translatedLabel($labels[$this->name]);
+    }
+
+    /**
+     * @param string|array{label:string,context:string} $label
+     *
+     */
+    private function translatedLabel(string|array $label): string
+    {
+        if (is_string($label)) {
+            return $label;
         }
 
-        return $labels[$this->name];
+        /** @var bool $i18n */
+        static $i18n;
+
+        $i18n ??= function_exists('\Cake\I18n\__');
+
+        if (!$i18n) {
+            return $label['label'];
+        }
+
+        $context = $label['context'] ?? '';
+
+        if ($context !== '') {
+            return __x($context, $label['label']);
+        }
+
+        return __($label['label']);
     }
 }
