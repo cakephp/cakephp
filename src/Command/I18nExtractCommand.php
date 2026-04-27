@@ -843,6 +843,7 @@ class I18nExtractCommand extends Command
         }
 
         try {
+            // @phpstan-ignore argument.type
             $reflection = new ReflectionClass($fqn);
         } catch (ReflectionException $e) {
             $this->io->warning(
