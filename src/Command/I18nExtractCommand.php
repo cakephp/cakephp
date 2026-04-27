@@ -845,7 +845,9 @@ class I18nExtractCommand extends Command
         try {
             $reflection = new ReflectionClass($fqn);
         } catch (ReflectionException $e) {
-            $this->io->warning(sprintf('Could not reflect class/enum %s in file %s', $fqn, $file));
+            $this->io->warning(
+                sprintf('Could not reflect class/enum %s in file %s: %s', $fqn, $file, $e->getMessage())
+            );
 
             return;
         }
