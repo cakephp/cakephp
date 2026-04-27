@@ -74,7 +74,7 @@ trait EnumLabelTrait
         $i18n ??= function_exists('\Cake\I18n\__');
 
         if (!$i18n) {
-            return $label['label'];
+            return is_string($label) ? $label : $label['label'];
         }
 
         if (is_string($label)) {
