@@ -30,6 +30,7 @@ use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 
 /**
  * Language string extractor
@@ -845,7 +846,7 @@ class I18nExtractCommand extends Command
         try {
             // @phpstan-ignore argument.type
             $reflection = new ReflectionClass($fqn);
-        } catch (ReflectionException $e) {
+        } catch (Throwable $e) {
             $this->io->warning(
                 sprintf('Could not reflect class/enum %s in file %s: %s', $fqn, $file, $e->getMessage()),
             );
