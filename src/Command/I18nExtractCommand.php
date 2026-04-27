@@ -24,9 +24,12 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Filesystem;
 use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Language string extractor
@@ -461,6 +464,8 @@ class I18nExtractCommand extends Command
                 }
             }
 
+            $this->_extractFileReflection($file, $code);
+
             if (!$isVerbose) {
                 $progress->increment(1);
                 $progress->draw();
@@ -821,6 +826,112 @@ class I18nExtractCommand extends Command
             $count++;
         }
         $io->err("\n");
+    }
+
+    /**
+     * Extract Label attribute strings from a PHP file using reflection.
+     *
+     * @param string $file Absolute path to the file being processed.
+     * @param string $code File contents.
+     * @return void
+     */
+    protected function _extractFileReflection(string $file, string $code): void
+    {
+        $fqn = $this->_parseClassName($code);
+        if ($fqn === null) {
+            return;
+        }
+
+        try {
+            $reflection = new ReflectionClass($fqn);
+        } catch (ReflectionException $e) {
+            $this->io->warning(sprintf('Could not reflect class/enum %s in file %s', $fqn, $file));
+
+            return;
+        }
+
+        if (!$reflection->isEnum()) {
+            return;
+        }
+
+        $relativeFile = '.' . str_replace(ROOT, '', $file);
+
+        foreach ($reflection->getReflectionConstants() as $constant) {
+            if (!$constant->isEnumCase()) {
+                continue;
+            }
+
+            $labelAttributes = $constant->getAttributes(Label::class);
+            if (!$labelAttributes) {
+                continue;
+            }
+
+            /** @var \Cake\Database\Type\Attribute\Label $label */
+            $label = $labelAttributes[0]->newInstance();
+            $details = [
+                'file' => $relativeFile,
+                'line' => 0,
+                'msgctxt' => $label->context,
+            ];
+            $this->_addTranslation('default', $label->label, $details);
+        }
+    }
+
+    /**
+     * Parse the fully qualified class/enum name from PHP source code.
+     *
+     * Uses token_get_all() to read the namespace declaration and the first
+     * class or enum name without executing the file.
+     *
+     * @param string $code PHP source code.
+     * @return string|null Fully qualified name, or null if none found.
+     */
+    protected function _parseClassName(string $code): ?string
+    {
+        $tokens = token_get_all($code);
+        $namespace = '';
+        $waitingForNamespace = false;
+        $waitingForName = false;
+
+        foreach ($tokens as $token) {
+            if (!is_array($token)) {
+                continue;
+            }
+
+            [$type, $value] = $token;
+
+            if ($type === T_WHITESPACE) {
+                continue;
+            }
+
+            if ($type === T_NAMESPACE) {
+                $waitingForNamespace = true;
+                continue;
+            }
+
+            if ($waitingForNamespace) {
+                if ($type === T_STRING || $type === T_NAME_QUALIFIED) {
+                    $namespace = $value;
+                }
+                $waitingForNamespace = false;
+                continue;
+            }
+
+            if ($type === T_ENUM || $type === T_CLASS) {
+                $waitingForName = true;
+                continue;
+            }
+
+            if ($waitingForName && $type === T_STRING) {
+                return $namespace !== '' ? $namespace . '\\' . $value : $value;
+            }
+
+            if ($waitingForName) {
+                $waitingForName = false;
+            }
+        }
+
+        return null;
     }
 
     /**
