@@ -239,7 +239,7 @@ class SeekPaginator extends NumericPaginator
                 'Seek pagination is only supported for query implementations that expose ordering metadata.',
             );
         }
-        $order = call_user_func([$query, 'clause'], 'order');
+        $order = $query->clause('order');
         if (!is_object($order) || !is_callable([$order, 'toList'])) {
             throw new InvalidCursorException(
                 'Seek pagination requires an explicit `orderBy()` on the query. '
