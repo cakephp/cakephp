@@ -1989,12 +1989,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($success) {
-            $deferToCommit = $options['_primary']
-                && $this->getConnection()->inTransaction();
-
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
-            } elseif ($deferToCommit) {
+            } elseif ($options['_primary'] && $this->getConnection()->inTransaction()) {
                 $this->getConnection()->afterCommit(
                     fn() => $this->dispatchEvent('Model.afterSaveCommit', [
                         'entity' => $entity,
@@ -2003,21 +2000,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 );
             }
             if ($options['atomic'] || $options['_primary']) {
-                if ($deferToCommit) {
-                    $this->getConnection()->afterCommit(function () use ($entity, $options): void {
-                        if ($options['_cleanOnSuccess']) {
-                            $entity->clean();
-                            $entity->setNew(false);
-                        }
-                        $entity->setSource($this->getRegistryAlias());
-                    });
-                } else {
-                    if ($options['_cleanOnSuccess']) {
-                        $entity->clean();
-                        $entity->setNew(false);
-                    }
-                    $entity->setSource($this->getRegistryAlias());
+                if ($options['_cleanOnSuccess']) {
+                    $entity->clean();
+                    $entity->setNew(false);
                 }
+                $entity->setSource($this->getRegistryAlias());
             }
         }
 
