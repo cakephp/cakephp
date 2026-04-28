@@ -24,6 +24,6 @@ enum ArticleStatusExtract: string
     #[Label('Unpublished')]
     case Unpublished = 'N';
 
-    #[Label('Archived', 'article_status')]
+    #[Label('Archived', context: 'article_status')]
     case Archived = 'A';
 }

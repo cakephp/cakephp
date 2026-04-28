@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\Type\Attribute\Label;
-use Cake\I18n\I18n;
 use Cake\Utility\Inflector;
 use ReflectionClassConstant;
+use function Cake\I18n\__dx;
 
 /**
  * Trait EnumLabelTrait
@@ -76,7 +76,7 @@ trait EnumLabelTrait
         /** @var bool $i18n */
         static $i18n;
 
-        $i18n ??= class_exists('Cake\I18n\I18n');
+        $i18n ??= function_exists('\Cake\I18n\__dx');
 
         if (!$i18n) {
             return $label['label'];
@@ -84,12 +84,7 @@ trait EnumLabelTrait
 
         $context = $label['context'] ?? '';
         $domain = $label['domain'] ?? 'default';
-        $args = [];
 
-        if ($context !== '') {
-            $args['_context'] = $context;
-        }
-
-        return I18n::getTranslator($domain)->translate($label['label'], $args);
+        return __dx($domain, $context, $label['label']);
     }
 }
