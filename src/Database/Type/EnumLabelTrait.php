@@ -17,10 +17,9 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\Type\Attribute\Label;
+use Cake\I18n\I18n;
 use Cake\Utility\Inflector;
 use ReflectionClassConstant;
-use function Cake\I18n\__;
-use function Cake\I18n\__x;
 
 /**
  * Trait EnumLabelTrait
@@ -53,12 +52,14 @@ trait EnumLabelTrait
             $labels[$this->name] = [
                 'label' => Inflector::humanize(Inflector::underscore($this->name)),
                 'context' => '',
+                'domain' => 'default',
             ];
         } else {
             $instance = $enumAttributes[0]->newInstance();
             $labels[$this->name] = [
                 'label' => $instance->label,
                 'context' => $instance->context,
+                'domain' => $instance->domain,
             ];
         }
 
@@ -68,25 +69,27 @@ trait EnumLabelTrait
     /**
      * Returns the translated label for the enum case.
      *
-     * @param array{label:string,context:string} $label
+     * @param array{label:string,context:string,domain:string} $label
      */
     private function translatedLabel(array $label): string
     {
         /** @var bool $i18n */
         static $i18n;
 
-        $i18n ??= function_exists('\Cake\I18n\__');
+        $i18n ??= class_exists('Cake\I18n\I18n');
 
         if (!$i18n) {
             return $label['label'];
         }
 
         $context = $label['context'] ?? '';
+        $domain = $label['domain'] ?? 'default';
+        $args = [];
 
         if ($context !== '') {
-            return __x($context, $label['label']);
+            $args['_context'] = $context;
         }
 
-        return __($label['label']);
+        return I18n::getTranslator($domain)->translate($label['label'], $args);
     }
 }
