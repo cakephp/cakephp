@@ -2481,7 +2481,7 @@ class TableTest extends TestCase
         $this->connection->commit();
     }
 
-    public function testAfterSaveCommitPreservesIsNewState(): void
+    public function testAfterSaveCommitEntityAlreadyFinalizedInOuterTransaction(): void
     {
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
@@ -2499,7 +2499,10 @@ class TableTest extends TestCase
             $table->saveOrFail($data);
         });
 
-        $this->assertTrue($wasNew, 'Entity should still report isNew() as true in afterSaveCommit for an INSERT');
+        $this->assertFalse(
+            $wasNew,
+            'Entity is finalized synchronously after save, so afterSaveCommit sees isNew() === false',
+        );
     }
 
     public function testAfterSaveCommitFiringAfterOuterTransactionCommits(): void
@@ -2613,6 +2616,94 @@ class TableTest extends TestCase
         }
 
         $this->assertFalse($called, 'afterSaveCommit should not fire when transaction is rolled back');
+    }
+
+    public function testEntityFinalizedSynchronouslyInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'outertxnuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $this->assertFalse(
+                $entity->isNew(),
+                'Entity saved inside outer transaction must report isNew() === false immediately after save',
+            );
+            $this->assertFalse(
+                $entity->isDirty(),
+                'Entity saved inside outer transaction must be clean immediately after save',
+            );
+            $this->assertSame(
+                'users',
+                $entity->getSource(),
+                'Entity saved inside outer transaction must have source set immediately after save',
+            );
+        });
+    }
+
+    public function testDeleteWorksOnEntitySavedInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'deletetxnuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $result = $table->delete($entity);
+            $this->assertTrue(
+                $result,
+                'Table::delete() must not short-circuit on entity saved inside outer transaction',
+            );
+        });
+    }
+
+    public function testSaveThenUpdateInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'insertupdateuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $entity->username = 'updateduser';
+            $table->saveOrFail($entity);
+
+            $row = $table->get($entity->id);
+            $this->assertSame('updateduser', $row->username);
+        });
+    }
+
+    public function testEntityFinalizedDespiteEventualRollback(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->begin();
+
+        $entity = new Entity([
+            'username' => 'rollbackfinalizeuser',
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
+        ]);
+        $table->saveOrFail($entity);
+
+        $this->assertFalse($entity->isNew(), 'Entity must be finalized even if outer transaction will roll back');
+        $this->assertFalse($entity->isDirty(), 'Entity must be clean even if outer transaction will roll back');
+        $this->assertSame('users', $entity->getSource());
+
+        $this->connection->rollback();
     }
 
     public function testSaveManyInsideTransactionalNoDoubleDispatch(): void
