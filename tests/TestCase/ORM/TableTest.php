@@ -2481,6 +2481,66 @@ class TableTest extends TestCase
         $this->connection->commit();
     }
 
+    public function testAfterSaveCommitOperationIsCreateForInsert(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+        $data = new Entity([
+            'username' => 'newuser',
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
+        ]);
+
+        $operation = null;
+        $table->getEventManager()->on('Model.afterSaveCommit', function ($e) use (&$operation): void {
+            $operation = $e->getData('operation');
+        });
+
+        $table->saveOrFail($data);
+
+        $this->assertSame(RulesChecker::CREATE, $operation);
+    }
+
+    public function testAfterSaveCommitOperationIsUpdateForUpdate(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+        $data = $table->get(1);
+        $data->username = 'updatedname';
+
+        $operation = null;
+        $table->getEventManager()->on('Model.afterSaveCommit', function ($e) use (&$operation): void {
+            $operation = $e->getData('operation');
+        });
+
+        $table->saveOrFail($data);
+
+        $this->assertSame(RulesChecker::UPDATE, $operation);
+    }
+
+    public function testAfterSaveCommitOperationInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+        $data = new Entity([
+            'username' => 'outertxnuser',
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
+        ]);
+
+        $operation = null;
+        $table->getEventManager()->on('Model.afterSaveCommit', function ($e) use (&$operation): void {
+            $operation = $e->getData('operation');
+        });
+
+        $this->connection->transactional(function () use ($table, $data): void {
+            $table->saveOrFail($data);
+        });
+
+        $this->assertSame(
+            RulesChecker::CREATE,
+            $operation,
+            'Deferred afterSaveCommit must carry operation even though entity is already finalized',
+        );
+    }
+
     public function testAfterSaveCommitEntityAlreadyFinalizedInOuterTransaction(): void
     {
         $table = $this->getTableLocator()->get('users');
@@ -6211,6 +6271,26 @@ class TableTest extends TestCase
         $this->connection->commit();
         $this->assertTrue($calledAfterCommit, 'afterSaveCommit should fire after outer transaction commits');
         $this->assertSame('Deferred Success', $article->title);
+    }
+
+    public function testFindOrCreateAfterSaveCommitCarriesOperation(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $operation = null;
+        $articles->getEventManager()->on('Model.afterSaveCommit', function ($e) use (&$operation): void {
+            $operation = $e->getData('operation');
+        });
+
+        $articles->findOrCreate(
+            ['title' => 'Brand New Article For Operation Test'],
+            function ($article): void {
+                $article->body = 'body';
+                $article->author_id = 1;
+            },
+        );
+
+        $this->assertSame(RulesChecker::CREATE, $operation);
     }
 
     /**
