@@ -53,6 +53,7 @@ class HasManyTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
+        'core.Categories',
         'core.Comments',
         'core.Articles',
         'core.Tags',
@@ -929,6 +930,92 @@ class HasManyTest extends TestCase
         $names = array_map(fn(EntityInterface $author): string => $author->name, $result);
         sort($names);
         $this->assertSame(['garrett', 'mariano'], $names);
+    }
+
+    /**
+     * Subquery strategy with a self-referential HasMany association.
+     *
+     * When source and target alias are the same (e.g. a tree structure
+     * with parent_id), the subquery join alias must not collide with
+     * the outer query's table alias, which would cause
+     * "Column 'X.id' in SELECT is ambiguous" errors.
+     */
+    public function testSubqueryWithSelfReferentialAssociation(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $Categories->ChildCategories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('ChildCategories.ChildCategories')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->child_categories);
+        }
+
+        $nestedPropertyLoaded = false;
+        foreach ($result as $category) {
+            foreach ($category->child_categories as $childCategory) {
+                if (isset($childCategory->child_categories)) {
+                    $this->assertIsArray($childCategory->child_categories);
+                    $nestedPropertyLoaded = true;
+                }
+                if (!empty($childCategory->child_categories)) {
+                    $nestedPropertyLoaded = true;
+                }
+            }
+        }
+
+        $this->assertTrue($nestedPropertyLoaded);
+    }
+
+    /**
+     * Subquery strategy with a self-referential HasMany association whose source
+     * alias already ends in `_subquery`.
+     *
+     * The generated alias for the derived table must not collide with the outer
+     * table alias or SQLite will see ambiguous references.
+     */
+    public function testSubqueryWithSelfReferentialAssociationAliasAlreadyUsingSubquerySuffix(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $Categories->Categories_subquery->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('Categories_subquery.Categories_subquery')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->categories_subquery);
+            foreach ($category->categories_subquery as $childCategory) {
+                $this->assertTrue(isset($childCategory->categories_subquery));
+                $this->assertIsArray($childCategory->categories_subquery);
+            }
+        }
     }
 
     /**

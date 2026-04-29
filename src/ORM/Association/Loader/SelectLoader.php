@@ -296,11 +296,24 @@ class SelectLoader
     protected function addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
     {
         $filter = [];
+        $joinFields = [];
         $aliasedTable = $this->sourceAlias;
+        $keyCount = count((array)$key);
+
+        // When source and target use the same alias (self-referential associations
+        // like a tree structure), the subquery join alias would collide with the
+        // outer query's table alias, causing ambiguous column references.
+        // Use a suffixed alias to avoid the collision.
+        if ($aliasedTable === $this->targetAlias) {
+            $aliasedTable = $this->sourceAlias . '_subquery';
+        }
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             if (is_int($aliasedField)) {
-                $filter[] = new IdentifierExpression($field);
+                $filter[] = $field;
+                if (count($joinFields) < $keyCount) {
+                    $joinFields[] = $this->rewriteJoinIdentifier($field, $aliasedTable);
+                }
             } else {
                 $filter[$aliasedField] = $field;
             }
@@ -308,15 +321,42 @@ class SelectLoader
         $subquery->select($filter, true);
 
         if (is_array($key)) {
-            $conditions = $this->createTupleCondition($query, $key, $filter, '=');
+            $conditions = $this->createTupleCondition($query, $key, $joinFields, '=');
         } else {
-            $filter = current($filter);
-            $conditions = $query->expr([$key => $filter]);
+            $conditions = $query->expr([$key => $joinFields[0]]);
         }
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
             $conditions,
+        );
+    }
+
+    /**
+     * Rewrites a subquery field reference for use in the outer join condition.
+     *
+     * The subquery body must continue to reference its own internal table alias,
+     * while the outer join condition must reference the alias assigned to the
+     * derived table itself.
+     *
+     * @param mixed $field The original selected field.
+     * @param string $aliasedTable The alias assigned to the joined subquery.
+     * @return mixed
+     */
+    protected function rewriteJoinIdentifier(mixed $field, string $aliasedTable): mixed
+    {
+        if (!is_string($field)) {
+            return $field;
+        }
+
+        $identifier = preg_replace(
+            '/^' . preg_quote($this->sourceAlias, '/') . '\./',
+            $aliasedTable . '.' . $this->sourceAlias . '__',
+            $field,
+        );
+
+        return new IdentifierExpression(
+            $identifier ?? $field,
         );
     }
 

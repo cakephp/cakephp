@@ -2029,4 +2029,69 @@ HTML;
         $this->expectException(InvalidArgumentException::class);
         Text::mask($string, $offset, $length, $maskCharacter);
     }
+
+    /**
+     * Data provider for testmaskValue()
+     *
+     * @return array<string, array>
+     */
+    public static function maskValueProvider(): array
+    {
+        return [
+            'single needle single match' => ['hello world', ['world'], '*', 'hello *****'],
+            'single needle multiple matches' => ['hello world hello', ['hello'], '*', '***** world *****'],
+            'multiple needles' => ['hello world', ['world', 'hell'], '*', '****o *****'],
+            'overlapping needles (prefer first match example - 1)' => ['hello world', ['hel', 'hello'], '*', '***lo world'],
+            'overlapping needles (prefer first match example - 2)' => ['hello world', ['hello', 'hel'], '*', '***** world'],
+            'no matches' => ['hello world', ['foo'], '*', 'hello world'],
+            'empty needles' => ['hello world', [''], '*', 'hello world'],
+            'no needles' => ['hello world', [], '*', 'hello world'],
+            'empty string' => ['', ['hello'], '*', ''],
+            'regex special characters in needle' => ['a.c a*c a+c', ['a.c', 'a*c'], '#', '### ### a+c'],
+            'multibyte string' => ['私は ケーキphp が大好きです', ['ケーキ'], '!', '私は !!!php が大好きです'],
+            'multibyte mask character' => ['私は ケーキphp が大好きです', ['ケーキ'], 'ক', '私は কককphp が大好きです'],
+        ];
+    }
+
+    /**
+     * testMaskValue method
+     *
+     * @param string $string Input string
+     * @param array $needles Needles to mask
+     * @param string $maskCharacter Mask character
+     * @param string $expected Expected output
+     */
+    #[DataProvider('maskValueProvider')]
+    public function testMaskValue(string $string, array $needles, string $maskCharacter, string $expected): void
+    {
+        $result = Text::maskValue($string, $needles, $maskCharacter);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Data provider for invalid mask characters
+     *
+     * @return array<string, array>
+     */
+    public static function maskValueInvalidCharacterProvider(): array
+    {
+        return [
+            'empty mask character' => ['hello', ['he'], ''],
+            'multi-character mask' => ['hello', ['he'], '**'],
+        ];
+    }
+
+    /**
+     * testMaskValueThrowsOnInvalidMaskCharacter method
+     *
+     * @param string $string
+     * @param array $needles
+     * @param string $maskCharacter
+     */
+    #[DataProvider('maskValueInvalidCharacterProvider')]
+    public function testMaskValueThrowsOnInvalidMaskCharacter(string $string, array $needles, string $maskCharacter): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Text::maskValue($string, $needles, $maskCharacter);
+    }
 }

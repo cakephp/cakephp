@@ -190,8 +190,8 @@ class Session
             ));
         }
 
-        if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
-            $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
+        if (empty(ini_get('session.cookie_samesite'))) {
+            $defaults[$name]['ini']['session.cookie_samesite'] = 'Lax';
         }
 
         return $defaults[$name];

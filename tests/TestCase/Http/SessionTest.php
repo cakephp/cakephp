@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
@@ -685,6 +686,59 @@ class SessionTest extends TestCase
         $this->assertFalse($session->started());
         $session->check('something');
         $this->assertFalse($session->started());
+    }
+
+    /**
+     * test SameSite cookie default is applied to all presets.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSameSiteDefaultAppliedToAllPresets(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.cookie_samesite', '');
+        $method = new ReflectionMethod(Session::class, '_defaultConfig');
+
+        $phpConfig = $method->invoke(null, 'php');
+        $this->assertSame('Lax', $phpConfig['ini']['session.cookie_samesite']);
+
+        $cakeConfig = $method->invoke(null, 'cake');
+        $this->assertSame('Lax', $cakeConfig['ini']['session.cookie_samesite']);
+    }
+
+    /**
+     * test SameSite cookie default is not applied when already set in php.ini.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSameSiteDefaultRespectsExistingIniValue(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.cookie_samesite', 'Strict');
+        $method = new ReflectionMethod(Session::class, '_defaultConfig');
+        $config = $method->invoke(null, 'cake');
+        $this->assertArrayNotHasKey('session.cookie_samesite', $config['ini']);
+    }
+
+    /**
+     * test SameSite cookie can be overridden via user config.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSameSiteDefaultCanBeOverridden(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.cookie_samesite', '');
+        new Session([
+            'defaults' => 'cake',
+            'ini' => [
+                'session.cookie_samesite' => 'None',
+            ],
+        ]);
+        $this->assertSame('None', ini_get('session.cookie_samesite'));
     }
 
     /**

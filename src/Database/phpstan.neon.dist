@@ -8,7 +8,6 @@ parameters:
 	excludePaths:
 		- vendor/
 	ignoreErrors:
-		- '#Unsafe usage of new static\(\).#'
 		-
 			identifier: notIdentical.alwaysTrue
 		-
