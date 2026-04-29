@@ -2861,7 +2861,7 @@ class SelectQueryTest extends TestCase
             !$this->connection->getDriver()->supports(DriverFeature::SET_OPERATIONS_ORDER_BY),
             'Driver does not support ORDER BY on EXCEPTed queries.',
         );
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->where(['article_id' => 1])
@@ -2875,7 +2875,7 @@ class SelectQueryTest extends TestCase
             ->execute();
 
         $this->assertCount(
-            count((new SelectQuery($this->connection))
+            count(new SelectQuery($this->connection)
                 ->select(['id', 'comment'])
                 ->from(['c' => 'comments'])
                 ->execute()
@@ -2894,7 +2894,7 @@ class SelectQueryTest extends TestCase
             !$this->connection->getDriver()->supports(DriverFeature::EXCEPT_ALL),
             'Driver does not support EXCEPT ALL clause.',
         );
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->where(['article_id' => 1]);
@@ -2906,7 +2906,7 @@ class SelectQueryTest extends TestCase
         $rows = $result->fetchAll('assoc');
 
         $this->assertCount(
-            count((new SelectQuery($this->connection))
+            count(new SelectQuery($this->connection)
                 ->select(['id', 'comment'])
                 ->from(['c' => 'comments'])
                 ->execute()
@@ -2916,13 +2916,13 @@ class SelectQueryTest extends TestCase
         );
         $result->closeCursor();
 
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->where(['article_id' => 2])
             ->orderBy(['id' => 'desc']);
         $query = new SelectQuery($this->connection);
-        $expectedCount = count((new SelectQuery($this->connection))
+        $expectedCount = count(new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->execute()
