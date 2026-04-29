@@ -2784,7 +2784,7 @@ class SelectQueryTest extends TestCase
             'Driver does not support EXCEPT clause.',
         );
 
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->where(['article_id' => 1]);
@@ -2794,7 +2794,7 @@ class SelectQueryTest extends TestCase
             ->except($except)
             ->execute();
         $rows = $result->fetchAll();
-        $expectedCount = count((new SelectQuery($this->connection))
+        $expectedCount = count(new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->execute()
@@ -2804,13 +2804,13 @@ class SelectQueryTest extends TestCase
         $this->assertCount($expectedCount, $rows);
         $result->closeCursor();
 
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['foo' => 'id', 'bar' => 'comment'])
             ->from(['c' => 'comments'])
             ->where(['article_id' => 2])
             ->orderBy(['foo' => 'desc']);
         $query = new SelectQuery($this->connection);
-        $expectedCount = count((new SelectQuery($this->connection))
+        $expectedCount = count(new SelectQuery($this->connection)
             ->select(['foo' => 'id', 'bar' => 'comment'])
             ->from(['c' => 'comments'])
             ->execute()
@@ -2825,7 +2825,7 @@ class SelectQueryTest extends TestCase
         $this->assertNotEquals($rows, $rows2);
         $result->closeCursor();
 
-        $except = (new SelectQuery($this->connection))
+        $except = new SelectQuery($this->connection)
             ->select(['id', 'comment'])
             ->where(['article_id' => 1])
             ->from(['c' => 'comments']);
@@ -2837,7 +2837,7 @@ class SelectQueryTest extends TestCase
         $rows3 = $result->fetchAll();
 
         $this->assertCount(
-            count((new SelectQuery($this->connection))
+            count(new SelectQuery($this->connection)
                 ->select(['id', 'comment'])
                 ->from(['c' => 'comments'])
                 ->execute()
