@@ -12,3 +12,7 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 		-
 			identifier: missingType.iterableValue
+		-
+			identifier: new.static
+		-
+			identifier: trait.unused
