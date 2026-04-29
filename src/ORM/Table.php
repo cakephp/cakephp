@@ -1662,13 +1662,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['atomic'],
         );
 
+        $operation = RulesChecker::CREATE;
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
-            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options', 'operation'));
         } elseif ($entity && $this->getConnection()->inTransaction()) {
             $this->getConnection()->afterCommit(
                 fn() => $this->dispatchEvent('Model.afterSaveCommit', [
                     'entity' => $entity,
                     'options' => $options,
+                    'operation' => $operation,
                 ]),
             );
         }
@@ -1989,13 +1991,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($success) {
+            $operation = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
+
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options', 'operation'));
             } elseif ($options['_primary'] && $this->getConnection()->inTransaction()) {
                 $this->getConnection()->afterCommit(
                     fn() => $this->dispatchEvent('Model.afterSaveCommit', [
                         'entity' => $entity,
                         'options' => $options,
+                        'operation' => $operation,
                     ]),
                 );
             }
