@@ -252,4 +252,169 @@ class LoggedQueryTest extends TestCase
 
         $this->assertEquals($expected, json_encode($query));
     }
+
+    /**
+     * The configured redactor should be applied to the rendered SQL produced
+     * by `__toString()` so secrets bound as parameters never reach log
+     * engines, and to any literals that the redactor recognizes inside the
+     * query string itself.
+     */
+    public function testRedactorAppliedToInterpolatedString(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
+            $params['secret'] = '«REDACTED»';
+
+            return [$query, $params];
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => 'SELECT a FROM b WHERE a = :secret AND b = :other',
+                'params' => ['secret' => 'super-private', 'other' => 'visible'],
+            ]);
+
+            $this->assertSame(
+                "SELECT a FROM b WHERE a = '«REDACTED»' AND b = 'visible'",
+                (string)$query,
+            );
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * The redactor should also rewrite the query string itself, so call sites
+     * that inline secrets directly into the SQL fragment (rather than binding
+     * them) get scrubbed too.
+     */
+    public function testRedactorRewritesInlinedQueryText(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
+            return [str_replace('SECRET-KEY', '«REDACTED»', $query), $params];
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => "SELECT AES_DECRYPT(field, 'SECRET-KEY') FROM t",
+            ]);
+
+            $this->assertSame(
+                "SELECT AES_DECRYPT(field, '«REDACTED»') FROM t",
+                (string)$query,
+            );
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * `getContext()` exposes the unrendered query — must apply the redactor
+     * so structured loggers reading `context.query` don't leak the inlined
+     * literal.
+     */
+    public function testRedactorAppliedToGetContext(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
+            return [str_replace('SECRET-KEY', '«REDACTED»', $query), $params];
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => "SELECT AES_DECRYPT(field, 'SECRET-KEY') FROM t",
+            ]);
+
+            $this->assertSame(
+                "SELECT AES_DECRYPT(field, '«REDACTED»') FROM t",
+                $query->getContext()['query'],
+            );
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * `jsonSerialize()` is consumed by structured loggers that round-trip
+     * the LoggedQuery as JSON — both `query` and `params` must come out
+     * sanitized.
+     */
+    public function testRedactorAppliedToJsonSerialize(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
+            $params['secret'] = '«REDACTED»';
+
+            return [str_replace('SECRET-KEY', '«REDACTED»', $query), $params];
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => "SELECT AES_DECRYPT(field, 'SECRET-KEY') FROM t WHERE x = :secret",
+                'params' => ['secret' => 'super-private'],
+            ]);
+
+            $serialized = json_decode(json_encode($query), true);
+            $this->assertSame(
+                "SELECT AES_DECRYPT(field, '«REDACTED»') FROM t WHERE x = :secret",
+                $serialized['query'],
+            );
+            $this->assertSame(['secret' => '«REDACTED»'], $serialized['params']);
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * A redactor that returns a malformed value should be ignored for that
+     * call rather than break logging — the raw query and params are used
+     * as a safe fallback.
+     */
+    public function testRedactorMalformedReturnIsIgnored(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): mixed {
+            return 'not-a-tuple';
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => 'SELECT a FROM b WHERE a = :p1',
+                'params' => ['p1' => 'visible'],
+            ]);
+
+            $this->assertSame(
+                "SELECT a FROM b WHERE a = 'visible'",
+                (string)$query,
+            );
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * Setting the redactor to null restores the pre-PR behaviour for
+     * subsequent LoggedQuery instances.
+     */
+    public function testRedactorCanBeCleared(): void
+    {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
+            $params = array_map(static fn() => '«REDACTED»', $params);
+
+            return [$query, $params];
+        });
+        LoggedQuery::setRedactor(null);
+
+        $query = new LoggedQuery();
+        $query->setContext([
+            'query' => 'SELECT a FROM b WHERE a = :p1',
+            'params' => ['p1' => 'visible'],
+        ]);
+
+        $this->assertSame(
+            "SELECT a FROM b WHERE a = 'visible'",
+            (string)$query,
+        );
+    }
 }
