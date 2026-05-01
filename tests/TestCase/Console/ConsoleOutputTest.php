@@ -266,4 +266,34 @@ class ConsoleOutputTest extends TestCase
         $expected = "Test line 1.\nTest line 2.";
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * Writing to a closed underlying stream resource must not raise a
+     * TypeError. Long-running queue workers can hold a globally registered
+     * `ConsoleLog` engine whose ConsoleOutput's stream goes out of scope
+     * mid-run; the next write through that engine would otherwise crash
+     * the parent process.
+     */
+    public function testWriteToClosedResourceIsNoOp(): void
+    {
+        $tmpfile = tempnam(sys_get_temp_dir(), 'cakephp_console_output_test_');
+        $this->assertIsString($tmpfile);
+        $stream = fopen($tmpfile, 'w');
+        $this->assertIsResource($stream);
+
+        try {
+            $output = new ConsoleOutput($stream);
+
+            // Sanity: writing to the open stream returns bytes written.
+            $this->assertGreaterThan(0, $output->write('open', 0));
+
+            fclose($stream);
+
+            // After the underlying resource is closed, write() must return 0
+            // rather than throwing a fwrite() TypeError.
+            $this->assertSame(0, $output->write('after-close', 0));
+        } finally {
+            @unlink($tmpfile);
+        }
+    }
 }
