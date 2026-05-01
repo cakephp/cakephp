@@ -36,6 +36,16 @@ use Throwable;
 class LoggedQuery implements JsonSerializable, Stringable
 {
     /**
+     * Instance-property allowlist for {@see setContext()}. Hardcoded so the
+     * hot path (called per query from `Driver::log()`) avoids `property_exists`
+     * (which would also accept static properties like `redactor` and create
+     * dynamic instance properties on assignment) and reflection-based filtering.
+     *
+     * @var list<string>
+     */
+    protected const SETTABLE_CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
+
+    /**
      * Driver executing the query
      *
      * @var \Cake\Database\Driver|null
@@ -233,16 +243,6 @@ class LoggedQuery implements JsonSerializable, Stringable
 
         return $this->driver->config()['name'] ?? '';
     }
-
-    /**
-     * Instance-property allowlist for {@see setContext()}. Hardcoded so the
-     * hot path (called per query from `Driver::log()`) avoids `property_exists`
-     * (which would also accept static properties like `redactor` and create
-     * dynamic instance properties on assignment) and reflection-based filtering.
-     *
-     * @var list<string>
-     */
-    private const SETTABLE_CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
 
     /**
      * Set logging context for this query.
