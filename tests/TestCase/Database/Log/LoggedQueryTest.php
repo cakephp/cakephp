@@ -22,6 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use Exception;
+use RuntimeException;
 
 /**
  * Tests LoggedQuery class
@@ -416,5 +417,60 @@ class LoggedQueryTest extends TestCase
             "SELECT a FROM b WHERE a = 'visible'",
             (string)$query,
         );
+    }
+
+    /**
+     * A redactor that throws should be caught — logging paths must never
+     * propagate exceptions out, so we fall back to the raw query and
+     * params instead.
+     */
+    public function testRedactorThatThrowsFallsBackToRawValues(): void
+    {
+        LoggedQuery::setRedactor(static function (): array {
+            throw new RuntimeException('redactor blew up');
+        });
+
+        try {
+            $query = new LoggedQuery();
+            $query->setContext([
+                'query' => 'SELECT a FROM b WHERE a = :p1',
+                'params' => ['p1' => 'visible'],
+            ]);
+
+            // No throw escaping __toString; raw values used.
+            $this->assertSame(
+                "SELECT a FROM b WHERE a = 'visible'",
+                (string)$query,
+            );
+            $this->assertSame(
+                'SELECT a FROM b WHERE a = :p1',
+                $query->getContext()['query'],
+            );
+            $serialized = json_decode(json_encode($query), true);
+            $this->assertSame(['p1' => 'visible'], $serialized['params']);
+        } finally {
+            LoggedQuery::setRedactor(null);
+        }
+    }
+
+    /**
+     * `setContext()` walks `property_exists()`, which returns true for
+     * static properties too. Without a guard, a `'redactor'` context key
+     * would attempt `$this->redactor = $val`, creating a dynamic instance
+     * property (PHP 8.2+ deprecation) instead of touching the static.
+     * Verifies the guard skips static properties cleanly.
+     */
+    public function testSetContextSkipsStaticProperties(): void
+    {
+        $query = new LoggedQuery();
+        $query->setContext([
+            'query' => 'SELECT 1',
+            'redactor' => static fn() => ['', []],
+        ]);
+
+        // The static stays null (no app-set redactor).
+        $this->assertSame('SELECT 1', (string)$query);
+        // No dynamic instance property was created — the call ran clean.
+        $this->assertSame('SELECT 1', $query->getContext()['query']);
     }
 }

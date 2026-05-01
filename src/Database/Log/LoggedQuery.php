@@ -21,11 +21,16 @@ use Cake\Database\Driver\Sqlserver;
 use Closure;
 use Exception;
 use JsonSerializable;
+use ReflectionProperty;
 use Stringable;
+use Throwable;
 
 /**
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
+ *
+ * The static {@see LoggedQuery::setRedactor()} hook is the one supported
+ * extension point; instantiation and subclassing are not.
  *
  * @internal
  */
@@ -113,6 +118,11 @@ class LoggedQuery implements JsonSerializable, Stringable
      * Apply the configured redactor (if any) to the stored query+params
      * and return the sanitized tuple.
      *
+     * Both a malformed return value and an exception thrown by the
+     * redactor are caught here; in either case the raw query and params
+     * are used as a safe fallback so a faulty redactor cannot break
+     * logging.
+     *
      * @return array{0: string, 1: array} [sanitized query, sanitized params]
      */
     protected function redacted(): array
@@ -121,7 +131,12 @@ class LoggedQuery implements JsonSerializable, Stringable
             return [$this->query, $this->params];
         }
 
-        $result = (self::$redactor)($this->query, $this->params);
+        try {
+            $result = (self::$redactor)($this->query, $this->params);
+        } catch (Throwable) {
+            return [$this->query, $this->params];
+        }
+
         if (!is_array($result) || !isset($result[0], $result[1]) || !is_string($result[0]) || !is_array($result[1])) {
             return [$this->query, $this->params];
         }
@@ -229,9 +244,17 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function setContext(array $context): void
     {
         foreach ($context as $key => $val) {
-            if (property_exists($this, $key)) {
-                $this->{$key} = $val;
+            if (!property_exists($this, $key)) {
+                continue;
             }
+            // Skip static properties (e.g. `redactor`); writing to them via
+            // `$this->{$key} = $val` would create a dynamic instance
+            // property and trip PHP 8.2+ deprecation notices instead of
+            // updating the static.
+            if ((new ReflectionProperty($this, $key))->isStatic()) {
+                continue;
+            }
+            $this->{$key} = $val;
         }
     }
 
