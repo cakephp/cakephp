@@ -28,10 +28,8 @@ use Throwable;
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
  *
- * The static {@see LoggedQuery::setRedactor()} hook is the one supported
- * extension point; instantiation and subclassing are not.
- *
- * @internal
+ * Applications can register a {@see LoggedQuery::setRedactor()} closure
+ * to scrub sensitive bound values from every public exposure path.
  */
 class LoggedQuery implements JsonSerializable, Stringable
 {
@@ -43,7 +41,7 @@ class LoggedQuery implements JsonSerializable, Stringable
      *
      * @var list<string>
      */
-    protected const SETTABLE_CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
+    protected const CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
 
     /**
      * Driver executing the query
@@ -253,7 +251,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function setContext(array $context): void
     {
         foreach ($context as $key => $val) {
-            if (in_array($key, self::SETTABLE_CONTEXT_KEYS, true)) {
+            if (in_array($key, self::CONTEXT_KEYS, true)) {
                 $this->{$key} = $val;
             }
         }
