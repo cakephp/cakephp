@@ -21,7 +21,6 @@ use Cake\Database\Driver\Sqlserver;
 use Closure;
 use Exception;
 use JsonSerializable;
-use ReflectionProperty;
 use Stringable;
 use Throwable;
 
@@ -236,6 +235,16 @@ class LoggedQuery implements JsonSerializable, Stringable
     }
 
     /**
+     * Instance-property allowlist for {@see setContext()}. Hardcoded so the
+     * hot path (called per query from `Driver::log()`) avoids `property_exists`
+     * (which would also accept static properties like `redactor` and create
+     * dynamic instance properties on assignment) and reflection-based filtering.
+     *
+     * @var list<string>
+     */
+    private const SETTABLE_CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
+
+    /**
      * Set logging context for this query.
      *
      * @param array<string, mixed> $context Context data.
@@ -244,17 +253,9 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function setContext(array $context): void
     {
         foreach ($context as $key => $val) {
-            if (!property_exists($this, $key)) {
-                continue;
+            if (in_array($key, self::SETTABLE_CONTEXT_KEYS, true)) {
+                $this->{$key} = $val;
             }
-            // Skip static properties (e.g. `redactor`); writing to them via
-            // `$this->{$key} = $val` would create a dynamic instance
-            // property and trip PHP 8.2+ deprecation notices instead of
-            // updating the static.
-            if ((new ReflectionProperty($this, $key))->isStatic()) {
-                continue;
-            }
-            $this->{$key} = $val;
         }
     }
 

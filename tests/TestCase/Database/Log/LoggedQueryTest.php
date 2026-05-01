@@ -426,7 +426,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testRedactorThatThrowsFallsBackToRawValues(): void
     {
-        LoggedQuery::setRedactor(static function (): array {
+        LoggedQuery::setRedactor(static function (string $query, array $params): array {
             throw new RuntimeException('redactor blew up');
         });
 
