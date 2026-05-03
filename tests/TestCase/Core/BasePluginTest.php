@@ -24,9 +24,13 @@ use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
+use Cake\Http\Server;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -34,6 +38,8 @@ use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
 use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -202,6 +208,39 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
     }
 
+    public function testServerBuildMiddlewareEventIsCalledOnBootstrap(): void
+    {
+        $basePlugin = new class extends BasePlugin
+        {
+            public bool $isCalled = false;
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                return $eventManager->on('Server.buildMiddleware', function (EventInterface $event): void {
+                    $this->isCalled = true;
+                });
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response(['status' => 200]);
+            }
+        };
+        $app->addPlugin($basePlugin);
+
+        $server = new Server($app);
+        $server->run(new ServerRequest());
+        $this->assertTrue($basePlugin->isCalled);
+    }
+
     public function testEventsAreRegistered(): void
     {
         static::setAppNamespace();
@@ -233,6 +272,7 @@ class BasePluginTest extends TestCase
             }
         };
         $app = $app->addPlugin($basePlugin);
+        $app->bootstrap();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }

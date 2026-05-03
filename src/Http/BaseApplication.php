@@ -190,6 +190,9 @@ abstract class BaseApplication implements
         if (is_array($plugins)) {
             $this->plugins->addFromConfig($plugins);
         }
+
+        $eventManager = $this->events($this->getEventManager());
+        $this->setEventManager($this->pluginEvents($eventManager));
     }
 
     /**
@@ -350,9 +353,6 @@ abstract class BaseApplication implements
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
-
-        $eventManager = $this->events($this->getEventManager());
-        $this->setEventManager($this->pluginEvents($eventManager));
 
         $this->controllerFactory ??= new ControllerFactory($container);
 
