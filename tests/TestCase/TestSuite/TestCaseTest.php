@@ -490,6 +490,119 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * Make sure the mocked objects behaves as a table object as well as a mockery object
+     */
+    public function testMockModel(): void
+    {
+        static::setAppNamespace();
+        $entity = new Entity([]);
+
+        $Posts = $this->mockModel('Posts');
+
+        $this->assertInstanceOf(PostsTable::class, $Posts);
+        $this->assertSame('posts', $Posts->getTable());
+
+        $Posts = $this->mockModel('Posts');
+        $Posts->shouldReceive('save')
+            ->once()
+            ->andReturn(false);
+        $this->assertFalse($Posts->save($entity));
+        $this->assertSame(Entity::class, $Posts->getEntityClass());
+        $this->assertInstanceOf(Connection::class, $Posts->getConnection());
+        $this->assertSame('test', $Posts->getConnection()->configName());
+
+        $Tags = $this->mockModel('Tags');
+        $this->assertSame(Tag::class, $Tags->getEntityClass());
+    }
+
+    /**
+     * Test mockModel on secondary datasource.
+     */
+    public function testMockModelSecondaryDatasource(): void
+    {
+        ConnectionManager::alias('test', 'secondary');
+
+        $post = $this->mockModel(SecondaryPostsTable::class);
+        $this->assertSame('test', $post->getConnection()->configName());
+    }
+
+    /**
+     * test mockModel() with plugin models
+     */
+    public function testMockModelWithPlugin(): void
+    {
+        static::setAppNamespace();
+        $this->loadPlugins(['TestPlugin']);
+        $TestPluginComment = $this->mockModel('TestPlugin.TestPluginComments');
+
+        $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
+        $this->assertInstanceOf(TestPluginCommentsTable::class, $result);
+        $this->assertSame($TestPluginComment, $result);
+
+        $TestPluginComment = $this->mockModel('TestPlugin.TestPluginComments');
+
+        $this->assertInstanceOf(TestPluginCommentsTable::class, $TestPluginComment);
+        $this->assertSame(Entity::class, $TestPluginComment->getEntityClass());
+        $TestPluginComment->shouldReceive('save')
+            ->once()
+            ->andReturn(false);
+
+        $entity = new Entity([]);
+        $this->assertFalse($TestPluginComment->save($entity));
+
+        $TestPluginAuthors = $this->mockModel('TestPlugin.Authors');
+        $this->assertInstanceOf(AuthorsTable::class, $TestPluginAuthors);
+        $this->assertSame(Author::class, $TestPluginAuthors->getEntityClass());
+        $this->clearPlugins();
+    }
+
+    /**
+     * Make sure the mock behaves correctly as a table object
+     */
+    public function testMockModelTable(): void
+    {
+        $Mock = $this->mockModel(
+            'Table',
+            ['alias' => 'Comments', 'className' => Table::class],
+        );
+
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf(Table::class, $result);
+        $this->assertSame('Comments', $Mock->getAlias());
+
+        $Mock->shouldReceive('save')
+            ->once()
+            ->andReturn(false);
+
+        $entity = new Entity([]);
+        $this->assertFalse($Mock->save($entity));
+
+        $allMethodsStubs = $this->mockModel(
+            'Table',
+            ['alias' => 'Comments', 'className' => Table::class],
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf(Table::class, $result);
+        $this->assertSame('Comments', $allMethodsStubs->getAlias());
+    }
+
+    /**
+     * Test getting a table mockery model that doesn't have a preset table name sets the proper name
+     */
+    public function testMockModelSetTable(): void
+    {
+        static::setAppNamespace();
+        ConnectionManager::alias('test', 'custom_i18n_datasource');
+
+        $I18n = $this->mockModel('CustomI18n');
+        $this->assertSame('custom_i18n_table', $I18n->getTable());
+
+        $Tags = $this->mockModel('Tags');
+        $this->assertSame('tags', $Tags->getTable());
+        ConnectionManager::dropAlias('custom_i18n_datasource');
+    }
+
+    /**
      * Test loadRoutes() helper
      */
     public function testLoadRoutes(): void

@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\StringAggExpression;
 use InvalidArgumentException;
 
 /**
@@ -100,6 +101,27 @@ class FunctionsBuilder
     public function count(ExpressionInterface|string $expression, array $types = []): AggregateExpression
     {
         return $this->aggregate('COUNT', $this->toLiteralParam($expression), $types, 'integer');
+    }
+
+    /**
+     * Returns an AggregateExpression representing a portable string aggregation call.
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The value to aggregate.
+     * @param string $separator The separator inserted between values.
+     * @param \Cake\Database\ExpressionInterface|array|string|null $orderBy Aggregate-local ordering.
+     * @param array $types List of types to bind to the arguments.
+     * @return \Cake\Database\Expression\StringAggExpression
+     */
+    public function stringAgg(
+        ExpressionInterface|string $expression,
+        string $separator,
+        ExpressionInterface|array|string|null $orderBy = null,
+        array $types = [],
+    ): StringAggExpression {
+        $params = $this->toLiteralParam($expression);
+        $params[] = $separator;
+
+        return new StringAggExpression($params, $types, $orderBy);
     }
 
     /**

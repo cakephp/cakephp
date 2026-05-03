@@ -22,6 +22,7 @@ use Cake\I18n\Exception\I18nException;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
+use RuntimeException;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -37,6 +38,13 @@ class I18n
     public const DEFAULT_LOCALE = 'en_US';
 
     /**
+     * Default Cache configuration name used for translator persistence.
+     *
+     * @var string
+     */
+    public const DEFAULT_CACHE_CONFIG = '_cake_translations_';
+
+    /**
      * The translators collection
      *
      * @var \Cake\I18n\TranslatorRegistry|null
@@ -49,6 +57,13 @@ class I18n
      * @var string|null
      */
     protected static ?string $_defaultLocale = null;
+
+    /**
+     * The Cache configuration name used by the default translators registry.
+     *
+     * @var string
+     */
+    protected static string $cacheConfig = self::DEFAULT_CACHE_CONFIG;
 
     /**
      * Returns the translators collection instance. It can be used
@@ -74,8 +89,11 @@ class I18n
 
         if (class_exists(Cache::class)) {
             try {
-                $pool = Cache::pool('_cake_translations_');
-            } catch (InvalidArgumentException) {
+                $pool = Cache::pool(static::$cacheConfig);
+            } catch (InvalidArgumentException $e) {
+                if (static::$cacheConfig !== self::DEFAULT_CACHE_CONFIG) {
+                    throw $e;
+                }
                 $pool = Cache::pool('_cake_core_');
                 deprecationWarning(
                     '5.1.0',
@@ -86,6 +104,29 @@ class I18n
         }
 
         return static::$_collection;
+    }
+
+    /**
+     * Sets the Cache configuration name used by the default translators registry.
+     *
+     * Must be called before the first translator is resolved. To swap the
+     * cacher after translators have been built, use
+     * {@see \Cake\I18n\TranslatorRegistry::setCacher()} directly.
+     *
+     * @param string $name The Cache config name to use for translator persistence.
+     * @return void
+     * @throws \RuntimeException When the translators registry has already been built.
+     */
+    public static function setCacheConfig(string $name): void
+    {
+        if (static::$_collection !== null) {
+            throw new RuntimeException(
+                '`I18n::setCacheConfig()` must be called before the translators registry is built. '
+                . 'Call `I18n::clear()` first, or use `I18n::translators()->setCacher()` to swap the cacher.',
+            );
+        }
+
+        static::$cacheConfig = $name;
     }
 
     /**

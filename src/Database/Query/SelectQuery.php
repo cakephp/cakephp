@@ -68,6 +68,7 @@ class SelectQuery extends Query implements IteratorAggregate
         'limit' => null,
         'offset' => null,
         'union' => [],
+        'except' => [],
         'epilog' => null,
         'intersect' => [],
     ];
@@ -560,6 +561,79 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->_parts['intersect'] = [];
         }
         $this->_parts['intersect'][] = [
+            'all' => true,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with an EXCEPT operator with
+     * this query. This is used to subtract the passed query from the result set of this query.
+     * You can add as many queries as you required by calling multiple times
+     * this method with different queries.
+     *
+     * By default, the EXCEPT operator will remove duplicate rows, if you wish to include
+     * every row for all queries, use exceptAll().
+     *
+     * ### Examples
+     *
+     * ```
+     * $except = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->except($except);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d EXCEPT SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in EXCEPT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function except(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['except'] = [];
+        }
+        $this->_parts['except'][] = [
+            'all' => false,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with the EXCEPT ALL operator with
+     * this query. This is used to subtract the passed query from the result set of this query.
+     * You can add as many queries as you required by calling multiple times
+     * this method with different queries.
+     *
+     * Unlike EXCEPT, EXCEPT ALL will not remove duplicate rows.
+     *
+     * ```
+     * $except = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->exceptAll($except);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d EXCEPT ALL SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in EXCEPT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function exceptAll(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['except'] = [];
+        }
+        $this->_parts['except'][] = [
             'all' => true,
             'query' => $query,
         ];

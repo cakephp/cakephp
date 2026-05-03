@@ -164,7 +164,7 @@ jobs:
 
     - name: Submit code coverage
       if: matrix.php-version == '8.2'
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         files: coverage.xml,coverage-database.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}

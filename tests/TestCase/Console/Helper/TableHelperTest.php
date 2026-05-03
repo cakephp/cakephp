@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         3.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Command\Helper;
+namespace Cake\Test\TestCase\Console\Helper;
 
-use Cake\Command\Helper\TableHelper;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Helper\TableHelper;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use UnexpectedValueException;

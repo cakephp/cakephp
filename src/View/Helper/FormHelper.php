@@ -173,7 +173,9 @@ class FormHelper extends Helper
             'requiredClass' => 'required',
             // CSS class added to the input when the field has validation errors
             'errorClass' => 'form-error',
-            // Class to use instead of "display:none" style attribute for hidden elements
+            // CSS class for the hidden block / postLink form. When set,
+            // this class is emitted instead of the HTML5 `hidden` boolean
+            // attribute that is used by default.
             'hiddenClass' => '',
             // CSS class added to the input containers
             'containerClass' => 'input',
@@ -665,6 +667,13 @@ class FormHelper extends Helper
     /**
      * Wrap the given content in a hidden div.
      *
+     * Defaults to the HTML5 `hidden` boolean attribute, which is functionally
+     * equivalent to `style="display:none;"` but does not require
+     * `style-src 'unsafe-inline'` under a strict Content-Security-Policy.
+     * Apps that need a custom mechanism (e.g. a Tailwind utility class) can
+     * set the `hiddenClass` template option, which takes precedence and
+     * emits `class="…"` instead.
+     *
      * @param string $content Content to wrap.
      * @return string
      */
@@ -673,7 +682,7 @@ class FormHelper extends Helper
         $hiddenClass = $this->templater()->get('hiddenClass');
         $hiddenBlockAttrs = $hiddenClass
             ? ['class' => $hiddenClass]
-            : ['style' => 'display:none;'];
+            : ['hidden' => true];
 
         return $this->formatTemplate('hiddenBlock', [
             'content' => $content,
@@ -1923,7 +1932,9 @@ class FormHelper extends Helper
         ];
         $hiddenClass = $this->templater()->get('hiddenClass');
         if ($hiddenClass === '' || $hiddenClass === null) {
-            $formOptions['style'] = 'display:none;';
+            // HTML5 `hidden` boolean attribute — functionally equivalent to
+            // `style="display:none;"` but strict-CSP compatible.
+            $formOptions['hidden'] = true;
         } else {
             $formOptions['class'] = $hiddenClass;
         }

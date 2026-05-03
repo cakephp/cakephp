@@ -1,5 +1,6 @@
 name: Feature Request
 description: Create a feature request
+type: enhancement
 labels: ["enhancement"]
 body:
   - type: textarea

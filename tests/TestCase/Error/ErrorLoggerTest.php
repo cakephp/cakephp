@@ -54,7 +54,7 @@ class ErrorLoggerTest extends TestCase
             'className' => 'Array',
         ]);
 
-        $driver = $this->createMock(Mysql::class);
+        $driver = $this->createStub(Mysql::class);
         $driver->method('config')->willReturn(['name' => 'test_connection']);
 
         $query = new LoggedQuery();
@@ -90,7 +90,7 @@ class ErrorLoggerTest extends TestCase
             'className' => TestAppLog::class,
         ]);
 
-        $driver = $this->createMock(Mysql::class);
+        $driver = $this->createStub(Mysql::class);
         $driver->method('config')->willReturn(['name' => 'my_connection']);
 
         $query = new LoggedQuery();
