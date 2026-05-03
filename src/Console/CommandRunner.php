@@ -23,7 +23,6 @@ use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Core\ContainerApplicationInterface;
-use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -138,13 +137,6 @@ class CommandRunner implements EventDispatcherInterface
         assert($argv !== [], 'Cannot run any commands. No arguments received.');
 
         $this->bootstrap();
-
-        if ($this->app instanceof EventAwareApplicationInterface) {
-            $eventManager = $this->getEventManager();
-            $eventManager = $this->app->events($eventManager);
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $this->setEventManager($eventManager);
-        }
 
         $commands = new CommandCollection([
             'help' => HelpCommand::class,
