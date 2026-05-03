@@ -19,6 +19,7 @@ namespace Cake\Console;
 use Cake\Console\Exception\MissingHelperException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Registry for Helpers. Provides features
@@ -56,8 +57,25 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _resolveClassName(string $class): ?string
     {
-        /** @var class-string<\Cake\Console\Helper>|null */
-        return App::className($class, 'Command/Helper', 'Helper');
+        /** @var class-string<\Cake\Console\Helper>|null $result */
+        $result = App::className($class, 'Console/Helper', 'Helper');
+        if ($result !== null) {
+            return $result;
+        }
+
+        /** @var class-string<\Cake\Console\Helper>|null $result */
+        $result = App::className($class, 'Command/Helper', 'Helper');
+        if ($result !== null) {
+            deprecationWarning(
+                '5.4.0',
+                sprintf(
+                    'Helpers in `Command/Helper` are deprecated. Move `%s` to `Console/Helper`.',
+                    $class,
+                ),
+            );
+        }
+
+        return $result;
     }
 
     /**

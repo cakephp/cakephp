@@ -39,6 +39,7 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
+use Mockery\LegacyMockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -1035,7 +1036,7 @@ abstract class TestCase extends BaseTestCase
 // phpcs:enable
 
     /**
-     * Mock a model, maintain fixtures and table association
+     * Mock a model with PHPUnit mocks, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
      * @param array<string> $methods The list of methods to mock
@@ -1084,6 +1085,48 @@ abstract class TestCase extends BaseTestCase
         }
 
         $mock = $builder->getMock();
+        assert($mock instanceof Table);
+
+        if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
+            $parts = explode('\\', $className);
+            $entityAlias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
+            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
+            if (class_exists($entityClass)) {
+                $mock->setEntityClass($entityClass);
+            }
+        }
+
+        if (stripos($mock->getTable(), 'mock') === 0) {
+            $mock->setTable(Inflector::tableize($baseClass));
+        }
+
+        $locator->set($baseClass, $mock);
+        $locator->set($alias, $mock);
+
+        return $mock;
+    }
+
+    /**
+     * Mock a model with Mockery mocks, maintain fixtures and table association
+     *
+     * @template T of \Cake\ORM\Table
+     * @param string|class-string<T> $alias The alias or the FQCN of the model to get a mock for.
+     * @param array<string, mixed> $options The config data for the mock's constructor.
+     * @return (T|\Cake\ORM\Table)&\Mockery\LegacyMockInterface
+     */
+    public function mockModel(string $alias, array $options = []): Table&LegacyMockInterface
+    {
+        $className = $this->_getTableClassName($alias, $options);
+        $connectionName = $className::defaultConnectionName();
+        $connection = ConnectionManager::get($connectionName);
+
+        $locator = $this->getTableLocator();
+
+        [, $baseClass] = pluginSplit($alias);
+        $options += ['alias' => $baseClass, 'connection' => $connection];
+        $options += $locator->getConfig($alias);
+
+        $mock = Mockery::mock(new $className($options))->makePartial();
         assert($mock instanceof Table);
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {

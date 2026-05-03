@@ -42,6 +42,7 @@ use PDO;
 use Psr\Log\AbstractLogger;
 use ReflectionMethod;
 use ReflectionProperty;
+use RuntimeException;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
@@ -1285,5 +1286,127 @@ class ConnectionTest extends TestCase
         $writeDriver = $connection->getDriver('write');
         $this->assertSame('write.db', $writeDriver->config()['database'], 'Write database should be overridden.');
         $this->assertSame('default-user', $writeDriver->config()['username'], 'Write username should be inherited.');
+    }
+
+    public function testAfterCommitCallbackFiredOnCommit(): void
+    {
+        $fired = false;
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$fired): void {
+            $fired = true;
+        });
+        $this->assertFalse($fired);
+        $this->connection->commit();
+        $this->assertTrue($fired);
+    }
+
+    public function testAfterCommitCallbackDiscardedOnRollback(): void
+    {
+        $fired = false;
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$fired): void {
+            $fired = true;
+        });
+        $this->connection->rollback();
+        $this->assertFalse($fired);
+
+        // Verify callback doesn't leak into subsequent transaction
+        $this->connection->begin();
+        $this->connection->commit();
+        $this->assertFalse($fired);
+    }
+
+    public function testAfterCommitExecutesImmediatelyOutsideTransaction(): void
+    {
+        $fired = false;
+        $this->connection->afterCommit(function () use (&$fired): void {
+            $fired = true;
+        });
+        $this->assertTrue($fired);
+    }
+
+    public function testAfterCommitCallbacksFireInRegistrationOrder(): void
+    {
+        $order = [];
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$order): void {
+            $order[] = 'first';
+        });
+        $this->connection->afterCommit(function () use (&$order): void {
+            $order[] = 'second';
+        });
+        $this->connection->commit();
+        $this->assertSame(['first', 'second'], $order);
+    }
+
+    public function testAfterCommitCallbacksFiredAfterNestedCommit(): void
+    {
+        $firedOuter = false;
+        $firedInner = false;
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$firedOuter): void {
+            $firedOuter = true;
+        });
+        $this->connection->begin(); // nested
+        $this->connection->afterCommit(function () use (&$firedInner): void {
+            $firedInner = true;
+        });
+        $this->connection->commit(); // commit nested
+        $this->assertFalse($firedOuter, 'Outer callback must not fire until outermost commit');
+        $this->assertFalse($firedInner, 'Inner callback must not fire until outermost commit');
+        $this->connection->commit(); // commit outermost
+        $this->assertTrue($firedOuter);
+        $this->assertTrue($firedInner);
+    }
+
+    public function testAfterCommitCallbacksDiscardedOnNestedRollbackToBeginning(): void
+    {
+        $fired = false;
+        $this->connection->begin();
+        $this->connection->begin(); // nested — savepoint
+        $this->connection->afterCommit(function () use (&$fired): void {
+            $fired = true;
+        });
+        $this->connection->rollback(true); // rollback to beginning
+        $this->assertFalse($fired);
+    }
+
+    public function testAfterCommitCallbacksSurviveSavepointRollback(): void
+    {
+        $this->connection->enableSavePoints();
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Driver does not support save points');
+
+        $firedA = false;
+        $firedB = false;
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$firedA): void {
+            $firedA = true;
+        });
+        $this->connection->begin(); // savepoint
+        $this->connection->afterCommit(function () use (&$firedB): void {
+            $firedB = true;
+        });
+        $this->connection->rollback(); // rollback savepoint only
+        $this->connection->commit(); // commit outermost
+        $this->assertTrue($firedA);
+        $this->assertTrue($firedB);
+    }
+
+    public function testAfterCommitCallbackExceptionStopsExecution(): void
+    {
+        $secondFired = false;
+        $this->connection->begin();
+        $this->connection->afterCommit(function (): void {
+            throw new RuntimeException('callback failed');
+        });
+        $this->connection->afterCommit(function () use (&$secondFired): void {
+            $secondFired = true;
+        });
+        try {
+            $this->connection->commit();
+        } catch (RuntimeException) {
+            // Expected
+        }
+        $this->assertFalse($secondFired, 'Remaining callbacks should not execute when one throws');
     }
 }

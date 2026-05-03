@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         5.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Command\Helper;
+namespace Cake\Test\TestCase\Console\Helper;
 
-use Cake\Command\Helper\BannerHelper;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Helper\BannerHelper;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -28,7 +28,7 @@ use InvalidArgumentException;
 class BannerHelperTest extends TestCase
 {
     /**
-     * @var \Cake\Command\Helper\BannerHelper
+     * @var \Cake\Console\Helper\BannerHelper
      */
     protected BannerHelper $helper;
 

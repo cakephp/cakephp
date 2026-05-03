@@ -49,7 +49,7 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'offset', 'limit', 'union', 'epilog', 'intersect',
+        'offset', 'limit', 'union', 'except', 'epilog', 'intersect',
     ];
 
     /**

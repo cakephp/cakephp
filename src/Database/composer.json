@@ -32,7 +32,8 @@
     },
     "require-dev": {
         "cakephp/i18n": "5.4.*@dev",
-        "cakephp/log": "5.4.*@dev"
+        "cakephp/log": "5.4.*@dev",
+        "cakephp/utility": "5.4.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -41,7 +42,8 @@
     },
     "suggest": {
         "cakephp/i18n": "If you are using locale-aware datetime formats.",
-        "cakephp/log": "If you want to use query logging without providing a logger yourself."
+        "cakephp/log": "If you want to use query logging without providing a logger yourself.",
+        "cakephp/utility": "If you want to use EnumLabelTrait."
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

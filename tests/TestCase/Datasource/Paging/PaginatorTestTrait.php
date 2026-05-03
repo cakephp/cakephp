@@ -1045,6 +1045,38 @@ trait PaginatorTestTrait
     }
 
     /**
+     * Test that unprefixed sortableFields work correctly with prefixed default order.
+     *
+     * When controller sets prefixed order like `['Articles.modified' => 'DESC']`
+     * and sortableFields uses unprefixed names like `['modified']`, sort toggling
+     * should work correctly without duplicating the field in the order array.
+     */
+    public function testValidateSortUnprefixedFieldsWithPrefixedDefaultOrder(): void
+    {
+        $model = $this->mockAliasHasFieldModel();
+
+        // Controller has prefixed default order but unprefixed sortableFields
+        $options = [
+            'sort' => 'created',
+            'direction' => 'asc',
+            'order' => [
+                'model.created' => 'DESC',
+            ],
+            'sortableFields' => ['created'],
+        ];
+
+        $result = $this->Paginator->validateSort($model, $options);
+
+        // The sort should work - unprefixed 'created' from sortableFields should
+        // be recognized as matching 'model.created' from default order
+        $expected = [
+            'model.created' => 'asc',
+        ];
+        $this->assertSame($expected, $result['order']);
+        $this->assertSame('created', $result['sort']);
+    }
+
+    /**
      * @return array
      */
     public static function checkLimitProvider(): array

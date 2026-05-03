@@ -27,8 +27,8 @@ use League\Container\Argument\ArgumentReflectorTrait;
 use League\Container\Argument\ArgumentResolverTrait;
 use League\Container\Argument\LiteralArgument;
 use League\Container\Argument\ResolvableArgument;
-use League\Container\Exception\NotFoundException;
 use League\Container\ReflectionContainer;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -180,7 +180,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             try {
                 $this->container->extend($class);
                 $hasDefinition = true;
-            } catch (NotFoundException) {
+            } catch (NotFoundExceptionInterface) {
                 // No definition exists yet
             }
 

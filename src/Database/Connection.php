@@ -105,6 +105,13 @@ class Connection implements ConnectionInterface
      */
     protected ?NestedTransactionRollbackException $nestedTransactionRollbackException = null;
 
+    /**
+     * Callbacks to execute after the outermost transaction commits.
+     *
+     * @var array<\Closure>
+     */
+    protected array $afterCommitCallbacks = [];
+
     protected QueryFactory $queryFactory;
 
     /**
@@ -472,6 +479,26 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Register a callback to run after the outermost transaction commits.
+     *
+     * If no transaction is active, the callback executes immediately.
+     * Callbacks are discarded on rollback.
+     *
+     * @param \Closure $callback Callback to execute after commit.
+     * @return void
+     */
+    public function afterCommit(Closure $callback): void
+    {
+        if (!$this->_transactionStarted) {
+            $callback();
+
+            return;
+        }
+
+        $this->afterCommitCallbacks[] = $callback;
+    }
+
+    /**
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
@@ -494,7 +521,15 @@ class Connection implements ConnectionInterface
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
 
-            return $this->getWriteDriver()->commitTransaction();
+            $result = $this->getWriteDriver()->commitTransaction();
+
+            $callbacks = $this->afterCommitCallbacks;
+            $this->afterCommitCallbacks = [];
+            foreach ($callbacks as $cb) {
+                $cb();
+            }
+
+            return $result;
         }
         if ($this->isSavePointsEnabled()) {
             $this->releaseSavePoint((string)$this->_transactionLevel);
@@ -524,6 +559,7 @@ class Connection implements ConnectionInterface
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
+            $this->afterCommitCallbacks = [];
             $this->getWriteDriver()->rollbackTransaction();
 
             return true;

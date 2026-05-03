@@ -46,6 +46,7 @@ class Column
      * @param bool|null $unsigned Whether the column is unsigned
      * @param string|null $collate Collation for the column
      * @param int|null $srid SRID for geometry fields
+     * @param string|null $geometryType Geometry type for geometry fields (e.g., Point, Polygon)
      * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
      * @param bool|null $fixed Whether the column is fixed-length (BINARY vs VARBINARY)
      */
@@ -65,6 +66,7 @@ class Column
         protected ?bool $unsigned = null,
         protected ?string $collate = null,
         protected ?int $srid = null,
+        protected ?string $geometryType = null,
         protected ?string $baseType = null,
         protected ?bool $fixed = null,
     ) {
@@ -506,6 +508,29 @@ class Column
     }
 
     /**
+     * Sets the geometry type for geometry fields.
+     *
+     * @param string $geometryType Geometry type (e.g., Point, Polygon)
+     * @return $this
+     */
+    public function setGeometryType(string $geometryType)
+    {
+        $this->geometryType = $geometryType;
+
+        return $this;
+    }
+
+    /**
+     * Gets the geometry type for geometry fields.
+     *
+     * @return string|null
+     */
+    public function getGeometryType(): ?string
+    {
+        return $this->geometryType;
+    }
+
+    /**
      * Sets whether the column is fixed-length.
      *
      * Used for binary columns to distinguish between BINARY and VARBINARY.
@@ -562,6 +587,7 @@ class Column
             'properties',
             'collate',
             'srid',
+            'geometryType',
             'increment',
             'generated',
             'fixed',
@@ -612,7 +638,7 @@ class Column
             }
         }
 
-        return [
+        $result = [
             'name' => $this->getName(),
             'baseType' => $this->getBaseType(),
             'type' => $type,
@@ -630,5 +656,12 @@ class Column
             'identity' => $this->getIdentity(),
             'fixed' => $this->getFixed(),
         ];
+
+        // Only include geometryType when set (for PostGIS reflection)
+        if ($this->getGeometryType() !== null) {
+            $result['geometryType'] = $this->getGeometryType();
+        }
+
+        return $result;
     }
 }

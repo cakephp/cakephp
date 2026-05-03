@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
@@ -101,6 +102,7 @@ class Sqlite extends Driver
      */
     protected array $featureVersions = [
         'cte' => '3.8.3',
+        'string-agg' => '3.44.0',
         'window' => '3.28.0',
     ];
 
@@ -199,13 +201,17 @@ class Sqlite extends Driver
             DriverFeatureEnum::JSON => false,
 
             DriverFeatureEnum::CTE,
+            DriverFeatureEnum::STRING_AGG,
             DriverFeatureEnum::WINDOW => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature->value],
                 '>=',
             ),
+            DriverFeatureEnum::GROUP_CONCAT => true,
             DriverFeatureEnum::INTERSECT => true,
             DriverFeatureEnum::INTERSECT_ALL => false,
+            DriverFeatureEnum::EXCEPT => true,
+            DriverFeatureEnum::EXCEPT_ALL => false,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
             DriverFeatureEnum::CHECK_CONSTRAINTS => true,
@@ -226,9 +232,24 @@ class Sqlite extends Driver
     protected function _expressionTranslators(): array
     {
         return [
+            StringAggExpression::class => '_transformStringAggExpression',
             FunctionExpression::class => '_transformFunctionExpression',
             TupleComparison::class => '_transformTupleComparison',
         ];
+    }
+
+    /**
+     * Receives a StringAggExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\StringAggExpression $expression The expression to convert.
+     * @return void
+     */
+    protected function _transformStringAggExpression(StringAggExpression $expression): void
+    {
+        $expression
+            ->setName($this->supports(DriverFeatureEnum::STRING_AGG) ? 'STRING_AGG' : 'GROUP_CONCAT')
+            ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
     }
 
     /**
