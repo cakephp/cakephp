@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\Command;
 use Cake\Command\VersionCommand;
 use Cake\Console\Arguments;
 use Cake\Console\CommandCollection;
@@ -24,8 +25,10 @@ use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -566,6 +569,50 @@ class CommandRunnerTest extends TestCase
 
         $this->assertTrue($app->customEventFired, 'Custom event should have been fired');
         $this->assertTrue($app->pluginEventFired, 'Plugin event should have been fired');
+    }
+
+    public function testRunRegistersPluginEventsForCommands(): void
+    {
+        $output = new StubConsoleOutput();
+        $plugin = new class extends BasePlugin {
+            public bool $commandEventFired = false;
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('Test.commandEvent', function (): void {
+                    $this->commandEventFired = true;
+                });
+
+                return $eventManager;
+            }
+        };
+        $command = new class extends Command {
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $this->getEventManager()->dispatch(new Event('Test.commandEvent'));
+
+                return CommandInterface::CODE_SUCCESS;
+            }
+        };
+        $app = new class ($this->config, $command) extends Application {
+            public function __construct(
+                string $configDir,
+                protected Command $command,
+            ) {
+                parent::__construct($configDir);
+            }
+
+            public function console(CommandCollection $commands): CommandCollection
+            {
+                return $commands->add('test_command', $this->command);
+            }
+        };
+        $app->addPlugin($plugin);
+
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'test_command'], $this->getMockIo($output));
+
+        $this->assertTrue($plugin->commandEventFired, 'Plugin event should have been fired by the command');
     }
 
     protected function makeAppWithCommands(array $commands): BaseApplication
