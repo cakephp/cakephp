@@ -151,14 +151,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public function getOptionParser(): ConsoleOptionParser
     {
-        // `$this->name` is normally rewritten to `"<root> <name>"` by
-        // `CommandRunner::resolve()` before `run()` is called. Direct
-        // callers (queue tasks, custom dispatchers, plain instantiation
-        // in tests) skip that step, leaving subclass overrides like
-        // `protected string $name = 'my_command';` as a single token —
-        // which previously caused `explode()` to return a one-element
-        // array and `new ConsoleOptionParser(null)` to throw a TypeError.
-        // Tolerate the missing root by falling back to 'cake' here.
         if (str_contains($this->name, ' ')) {
             [$root, $name] = explode(' ', $this->name, 2);
         } else {

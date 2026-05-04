@@ -210,15 +210,6 @@ class BaseCommandTest extends TestCase
         $this->assertSame('Alice', $command->capturedName);
     }
 
-    /**
-     * Subclasses commonly override `protected string $name` to a single
-     * bare token (e.g. `'my_command'`), expecting `CommandRunner` to
-     * rewrite it to `"cake my_command"` via setName() before running.
-     * Direct callers (queue tasks, custom dispatchers, plain
-     * instantiation in tests) skip that step. getOptionParser() must
-     * tolerate the missing root rather than throw a TypeError from
-     * `new ConsoleOptionParser(null)`.
-     */
     public function testGetOptionParserToleratesSingleTokenName(): void
     {
         $command = new class extends Command {
@@ -236,11 +227,6 @@ class BaseCommandTest extends TestCase
         $this->assertStringContainsString('cake single_token_name', $parser->help());
     }
 
-    /**
-     * Counterpart: when the name is already space-formatted
-     * (BaseCommand's default `cake unknown`, custom roots like
-     * `app foo`), getOptionParser() must keep both halves intact.
-     */
     public function testGetOptionParserPreservesSpaceFormattedName(): void
     {
         $command = new class extends Command {
