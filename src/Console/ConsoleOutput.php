@@ -293,12 +293,7 @@ class ConsoleOutput
     protected function _write(string $message): int
     {
         // @phpstan-ignore isset.property (property may not be set if constructor throws)
-        if (!isset($this->_output) || !is_resource($this->_output)) {
-            // The stream resource was never opened (constructor threw an error) or has
-            // been closed since — e.g. by a long-running queue worker whose
-            // job-scoped ConsoleIo went out of scope while the globally
-            // registered ConsoleLog engine still references it. Bail silently
-            // so logging paths can't bring the parent process down.
+        if (!is_resource($this->_output)) {
             return 0;
         }
 
