@@ -733,6 +733,20 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Test that the "too many arguments" error message reports the correct 1-based count.
+     */
+    public function testParseArgumentTooManyErrorMessage(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument('name', ['help' => 'An argument']);
+
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Received too many arguments. Got `2` (or more) but only `1` arguments are defined.');
+
+        $parser->parse(['one', 'two', 'three'], $this->io);
+    }
+
+    /**
      * test parsing arguments with 0 value.
      */
     public function testParseArgumentZero(): void

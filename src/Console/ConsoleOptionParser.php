@@ -836,8 +836,8 @@ class ConsoleOptionParser
         if (!isset($this->_args[$next])) {
             $expected = count($this->_args);
             throw new ConsoleException(sprintf(
-                'Received too many arguments. Got `%s` but only `%s` arguments are defined.',
-                $next,
+                'Received too many arguments. Got `%s` (or more) but only `%s` arguments are defined.',
+                $next + 1,
                 $expected,
             ));
         }
