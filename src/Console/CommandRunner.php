@@ -174,6 +174,24 @@ class CommandRunner implements EventDispatcherInterface
             $name = 'help';
         }
 
+        // If the matched command also has sibling subcommands (e.g. `i18n` exists alongside
+        // `i18n init` / `i18n extract`), an unknown next token is almost always a typo for a
+        // subcommand. Reject it instead of letting it fall through as a positional argument.
+        if (
+            $name !== null
+            && $commands->has($name)
+            && isset($argv[0])
+            && !str_starts_with($argv[0], '-')
+            && $this->hasCommandsWithPrefix($commands, $name)
+        ) {
+            $candidate = $name . ' ' . $argv[0];
+            if (!$commands->has($candidate)) {
+                $io->error($this->unknownSubcommandMessage($commands, $name, $argv[0]));
+
+                return CommandInterface::CODE_ERROR;
+            }
+        }
+
         try {
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
@@ -351,6 +369,38 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return false;
+    }
+
+    /**
+     * Build the error message shown when a token following a command name doesn't
+     * match any known subcommand of that command.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection.
+     * @param string $name The matched command name (e.g. "i18n").
+     * @param string $token The unknown next token (e.g. "nonsense").
+     * @return string
+     */
+    protected function unknownSubcommandMessage(
+        CommandCollection $commands,
+        string $name,
+        string $token,
+    ): string {
+        $prefix = $name . ' ';
+        $available = [];
+        foreach ($commands->keys() as $key) {
+            if (str_starts_with($key, $prefix)) {
+                $available[] = $key;
+            }
+        }
+        sort($available);
+
+        $message = "Unknown command `{$this->root} {$name} {$token}`.";
+        if ($available !== []) {
+            $message .= "\nAvailable subcommands: `" . implode('`, `', $available) . '`.';
+        }
+        $message .= "\nRun `{$this->root} {$name} --help` to see usage.";
+
+        return $message;
     }
 
     /**

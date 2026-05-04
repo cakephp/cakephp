@@ -173,6 +173,44 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test that an unknown token following a command which also has sibling
+     * subcommands is rejected, instead of being silently passed to the base
+     * command as a positional argument.
+     *
+     * For example, given `i18n`, `i18n init` and `i18n extract` are all registered:
+     *   `bin/cake i18n nonsense`
+     * should error rather than silently invoking I18nCommand.
+     */
+    public function testRunUnknownSubcommandErrorsWhenSiblingsExist(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', 'i18n', 'nonsense'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_ERROR, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('Unknown command `cake i18n nonsense`.', $messages);
+        $this->assertStringContainsString('Available subcommands:', $messages);
+        $this->assertStringContainsString('i18n extract', $messages);
+        $this->assertStringContainsString('i18n init', $messages);
+    }
+
+    /**
+     * Test that an option-like token after a parent command does not trigger
+     * the unknown-subcommand check.
+     */
+    public function testRunOptionAfterParentCommandIsNotASubcommand(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', 'i18n', '--help'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringNotContainsString('Unknown command', $messages);
+    }
+
+    /**
      * Test using `cake --help` invokes the help command
      */
     public function testRunHelpLongOption(): void
