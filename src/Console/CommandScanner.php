@@ -56,7 +56,6 @@ class CommandScanner
         return $this->scanDir(
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
-            '',
         );
     }
 
@@ -88,7 +87,7 @@ class CommandScanner
      * @param array<string> $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
-    public function scanDir(string $path, string $namespace, string $prefix, array $hide = []): array
+    public function scanDir(string $path, string $namespace, string $prefix = '', array $hide = []): array
     {
         if (!is_dir($path)) {
             return [];
