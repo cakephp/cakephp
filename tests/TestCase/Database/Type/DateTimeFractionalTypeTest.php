@@ -240,6 +240,7 @@ class DateTimeFractionalTypeTest extends TestCase
             ['2017-04-05T17:18:00.1234567+00:00', null],
 
             // valid string types
+            ['2014-02-14', new DateTime('2014-02-14 00:00:00')],
             ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')],
             ['2014-02-14 12:02:12', new DateTime('2014-02-14 12:02:12')],
             ['2014-02-14 00:00:00.123456', new DateTime('2014-02-14 00:00:00.123456')],

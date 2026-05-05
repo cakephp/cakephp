@@ -56,6 +56,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         'Y-m-d\TH:i:sP',
         'Y-m-d\TH:i:s.u',
         'Y-m-d\TH:i:s.uP',
+        '!Y-m-d',
     ];
 
     /**

@@ -228,6 +228,7 @@ class DateTimeTypeTest extends TestCase
             // valid string types
             ['1392387900', new DateTime('@1392387900')],
             [1392387900, new DateTime('@1392387900')],
+            ['2014-02-14', new DateTime('2014-02-14 00:00:00')],
             ['2014-02-14 12:02', new DateTime('2014-02-14 12:02')],
             ['2014-02-14 00:00:00', new DateTime('2014-02-14 00:00:00')],
             ['2014-02-14 13:14:15', new DateTime('2014-02-14 13:14:15')],
