@@ -28,6 +28,7 @@
         "cakephp/core": "5.4.*@dev",
         "cakephp/chronos": "^3.3",
         "cakephp/datasource": "5.4.*@dev",
+        "cakephp/event": "5.4.*@dev",
         "psr/log": "^3.0"
     },
     "require-dev": {

@@ -33,6 +33,8 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Log\Log;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
@@ -41,9 +43,24 @@ use function Cake\Core\env;
 
 /**
  * Represents a connection with a database server.
+ *
+ * ### Events
+ *
+ * - `Connection.afterCommit` Fired after the outermost transaction commits.
+ *   Listeners receive the connection as the event subject. Not fired on
+ *   rollback or for nested commits. Useful for hooks that must run only once
+ *   per top-level transaction commit, regardless of how many ORM operations
+ *   participated in it.
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Database\Connection>
  */
-class Connection implements ConnectionInterface
+class Connection implements ConnectionInterface, EventDispatcherInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Database\Connection>
+     */
+    use EventDispatcherTrait;
+
     /**
      * Contains the configuration params for this connection.
      *
@@ -528,6 +545,8 @@ class Connection implements ConnectionInterface
             foreach ($callbacks as $cb) {
                 $cb();
             }
+
+            $this->dispatchEvent('Connection.afterCommit');
 
             return $result;
         }
