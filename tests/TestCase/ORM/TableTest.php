@@ -6882,6 +6882,118 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that passing an entity from a different table to delete()
+     * throws when both tables declare a specific entity class.
+     */
+    public function testDeleteRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity of class `TestApp\Model\Entity\Tag` does not match the entity class '
+            . '`TestApp\Model\Entity\Article` configured for table `Articles`.',
+        );
+
+        $articles->delete($tag);
+    }
+
+    /**
+     * Tests that passing an entity from a different table to save()
+     * throws when both tables declare a specific entity class.
+     */
+    public function testSaveRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['name' => 'new']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->save($tag);
+    }
+
+    /**
+     * Tests that the generic Entity class is accepted as an escape hatch,
+     * allowing ad-hoc operations such as ``$table->delete(new Entity(['id' => 1]))``.
+     */
+    public function testDeleteAcceptsGenericEntity(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $entity = new Entity(['id' => 1]);
+        $entity->setNew(false);
+
+        $this->assertTrue($articles->delete($entity));
+    }
+
+    /**
+     * Tests that a table without a custom entity class accepts any entity
+     * subclass, as there is nothing specific to validate against.
+     */
+    public function testDeleteOnGenericTableAcceptsAnyEntity(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(Entity::class);
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
+     * Tests that the cross-table check also fires for deleteMany().
+     */
+    public function testDeleteManyRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = $articles->get(1);
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->deleteMany([$article, $tag]);
+    }
+
+    /**
+     * Tests that the cross-table check also fires for saveMany().
+     */
+    public function testSaveManyRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article(['title' => 'a', 'body' => 'b']);
+        $tag = new Tag(['name' => 'new']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->saveMany([$article, $tag]);
+    }
+
+    /**
+     * Tests that patchEntity() rejects an entity from another table.
+     */
+    public function testPatchEntityRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1, 'name' => 'foo']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->patchEntity($tag, ['title' => 'updated']);
+    }
+
+    /**
+     * Tests that loadInto() rejects an entity from another table.
+     */
+    public function testLoadIntoRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->loadInto($tag, ['Tags']);
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLServer.
      */
     public function skipIfSqlServer(): void

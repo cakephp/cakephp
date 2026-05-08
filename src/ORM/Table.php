@@ -753,6 +753,40 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Asserts that the given entity belongs to this table instance.
+     *
+     * The entity must either be an instance of the table's configured entity
+     * class, or an instance of the generic ``\Cake\ORM\Entity`` class. The
+     * generic class is allowed as an escape hatch for ad-hoc usage such as
+     * ``$table->delete(new Entity(['id' => 1]))``.
+     *
+     * Catches mistakes like ``$this->Invoices->delete($orderEntity)`` where
+     * an entity from a different table is passed.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to validate.
+     * @return void
+     * @throws \InvalidArgumentException When the entity does not match the
+     *   configured entity class.
+     */
+    protected function assertEntityClass(EntityInterface $entity): void
+    {
+        $entityClass = $this->getEntityClass();
+        if ($entity instanceof $entityClass) {
+            return;
+        }
+        if ($entity::class === Entity::class) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'Entity of class `%s` does not match the entity class `%s` configured for table `%s`.',
+            $entity::class,
+            $entityClass,
+            $this->getRegistryAlias(),
+        ));
+    }
+
+    /**
      * Add a behavior.
      *
      * Adds a behavior to this table's behavior collection. Behaviors
@@ -2057,6 +2091,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
     {
+        $this->assertEntityClass($entity);
+
         $primaryColumns = (array)$this->getPrimaryKey();
 
         if ($options['checkExisting'] && $primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
@@ -2632,6 +2668,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processDelete(EntityInterface $entity, ArrayObject $options): bool
     {
+        $this->assertEntityClass($entity);
+
         if ($entity->isNew()) {
             return false;
         }
@@ -3132,6 +3170,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
+        $this->assertEntityClass($entity);
+
         $options['associated'] ??= $this->_associations->keys();
 
         return $this->marshaller()->merge($entity, $data, $options);
@@ -3171,6 +3211,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
+        foreach ($entities as $entity) {
+            $this->assertEntityClass($entity);
+        }
+
         $options['associated'] ??= $this->_associations->keys();
 
         return $this->marshaller()->mergeMany($entities, $data, $options);
@@ -3336,6 +3380,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
+        if ($entities instanceof EntityInterface) {
+            $this->assertEntityClass($entities);
+        } else {
+            foreach ($entities as $entity) {
+                $this->assertEntityClass($entity);
+            }
+        }
+
         return (new LazyEagerLoader())->loadInto($entities, $contain, $this);
     }
 
