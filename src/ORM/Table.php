@@ -276,9 +276,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * Whether to assert that entities passed to save/delete/patch/loadInto
-     * belong to this table (matching configured entity class and source).
-     * Disable per table via {@see Table::disableEntityClassAssertion()} when
-     * foreign entities are passed intentionally.
+     * match the table's configured entity class. Disable per table via
+     * {@see Table::disableEntityClassAssertion()} when foreign entities are
+     * passed intentionally.
      *
      * @var bool
      */
@@ -764,8 +764,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * Enables the assertion that entities passed to save/delete/patch/loadInto
-     * belong to this table. The check covers both the entity class and, for
-     * loaded entities, the source.
+     * match the table's configured entity class.
      *
      * @param bool $enable Whether to enable. Defaults to true.
      * @return $this
@@ -820,15 +819,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_assertEntityClass) {
             return;
-        }
-
-        $source = $entity->getSource();
-        if ($source !== '' && $source !== $this->getRegistryAlias()) {
-            throw new InvalidArgumentException(sprintf(
-                'Entity loaded from `%s` does not match table `%s`.',
-                $source,
-                $this->getRegistryAlias(),
-            ));
         }
 
         $entityClass = $this->getEntityClass();
