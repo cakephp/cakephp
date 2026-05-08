@@ -48,9 +48,7 @@ use function Cake\Core\env;
  *
  * - `Connection.afterCommit` Fired after the outermost transaction commits.
  *   Listeners receive the connection as the event subject. Not fired on
- *   rollback or for nested commits. Useful for hooks that must run only once
- *   per top-level transaction commit, regardless of how many ORM operations
- *   participated in it.
+ *   rollback or for nested commits.
  *
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Database\Connection>
  */
