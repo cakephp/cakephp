@@ -127,22 +127,13 @@ use function Cake\Core\namespaceSplit;
  * - `Model.afterSaveCommit` Fired after the transaction in which the save operation is
  *   wrapped has been committed. It’s also triggered for non atomic saves where database
  *   operations are implicitly committed. The event is triggered only for the primary
- *   table on which save() is directly called. When called inside an outer transaction,
- *   the event is deferred until the outermost transaction commits. The event data
- *   includes an `operation` key (`RulesChecker::CREATE` or `RulesChecker::UPDATE`)
- *   indicating whether the save was an insert or update — use this instead of
- *   `$entity->isNew()`, as the entity is finalized before the event fires.
+ *   table on which save() is directly called. The event is not triggered if a
+ *   transaction is started before calling save.
  *
  * - `Model.beforeDelete` Fired before an entity is deleted. By stopping this
  *   event you will abort the delete operation.
  *
  * - `Model.afterDelete` Fired after an entity has been deleted.
- *
- * - `Model.afterDeleteCommit` Fired after the transaction in which the delete operation is
- *   wrapped has been committed. It's also triggered for non atomic deletes where database
- *   operations are implicitly committed. The event is triggered only for the primary
- *   table on which delete() is directly called. When called inside an outer transaction,
- *   the event is deferred until the outermost transaction commits.
  *
  * ### Callbacks
  *
@@ -157,7 +148,7 @@ use function Cake\Core\namespaceSplit;
  * - `afterRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, bool $result, string $operation)`
  * - `beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
- * - `afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)`
+ * - `afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
  * - `afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options)`
@@ -1665,17 +1656,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['atomic'],
         );
 
-        $operation = RulesChecker::CREATE;
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
-            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options', 'operation'));
-        } elseif ($entity && $this->getConnection()->inTransaction()) {
-            $this->getConnection()->afterCommit(
-                fn() => $this->dispatchEvent('Model.afterSaveCommit', [
-                    'entity' => $entity,
-                    'options' => $options,
-                    'operation' => $operation,
-                ]),
-            );
+            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
         }
 
         return $entity;
@@ -1925,14 +1907,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   of operation performed (insert or update) can be determined by checking the
      *   entity's method `isNew`, true meaning an insert and false an update.
      * - Model.afterSaveCommit: Will be triggered after the transaction is committed
-     *   for atomic save, listeners will receive the entity, options array and an
-     *   `operation` value as arguments. The `operation` value is either
-     *   `\Cake\ORM\RulesChecker::CREATE` or `\Cake\ORM\RulesChecker::UPDATE` and
-     *   indicates whether the save was an insert or an update. Use `$event->getData('operation')`
-     *   to detect CREATE vs UPDATE in `afterSaveCommit` listeners — do **not** use
-     *   `$entity->isNew()` for this purpose, as the entity is finalized (marked as
-     *   not-new and cleaned) before the event fires, including when the event is
-     *   deferred to the outer transaction commit.
+     *   for atomic save, listeners will receive the entity and the options array
+     *   as arguments.
      *
      * This method will determine whether the passed entity needs to be
      * inserted or updated in the database. It does that by checking the `isNew`
@@ -2000,18 +1976,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($success) {
-            $operation = $entity->isNew() ? RulesChecker::CREATE : RulesChecker::UPDATE;
-
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options', 'operation'));
-            } elseif ($options['_primary'] && $this->getConnection()->inTransaction()) {
-                $this->getConnection()->afterCommit(
-                    fn() => $this->dispatchEvent('Model.afterSaveCommit', [
-                        'entity' => $entity,
-                        'options' => $options,
-                        'operation' => $operation,
-                    ]),
-                );
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
                 if ($options['_cleanOnSuccess']) {
@@ -2433,9 +2399,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
-        // afterSaveCommit is dispatched by individual save() calls via afterCommit()
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
                 if ($options['atomic'] || $options['_primary']) {
                     $cleanupOnSuccess($entity);
                 }
@@ -2493,13 +2459,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'entity' => $entity,
                 'options' => $options,
             ]);
-        } elseif ($success && $options['_primary'] && $this->getConnection()->inTransaction()) {
-            $this->getConnection()->afterCommit(
-                fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
-                    'entity' => $entity,
-                    'options' => $options,
-                ]),
-            );
         }
 
         return $success;
@@ -2584,15 +2543,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'entity' => $entity,
                     'options' => $options,
                 ]);
-            }
-        } elseif ($failed === null && $options['_primary'] && $this->getConnection()->inTransaction()) {
-            foreach ($entities as $entity) {
-                $this->getConnection()->afterCommit(
-                    fn() => $this->dispatchEvent('Model.afterDeleteCommit', [
-                        'entity' => $entity,
-                        'options' => $options,
-                    ]),
-                );
             }
         }
 
