@@ -6994,6 +6994,22 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that an entity whose source matches the table's registry alias
+     * short-circuits the assertion: it is treated as unambiguously belonging
+     * to this table even if its concrete class would not pass the class check.
+     */
+    public function testAssertEntityClassAcceptsMatchingSource(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+        $tag->setSource('Articles');
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
      * Tests that disableEntityClassAssertion() skips the class check, restoring
      * pre-19428 behavior for tables that intentionally accept foreign entities.
      */
