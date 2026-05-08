@@ -821,9 +821,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return;
         }
 
-        // If the entity's source matches this table's registry alias, treat it
-        // as unambiguously belonging here and skip the class check. Source
-        // mismatch falls through; the class check is authoritative.
         if ($entity->getSource() === $this->getRegistryAlias()) {
             return;
         }
