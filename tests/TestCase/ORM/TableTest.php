@@ -1875,7 +1875,10 @@ class TableTest extends TestCase
         $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
+        // Use select strategy explicitly for nested contain on PostgreSQL compatibility
+        $result = $table->find('all')
+            ->contain(['Authors' => ['Articles' => ['strategy' => 'select']]])
+            ->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf(Article::class, $article);
