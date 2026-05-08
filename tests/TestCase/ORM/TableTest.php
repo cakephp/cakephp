@@ -6994,6 +6994,105 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that an entity carrying a source from a different registry alias is
+     * rejected even when its class would otherwise pass the class check. Catches
+     * the case where two tables share the same entity class (or use the generic
+     * Entity class) but hold rows from different tables.
+     */
+    public function testDeleteRejectsEntityWithMismatchedSource(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article(['id' => 1]);
+        $article->setNew(false);
+        $article->setSource('OtherArticles');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity loaded from `OtherArticles` does not match table `Articles`.',
+        );
+
+        $articles->delete($article);
+    }
+
+    /**
+     * Tests that the source check also catches mismatches on save().
+     */
+    public function testSaveRejectsEntityWithMismatchedSource(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article(['title' => 'a', 'body' => 'b']);
+        $article->setSource('OtherArticles');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity loaded from `OtherArticles` does not match table `Articles`.',
+        );
+
+        $articles->save($article);
+    }
+
+    /**
+     * Tests that an entity with empty source still passes the source check —
+     * freshly-`new`'d entities have no source and should not be treated as
+     * cross-table mismatches.
+     */
+    public function testSaveAcceptsEntityWithEmptySource(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article(['title' => 'a', 'body' => 'b']);
+
+        $this->assertSame('', $article->getSource());
+        $this->assertNotFalse($articles->save($article));
+    }
+
+    /**
+     * Tests that disableEntityClassAssertion() skips the class check, restoring
+     * pre-19428 behavior for tables that intentionally accept foreign entities.
+     */
+    public function testDisableEntityClassAssertionSkipsClassCheck(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->disableEntityClassAssertion();
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
+     * Tests that disableEntityClassAssertion() also skips the source check.
+     */
+    public function testDisableEntityClassAssertionSkipsSourceCheck(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->disableEntityClassAssertion();
+
+        $article = new Article(['id' => 1]);
+        $article->setNew(false);
+        $article->setSource('OtherArticles');
+
+        $this->assertTrue($articles->delete($article));
+    }
+
+    /**
+     * Tests the enable/disable/isEnabled accessor trio for the entity-class
+     * assertion. Setters are chainable and reflect in isEntityClassAssertionEnabled().
+     */
+    public function testEntityClassAssertionAccessors(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $this->assertTrue($articles->isEntityClassAssertionEnabled(), 'Defaults to enabled');
+        $this->assertSame($articles, $articles->disableEntityClassAssertion());
+        $this->assertFalse($articles->isEntityClassAssertionEnabled());
+        $this->assertSame($articles, $articles->enableEntityClassAssertion());
+        $this->assertTrue($articles->isEntityClassAssertionEnabled());
+        $articles->enableEntityClassAssertion(false);
+        $this->assertFalse($articles->isEntityClassAssertionEnabled(), 'enableEntityClassAssertion(false) disables');
+    }
+
+    /**
      * Helper method to skip tests when connection is SQLServer.
      */
     public function skipIfSqlServer(): void

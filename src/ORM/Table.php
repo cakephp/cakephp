@@ -275,6 +275,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected ?string $_entityClass = null;
 
     /**
+     * Whether to assert that entities passed to save/delete/patch/loadInto
+     * belong to this table (matching configured entity class and source).
+     * Disable per table via {@see Table::disableEntityClassAssertion()} when
+     * foreign entities are passed intentionally.
+     *
+     * @var bool
+     */
+    protected bool $_assertEntityClass = true;
+
+    /**
      * Registry key used to create this table object
      *
      * @var string|null
@@ -753,6 +763,44 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Enables the assertion that entities passed to save/delete/patch/loadInto
+     * belong to this table. The check covers both the entity class and, for
+     * loaded entities, the source.
+     *
+     * @param bool $enable Whether to enable. Defaults to true.
+     * @return $this
+     */
+    public function enableEntityClassAssertion(bool $enable = true)
+    {
+        $this->_assertEntityClass = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Disables the entity-class assertion for this table. Use when foreign
+     * entities are passed intentionally (e.g. polymorphic patterns).
+     *
+     * @return $this
+     */
+    public function disableEntityClassAssertion()
+    {
+        $this->_assertEntityClass = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the entity-class assertion is enabled for this table.
+     *
+     * @return bool
+     */
+    public function isEntityClassAssertionEnabled(): bool
+    {
+        return $this->_assertEntityClass;
+    }
+
+    /**
      * Asserts that the given entity belongs to this table instance.
      *
      * The entity must either be an instance of the table's configured entity
@@ -770,6 +818,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function assertEntityClass(EntityInterface $entity): void
     {
+        if (!$this->_assertEntityClass) {
+            return;
+        }
+
+        $source = $entity->getSource();
+        if ($source !== '' && $source !== $this->getRegistryAlias()) {
+            throw new InvalidArgumentException(sprintf(
+                'Entity loaded from `%s` does not match table `%s`.',
+                $source,
+                $this->getRegistryAlias(),
+            ));
+        }
+
         $entityClass = $this->getEntityClass();
         if ($entity instanceof $entityClass) {
             return;
