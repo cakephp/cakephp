@@ -23,7 +23,6 @@ use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Core\ContainerApplicationInterface;
-use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -115,13 +114,6 @@ class CommandRunner implements EventDispatcherInterface
 
         $this->bootstrap();
 
-        if ($this->app instanceof EventAwareApplicationInterface) {
-            $eventManager = $this->getEventManager();
-            $eventManager = $this->app->events($eventManager);
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $this->setEventManager($eventManager);
-        }
-
         $commands = new CommandCollection([
             'help' => HelpCommand::class,
         ]);
@@ -154,7 +146,7 @@ class CommandRunner implements EventDispatcherInterface
         // Check if this is a command prefix (e.g., "cache" has subcommands like "cache clear")
         // Show help for that prefix instead of running the base command
         if ($name !== null && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
-            $argv = array_merge([$name], $argv);
+            $argv = [$name];
             $name = 'help';
         }
 

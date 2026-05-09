@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="7"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    autoloader="tests/bootstrap.php"
+    findUnusedPsalmSuppress="true"
+    findUnusedCode="false"
+    errorBaseline="psalm-baseline.xml"
+>
+    <projectFiles>
+        <directory name="./src"/>
+        <ignoreFiles>
+            <directory name="./vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <MissingOverrideAttribute errorLevel="suppress"/>
+        <MissingPureAnnotation errorLevel="suppress"/>
+        <MissingAbstractPureAnnotation errorLevel="suppress"/>
+        <ImpureFunctionCall errorLevel="suppress"/>
+        <MissingInterfaceImmutableAnnotation errorLevel="suppress"/>
+        <MissingImmutableAnnotation errorLevel="suppress"/>
+        <MissingTemplateParam errorLevel="suppress"/>
+        <MissingFile errorLevel="suppress"/>
+        <UndefinedConstant errorLevel="suppress" />
+        <UndefinedClass errorLevel="suppress" />
+
+        <!-- All the taint -->
+        <TaintedCallable errorLevel="suppress"/>
+        <TaintedFile errorLevel="suppress"/>
+        <TaintedHtml errorLevel="suppress"/>
+    </issueHandlers>
+</psalm>

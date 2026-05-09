@@ -2395,210 +2395,92 @@ class TableTest extends TestCase
         $this->connection->commit();
     }
 
-    public function testAfterSaveCommitPreservesIsNewState(): void
+    public function testEntityFinalizedSynchronouslyInOuterTransaction(): void
     {
         $table = $this->getTableLocator()->get('users');
-        $data = new Entity([
-            'username' => 'isnewuser',
-            'created' => new DateTime('2013-10-10 00:00'),
-            'updated' => new DateTime('2013-10-10 00:00'),
-        ]);
 
-        $wasNew = null;
-        $table->getEventManager()->on('Model.afterSaveCommit', function ($e, $entity) use (&$wasNew): void {
-            $wasNew = $entity->isNew();
-        });
-
-        $this->connection->transactional(function () use ($table, $data): void {
-            $table->saveOrFail($data);
-        });
-
-        $this->assertTrue($wasNew, 'Entity should still report isNew() as true in afterSaveCommit for an INSERT');
-    }
-
-    public function testAfterSaveCommitFiringAfterOuterTransactionCommits(): void
-    {
-        $table = $this->getTableLocator()->get('users');
-        $data = new Entity([
-            'username' => 'superuser',
-            'created' => new DateTime('2013-10-10 00:00'),
-            'updated' => new DateTime('2013-10-10 00:00'),
-        ]);
-
-        $calledDuringTransaction = false;
-        $calledAfterCommit = false;
-        $listener = function ($e, $entity, $options) use (&$calledDuringTransaction, &$calledAfterCommit): void {
-            if ($this->connection->inTransaction()) {
-                $calledDuringTransaction = true;
-            } else {
-                $calledAfterCommit = true;
-            }
-        };
-        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
-
-        $this->connection->transactional(function () use ($table, $data, &$calledDuringTransaction): void {
-            $table->saveOrFail($data);
-            // Event must NOT fire while transaction is still open
-            $this->assertFalse($calledDuringTransaction, 'afterSaveCommit must not fire during an open transaction');
-        });
-
-        // After transactional() returns, the outer transaction has committed.
-        // afterSaveCommit should have fired.
-        $this->assertFalse($calledDuringTransaction, 'afterSaveCommit must not fire during a transaction');
-        $this->assertTrue($calledAfterCommit, 'afterSaveCommit should fire after the outer transaction commits');
-    }
-
-    public function testAfterSaveCommitForCrossTableTransactional(): void
-    {
-        $usersTable = $this->getTableLocator()->get('users');
-        $articlesTable = $this->getTableLocator()->get('articles');
-
-        $userEventFired = false;
-        $articleEventFired = false;
-
-        $usersTable->getEventManager()->on('Model.afterSaveCommit', function () use (&$userEventFired): void {
-            $userEventFired = true;
-        });
-        $articlesTable->getEventManager()->on('Model.afterSaveCommit', function () use (&$articleEventFired): void {
-            $articleEventFired = true;
-        });
-
-        $this->connection->transactional(function () use ($usersTable, $articlesTable): void {
-            $user = new Entity([
-                'username' => 'crossuser',
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'outertxnuser',
                 'created' => new DateTime('2013-10-10 00:00'),
                 'updated' => new DateTime('2013-10-10 00:00'),
             ]);
-            $usersTable->saveOrFail($user);
+            $table->saveOrFail($entity);
 
-            $article = new Entity([
-                'title' => 'Cross-table article',
-                'body' => 'Testing cross-table transactional saves',
-                'author_id' => $user->id,
+            $this->assertFalse(
+                $entity->isNew(),
+                'Entity saved inside outer transaction must report isNew() === false immediately after save',
+            );
+            $this->assertFalse(
+                $entity->isDirty(),
+                'Entity saved inside outer transaction must be clean immediately after save',
+            );
+            $this->assertSame(
+                'users',
+                $entity->getSource(),
+                'Entity saved inside outer transaction must have source set immediately after save',
+            );
+        });
+    }
+
+    public function testDeleteWorksOnEntitySavedInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'deletetxnuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
             ]);
-            $articlesTable->saveOrFail($article);
-        });
+            $table->saveOrFail($entity);
 
-        $this->assertTrue($userEventFired, 'afterSaveCommit should fire for users table after outer commit');
-        $this->assertTrue($articleEventFired, 'afterSaveCommit should fire for articles table after outer commit');
+            $result = $table->delete($entity);
+            $this->assertTrue(
+                $result,
+                'Table::delete() must not short-circuit on entity saved inside outer transaction',
+            );
+        });
     }
 
-    public function testAfterDeleteCommitFiringAfterOuterTransactionCommits(): void
+    public function testSaveThenUpdateInOuterTransaction(): void
     {
         $table = $this->getTableLocator()->get('users');
 
-        $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
-            $called = true;
-        };
-        $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'insertupdateuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
 
-        $user = $table->get(1);
+            $entity->username = 'updateduser';
+            $table->saveOrFail($entity);
 
-        $this->connection->transactional(function () use ($table, $user): void {
-            $table->deleteOrFail($user);
+            $row = $table->get($entity->id);
+            $this->assertSame('updateduser', $row->username);
         });
-
-        $this->assertTrue($called, 'afterDeleteCommit should fire after the outer transaction commits');
     }
 
-    public function testAfterSaveCommitNotFiredOnRollback(): void
+    public function testEntityFinalizedDespiteEventualRollback(): void
     {
         $table = $this->getTableLocator()->get('users');
-        $data = new Entity([
-            'username' => 'rollbackuser',
+
+        $this->connection->begin();
+
+        $entity = new Entity([
+            'username' => 'rollbackfinalizeuser',
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
+        $table->saveOrFail($entity);
 
-        $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
-            $called = true;
-        };
-        $table->getEventManager()->on('Model.afterSaveCommit', $listener);
+        $this->assertFalse($entity->isNew(), 'Entity must be finalized even if outer transaction will roll back');
+        $this->assertFalse($entity->isDirty(), 'Entity must be clean even if outer transaction will roll back');
+        $this->assertSame('users', $entity->getSource());
 
-        try {
-            $this->connection->transactional(function () use ($table, $data): void {
-                $table->saveOrFail($data);
-                throw new RuntimeException('Force rollback');
-            });
-        } catch (RuntimeException) {
-            // Expected
-        }
-
-        $this->assertFalse($called, 'afterSaveCommit should not fire when transaction is rolled back');
-    }
-
-    public function testSaveManyInsideTransactionalNoDoubleDispatch(): void
-    {
-        $table = $this->getTableLocator()->get('authors');
-        $entities = [
-            new Entity(['name' => 'Author A']),
-            new Entity(['name' => 'Author B']),
-        ];
-
-        $callCount = 0;
-        $table->getEventManager()->on('Model.afterSaveCommit', function () use (&$callCount): void {
-            $callCount++;
-        });
-
-        $this->connection->transactional(function () use ($table, $entities): void {
-            $table->saveManyOrFail($entities);
-        });
-
-        $this->assertSame(2, $callCount, 'afterSaveCommit should fire exactly once per entity');
-    }
-
-    public function testSaveManyStandaloneNoDoubleDispatch(): void
-    {
-        $table = $this->getTableLocator()->get('authors');
-        $entities = [
-            new Entity(['name' => 'Author C']),
-            new Entity(['name' => 'Author D']),
-        ];
-
-        $callCount = 0;
-        $table->getEventManager()->on('Model.afterSaveCommit', function () use (&$callCount): void {
-            $callCount++;
-        });
-
-        $table->saveManyOrFail($entities);
-
-        $this->assertSame(2, $callCount, 'afterSaveCommit should fire exactly once per entity');
-    }
-
-    public function testDeleteManyStandaloneFiresAfterDeleteCommit(): void
-    {
-        $table = $this->getTableLocator()->get('authors');
-        $entities = $table->find()->limit(2)->toArray();
-        $this->assertCount(2, $entities);
-
-        $callCount = 0;
-        $table->getEventManager()->on('Model.afterDeleteCommit', function () use (&$callCount): void {
-            $callCount++;
-        });
-
-        $table->deleteManyOrFail($entities);
-
-        $this->assertSame(2, $callCount, 'afterDeleteCommit should fire once per entity');
-    }
-
-    public function testDeleteManyInsideTransactionalFiresAfterDeleteCommit(): void
-    {
-        $table = $this->getTableLocator()->get('authors');
-        $entities = $table->find()->limit(2)->toArray();
-        $this->assertCount(2, $entities);
-
-        $callCount = 0;
-        $table->getEventManager()->on('Model.afterDeleteCommit', function () use (&$callCount): void {
-            $callCount++;
-        });
-
-        $this->connection->transactional(function () use ($table, $entities): void {
-            $table->deleteManyOrFail($entities);
-        });
-
-        $this->assertSame(2, $callCount, 'afterDeleteCommit should fire once per entity after outer commit');
+        $this->connection->rollback();
     }
 
     /**
@@ -5925,31 +5807,6 @@ class TableTest extends TestCase
         $this->assertNotNull($article->id);
         $this->assertSame('Success', $article->title);
         $this->assertTrue($article->afterSaveCommit);
-    }
-
-    /**
-     * Test that findOrCreate defers afterSaveCommit inside an outer transaction.
-     */
-    public function testFindOrCreateDefersAfterSaveCommitInOuterTransaction(): void
-    {
-        $articles = $this->getTableLocator()->get('Articles');
-        $calledAfterCommit = false;
-        $articles->getEventManager()->on('Model.afterSaveCommit', function () use (&$calledAfterCommit): void {
-            $calledAfterCommit = true;
-        });
-
-        $this->connection->begin();
-        $article = $articles->findOrCreate(
-            ['title' => 'Find Something New For Outer Txn'],
-            function ($article): void {
-                $article->title = 'Deferred Success';
-            },
-        );
-        $this->assertFalse($calledAfterCommit, 'afterSaveCommit must not fire while outer transaction is open');
-
-        $this->connection->commit();
-        $this->assertTrue($calledAfterCommit, 'afterSaveCommit should fire after outer transaction commits');
-        $this->assertSame('Deferred Success', $article->title);
     }
 
     /**

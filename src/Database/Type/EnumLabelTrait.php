@@ -19,7 +19,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Inflector;
 use ReflectionClassConstant;
-use function Cake\I18n\__;
+use function Cake\I18n\__dx;
 
 /**
  * Trait EnumLabelTrait
@@ -38,35 +38,53 @@ trait EnumLabelTrait
      */
     public function label(): string
     {
-        /** @var array<string, string> $labels */
+        /** @var array<string,array{label:string,context:string}> $labels */
         static $labels = [];
 
-        /** @var bool $i18n */
-        static $i18n;
-
-        $i18n ??= function_exists('\Cake\I18n\__');
-
         if (isset($labels[$this->name])) {
-            if ($i18n) {
-                return __($labels[$this->name]);
-            }
-
-            return $labels[$this->name];
+            return $this->translatedLabel($labels[$this->name]);
         }
 
         $reflection = new ReflectionClassConstant(static::class, $this->name);
         $enumAttributes = $reflection->getAttributes(Label::class);
 
         if ($enumAttributes === []) {
-            $labels[$this->name] = Inflector::humanize(Inflector::underscore($this->name));
+            $labels[$this->name] = [
+                'label' => Inflector::humanize(Inflector::underscore($this->name)),
+                'context' => '',
+                'domain' => 'default',
+            ];
         } else {
-            $labels[$this->name] = $enumAttributes[0]->newInstance()->label;
+            $instance = $enumAttributes[0]->newInstance();
+            $labels[$this->name] = [
+                'label' => $instance->label,
+                'context' => $instance->context,
+                'domain' => $instance->domain,
+            ];
         }
 
-        if ($i18n) {
-            return __($labels[$this->name]);
+        return $this->translatedLabel($labels[$this->name]);
+    }
+
+    /**
+     * Returns the translated label for the enum case.
+     *
+     * @param array{label:string,context:string,domain:string} $label
+     */
+    private function translatedLabel(array $label): string
+    {
+        /** @var bool $i18n */
+        static $i18n;
+
+        $i18n ??= function_exists('\Cake\I18n\__dx');
+
+        if (!$i18n) {
+            return $label['label'];
         }
 
-        return $labels[$this->name];
+        $context = $label['context'] ?? '';
+        $domain = $label['domain'] ?? 'default';
+
+        return __dx($domain, $context, $label['label']);
     }
 }

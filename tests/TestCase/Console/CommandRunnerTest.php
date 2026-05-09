@@ -16,8 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\Command;
+use Cake\Command\SchemacacheBuildCommand;
+use Cake\Command\SchemacacheClearCommand;
 use Cake\Command\VersionCommand;
 use Cake\Console\Arguments;
+use Cake\Console\Command\HelpCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
@@ -25,8 +29,10 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -143,6 +149,28 @@ class CommandRunnerTest extends TestCase
         $this->assertStringContainsString('<info>cache:</info>', $messages);
         $this->assertStringContainsString('cache clear', $messages);
         $this->assertStringContainsString('cache list', $messages);
+    }
+
+    /**
+     * Test that running an invalid subcommand shows help listing commands
+     * that start with the given prefix.
+     */
+    public function testRunInvalidSubcommandShowsPrefixHelp(): void
+    {
+        $output = new StubConsoleOutput();
+        $app = $this->makeAppWithCommands([
+            'help' => HelpCommand::class,
+            'schema_cache build' => SchemacacheBuildCommand::class,
+            'schema_cache clear' => SchemacacheClearCommand::class,
+        ]);
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake', 'schema_cache', 'invalid'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('<info>schema_cache:</info>', $messages);
+        $this->assertStringContainsString('schema_cache build', $messages);
+        $this->assertStringContainsString('schema_cache clear', $messages);
     }
 
     /**
@@ -567,6 +595,50 @@ class CommandRunnerTest extends TestCase
 
         $this->assertTrue($app->customEventFired, 'Custom event should have been fired');
         $this->assertTrue($app->pluginEventFired, 'Plugin event should have been fired');
+    }
+
+    public function testRunRegistersPluginEventsForCommands(): void
+    {
+        $output = new StubConsoleOutput();
+        $plugin = new class extends BasePlugin {
+            public bool $commandEventFired = false;
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('Test.commandEvent', function (): void {
+                    $this->commandEventFired = true;
+                });
+
+                return $eventManager;
+            }
+        };
+        $command = new class extends Command {
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $this->getEventManager()->dispatch(new Event('Test.commandEvent'));
+
+                return CommandInterface::CODE_SUCCESS;
+            }
+        };
+        $app = new class ($this->config, $command) extends Application {
+            public function __construct(
+                string $configDir,
+                protected Command $command,
+            ) {
+                parent::__construct($configDir);
+            }
+
+            public function console(CommandCollection $commands): CommandCollection
+            {
+                return $commands->add('test_command', $this->command);
+            }
+        };
+        $app->addPlugin($plugin);
+
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'test_command'], $this->getMockIo($output));
+
+        $this->assertTrue($plugin->commandEventFired, 'Plugin event should have been fired by the command');
     }
 
     protected function makeAppWithCommands(array $commands): BaseApplication

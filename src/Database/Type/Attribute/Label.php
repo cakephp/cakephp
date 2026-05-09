@@ -32,9 +32,13 @@ readonly class Label
      * Constructor.
      *
      * @param string $label The label to use for the enum case.
+     * @param string $context The translation context for the label.
+     * @param string $domain The translation domain for the label.
      */
     public function __construct(
         public string $label,
+        public string $domain = 'default',
+        public string $context = '',
     ) {
     }
 }

@@ -22,10 +22,13 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
+use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
@@ -33,6 +36,8 @@ use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -264,6 +269,70 @@ class BaseApplicationTest extends TestCase
         $this->assertTrue($container->has('testing'));
     }
 
+    public function testServerBuildMiddlewareEventIsCalledOnBootstrap(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $isCalled = false;
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                return $eventManager->on('Server.buildMiddleware', function (EventInterface $event): void {
+                    $this->isCalled = true;
+                });
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response(['status' => 200]);
+            }
+        };
+        $server = new Server($app);
+        $server->run(new ServerRequest());
+
+        $app->bootstrap();
+        $this->assertTrue($app->isCalled);
+    }
+
+    public function testMiddlewareEventIsCaughtByApplicationEventsListener(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $isCalled = false;
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue->add(function (
+                    ServerRequestInterface $request,
+                    RequestHandlerInterface $handler,
+                ): ResponseInterface {
+                    $this->getEventManager()->dispatch(new Event('Test.middlewareEvent'));
+
+                    return $handler->handle($request);
+                });
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                return $eventManager->on('Test.middlewareEvent', function (EventInterface $event): void {
+                    $this->isCalled = true;
+                });
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response(['status' => 200]);
+            }
+        };
+        $server = new Server($app);
+        $server->run(new ServerRequest());
+
+        $this->assertTrue($app->isCalled);
+    }
+
     public function testEventsAreRegistered(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
@@ -275,6 +344,7 @@ class BaseApplicationTest extends TestCase
         ]);
 
         $app = $this->app;
+        $app->bootstrap();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }

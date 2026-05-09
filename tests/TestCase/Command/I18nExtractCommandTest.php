@@ -357,6 +357,29 @@ class I18nExtractCommandTest extends TestCase
     }
 
     /**
+     * Test extraction of Label attribute strings from enum cases.
+     */
+    public function testExtractLabelAttributes(): void
+    {
+        $this->exec(
+            'i18n extract ' .
+            '--merge=no ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'TestApp/Model/Enum ' .
+            '--output=' . $this->path . DS,
+        );
+        $this->assertExitSuccess();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $this->assertStringContainsString('msgid "Published"', $result);
+        $this->assertStringContainsString('msgid "Unpublished"', $result);
+
+        $pattern = '/msgctxt "article_status"\nmsgid "Archived"/';
+        $this->assertMatchesRegularExpression($pattern, $result);
+    }
+
+    /**
      * test relative-paths option
      */
     public function testExtractWithRelativePaths(): void

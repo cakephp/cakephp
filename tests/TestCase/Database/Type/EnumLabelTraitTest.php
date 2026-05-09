@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Enum\ArticleDomainStatus;
 use TestApp\Model\Enum\ArticleStatusTrait;
 use TestApp\Model\Enum\ArticleStatusTraitLabeled;
 
@@ -138,5 +139,57 @@ class EnumLabelTraitTest extends TestCase
 
         // Explicit Label attribute values are also translated.
         $this->assertSame("L'article est publié", ArticleStatusTraitLabeled::Published->label());
+    }
+
+    /**
+     * Test that label() uses the context from the Label attribute when present.
+     */
+    public function testLabelWithAttributeContextUsesTranslationContext(): void
+    {
+        Cache::clear('_cake_translations_');
+        I18n::clear();
+
+        I18n::setTranslator('default', function () {
+            $package = new Package();
+            $package->setMessages([
+                'Article is a draft' => [
+                    '_context' => [
+                        'ArticleStatus' => 'Article est un brouillon',
+                    ],
+                ],
+            ]);
+
+            return $package;
+        }, 'fr_FR');
+        I18n::setLocale('fr_FR');
+
+        $this->assertSame('Article est un brouillon', ArticleStatusTraitLabeled::Draft->label());
+    }
+
+    /**
+     * Test that label() uses the domain from the Label attribute when present.
+     */
+    public function testLabelWithAttributeUsesDomain(): void
+    {
+        Cache::clear('_cake_translations_');
+        I18n::clear();
+
+        I18n::setTranslator('news', function () {
+            $package = new Package();
+            $package->setMessages([
+                'Article is published in the news domain' => [
+                    '_context' => [
+                        'Article' => 'Un article est publié dans la presse.',
+                    ],
+                ],
+                'Article is unpublished in the news domain' => 'Un article est non publié dans la presse.',
+            ]);
+
+            return $package;
+        }, 'fr_FR');
+        I18n::setLocale('fr_FR');
+
+        $this->assertSame('Un article est publié dans la presse.', ArticleDomainStatus::Published->label());
+        $this->assertSame('Un article est non publié dans la presse.', ArticleDomainStatus::Unpublished->label());
     }
 }
