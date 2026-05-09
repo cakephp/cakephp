@@ -282,7 +282,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var bool
      */
-    protected bool $_assertEntityClass = true;
+    protected bool $assertEntityClass = true;
 
     /**
      * Registry key used to create this table object
@@ -771,7 +771,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function enableEntityClassAssertion(bool $enable = true)
     {
-        $this->_assertEntityClass = $enable;
+        $this->assertEntityClass = $enable;
 
         return $this;
     }
@@ -784,7 +784,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function disableEntityClassAssertion()
     {
-        $this->_assertEntityClass = false;
+        $this->assertEntityClass = false;
 
         return $this;
     }
@@ -796,7 +796,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function isEntityClassAssertionEnabled(): bool
     {
-        return $this->_assertEntityClass;
+        return $this->assertEntityClass;
     }
 
     /**
@@ -817,7 +817,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function assertEntityClass(EntityInterface $entity): void
     {
-        if (!$this->_assertEntityClass) {
+        if (!$this->assertEntityClass) {
             return;
         }
 
@@ -826,10 +826,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $entityClass = $this->getEntityClass();
-        if ($entity instanceof $entityClass) {
-            return;
-        }
-        if ($entity::class === Entity::class) {
+        if ($entity instanceof $entityClass || $entity::class === Entity::class) {
             return;
         }
 
