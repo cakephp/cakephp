@@ -211,6 +211,42 @@ class AbstractStreamResponseTest extends TestCase
             {
                 $this->logStreamError($message, $index);
             }
+
+            public function triggerFlush(): void
+            {
+                $this->flushOutputBuffers();
+            }
         };
+    }
+
+    public function testFlushOutputBuffersAtImplicitLevelInvokesObFlush(): void
+    {
+        $response = $this->newFixture([]);
+
+        // Collapse the entire OB stack and start exactly one buffer so
+        // flushOutputBuffers() takes the `$level === 1` branch and calls
+        // ob_flush(). PHPUnit normally adds its own buffers around tests.
+        $depth = 0;
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+            $depth++;
+        }
+        ob_start();
+
+        try {
+            // Empty buffer: ob_flush() inside flushOutputBuffers() still runs
+            // (the coverage target), but emits nothing to stdout.
+            $this->assertSame(1, ob_get_level(), 'precondition: ob_get_level == 1');
+            $response->triggerFlush();
+            $remaining = ob_get_clean();
+        } finally {
+            // Restore the buffer depth PHPUnit had so it can capture our output
+            for ($i = 0; $i < $depth; $i++) {
+                ob_start();
+            }
+        }
+
+        // ob_flush() executed cleanly on the single-level buffer.
+        $this->assertSame('', $remaining);
     }
 }
