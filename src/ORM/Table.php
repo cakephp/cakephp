@@ -2454,28 +2454,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Deletes multiple entities of a table.
+     * Deletes multiple entities of a table or throws a PersistenceFailedException
+     * if any one of the records fails to delete.
      *
      * The records will be deleted in a transaction which will be rolled back if
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @template TDeletedEntity of \Cake\Datasource\EntityInterface
-     * @param iterable<TDeletedEntity> $entities Entities to delete.
+     * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to delete.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TDeletedEntity> Entities list.
+     * @return void
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
-    public function deleteManyOrFail(iterable $entities, array $options = []): iterable
+    public function deleteManyOrFail(iterable $entities, array $options = []): void
     {
         $failed = $this->doDeleteMany($entities, $options);
 
         if ($failed !== null) {
             throw new PersistenceFailedException($failed, ['deleteMany']);
         }
-
-        return $entities;
     }
 
     /**
