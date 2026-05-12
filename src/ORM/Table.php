@@ -3282,7 +3282,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
-     * @see \Cake\ORM\Query::contain()
+     * @see \Cake\ORM\Query\SelectQuery::contain()
      * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array

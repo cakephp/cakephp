@@ -800,9 +800,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * })
      * ```
      *
-     * By default, no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
-     * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
-     * from the table.
+     * By default, no fields are selected, if you have an instance of `Cake\ORM\Query\SelectQuery` and try to
+     * append fields you should also call `Cake\ORM\Query\SelectQuery::enableAutoFields()` to select the
+     * default fields from the table.
      *
      * If you pass an instance of a `Cake\ORM\Table` or `Cake\ORM\Association` class,
      * all the fields in the schema of the table or the association will be added to
