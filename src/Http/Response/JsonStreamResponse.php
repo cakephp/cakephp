@@ -40,6 +40,16 @@ use JsonException;
  * return new JsonStreamResponse($query, ['format' => 'ndjson']);
  * ```
  *
+ * ### Options
+ *
+ * - `root` (string|null, default: null): Wrap data in `{"root": [...]}`
+ * - `envelope` (array, default: []): Static metadata merged with streaming data
+ * - `dataKey` (string, default: 'data'): Key for streaming data when envelope is used
+ * - `format` (string, default: 'json'): Output format — 'json' or 'ndjson'
+ * - `transform` (callable|null, default: null): Transform each item before encoding
+ * - `flags` (int, default: DEFAULT_JSON_FLAGS): JSON encode flags
+ * - `flushEvery` (int, default: 1): Flush output buffers every N items
+ *
  * ### ORM Integration
  *
  * For true streaming benefits, use unbuffered queries and avoid result formatters:
@@ -107,24 +117,6 @@ class JsonStreamResponse extends AbstractStreamResponse
         'flags' => self::DEFAULT_JSON_FLAGS,
         'flushEvery' => 1,
     ];
-
-    /**
-     * Constructor.
-     *
-     * @param iterable $data The iterable data to stream (array, generator, ResultSet, etc.)
-     * @param array<string, mixed> $options Streaming options:
-     *   - `root`: Wrap data in `{"root": [...]}` (string|null, default: null)
-     *   - `envelope`: Static metadata merged with streaming data (array, default: [])
-     *   - `dataKey`: Key for streaming data when envelope is used (string, default: 'data')
-     *   - `format`: Output format - 'json' or 'ndjson' (string, default: 'json')
-     *   - `transform`: Transform each item before encoding (callable|null, default: null)
-     *   - `flags`: JSON encode flags (int, default: DEFAULT_JSON_FLAGS)
-     *   - `flushEvery`: Flush output buffers every N items (int, default: 1)
-     */
-    public function __construct(iterable $data, array $options = [])
-    {
-        parent::__construct($data, $options);
-    }
 
     /**
      * @inheritDoc
