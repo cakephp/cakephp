@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="7.0.0-beta17@a7f96f911fc869c40c48ec977e21f01a8ca534bd">
+<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+  <file src="src/Cache/Engine/PhpEngine.php">
+    <TaintedInclude>
+      <code><![CDATA[$path]]></code>
+    </TaintedInclude>
+  </file>
   <file src="src/Command/PluginLoadCommand.php">
     <TaintedSSRF>
       <code><![CDATA[$file]]></code>
     </TaintedSSRF>
+  </file>
+  <file src="src/Controller/Component/FlashComponent.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+    </MethodSignatureMismatch>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
     <OverriddenMethodAccess>
@@ -31,8 +42,8 @@
   </file>
   <file src="src/Core/InstanceConfigTrait.php">
     <UnsupportedPropertyReferenceUsage>
-      <code><![CDATA[$update = &$this->_config]]></code>
-      <code><![CDATA[$update = &$this->_config]]></code>
+      <code><![CDATA[$update = &$this->config]]></code>
+      <code><![CDATA[$update = &$this->config]]></code>
     </UnsupportedPropertyReferenceUsage>
   </file>
   <file src="src/Core/PluginConfig.php">
@@ -42,10 +53,23 @@
   </file>
   <file src="src/Datasource/EntityTrait.php">
     <UnsupportedPropertyReferenceUsage>
-      <code><![CDATA[$value = &$this->_fields[$field]]]></code>
+      <code><![CDATA[$value = &$this->fields[$field]]]></code>
     </UnsupportedPropertyReferenceUsage>
   </file>
+  <file src="src/ORM/Query/SelectQuery.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[SelectQuery]]></code>
+      <code><![CDATA[SelectQuery]]></code>
+      <code><![CDATA[SelectQuery]]></code>
+      <code><![CDATA[SelectQuery]]></code>
+      <code><![CDATA[SelectQuery]]></code>
+      <code><![CDATA[SelectQuery]]></code>
+    </MethodSignatureMismatch>
+  </file>
   <file src="src/TestSuite/TestCase.php">
+    <NoValue>
+      <code><![CDATA[return $this->capturedError;]]></code>
+    </NoValue>
     <UndefinedVariable>
       <code><![CDATA[$previousHandler]]></code>
     </UndefinedVariable>

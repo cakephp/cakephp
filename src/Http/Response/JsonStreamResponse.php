@@ -101,13 +101,6 @@ class JsonStreamResponse extends Response
     ];
 
     /**
-     * The iterable data to stream.
-     *
-     * @var iterable
-     */
-    protected iterable $data;
-
-    /**
      * Number of streamed rows since the last flush.
      *
      * @var int
@@ -119,7 +112,7 @@ class JsonStreamResponse extends Response
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'root' => null,
         'envelope' => [],
         'dataKey' => 'data',
@@ -142,10 +135,9 @@ class JsonStreamResponse extends Response
      *   - `flags`: JSON encode flags (int, default: DEFAULT_JSON_FLAGS)
      *   - `flushEvery`: Flush output buffers every N items (int, default: 1)
      */
-    public function __construct(iterable $data, array $options = [])
+    public function __construct(protected iterable $data, array $options = [])
     {
-        $this->data = $data;
-        $this->setConfig($this->normalizeStreamOptions($options + $this->_defaultConfig, $options), null, false);
+        $this->setConfig($this->normalizeStreamOptions($options + $this->defaultConfig, $options), null, false);
 
         $stream = new CallbackStream($this->createStreamCallback());
         parent::__construct(['stream' => $stream]);
@@ -398,9 +390,9 @@ class JsonStreamResponse extends Response
             : 'application/json';
         $contentType = $mimeType . '; charset=' . $charset;
 
-        $this->_setHeader('Content-Type', $contentType);
+        $this->setHeader('Content-Type', $contentType);
         // Prevent proxy/nginx buffering for true streaming
-        $this->_setHeader('X-Accel-Buffering', 'no');
+        $this->setHeader('X-Accel-Buffering', 'no');
     }
 
     /**
