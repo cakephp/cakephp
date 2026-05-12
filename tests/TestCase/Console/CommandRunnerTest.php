@@ -613,7 +613,7 @@ class CommandRunnerTest extends TestCase
             }
         };
         $command = new class extends Command {
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 $this->getEventManager()->dispatch(new Event('Test.commandEvent'));
 

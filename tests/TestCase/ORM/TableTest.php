@@ -6551,7 +6551,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that deleteOrFail returns the right entity
+     * Tests that the PersistenceFailedException raised by deleteOrFail carries the failing entity.
      */
     public function testDeleteOrFailGetEntity(): void
     {

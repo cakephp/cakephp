@@ -863,7 +863,7 @@ class I18nExtractCommand extends Command
                 'msgctxt' => $label->context,
             ];
 
-            $this->_addTranslation($label->domain, $label->label, $details);
+            $this->addTranslation($label->domain, $label->label, $details);
         }
     }
 
