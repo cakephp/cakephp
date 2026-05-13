@@ -1271,11 +1271,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type the type of query to perform
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
      */
     public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
-        /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query */
+        /** @var \Cake\ORM\Query\SelectQuery<TEntity|array> $query */
         $query = $this->callFinder($type, $this->selectQuery(), ...$args);
 
         return $query;
@@ -1359,8 +1359,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array> $query The query to find with
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
      */
     public function findList(
         SelectQuery $query,
@@ -1417,11 +1417,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $table->find('threaded', keyField: 'id', parentField: 'ancestor_id', nestingKey: 'children');
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array> $query The query to find with
      * @param \Closure|array|string|null $keyField The path to the key field.
      * @param \Closure|array|string $parentField The path to the parent field.
      * @param string $nestingKey The key to nest children under.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
      */
     public function findThreaded(
         SelectQuery $query,
@@ -1631,14 +1631,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|array|null $callback An array of data key/value pairs or a callback that will
      *   be invoked for newly created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array<string, mixed> $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface An entity.
+     * @return TEntity An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     public function findOrCreate(
@@ -1666,13 +1666,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find an existing record by, or a callable that will
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|array|null $callback Data or a callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array<string, mixed> $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface|array An entity.
+     * @return TEntity|array An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @throws \InvalidArgumentException
      */
@@ -1700,7 +1700,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $entity = $this->patchEntity($entity, $data, ['accessibleFields' => $accessibleFields]);
         }
         if ($callback !== null) {
-            /** @var \Cake\Datasource\EntityInterface $entity */
+            /** @var TEntity $entity */
             $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
@@ -1717,8 +1717,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      */
     protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
@@ -1792,11 +1792,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * This is useful for subqueries.
      *
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      */
     public function subquery(): SelectQuery
     {
-        return $this->queryFactory->select($this)->disableAutoAliasing();
+        /** @var \Cake\ORM\Query\SelectQuery<TEntity|array> $query */
+        $query = $this->queryFactory->select($this)->disableAutoAliasing();
+
+        return $query;
     }
 
     /**
@@ -2779,7 +2782,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
