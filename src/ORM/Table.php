@@ -264,7 +264,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The name of the class that represent a single row for this table
      *
      * @var string|null
-     * @phpstan-var class-string<\Cake\Datasource\EntityInterface>|null
+     * @phpstan-var class-string<TEntity>|null
      */
     protected ?string $_entityClass = null;
 
@@ -695,11 +695,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the class used to hydrate rows for this table.
      *
-     * @return class-string<\Cake\Datasource\EntityInterface>
+     * @return class-string<TEntity>
      */
     public function getEntityClass(): string
     {
         if (!$this->_entityClass) {
+            /** @var class-string<TEntity> $default */
             $default = Entity::class;
             $self = static::class;
             $parts = explode('\\', $self);
@@ -714,7 +715,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->_entityClass = $default;
             }
 
-            /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+            /** @var class-string<TEntity>|null $class */
             $class = App::className($name, 'Model/Entity');
             if (!$class) {
                 throw new MissingEntityException([$name]);
@@ -735,7 +736,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setEntityClass(string $name)
     {
-        /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+        /** @var class-string<TEntity>|null $class */
         $class = App::className($name, 'Model/Entity');
         if ($class === null) {
             throw new MissingEntityException([$name]);
@@ -3283,14 +3284,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $entities a single entity or list of entities
+     * @param TEntity|array<TEntity> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query\SelectQuery::contain()
-     * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
+     * @return TEntity|array<TEntity>
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
-        return (new LazyEagerLoader())->loadInto($entities, $contain, $this);
+        /** @var TEntity|array<TEntity> $result */
+        $result = (new LazyEagerLoader())->loadInto($entities, $contain, $this);
+
+        return $result;
     }
 
     /**
