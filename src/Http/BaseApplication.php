@@ -19,6 +19,7 @@ namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
+use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerFactory;
@@ -32,12 +33,14 @@ use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -97,6 +100,16 @@ abstract class BaseApplication implements
     protected ?ContainerInterface $container = null;
 
     /**
+     * A list of event listeners which get registered on the host application's
+     * event manager when this app boots. Each entry must be a class name
+     * implementing `\Cake\Event\EventListenerInterface`; listeners are resolved
+     * via the application's container, so they support constructor injection.
+     *
+     * @var array<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    protected array $eventListeners = [];
+
+    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
@@ -111,6 +124,7 @@ abstract class BaseApplication implements
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = new PluginCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
+        $this->eventListeners = Configure::read('App.EventListeners', []);
         $this->controllerFactory = $controllerFactory;
         Plugin::setCollection($this->plugins);
     }
@@ -191,7 +205,21 @@ abstract class BaseApplication implements
             $this->plugins->addFromConfig($plugins);
         }
 
-        $eventManager = $this->events($this->getEventManager());
+        $container = $this->getContainer();
+        $eventManager = $this->getEventManager();
+        foreach ($this->eventListeners as $listener) {
+            if (!is_a($listener, EventListenerInterface::class, true)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Event listener `%s` must be a class name that implements %s',
+                    is_string($listener) ? $listener : get_debug_type($listener),
+                    EventListenerInterface::class,
+                ));
+            }
+
+            $eventManager->on($container->get($listener));
+        }
+
+        $eventManager = $this->events($eventManager);
         $this->setEventManager($this->pluginEvents($eventManager));
     }
 

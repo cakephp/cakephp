@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
@@ -72,6 +73,16 @@ class BasePlugin implements PluginInterface
      * @var bool
      */
     protected bool $eventsEnabled = true;
+
+    /**
+     * A list of event listeners which get registered on the host application's
+     * event manager when this plugin boots. Each entry must be a class name
+     * implementing `\Cake\Event\EventListenerInterface`; listeners are resolved
+     * via the application's container, so they support constructor injection.
+     *
+     * @var array<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    protected array $eventListeners = [];
 
     /**
      * The path to this plugin.
@@ -284,6 +295,28 @@ class BasePlugin implements PluginInterface
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
         if (is_file($bootstrap)) {
             require $bootstrap;
+        }
+
+        if (
+            !$this->eventsEnabled ||
+            !$app instanceof ContainerApplicationInterface ||
+            $this->eventListeners === []
+        ) {
+            return;
+        }
+
+        $container = $app->getContainer();
+        $eventManager = $app->getEventManager();
+        foreach ($this->eventListeners as $listener) {
+            if (!is_a($listener, EventListenerInterface::class, true)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Event listener `%s` must be a class name that implements %s',
+                    is_string($listener) ? $listener : get_debug_type($listener),
+                    EventListenerInterface::class,
+                ));
+            }
+
+            $eventManager->on($container->get($listener));
         }
     }
 
