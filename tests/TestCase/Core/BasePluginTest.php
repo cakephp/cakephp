@@ -22,6 +22,7 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
+use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\Event;
@@ -37,11 +38,16 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
+use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use stdClass;
+use TestApp\Event\DependencyInjectedEventListener;
+use TestApp\Event\GreeterService;
+use TestApp\TestCase\Event\CustomTestEventListenerInterface;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -354,5 +360,142 @@ class BasePluginTest extends TestCase
         $runner = new CommandRunner($app);
         $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    /**
+     * Listeners declared on `$eventListeners` should be attached to the host
+     * application's event manager when the plugin boots.
+     */
+    public function testEventListenersAreRegisteredOnPluginBootstrap(): void
+    {
+        static::setAppNamespace();
+
+        $plugin = new class extends BasePlugin
+        {
+            protected array $eventListeners = [CustomTestEventListenerInterface::class];
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(CustomTestEventListenerInterface::class);
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->addPlugin($plugin);
+        $app->bootstrap();
+        $app->pluginBootstrap();
+
+        $this->assertNotEmpty(
+            $app->getEventManager()->listeners('fake.event'),
+            'Plugin listener declared in $eventListeners should be attached to the event manager.',
+        );
+        $this->assertNotEmpty($app->getEventManager()->listeners('another.event'));
+    }
+
+    /**
+     * Listeners declared on `$eventListeners` are resolved through the host
+     * application's container, so plugin event listeners can declare
+     * constructor-injected dependencies that the plugin registers in
+     * `services()`.
+     */
+    public function testEventListenersResolvedThroughContainerWithDependencyInjection(): void
+    {
+        static::setAppNamespace();
+
+        $plugin = new class extends BasePlugin
+        {
+            protected array $eventListeners = [DependencyInjectedEventListener::class];
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->addPlugin($plugin);
+        $app->bootstrap();
+        $app->pluginBootstrap();
+
+        $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
+
+        $listener = $app->getContainer()->get(DependencyInjectedEventListener::class);
+        $this->assertInstanceOf(DependencyInjectedEventListener::class, $listener);
+        $this->assertSame(
+            'Hello, Jane',
+            $listener->lastGreeting,
+            'Plugin listener should have been built with its GreeterService dependency injected.',
+        );
+    }
+
+    /**
+     * A class that does not implement EventListenerInterface should be rejected
+     * with a clear error message.
+     */
+    public function testEventListenersInvalidClassThrows(): void
+    {
+        $plugin = new class extends BasePlugin
+        {
+            protected array $eventListeners = [stdClass::class];
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->addPlugin($plugin);
+        $app->bootstrap();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
+        $app->pluginBootstrap();
+    }
+
+    /**
+     * Non-string entries (e.g. an already-instantiated object) should also be
+     * rejected — only class-string entries are supported.
+     */
+    public function testEventListenersNonStringEntryThrows(): void
+    {
+        $plugin = new class extends BasePlugin
+        {
+            protected array $eventListeners;
+
+            public function initialize(): void
+            {
+                $this->eventListeners = [new stdClass()];
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->addPlugin($plugin);
+        $app->bootstrap();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
+        $app->pluginBootstrap();
     }
 }

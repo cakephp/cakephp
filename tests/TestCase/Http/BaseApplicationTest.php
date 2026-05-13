@@ -35,10 +35,15 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use stdClass;
+use TestApp\Event\DependencyInjectedEventListener;
+use TestApp\Event\GreeterService;
+use TestApp\TestCase\Event\CustomTestEventListenerInterface;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -83,6 +88,7 @@ class BaseApplicationTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
+        Configure::delete('App.EventListeners');
         unset($this->app);
     }
 
@@ -409,5 +415,112 @@ class BaseApplicationTest extends TestCase
         $runner = new CommandRunner($app);
         $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    /**
+     * Listeners declared via `App.EventListeners` should be attached to the
+     * application's event manager when `bootstrap()` runs.
+     */
+    public function testEventListenersFromConfigureAreRegisteredOnBootstrap(): void
+    {
+        Configure::write('App.EventListeners', [CustomTestEventListenerInterface::class]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(CustomTestEventListenerInterface::class);
+            }
+        };
+        $app->bootstrap();
+
+        $this->assertNotEmpty(
+            $app->getEventManager()->listeners('fake.event'),
+            'Listener declared in App.EventListeners should be attached to the event manager.',
+        );
+        $this->assertNotEmpty($app->getEventManager()->listeners('another.event'));
+    }
+
+    /**
+     * Listeners declared via `App.EventListeners` are resolved through the DI
+     * container, so their constructor dependencies can be wired up in
+     * `services()` just like any other service.
+     */
+    public function testEventListenersResolvedThroughContainerWithDependencyInjection(): void
+    {
+        Configure::write('App.EventListeners', [DependencyInjectedEventListener::class]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+        $app->bootstrap();
+
+        $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
+
+        $listener = $app->getContainer()->get(DependencyInjectedEventListener::class);
+        $this->assertInstanceOf(DependencyInjectedEventListener::class, $listener);
+        $this->assertSame(
+            'Hello, Jane',
+            $listener->lastGreeting,
+            'The listener should have been built with its GreeterService dependency injected by the container.',
+        );
+    }
+
+    /**
+     * A class that does not implement EventListenerInterface should be rejected
+     * with a clear error message.
+     */
+    public function testEventListenersInvalidClassThrows(): void
+    {
+        Configure::write('App.EventListeners', [stdClass::class]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
+        $app->bootstrap();
+    }
+
+    /**
+     * Non-string entries (e.g. an already-instantiated object) should also be
+     * rejected — only class-string entries are supported.
+     */
+    public function testEventListenersNonStringEntryThrows(): void
+    {
+        Configure::write('App.EventListeners', [new stdClass()]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
+        $app->bootstrap();
     }
 }
