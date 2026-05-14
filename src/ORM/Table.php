@@ -1272,11 +1272,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type the type of query to perform
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
+     * @return \Cake\ORM\Query\SelectQuery<TEntity> The query builder
      */
     public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
-        /** @var \Cake\ORM\Query\SelectQuery<TEntity|array> $query */
+        /** @var \Cake\ORM\Query\SelectQuery<TEntity> $query */
         $query = $this->callFinder($type, $this->selectQuery(), ...$args);
 
         return $query;

@@ -44,7 +44,7 @@ use Psr\SimpleCache\CacheInterface;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @template TSubject of \Cake\Datasource\EntityInterface|array
+ * @template-covariant TSubject of \Cake\Datasource\EntityInterface|array
  * @extends \Cake\Database\Query\SelectQuery<TSubject>
  */
 class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterface
