@@ -43,6 +43,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
+use Cake\ORM\Query\ArrayQuery;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
@@ -1366,6 +1367,34 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this->callFinder($type, $this->selectQuery(), ...$args);
 
         return $query;
+    }
+
+    /**
+     * Type-safe non-hydrated read. Equivalent in behavior to
+     * `find($type, ...)->disableHydration()` but the type system knows the
+     * results are arrays rather than entities.
+     *
+     * Construction methods (where/join/order/contain/finders) behave the same
+     * as on a regular {@see SelectQuery}; only the result-fetch methods
+     * (first/firstOrFail/all/toArray/iteration) differ in shape.
+     *
+     * ```
+     * $rows = $articlesTable->findArray()->where(['published' => true])->all();
+     * // $rows: iterable<array<string, mixed>>
+     * ```
+     *
+     * @param string $type The type of finder to call.
+     * @param mixed ...$args Arguments matching the finder's parameters.
+     * @return \Cake\ORM\Query\ArrayQuery
+     * @since 5.next
+     */
+    public function findArray(string $type = 'all', mixed ...$args): ArrayQuery
+    {
+        $query = new ArrayQuery($this);
+        /** @var \Cake\ORM\Query\ArrayQuery $result */
+        $result = $this->callFinder($type, $query, ...$args);
+
+        return $result;
     }
 
     /**
