@@ -593,7 +593,7 @@ class Validation
      *
      * @param mixed $check Value to check
      * @return bool True if the value is valid, false otherwise
-     * @see Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     * @see https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/ for regex credits
      */
     public static function iso8601(mixed $check): bool
     {
@@ -651,9 +651,9 @@ class Validation
      * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success
      * @throws \InvalidArgumentException when unsupported $type given
-     * @see \Cake\I18n\Time::parseDate()
+     * @see \Cake\I18n\Date::parseDate()
      * @see \Cake\I18n\Time::parseTime()
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @see \Cake\I18n\DateTime::parseDateTime()
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {

@@ -25,7 +25,7 @@ use Closure;
  * @method $this andWhere($conditions, array $types = []) Connects any previously defined set of conditions to the
  *   provided list using the AND operator. {@see \Cake\Database\Query::andWhere()}
  * @method \Cake\Datasource\EntityInterface|array firstOrFail() Get the first result from the executing query or raise an exception.
- *   {@see \Cake\Database\Query::firstOrFail()}
+ *   {@see \Cake\ORM\Query\SelectQuery::firstOrFail()}
  */
 interface QueryInterface
 {

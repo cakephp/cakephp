@@ -214,7 +214,7 @@ class Cookie implements CookieInterface
      * @param array|string|float|int|bool $value Value of the cookie
      * @param array<string, mixed> $options Cookies options.
      * @return static
-     * @see \Cake\Cookie\Cookie::setDefaults()
+     * @see \Cake\Http\Cookie\Cookie::setDefaults()
      */
     public static function create(string $name, array|string|float|int|bool $value, array $options = []): static
     {

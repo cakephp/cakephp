@@ -161,7 +161,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When set, SelectQuery execution will be bypassed.
      *
      * @var iterable|null
-     * @see \Cake\Datasource\QueryTrait::setResult()
+     * @see \Cake\ORM\Query\SelectQuery::setResult()
      */
     protected ?iterable $_results = null;
 
@@ -627,7 +627,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
-     * @see applyOptions()
+     * @see \Cake\ORM\Query\SelectQuery::applyOptions()
      */
     public function getOptions(): array
     {
@@ -695,7 +695,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @param array<string, mixed> $options The options to be applied
      * @return $this
-     * @see getOptions()
+     * @see \Cake\ORM\Query\SelectQuery::getOptions()
      */
     public function applyOptions(array $options)
     {
@@ -1259,7 +1259,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
-     * @see \Cake\ORM\Query\SeletQuery::matching()
+     * @see \Cake\ORM\Query\SelectQuery::matching()
      */
     public function innerJoinWith(string $assoc, ?Closure $builder = null)
     {

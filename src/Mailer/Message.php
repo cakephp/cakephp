@@ -1260,7 +1260,7 @@ class Message implements JsonSerializable
      * @param array $attachments Array of filenames.
      * @return $this
      * @throws \InvalidArgumentException
-     * @see \Cake\Mailer\Email::setAttachments()
+     * @see Message::setAttachments()
      */
     public function addAttachments(array $attachments)
     {

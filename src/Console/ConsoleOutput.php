@@ -92,7 +92,7 @@ class ConsoleOutput
     /**
      * The current output type.
      *
-     * @see setOutputAs() For manipulation.
+     * @see \Cake\Console\ConsoleOutput::setOutputAs() For manipulation.
      * @var int
      */
     protected int $_outputAs = self::COLOR;

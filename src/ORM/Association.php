@@ -611,7 +611,7 @@ abstract class Association
      *   Available strategies vary by association type.
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
-     * @see getStrategy() to retrieve the current strategy.
+     * @see Association::getStrategy() to retrieve the current strategy.
      */
     public function setStrategy(string $name)
     {

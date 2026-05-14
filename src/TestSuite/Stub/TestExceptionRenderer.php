@@ -28,7 +28,7 @@ use Throwable;
  * caught by the ErrorHandlerMiddleware. This is useful while debugging or
  * writing integration test cases.
  *
- * @see \Cake\TestSuite\IntegrationTestCase::disableErrorHandlerMiddleware()
+ * @see \Cake\TestSuite\IntegrationTestTrait::disableErrorHandlerMiddleware()
  * @internal
  */
 class TestExceptionRenderer implements ExceptionRendererInterface

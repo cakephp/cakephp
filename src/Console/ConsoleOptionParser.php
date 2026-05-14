@@ -78,7 +78,7 @@ class ConsoleOptionParser
     /**
      * Description text - displays before options when help is generated
      *
-     * @see \Cake\Console\ConsoleOptionParser::description()
+     * @see \Cake\Console\ConsoleOptionParser::setDescription()
      * @var string
      */
     protected string $_description = '';
@@ -86,7 +86,7 @@ class ConsoleOptionParser
     /**
      * Epilog text - displays after options when help is generated
      *
-     * @see \Cake\Console\ConsoleOptionParser::epilog()
+     * @see \Cake\Console\ConsoleOptionParser::setEpilog()
      * @var string
      */
     protected string $_epilog = '';

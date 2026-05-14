@@ -1156,8 +1156,8 @@ class Text
      * @param array<string, mixed>|string $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
-     * @see setTransliterator()
-     * @see setTransliteratorId()
+     * @see Text::setTransliterator()
+     * @see Text::setTransliteratorId()
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#text-slug
      */
     public static function slug(string $string, array|string $options = []): string

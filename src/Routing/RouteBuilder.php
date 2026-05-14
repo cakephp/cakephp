@@ -1026,7 +1026,7 @@ class RouteBuilder
      * @param string ...$names The names of the middleware to apply to the current scope.
      * @return $this
      * @throws \InvalidArgumentException If it cannot apply one of the given middleware or middleware groups.
-     * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
+     * @see \Cake\Routing\RouteCollection::registerMiddleware()
      */
     public function applyMiddleware(string ...$names)
     {

@@ -104,7 +104,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param \Cake\I18n\DateTime|\Cake\I18n\Date $time The time instance to format.
      * @param array<string, mixed> $options Array of options.
      * @return string Relative time string.
-     * @see \Cake\I18n\Time::timeAgoInWords()
+     * @see \Cake\I18n\DateTime::timeAgoInWords()
      */
     public function timeAgoInWords(DateTime|Date $time, array $options = []): string
     {

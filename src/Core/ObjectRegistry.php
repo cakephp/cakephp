@@ -38,7 +38,6 @@ use Traversable;
  *
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
- * @see \Cake\Console\TaskRegistry
  * @template TObject of object
  * @template-implements \IteratorAggregate<string, TObject>
  */
