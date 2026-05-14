@@ -582,7 +582,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return mixed The first result from the ResultSet.
+     * @return TSubject|null The first result from the ResultSet.
      */
     public function first(): mixed
     {
@@ -597,7 +597,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return mixed The first result from the ResultSet.
+     * @return TSubject The first result from the ResultSet.
      */
     public function firstOrFail(): mixed
     {

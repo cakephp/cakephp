@@ -788,7 +788,7 @@ class TreeBehavior extends Behavior
             ->where([$this->_table->aliasField($primaryKey) => $id])
             ->first();
 
-        if (!$node) {
+        if (!$node instanceof EntityInterface) {
             throw new RecordNotFoundException(sprintf('Node `%s` was not found in the tree.', $id));
         }
 
