@@ -24,7 +24,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests the type-safe non-hydrated query path: Table::findArray() and
+ * Tests the type-safe non-hydrated query path: Table::findUnhydrated() and
  * the ArrayQuery class it returns.
  */
 class ArrayQueryTest extends TestCase
@@ -49,13 +49,13 @@ class ArrayQueryTest extends TestCase
     }
 
     /**
-     * findArray() is the type-safe entry point for non-hydrated reads.
+     * findUnhydrated() is the type-safe entry point for non-hydrated reads.
      * It returns an ArrayQuery (not a plain SelectQuery), so consumers know
      * up-front that results will be arrays.
      */
-    public function testFindArrayReturnsArrayQuery(): void
+    public function testFindUnhydratedReturnsArrayQuery(): void
     {
-        $query = $this->articles->findArray();
+        $query = $this->articles->findUnhydrated();
 
         $this->assertInstanceOf(ArrayQuery::class, $query);
         $this->assertInstanceOf(SelectQuery::class, $query);
@@ -68,12 +68,12 @@ class ArrayQueryTest extends TestCase
      */
     public function testFirstReturnsArrayOrNull(): void
     {
-        $row = $this->articles->findArray()->where(['id' => 1])->first();
+        $row = $this->articles->findUnhydrated()->where(['id' => 1])->first();
 
         $this->assertIsArray($row);
         $this->assertSame(1, $row['id']);
 
-        $missing = $this->articles->findArray()->where(['id' => 99999])->first();
+        $missing = $this->articles->findUnhydrated()->where(['id' => 99999])->first();
         $this->assertNull($missing);
     }
 
@@ -83,12 +83,12 @@ class ArrayQueryTest extends TestCase
      */
     public function testFirstOrFailReturnsArrayOrThrows(): void
     {
-        $row = $this->articles->findArray()->where(['id' => 1])->firstOrFail();
+        $row = $this->articles->findUnhydrated()->where(['id' => 1])->firstOrFail();
         $this->assertIsArray($row);
         $this->assertSame(1, $row['id']);
 
         $this->expectException(RecordNotFoundException::class);
-        $this->articles->findArray()->where(['id' => 99999])->firstOrFail();
+        $this->articles->findUnhydrated()->where(['id' => 99999])->firstOrFail();
     }
 
     /**
@@ -97,7 +97,7 @@ class ArrayQueryTest extends TestCase
      */
     public function testAllAndIterationProduceArrays(): void
     {
-        $resultSet = $this->articles->findArray()->orderBy(['id' => 'ASC'])->all();
+        $resultSet = $this->articles->findUnhydrated()->orderBy(['id' => 'ASC'])->all();
         $rows = $resultSet->toArray();
 
         $this->assertNotEmpty($rows);
@@ -113,7 +113,7 @@ class ArrayQueryTest extends TestCase
      */
     public function testEnableHydrationTrueThrows(): void
     {
-        $query = $this->articles->findArray();
+        $query = $this->articles->findUnhydrated();
 
         $this->expectException(BadMethodCallException::class);
         $query->enableHydration(true);
@@ -125,7 +125,7 @@ class ArrayQueryTest extends TestCase
      */
     public function testEnableHydrationFalseIsNoop(): void
     {
-        $query = $this->articles->findArray();
+        $query = $this->articles->findUnhydrated();
         $returned = $query->enableHydration(false);
 
         $this->assertSame($query, $returned);
@@ -133,13 +133,13 @@ class ArrayQueryTest extends TestCase
     }
 
     /**
-     * Custom finders called via findArray() receive the ArrayQuery itself,
+     * Custom finders called via findUnhydrated() receive the ArrayQuery itself,
      * so finder-applied builder methods (where/orderBy/contain/...) flow
      * through without losing the array shape.
      */
     public function testFinderReceivesArrayQuery(): void
     {
-        $query = $this->articles->findArray('all')->where(['id >' => 0]);
+        $query = $this->articles->findUnhydrated('all')->where(['id >' => 0]);
 
         $this->assertInstanceOf(ArrayQuery::class, $query);
         $rows = $query->orderBy(['id' => 'ASC'])->limit(2)->toArray();

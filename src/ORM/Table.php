@@ -1379,7 +1379,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * (first/firstOrFail/all/toArray/iteration) differ in shape.
      *
      * ```
-     * $rows = $articlesTable->findArray()->where(['published' => true])->all();
+     * $rows = $articlesTable->findUnhydrated()->where(['published' => true])->all();
      * // $rows: iterable<array<string, mixed>>
      * ```
      *
@@ -1388,7 +1388,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\ORM\Query\ArrayQuery
      * @since 5.next
      */
-    public function findArray(string $type = 'all', mixed ...$args): ArrayQuery
+    public function findUnhydrated(string $type = 'all', mixed ...$args): ArrayQuery
     {
         $query = new ArrayQuery($this);
         /** @var \Cake\ORM\Query\ArrayQuery $result */
@@ -1970,7 +1970,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
-            $this->findArray('all')
+            $this->findUnhydrated('all')
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)

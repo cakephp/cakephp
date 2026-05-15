@@ -28,7 +28,7 @@ use Cake\ORM\Table;
  * entities. Bind a finder once, get array results forever; the type system
  * knows the difference.
  *
- * Use {@see Table::findArray()} as the entry point. This class is the
+ * Use {@see Table::findUnhydrated()} as the entry point. This class is the
  * type-safe replacement for `SelectQuery->disableHydration()`, which becomes
  * a hard error in 6.0.
  *
