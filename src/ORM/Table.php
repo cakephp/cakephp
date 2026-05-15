@@ -43,11 +43,11 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
-use Cake\ORM\Query\ArrayQuery;
 use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1385,13 +1385,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type The type of finder to call.
      * @param mixed ...$args Arguments matching the finder's parameters.
-     * @return \Cake\ORM\Query\ArrayQuery
+     * @return \Cake\ORM\Query\UnhydratedQuery
      * @since 5.next
      */
-    public function findUnhydrated(string $type = 'all', mixed ...$args): ArrayQuery
+    public function findUnhydrated(string $type = 'all', mixed ...$args): UnhydratedQuery
     {
-        $query = new ArrayQuery($this);
-        /** @var \Cake\ORM\Query\ArrayQuery $result */
+        $query = new UnhydratedQuery($this);
+        /** @var \Cake\ORM\Query\UnhydratedQuery $result */
         $result = $this->callFinder($type, $query, ...$args);
 
         return $result;

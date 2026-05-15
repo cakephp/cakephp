@@ -34,7 +34,7 @@ use Cake\ORM\Table;
  *
  * @extends \Cake\ORM\Query\SelectQuery<array<string, mixed>>
  */
-class ArrayQuery extends SelectQuery
+class UnhydratedQuery extends SelectQuery
 {
     /**
      * @param \Cake\ORM\Table $table The table this query is starting on.
@@ -46,7 +46,7 @@ class ArrayQuery extends SelectQuery
     }
 
     /**
-     * Re-enabling hydration on an ArrayQuery would violate its type contract.
+     * Re-enabling hydration on an UnhydratedQuery would violate its type contract.
      * Use {@see Table::find()} for entity results.
      *
      * @param bool $enable Must be false; passing true throws.
@@ -57,7 +57,7 @@ class ArrayQuery extends SelectQuery
     {
         if ($enable) {
             throw new BadMethodCallException(
-                'Cannot enable hydration on ArrayQuery. Use Table::find() for entity results.',
+                'Cannot enable hydration on UnhydratedQuery. Use Table::find() for entity results.',
             );
         }
 

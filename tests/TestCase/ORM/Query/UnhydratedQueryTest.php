@@ -18,16 +18,16 @@ namespace Cake\Test\TestCase\ORM\Query;
 
 use BadMethodCallException;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\ORM\Query\ArrayQuery;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the type-safe non-hydrated query path: Table::findUnhydrated() and
- * the ArrayQuery class it returns.
+ * the UnhydratedQuery class it returns.
  */
-class ArrayQueryTest extends TestCase
+class UnhydratedQueryTest extends TestCase
 {
     /**
      * @var array<string>
@@ -50,20 +50,20 @@ class ArrayQueryTest extends TestCase
 
     /**
      * findUnhydrated() is the type-safe entry point for non-hydrated reads.
-     * It returns an ArrayQuery (not a plain SelectQuery), so consumers know
+     * It returns an UnhydratedQuery (not a plain SelectQuery), so consumers know
      * up-front that results will be arrays.
      */
-    public function testFindUnhydratedReturnsArrayQuery(): void
+    public function testFindUnhydratedReturnsUnhydratedQuery(): void
     {
         $query = $this->articles->findUnhydrated();
 
-        $this->assertInstanceOf(ArrayQuery::class, $query);
+        $this->assertInstanceOf(UnhydratedQuery::class, $query);
         $this->assertInstanceOf(SelectQuery::class, $query);
         $this->assertFalse($query->isHydrationEnabled());
     }
 
     /**
-     * first() on an ArrayQuery resolves to an array (or null when empty),
+     * first() on an UnhydratedQuery resolves to an array (or null when empty),
      * matching the runtime hydration setting locked in by the constructor.
      */
     public function testFirstReturnsArrayOrNull(): void
@@ -109,7 +109,7 @@ class ArrayQueryTest extends TestCase
 
     /**
      * enableHydration(true) must throw — re-enabling hydration mid-flight
-     * would break the type contract that ArrayQuery's TSubject binding promises.
+     * would break the type contract that UnhydratedQuery's TSubject binding promises.
      */
     public function testEnableHydrationTrueThrows(): void
     {
@@ -133,15 +133,15 @@ class ArrayQueryTest extends TestCase
     }
 
     /**
-     * Custom finders called via findUnhydrated() receive the ArrayQuery itself,
+     * Custom finders called via findUnhydrated() receive the UnhydratedQuery itself,
      * so finder-applied builder methods (where/orderBy/contain/...) flow
      * through without losing the array shape.
      */
-    public function testFinderReceivesArrayQuery(): void
+    public function testFinderReceivesUnhydratedQuery(): void
     {
         $query = $this->articles->findUnhydrated('all')->where(['id >' => 0]);
 
-        $this->assertInstanceOf(ArrayQuery::class, $query);
+        $this->assertInstanceOf(UnhydratedQuery::class, $query);
         $rows = $query->orderBy(['id' => 'ASC'])->limit(2)->toArray();
 
         $this->assertCount(2, $rows);
