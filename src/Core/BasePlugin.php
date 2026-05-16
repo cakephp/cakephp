@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
-use Cake\Event\EventListenerInterface;
+use Cake\Event\EventListenerRegistryTrait;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
@@ -32,6 +32,8 @@ use ReflectionClass;
  */
 class BasePlugin implements PluginInterface
 {
+    use EventListenerRegistryTrait;
+
     /**
      * Do bootstrapping or not
      *
@@ -80,7 +82,7 @@ class BasePlugin implements PluginInterface
      * implementing `\Cake\Event\EventListenerInterface`; listeners are resolved
      * via the application's container, so they support constructor injection.
      *
-     * @var array<class-string<\Cake\Event\EventListenerInterface>>
+     * @var list<class-string<\Cake\Event\EventListenerInterface>>
      */
     protected array $eventListeners = [];
 
@@ -135,6 +137,9 @@ class BasePlugin implements PluginInterface
             if (isset($options[$path])) {
                 $this->{$path} = $options[$path];
             }
+        }
+        if (isset($options['eventListeners'])) {
+            $this->eventListeners = $options['eventListeners'];
         }
 
         $this->initialize();
@@ -305,19 +310,11 @@ class BasePlugin implements PluginInterface
             return;
         }
 
-        $container = $app->getContainer();
-        $eventManager = $app->getEventManager();
-        foreach ($this->eventListeners as $listener) {
-            if (!is_a($listener, EventListenerInterface::class, true)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Event listener `%s` must be a class name that implements %s',
-                    is_string($listener) ? $listener : get_debug_type($listener),
-                    EventListenerInterface::class,
-                ));
-            }
-
-            $eventManager->on($container->get($listener));
-        }
+        $this->registerEventListeners(
+            $this->eventListeners,
+            $app->getContainer(),
+            $app->getEventManager(),
+        );
     }
 
     /**
