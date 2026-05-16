@@ -33,7 +33,7 @@ use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventListenerRegistryTrait;
+use Cake\Event\EventListenerRegistrationTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
@@ -71,7 +71,7 @@ abstract class BaseApplication implements
      * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
-    use EventListenerRegistryTrait;
+    use EventListenerRegistrationTrait;
 
     /**
      * @var string Contains the path of the config directory
