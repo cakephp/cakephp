@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
-use Cake\Event\EventListenerRegistryTrait;
+use Cake\Event\EventListenerRegistrationTrait;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
@@ -32,7 +32,7 @@ use ReflectionClass;
  */
 class BasePlugin implements PluginInterface
 {
-    use EventListenerRegistryTrait;
+    use EventListenerRegistrationTrait;
 
     /**
      * Do bootstrapping or not

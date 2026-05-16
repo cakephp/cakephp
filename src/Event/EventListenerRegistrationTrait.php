@@ -27,7 +27,7 @@ use InvalidArgumentException;
  * the trait resolves it through the given DI container so constructor
  * dependencies can be injected.
  */
-trait EventListenerRegistryTrait
+trait EventListenerRegistrationTrait
 {
     /**
      * Validate, resolve, and register the given event listeners.
