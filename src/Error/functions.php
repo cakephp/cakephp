@@ -87,12 +87,11 @@ function stackTrace(array $options = []): void
  * Only runs if debug mode is enabled.
  * It will otherwise just continue code execution and ignore this function.
  *
- * @param mixed $var Variable to show debug information for.
- * @param bool|null $showHtml If set to true, the method prints the debug data in a browser-friendly way.
+ * @param mixed ...$vars Variables to show debug information for.
  * @return void
  * @link https://book.cakephp.org/5/en/development/debugging.html#basic-debugging
  */
-function dd(mixed $var, ?bool $showHtml = null): void
+function dd(mixed ...$vars): void
 {
     if (!Configure::read('debug')) {
         return;
@@ -104,7 +103,9 @@ function dd(mixed $var, ?bool $showHtml = null): void
         'file' => $trace[0]['file'],
     ];
 
-    Debugger::printVar($var, $location, $showHtml);
+    foreach ($vars as $var) {
+        Debugger::printVar($var, $location);
+    }
     die(1);
 }
 
