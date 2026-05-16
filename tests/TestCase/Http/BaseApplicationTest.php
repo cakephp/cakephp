@@ -523,4 +523,43 @@ class BaseApplicationTest extends TestCase
         $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
         $app->bootstrap();
     }
+
+    /**
+     * The application's `$eventListeners` property (developer defaults) and the
+     * `App.EventListeners` Configure key (environment-specific extras) should
+     * be merged rather than the latter overwriting the former.
+     */
+    public function testEventListenersPropertyAndConfigureAreMerged(): void
+    {
+        Configure::write('App.EventListeners', [DependencyInjectedEventListener::class]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            // Developer-defined default on the Application class.
+            protected array $eventListeners = [CustomTestEventListenerInterface::class];
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(CustomTestEventListenerInterface::class);
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+        $app->bootstrap();
+
+        $this->assertNotEmpty(
+            $app->getEventManager()->listeners('fake.event'),
+            'Property-declared listener should still be registered.',
+        );
+        $this->assertNotEmpty(
+            $app->getEventManager()->listeners('Greeting.before'),
+            'Configure-supplied listener should also be registered.',
+        );
+    }
 }

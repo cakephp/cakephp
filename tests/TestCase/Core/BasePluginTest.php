@@ -498,4 +498,51 @@ class BasePluginTest extends TestCase
         $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
         $app->pluginBootstrap();
     }
+
+    /**
+     * The `eventListeners` plugin option (passed via `addPlugin()` or the
+     * BasePlugin constructor) replaces the plugin's default listener list,
+     * letting app developers swap out vendor listeners without subclassing.
+     */
+    public function testEventListenersOptionReplacesPluginDefaults(): void
+    {
+        static::setAppNamespace();
+
+        $pluginClass = new class extends BasePlugin
+        {
+            // Vendor default — would normally be registered, but we expect
+            // the app dev's option to override it.
+            protected array $eventListeners = [CustomTestEventListenerInterface::class];
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+        $plugin = new $pluginClass([
+            'eventListeners' => [DependencyInjectedEventListener::class],
+        ]);
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app->addPlugin($plugin);
+        $app->bootstrap();
+        $app->pluginBootstrap();
+
+        $this->assertEmpty(
+            $app->getEventManager()->listeners('fake.event'),
+            'The vendor default listener should have been replaced by the option.',
+        );
+        $this->assertNotEmpty(
+            $app->getEventManager()->listeners('Greeting.before'),
+            'The app-dev-supplied listener should be registered instead.',
+        );
+    }
 }
