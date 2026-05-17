@@ -17,7 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Query;
 
 use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\SelectUnhydratedQuery;
 use Cake\ORM\Table;
@@ -148,5 +151,60 @@ class SelectUnhydratedQueryTest extends TestCase
         foreach ($rows as $row) {
             $this->assertIsArray($row);
         }
+    }
+
+    /**
+     * findUnhydrated() must build through the injected QueryFactory (like
+     * find() does), not by instantiating SelectUnhydratedQuery directly —
+     * otherwise apps with a custom QueryFactory get divergent behavior
+     * between find() and findUnhydrated().
+     */
+    public function testHonorsInjectedQueryFactory(): void
+    {
+        $factory = new class extends QueryFactory {
+            public function selectUnhydrated(Table $table): SelectUnhydratedQuery
+            {
+                return new class ($table) extends SelectUnhydratedQuery {
+                };
+            }
+        };
+        $table = $this->getTableLocator()->get('ArticlesCustomFactory', [
+            'className' => Table::class,
+            'table' => 'articles',
+            'queryFactory' => $factory,
+        ]);
+
+        $query = $table->findUnhydrated();
+
+        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
+        $this->assertNotSame(
+            SelectUnhydratedQuery::class,
+            $query::class,
+            'findUnhydrated() bypassed the injected QueryFactory.',
+        );
+    }
+
+    /**
+     * A finder that discards the passed query and returns a freshly built
+     * one cannot preserve the non-hydrating contract. findUnhydrated() must
+     * fail loudly with a clear message naming the finder, not return a
+     * silently hydrated query or hit a cryptic TypeError.
+     */
+    public function testFinderReturningFreshQueryThrows(): void
+    {
+        $table = new class (['table' => 'articles', 'connection' => ConnectionManager::get('test')]) extends Table {
+            /**
+             * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The passed query.
+             * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+             */
+            public function findFresh(SelectQuery $query): SelectQuery
+            {
+                return $this->find();
+            }
+        };
+
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('`fresh` finder must return the query it was given');
+        $table->findUnhydrated('fresh');
     }
 }

@@ -1383,16 +1383,32 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * // $rows: iterable<array<string, mixed>>
      * ```
      *
+     * Only finders that mutate and return the query they were given are
+     * supported here (the overwhelming majority). A finder that discards the
+     * passed query and returns a freshly built one (e.g. by delegating to
+     * `find()`) cannot preserve the non-hydrating contract and triggers an
+     * exception rather than a silent hydrated result.
+     *
      * @param string $type The type of finder to call.
      * @param mixed ...$args Arguments matching the finder's parameters.
      * @return \Cake\ORM\Query\SelectUnhydratedQuery
+     * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
      * @since 5.next
      */
     public function findUnhydrated(string $type = 'all', mixed ...$args): SelectUnhydratedQuery
     {
-        $query = new SelectUnhydratedQuery($this);
-        /** @var \Cake\ORM\Query\SelectUnhydratedQuery $result */
+        $query = $this->selectUnhydratedQuery();
         $result = $this->callFinder($type, $query, ...$args);
+
+        if (!$result instanceof SelectUnhydratedQuery) {
+            throw new CakeException(sprintf(
+                'The `%s` finder must return the query it was given when called via findUnhydrated(); '
+                . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
+                . 'non-hydrating contract — use find() for those.',
+                $type,
+                get_debug_type($result),
+            ));
+        }
 
         return $result;
     }
@@ -1871,6 +1887,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this->queryFactory->select($this);
 
         return $query;
+    }
+
+    /**
+     * Creates a new non-hydrating select query.
+     *
+     * @return \Cake\ORM\Query\SelectUnhydratedQuery
+     * @since 5.next
+     */
+    public function selectUnhydratedQuery(): SelectUnhydratedQuery
+    {
+        return $this->queryFactory->selectUnhydrated($this);
     }
 
     /**

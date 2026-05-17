@@ -35,6 +35,18 @@ class QueryFactory
     }
 
     /**
+     * Create a new non-hydrating SelectUnhydratedQuery instance.
+     *
+     * @param \Cake\ORM\Table $table The table this query is starting on.
+     * @return \Cake\ORM\Query\SelectUnhydratedQuery
+     * @since 5.next
+     */
+    public function selectUnhydrated(Table $table): SelectUnhydratedQuery
+    {
+        return new SelectUnhydratedQuery($table);
+    }
+
+    /**
      * Create a new InsertQuery instance.
      *
      * @param \Cake\ORM\Table $table The table this query is starting on.
