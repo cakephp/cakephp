@@ -256,11 +256,6 @@ class BelongsTo extends Association
         string $sourceAlias,
         string $targetAlias,
     ): ?array {
-        $left = $this->extractAliasField($key, $sourceAlias);
-        if ($left === null) {
-            return null;
-        }
-
         if ($value instanceof IdentifierExpression) {
             $value = $value->getIdentifier();
         }
@@ -268,12 +263,19 @@ class BelongsTo extends Association
             return null;
         }
 
+        $left = $this->extractAliasField($key, $sourceAlias);
         $right = $this->extractAliasField($value, $targetAlias);
-        if ($right === null) {
-            return null;
+        if ($left !== null && $right !== null) {
+            return [$left, $right];
         }
 
-        return [$left, $right];
+        $left = $this->extractAliasField($key, $targetAlias);
+        $right = $this->extractAliasField($value, $sourceAlias);
+        if ($left !== null && $right !== null) {
+            return [$right, $left];
+        }
+
+        return null;
     }
 
     /**

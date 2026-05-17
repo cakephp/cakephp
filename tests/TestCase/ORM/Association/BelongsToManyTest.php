@@ -121,6 +121,20 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that join-key introspection is empty for many-to-many associations.
+     */
+    public function testGetJoinKeys(): void
+    {
+        $assoc = new BelongsToMany('Tags', [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+        ]);
+
+        $this->assertSame([], $assoc->getSourceJoinKey());
+        $this->assertSame([], $assoc->getTargetJoinKey());
+    }
+
+    /**
      * Tests that the association reports it can be joined
      */
     public function testCanBeJoined(): void

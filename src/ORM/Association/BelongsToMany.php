@@ -207,6 +207,32 @@ class BelongsToMany extends Association
     }
 
     /**
+     * Gets the source table column(s) participating in the association join.
+     *
+     * BelongsToMany associations are mediated by a junction table, so there is
+     * no single direct source/target join key pair to expose.
+     *
+     * @return list<string>
+     */
+    public function getSourceJoinKey(): array
+    {
+        return [];
+    }
+
+    /**
+     * Gets the target table column(s) participating in the association join.
+     *
+     * BelongsToMany associations are mediated by a junction table, so there is
+     * no single direct source/target join key pair to expose.
+     *
+     * @return list<string>
+     */
+    public function getTargetJoinKey(): array
+    {
+        return [];
+    }
+
+    /**
      * Sets the sort order in which target records should be returned.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array<\Cake\Database\ExpressionInterface|string>|string $sort A find() compatible order clause

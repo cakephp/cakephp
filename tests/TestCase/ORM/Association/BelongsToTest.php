@@ -132,13 +132,14 @@ class BelongsToTest extends TestCase
             'bindingKey' => 'id',
             'conditions' => [
                 'Clients.company_uuid' => new IdentifierExpression('Companies.uuid'),
+                'Companies.legacy_uuid' => new IdentifierExpression('Clients.reverse_company_uuid'),
                 'Companies.uuid = Clients.legacy_company_uuid',
                 'Clients.is_active' => true,
             ],
         ]);
 
-        $this->assertSame(['company_uuid', 'legacy_company_uuid'], $assoc->getSourceJoinKey());
-        $this->assertSame(['uuid', 'uuid'], $assoc->getTargetJoinKey());
+        $this->assertSame(['company_uuid', 'reverse_company_uuid', 'legacy_company_uuid'], $assoc->getSourceJoinKey());
+        $this->assertSame(['uuid', 'legacy_uuid', 'uuid'], $assoc->getTargetJoinKey());
     }
 
     /**
