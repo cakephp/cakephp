@@ -531,7 +531,7 @@ abstract class Association
 
         return array_values(array_filter(
             (array)$key,
-            static fn(mixed $column): bool => is_string($column) && $column !== '',
+            static fn(string $column): bool => $column !== '',
         ));
     }
 

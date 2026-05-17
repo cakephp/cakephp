@@ -303,6 +303,13 @@ class BelongsTo extends Association
         return null;
     }
 
+    /**
+     * Extracts the field name from an alias-qualified identifier.
+     *
+     * @param string $identifier Identifier to inspect.
+     * @param string $alias Expected table alias.
+     * @return string|null
+     */
     protected function extractAliasField(string $identifier, string $alias): ?string
     {
         $quotedAlias = preg_quote($alias, '/');
