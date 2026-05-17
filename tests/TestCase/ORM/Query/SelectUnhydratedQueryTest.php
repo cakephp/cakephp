@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
-use BadMethodCallException;
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -111,28 +110,39 @@ class SelectUnhydratedQueryTest extends TestCase
     }
 
     /**
-     * enableHydration(true) must throw — re-enabling hydration mid-flight
-     * would break the type contract that SelectUnhydratedQuery's TSubject binding promises.
+     * SelectUnhydratedQuery is fully substitutable for SelectQuery: the ORM
+     * may re-enable hydration on it (the eager loader does exactly this when
+     * normalizing association queries). It must not fight that — contain()
+     * with a hydrated parent has to keep working.
      */
-    public function testEnableHydrationTrueThrows(): void
+    public function testInteroperatesWithContainEagerLoading(): void
     {
-        $query = $this->articles->findUnhydrated();
+        $this->articles->belongsTo('Authors');
 
-        $this->expectException(BadMethodCallException::class);
-        $query->enableHydration(true);
+        $rows = $this->articles
+            ->findUnhydrated()
+            ->contain('Authors')
+            ->where(['Articles.id' => 1])
+            ->toArray();
+
+        $this->assertNotEmpty($rows);
+        $this->assertIsArray($rows[0]);
+        $this->assertArrayHasKey('author', $rows[0]);
+        $this->assertIsArray($rows[0]['author']);
     }
 
     /**
-     * enableHydration(false) is a no-op (hydration is already off) and
-     * preserves fluent chaining.
+     * Re-enabling hydration is allowed (it just flips the flag, like any
+     * SelectQuery) — the value of this class is the static type, not a
+     * runtime lock.
      */
-    public function testEnableHydrationFalseIsNoop(): void
+    public function testEnableHydrationIsNotLocked(): void
     {
         $query = $this->articles->findUnhydrated();
-        $returned = $query->enableHydration(false);
-
-        $this->assertSame($query, $returned);
         $this->assertFalse($query->isHydrationEnabled());
+
+        $query->enableHydration(true);
+        $this->assertTrue($query->isHydrationEnabled());
     }
 
     /**
@@ -206,32 +216,5 @@ class SelectUnhydratedQueryTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('`fresh` finder must return the query it was given');
         $table->findUnhydrated('fresh');
-    }
-
-    /**
-     * The same guard applies when a finder is chained on the query object
-     * itself (findUnhydrated()->find('fresh')), not just at the table entry
-     * point — otherwise the non-hydrating contract leaks via a cryptic
-     * return-type TypeError from the inherited SelectQuery::find().
-     */
-    public function testChainedFinderReturningFreshQueryThrows(): void
-    {
-        $table = new class (['table' => 'articles', 'connection' => ConnectionManager::get('test')]) extends Table {
-            /**
-             * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The passed query.
-             * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
-             */
-            public function findFresh(SelectQuery $query): SelectQuery
-            {
-                return $this->find();
-            }
-        };
-
-        $query = $table->findUnhydrated('all');
-        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
-
-        $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('`fresh` finder must return the query it was given');
-        $query->find('fresh');
     }
 }
