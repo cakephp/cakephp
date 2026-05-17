@@ -47,7 +47,7 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\Query\UnhydratedQuery;
+use Cake\ORM\Query\SelectUnhydratedQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1385,13 +1385,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type The type of finder to call.
      * @param mixed ...$args Arguments matching the finder's parameters.
-     * @return \Cake\ORM\Query\UnhydratedQuery
+     * @return \Cake\ORM\Query\SelectUnhydratedQuery
      * @since 5.next
      */
-    public function findUnhydrated(string $type = 'all', mixed ...$args): UnhydratedQuery
+    public function findUnhydrated(string $type = 'all', mixed ...$args): SelectUnhydratedQuery
     {
-        $query = new UnhydratedQuery($this);
-        /** @var \Cake\ORM\Query\UnhydratedQuery $result */
+        $query = new SelectUnhydratedQuery($this);
+        /** @var \Cake\ORM\Query\SelectUnhydratedQuery $result */
         $result = $this->callFinder($type, $query, ...$args);
 
         return $result;
