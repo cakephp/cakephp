@@ -45,7 +45,7 @@ class QueryFactory
      *
      * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query\SelectUnhydratedQuery
-     * @since 5.next
+     * @since 5.4.0
      */
     public function selectUnhydrated(Table $table): SelectUnhydratedQuery
     {

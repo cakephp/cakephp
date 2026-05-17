@@ -1393,7 +1393,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed ...$args Arguments matching the finder's parameters.
      * @return \Cake\ORM\Query\SelectUnhydratedQuery
      * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
-     * @since 5.next
+     * @since 5.4.0
      */
     public function findUnhydrated(string $type = 'all', mixed ...$args): SelectUnhydratedQuery
     {
@@ -1893,7 +1893,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Creates a new non-hydrating select query.
      *
      * @return \Cake\ORM\Query\SelectUnhydratedQuery
-     * @since 5.next
+     * @since 5.4.0
      */
     public function selectUnhydratedQuery(): SelectUnhydratedQuery
     {

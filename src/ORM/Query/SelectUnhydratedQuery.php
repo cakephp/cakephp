@@ -11,12 +11,10 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.next
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Query;
-
-use Cake\ORM\Table;
 
 /**
  * Non-hydrating SelectQuery variant. Always returns arrays.
@@ -30,7 +28,7 @@ use Cake\ORM\Table;
  * that binding survives finder dispatch where a bare generic annotation would
  * decay.
  *
- * Use {@see Table::findUnhydrated()} as the entry point. This class is the
+ * Use {@see \Cake\ORM\Table::findUnhydrated()} as the entry point. This class is the
  * type-safe replacement for `SelectQuery->disableHydration()`, which becomes
  * a hard error in 6.0.
  *
@@ -39,11 +37,7 @@ use Cake\ORM\Table;
 class SelectUnhydratedQuery extends SelectQuery
 {
     /**
-     * @param \Cake\ORM\Table $table The table this query is starting on.
+     * @var bool
      */
-    public function __construct(Table $table)
-    {
-        parent::__construct($table);
-        $this->_hydrate = false;
-    }
+    protected bool $_hydrate = false;
 }
