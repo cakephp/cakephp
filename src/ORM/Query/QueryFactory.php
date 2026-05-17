@@ -37,6 +37,12 @@ class QueryFactory
     /**
      * Create a new non-hydrating SelectUnhydratedQuery instance.
      *
+     * This is an independent construction seam, like select()/insert()/etc.
+     * Applications that override select() to return a custom SelectQuery
+     * subclass and want the same custom behavior on the non-hydrating path
+     * should override this method too (returning their own
+     * SelectUnhydratedQuery subclass).
+     *
      * @param \Cake\ORM\Table $table The table this query is starting on.
      * @return \Cake\ORM\Query\SelectUnhydratedQuery
      * @since 5.next
