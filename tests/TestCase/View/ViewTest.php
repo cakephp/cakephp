@@ -708,6 +708,16 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test element name cannot escape the view template path.
+     */
+    public function testElementPathEscape(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('it is not within any view template path.');
+        $this->View->element('../../../check');
+    }
+
+    /**
      * Test loading nonexistent plugin view element
      */
     public function testElementMissingPluginElement(): void

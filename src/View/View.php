@@ -1520,7 +1520,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         foreach ($this->getElementPaths($plugin) as $path) {
             if (is_file($path . $name)) {
-                return $path . $name;
+                return $this->_checkFilePath($path . $name, $path);
             }
         }
 
