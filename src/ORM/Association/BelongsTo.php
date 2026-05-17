@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
@@ -65,6 +66,30 @@ class BelongsTo extends Association
         $this->_foreignKey = $key;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSourceJoinKey(): array
+    {
+        if ($this->getForeignKey() !== false) {
+            return parent::getSourceJoinKey();
+        }
+
+        return array_keys($this->getCustomJoinKeyPairs());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTargetJoinKey(): array
+    {
+        if ($this->getForeignKey() !== false) {
+            return parent::getTargetJoinKey();
+        }
+
+        return array_values($this->getCustomJoinKeyPairs());
     }
 
     /**
@@ -175,5 +200,116 @@ class BelongsTo extends Association
         ]);
 
         return $loader->buildEagerLoader($options);
+    }
+
+    /**
+     * Best-effort extraction of source/target join key pairs from custom
+     * alias-qualified conditions used with `foreignKey => false`.
+     *
+     * @return array<string, string>
+     */
+    protected function getCustomJoinKeyPairs(): array
+    {
+        $conditions = $this->getConditions();
+        if (!is_array($conditions)) {
+            return [];
+        }
+
+        $sourceAlias = $this->getSource()->getAlias();
+        $targetAlias = $this->getAlias();
+        $pairs = [];
+
+        foreach ($conditions as $key => $value) {
+            if (is_string($key)) {
+                $pair = $this->extractJoinKeyPair($key, $value, $sourceAlias, $targetAlias);
+                if ($pair !== null) {
+                    [$sourceKey, $targetKey] = $pair;
+                    $pairs[$sourceKey] = $targetKey;
+                }
+
+                continue;
+            }
+
+            if (!is_string($value)) {
+                continue;
+            }
+
+            $pair = $this->extractJoinKeyPairFromString($value, $sourceAlias, $targetAlias);
+            if ($pair === null) {
+                continue;
+            }
+
+            [$sourceKey, $targetKey] = $pair;
+            $pairs[$sourceKey] = $targetKey;
+        }
+
+        return $pairs;
+    }
+
+    /**
+     * @param mixed $value Condition value.
+     * @return array{string, string}|null
+     */
+    protected function extractJoinKeyPair(
+        string $key,
+        mixed $value,
+        string $sourceAlias,
+        string $targetAlias,
+    ): ?array {
+        $left = $this->extractAliasField($key, $sourceAlias);
+        if ($left === null) {
+            return null;
+        }
+
+        if ($value instanceof IdentifierExpression) {
+            $value = $value->getIdentifier();
+        }
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $right = $this->extractAliasField($value, $targetAlias);
+        if ($right === null) {
+            return null;
+        }
+
+        return [$left, $right];
+    }
+
+    /**
+     * @return array{string, string}|null
+     */
+    protected function extractJoinKeyPairFromString(
+        string $condition,
+        string $sourceAlias,
+        string $targetAlias,
+    ): ?array {
+        if (!preg_match('/^\s*(.+?)\s*=\s*(.+?)\s*$/', $condition, $matches)) {
+            return null;
+        }
+
+        $left = $this->extractAliasField($matches[1], $sourceAlias);
+        $right = $this->extractAliasField($matches[2], $targetAlias);
+        if ($left !== null && $right !== null) {
+            return [$left, $right];
+        }
+
+        $left = $this->extractAliasField($matches[1], $targetAlias);
+        $right = $this->extractAliasField($matches[2], $sourceAlias);
+        if ($left !== null && $right !== null) {
+            return [$right, $left];
+        }
+
+        return null;
+    }
+
+    protected function extractAliasField(string $identifier, string $alias): ?string
+    {
+        $quotedAlias = preg_quote($alias, '/');
+        if (!preg_match('/^' . $quotedAlias . '\.([A-Za-z0-9_]+)$/', trim($identifier), $matches)) {
+            return null;
+        }
+
+        return $matches[1];
     }
 }

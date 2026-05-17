@@ -81,6 +81,20 @@ class HasOneTest extends TestCase
     }
 
     /**
+     * Tests that source and target join keys are exposed for standard hasOne associations.
+     */
+    public function testGetJoinKeys(): void
+    {
+        $assoc = new HasOne('Profiles', [
+            'sourceTable' => $this->user,
+            'targetTable' => $this->profile,
+        ]);
+
+        $this->assertSame(['id'], $assoc->getSourceJoinKey());
+        $this->assertSame(['user_id'], $assoc->getTargetJoinKey());
+    }
+
+    /**
      * Tests that the default foreign key condition generation can be disabled.
      */
     public function testDisableForeignKey(): void

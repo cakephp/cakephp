@@ -467,6 +467,44 @@ abstract class Association
     }
 
     /**
+     * Gets the source table column(s) participating in the association join.
+     *
+     * For associations with a declared foreign key this returns the normalized
+     * source-side join columns. Associations with custom join conditions and no
+     * declared foreign key may return an empty list if the join columns cannot
+     * be determined.
+     *
+     * @return list<string>
+     */
+    public function getSourceJoinKey(): array
+    {
+        if ($this->isOwningSide($this->getTarget())) {
+            return $this->_normalizeJoinKey($this->getForeignKey());
+        }
+
+        return $this->_normalizeJoinKey($this->getBindingKey());
+    }
+
+    /**
+     * Gets the target table column(s) participating in the association join.
+     *
+     * For associations with a declared foreign key this returns the normalized
+     * target-side join columns. Associations with custom join conditions and no
+     * declared foreign key may return an empty list if the join columns cannot
+     * be determined.
+     *
+     * @return list<string>
+     */
+    public function getTargetJoinKey(): array
+    {
+        if ($this->isOwningSide($this->getTarget())) {
+            return $this->_normalizeJoinKey($this->getBindingKey());
+        }
+
+        return $this->_normalizeJoinKey($this->getForeignKey());
+    }
+
+    /**
      * Sets the name of the field representing the foreign key to the target table.
      *
      * @param array<string>|string $key the key or keys to be used to link both tables together
@@ -477,6 +515,24 @@ abstract class Association
         $this->_foreignKey = $key;
 
         return $this;
+    }
+
+    /**
+     * Normalizes a join key definition into a list of column names.
+     *
+     * @param array<string>|string|false $key Join key configuration.
+     * @return list<string>
+     */
+    protected function _normalizeJoinKey(array|string|false $key): array
+    {
+        if ($key === false) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            (array)$key,
+            static fn(mixed $column): bool => is_string($column) && $column !== '',
+        ));
     }
 
     /**

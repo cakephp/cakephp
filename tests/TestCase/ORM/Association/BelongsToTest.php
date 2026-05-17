@@ -107,6 +107,63 @@ class BelongsToTest extends TestCase
     }
 
     /**
+     * Tests that source and target join keys are exposed for declared foreign keys.
+     */
+    public function testGetJoinKeys(): void
+    {
+        $assoc = new BelongsTo('Companies', [
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+        ]);
+
+        $this->assertSame(['company_id'], $assoc->getSourceJoinKey());
+        $this->assertSame(['id'], $assoc->getTargetJoinKey());
+    }
+
+    /**
+     * Tests that custom join conditions can be introspected when foreignKey is false.
+     */
+    public function testGetJoinKeysFromCustomConditions(): void
+    {
+        $assoc = new BelongsTo('Companies', [
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+            'foreignKey' => false,
+            'bindingKey' => 'id',
+            'conditions' => [
+                'Clients.company_uuid' => new IdentifierExpression('Companies.uuid'),
+                'Companies.uuid = Clients.legacy_company_uuid',
+                'Clients.is_active' => true,
+            ],
+        ]);
+
+        $this->assertSame(['company_uuid', 'legacy_company_uuid'], $assoc->getSourceJoinKey());
+        $this->assertSame(['uuid', 'uuid'], $assoc->getTargetJoinKey());
+    }
+
+    /**
+     * Tests that opaque or non-join conditions yield no inferred join keys.
+     */
+    public function testGetJoinKeysFromCustomConditionsWithoutInspectableJoin(): void
+    {
+        $assoc = new BelongsTo('Companies', [
+            'sourceTable' => $this->client,
+            'targetTable' => $this->company,
+            'foreignKey' => false,
+            'conditions' => static fn() => null,
+        ]);
+        $this->assertSame([], $assoc->getSourceJoinKey());
+        $this->assertSame([], $assoc->getTargetJoinKey());
+
+        $assoc->setConditions([
+            'Clients.is_active' => true,
+            'Clients.deleted = 0',
+        ]);
+        $this->assertSame([], $assoc->getSourceJoinKey());
+        $this->assertSame([], $assoc->getTargetJoinKey());
+    }
+
+    /**
      * Tests that the default foreign key condition generation can be disabled.
      */
     public function testDisableForeignKey(): void
