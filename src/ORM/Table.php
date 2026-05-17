@@ -1997,10 +1997,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
-            $this->findUnhydrated('all')
+            $this->find('all')
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
+            ->disableHydration()
             ->toArray(),
         );
     }

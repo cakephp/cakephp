@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Query;
 
 use BadMethodCallException;
+use Cake\Core\Exception\CakeException;
 use Cake\ORM\Table;
 
 /**
@@ -46,8 +47,8 @@ class SelectUnhydratedQuery extends SelectQuery
     }
 
     /**
-     * Re-enabling hydration on an SelectUnhydratedQuery would violate its type contract.
-     * Use {@see Table::find()} for entity results.
+     * Re-enabling hydration on a SelectUnhydratedQuery would violate its type
+     * contract. Use {@see Table::find()} for entity results.
      *
      * @param bool $enable Must be false; passing true throws.
      * @return $this
@@ -62,5 +63,36 @@ class SelectUnhydratedQuery extends SelectQuery
         }
 
         return $this;
+    }
+
+    /**
+     * Apply a finder while keeping the non-hydrating contract.
+     *
+     * Same guard as {@see Table::findUnhydrated()}: a finder that discards the
+     * passed query and returns a freshly built one cannot preserve the
+     * non-hydrating shape, so it fails loudly here instead of yielding a
+     * cryptic return-type error or a silently hydrated query.
+     *
+     * @param string $finder The finder method to use.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters.
+     * @return static
+     * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
+     */
+    public function find(string $finder, mixed ...$args): static
+    {
+        $result = $this->getRepository()->callFinder($finder, $this, ...$args);
+
+        if (!$result instanceof static) {
+            throw new CakeException(sprintf(
+                'The `%s` finder must return the query it was given when chained on a %s; '
+                . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
+                . 'non-hydrating contract — use find() on the table for those.',
+                $finder,
+                static::class,
+                get_debug_type($result),
+            ));
+        }
+
+        return $result;
     }
 }

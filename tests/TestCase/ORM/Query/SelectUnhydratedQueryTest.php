@@ -207,4 +207,31 @@ class SelectUnhydratedQueryTest extends TestCase
         $this->expectExceptionMessage('`fresh` finder must return the query it was given');
         $table->findUnhydrated('fresh');
     }
+
+    /**
+     * The same guard applies when a finder is chained on the query object
+     * itself (findUnhydrated()->find('fresh')), not just at the table entry
+     * point — otherwise the non-hydrating contract leaks via a cryptic
+     * return-type TypeError from the inherited SelectQuery::find().
+     */
+    public function testChainedFinderReturningFreshQueryThrows(): void
+    {
+        $table = new class (['table' => 'articles', 'connection' => ConnectionManager::get('test')]) extends Table {
+            /**
+             * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The passed query.
+             * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+             */
+            public function findFresh(SelectQuery $query): SelectQuery
+            {
+                return $this->find();
+            }
+        };
+
+        $query = $table->findUnhydrated('all');
+        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
+
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('`fresh` finder must return the query it was given');
+        $query->find('fresh');
+    }
 }
