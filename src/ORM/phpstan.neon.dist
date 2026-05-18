@@ -14,6 +14,17 @@ parameters:
 			identifier: missingType.iterableValue
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
+		# Release-coordination lag: the released cakephp/database still declares
+		# Database\Query\SelectQuery's template as invariant, while the ORM
+		# subclass' TSubject is now covariant. Both are consistent inside the
+		# monorepo (root phpstan is green); the standalone split analysis pulls
+		# the released database package. Remove once cakephp/database ships the
+		# covariant template marker.
+		-
+			message: '#^Template type TSubject is declared as covariant, but occurs in invariant position in extended type Cake\\Database\\Query\\SelectQuery<TSubject of array\|Cake\\Datasource\\EntityInterface> of class Cake\\ORM\\Query\\SelectQuery\.$#'
+			identifier: generics.variance
+			path: Query/SelectQuery.php
+			count: 1
 		- '#^PHPDoc tag @var with type callable\(\): mixed is not subtype of native type Closure\(string\): string\.$#'
 
 		-
