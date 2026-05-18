@@ -20,6 +20,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
@@ -566,7 +567,7 @@ abstract class Association
                     E_USER_WARNING,
                 );
             }
-        } catch (DatabaseException) {
+        } catch (DatabaseException | MissingConnectionException) {
             // Schema is not yet loaded, can't check for clashes
         }
 

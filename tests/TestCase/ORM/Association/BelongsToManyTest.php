@@ -1397,6 +1397,28 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that property is being set doesn't throw exception when connection is not configured.
+     */
+    public function testPropertyOption_MissingConnectionError(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf($connection->getDriver() instanceof Sqlite, 'Skip for sqlite');
+
+        // Create a dummy database connection to test
+        $originalConfig = ConnectionManager::getConfig('test');
+        ConnectionManager::drop('test');
+        ConnectionManager::setConfig('test', $originalConfig + ['database' => 'nonexistent']);
+
+        $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $this->article];
+        $association = new BelongsToMany('Thing', $config);
+        $this->assertSame('thing_placeholder', $association->getProperty());
+
+        // Clean up
+        ConnectionManager::drop('test');
+        ConnectionManager::setConfig('test', $originalConfig);
+    }
+
+    /**
      * Test that plugin names are omitted from property()
      */
     public function testPropertyNoPlugin(): void
