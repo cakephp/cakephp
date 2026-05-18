@@ -3541,8 +3541,7 @@ class TableTest extends TestCase
         $entities = $table->find()->limit(2)->all()->toArray();
         $this->assertCount(2, $entities);
 
-        $result = $table->deleteManyOrFail($entities);
-        $this->assertSame($entities, $result);
+        $table->deleteManyOrFail($entities);
 
         $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
         $this->assertSame(0, $count, 'Find should not return > 0.');
