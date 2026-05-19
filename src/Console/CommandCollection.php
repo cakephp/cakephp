@@ -202,6 +202,52 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Auto-discover commands in a filesystem directory.
+     *
+     * Useful for registering commands that live in a subdirectory and
+     * namespace of the application (e.g. `src/Command/Maintenance/`)
+     * without listing each command individually, typically from
+     * `Application::console()`:
+     *
+     * ```
+     * $commands->addMany($commands->discoverDirectory(
+     *     ROOT . '/src/Command/Maintenance',
+     *     'App\\Command\\Maintenance',
+     *     'maintenance ',
+     * ));
+     * ```
+     *
+     * The directory is scanned non-recursively. A non-empty `$prefix` is
+     * required: it produces a `prefix.command` long name so a discovered
+     * command whose short name collides with an existing one is exposed
+     * only under its prefixed name instead of silently replacing it -
+     * the same short-name de-duplication {@see discoverPlugin()} relies
+     * on (an empty prefix would defeat it). The prefixed long name itself
+     * follows the same last-wins precedence as `discoverPlugin()` /
+     * `autoDiscover()`. The path and namespace are normalized, so a
+     * trailing separator is optional.
+     *
+     * @param string $path The directory to scan.
+     * @param string $namespace The namespace the commands live in.
+     * @param string $prefix Prefix applied to each command's full name.
+     * @return array<string, class-string<\Cake\Console\CommandInterface>> Discovered commands.
+     * @throws \InvalidArgumentException When `$prefix` is empty.
+     */
+    public function discoverDirectory(string $path, string $namespace, string $prefix): array
+    {
+        if ($prefix === '') {
+            throw new InvalidArgumentException(
+                'A non-empty `$prefix` is required so discovered commands ' .
+                'de-duplicate against existing ones instead of overwriting them.',
+            );
+        }
+        $namespace = rtrim($namespace, '\\') . '\\';
+        $scanner = new CommandScanner();
+
+        return $this->resolveNames($scanner->scanDir($path, $namespace, $prefix));
+    }
+
+    /**
      * Resolve names based on existing commands
      *
      * @param array<array<string, string>> $input The results of a CommandScanner operation.
