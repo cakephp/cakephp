@@ -382,6 +382,7 @@ abstract class TestCase extends BaseTestCase
             }
         }
         $app->pluginBootstrap();
+        $app->registerEvents();
         $builder = Router::createRouteBuilder('/');
         $app->pluginRoutes($builder);
 
