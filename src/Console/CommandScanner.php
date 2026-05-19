@@ -24,8 +24,10 @@ use Cake\Utility\Inflector;
 use ReflectionClass;
 
 /**
- * Used by CommandCollection and CommandTask to scan the filesystem
- * for command classes.
+ * Scans the filesystem for command classes.
+ *
+ * Used internally by CommandCollection, but can also be used directly
+ * (e.g. via `scanDir()`) to discover commands in custom directories.
  */
 class CommandScanner
 {
@@ -70,11 +72,10 @@ class CommandScanner
         if (!Plugin::isLoaded($plugin)) {
             return [];
         }
-        $path = Plugin::classPath($plugin);
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        return $this->scanDir($path . 'Command' . DIRECTORY_SEPARATOR, $namespace . '\Command\\', $prefix);
+        return $this->scanDir(App::classPath('Command', $plugin)[0], $namespace . '\Command\\', $prefix);
     }
 
     /**
@@ -92,6 +93,9 @@ class CommandScanner
         if (!is_dir($path)) {
             return [];
         }
+        // Normalize to a single trailing separator so `file` paths are
+        // correct regardless of how callers pass the directory.
+        $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         // This ensures `Command` class is not added to the list.
         $hide[] = '';
