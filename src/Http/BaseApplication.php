@@ -19,7 +19,7 @@ namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
-use Cake\Core\Configure;
+use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerFactory;
@@ -100,16 +100,6 @@ abstract class BaseApplication implements
     protected ?ContainerInterface $container = null;
 
     /**
-     * A list of event listeners which get registered on the host application's
-     * event manager when this app boots. Each entry must be a class name
-     * implementing `\Cake\Event\EventListenerInterface`; listeners are resolved
-     * via the application's container, so they support constructor injection.
-     *
-     * @var list<class-string<\Cake\Event\EventListenerInterface>>
-     */
-    protected array $eventListeners = [];
-
-    /**
      * Constructor
      *
      * @param string $configDir The directory the bootstrap configuration is held in.
@@ -124,10 +114,6 @@ abstract class BaseApplication implements
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = new PluginCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
-        $this->eventListeners = array_values(array_merge(
-            $this->eventListeners,
-            (array)Configure::read('App.EventListeners', []),
-        ));
         $this->controllerFactory = $controllerFactory;
         Plugin::setCollection($this->plugins);
     }
@@ -159,6 +145,9 @@ abstract class BaseApplication implements
             $plugin = $this->plugins->create($name, $config);
         } else {
             $plugin = $name;
+        }
+        if ($plugin instanceof BasePlugin) {
+            $plugin->setApplication($this);
         }
         $this->plugins->add($plugin);
 
@@ -207,16 +196,19 @@ abstract class BaseApplication implements
         if (is_array($plugins)) {
             $this->plugins->addFromConfig($plugins);
         }
+    }
 
-        $eventManager = $this->getEventManager();
-        $this->registerEventListeners(
-            $this->eventListeners,
-            $this->getContainer(),
-            $eventManager,
-        );
-
-        $eventManager = $this->events($eventManager);
-        $this->setEventManager($this->pluginEvents($eventManager));
+    /**
+     * Define global event listeners for the application.
+     *
+     * Listener classes are resolved through the application container and can
+     * declare constructor dependencies.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [];
     }
 
     /**
@@ -225,6 +217,9 @@ abstract class BaseApplication implements
     public function pluginBootstrap(): void
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
+            if ($plugin instanceof BasePlugin) {
+                $plugin->setApplication($this);
+            }
             $plugin->bootstrap($this);
         }
     }
@@ -293,10 +288,35 @@ abstract class BaseApplication implements
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
         foreach ($this->plugins->with('events') as $plugin) {
-            $eventManager = $plugin->events($eventManager);
+            if ($plugin instanceof BasePlugin) {
+                $plugin->setApplication($this);
+                $eventManager = $plugin->registerEvents($eventManager);
+            } else {
+                $eventManager = $plugin->events($eventManager);
+            }
         }
 
         return $eventManager;
+    }
+
+    /**
+     * Register application and plugin events.
+     *
+     * This hook is invoked after application and plugin bootstrap have completed.
+     *
+     * @return void
+     */
+    public function registerEvents(): void
+    {
+        $eventManager = $this->getEventManager();
+        $this->registerEventListeners(
+            $this->eventListeners(),
+            $this->getContainer(),
+            $eventManager,
+        );
+
+        $eventManager = $this->events($eventManager);
+        $this->setEventManager($this->pluginEvents($eventManager));
     }
 
     /**

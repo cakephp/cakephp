@@ -28,6 +28,7 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\BaseApplication;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
@@ -217,7 +218,7 @@ class CommandRunner implements EventDispatcherInterface
      * Application bootstrap wrapper.
      *
      * Calls the application's `bootstrap()` hook. After the application the
-     * plugins are bootstrapped.
+     * plugins are bootstrapped and events are registered.
      *
      * @return void
      */
@@ -226,6 +227,9 @@ class CommandRunner implements EventDispatcherInterface
         $this->app->bootstrap();
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
+        }
+        if ($this->app instanceof BaseApplication) {
+            $this->app->registerEvents();
         }
     }
 

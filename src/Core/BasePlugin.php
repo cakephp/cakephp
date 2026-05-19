@@ -77,14 +77,11 @@ class BasePlugin implements PluginInterface
     protected bool $eventsEnabled = true;
 
     /**
-     * A list of event listeners which get registered on the host application's
-     * event manager when this plugin boots. Each entry must be a class name
-     * implementing `\Cake\Event\EventListenerInterface`; listeners are resolved
-     * via the application's container, so they support constructor injection.
+     * The host application this plugin is attached to.
      *
-     * @var list<class-string<\Cake\Event\EventListenerInterface>>
+     * @var \Cake\Core\PluginApplicationInterface<mixed>|null
      */
-    protected array $eventListeners = [];
+    protected ?PluginApplicationInterface $application = null;
 
     /**
      * The path to this plugin.
@@ -138,10 +135,6 @@ class BasePlugin implements PluginInterface
                 $this->{$path} = $options[$path];
             }
         }
-        if (isset($options['eventListeners'])) {
-            $this->eventListeners = $options['eventListeners'];
-        }
-
         $this->initialize();
     }
 
@@ -259,6 +252,28 @@ class BasePlugin implements PluginInterface
     }
 
     /**
+     * Set the host application this plugin is attached to.
+     *
+     * @param \Cake\Core\PluginApplicationInterface<mixed> $application The host application.
+     */
+    public function setApplication(PluginApplicationInterface $application): static
+    {
+        $this->application = $application;
+
+        return $this;
+    }
+
+    /**
+     * Get the host application this plugin is attached to.
+     *
+     * @return \Cake\Core\PluginApplicationInterface<mixed>|null
+     */
+    public function getApplication(): ?PluginApplicationInterface
+    {
+        return $this->application;
+    }
+
+    /**
      * Check if a hook name is valid
      *
      * @param string $hook The hook name to check
@@ -297,24 +312,12 @@ class BasePlugin implements PluginInterface
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
+        $this->setApplication($app);
+
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
         if (is_file($bootstrap)) {
             require $bootstrap;
         }
-
-        if (
-            !$this->eventsEnabled ||
-            !$app instanceof ContainerApplicationInterface ||
-            $this->eventListeners === []
-        ) {
-            return;
-        }
-
-        $this->registerEventListeners(
-            $this->eventListeners,
-            $app->getContainer(),
-            $app->getEventManager(),
-        );
     }
 
     /**
@@ -341,6 +344,43 @@ class BasePlugin implements PluginInterface
      */
     public function services(ContainerInterface $container): void
     {
+    }
+
+    /**
+     * Define global event listeners for the plugin.
+     *
+     * Listener classes are resolved through the host application's container and
+     * can declare constructor dependencies.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [];
+    }
+
+    /**
+     * Register declarative and imperative application events.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function registerEvents(EventManagerInterface $eventManager): EventManagerInterface
+    {
+        $listeners = $this->eventListeners();
+        if (
+            $this->eventsEnabled &&
+            $this->application instanceof ContainerApplicationInterface &&
+            $listeners !== []
+        ) {
+            $this->registerEventListeners(
+                $listeners,
+                $this->application->getContainer(),
+                $eventManager,
+            );
+        }
+
+        return $this->events($eventManager);
     }
 
     /**

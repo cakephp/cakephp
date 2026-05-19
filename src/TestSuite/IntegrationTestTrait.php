@@ -25,6 +25,7 @@ use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Form\FormProtector;
+use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Session;
 use Cake\Routing\Router;
@@ -561,6 +562,9 @@ trait IntegrationTestTrait
         $app->bootstrap();
         if ($app instanceof PluginApplicationInterface) {
             $app->pluginBootstrap();
+        }
+        if ($app instanceof BaseApplication) {
+            $app->registerEvents();
         }
         $builder = Router::createRouteBuilder('/');
 

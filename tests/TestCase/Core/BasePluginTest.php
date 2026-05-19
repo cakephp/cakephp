@@ -322,6 +322,8 @@ class BasePluginTest extends TestCase
         };
         $app = $app->addPlugin($basePlugin);
         $app->bootstrap();
+        $app->pluginBootstrap();
+        $app->registerEvents();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
@@ -362,17 +364,16 @@ class BasePluginTest extends TestCase
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 
-    /**
-     * Listeners declared on `$eventListeners` should be attached to the host
-     * application's event manager when the plugin boots.
-     */
-    public function testEventListenersAreRegisteredOnPluginBootstrap(): void
+    public function testEventListenersAreRegistered(): void
     {
         static::setAppNamespace();
 
         $plugin = new class extends BasePlugin
         {
-            protected array $eventListeners = [CustomTestEventListenerInterface::class];
+            public function eventListeners(): array
+            {
+                return [CustomTestEventListenerInterface::class];
+            }
 
             public function services(ContainerInterface $container): void
             {
@@ -390,19 +391,19 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
+        $app->registerEvents();
 
         $this->assertNotEmpty(
             $app->getEventManager()->listeners('fake.event'),
-            'Plugin listener declared in $eventListeners should be attached to the event manager.',
+            'Plugin listener should be attached to the event manager.',
         );
         $this->assertNotEmpty($app->getEventManager()->listeners('another.event'));
     }
 
     /**
-     * Listeners declared on `$eventListeners` are resolved through the host
-     * application's container, so plugin event listeners can declare
-     * constructor-injected dependencies that the plugin registers in
-     * `services()`.
+     * Event listeners are resolved through the host application's container, so
+     * plugin event listeners can declare constructor-injected dependencies that
+     * the plugin registers in `services()`.
      */
     public function testEventListenersResolvedThroughContainerWithDependencyInjection(): void
     {
@@ -410,7 +411,10 @@ class BasePluginTest extends TestCase
 
         $plugin = new class extends BasePlugin
         {
-            protected array $eventListeners = [DependencyInjectedEventListener::class];
+            public function eventListeners(): array
+            {
+                return [DependencyInjectedEventListener::class];
+            }
 
             public function services(ContainerInterface $container): void
             {
@@ -430,6 +434,7 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
+        $app->registerEvents();
 
         $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
 
@@ -450,7 +455,10 @@ class BasePluginTest extends TestCase
     {
         $plugin = new class extends BasePlugin
         {
-            protected array $eventListeners = [stdClass::class];
+            public function eventListeners(): array
+            {
+                return [stdClass::class];
+            }
         };
 
         $app = new class (dirname(__DIR__, 2)) extends BaseApplication
@@ -466,6 +474,7 @@ class BasePluginTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
         $app->pluginBootstrap();
+        $app->registerEvents();
     }
 
     /**
@@ -476,11 +485,9 @@ class BasePluginTest extends TestCase
     {
         $plugin = new class extends BasePlugin
         {
-            protected array $eventListeners;
-
-            public function initialize(): void
+            public function eventListeners(): array
             {
-                $this->eventListeners = [new stdClass()];
+                return [new stdClass()];
             }
         };
 
@@ -497,33 +504,25 @@ class BasePluginTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
         $app->pluginBootstrap();
+        $app->registerEvents();
     }
 
-    /**
-     * The `eventListeners` plugin option (passed via `addPlugin()` or the
-     * BasePlugin constructor) replaces the plugin's default listener list,
-     * letting app developers swap out vendor listeners without subclassing.
-     */
-    public function testEventListenersOptionReplacesPluginDefaults(): void
+    public function testEventListenersResolvedThroughContainer(): void
     {
         static::setAppNamespace();
 
-        $pluginClass = new class extends BasePlugin
+        $plugin = new class extends BasePlugin
         {
-            // Vendor default — would normally be registered, but we expect
-            // the app dev's option to override it.
-            protected array $eventListeners = [CustomTestEventListenerInterface::class];
+            public function eventListeners(): array
+            {
+                return [CustomTestEventListenerInterface::class];
+            }
 
             public function services(ContainerInterface $container): void
             {
-                $container->addShared(GreeterService::class);
-                $container->addShared(DependencyInjectedEventListener::class)
-                    ->addArgument(GreeterService::class);
+                $container->addShared(CustomTestEventListenerInterface::class);
             }
         };
-        $plugin = new $pluginClass([
-            'eventListeners' => [DependencyInjectedEventListener::class],
-        ]);
 
         $app = new class (dirname(__DIR__, 2)) extends BaseApplication
         {
@@ -535,14 +534,26 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
+        $app->registerEvents();
 
-        $this->assertEmpty(
-            $app->getEventManager()->listeners('fake.event'),
-            'The vendor default listener should have been replaced by the option.',
-        );
-        $this->assertNotEmpty(
-            $app->getEventManager()->listeners('Greeting.before'),
-            'The app-dev-supplied listener should be registered instead.',
-        );
+        $listener = $app->getContainer()->get(CustomTestEventListenerInterface::class);
+        $this->assertInstanceOf(CustomTestEventListenerInterface::class, $listener);
+        $this->assertNotEmpty($app->getEventManager()->listeners('fake.event'));
+    }
+
+    public function testApplicationIsAvailableToPlugin(): void
+    {
+        $plugin = new BasePlugin();
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        $app->addPlugin($plugin);
+
+        $this->assertSame($app, $plugin->getApplication());
     }
 }
