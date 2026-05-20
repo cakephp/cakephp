@@ -98,8 +98,7 @@ class CommandScanner
         if (!is_dir($path)) {
             return [];
         }
-        // Normalize to a single trailing separator so `file` paths are
-        // correct regardless of how callers pass the directory.
+
         $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         // This ensures `Command` class is not added to the list.
