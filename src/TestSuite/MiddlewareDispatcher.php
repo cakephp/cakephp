@@ -17,7 +17,6 @@ namespace Cake\TestSuite;
 
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Http\BaseApplication;
 use Cake\Http\FlashMessage;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
@@ -93,9 +92,6 @@ class MiddlewareDispatcher
         $this->app->bootstrap();
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
-        }
-        if ($this->app instanceof BaseApplication) {
-            $this->app->registerEvents();
         }
         $builder = Router::createRouteBuilder('/');
 

@@ -19,7 +19,6 @@ namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
-use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerFactory;
@@ -146,9 +145,6 @@ abstract class BaseApplication implements
         } else {
             $plugin = $name;
         }
-        if ($plugin instanceof BasePlugin) {
-            $plugin->setApplication($this);
-        }
         $this->plugins->add($plugin);
 
         return $this;
@@ -196,6 +192,8 @@ abstract class BaseApplication implements
         if (is_array($plugins)) {
             $this->plugins->addFromConfig($plugins);
         }
+
+        $this->registerEvents();
     }
 
     /**
@@ -217,9 +215,6 @@ abstract class BaseApplication implements
     public function pluginBootstrap(): void
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
-            if ($plugin instanceof BasePlugin) {
-                $plugin->setApplication($this);
-            }
             $plugin->bootstrap($this);
         }
     }
@@ -282,41 +277,28 @@ abstract class BaseApplication implements
     }
 
     /**
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
+     * @inheritDoc
      */
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
-        foreach ($this->plugins->with('events') as $plugin) {
-            if ($plugin instanceof BasePlugin) {
-                $plugin->setApplication($this);
-                $eventManager = $plugin->registerEvents($eventManager);
-            } else {
-                $eventManager = $plugin->events($eventManager);
-            }
-        }
-
         return $eventManager;
     }
 
     /**
-     * Register application and plugin events.
-     *
-     * This hook is invoked after application and plugin bootstrap have completed.
+     * Register application events.
      *
      * @return void
      */
-    public function registerEvents(): void
+    protected function registerEvents(): void
     {
         $eventManager = $this->getEventManager();
         $this->registerEventListeners(
             $this->eventListeners(),
-            $this->getContainer(),
             $eventManager,
+            $this->getContainer(),
         );
 
-        $eventManager = $this->events($eventManager);
-        $this->setEventManager($this->pluginEvents($eventManager));
+        $this->events($eventManager);
     }
 
     /**

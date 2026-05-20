@@ -252,28 +252,6 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * Set the host application this plugin is attached to.
-     *
-     * @param \Cake\Core\PluginApplicationInterface<mixed> $application The host application.
-     */
-    public function setApplication(PluginApplicationInterface $application): static
-    {
-        $this->application = $application;
-
-        return $this;
-    }
-
-    /**
-     * Get the host application this plugin is attached to.
-     *
-     * @return \Cake\Core\PluginApplicationInterface<mixed>|null
-     */
-    public function getApplication(): ?PluginApplicationInterface
-    {
-        return $this->application;
-    }
-
-    /**
      * Check if a hook name is valid
      *
      * @param string $hook The hook name to check
@@ -312,12 +290,16 @@ class BasePlugin implements PluginInterface
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
-        $this->setApplication($app);
-
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
         if (is_file($bootstrap)) {
             require $bootstrap;
         }
+
+        $container = $app instanceof ContainerApplicationInterface
+            ? $app->getContainer()
+            : null;
+
+        $this->registerEvents($app->getEventManager(), $container);
     }
 
     /**
@@ -363,24 +345,28 @@ class BasePlugin implements PluginInterface
      * Register declarative and imperative application events.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
+     * @param \Cake\Core\ContainerInterface|null $container The container to use for resolving dependencies
+     * @return void
      */
-    public function registerEvents(EventManagerInterface $eventManager): EventManagerInterface
+    protected function registerEvents(EventManagerInterface $eventManager, ?ContainerInterface $container = null): void
     {
+        if (!$this->isEnabled('events')) {
+            return;
+        }
+
         $listeners = $this->eventListeners();
         if (
-            $this->eventsEnabled &&
-            $this->application instanceof ContainerApplicationInterface &&
-            $listeners !== []
+            $container !== null
+            && $listeners !== []
         ) {
             $this->registerEventListeners(
                 $listeners,
-                $this->application->getContainer(),
                 $eventManager,
+                $container,
             );
         }
 
-        return $this->events($eventManager);
+        $this->events($eventManager);
     }
 
     /**

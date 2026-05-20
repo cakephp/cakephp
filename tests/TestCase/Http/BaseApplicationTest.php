@@ -377,7 +377,6 @@ class BaseApplicationTest extends TestCase
         $app = $this->app;
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
@@ -438,7 +437,6 @@ class BaseApplicationTest extends TestCase
         };
 
         $app->bootstrap();
-        $app->registerEvents();
         $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
 
         $listener = $app->getContainer()->get(DependencyInjectedEventListener::class);
@@ -478,7 +476,6 @@ class BaseApplicationTest extends TestCase
 
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
         $app->getEventManager()->dispatch('DynamicPlugin.event');
 
         $this->assertTrue($app->pluginEventFired);
