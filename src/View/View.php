@@ -1411,8 +1411,9 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
-            if (is_file($path . $name)) {
-                return $this->_checkFilePath($path . $name, $path);
+            $filepath = $path . $name;
+            if (is_file($filepath)) {
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
@@ -1434,20 +1435,33 @@ class View implements EventDispatcherInterface
      * Check that a view file path does not go outside of the defined template paths.
      *
      * Only paths that contain `..` will be checked, as they are the ones most likely to
-     * have the ability to resolve to files outside of the template paths.
+     * have the ability to resolve to files outside of the template paths. A candidate
+     * that does not exist on the current root (realpath returning false) is passed
+     * through so the path cascade can try the next root.
      *
      * @param string $file The path to the template file.
-     * @param string $path Base path that $file should be inside of.
+     * @param ?string $plugin The plugin name or null. Used to generate template paths.
      * @return string The file path
      * @throws \InvalidArgumentException
      */
-    protected function _checkFilePath(string $file, string $path): string
+    protected function _checkFilePath(string $file, ?string $plugin): string
     {
         if (strpos($file, '..') === false) {
             return $file;
         }
         $absolute = realpath($file);
-        if (strpos($absolute, $path) !== 0) {
+        if ($absolute === false) {
+            // Candidate does not exist on this root; let the path cascade continue.
+            return $file;
+        }
+        $found = false;
+        foreach ($this->_paths($plugin) as $path) {
+            if (str_starts_with($absolute, $path)) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use "%s" as a template, it is not within any view template path.',
                 $file
@@ -1505,8 +1519,9 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
-            if (is_file($path . $name)) {
-                return $this->_checkFilePath($path . $name, $path);
+            $filepath = $path . $name;
+            if (is_file($filepath)) {
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
@@ -1547,9 +1562,11 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $name .= $this->_ext;
-        foreach ($this->getElementPaths($plugin) as $path) {
-            if (is_file($path . $name)) {
-                return $path . $name;
+        $paths = iterator_to_array($this->getElementPaths($plugin));
+        foreach ($paths as $path) {
+            $filepath = $path . $name;
+            if (is_file($filepath)) {
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
