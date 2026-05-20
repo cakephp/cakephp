@@ -568,7 +568,7 @@ abstract class Association
                 );
             }
         } catch (DatabaseException | MissingConnectionException) {
-            // Schema is not yet loaded, can't check for clashes
+            // Schema can't be read, so skip checking for property/column clashes.
         }
 
         return $this;

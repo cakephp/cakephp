@@ -1397,9 +1397,9 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
-     * Tests that property is being set doesn't throw exception when connection is not configured.
+     * Tests that property is being set doesn't throw an exception when connection is not configured.
      */
-    public function testPropertyOption_MissingConnectionError(): void
+    public function testPropertyOptionMissingConnectionError(): void
     {
         $connection = ConnectionManager::get('test');
         $this->skipIf($connection->getDriver() instanceof Sqlite, 'Skip for sqlite');
@@ -1407,15 +1407,23 @@ class BelongsToManyTest extends TestCase
         // Create a dummy database connection to test
         $originalConfig = ConnectionManager::getConfig('test');
         ConnectionManager::drop('test');
-        ConnectionManager::setConfig('test', $originalConfig + ['database' => 'nonexistent']);
+        ConnectionManager::setConfig('test', ['database' => 'nonexistent'] + $originalConfig);
 
-        $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $this->article];
-        $association = new BelongsToMany('Thing', $config);
-        $this->assertSame('thing_placeholder', $association->getProperty());
-
-        // Clean up
-        ConnectionManager::drop('test');
-        ConnectionManager::setConfig('test', $originalConfig);
+        // Used try...finally to restore original configuration in case there's an exception mid-test
+        try {
+            $table = new Table([
+                'alias' => 'Articles',
+                'table' => 'articles',
+                'connection' => ConnectionManager::get('test'),
+            ]);
+            $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $table];
+            $association = new BelongsToMany('Thing', $config);
+            $this->assertSame('thing_placeholder', $association->getProperty());
+        } finally {
+            // Clean up
+            ConnectionManager::drop('test');
+            ConnectionManager::setConfig('test', $originalConfig);
+        }
     }
 
     /**
