@@ -1406,7 +1406,9 @@ class View implements EventDispatcherInterface
      * Check that a view file path does not go outside of the defined template paths.
      *
      * Only paths that contain `..` will be checked, as they are the ones most likely to
-     * have the ability to resolve to files outside of the template paths.
+     * have the ability to resolve to files outside of the template paths. A candidate
+     * that does not exist on the current root (realpath returning false) is passed
+     * through so the path cascade can try the next root.
      *
      * @param string $file The path to the template file.
      * @param string $path Base path that $file should be inside of.
@@ -1419,7 +1421,11 @@ class View implements EventDispatcherInterface
             return $file;
         }
         $absolute = realpath($file);
-        if ($absolute === false || !str_starts_with($absolute, $path)) {
+        if ($absolute === false) {
+            // Candidate does not exist on this root; let the path cascade continue.
+            return $file;
+        }
+        if (!str_starts_with($absolute, $path)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',
                 $file,
