@@ -21,8 +21,8 @@ use Cake\Database\Driver\Sqlserver;
 use Closure;
 use Exception;
 use JsonSerializable;
+use RuntimeException;
 use Stringable;
-use Throwable;
 
 /**
  * Contains a query string, the params used to executed it, time taken to do it
@@ -107,9 +107,11 @@ class LoggedQuery implements JsonSerializable, Stringable
      *
      * The redactor receives the raw `(string $query, array $params)` and
      * must return a 2-element list `[string $query, array $params]` with
-     * the sensitive substrings replaced. Returning a malformed value
-     * causes the redactor to be ignored for that call (the raw query and
-     * params are used instead) so a faulty redactor cannot break logging.
+     * the sensitive substrings replaced. Exceptions thrown by the
+     * redactor propagate to the caller, and returning a malformed value
+     * raises a `RuntimeException` — both surface a broken redactor
+     * loudly rather than silently leaking the secrets it was supposed
+     * to scrub. Register a redactor you trust.
      *
      * Pass `null` to clear a previously-registered redactor.
      *
@@ -125,12 +127,13 @@ class LoggedQuery implements JsonSerializable, Stringable
      * Apply the configured redactor (if any) to the stored query+params
      * and return the sanitized tuple.
      *
-     * Both a malformed return value and an exception thrown by the
-     * redactor are caught here; in either case the raw query and params
-     * are used as a safe fallback so a faulty redactor cannot break
-     * logging.
+     * A redactor that throws lets the exception propagate; a redactor
+     * that returns a value not matching `[string, array]` raises a
+     * `RuntimeException`. Both surface a broken redactor instead of
+     * silently falling back to the raw values it was meant to scrub.
      *
      * @return array{0: string, 1: array} [sanitized query, sanitized params]
+     * @throws \RuntimeException If the redactor returns a malformed value.
      */
     protected function redacted(): array
     {
@@ -138,14 +141,13 @@ class LoggedQuery implements JsonSerializable, Stringable
             return [$this->query, $this->params];
         }
 
-        try {
-            $result = (self::$redactor)($this->query, $this->params);
-        } catch (Throwable) {
-            return [$this->query, $this->params];
-        }
+        $result = (self::$redactor)($this->query, $this->params);
 
         if (!is_array($result) || !isset($result[0], $result[1]) || !is_string($result[0]) || !is_array($result[1])) {
-            return [$this->query, $this->params];
+            throw new RuntimeException(sprintf(
+                'LoggedQuery redactor must return [string $query, array $params]; got %s.',
+                get_debug_type($result),
+            ));
         }
 
         return [$result[0], $result[1]];

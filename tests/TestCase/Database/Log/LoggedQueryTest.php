@@ -368,11 +368,11 @@ class LoggedQueryTest extends TestCase
     }
 
     /**
-     * A redactor that returns a malformed value should be ignored for that
-     * call rather than break logging — the raw query and params are used
-     * as a safe fallback.
+     * A redactor that returns a malformed value must raise so the broken
+     * configuration surfaces immediately — silently falling back would
+     * leak the very secrets the redactor was meant to scrub.
      */
-    public function testRedactorMalformedReturnIsIgnored(): void
+    public function testRedactorMalformedReturnThrows(): void
     {
         LoggedQuery::setRedactor(static function (string $query, array $params): mixed {
             return 'not-a-tuple';
@@ -385,10 +385,10 @@ class LoggedQueryTest extends TestCase
                 'params' => ['p1' => 'visible'],
             ]);
 
-            $this->assertSame(
-                "SELECT a FROM b WHERE a = 'visible'",
-                (string)$query,
-            );
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('LoggedQuery redactor must return [string $query, array $params]; got string.');
+
+            (string)$query;
         } finally {
             LoggedQuery::setRedactor(null);
         }
@@ -420,11 +420,11 @@ class LoggedQueryTest extends TestCase
     }
 
     /**
-     * A redactor that throws should be caught — logging paths must never
-     * propagate exceptions out, so we fall back to the raw query and
-     * params instead.
+     * Exceptions thrown by the redactor must propagate — a broken
+     * redactor that silently falls back would leak secrets, so the
+     * failure surfaces at the call site instead.
      */
-    public function testRedactorThatThrowsFallsBackToRawValues(): void
+    public function testRedactorThatThrowsPropagates(): void
     {
         LoggedQuery::setRedactor(static function (string $query, array $params): array {
             throw new RuntimeException('redactor blew up');
@@ -437,17 +437,10 @@ class LoggedQueryTest extends TestCase
                 'params' => ['p1' => 'visible'],
             ]);
 
-            // No throw escaping __toString; raw values used.
-            $this->assertSame(
-                "SELECT a FROM b WHERE a = 'visible'",
-                (string)$query,
-            );
-            $this->assertSame(
-                'SELECT a FROM b WHERE a = :p1',
-                $query->getContext()['query'],
-            );
-            $serialized = json_decode(json_encode($query), true);
-            $this->assertSame(['p1' => 'visible'], $serialized['params']);
+            $this->expectException(RuntimeException::class);
+            $this->expectExceptionMessage('redactor blew up');
+
+            (string)$query;
         } finally {
             LoggedQuery::setRedactor(null);
         }
