@@ -1,0 +1,6 @@
+Contact: mailto:security@cakephp.org
+Expires: 2027-06-01T04:59:00.000Z
+Preferred-Languages: en, de
+Canonical: https://cakephp.org/.well-known/security.txt
+Policy: https://book.cakephp.org/5.x/contributing/tickets.html#reporting-security-issues
+
