@@ -718,6 +718,16 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test element name can use a template path
+     */
+    public function testElementPathTemplate(): void
+    {
+        $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
+        $result = $this->View->element('../Tests/index');
+        $this->assertEquals($result, 'test plugin index');
+    }
+
+    /**
      * Test loading nonexistent plugin view element
      */
     public function testElementMissingPluginElement(): void

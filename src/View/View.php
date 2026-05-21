@@ -1382,9 +1382,9 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+            $filepath = $path . $name;
             if (is_file($filepath)) {
-                return $filepath;
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
@@ -1411,11 +1411,11 @@ class View implements EventDispatcherInterface
      * through so the path cascade can try the next root.
      *
      * @param string $file The path to the template file.
-     * @param string $path Base path that $file should be inside of.
+     * @param ?string $plugin The plugin name or null. Used to generate template paths.
      * @return string The file path
      * @throws \InvalidArgumentException
      */
-    protected function _checkFilePath(string $file, string $path): string
+    protected function _checkFilePath(string $file, ?string $plugin): string
     {
         if (!str_contains($file, '..')) {
             return $file;
@@ -1425,7 +1425,14 @@ class View implements EventDispatcherInterface
             // Candidate does not exist on this root; let the path cascade continue.
             return $file;
         }
-        if (!str_starts_with($absolute, $path)) {
+        $found = false;
+        foreach ($this->_paths($plugin) as $path) {
+            if (str_starts_with($absolute, $path)) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',
                 $file,
@@ -1483,9 +1490,9 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+            $filepath = $path . $name;
             if (is_file($filepath)) {
-                return $filepath;
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
@@ -1526,10 +1533,11 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $name .= $this->_ext;
-        foreach ($this->getElementPaths($plugin) as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+        $paths = iterator_to_array($this->getElementPaths($plugin));
+        foreach ($paths as $path) {
+            $filepath = $path . $name;
             if (is_file($filepath)) {
-                return $filepath;
+                return $this->_checkFilePath($filepath, $plugin);
             }
         }
 
