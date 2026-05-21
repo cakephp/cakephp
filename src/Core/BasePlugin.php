@@ -77,13 +77,6 @@ class BasePlugin implements PluginInterface
     protected bool $eventsEnabled = true;
 
     /**
-     * The host application this plugin is attached to.
-     *
-     * @var \Cake\Core\PluginApplicationInterface<mixed>|null
-     */
-    protected ?PluginApplicationInterface $application = null;
-
-    /**
      * The path to this plugin.
      *
      * @var string|null
