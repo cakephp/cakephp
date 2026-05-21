@@ -718,6 +718,18 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test that `..` traversal across configured template roots still resolves but
+     * triggers a deprecation warning. The relaxation is removed in 6.x.
+     */
+    public function testElementCrossRootTraversalDeprecated(): void
+    {
+        $this->deprecated(function (): void {
+            $result = $this->View->element('../Posts/header');
+            $this->assertStringContainsString('header template', $result);
+        });
+    }
+
+    /**
      * Test loading nonexistent plugin view element
      */
     public function testElementMissingPluginElement(): void

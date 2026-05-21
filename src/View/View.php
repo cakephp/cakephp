@@ -36,6 +36,7 @@ use Generator;
 use InvalidArgumentException;
 use LogicException;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\pluginSplit;
 
 /**
@@ -1382,7 +1383,7 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+            $filepath = $this->_checkFilePath($path . $name, $path, $paths);
             if (is_file($filepath)) {
                 return $filepath;
             }
@@ -1410,12 +1411,20 @@ class View implements EventDispatcherInterface
      * that does not exist on the current root (realpath returning false) is passed
      * through so the path cascade can try the next root.
      *
+     * When `$allowedRoots` is supplied, a candidate that resolves outside `$path` but
+     * inside any of those roots is allowed for now and emits a deprecation warning,
+     * since `..` traversal between configured template roots was permitted before
+     * the path hardening in 5.3.2. This relaxation is removed in 6.x; new code must
+     * use plain element/template names instead of `..` traversal.
+     *
      * @param string $file The path to the template file.
      * @param string $path Base path that $file should be inside of.
+     * @param array<string> $allowedRoots Other configured roots accepted with a
+     *  deprecation warning when `$file` resolves outside `$path`.
      * @return string The file path
      * @throws \InvalidArgumentException
      */
-    protected function _checkFilePath(string $file, string $path): string
+    protected function _checkFilePath(string $file, string $path, array $allowedRoots = []): string
     {
         if (!str_contains($file, '..')) {
             return $file;
@@ -1425,14 +1434,29 @@ class View implements EventDispatcherInterface
             // Candidate does not exist on this root; let the path cascade continue.
             return $file;
         }
-        if (!str_starts_with($absolute, $path)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot use `%s` as a template, it is not within any view template path.',
-                $file,
-            ));
+        if (str_starts_with($absolute, $path)) {
+            return $absolute;
+        }
+        foreach ($allowedRoots as $allowedRoot) {
+            if ($allowedRoot !== $path && str_starts_with($absolute, $allowedRoot)) {
+                deprecationWarning(
+                    '5.3.6',
+                    sprintf(
+                        'Resolving `%s` via `..` traversal across configured template roots is deprecated. ' .
+                        'Move the file under the current root or reference it directly. ' .
+                        'This relaxation is removed in 6.x.',
+                        $file,
+                    ),
+                );
+
+                return $absolute;
+            }
         }
 
-        return $absolute;
+        throw new InvalidArgumentException(sprintf(
+            'Cannot use `%s` as a template, it is not within any view template path.',
+            $file,
+        ));
     }
 
     /**
@@ -1482,8 +1506,9 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name);
         $name .= $this->_ext;
 
+        $allowedRoots = $this->_paths($plugin);
         foreach ($this->getLayoutPaths($plugin) as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+            $filepath = $this->_checkFilePath($path . $name, $path, $allowedRoots);
             if (is_file($filepath)) {
                 return $filepath;
             }
@@ -1526,8 +1551,9 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $name .= $this->_ext;
+        $allowedRoots = $this->_paths($plugin);
         foreach ($this->getElementPaths($plugin) as $path) {
-            $filepath = $this->_checkFilePath($path . $name, $path);
+            $filepath = $this->_checkFilePath($path . $name, $path, $allowedRoots);
             if (is_file($filepath)) {
                 return $filepath;
             }
