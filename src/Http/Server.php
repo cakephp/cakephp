@@ -118,9 +118,6 @@ class Server implements EventDispatcherInterface
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
         }
-        if ($this->app instanceof BaseApplication) {
-            $this->app->registerEvents();
-        }
     }
 
     /**

@@ -32,23 +32,23 @@ trait EventListenerRegistrationTrait
     /**
      * Validate, resolve, and register the given event listeners.
      *
-     * @param list<mixed> $listeners FQCNs to register.
-     * @param \Cake\Core\ContainerInterface $container Container used to resolve each listener.
+     * @param list<class-string<\Cake\Event\EventListenerInterface>> $listeners FQCNs to register.
      * @param \Cake\Event\EventManagerInterface $eventManager Manager the listeners are attached to.
+     * @param \Cake\Core\ContainerInterface $container Container used to resolve each listener.
      * @return void
      * @throws \InvalidArgumentException When an entry is not a class string implementing
      *    `EventListenerInterface`.
      */
     protected function registerEventListeners(
         array $listeners,
-        ContainerInterface $container,
         EventManagerInterface $eventManager,
+        ContainerInterface $container,
     ): void {
         foreach ($listeners as $listener) {
-            if (!is_string($listener) || !is_a($listener, EventListenerInterface::class, true)) {
+            if (!is_a($listener, EventListenerInterface::class, true)) {
                 throw new InvalidArgumentException(sprintf(
                     'Event listener `%s` must be a class name that implements %s',
-                    is_string($listener) ? $listener : get_debug_type($listener),
+                    $listener,
                     EventListenerInterface::class,
                 ));
             }

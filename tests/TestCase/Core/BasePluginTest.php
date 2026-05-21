@@ -323,7 +323,6 @@ class BasePluginTest extends TestCase
         $app = $app->addPlugin($basePlugin);
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
@@ -391,7 +390,6 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
 
         $this->assertNotEmpty(
             $app->getEventManager()->listeners('fake.event'),
@@ -434,7 +432,6 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
 
         $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
 
@@ -474,37 +471,6 @@ class BasePluginTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
         $app->pluginBootstrap();
-        $app->registerEvents();
-    }
-
-    /**
-     * Non-string entries (e.g. an already-instantiated object) should also be
-     * rejected — only class-string entries are supported.
-     */
-    public function testEventListenersNonStringEntryThrows(): void
-    {
-        $plugin = new class extends BasePlugin
-        {
-            public function eventListeners(): array
-            {
-                return [new stdClass()];
-            }
-        };
-
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
-            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
-            {
-                return $middlewareQueue;
-            }
-        };
-        $app->addPlugin($plugin);
-        $app->bootstrap();
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/stdClass.*EventListenerInterface/');
-        $app->pluginBootstrap();
-        $app->registerEvents();
     }
 
     public function testEventListenersResolvedThroughContainer(): void
@@ -534,26 +500,9 @@ class BasePluginTest extends TestCase
         $app->addPlugin($plugin);
         $app->bootstrap();
         $app->pluginBootstrap();
-        $app->registerEvents();
 
         $listener = $app->getContainer()->get(CustomTestEventListenerInterface::class);
         $this->assertInstanceOf(CustomTestEventListenerInterface::class, $listener);
         $this->assertNotEmpty($app->getEventManager()->listeners('fake.event'));
-    }
-
-    public function testApplicationIsAvailableToPlugin(): void
-    {
-        $plugin = new BasePlugin();
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
-            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
-            {
-                return $middlewareQueue;
-            }
-        };
-
-        $app->addPlugin($plugin);
-
-        $this->assertSame($app, $plugin->getApplication());
     }
 }

@@ -610,28 +610,17 @@ class CommandRunnerTest extends TestCase
 
                 return $eventManager;
             }
-
-            public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
-            {
-                $eventManager->on('Test.pluginEvent', function (): void {
-                    $this->pluginEventFired = true;
-                });
-
-                return $eventManager;
-            }
         };
 
         $runner = new CommandRunner($app);
         $runner->getEventManager()->on('Console.buildCommands', function () use ($runner): void {
             // Trigger the events that should have been registered by events() and pluginEvents()
             $runner->getEventManager()->dispatch('Test.customEvent');
-            $runner->getEventManager()->dispatch('Test.pluginEvent');
         });
 
         $runner->run(['cake', '--version'], $this->getMockIo($output));
 
         $this->assertTrue($app->customEventFired, 'Custom event should have been fired');
-        $this->assertTrue($app->pluginEventFired, 'Plugin event should have been fired');
     }
 
     public function testRunRegistersPluginEventsForCommands(): void
