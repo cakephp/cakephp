@@ -288,11 +288,7 @@ class BasePlugin implements PluginInterface
             require $bootstrap;
         }
 
-        $container = $app instanceof ContainerApplicationInterface
-            ? $app->getContainer()
-            : null;
-
-        $this->registerEvents($app->getEventManager(), $container);
+        $this->registerEvents($app);
     }
 
     /**
@@ -337,25 +333,30 @@ class BasePlugin implements PluginInterface
     /**
      * Register declarative and imperative application events.
      *
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @param \Cake\Core\ContainerInterface|null $container The container to use for resolving dependencies
+     * @param \Cake\Core\PluginApplicationInterface<mixed> $app The host application
      * @return void
      */
-    protected function registerEvents(EventManagerInterface $eventManager, ?ContainerInterface $container = null): void
+    protected function registerEvents(PluginApplicationInterface $app): void
     {
         if (!$this->isEnabled('events')) {
             return;
         }
 
+        $eventManager = $app->getEventManager();
         $listeners = $this->eventListeners();
-        if (
-            $container !== null
-            && $listeners !== []
-        ) {
+        if ($listeners !== []) {
+            if (!$app instanceof ContainerApplicationInterface) {
+                throw new InvalidArgumentException(sprintf(
+                    'Plugin `%s` defines event listeners but the application does not implement %s',
+                    $this->getName(),
+                    ContainerApplicationInterface::class,
+                ));
+            }
+
             $this->registerEventListeners(
                 $listeners,
                 $eventManager,
-                $container,
+                $app->getContainer(),
             );
         }
 

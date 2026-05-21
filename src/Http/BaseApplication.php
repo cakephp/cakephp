@@ -292,11 +292,10 @@ abstract class BaseApplication implements
     protected function registerEvents(): void
     {
         $eventManager = $this->getEventManager();
-        $this->registerEventListeners(
-            $this->eventListeners(),
-            $eventManager,
-            $this->getContainer(),
-        );
+        $listeners = $this->eventListeners();
+        if ($listeners) {
+            $this->registerEventListeners($listeners, $eventManager, $this->getContainer());
+        }
 
         $this->events($eventManager);
     }
