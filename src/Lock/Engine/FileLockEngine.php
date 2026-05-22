@@ -43,14 +43,14 @@ class FileLockEngine extends LockEngine
      *
      * @var array<string, resource>
      */
-    protected array $_handles = [];
+    protected array $handles = [];
 
     /**
      * Default configuration.
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'path' => '',
         'prefix' => 'lock_',
         'ttl' => 300,
@@ -66,13 +66,13 @@ class FileLockEngine extends LockEngine
     {
         parent::init($config);
 
-        if (empty($this->_config['path'])) {
-            $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_locks';
+        if (empty($this->config['path'])) {
+            $this->config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_locks';
         }
 
         // Ensure lock directory exists
-        if (!is_dir($this->_config['path'])) {
-            mkdir($this->_config['path'], 0777, true);
+        if (!is_dir($this->config['path'])) {
+            mkdir($this->config['path'], 0777, true);
         }
 
         return true;
@@ -90,7 +90,7 @@ class FileLockEngine extends LockEngine
         // Make filename safe
         $safeKey = preg_replace('/[^a-zA-Z0-9_-]/', '_', $key);
 
-        return $this->_config['path'] . DIRECTORY_SEPARATOR . $safeKey . '.lock';
+        return $this->config['path'] . DIRECTORY_SEPARATOR . $safeKey . '.lock';
     }
 
     /**
@@ -135,7 +135,7 @@ class FileLockEngine extends LockEngine
         fflush($handle);
 
         // Store handle for later release
-        $this->_handles[$resource] = $handle;
+        $this->handles[$resource] = $handle;
 
         return new AcquiredLock($resource, $token, $ttl, microtime(true), $this);
     }
@@ -169,11 +169,11 @@ class FileLockEngine extends LockEngine
     {
         $resource = $lock->getResource();
 
-        if (!isset($this->_handles[$resource])) {
+        if (!isset($this->handles[$resource])) {
             return false;
         }
 
-        $handle = $this->_handles[$resource];
+        $handle = $this->handles[$resource];
 
         // Verify ownership
         rewind($handle);
@@ -182,7 +182,7 @@ class FileLockEngine extends LockEngine
             $data = json_decode($content, true);
             if (isset($data['token']) && $data['token'] !== $lock->getToken()) {
                 fclose($handle);
-                unset($this->_handles[$resource]);
+                unset($this->handles[$resource]);
 
                 return false;
             }
@@ -190,7 +190,7 @@ class FileLockEngine extends LockEngine
 
         // Close handle to release the advisory lock.
         fclose($handle);
-        unset($this->_handles[$resource]);
+        unset($this->handles[$resource]);
 
         // Remove lock file
         $file = $this->getLockFile($resource);
@@ -238,11 +238,11 @@ class FileLockEngine extends LockEngine
     {
         $resource = $lock->getResource();
 
-        if (!isset($this->_handles[$resource])) {
+        if (!isset($this->handles[$resource])) {
             return false;
         }
 
-        $handle = $this->_handles[$resource];
+        $handle = $this->handles[$resource];
         $ttl ??= $lock->getTtl();
 
         // Update lock metadata
@@ -274,9 +274,9 @@ class FileLockEngine extends LockEngine
         $file = $this->getLockFile($resource);
 
         // Close handle if we have one
-        if (isset($this->_handles[$resource])) {
-            fclose($this->_handles[$resource]);
-            unset($this->_handles[$resource]);
+        if (isset($this->handles[$resource])) {
+            fclose($this->handles[$resource]);
+            unset($this->handles[$resource]);
         }
 
         // Remove lock file
@@ -292,9 +292,9 @@ class FileLockEngine extends LockEngine
      */
     public function __destruct()
     {
-        foreach ($this->_handles as $handle) {
+        foreach ($this->handles as $handle) {
             fclose($handle);
         }
-        $this->_handles = [];
+        $this->handles = [];
     }
 }

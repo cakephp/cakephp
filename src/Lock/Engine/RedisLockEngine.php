@@ -60,14 +60,14 @@ class RedisLockEngine extends LockEngine
      *
      * @var \Redis|\RedisCluster
      */
-    protected Redis|RedisCluster $_redis;
+    protected Redis|RedisCluster $redis;
 
     /**
      * Default configuration.
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'host' => '127.0.0.1',
         'port' => 6379,
         'password' => false,
@@ -98,7 +98,7 @@ class RedisLockEngine extends LockEngine
 
         parent::init($config);
 
-        return $this->_connect();
+        return $this->connect();
     }
 
     /**
@@ -106,9 +106,9 @@ class RedisLockEngine extends LockEngine
      *
      * @return bool True if connection was successful.
      */
-    protected function _connect(): bool
+    protected function connect(): bool
     {
-        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
+        if (!empty($this->config['nodes']) || !empty($this->config['clusterName'])) {
             return $this->connectRedisCluster();
         }
 
@@ -122,21 +122,21 @@ class RedisLockEngine extends LockEngine
      */
     protected function connectRedis(): bool
     {
-        $this->_redis = new Redis();
+        $this->redis = new Redis();
 
         try {
-            if ($this->_config['persistent']) {
-                $connected = $this->_redis->pconnect(
-                    $this->_config['host'],
-                    $this->_config['port'],
-                    (float)$this->_config['timeout'],
-                    'lock_' . $this->_config['database'],
+            if ($this->config['persistent']) {
+                $connected = $this->redis->pconnect(
+                    $this->config['host'],
+                    $this->config['port'],
+                    (float)$this->config['timeout'],
+                    'lock_' . $this->config['database'],
                 );
             } else {
-                $connected = $this->_redis->connect(
-                    $this->_config['host'],
-                    $this->_config['port'],
-                    (float)$this->_config['timeout'],
+                $connected = $this->redis->connect(
+                    $this->config['host'],
+                    $this->config['port'],
+                    (float)$this->config['timeout'],
                 );
             }
 
@@ -144,12 +144,12 @@ class RedisLockEngine extends LockEngine
                 return false;
             }
 
-            if ($this->_config['password'] !== false && !$this->_redis->auth($this->_config['password'])) {
+            if ($this->config['password'] !== false && !$this->redis->auth($this->config['password'])) {
                 return false;
             }
 
-            if ($this->_config['database'] !== 0) {
-                $this->_redis->select((int)$this->_config['database']);
+            if ($this->config['database'] !== 0) {
+                $this->redis->select((int)$this->config['database']);
             }
 
             return true;
@@ -165,7 +165,7 @@ class RedisLockEngine extends LockEngine
      */
     protected function connectRedisCluster(): bool
     {
-        if (empty($this->_config['nodes']) && empty($this->_config['clusterName'])) {
+        if (empty($this->config['nodes']) && empty($this->config['clusterName'])) {
             // @codeCoverageIgnoreStart
             if (class_exists(Log::class)) {
                 Log::error('RedisLockEngine requires nodes or a clusterName in cluster mode');
@@ -177,7 +177,7 @@ class RedisLockEngine extends LockEngine
 
         // @codeCoverageIgnoreStart
         $ssl = [];
-        if ($this->_config['tls']) {
+        if ($this->config['tls']) {
             $map = [
                 'ssl_ca' => 'cafile',
                 'ssl_key' => 'local_pk',
@@ -188,22 +188,22 @@ class RedisLockEngine extends LockEngine
             ];
 
             foreach ($map as $configKey => $sslOption) {
-                if (array_key_exists($configKey, $this->_config)) {
-                    $ssl[$sslOption] = $this->_config[$configKey];
+                if (array_key_exists($configKey, $this->config)) {
+                    $ssl[$sslOption] = $this->config[$configKey];
                 }
             }
         }
         // @codeCoverageIgnoreEnd
 
         try {
-            $this->_redis = new RedisCluster(
-                $this->_config['clusterName'],
-                $this->_config['nodes'] ?: null,
-                (float)$this->_config['timeout'],
-                (float)$this->_config['readTimeout'],
-                (bool)$this->_config['persistent'],
-                $this->_config['password'],
-                $this->_config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
+            $this->redis = new RedisCluster(
+                $this->config['clusterName'],
+                $this->config['nodes'] ?: null,
+                (float)$this->config['timeout'],
+                (float)$this->config['readTimeout'],
+                (bool)$this->config['persistent'],
+                $this->config['password'],
+                $this->config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
             );
         } catch (RedisClusterException $e) {
             // @codeCoverageIgnoreStart
@@ -215,7 +215,7 @@ class RedisLockEngine extends LockEngine
             // @codeCoverageIgnoreEnd
         }
 
-        $failover = match ($this->_config['failover']) {
+        $failover = match ($this->config['failover']) {
             RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
             RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
             RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
@@ -224,7 +224,7 @@ class RedisLockEngine extends LockEngine
         };
 
         if ($failover !== null) {
-            $this->_redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
+            $this->redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
         }
 
         return true;
@@ -247,7 +247,7 @@ class RedisLockEngine extends LockEngine
 
         try {
             // SET key value EX seconds NX - atomic set if not exists with expiry
-            $result = $this->_redis->set($key, $token, ['NX', 'EX' => $ttl]);
+            $result = $this->redis->set($key, $token, ['NX', 'EX' => $ttl]);
 
             if ($result === true) {
                 return new AcquiredLock($resource, $token, $ttl, microtime(true), $this);
@@ -283,7 +283,7 @@ class RedisLockEngine extends LockEngine
             LUA;
 
         try {
-            $result = $this->_redis->eval($script, [$key, $lock->getToken()], 1);
+            $result = $this->redis->eval($script, [$key, $lock->getToken()], 1);
 
             return $result === 1;
         } catch (RedisException | RedisClusterException) {
@@ -302,8 +302,7 @@ class RedisLockEngine extends LockEngine
         $key = $this->key($resource);
 
         try {
-            return $this->_redis->exists($key) === 1;
-        /** @phpstan-ignore catch.neverThrown */
+            return $this->redis->exists($key) === 1;
         } catch (RedisException | RedisClusterException) {
             return false;
         }
@@ -333,7 +332,7 @@ class RedisLockEngine extends LockEngine
             LUA;
 
         try {
-            $result = $this->_redis->eval($script, [$key, $lock->getToken(), $ttl], 1);
+            $result = $this->redis->eval($script, [$key, $lock->getToken(), $ttl], 1);
 
             return $result === 1;
         } catch (RedisException | RedisClusterException) {
@@ -352,8 +351,7 @@ class RedisLockEngine extends LockEngine
         $key = $this->key($resource);
 
         try {
-            return $this->_redis->del($key) >= 0;
-        /** @phpstan-ignore catch.neverThrown */
+            return $this->redis->del($key) >= 0;
         } catch (RedisException | RedisClusterException) {
             return false;
         }

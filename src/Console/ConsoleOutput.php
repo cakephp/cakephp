@@ -292,6 +292,7 @@ class ConsoleOutput
      */
     protected function writeStream(string $message): int
     {
+        // @phpstan-ignore isset.property (property may not be set if constructor throws)
         if (!isset($this->output) || !is_resource($this->output)) {
             return 0;
         }

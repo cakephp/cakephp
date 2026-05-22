@@ -37,7 +37,7 @@ abstract class LockEngine implements LockInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'prefix' => 'lock_',
         'ttl' => 300,
     ];

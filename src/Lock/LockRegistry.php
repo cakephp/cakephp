@@ -37,7 +37,7 @@ class LockRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return class-string<TEngine>|null Either the correct classname or null.
      */
-    protected function _resolveClassName(string $class): ?string
+    protected function resolveClassName(string $class): ?string
     {
         /** @var class-string<TEngine>|null */
         return App::className($class, 'Lock/Engine', 'LockEngine');
@@ -51,7 +51,7 @@ class LockRegistry extends ObjectRegistry
      * @return void
      * @throws \BadMethodCallException
      */
-    protected function _throwMissingClassError(string $class, ?string $plugin): void
+    protected function throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new BadMethodCallException(sprintf('Lock engine `%s` is not available.', $class));
     }
@@ -65,7 +65,7 @@ class LockRegistry extends ObjectRegistry
      * @return TEngine The constructed LockEngine.
      * @throws \Cake\Lock\Exception\LockException When the lock engine cannot be initialized.
      */
-    protected function _create(object|string $class, string $alias, array $config): LockEngine
+    protected function create(object|string $class, string $alias, array $config): LockEngine
     {
         if (is_object($class)) {
             $instance = $class;
@@ -94,9 +94,9 @@ class LockRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): static
     {
-        unset($this->_loaded[$name]);
+        unset($this->loaded[$name]);
 
         return $this;
     }

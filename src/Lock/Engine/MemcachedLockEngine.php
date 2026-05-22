@@ -42,14 +42,14 @@ class MemcachedLockEngine extends LockEngine
      *
      * @var \Memcached
      */
-    protected Memcached $_memcached;
+    protected Memcached $memcached;
 
     /**
      * Default configuration.
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'servers' => [['127.0.0.1', 11211]],
         'prefix' => 'lock_',
         'ttl' => 300,
@@ -71,7 +71,7 @@ class MemcachedLockEngine extends LockEngine
 
         parent::init($config);
 
-        return $this->_connect();
+        return $this->connect();
     }
 
     /**
@@ -79,25 +79,25 @@ class MemcachedLockEngine extends LockEngine
      *
      * @return bool True if connection was successful.
      */
-    protected function _connect(): bool
+    protected function connect(): bool
     {
-        if ($this->_config['persistent']) {
-            $this->_memcached = new Memcached((string)$this->_config['persistent']);
+        if ($this->config['persistent']) {
+            $this->memcached = new Memcached((string)$this->config['persistent']);
         } else {
-            $this->_memcached = new Memcached();
+            $this->memcached = new Memcached();
         }
 
         // Only add servers if not already added (for persistent connections)
-        if ($this->_memcached->getServerList() === []) {
+        if ($this->memcached->getServerList() === []) {
             $servers = [];
-            foreach ($this->_config['servers'] as $server) {
+            foreach ($this->config['servers'] as $server) {
                 $servers[] = [$server[0], (int)($server[1] ?? 11211), 1];
             }
-            $this->_memcached->addServers($servers);
+            $this->memcached->addServers($servers);
         }
 
         // Verify connection by getting version
-        $versions = $this->_memcached->getVersion();
+        $versions = $this->memcached->getVersion();
 
         return $versions !== false && $versions !== [];
     }
@@ -117,7 +117,7 @@ class MemcachedLockEngine extends LockEngine
         $token = $this->generateToken();
 
         // add() only succeeds if key doesn't exist - atomic operation
-        $result = $this->_memcached->add($key, $token, $ttl);
+        $result = $this->memcached->add($key, $token, $ttl);
 
         if ($result === true) {
             return new AcquiredLock($resource, $token, $ttl, microtime(true), $this);
@@ -140,7 +140,7 @@ class MemcachedLockEngine extends LockEngine
         $key = $this->key($lock->getResource());
 
         // Get value to verify ownership
-        $value = $this->_memcached->get($key, null, Memcached::GET_EXTENDED);
+        $value = $this->memcached->get($key, null, Memcached::GET_EXTENDED);
 
         if ($value === false) {
             return false;
@@ -152,7 +152,7 @@ class MemcachedLockEngine extends LockEngine
         }
 
         // Delete with CAS to ensure atomicity
-        return $this->_memcached->delete($key);
+        return $this->memcached->delete($key);
     }
 
     /**
@@ -164,9 +164,9 @@ class MemcachedLockEngine extends LockEngine
     public function isLocked(string $resource): bool
     {
         $key = $this->key($resource);
-        $this->_memcached->get($key);
+        $this->memcached->get($key);
 
-        return $this->_memcached->getResultCode() !== Memcached::RES_NOTFOUND;
+        return $this->memcached->getResultCode() !== Memcached::RES_NOTFOUND;
     }
 
     /**
@@ -184,13 +184,13 @@ class MemcachedLockEngine extends LockEngine
         $ttl ??= $lock->getTtl();
 
         // Verify ownership first
-        $value = $this->_memcached->get($key);
+        $value = $this->memcached->get($key);
         if ($value !== $lock->getToken()) {
             return false;
         }
 
         // Touch to extend TTL
-        return $this->_memcached->touch($key, $ttl);
+        return $this->memcached->touch($key, $ttl);
     }
 
     /**
@@ -203,6 +203,6 @@ class MemcachedLockEngine extends LockEngine
     {
         $key = $this->key($resource);
 
-        return $this->_memcached->delete($key);
+        return $this->memcached->delete($key);
     }
 }

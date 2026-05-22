@@ -118,13 +118,13 @@ class Lock
     {
         $registry = static::getRegistry();
 
-        if (empty(static::$_config[$name]['className'])) {
+        if (empty(static::$config[$name]['className'])) {
             throw new InvalidArgumentException(
                 sprintf('The `%s` lock configuration does not exist.', $name),
             );
         }
 
-        $config = static::$_config[$name];
+        $config = static::$config[$name];
 
         try {
             $registry->load($name, $config);
