@@ -92,7 +92,7 @@ class ConsoleOutput
     /**
      * The current output type.
      *
-     * @see setOutputAs() For manipulation.
+     * @see \Cake\Console\ConsoleOutput::setOutputAs() For manipulation.
      * @var int
      */
     protected int $outputAs = self::COLOR;
@@ -292,7 +292,7 @@ class ConsoleOutput
      */
     protected function writeStream(string $message): int
     {
-        if (!is_resource($this->output)) {
+        if (!isset($this->output) || !is_resource($this->output)) {
             return 0;
         }
 

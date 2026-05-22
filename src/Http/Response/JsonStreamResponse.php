@@ -17,11 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http\Response;
 
 use Cake\Core\Configure;
-use Cake\Core\InstanceConfigTrait;
-use Cake\Http\CallbackStream;
-use Cake\Http\Response;
-use Cake\Log\Log;
-use Closure;
 use InvalidArgumentException;
 use JsonException;
 
@@ -45,6 +40,16 @@ use JsonException;
  * return new JsonStreamResponse($query, ['format' => 'ndjson']);
  * ```
  *
+ * ### Options
+ *
+ * - `root` (string|null, default: null): Wrap data in `{"root": [...]}`
+ * - `envelope` (array, default: []): Static metadata merged with streaming data
+ * - `dataKey` (string, default: 'data'): Key for streaming data when envelope is used
+ * - `format` (string, default: 'json'): Output format — 'json' or 'ndjson'
+ * - `transform` (callable|null, default: null): Transform each item before encoding
+ * - `flags` (int, default: DEFAULT_JSON_FLAGS): JSON encode flags
+ * - `flushEvery` (int, default: 1): Flush output buffers every N items
+ *
  * ### ORM Integration
  *
  * For true streaming benefits, use unbuffered queries and avoid result formatters:
@@ -65,10 +70,8 @@ use JsonException;
  * - 100,000 rows @ 1KB each: ~1KB memory (not ~100MB)
  * - Time to first byte: after first row (not after all rows)
  */
-class JsonStreamResponse extends Response
+class JsonStreamResponse extends AbstractStreamResponse
 {
-    use InstanceConfigTrait;
-
     /**
      * Default JSON encoding flags (consistent with JsonView).
      *
@@ -101,13 +104,6 @@ class JsonStreamResponse extends Response
     ];
 
     /**
-     * Number of streamed rows since the last flush.
-     *
-     * @var int
-     */
-    protected int $rowsSinceLastFlush = 0;
-
-    /**
      * Default streaming options.
      *
      * @var array<string, mixed>
@@ -123,51 +119,29 @@ class JsonStreamResponse extends Response
     ];
 
     /**
-     * Constructor.
-     *
-     * @param iterable $data The iterable data to stream (array, generator, ResultSet, etc.)
-     * @param array<string, mixed> $options Streaming options:
-     *   - `root`: Wrap data in `{"root": [...]}` (string|null, default: null)
-     *   - `envelope`: Static metadata merged with streaming data (array, default: [])
-     *   - `dataKey`: Key for streaming data when envelope is used (string, default: 'data')
-     *   - `format`: Output format - 'json' or 'ndjson' (string, default: 'json')
-     *   - `transform`: Transform each item before encoding (callable|null, default: null)
-     *   - `flags`: JSON encode flags (int, default: DEFAULT_JSON_FLAGS)
-     *   - `flushEvery`: Flush output buffers every N items (int, default: 1)
+     * @inheritDoc
      */
-    public function __construct(protected iterable $data, array $options = [])
+    protected function streamData(): void
     {
-        $this->setConfig($this->normalizeStreamOptions($options + $this->defaultConfig, $options), null, false);
-
-        $stream = new CallbackStream($this->createStreamCallback());
-        parent::__construct(['stream' => $stream]);
-
-        $this->applyStreamingHeaders();
+        if ($this->getConfigOrFail('format') === self::FORMAT_NDJSON) {
+            $this->streamNdjson();
+        } else {
+            $this->streamJson();
+        }
     }
 
     /**
-     * Create the streaming callback.
-     *
-     * The callback uses echo + flush for true streaming, sending data
-     * to the client as each item is encoded rather than buffering everything.
-     *
-     * @return \Closure
+     * @inheritDoc
      */
-    protected function createStreamCallback(): Closure
+    protected function contentType(): string
     {
-        return function (): void {
-            if ($this->getConfigOrFail('format') === self::FORMAT_NDJSON) {
-                $this->streamNdjson();
-            } else {
-                $this->streamJson();
-            }
-        };
+        return $this->getConfigOrFail('format') === self::FORMAT_NDJSON
+            ? 'application/x-ndjson'
+            : 'application/json';
     }
 
     /**
      * Stream data as standard JSON.
-     *
-     * Uses echo + flush to send data immediately to the client.
      *
      * @return void
      */
@@ -221,8 +195,6 @@ class JsonStreamResponse extends Response
 
     /**
      * Stream data as NDJSON (newline-delimited JSON).
-     *
-     * Uses echo + flush to send each line immediately to the client.
      *
      * @return void
      */
@@ -350,11 +322,7 @@ class JsonStreamResponse extends Response
     }
 
     /**
-     * Normalize and validate stream options.
-     *
-     * @param array<string, mixed> $options Merged options.
-     * @param array<string, mixed> $originalOptions Original options passed by the caller.
-     * @return array<string, mixed>
+     * @inheritDoc
      */
     protected function normalizeStreamOptions(array $options, array $originalOptions = []): array
     {
@@ -370,127 +338,7 @@ class JsonStreamResponse extends Response
         if (Configure::read('debug') && !isset($originalOptions['flags'])) {
             $options['flags'] |= JSON_PRETTY_PRINT;
         }
-        if (!is_int($options['flushEvery']) || $options['flushEvery'] < 1) {
-            throw new InvalidArgumentException('`flushEvery` must be an integer greater than or equal to 1');
-        }
 
-        return $options;
-    }
-
-    /**
-     * Apply headers derived from the active stream options.
-     *
-     * @return void
-     */
-    protected function applyStreamingHeaders(): void
-    {
-        $charset = Configure::read('App.encoding') ?? 'UTF-8';
-        $mimeType = $this->getConfigOrFail('format') === self::FORMAT_NDJSON
-            ? 'application/x-ndjson'
-            : 'application/json';
-        $contentType = $mimeType . '; charset=' . $charset;
-
-        $this->setHeader('Content-Type', $contentType);
-        // Prevent proxy/nginx buffering for true streaming
-        $this->setHeader('X-Accel-Buffering', 'no');
-    }
-
-    /**
-     * Output data without flushing.
-     *
-     * Used for structural elements like brackets that don't need immediate flushing.
-     *
-     * @param string $data The data to output.
-     * @return void
-     */
-    protected function output(string $data): void
-    {
-        echo $data;
-    }
-
-    /**
-     * Output data and flush to client immediately.
-     *
-     * This ensures data is sent to the client right away rather than
-     * being buffered, enabling true streaming behavior.
-     *
-     * @param string $data The data to output and flush.
-     * @param bool $force Whether to force an immediate flush regardless of threshold.
-     * @return void
-     */
-    protected function outputAndFlush(string $data, bool $force = false): void
-    {
-        echo $data;
-        $this->rowsSinceLastFlush++;
-
-        if ($force || $this->rowsSinceLastFlush >= $this->getConfigOrFail('flushEvery')) {
-            $this->flushOutputBuffers();
-        }
-    }
-
-    /**
-     * Flush output buffers when it is safe to do so.
-     *
-     * @return void
-     */
-    protected function flushOutputBuffers(): void
-    {
-        // Only flush if we're at the implicit output buffer level (1) or no buffering.
-        // Higher levels indicate explicit buffering (e.g., tests) that we shouldn't disturb.
-        $level = ob_get_level();
-        if ($level <= 1) {
-            if ($level === 1) {
-                ob_flush();
-            }
-            flush();
-            $this->rowsSinceLastFlush = 0;
-        }
-    }
-
-    /**
-     * Log a streaming error.
-     *
-     * @param string $message Error message.
-     * @param int $index Item index where error occurred.
-     * @return void
-     */
-    protected function logStreamError(string $message, int $index): void
-    {
-        if (class_exists(Log::class)) {
-            Log::error(sprintf(
-                'JsonStreamResponse encoding failed at index %d: %s',
-                $index,
-                $message,
-            ));
-        }
-    }
-
-    /**
-     * Get the streaming options.
-     *
-     * @return array<string, mixed>
-     */
-    public function getStreamOptions(): array
-    {
-        return $this->getConfig();
-    }
-
-    /**
-     * Return an instance with updated streaming options.
-     *
-     * @param array<string, mixed> $options Options to merge with existing options.
-     * @return static
-     */
-    public function withStreamOptions(array $options): static
-    {
-        $new = clone $this;
-        $new->setConfig(
-            $this->normalizeStreamOptions($options + $this->getConfig(), $options),
-            null,
-            false,
-        );
-        $new->applyStreamingHeaders();
-
-        return $new->withBody(new CallbackStream($new->createStreamCallback()));
+        return parent::normalizeStreamOptions($options, $originalOptions);
     }
 }

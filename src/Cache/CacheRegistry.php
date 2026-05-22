@@ -26,7 +26,7 @@ use Cake\Core\ObjectRegistry;
  *
  * Used by {@link \Cake\Cache\Cache} to load and manage cache engines.
  *
- * @template TEngine of \Cake\Cache\CacheEngine<object>
+ * @template TEngine of \Cake\Cache\CacheEngine
  * @extends \Cake\Core\ObjectRegistry<TEngine>
  */
 class CacheRegistry extends ObjectRegistry

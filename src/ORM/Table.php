@@ -156,13 +156,9 @@ use function Cake\Core\namespaceSplit;
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
  * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table<TBehaviors, TEntity>>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table<TBehaviors, TEntity>>
-     */
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -256,9 +252,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The name of the class that represent a single row for this table
      *
      * @var string|null
-     * @phpstan-var class-string<\Cake\Datasource\EntityInterface>|null
+     * @phpstan-var class-string<TEntity>|null
      */
     protected ?string $entityClass = null;
+
+    /**
+     * Whether to assert that entities passed to save/delete/patch/loadInto
+     * match the table's configured entity class. Disable per table via
+     * {@see Table::disableEntityClassAssertion()} when foreign entities are
+     * passed intentionally.
+     *
+     * @var bool
+     */
+    protected bool $assertEntityClass = true;
 
     /**
      * Registry key used to create this table object
@@ -692,11 +698,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the class used to hydrate rows for this table.
      *
-     * @return class-string<\Cake\Datasource\EntityInterface>
+     * @return class-string<TEntity>
      */
     public function getEntityClass(): string
     {
         if (!$this->entityClass) {
+            /** @var class-string<TEntity> $default */
             $default = Entity::class;
             $self = static::class;
             $parts = explode('\\', $self);
@@ -711,7 +718,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->entityClass = $default;
             }
 
-            /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+            /** @var class-string<TEntity>|null $class */
             $class = App::className($name, 'Model/Entity');
             if (!$class) {
                 throw new MissingEntityException([$name]);
@@ -732,7 +739,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function setEntityClass(string $name): static
     {
-        /** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+        /** @var class-string<TEntity>|null $class */
         $class = App::className($name, 'Model/Entity');
         if ($class === null) {
             throw new MissingEntityException([$name]);
@@ -741,6 +748,82 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->entityClass = $class;
 
         return $this;
+    }
+
+    /**
+     * Enables the assertion that entities passed to save/delete/patch/loadInto
+     * match the table's configured entity class.
+     *
+     * @param bool $enable Whether to enable. Defaults to true.
+     * @return $this
+     */
+    public function enableEntityClassAssertion(bool $enable = true)
+    {
+        $this->assertEntityClass = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Disables the entity-class assertion for this table. Use when foreign
+     * entities are passed intentionally (e.g. polymorphic patterns).
+     *
+     * @return $this
+     */
+    public function disableEntityClassAssertion()
+    {
+        $this->assertEntityClass = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the entity-class assertion is enabled for this table.
+     *
+     * @return bool
+     */
+    public function isEntityClassAssertionEnabled(): bool
+    {
+        return $this->assertEntityClass;
+    }
+
+    /**
+     * Asserts that the given entity belongs to this table instance.
+     *
+     * The entity must either be an instance of the table's configured entity
+     * class, or an instance of the generic ``\Cake\ORM\Entity`` class. The
+     * generic class is allowed as an escape hatch for ad-hoc usage such as
+     * ``$table->delete(new Entity(['id' => 1]))``.
+     *
+     * Catches mistakes like ``$this->Invoices->delete($orderEntity)`` where
+     * an entity from a different table is passed.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to validate.
+     * @return void
+     * @throws \InvalidArgumentException When the entity does not match the
+     *   configured entity class.
+     */
+    protected function assertEntityClass(EntityInterface $entity): void
+    {
+        if (!$this->assertEntityClass) {
+            return;
+        }
+
+        if ($entity->getSource() === $this->getRegistryAlias()) {
+            return;
+        }
+
+        $entityClass = $this->getEntityClass();
+        if ($entity instanceof $entityClass || $entity::class === Entity::class) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'Entity of class `%s` does not match the entity class `%s` configured for table `%s`.',
+            $entity::class,
+            $entityClass,
+            $this->getRegistryAlias(),
+        ));
     }
 
     /**
@@ -1260,11 +1343,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type the type of query to perform
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @return \Cake\ORM\Query\SelectQuery<TEntity> The query builder
      */
     public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
-        /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query */
+        /** @var \Cake\ORM\Query\SelectQuery<TEntity> $query */
         $query = $this->callFinder($type, $this->selectQuery(), ...$args);
 
         return $query;
@@ -1348,8 +1431,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array> $query The query to find with
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
      */
     public function findList(
         SelectQuery $query,
@@ -1406,11 +1489,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $table->find('threaded', keyField: 'id', parentField: 'ancestor_id', nestingKey: 'children');
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array> $query The query to find with
      * @param \Closure|array|string|null $keyField The path to the key field.
      * @param \Closure|array|string $parentField The path to the parent field.
      * @param string $nestingKey The key to nest children under.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array> The query builder
      */
     public function findThreaded(
         SelectQuery $query,
@@ -1602,14 +1685,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|array|null $callback An array of data key/value pairs or a callback that will
      *   be invoked for newly created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array<string, mixed> $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface An entity.
+     * @return TEntity An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      */
     public function findOrCreate(
@@ -1637,13 +1720,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find an existing record by, or a callable that will
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|array|null $callback Data or a callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array<string, mixed> $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface|array An entity.
+     * @return TEntity|array An entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @throws \InvalidArgumentException
      */
@@ -1671,7 +1754,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $entity = $this->patchEntity($entity, $data, ['patchableFields' => $patchableFields]);
         }
         if ($callback !== null) {
-            /** @var \Cake\Datasource\EntityInterface $entity */
+            /** @var TEntity $entity */
             $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
@@ -1688,8 +1771,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|callable|array $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      */
     protected function getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
@@ -1763,11 +1846,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * This is useful for subqueries.
      *
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      */
     public function subquery(): SelectQuery
     {
-        return $this->queryFactory->select($this)->disableAutoAliasing();
+        /** @var \Cake\ORM\Query\SelectQuery<TEntity|array> $query */
+        $query = $this->queryFactory->select($this)->disableAutoAliasing();
+
+        return $query;
     }
 
     /**
@@ -1995,6 +2081,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
     {
+        $this->assertEntityClass($entity);
+
         $primaryColumns = (array)$this->getPrimaryKey();
 
         if ($options['checkExisting'] && $primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
@@ -2543,6 +2631,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function processDelete(EntityInterface $entity, ArrayObject $options): bool
     {
+        $this->assertEntityClass($entity);
+
         if ($entity->isNew()) {
             return false;
         }
@@ -2690,7 +2780,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     * @return \Cake\ORM\Query\SelectQuery<TEntity|array>
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
@@ -2991,6 +3081,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
+        $this->assertEntityClass($entity);
+
         $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->merge($entity, $data, $options);
@@ -3030,6 +3122,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
+        foreach ($entities as $entity) {
+            $this->assertEntityClass($entity);
+        }
+
         $options['associated'] ??= $this->associations->keys();
 
         return $this->marshaller()->mergeMany($entities, $data, $options);
@@ -3188,14 +3284,25 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> $entities a single entity or list of entities
+     * @param TEntity|array<TEntity> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query\SelectQuery::contain()
-     * @return \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>
+     * @return TEntity|array<TEntity>
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
-        return new LazyEagerLoader()->loadInto($entities, $contain, $this);
+        if ($entities instanceof EntityInterface) {
+            $this->assertEntityClass($entities);
+        } else {
+            foreach ($entities as $entity) {
+                $this->assertEntityClass($entity);
+            }
+        }
+
+        /** @var TEntity|array<TEntity> $result */
+        $result = (new LazyEagerLoader())->loadInto($entities, $contain, $this);
+
+        return $result;
     }
 
     /**

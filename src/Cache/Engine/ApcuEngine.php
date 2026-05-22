@@ -37,8 +37,6 @@ use DateInterval;
 
 /**
  * APCu storage engine for cache
- *
- * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\ApcuEngine>
  */
 class ApcuEngine extends CacheEngine
 {

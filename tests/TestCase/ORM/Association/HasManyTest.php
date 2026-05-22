@@ -715,7 +715,7 @@ class HasManyTest extends TestCase
     public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new HasMany('Thing', new Table(['alias' => 'Test']), $config);
+        $association = new HasMany('Authors', $this->getTableLocator()->get('Authors'), $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
 

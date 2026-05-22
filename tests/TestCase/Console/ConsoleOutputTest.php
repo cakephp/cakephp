@@ -296,4 +296,47 @@ class ConsoleOutputTest extends TestCase
             @unlink($tmpfile);
         }
     }
+
+    /**
+     * `ConsoleOutput::__destruct()` unsets the `_output` property, so any
+     * write that reaches the same instance during the rest of the shutdown
+     * sequence sees an undefined property — observed when another
+     * destructor (e.g. `Connection::__destruct()`) routes a `Log::warning()`
+     * through a globally registered `ConsoleLog` engine.
+     *
+     * `_write()` must guard with `isset()` in addition to `is_resource()`;
+     * reading an undefined property emits an "Undefined property" warning
+     * before evaluating to false.
+     */
+    public function testWriteAfterDestructIsNoOpWithoutWarning(): void
+    {
+        $tmpfile = tempnam(sys_get_temp_dir(), 'cakephp_console_output_test_');
+        $this->assertIsString($tmpfile);
+        $stream = fopen($tmpfile, 'w');
+        $this->assertIsResource($stream);
+
+        $captured = [];
+        set_error_handler(function (int $errno, string $errstr) use (&$captured): bool {
+            $captured[] = $errstr;
+
+            return true;
+        });
+
+        try {
+            $output = new ConsoleOutput($stream);
+            // Explicitly invoke the destructor to simulate the shutdown cascade
+            // where this instance is destructed before another logging caller
+            // reaches it.
+            $output->__destruct();
+
+            $this->assertSame(0, $output->write('after-destruct', 0));
+            $this->assertSame([], $captured, 'write() must not emit warnings after __destruct()');
+        } finally {
+            restore_error_handler();
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+            @unlink($tmpfile);
+        }
+    }
 }

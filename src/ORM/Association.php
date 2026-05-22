@@ -195,6 +195,11 @@ abstract class Association
     ];
 
     /**
+     * Whether the property name needs to be checked for collisions with source table fields.
+     */
+    private bool $checkPropertyName = true;
+
+    /**
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
      *
@@ -204,39 +209,24 @@ abstract class Association
      */
     public function __construct(string $alias, protected Table $sourceTable, array $options = [])
     {
-        if (isset($options['cascadeCallbacks'])) {
-            $this->cascadeCallbacks = $options['cascadeCallbacks'];
-        }
-        if (isset($options['className'])) {
-            $this->className = $options['className'];
-        }
-        if (isset($options['conditions'])) {
-            $this->conditions = $options['conditions'];
-        }
-        if (isset($options['dependent'])) {
-            $this->dependent = $options['dependent'];
-        }
-        if (isset($options['finder'])) {
-            $this->finder = $options['finder'];
-        }
-        if (isset($options['bindingKey'])) {
-            $this->bindingKey = $options['bindingKey'];
-        }
-        if (isset($options['foreignKey'])) {
-            $this->foreignKey = $options['foreignKey'];
-        }
-        if (isset($options['joinType'])) {
-            $this->joinType = $options['joinType'];
-        }
-        if (isset($options['tableLocator'])) {
-            $this->tableLocator = $options['tableLocator'];
-        }
-        if (isset($options['targetTable'])) {
-            $this->targetTable = $options['targetTable'];
-        }
-
-        if (isset($options['propertyName'])) {
-            $this->setProperty($options['propertyName']);
+        $defaults = [
+            'cascadeCallbacks',
+            'className',
+            'conditions',
+            'dependent',
+            'finder',
+            'bindingKey',
+            'foreignKey',
+            'joinType',
+            'tableLocator',
+            'propertyName',
+            'sourceTable',
+            'targetTable',
+        ];
+        foreach ($defaults as $property) {
+            if (isset($options[$property])) {
+                $this->{$property} = $options[$property];
+            }
         }
 
         $this->className ??= $alias;
@@ -562,19 +552,7 @@ abstract class Association
     public function setProperty(string $name): static
     {
         $this->propertyName = $name;
-
-        try {
-            if (in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)) {
-                $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                    ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
-                trigger_error(
-                    sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
-                    E_USER_WARNING,
-                );
-            }
-        } catch (DatabaseException) {
-            // Schema is not yet loaded, can't check for clashes
-        }
+        $this->checkPropertyName = true;
 
         return $this;
     }
@@ -589,6 +567,18 @@ abstract class Association
     {
         if (!isset($this->propertyName)) {
             $this->setProperty($this->propertyName());
+        }
+
+        if (
+            $this->checkPropertyName
+            && in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)
+        ) {
+            $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
+                ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
+            trigger_error(
+                sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
+                E_USER_WARNING,
+            );
         }
 
         return $this->propertyName;
@@ -617,7 +607,7 @@ abstract class Association
      *   Available strategies vary by association type.
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
-     * @see getStrategy() to retrieve the current strategy.
+     * @see Association::getStrategy() to retrieve the current strategy.
      */
     public function setStrategy(string $name): static
     {

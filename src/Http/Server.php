@@ -30,14 +30,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
- *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Core\HttpApplicationInterface>
  */
 class Server implements EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Core\HttpApplicationInterface>
-     */
     use EventDispatcherTrait;
 
     /**

@@ -82,7 +82,7 @@ trait LocatorAwareTrait
      *   If a table has already been loaded the registry options will be ignored.
      * @return ($alias is class-string<T> ? T : \Cake\ORM\Table)
      * @throws \Cake\Core\Exception\CakeException If `$alias` argument and `$defaultTable` property both are `null`.
-     * @see \Cake\ORM\TableLocator::get()
+     * @see \Cake\ORM\Locator\TableLocator::get()
      * @since 4.3.0
      */
     public function fetchTable(?string $alias = null, array $options = []): Table

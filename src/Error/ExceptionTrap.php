@@ -30,9 +30,6 @@ use function Cake\Core\env;
  */
 class ExceptionTrap
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Error\ExceptionTrap>
-     */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
 

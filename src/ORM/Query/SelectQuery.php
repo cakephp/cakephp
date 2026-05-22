@@ -44,7 +44,7 @@ use Psr\SimpleCache\CacheInterface;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @template TSubject of \Cake\Datasource\EntityInterface|array
+ * @template-covariant TSubject of \Cake\Datasource\EntityInterface|array
  * @extends \Cake\Database\Query\SelectQuery<TSubject>
  */
 class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterface
@@ -161,7 +161,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When set, SelectQuery execution will be bypassed.
      *
      * @var iterable|null
-     * @see \Cake\Datasource\QueryTrait::setResult()
+     * @see \Cake\ORM\Query\SelectQuery::setResult()
      */
     protected ?iterable $results = null;
 
@@ -582,7 +582,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return mixed The first result from the ResultSet.
+     * @return TSubject|null The first result from the ResultSet.
      */
     public function first(): mixed
     {
@@ -597,7 +597,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return mixed The first result from the ResultSet.
+     * @return TSubject The first result from the ResultSet.
      */
     public function firstOrFail(): mixed
     {
@@ -627,7 +627,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @see \Cake\Datasource\QueryInterface::applyOptions() to read about the options that will
      * be processed by this class and not returned by this function
      * @return array
-     * @see applyOptions()
+     * @see \Cake\ORM\Query\SelectQuery::applyOptions()
      */
     public function getOptions(): array
     {
@@ -695,7 +695,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @param array<string, mixed> $options The options to be applied
      * @return $this
-     * @see getOptions()
+     * @see \Cake\ORM\Query\SelectQuery::getOptions()
      */
     public function applyOptions(array $options): static
     {
@@ -1259,7 +1259,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param \Closure|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
-     * @see \Cake\ORM\Query\SeletQuery::matching()
+     * @see \Cake\ORM\Query\SelectQuery::matching()
      */
     public function innerJoinWith(string $assoc, ?Closure $builder = null): static
     {

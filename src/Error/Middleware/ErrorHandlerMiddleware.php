@@ -44,10 +44,6 @@ use function Cake\Core\triggerWarning;
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
     use InstanceConfigTrait;
-
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Error\ExceptionTrap>
-     */
     use EventDispatcherTrait;
 
     /**

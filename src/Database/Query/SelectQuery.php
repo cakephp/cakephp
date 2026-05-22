@@ -33,7 +33,7 @@ use Traversable;
 /**
  * This class is used to generate SELECT queries for the relational database.
  *
- * @template T of mixed
+ * @template-covariant T of mixed
  * @implements \IteratorAggregate<T>
  */
 class SelectQuery extends Query implements IteratorAggregate

@@ -78,14 +78,14 @@ class CommandScanner
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+        return $this->scanDir($path . 'Command' . DIRECTORY_SEPARATOR, $namespace . '\Command\\', $prefix, []);
     }
 
     /**
      * Scan a directory for .php files and return the class names that
      * should be within them.
      *
-     * @param string $path The directory to read.
+     * @param string $path The directory to read. Must end with a trailing directory separator.
      * @param string $namespace The namespace the shells live in.
      * @param string $prefix The prefix to apply to commands for their full name.
      * @param array<string> $hide A list of command names to hide as they are internal commands.

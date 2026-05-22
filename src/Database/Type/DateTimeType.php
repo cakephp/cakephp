@@ -56,6 +56,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         'Y-m-d\TH:i:sP',
         'Y-m-d\TH:i:s.u',
         'Y-m-d\TH:i:s.uP',
+        '!Y-m-d',
     ];
 
     /**
@@ -166,7 +167,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * This is the time zone used when converting database strings to DateTime
      * instances and converting DateTime instances to database strings.
      *
-     * @see DateTimeType::setKeepDatabaseTimezone
+     * @see \Cake\Database\Type\DateTimeType::setKeepDatabaseTimezone()
      * @param \DateTimeZone|string|null $timezone Database timezone.
      * @return $this
      */
@@ -401,7 +402,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
      * @param array|string $format The locale-aware format
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @see \Cake\I18n\DateTime::parseDateTime()
      * @return $this
      */
     public function setLocaleFormat(array|string $format): static
