@@ -52,7 +52,7 @@ class LockTest extends TestCase
     /**
      * Configure lock settings for test
      */
-    protected function _configLock(): void
+    protected function configLock(): void
     {
         Lock::setConfig('tests', [
             'className' => NullLockEngine::class,
@@ -94,7 +94,7 @@ class LockTest extends TestCase
      */
     public function testAcquire(): void
     {
-        $this->_configLock();
+        $this->configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
         $this->assertInstanceOf(AcquiredLock::class, $lock);
@@ -106,7 +106,7 @@ class LockTest extends TestCase
      */
     public function testRelease(): void
     {
-        $this->_configLock();
+        $this->configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
         $this->assertTrue(Lock::release($lock));
@@ -117,7 +117,7 @@ class LockTest extends TestCase
      */
     public function testAcquiredLockCanReleaseItself(): void
     {
-        $this->_configLock();
+        $this->configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
         $this->assertTrue($lock->release());
@@ -128,7 +128,7 @@ class LockTest extends TestCase
      */
     public function testIsLocked(): void
     {
-        $this->_configLock();
+        $this->configLock();
 
         // NullLockEngine always returns false for isLocked
         $this->assertFalse(Lock::isLocked('test-resource', 'tests'));
@@ -139,7 +139,7 @@ class LockTest extends TestCase
      */
     public function testRefresh(): void
     {
-        $this->_configLock();
+        $this->configLock();
         $lock = Lock::acquire('test-resource', 60, 'tests');
 
         $this->assertTrue(Lock::refresh($lock, 120));
@@ -150,7 +150,7 @@ class LockTest extends TestCase
      */
     public function testForceRelease(): void
     {
-        $this->_configLock();
+        $this->configLock();
 
         $this->assertTrue(Lock::forceRelease('test-resource', 'tests'));
     }
@@ -160,7 +160,7 @@ class LockTest extends TestCase
      */
     public function testSynchronized(): void
     {
-        $this->_configLock();
+        $this->configLock();
 
         $result = Lock::synchronized('test-resource', function () {
             return 'callback-result';
@@ -195,7 +195,7 @@ class LockTest extends TestCase
      */
     public function testAcquireBlocking(): void
     {
-        $this->_configLock();
+        $this->configLock();
 
         $lock = Lock::acquireBlocking('test-resource', 60, 5, 100, 'tests');
 

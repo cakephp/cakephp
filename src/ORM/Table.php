@@ -3300,7 +3300,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         /** @var TEntity|array<TEntity> $result */
-        $result = (new LazyEagerLoader())->loadInto($entities, $contain, $this);
+        $result = new LazyEagerLoader()->loadInto($entities, $contain, $this);
 
         return $result;
     }

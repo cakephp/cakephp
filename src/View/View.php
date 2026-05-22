@@ -1417,18 +1417,14 @@ class View implements EventDispatcherInterface
         if (!str_contains($file, '..')) {
             return $file;
         }
+
         $absolute = realpath($file);
         if ($absolute === false) {
             // Candidate does not exist on this root; let the path cascade continue.
             return $file;
         }
-        $found = false;
-        foreach ($this->paths($plugin) as $path) {
-            if (str_starts_with($absolute, $path)) {
-                $found = true;
-                break;
-            }
-        }
+
+        $found = array_any($this->paths($plugin), fn($path) => str_starts_with($absolute, $path));
         if (!$found) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',
