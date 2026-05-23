@@ -218,14 +218,12 @@ class CommandCollection implements IteratorAggregate, Countable
      * ```
      *
      * The directory is scanned non-recursively. A non-empty `$prefix` is
-     * required: it produces a `prefix.command` long name so a discovered
-     * command whose short name collides with an existing one is exposed
-     * only under its prefixed name instead of silently replacing it -
-     * the same short-name de-duplication {@see discoverPlugin()} relies
-     * on (an empty prefix would defeat it). The prefixed long name itself
-     * follows the same last-wins precedence as `discoverPlugin()` /
-     * `autoDiscover()`. The path and namespace are normalized, so a
-     * trailing separator is optional.
+     * required. The prefix produces a `prefix.command` long name so discovered
+     * commands whose short name collides with an existing command is exposed
+     * only under its prefixed name, and does not replace an existing command.
+     * The prefixed long name itself follows the same last-wins
+     * precedence as `discoverPlugin()` / `autoDiscover()`. The path and
+     * namespace are normalized, so a trailing separator is optional.
      *
      * @param string $path The directory to scan.
      * @param string $namespace The namespace the commands live in.

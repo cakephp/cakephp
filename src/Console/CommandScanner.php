@@ -79,7 +79,7 @@ class CommandScanner
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        return $this->scanDir($path . 'Command' . DIRECTORY_SEPARATOR, $namespace . '\Command\\', $prefix);
+        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix);
     }
 
     /**
