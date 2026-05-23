@@ -35,15 +35,9 @@ use Stringable;
 
 /**
  * Cell base.
- *
- * @template TSubject of \Cake\View\View
- * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 abstract class Cell implements EventDispatcherInterface, Stringable
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<TSubject>
-     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ViewVarsTrait;
@@ -59,7 +53,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * Instance of the View created during rendering. Won't be set until after
      * Cell::__toString()/render() is called.
      *
-     * @var TSubject
+     * @var \Cake\View\View
      */
     protected View $View;
 

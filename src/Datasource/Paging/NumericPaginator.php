@@ -592,6 +592,55 @@ class NumericPaginator implements PaginatorInterface
 
         $sortAllowed = $builder !== null;
 
+        // Resolve a default `order` that uses builder/alias/combined sort keys.
+        // Keys the builder does not know (plain columns) pass through unchanged,
+        // because the default order is developer-controlled, not user input.
+        $defaultSortKey = null;
+        $defaultSortDirection = null;
+        if ($builder !== null && isset($options['order']) && is_array($options['order'])) {
+            $resolvedOrder = [];
+            $leadingResolved = null;
+            foreach ($options['order'] as $field => $dir) {
+                // Builder direction matching is lowercase-only, so normalize
+                // here just like parseSortParams() does for user input.
+                $direction = is_string($dir) ? strtolower($dir) : $dir;
+                $resolved = is_string($field) && is_string($direction)
+                    ? $builder->resolve($field, $direction, true)
+                    : null;
+                if ($resolved === null) {
+                    // Pass through with the original direction; the DB treats
+                    // the ORDER BY keyword case-insensitively.
+                    $resolvedOrder[$field] = $dir;
+
+                    continue;
+                }
+
+                // Only surface the alias as the active default sort when it is
+                // the leading `order` entry; otherwise a plain field ahead of it
+                // is the effective primary sort.
+                if ($resolvedOrder === []) {
+                    $defaultSortKey = $field;
+                    $defaultSortDirection = $direction;
+                    $leadingResolved = $resolved;
+                }
+                foreach ($resolved as $resolvedField => $resolvedDir) {
+                    $resolvedOrder[$resolvedField] = $resolvedDir;
+                }
+            }
+            $options['order'] = $resolvedOrder;
+
+            // If a later `order` entry overrode any field produced by the
+            // leading alias, the default order is no longer equivalent to
+            // selecting that alias, so do not advertise it as the active sort.
+            if (
+                $leadingResolved !== null
+                && array_slice($resolvedOrder, 0, count($leadingResolved), true) !== $leadingResolved
+            ) {
+                $defaultSortKey = null;
+                $defaultSortDirection = null;
+            }
+        }
+
         if (isset($options['sort'])) {
             // Parse sort and direction parameters
             $sortParams = $this->parseSortParams($options);
@@ -622,13 +671,20 @@ class NumericPaginator implements PaginatorInterface
                 // Only keep fields from existing order that aren't already in our resolved order
                 // Account for prefixed vs unprefixed field names (e.g., 'modified' vs 'Alerts.modified')
                 foreach ($existingOrder as $field => $dir) {
-                    // Check if this field (or its unprefixed version) is already in $order
+                    // Check if this field is already in $order, accounting for
+                    // prefixed vs unprefixed names in either direction (e.g.
+                    // `modified` vs `Alerts.modified`). Both must be deduped,
+                    // otherwise _prefix() later collapses them and the existing
+                    // (default) entry would override the requested sort.
                     $alreadyInOrder = isset($order[$field]);
                     if (!$alreadyInOrder && str_contains($field, '.')) {
                         [$alias, $fieldName] = explode('.', $field, 2);
                         if ($alias === $modelAlias && isset($order[$fieldName])) {
                             $alreadyInOrder = true;
                         }
+                    }
+                    if (!$alreadyInOrder && !str_contains($field, '.') && isset($order[$modelAlias . '.' . $field])) {
+                        $alreadyInOrder = true;
                     }
                     if (!$alreadyInOrder) {
                         $order[$field] = $dir;
@@ -658,12 +714,16 @@ class NumericPaginator implements PaginatorInterface
             return $options;
         }
 
-        if (
-            $options['sort'] === null
-            && count($options['order']) >= 1
-            && !is_numeric(key($options['order']))
-        ) {
-            $options['sort'] = key($options['order']);
+        if ($options['sort'] === null) {
+            if ($defaultSortKey !== null) {
+                // Highlight the alias/combined key in PaginatorHelper without
+                // forcing a query string for the default sort. Report the alias
+                // direction so it matches the equivalent click-driven sort.
+                $options['sort'] = $defaultSortKey;
+                $options['sortDirection'] = $defaultSortDirection;
+            } elseif (count($options['order']) >= 1 && !is_numeric(key($options['order']))) {
+                $options['sort'] = key($options['order']);
+            }
         }
 
         $options['order'] = $this->_prefix($object, $options['order'], $sortAllowed);

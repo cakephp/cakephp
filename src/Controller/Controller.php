@@ -93,13 +93,9 @@ use function Cake\Core\triggerWarning;
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @property \Cake\Controller\Component\CheckHttpCacheComponent $CheckHttpCache
  * @link https://book.cakephp.org/5/en/controllers.html
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
-     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -162,7 +158,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instance of ComponentRegistry used to create Components
      *
-     * @var \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null
+     * @var \Cake\Controller\ComponentRegistry|null
      */
     protected ?ComponentRegistry $_components = null;
 
@@ -198,7 +194,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   but expect that features that use the request parameters will not work.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null $components ComponentRegistry to use. Defaults to a new instance.
+     * @param \Cake\Controller\ComponentRegistry|null $components ComponentRegistry to use. Defaults to a new instance.
      */
     public function __construct(
         ServerRequest $request,
@@ -256,7 +252,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the component registry for this controller.
      *
-     * @return \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>
+     * @return \Cake\Controller\ComponentRegistry
      */
     public function components(): ComponentRegistry
     {

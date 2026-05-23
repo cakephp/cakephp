@@ -202,6 +202,11 @@ abstract class Association
     ];
 
     /**
+     * Whether the property name needs to be checked for collisions with source table fields.
+     */
+    private bool $checkPropertyName = true;
+
+    /**
      * Constructor. Subclasses can override _options function to get the original
      * list of passed options if expecting any other special key
      *
@@ -220,6 +225,7 @@ abstract class Association
             'foreignKey',
             'joinType',
             'tableLocator',
+            'propertyName',
             'sourceTable',
             'targetTable',
         ];
@@ -227,10 +233,6 @@ abstract class Association
             if (isset($options[$property])) {
                 $this->{'_' . $property} = $options[$property];
             }
-        }
-
-        if (isset($options['propertyName'])) {
-            $this->setProperty($options['propertyName']);
         }
 
         $this->_className ??= $alias;
@@ -556,19 +558,7 @@ abstract class Association
     public function setProperty(string $name)
     {
         $this->_propertyName = $name;
-
-        try {
-            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
-                $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                    ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
-                trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
-                    E_USER_WARNING,
-                );
-            }
-        } catch (DatabaseException) {
-            // Schema is not yet loaded, can't check for clashes
-        }
+        $this->checkPropertyName = true;
 
         return $this;
     }
@@ -583,6 +573,18 @@ abstract class Association
     {
         if (!isset($this->_propertyName)) {
             $this->setProperty($this->_propertyName());
+        }
+
+        if (
+            $this->checkPropertyName
+            && in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)
+        ) {
+            $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
+                ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
+            trigger_error(
+                sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                E_USER_WARNING,
+            );
         }
 
         return $this->_propertyName;

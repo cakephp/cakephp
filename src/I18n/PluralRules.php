@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Core\Exception\CakeException;
+use Closure;
 use InvalidArgumentException;
 use Locale;
 
@@ -133,6 +134,14 @@ class PluralRules
     ];
 
     /**
+     * A map of locale => function that overrides the above map.
+     * Such functions directly resolve the plural form number.
+     *
+     * @var array<string, \Closure(int): int>
+     */
+    protected static array $callableRulesMap = [];
+
+    /**
      * Returns the plural form number for the passed locale corresponding
      * to the countable provided in $n.
      *
@@ -149,8 +158,12 @@ class PluralRules
             throw new InvalidArgumentException('Invalid locale provided');
         }
 
-        if (!isset(static::$_rulesMap[$locale])) {
+        if (!isset(static::$_rulesMap[$locale]) && !isset(static::$callableRulesMap[$locale])) {
             $locale = explode('_', $locale)[0];
+        }
+
+        if (isset(static::$callableRulesMap[$locale])) {
+            return static::$callableRulesMap[$locale]($n);
         }
 
         if (!isset(static::$_rulesMap[$locale])) {
@@ -193,5 +206,33 @@ class PluralRules
             17 => $n === 1 ? 0 : ($n !== 0 && $n % 1000000 === 0 ? 1 : 2),
             default => throw new CakeException('Unable to find plural rule number.'),
         };
+    }
+
+    /**
+     * Set a custom plural rule.
+     *
+     * @param string $locale The locale on which the plural rule is applied.
+     * @param \Closure(int): int $resolver A function that takes a plural number and
+     *   returns the plural form number for $locale.
+     * @throws \InvalidArgumentException If $locale is invalid.
+     * @return void
+     */
+    public static function setRule(string $locale, Closure $resolver): void
+    {
+        $canonicalLocale = Locale::canonicalize($locale);
+
+        if ($canonicalLocale === null) {
+            throw new InvalidArgumentException(sprintf('Invalid locale `%s` provided', $locale));
+        }
+
+        static::$callableRulesMap[$canonicalLocale] = $resolver;
+    }
+
+    /**
+     * Remove any custom rule previously set.
+     */
+    public static function resetRules(): void
+    {
+        static::$callableRulesMap = [];
     }
 }

@@ -157,13 +157,9 @@ use function Cake\Core\namespaceSplit;
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
  * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table<TBehaviors, TEntity>>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table<TBehaviors, TEntity>>
-     */
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;

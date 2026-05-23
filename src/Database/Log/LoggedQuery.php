@@ -18,18 +18,31 @@ namespace Cake\Database\Log;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Closure;
 use Exception;
 use JsonSerializable;
+use RuntimeException;
 use Stringable;
 
 /**
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
  *
- * @internal
+ * Applications can register a {@see LoggedQuery::setRedactor()} closure
+ * to scrub sensitive bound values from every public exposure path.
  */
 class LoggedQuery implements JsonSerializable, Stringable
 {
+    /**
+     * Instance-property allowlist for {@see setContext()}. Hardcoded so the
+     * hot path (called per query from `Driver::log()`) avoids `property_exists`
+     * (which would also accept static properties like `redactor` and create
+     * dynamic instance properties on assignment) and reflection-based filtering.
+     *
+     * @var list<string>
+     */
+    protected const CONTEXT_KEYS = ['driver', 'query', 'took', 'params', 'numRows', 'error'];
+
     /**
      * Driver executing the query
      *
@@ -73,6 +86,74 @@ class LoggedQuery implements JsonSerializable, Stringable
     protected ?Exception $error = null;
 
     /**
+     * Optional redactor invoked before the stored query string or bound
+     * parameters are exposed via {@see __toString()}, {@see getContext()},
+     * or {@see jsonSerialize()}. Receives `(string $query, array $params)`
+     * and must return a 2-element list `[string $query, array $params]`
+     * with sensitive substrings replaced.
+     *
+     * Used to keep secrets bound as parameters (cryptographic keys,
+     * passwords, tokens) out of file logs, structured loggers, and
+     * remote breadcrumb sinks. Set once during application bootstrap;
+     * applies to every LoggedQuery instance from then on.
+     *
+     * @var \Closure|null
+     */
+    protected static ?Closure $redactor = null;
+
+    /**
+     * Register a global redactor applied to every LoggedQuery before its
+     * query string or params are exposed for logging.
+     *
+     * The redactor receives the raw `(string $query, array $params)` and
+     * must return a 2-element list `[string $query, array $params]` with
+     * the sensitive substrings replaced. Exceptions thrown by the
+     * redactor propagate to the caller, and returning a malformed value
+     * raises a `RuntimeException` — both surface a broken redactor
+     * loudly rather than silently leaking the secrets it was supposed
+     * to scrub. Register a redactor you trust.
+     *
+     * Pass `null` to clear a previously-registered redactor.
+     *
+     * @param \Closure|null $redactor `fn(string, array): array{0: string, 1: array}`
+     * @return void
+     */
+    public static function setRedactor(?Closure $redactor): void
+    {
+        self::$redactor = $redactor;
+    }
+
+    /**
+     * Apply the configured redactor (if any) to the stored query+params
+     * and return the sanitized tuple.
+     *
+     * A redactor that throws lets the exception propagate; a redactor
+     * that returns a value not matching `[string, array]` raises a
+     * `RuntimeException`. Both surface a broken redactor instead of
+     * silently falling back to the raw values it was meant to scrub.
+     *
+     * @return array{0: string, 1: array} [sanitized query, sanitized params]
+     * @throws \RuntimeException If the redactor returns a malformed value.
+     */
+    protected function redacted(): array
+    {
+        if (self::$redactor === null) {
+            return [$this->query, $this->params];
+        }
+
+        $result = (self::$redactor)($this->query, $this->params);
+
+        if (!is_array($result) || !isset($result[0], $result[1]) || !is_string($result[0]) || !is_array($result[1])) {
+            throw new RuntimeException(sprintf(
+                'LoggedQuery redactor must return [string $query, array $params]; got %s.',
+                get_debug_type($result),
+            ));
+        }
+
+        return [$result[0], $result[1]];
+    }
+
+    /**
      * Helper function used to replace query placeholders by the real
      * params used to execute the query
      *
@@ -80,6 +161,8 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     protected function interpolate(): string
     {
+        [$query, $rawParams] = $this->redacted();
+
         $params = array_map(function ($p) {
             if ($p === null) {
                 return 'NULL';
@@ -112,7 +195,7 @@ class LoggedQuery implements JsonSerializable, Stringable
             }
 
             return $p;
-        }, $this->params);
+        }, $rawParams);
 
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;
@@ -120,7 +203,7 @@ class LoggedQuery implements JsonSerializable, Stringable
             $keys[] = is_string($key) ? "/:{$key}\b/" : '/[?]/';
         }
 
-        return (string)preg_replace($keys, $params, $this->query, $limit);
+        return (string)preg_replace($keys, $params, $query, $limit);
     }
 
     /**
@@ -130,8 +213,10 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     public function getContext(): array
     {
+        [$query] = $this->redacted();
+
         $context = [
-            'query' => $this->query,
+            'query' => $query,
             'numRows' => $this->numRows,
             'took' => $this->took,
             'role' => $this->driver ? $this->driver->getRole() : '',
@@ -168,7 +253,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function setContext(array $context): void
     {
         foreach ($context as $key => $val) {
-            if (property_exists($this, $key)) {
+            if (in_array($key, self::CONTEXT_KEYS, true)) {
                 $this->{$key} = $val;
             }
         }
@@ -181,6 +266,8 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     public function jsonSerialize(): array
     {
+        [$query, $params] = $this->redacted();
+
         $error = $this->error;
         if ($error !== null) {
             $error = [
@@ -191,9 +278,9 @@ class LoggedQuery implements JsonSerializable, Stringable
         }
 
         return [
-            'query' => $this->query,
+            'query' => $query,
             'numRows' => $this->numRows,
-            'params' => $this->params,
+            'params' => $params,
             'took' => $this->took,
             'error' => $error,
         ];
@@ -210,6 +297,8 @@ class LoggedQuery implements JsonSerializable, Stringable
             return $this->interpolate();
         }
 
-        return $this->query;
+        [$query] = $this->redacted();
+
+        return $query;
     }
 }

@@ -640,4 +640,326 @@ class NumericPaginatorSortFieldTest extends TestCase
         $this->assertEquals('desc', $pagingParams['direction']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
     }
+
+    /**
+     * Default `order` may use an alias/combined sort key resolved via the builder.
+     *
+     * @return void
+     */
+    public function testDefaultOrderResolvesCombinedKey(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'asc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('newest', $pagingParams['sort']);
+        $this->assertSame('asc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.title' => 'asc',
+            'Articles.published' => 'desc',
+        ], $pagingParams['completeSort']);
+
+        // Reversing the default direction reverses non-locked fields
+        $settings['order'] = ['newest' => 'desc'];
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('newest', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.title' => 'desc',
+            'Articles.published' => 'asc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Uppercase directions in the default order resolve the same as lowercase.
+     *
+     * @return void
+     */
+    public function testDefaultOrderResolvesUppercaseDirection(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'DESC'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('newest', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.title' => 'desc',
+            'Articles.published' => 'asc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Locked SortField keeps its locked direction within a default order.
+     *
+     * @return void
+     */
+    public function testDefaultOrderResolvesLockedSortField(): void
+    {
+        $settings = [
+            'order' => ['popular' => 'desc'],
+            'sortableFields' => [
+                'popular' => [
+                    SortField::desc('published', locked: true),
+                    SortField::asc('title'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('popular', $pagingParams['sort']);
+        $this->assertSame([
+            'Articles.published' => 'desc', // locked, not reversed
+            'Articles.title' => 'desc', // toggleable, reversed
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * A plain column not registered in the builder must pass through unchanged
+     * (BC: the default `order` is developer-controlled, not user input).
+     *
+     * @return void
+     */
+    public function testDefaultOrderPlainColumnPassesThrough(): void
+    {
+        $settings = [
+            'order' => ['id' => 'desc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('id', $pagingParams['sort']);
+        $this->assertSame(['Articles.id' => 'desc'], $pagingParams['completeSort']);
+    }
+
+    /**
+     * When a plain field precedes an alias in the default order, the plain
+     * field stays the effective primary sort and is the highlighted key.
+     *
+     * @return void
+     */
+    public function testDefaultOrderPlainFieldBeforeAliasKeepsPrimarySort(): void
+    {
+        $settings = [
+            'order' => ['id' => 'desc', 'newest' => 'asc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('id', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.id' => 'desc',
+            'Articles.title' => 'asc',
+            'Articles.published' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * When a later default-order entry overrides a column produced by the
+     * leading alias, the alias is no longer advertised as the active sort
+     * (the default order is not equivalent to selecting that alias).
+     *
+     * @return void
+     */
+    public function testDefaultOrderAliasNotAdvertisedWhenOverridden(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'asc', 'published' => 'asc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        // 'published' => 'asc' overrides newest's published => desc, so the
+        // result is not equivalent to clicking the `newest` header.
+        $this->assertSame('title', $pagingParams['sort']);
+        $this->assertSame([
+            'Articles.title' => 'asc',
+            'Articles.published' => 'asc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * A user sort on another column is prepended; the resolved default order
+     * is appended after it.
+     *
+     * @return void
+     */
+    public function testDefaultOrderAppendedAfterUserSort(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'asc'],
+            'sortableFields' => [
+                'author_id',
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate(
+            $this->table,
+            ['sort' => 'author_id', 'direction' => 'desc'],
+            $settings,
+        );
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('author_id', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.author_id' => 'desc',
+            'Articles.title' => 'asc',
+            'Articles.published' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * A user sort wins over a resolved default even when the builder mixes
+     * prefixed and unprefixed names for the same column.
+     *
+     * @return void
+     */
+    public function testDefaultOrderUserSortWinsWithInconsistentPrefixing(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'asc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'), // unprefixed
+                ],
+                'title' => [
+                    SortField::asc('Articles.title'), // prefixed, same column
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate(
+            $this->table,
+            ['sort' => 'title', 'direction' => 'desc'],
+            $settings,
+        );
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('title', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        // The requested desc must win; the default must not re-add an
+        // unprefixed `title` that _prefix() would collapse back to asc.
+        $this->assertSame(['Articles.title' => 'desc'], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Mixed SortField objects and plain string fields within a default order.
+     *
+     * @return void
+     */
+    public function testDefaultOrderResolvesMixedSortFieldAndString(): void
+    {
+        $settings = [
+            'order' => ['mixed' => 'desc'],
+            'sortableFields' => [
+                'mixed' => [
+                    SortField::desc('published'),
+                    'author_id',
+                    SortField::asc('title', locked: true),
+                ],
+            ],
+        ];
+
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('mixed', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame([
+            'Articles.published' => 'asc', // reversed (desc default toggled)
+            'Articles.author_id' => 'desc', // plain string uses requested direction
+            'Articles.title' => 'asc', // locked, ignores requested direction
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Toggling the default alias link off (back to default direction) keeps the
+     * resolved order and does not require a sort param.
+     *
+     * @return void
+     */
+    public function testDefaultOrderAliasIsHighlightedWithoutQueryString(): void
+    {
+        $settings = [
+            'order' => ['newest' => 'asc'],
+            'sortableFields' => [
+                'newest' => [
+                    SortField::asc('title'),
+                    SortField::desc('published'),
+                ],
+            ],
+        ];
+
+        // No query string at all -> alias is still the active sort
+        $result = $this->paginator->paginate($this->table, [], $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('newest', $pagingParams['sort']);
+        $this->assertSame([
+            'Articles.title' => 'asc',
+            'Articles.published' => 'desc',
+        ], $pagingParams['completeSort']);
+
+        // Explicitly requesting the alias yields the same resolved order
+        $result = $this->paginator->paginate(
+            $this->table,
+            ['sort' => 'newest', 'direction' => 'asc'],
+            $settings,
+        );
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('newest', $pagingParams['sort']);
+        $this->assertSame([
+            'Articles.title' => 'asc',
+            'Articles.published' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
 }
