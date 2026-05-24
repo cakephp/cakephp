@@ -32,6 +32,10 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
     ])
 
+    ->withConfiguredRule(\Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::class, [
+        \Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::ONLY_DIRECT_ASSIGN => true,
+    ])
+
     ->withSkip([
         __DIR__ . '/tests/test_app/templates',
         __DIR__ . '/tests/test_app/Plugin/TestPlugin/templates',
@@ -45,7 +49,6 @@ return RectorConfig::configure()
         \Rector\CodeQuality\Rector\Foreach_\UnusedForeachValueToArrayKeysRector::class,
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
         \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class,
-        \Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::class,
         \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         \Rector\CodeQuality\Rector\If_\ConsecutiveNullCompareReturnsToNullCoalesceQueueRector::class,
         \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,

@@ -71,9 +71,7 @@ class Curl implements AdapterInterface
             throw new NetworkException($message, $request);
         }
 
-        $responses = $this->createResponse($ch, $body);
-
-        return $responses;
+        return $this->createResponse($ch, $body);
     }
 
     /**
