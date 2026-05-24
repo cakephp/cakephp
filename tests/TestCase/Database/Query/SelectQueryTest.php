@@ -1501,11 +1501,9 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
-                $or = $exp->or(function ($or) {
+                return $exp->or(function ($or) {
                     return $or->eq('id', 1)->eq('id', 2);
                 });
-
-                return $or;
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
