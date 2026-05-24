@@ -2069,16 +2069,15 @@ SQL;
     {
         $this->_needsConnection();
 
-        $this->pdo = Mockery::mock(PDOMocked::class);
+        $this->pdo = Mockery::mock(PDO::class);
         $this->pdo->shouldReceive('quote')
             ->andReturnUsing(function ($value) {
                 return "'{$value}'";
             });
 
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock(Mysql::class, [[]])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
 
         $driver->shouldReceive('createPdo')
             ->andReturn($this->pdo);
@@ -2091,10 +2090,3 @@ SQL;
         return $driver;
     }
 }
-
-// phpcs:disable
-class PDOMocked extends PDO
-{
-    public function quoteIdentifier(): void {}
-}
-// phpcs:enable

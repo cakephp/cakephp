@@ -25,23 +25,15 @@ class TableValidationWithBadDefinerTest extends TestCase
      */
     public function testValidationWithBadDefiner(): void
     {
-        $table = new ValidationWithBadDefinerTable();
+        $table = new class extends Table {
+            public function validationBad($validator): string
+            {
+                return '';
+            }
+        };
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage(sprintf(
-            'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
-            $table::class,
-        ));
+        $this->expectExceptionMessage('The `Cake\ORM\Table@anonymous');
 
         $table->getValidator('bad');
     }
 }
-
-// phpcs:disable
-class ValidationWithBadDefinerTable extends Table
-{
-    public function validationBad($validator): string
-    {
-        return '';
-    }
-}
-// phpcs:enable

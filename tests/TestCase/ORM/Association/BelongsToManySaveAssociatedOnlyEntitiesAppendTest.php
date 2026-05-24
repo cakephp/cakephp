@@ -68,8 +68,17 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
     public function testSaveAssociatedOnlyEntitiesAppend(): void
     {
         $connection = ConnectionManager::get('test');
-        /** @var \Cake\Test\TestCase\ORM\Association\MockedTable&\Mockery\MockInterface $table */
-        $table = Mockery::mock(new MockedTable(['table' => 'tags', 'connection' => $connection]))
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $table */
+        $table = Mockery::mock(new class (['alias' => 'Tags', 'table' => 'tags', 'connection' => $connection]) extends Table
+        {
+            public function saveAssociated()
+            {
+            }
+
+            public function schema()
+            {
+            }
+        })
             ->makePartial();
         $table->setPrimaryKey('id');
 
@@ -88,17 +97,9 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
             ],
         ]);
 
-        $table->shouldReceive('saveAssociated')->never();
+        $table->shouldReceive('save')->never();
 
         $association = new BelongsToMany('Tags', $config);
         $association->saveAssociated($entity);
     }
 }
-
-// phpcs:disable
-class MockedTable extends Table
-{
-    public function saveAssociated() {}
-    public function schema() {}
-}
-// phpcs:enable

@@ -24,19 +24,15 @@ class TableValidationWithDefinerTest extends TestCase
      */
     public function testValidationWithDefinerTest(): void
     {
-        $table = new ValidationWithDefinerTable();
+        $table = new class extends Table
+        {
+            public function validationForOtherStuff($validator)
+            {
+                return $validator;
+            }
+        };
         $other = $table->getValidator('forOtherStuff');
         $this->assertNotSame($other, $table->getValidator());
         $this->assertSame($table, $other->getProvider('table'));
     }
 }
-
-// phpcs:disable
-class ValidationWithDefinerTable extends Table
-{
-    public function validationForOtherStuff($validator)
-    {
-        return $validator;
-    }
-}
-// phpcs:enable

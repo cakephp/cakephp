@@ -51,7 +51,8 @@ class TableGetWithCustomFinderTest extends TestCase
     public function testGetWithCustomFinder($options): void
     {
         $queryFactory = Mockery::mock(QueryFactory::class);
-        $table = new GetWithCustomFinderTable([
+        $table = new class ([
+            'alias' => 'sometable',
             'connection' => $this->connection,
             'schema' => [
                 'id' => ['type' => 'integer'],
@@ -59,7 +60,12 @@ class TableGetWithCustomFinderTest extends TestCase
                 '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
             ],
             'queryFactory' => $queryFactory,
-        ]);
+        ]) extends Table {
+            public function findCustom($query)
+            {
+                return $query;
+            }
+        };
 
         $query = Mockery::mock(new SelectQuery($table))->makePartial();
         $queryFactory->shouldReceive('select')->once()->with($table)->andReturn($query);
@@ -82,13 +88,3 @@ class TableGetWithCustomFinderTest extends TestCase
         $this->assertSame($entity, $result);
     }
 }
-
-// phpcs:disable
-class GetWithCustomFinderTable extends Table
-{
-    public function findCustom($query)
-    {
-        return $query;
-    }
-}
-// phpcs:enable

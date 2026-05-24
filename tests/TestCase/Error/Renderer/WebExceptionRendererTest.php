@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Error;
+namespace Cake\Test\TestCase\Error\Renderer;
 
 use Cake\Controller\Controller;
 use Cake\Controller\ErrorController;

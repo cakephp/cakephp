@@ -25,7 +25,40 @@ class TableImplementedEventsTest extends TestCase
      */
     public function testImplementedEvents(): void
     {
-        $table = new ImplementedEventsTable();
+        $table = new class extends Table
+        {
+            public function buildValidator(): void
+            {
+            }
+
+            public function beforeMarshal(): void
+            {
+            }
+
+            public function beforeFind(): void
+            {
+            }
+
+            public function beforeSave(): void
+            {
+            }
+
+            public function afterSave(): void
+            {
+            }
+
+            public function beforeDelete(): void
+            {
+            }
+
+            public function afterDelete(): void
+            {
+            }
+
+            public function afterRules(): void
+            {
+            }
+        };
         $result = $table->implementedEvents();
         $expected = [
             'Model.beforeMarshal' => 'beforeMarshal',
@@ -42,7 +75,10 @@ class TableImplementedEventsTest extends TestCase
 
     public function testImplementedEventsWithTableEventsTrait(): void
     {
-        $table = new ImplementedAllEventsTable();
+        $table = new class extends Table
+        {
+            use TableEventsTrait;
+        };
         $result = $table->implementedEvents();
         $expected = [
             'Model.beforeMarshal' => 'beforeMarshal',
@@ -61,22 +97,3 @@ class TableImplementedEventsTest extends TestCase
         $this->assertEquals($expected, $result, 'Events do not match.');
     }
 }
-
-// phpcs:disable
-class ImplementedEventsTable extends Table
-{
-    public function buildValidator(): void {}
-    public function beforeMarshal(): void {}
-    public function beforeFind(): void {}
-    public function beforeSave(): void {}
-    public function afterSave(): void {}
-    public function beforeDelete(): void {}
-    public function afterDelete(): void {}
-    public function afterRules(): void {}
-}
-
-class ImplementedAllEventsTable extends Table
-{
-    use TableEventsTrait;
-}
-// phpcs:enable

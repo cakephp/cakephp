@@ -3205,10 +3205,3 @@ class ValidatorTest extends TestCase
         );
     }
 }
-
-// phpcs:disable
-class stdMock extends stdClass
-{
-    public function isCool() {}
-}
-// phpcs:enable
