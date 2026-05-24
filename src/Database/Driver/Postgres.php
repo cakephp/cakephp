@@ -345,16 +345,28 @@ class Postgres extends Driver
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
             case 'JSON_VALUE':
-                $expression->setName('JSONB_PATH_QUERY')
-                    ->iterateParts(function ($p, $key) {
-                        if ($key === 0) {
-                            $p = sprintf('%s::jsonb', $p);
-                        } elseif ($key === 1) {
-                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
-                        }
+                if (version_compare($this->version(), '17.0', '<')) {
+                    $expression->setName('JSONB_PATH_QUERY')
+                        ->iterateParts(function ($p, $key) {
+                            if ($key === 0) {
+                                return $p = sprintf('%s::jsonb', $p);
+                            }
 
-                        return $p;
-                    });
+                            return $p;
+                        });
+                }
+                break;
+            case 'JSON_EXISTS':
+                if (version_compare($this->version(), '17.0', '<')) {
+                    $expression->setName('JSONB_PATH_EXISTS')
+                        ->iterateParts(function ($p, $key) {
+                            if ($key === 0) {
+                                return sprintf('%s::jsonb', $p);
+                            }
+
+                            return $p;
+                        });
+                }
                 break;
         }
     }

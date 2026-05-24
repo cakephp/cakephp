@@ -51,6 +51,11 @@ class QueryExpression implements ExpressionInterface, Countable
     protected array $_conditions = [];
 
     /**
+     * @var bool
+     */
+    protected bool $parentheses = true;
+
+    /**
      * Constructor. A new expression object can be created without any params and
      * be built dynamically. Otherwise, it is possible to pass an array of conditions
      * containing either a tree-like array structure to be parsed and/or other
@@ -63,13 +68,17 @@ class QueryExpression implements ExpressionInterface, Countable
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
      * level of the expression tree. For example "AND", "OR", "XOR"...
+     * @param bool $parentheses Whether to wrap this expression in parentheses when it is converted to sql string.
+     *  This is useful when you want to create a sub-expression and you don't want it to be wrapped in parentheses.
      * @see \Cake\Database\Expression\QueryExpression::add() for more details on $conditions and $types
      */
     public function __construct(
         ExpressionInterface|array|string $conditions = [],
         TypeMap|array $types = [],
         string $conjunction = 'AND',
+        bool $parentheses = true,
     ) {
+        $this->parentheses = $parentheses;
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
         if ($conditions) {
@@ -589,7 +598,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return '';
         }
         $conjunction = $this->_conjunction;
-        $template = $len === 1 ? '%s' : '(%s)';
+        $template = !$this->parentheses || $len === 1 ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {

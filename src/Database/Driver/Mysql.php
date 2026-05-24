@@ -19,6 +19,8 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\DistinctComparisonExpression;
+use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
@@ -39,6 +41,7 @@ class Mysql extends Driver
     protected function _expressionTranslators(): array
     {
         return [
+            FunctionExpression::class => '_transformFunctionExpression',
             StringAggExpression::class => 'transformStringAggExpression',
             DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
         ];
@@ -353,6 +356,33 @@ class Mysql extends Driver
         }
 
         return $this->_version;
+    }
+
+    /**
+     * Receives a FunctionExpression and changes it so that it conforms to this SQL dialect.
+     *
+     * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to transform.
+     * @return void
+     */
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    {
+        if ($this->isMariadb()) {
+            return;
+        }
+
+        switch ($expression->getName()) {
+            case 'JSON_EXISTS':
+                $expression
+                    ->setName('JSON_CONTAINS_PATH')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            return new QueryExpression(["'all'", $p], ['literal'], ',', parentheses: false);
+                        }
+
+                        return $p;
+                    });
+                break;
+        }
     }
 
     /**

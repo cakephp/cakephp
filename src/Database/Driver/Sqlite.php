@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Schema\SchemaDialect;
@@ -324,6 +325,22 @@ class Sqlite extends Driver
                 break;
             case 'JSON_VALUE':
                 $expression->setName('JSON_EXTRACT');
+                break;
+            case 'JSON_EXISTS':
+                $expression
+                    ->setName('JSON_TYPE')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 1) {
+                            return new QueryExpression(
+                                [$p, ') IS NOT NULL AND (1'],
+                                [null, 'literal'],
+                                '',
+                                parentheses: false,
+                            );
+                        }
+
+                        return $p;
+                    });
                 break;
         }
     }

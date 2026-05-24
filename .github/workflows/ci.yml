@@ -83,8 +83,12 @@ jobs:
       if: matrix.db-type == 'mysql' && matrix.dependencies == 'lowest'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-    - name: Setup PostgreSQL with PostGIS
-      if: matrix.db-type == 'pgsql'
+    - name: Setup PostgreSQL 12 with PostGIS
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '8.2'
+      run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:12-3.5
+
+    - name: Setup PostgreSQL 18 with PostGIS
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '8.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8

@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\JsonPathExpression;
 use Cake\Database\Expression\StringAggExpression;
 use InvalidArgumentException;
 
@@ -344,21 +345,55 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing the Json Value
+     * Returns a FunctionExpression representing JSON_VALUE().
+     *
+     * If the SQL standard version isn't supported some drivers will fall back to a vendor specific implementation.
+     * The vendor specific implemention will only support a string path and won't support the additional clauses.
+     * Check for support before using.
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
-     * @param string $jsonPath A valid JSON PATH Query
-     * @param array $types list of types to bind to the arguments
+     * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path or path expression
+     * @param array $types List of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function jsonValue(
         ExpressionInterface|string $expression,
-        string $jsonPath,
+        JsonPathExpression|string $jsonPath,
         array $types = [],
     ): FunctionExpression {
+        if (is_string($jsonPath)) {
+            $jsonPath = new JsonPathExpression($jsonPath);
+        }
+
         $params = $this->toLiteralParam($expression) + [$jsonPath];
 
-        return new FunctionExpression('JSON_VALUE', $params, $types);
+        return new FunctionExpression('JSON_VALUE', $params, $types, $jsonPath->getReturnType());
+    }
+
+    /**
+     * Returns a FunctionExpression representing JSON_EXISTS().
+     *
+     * If the SQL standard version isn't supported some drivers will fall back to a vendor specific implementation.
+     * The vendor specific implemention will only support a string path and won't support the additional clauses.
+     * Check for support before using.
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
+     * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path expression
+     * @param array $types List of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonExists(
+        ExpressionInterface|string $expression,
+        JsonPathExpression|string $jsonPath,
+        array $types = [],
+    ): FunctionExpression {
+        if (is_string($jsonPath)) {
+            $jsonPath = new JsonPathExpression($jsonPath);
+        }
+
+        $params = $this->toLiteralParam($expression) + [$jsonPath];
+
+        return new FunctionExpression('JSON_EXISTS', $params, $types, 'boolean');
     }
 
     /**
