@@ -127,4 +127,10 @@ return RectorConfig::configure()
         \Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector::class,
         \Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
+
+        // Newly aggressive in rector 2.4 - keep the bump behavior-neutral:
+        // adds declare(strict_types=1) to test fixtures/config (out of scope here),
+        \Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector::class,
+        // and rewrites `$x ?: []` in ways that can change behavior on undefined/empty values.
+        \Rector\DeadCode\Rector\Ternary\RemoveUselessTernaryRector::class,
     ]);
