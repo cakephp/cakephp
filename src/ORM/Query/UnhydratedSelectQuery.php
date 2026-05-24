@@ -34,7 +34,7 @@ namespace Cake\ORM\Query;
  *
  * @extends \Cake\ORM\Query\SelectQuery<array<string, mixed>>
  */
-class SelectUnhydratedQuery extends SelectQuery
+class UnhydratedSelectQuery extends SelectQuery
 {
     /**
      * @var bool

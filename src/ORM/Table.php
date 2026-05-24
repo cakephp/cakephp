@@ -47,7 +47,7 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\Query\SelectUnhydratedQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -1391,16 +1391,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type The type of finder to call.
      * @param mixed ...$args Arguments matching the finder's parameters.
-     * @return \Cake\ORM\Query\SelectUnhydratedQuery
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
      * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
      * @since 5.4.0
      */
-    public function findUnhydrated(string $type = 'all', mixed ...$args): SelectUnhydratedQuery
+    public function findUnhydrated(string $type = 'all', mixed ...$args): UnhydratedSelectQuery
     {
         $query = $this->selectUnhydratedQuery();
         $result = $this->callFinder($type, $query, ...$args);
 
-        if (!$result instanceof SelectUnhydratedQuery) {
+        if (!$result instanceof UnhydratedSelectQuery) {
             throw new CakeException(sprintf(
                 'The `%s` finder must return the query it was given when called via findUnhydrated(); '
                 . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
@@ -1892,10 +1892,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Creates a new non-hydrating select query.
      *
-     * @return \Cake\ORM\Query\SelectUnhydratedQuery
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
      * @since 5.4.0
      */
-    public function selectUnhydratedQuery(): SelectUnhydratedQuery
+    public function selectUnhydratedQuery(): UnhydratedSelectQuery
     {
         return $this->queryFactory->selectUnhydrated($this);
     }

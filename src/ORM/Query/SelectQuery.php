@@ -1522,7 +1522,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @deprecated 5.4.0 Use {@see \Cake\ORM\Table::findUnhydrated()} for
      *   type-safe non-hydrated reads. The fluent toggle returns a `static`
      *   that lies about its result shape; `findUnhydrated()` returns an
-     *   `SelectUnhydratedQuery` whose type matches the runtime. Removed in 6.0.
+     *   `UnhydratedSelectQuery` whose type matches the runtime. Removed in 6.0.
      * @return static<array<string,mixed>>
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */

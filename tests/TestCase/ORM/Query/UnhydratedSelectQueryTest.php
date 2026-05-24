@@ -21,15 +21,15 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
-use Cake\ORM\Query\SelectUnhydratedQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the type-safe non-hydrated query path: Table::findUnhydrated() and
- * the SelectUnhydratedQuery class it returns.
+ * the UnhydratedSelectQuery class it returns.
  */
-class SelectUnhydratedQueryTest extends TestCase
+class UnhydratedSelectQueryTest extends TestCase
 {
     /**
      * @var array<string>
@@ -52,20 +52,20 @@ class SelectUnhydratedQueryTest extends TestCase
 
     /**
      * findUnhydrated() is the type-safe entry point for non-hydrated reads.
-     * It returns an SelectUnhydratedQuery (not a plain SelectQuery), so consumers know
+     * It returns an UnhydratedSelectQuery (not a plain SelectQuery), so consumers know
      * up-front that results will be arrays.
      */
-    public function testFindUnhydratedReturnsSelectUnhydratedQuery(): void
+    public function testFindUnhydratedReturnsUnhydratedSelectQuery(): void
     {
         $query = $this->articles->findUnhydrated();
 
-        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
+        $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $this->assertInstanceOf(SelectQuery::class, $query);
         $this->assertFalse($query->isHydrationEnabled());
     }
 
     /**
-     * first() on an SelectUnhydratedQuery resolves to an array (or null when empty),
+     * first() on an UnhydratedSelectQuery resolves to an array (or null when empty),
      * matching the runtime hydration setting locked in by the constructor.
      */
     public function testFirstReturnsArrayOrNull(): void
@@ -110,7 +110,7 @@ class SelectUnhydratedQueryTest extends TestCase
     }
 
     /**
-     * SelectUnhydratedQuery is fully substitutable for SelectQuery: the ORM
+     * UnhydratedSelectQuery is fully substitutable for SelectQuery: the ORM
      * may re-enable hydration on it (the eager loader does exactly this when
      * normalizing association queries). It must not fight that — contain()
      * with a hydrated parent has to keep working.
@@ -146,15 +146,15 @@ class SelectUnhydratedQueryTest extends TestCase
     }
 
     /**
-     * Custom finders called via findUnhydrated() receive the SelectUnhydratedQuery itself,
+     * Custom finders called via findUnhydrated() receive the UnhydratedSelectQuery itself,
      * so finder-applied builder methods (where/orderBy/contain/...) flow
      * through without losing the array shape.
      */
-    public function testFinderReceivesSelectUnhydratedQuery(): void
+    public function testFinderReceivesUnhydratedSelectQuery(): void
     {
         $query = $this->articles->findUnhydrated('all')->where(['id >' => 0]);
 
-        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
+        $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $rows = $query->orderBy(['id' => 'ASC'])->limit(2)->toArray();
 
         $this->assertCount(2, $rows);
@@ -165,16 +165,16 @@ class SelectUnhydratedQueryTest extends TestCase
 
     /**
      * findUnhydrated() must build through the injected QueryFactory (like
-     * find() does), not by instantiating SelectUnhydratedQuery directly —
+     * find() does), not by instantiating UnhydratedSelectQuery directly —
      * otherwise apps with a custom QueryFactory get divergent behavior
      * between find() and findUnhydrated().
      */
     public function testHonorsInjectedQueryFactory(): void
     {
         $factory = new class extends QueryFactory {
-            public function selectUnhydrated(Table $table): SelectUnhydratedQuery
+            public function selectUnhydrated(Table $table): UnhydratedSelectQuery
             {
-                return new class ($table) extends SelectUnhydratedQuery {
+                return new class ($table) extends UnhydratedSelectQuery {
                 };
             }
         };
@@ -186,9 +186,9 @@ class SelectUnhydratedQueryTest extends TestCase
 
         $query = $table->findUnhydrated();
 
-        $this->assertInstanceOf(SelectUnhydratedQuery::class, $query);
+        $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $this->assertNotSame(
-            SelectUnhydratedQuery::class,
+            UnhydratedSelectQuery::class,
             $query::class,
             'findUnhydrated() bypassed the injected QueryFactory.',
         );
