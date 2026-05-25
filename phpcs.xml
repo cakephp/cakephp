@@ -16,6 +16,17 @@
             <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array">
+                <element key="src" value="Cake"/>
+                <element key="tests/Fixture" value="Cake\Test\Fixture"/>
+                <element key="tests/TestCase" value="Cake\Test\TestCase"/>
+                <element key="tests/PHPStan" value="Cake\PHPStan"/>
+            </property>
+        </properties>
+        <exclude-pattern>tests/test_app/*</exclude-pattern>
+    </rule>
 
     <arg value="s"/>
     <!-- pretty sure this is a bug in slevomat -->
