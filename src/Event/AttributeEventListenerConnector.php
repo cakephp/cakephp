@@ -188,8 +188,8 @@ class AttributeEventListenerConnector
      * Resolves the listener method name for the given attribute and target.
      *
      * Resolution order:
-     *  1. Explicit `method` argument on the attribute.
-     *  2. For method-level attributes: the name of the method the attribute is placed on.
+     *  1. For method-level attributes: the name of the method the attribute is placed on.
+     *  2. For class-level attributes: the explicit `method` argument when provided.
      *  3. For class-level attributes: `__invoke` when present on the class.
      *  4. For class-level attributes: a name inferred from the event name.
      *
@@ -200,12 +200,12 @@ class AttributeEventListenerConnector
      */
     protected function resolveMethodName(AttributeInfo $info, EventListener $attribute, string $className): string
     {
-        if ($attribute->method !== null) {
-            return $attribute->method;
-        }
-
         if ($info->target->type === AttributeTargetType::METHOD) {
             return $info->target->name;
+        }
+
+        if ($attribute->method !== null) {
+            return $attribute->method;
         }
 
         if (method_exists($className, '__invoke')) {

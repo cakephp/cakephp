@@ -62,8 +62,7 @@ readonly class EventListener
      * @param int|null $priority Listener priority. When null, the current value of
      *   `EventManager::$defaultPriority` is used at connection time.
      * @param string|null $method Explicit method name to use as the listener callable.
-     *   Only relevant for class-level attributes; ignored for method-level attributes
-     *   that do not override the target method.
+     *   Only applicable for class-level attributes; ignored when the attribute is placed on a method.
      */
     public function __construct(
         public string $event,
