@@ -59,6 +59,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "boundwize/structarmed": "^0.7",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
@@ -132,8 +133,10 @@
         "cs-fix": "phpcbf",
         "stan": [
             "tools/phpstan analyse",
-            "tools/psalm"
+            "tools/psalm",
+            "@structarmed"
         ],
+        "structarmed": "vendor/bin/structarmed analyze src",
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",

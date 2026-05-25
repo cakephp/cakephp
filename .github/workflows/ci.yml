@@ -327,6 +327,10 @@ jobs:
           RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
         run: composer rector-setup && composer rector-check
 
+      - name: Run StructArmed
+        if: always()
+        run: vendor/bin/structarmed analyze src
+
   split-packages-stan:
     name: Static Analysis for Split Packages
     runs-on: ubuntu-24.04
