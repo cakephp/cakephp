@@ -249,7 +249,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Resolve names based on existing commands
      *
      * @param array<array<string, string>> $input The results of a CommandScanner operation.
-     * @return array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>> A flat map of command names => class names.
+     * @return array<string, class-string<\Cake\Console\CommandInterface>> A flat map of command names => class names.
      */
     protected function resolveNames(array $input): array
     {
