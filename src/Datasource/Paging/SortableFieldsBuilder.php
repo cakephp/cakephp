@@ -109,9 +109,8 @@ class SortableFieldsBuilder
     public static function fromCallable(Closure $factory): static
     {
         $builder = new static();
-        $builder = $factory($builder);
 
-        return $builder;
+        return $factory($builder);
     }
 
     /**
