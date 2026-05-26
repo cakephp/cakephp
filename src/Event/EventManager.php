@@ -459,7 +459,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * Connects event listeners declared via PHP attributes to this event manager.
+     * Registers event listeners declared via PHP attributes onto this event manager.
      *
      * Reads EventListener attribute metadata from the configured AttributeResolver
      * collection and registers the resolved callables.
@@ -467,9 +467,9 @@ class EventManager implements EventManagerInterface
      * ### Example
      *
      * ```php
-     * public function events(EventManagerInterface $eventManager): EventManagerInterface
+     * public function events(EventManager $eventManager): EventManagerInterface
      * {
-     *     $eventManager->attachAttributes();
+     *     $eventManager->registerAttributeListeners();
      *
      *     return $eventManager;
      * }
@@ -478,7 +478,7 @@ class EventManager implements EventManagerInterface
      * @param string $config Attribute resolver config name.
      * @return $this
      */
-    public function attachAttributes(string $config = 'default'): static
+    public function registerAttributeListeners(string $config = 'default'): static
     {
         $connector = new AttributeEventListenerConnector($this);
         $connector->connect($config);

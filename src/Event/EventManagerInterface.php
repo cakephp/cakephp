@@ -112,12 +112,4 @@ interface EventManagerInterface
      * @return array
      */
     public function listeners(string $eventKey): array;
-
-    /**
-     * Connects event listeners declared via PHP attributes to this event manager.
-     *
-     * @param string $config Attribute resolver config name.
-     * @return $this
-     */
-    public function attachAttributes(string $config = 'default'): static;
 }

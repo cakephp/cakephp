@@ -513,7 +513,7 @@ class AttributeEventListenerConnectorTest extends TestCase
         ]);
 
         $manager = new EventManager();
-        $result = $manager->attachAttributes('default');
+        $result = $manager->registerAttributeListeners('default');
 
         $this->assertSame($manager, $result);
         $this->assertCount(2, $manager->listeners('Order.afterPlace'));
