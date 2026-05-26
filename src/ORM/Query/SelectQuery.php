@@ -1519,15 +1519,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Disabling hydration will cause array results to be returned for the query
      * instead of entities.
      *
-     * @return static<array<string,mixed>>
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+     * @deprecated 5.4.0 Use {@see \Cake\ORM\Table::findUnhydrated()} instead.
+     * @return $this
      */
     public function disableHydration()
     {
         $this->_dirty();
         $this->_hydrate = false;
 
-        /** @phpstan-ignore return.type */
         return $this;
     }
 

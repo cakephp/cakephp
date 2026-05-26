@@ -1365,6 +1365,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Returns a new unhydrated query object for this table.
+     *
+     * This is a lightweight typed wrapper around `find()->disableHydration()`.
+     * It keeps finder dispatch unchanged while giving static analysis an
+     * explicit non-hydrated entry point.
+     *
+     * @since 5.4.0
+     * @param string $type The type of query to perform
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
+     * @return \Cake\ORM\Query\SelectQuery<array<string, mixed>> The query builder
+     */
+    public function findUnhydrated(string $type = 'all', mixed ...$args): SelectQuery
+    {
+        /** @var \Cake\ORM\Query\SelectQuery<array<string, mixed>> $query */
+        $query = $this->callFinder($type, $this->selectQuery()->disableHydration(), ...$args);
+
+        return $query;
+    }
+
+    /**
      * Returns the query as passed.
      *
      * By default findAll() applies no query clauses, you can override this

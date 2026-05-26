@@ -1316,6 +1316,28 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
+    public function testFindUnhydrated(): void
+    {
+        $row = $this->getTableLocator()->get('Authors')
+            ->findUnhydrated()
+            ->where(['id' => 2])
+            ->first();
+
+        $this->assertIsArray($row);
+        $this->assertSame(2, $row['id']);
+    }
+
+    public function testFindUnhydratedTypedParameters(): void
+    {
+        $row = $this->getTableLocator()->get('Authors')->findUnhydrated('WithIdArgument', 2)->first();
+        $this->assertIsArray($row);
+        $this->assertSame(2, $row['id']);
+
+        $row = $this->getTableLocator()->get('Authors')->findUnhydrated('WithIdArgument', id: 2)->first();
+        $this->assertIsArray($row);
+        $this->assertSame(2, $row['id']);
+    }
+
     /**
      * https://github.com/cakephp/cakephp/issues/18716
      */
