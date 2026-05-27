@@ -44,14 +44,9 @@ use Cake\Utility\Inflector;
  *   general logic that applies to command setup.
  * - `afterExecute(EventInterface $event)`
  *   Called immediately after the command's run method, unless an exception occurs.
- *
- * @implements \Cake\Event\EventDispatcherInterface<static>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<static>
-     */
     use EventDispatcherTrait;
 
     /**

@@ -44,8 +44,6 @@ use Memcached;
  * Memcached engine supports binary protocol and igbinary
  * serialization (if memcached extension is compiled with --enable-igbinary).
  * Compressed keys can also be incremented/decremented.
- *
- * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\MemcachedEngine>
  */
 class MemcachedEngine extends CacheEngine
 {

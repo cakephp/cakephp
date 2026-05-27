@@ -24,8 +24,11 @@ use Cake\Utility\Inflector;
 use ReflectionClass;
 
 /**
- * Used by CommandCollection and CommandTask to scan the filesystem
- * for command classes.
+ * Scans the filesystem for command classes.
+ *
+ * Implementation detail behind CommandCollection's discovery methods.
+ * Not part of the supported public API - use CommandCollection
+ * (e.g. `discoverDirectory()`) instead.
  *
  * @internal
  */
@@ -58,8 +61,6 @@ class CommandScanner
         return $this->scanDir(
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
-            '',
-            [],
         );
     }
 
@@ -78,24 +79,27 @@ class CommandScanner
         $namespace = str_replace('/', '\\', $plugin);
         $prefix = Inflector::underscore($plugin) . '.';
 
-        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix, []);
+        return $this->scanDir($path . 'Command', $namespace . '\Command\\', $prefix);
     }
 
     /**
      * Scan a directory for .php files and return the class names that
      * should be within them.
      *
-     * @param string $path The directory to read.
+     * @param string $path The directory to read. Must end with a trailing directory separator.
      * @param string $namespace The namespace the shells live in.
      * @param string $prefix The prefix to apply to commands for their full name.
      * @param array<string> $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
+     * @internal Reachable via CommandCollection discovery; not a supported entry point on its own.
      */
-    protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
+    public function scanDir(string $path, string $namespace, string $prefix = '', array $hide = []): array
     {
         if (!is_dir($path)) {
             return [];
         }
+
+        $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         // This ensures `Command` class is not added to the list.
         $hide[] = '';

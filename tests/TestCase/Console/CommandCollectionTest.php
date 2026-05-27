@@ -20,6 +20,7 @@ use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -347,6 +348,82 @@ class CommandCollectionTest extends TestCase
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
         $this->clearPlugins();
+    }
+
+    /**
+     * Discovering commands in an arbitrary directory + namespace.
+     */
+    public function testDiscoverDirectory(): void
+    {
+        $this->loadPlugins(['Company/TestPluginThree']);
+        $path = Plugin::classPath('Company/TestPluginThree') . 'Command' . DIRECTORY_SEPARATOR;
+        $class = 'Company\TestPluginThree\Command\CompanyCommand';
+
+        $collection = new CommandCollection();
+        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command\\', 'maint.');
+
+        $this->assertSame(
+            ['company' => $class, 'maint.company' => $class],
+            $result,
+        );
+        $this->clearPlugins();
+    }
+
+    /**
+     * A non-empty prefix gives a long name to fall back on, so a
+     * colliding short name does not silently overwrite an existing
+     * command (it is exposed only under the prefixed name).
+     */
+    public function testDiscoverDirectoryDeduplicates(): void
+    {
+        $this->loadPlugins(['Company/TestPluginThree']);
+        $path = Plugin::classPath('Company/TestPluginThree') . 'Command' . DIRECTORY_SEPARATOR;
+        $class = 'Company\TestPluginThree\Command\CompanyCommand';
+
+        $collection = new CommandCollection();
+        $collection->add('company', DemoCommand::class);
+        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command\\', 'maint.');
+
+        $this->assertArrayNotHasKey('company', $result, 'Existing command not overwritten');
+        $this->assertSame(['maint.company' => $class], $result);
+        $this->clearPlugins();
+    }
+
+    /**
+     * A missing trailing separator on either the path or the namespace
+     * must not break discovery (both are normalized), so a new public
+     * caller cannot trip the malformed `file` path / empty-result issues.
+     */
+    public function testDiscoverDirectoryWithoutTrailingSeparators(): void
+    {
+        $this->loadPlugins(['Company/TestPluginThree']);
+        $path = Plugin::classPath('Company/TestPluginThree') . 'Command';
+
+        $collection = new CommandCollection();
+        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command', 'maint.');
+
+        $this->assertArrayHasKey('company', $result);
+        $this->assertArrayHasKey('maint.company', $result);
+        $this->clearPlugins();
+    }
+
+    /**
+     * A non-existent directory yields no commands.
+     */
+    public function testDiscoverDirectoryUnknown(): void
+    {
+        $collection = new CommandCollection();
+        $this->assertSame([], $collection->discoverDirectory('/no/such/dir', 'App\Command\\', 'x.'));
+    }
+
+    /**
+     * An empty prefix is rejected because it would defeat de-duplication.
+     */
+    public function testDiscoverDirectoryEmptyPrefix(): void
+    {
+        $collection = new CommandCollection();
+        $this->expectException(InvalidArgumentException::class);
+        $collection->discoverDirectory('/no/such/dir', 'App\Command\\', '');
     }
 
     /**

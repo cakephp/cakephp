@@ -103,14 +103,9 @@ use Psr\Http\Message\ResponseInterface;
  * a proxy if you need to use one. The type sub option can be used to
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
- *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Http\Client>
  */
 class Client implements EventDispatcherInterface, ClientInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Http\Client>
-     */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
 

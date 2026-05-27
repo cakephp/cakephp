@@ -18,30 +18,6 @@ parameters:
 		-	'#Unsafe usage of new static\(\).#'
 
 		-
-			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_SSL_CERT on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Driver/Mysql.php
-
-		-
 			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
 			identifier: catch.neverThrown
 			count: 1

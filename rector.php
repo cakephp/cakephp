@@ -32,6 +32,10 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
     ])
 
+    ->withConfiguredRule(\Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::class, [
+        \Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::ONLY_DIRECT_ASSIGN => true,
+    ])
+
     ->withSkip([
         __DIR__ . '/tests/test_app/templates',
         __DIR__ . '/tests/test_app/Plugin/TestPlugin/templates',
@@ -45,7 +49,6 @@ return RectorConfig::configure()
         \Rector\CodeQuality\Rector\Foreach_\UnusedForeachValueToArrayKeysRector::class,
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
         \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class,
-        \Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::class,
         \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         \Rector\CodeQuality\Rector\If_\ConsecutiveNullCompareReturnsToNullCoalesceQueueRector::class,
         \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
@@ -127,4 +130,10 @@ return RectorConfig::configure()
         \Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector::class,
         \Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
+
+        // Newly aggressive in rector 2.4 - keep the bump behavior-neutral:
+        // adds declare(strict_types=1) to test fixtures/config (out of scope here),
+        \Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector::class,
+        // and rewrites `$x ?: []` in ways that can change behavior on undefined/empty values.
+        \Rector\DeadCode\Rector\Ternary\RemoveUselessTernaryRector::class,
     ]);

@@ -18,8 +18,6 @@ namespace Cake\Event;
 
 /**
  * Implements Cake\Event\EventDispatcherInterface.
- *
- * @template TSubject of object
  */
 trait EventDispatcherTrait
 {
@@ -72,21 +70,21 @@ trait EventDispatcherTrait
      *
      * Returns a dispatched event.
      *
+     * @template TSubject of object = $this
      * @param string $name Name of the event.
      * @param array $data Any value you wish to be transported with this event to
      * it can be read by listeners.
      * @param TSubject|null $subject The object that this event applies to
      * ($this by default).
      * @return \Cake\Event\EventInterface<TSubject>
-     * @phpstan-ignore missingType.generics
      */
-    public function dispatchEvent(string $name, array $data = [], ?object $subject = null): EventInterface // @phpstan-ignore missingType.generics
+    public function dispatchEvent(string $name, array $data = [], ?object $subject = null): EventInterface
     {
         $subject ??= $this;
 
         /**
+         * phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
          * @var \Cake\Event\EventInterface<TSubject> $event Coerce for psalm/phpstan
-         * @phpstan-ignore missingType.generics (TSubject may itself be generic)
          */
         $event = new $this->_eventClass($name, $subject, $data);
         $this->getEventManager()->dispatch($event);

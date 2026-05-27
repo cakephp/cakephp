@@ -421,7 +421,7 @@ class RulesChecker
     protected function checkName(string $name, array $rules): void
     {
         if (array_key_exists($name, $rules)) {
-            throw new CakeException('A rule with the same name already exists');
+            throw new CakeException("A rule with the name `{$name}` already exists");
         }
     }
 }

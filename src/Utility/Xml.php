@@ -267,7 +267,6 @@ class Xml
      */
     public static function fromArray(object|array $input, array $options = []): SimpleXMLElement|DOMDocument
     {
-        // @phpstan-ignore function.alreadyNarrowedType (is_callable check for visibility)
         if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
             $input = $input->toArray();
         }
@@ -347,7 +346,6 @@ class Xml
         }
         foreach ($data as $key => $value) {
             if (is_string($key)) {
-                // @phpstan-ignore function.alreadyNarrowedType (is_callable check for visibility)
                 if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
                     $value = $value->toArray();
                 }
@@ -431,7 +429,6 @@ class Xml
         $node = $data['node'];
         $childNS = null;
         $childValue = null;
-        // @phpstan-ignore function.alreadyNarrowedType (is_callable check for visibility)
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
             $value = $value->toArray();
         }

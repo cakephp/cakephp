@@ -30,6 +30,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\EventInterface;
 use Cake\Log\Log;
 use Cake\Test\TestCase\Database\Driver\BaseDriverTrait;
 use Cake\TestSuite\TestCase;
@@ -1408,5 +1409,89 @@ class ConnectionTest extends TestCase
             // Expected
         }
         $this->assertFalse($secondFired, 'Remaining callbacks should not execute when one throws');
+    }
+
+    public function testAfterCommitEventFiresOnOuterCommit(): void
+    {
+        $fired = false;
+        $this->connection->getEventManager()->on(
+            'Connection.afterCommit',
+            function () use (&$fired): void {
+                $fired = true;
+            },
+        );
+
+        $this->connection->begin();
+        $this->assertFalse($fired, 'Event must not fire before commit');
+        $this->connection->commit();
+        $this->assertTrue($fired, 'Event must fire after outermost commit');
+    }
+
+    public function testAfterCommitEventNotFiredOnRollback(): void
+    {
+        $fired = false;
+        $this->connection->getEventManager()->on(
+            'Connection.afterCommit',
+            function () use (&$fired): void {
+                $fired = true;
+            },
+        );
+
+        $this->connection->begin();
+        $this->connection->rollback();
+        $this->assertFalse($fired);
+    }
+
+    public function testAfterCommitEventFiresOnceForNestedTransactions(): void
+    {
+        $fireCount = 0;
+        $this->connection->getEventManager()->on(
+            'Connection.afterCommit',
+            function () use (&$fireCount): void {
+                $fireCount++;
+            },
+        );
+
+        $this->connection->begin();
+        $this->connection->begin(); // nested
+        $this->connection->commit(); // commit nested
+        $this->assertSame(0, $fireCount, 'Nested commit must not fire the event');
+        $this->connection->commit(); // commit outermost
+        $this->assertSame(1, $fireCount, 'Event must fire exactly once on outermost commit');
+    }
+
+    public function testAfterCommitEventSubjectIsConnection(): void
+    {
+        $subject = null;
+        $this->connection->getEventManager()->on(
+            'Connection.afterCommit',
+            function (EventInterface $event) use (&$subject): void {
+                $subject = $event->getSubject();
+            },
+        );
+
+        $this->connection->begin();
+        $this->connection->commit();
+
+        $this->assertSame($this->connection, $subject);
+    }
+
+    public function testAfterCommitEventFiresAfterCallbacks(): void
+    {
+        $order = [];
+        $this->connection->getEventManager()->on(
+            'Connection.afterCommit',
+            function () use (&$order): void {
+                $order[] = 'event';
+            },
+        );
+
+        $this->connection->begin();
+        $this->connection->afterCommit(function () use (&$order): void {
+            $order[] = 'callback';
+        });
+        $this->connection->commit();
+
+        $this->assertSame(['callback', 'event'], $order);
     }
 }

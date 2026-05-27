@@ -39,14 +39,9 @@ use function Cake\Core\deprecationWarning;
  * fields, validation and primary action respectively.
  *
  * Forms are conventionally placed in the `App\Form` namespace.
- *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Form\Form>
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Form\Form>
-     */
     use EventDispatcherTrait;
     use ValidatorAwareTrait;
 

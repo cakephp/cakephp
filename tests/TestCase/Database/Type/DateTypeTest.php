@@ -139,7 +139,8 @@ class DateTypeTest extends TestCase
     public static function marshalProvider(): array
     {
         $date = new Date('@1392387900');
-        $data = [
+
+        return [
             // invalid types.
             [null, null],
             [false, null],
@@ -211,8 +212,6 @@ class DateTypeTest extends TestCase
                 null,
             ],
         ];
-
-        return $data;
     }
 
     /**

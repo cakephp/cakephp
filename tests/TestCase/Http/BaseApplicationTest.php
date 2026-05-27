@@ -39,6 +39,8 @@ use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TestApp\Event\DependencyInjectedEventListener;
+use TestApp\Event\GreeterService;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -324,7 +326,6 @@ class BaseApplicationTest extends TestCase
         $server = new Server($app);
         $server->run(new ServerRequest());
 
-        $app->bootstrap();
         $this->assertTrue($app->isCalled);
     }
 
@@ -375,6 +376,7 @@ class BaseApplicationTest extends TestCase
 
         $app = $this->app;
         $app->bootstrap();
+        $app->pluginBootstrap();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
@@ -409,5 +411,73 @@ class BaseApplicationTest extends TestCase
         $runner = new CommandRunner($app);
         $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testEventListenersWithDependencyInjection(): void
+    {
+        static::setAppNamespace();
+
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public function eventListeners(): array
+            {
+                return [DependencyInjectedEventListener::class];
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+
+        $app->bootstrap();
+        $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
+
+        $listener = $app->getContainer()->get(DependencyInjectedEventListener::class);
+        $this->assertInstanceOf(DependencyInjectedEventListener::class, $listener);
+        $this->assertSame('Hello, Jane', $listener->lastGreeting);
+    }
+
+    public function testPluginEventsRegisteredForPluginsAddedAfterParentBootstrap(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $pluginEventFired = false;
+
+            public function bootstrap(): void
+            {
+                parent::bootstrap();
+
+                $this->addPlugin(new class ($this) extends BasePlugin {
+                    public function __construct(protected BaseApplication $app)
+                    {
+                        parent::__construct();
+                    }
+
+                    public function events(EventManagerInterface $eventManager): EventManagerInterface
+                    {
+                        return $eventManager->on('DynamicPlugin.event', function (): void {
+                            $this->app->pluginEventFired = true;
+                        });
+                    }
+                });
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        $app->bootstrap();
+        $app->pluginBootstrap();
+        $app->getEventManager()->dispatch('DynamicPlugin.event');
+
+        $this->assertTrue($app->pluginEventFired);
     }
 }

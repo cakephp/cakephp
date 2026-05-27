@@ -225,10 +225,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             if ($parts[0] !== $name) {
                 continue;
             }
-            if ($subcommand && !isset($parts[1])) {
-                continue;
-            }
-            if ($subcommand && isset($parts[1]) && $parts[1] !== $subcommand) {
+            if ($subcommand && (!isset($parts[1]) || $parts[1] !== $subcommand)) {
                 continue;
             }
 

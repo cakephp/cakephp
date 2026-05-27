@@ -30,14 +30,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Runs an application invoking all the PSR7 middleware and the registered application.
- *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Core\HttpApplicationInterface>
  */
 class Server implements EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Core\HttpApplicationInterface>
-     */
     use EventDispatcherTrait;
 
     /**
@@ -108,7 +103,7 @@ class Server implements EventDispatcherInterface
      * Application bootstrap wrapper.
      *
      * Calls the application's `bootstrap()` hook. After the application the
-     * plugins are bootstrapped.
+     * plugins are bootstrapped and events are registered.
      *
      * @return void
      */

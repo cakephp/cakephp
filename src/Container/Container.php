@@ -105,7 +105,7 @@ class Container implements DefinitionContainerInterface
                 $this->add($definition);
             } elseif (is_string($id) && is_string($definition)) {
                 $this->add($id, $definition);
-            } elseif (is_string($id) && is_array($definition)) {
+            } elseif (is_string($id) && is_array($definition)) { // @phpstan-ignore-line
                 $this->add($id)
                     ->addArguments($definition);
             }
