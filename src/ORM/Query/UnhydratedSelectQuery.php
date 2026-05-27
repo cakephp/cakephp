@@ -28,7 +28,7 @@ namespace Cake\ORM\Query;
  * that binding survives finder dispatch where a bare generic annotation would
  * decay.
  *
- * Use {@see \Cake\ORM\Table::findUnhydrated()} as the entry point. This class is the
+ * Use {@see \Cake\ORM\Table::selectUnhydrated()} as the entry point. This class is the
  * type-safe replacement for `SelectQuery->disableHydration()`, which becomes
  * a hard error in 6.0.
  *

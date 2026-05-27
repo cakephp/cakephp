@@ -47,7 +47,7 @@ class QueryFactory
      * @return \Cake\ORM\Query\UnhydratedSelectQuery
      * @since 5.4.0
      */
-    public function selectUnhydrated(Table $table): UnhydratedSelectQuery
+    public function unhydratedSelect(Table $table): UnhydratedSelectQuery
     {
         return new UnhydratedSelectQuery($table);
     }

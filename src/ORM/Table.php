@@ -1379,7 +1379,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * (first/firstOrFail/all/toArray/iteration) differ in shape.
      *
      * ```
-     * $rows = $articlesTable->findUnhydrated()->where(['published' => true])->all();
+     * $rows = $articlesTable->selectUnhydrated()->where(['published' => true])->all();
      * // $rows: iterable<array<string, mixed>>
      * ```
      *
@@ -1395,14 +1395,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
      * @since 5.4.0
      */
-    public function findUnhydrated(string $type = 'all', mixed ...$args): UnhydratedSelectQuery
+    public function selectUnhydrated(string $type = 'all', mixed ...$args): UnhydratedSelectQuery
     {
-        $query = $this->selectUnhydratedQuery();
+        $query = $this->unhydratedSelectQuery();
         $result = $this->callFinder($type, $query, ...$args);
 
         if (!$result instanceof UnhydratedSelectQuery) {
             throw new CakeException(sprintf(
-                'The `%s` finder must return the query it was given when called via findUnhydrated(); '
+                'The `%s` finder must return the query it was given when called via selectUnhydrated(); '
                 . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
                 . 'non-hydrating contract — use find() for those.',
                 $type,
@@ -1895,9 +1895,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\ORM\Query\UnhydratedSelectQuery
      * @since 5.4.0
      */
-    public function selectUnhydratedQuery(): UnhydratedSelectQuery
+    public function unhydratedSelectQuery(): UnhydratedSelectQuery
     {
-        return $this->queryFactory->selectUnhydrated($this);
+        return $this->queryFactory->unhydratedSelect($this);
     }
 
     /**
