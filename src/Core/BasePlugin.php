@@ -331,7 +331,7 @@ class BasePlugin implements PluginInterface
     /**
      * Register declarative and imperative application events.
      *
-     * @param \Cake\Core\PluginApplicationInterface<mixed> $app The host application
+     * @param \Cake\Core\PluginApplicationInterface $app The host application
      * @return void
      */
     protected function registerEvents(PluginApplicationInterface $app): void
