@@ -26,7 +26,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests the type-safe non-hydrated query path: Table::selectUnhydrated() and
+ * Tests the type-safe non-hydrated query path: Table::unhydratedFind() and
  * the UnhydratedSelectQuery class it returns.
  */
 class UnhydratedSelectQueryTest extends TestCase
@@ -51,13 +51,13 @@ class UnhydratedSelectQueryTest extends TestCase
     }
 
     /**
-     * selectUnhydrated() is the type-safe entry point for non-hydrated reads.
+     * unhydratedFind() is the type-safe entry point for non-hydrated reads.
      * It returns an UnhydratedSelectQuery (not a plain SelectQuery), so consumers know
      * up-front that results will be arrays.
      */
-    public function testSelectUnhydratedReturnsUnhydratedSelectQuery(): void
+    public function testUnhydratedFindReturnsUnhydratedSelectQuery(): void
     {
-        $query = $this->articles->selectUnhydrated();
+        $query = $this->articles->unhydratedFind();
 
         $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $this->assertInstanceOf(SelectQuery::class, $query);
@@ -70,12 +70,12 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testFirstReturnsArrayOrNull(): void
     {
-        $row = $this->articles->selectUnhydrated()->where(['id' => 1])->first();
+        $row = $this->articles->unhydratedFind()->where(['id' => 1])->first();
 
         $this->assertIsArray($row);
         $this->assertSame(1, $row['id']);
 
-        $missing = $this->articles->selectUnhydrated()->where(['id' => 99999])->first();
+        $missing = $this->articles->unhydratedFind()->where(['id' => 99999])->first();
         $this->assertNull($missing);
     }
 
@@ -85,12 +85,12 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testFirstOrFailReturnsArrayOrThrows(): void
     {
-        $row = $this->articles->selectUnhydrated()->where(['id' => 1])->firstOrFail();
+        $row = $this->articles->unhydratedFind()->where(['id' => 1])->firstOrFail();
         $this->assertIsArray($row);
         $this->assertSame(1, $row['id']);
 
         $this->expectException(RecordNotFoundException::class);
-        $this->articles->selectUnhydrated()->where(['id' => 99999])->firstOrFail();
+        $this->articles->unhydratedFind()->where(['id' => 99999])->firstOrFail();
     }
 
     /**
@@ -99,7 +99,7 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testAllAndIterationProduceArrays(): void
     {
-        $resultSet = $this->articles->selectUnhydrated()->orderBy(['id' => 'ASC'])->all();
+        $resultSet = $this->articles->unhydratedFind()->orderBy(['id' => 'ASC'])->all();
         $rows = $resultSet->toArray();
 
         $this->assertNotEmpty($rows);
@@ -120,7 +120,7 @@ class UnhydratedSelectQueryTest extends TestCase
         $this->articles->belongsTo('Authors');
 
         $rows = $this->articles
-            ->selectUnhydrated()
+            ->unhydratedFind()
             ->contain('Authors')
             ->where(['Articles.id' => 1])
             ->toArray();
@@ -138,7 +138,7 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testEnableHydrationIsNotLocked(): void
     {
-        $query = $this->articles->selectUnhydrated();
+        $query = $this->articles->unhydratedFind();
         $this->assertFalse($query->isHydrationEnabled());
 
         $query->enableHydration(true);
@@ -146,13 +146,13 @@ class UnhydratedSelectQueryTest extends TestCase
     }
 
     /**
-     * Custom finders called via selectUnhydrated() receive the UnhydratedSelectQuery itself,
+     * Custom finders called via unhydratedFind() receive the UnhydratedSelectQuery itself,
      * so finder-applied builder methods (where/orderBy/contain/...) flow
      * through without losing the array shape.
      */
     public function testFinderReceivesUnhydratedSelectQuery(): void
     {
-        $query = $this->articles->selectUnhydrated('all')->where(['id >' => 0]);
+        $query = $this->articles->unhydratedFind('all')->where(['id >' => 0]);
 
         $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $rows = $query->orderBy(['id' => 'ASC'])->limit(2)->toArray();
@@ -164,10 +164,10 @@ class UnhydratedSelectQueryTest extends TestCase
     }
 
     /**
-     * selectUnhydrated() must build through the injected QueryFactory (like
+     * unhydratedFind() must build through the injected QueryFactory (like
      * find() does), not by instantiating UnhydratedSelectQuery directly —
      * otherwise apps with a custom QueryFactory get divergent behavior
-     * between find() and selectUnhydrated().
+     * between find() and unhydratedFind().
      */
     public function testHonorsInjectedQueryFactory(): void
     {
@@ -184,19 +184,19 @@ class UnhydratedSelectQueryTest extends TestCase
             'queryFactory' => $factory,
         ]);
 
-        $query = $table->selectUnhydrated();
+        $query = $table->unhydratedFind();
 
         $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $this->assertNotSame(
             UnhydratedSelectQuery::class,
             $query::class,
-            'selectUnhydrated() bypassed the injected QueryFactory.',
+            'unhydratedFind() bypassed the injected QueryFactory.',
         );
     }
 
     /**
      * A finder that discards the passed query and returns a freshly built
-     * one cannot preserve the non-hydrating contract. selectUnhydrated() must
+     * one cannot preserve the non-hydrating contract. unhydratedFind() must
      * fail loudly with a clear message naming the finder, not return a
      * silently hydrated query or hit a cryptic TypeError.
      */
@@ -215,6 +215,6 @@ class UnhydratedSelectQueryTest extends TestCase
 
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('`fresh` finder must return the query it was given');
-        $table->selectUnhydrated('fresh');
+        $table->unhydratedFind('fresh');
     }
 }
