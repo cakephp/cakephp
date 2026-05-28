@@ -250,7 +250,6 @@ class Marshaller
                     $entity->set($field, $properties[$field], ['asOriginal' => true]);
                 }
             }
-        // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
         } elseif (method_exists($entity, 'patch')) {
             $entity->patch($properties, ['asOriginal' => true]);
         } else {
@@ -624,7 +623,6 @@ class Marshaller
 
         $entity->setErrors($errors);
         if (!isset($options['fields'])) {
-            // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
             if (method_exists($entity, 'patch')) {
                 $entity->patch($properties);
             } else {

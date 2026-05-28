@@ -55,12 +55,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between Cake\\Database\\TypeMap and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: src/Database/Expression/WhenThenExpression.php
-
-		-
 			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
 			identifier: catch.neverThrown
 			count: 1

@@ -127,7 +127,6 @@ class HasOne extends Association
             $foreignKeys,
             $entity->extract((array)$this->getBindingKey()),
         );
-        // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
         if (method_exists($targetEntity, 'patch')) {
             $targetEntity = $targetEntity->patch($properties, ['guard' => false]);
         } else {

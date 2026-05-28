@@ -2195,7 +2195,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($statement->rowCount() !== 0) {
             $success = $entity;
 
-            // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
             if (method_exists($entity, 'patch')) {
                 $entity = $entity->patch($filteredKeys, ['guard' => false]);
             } else {
