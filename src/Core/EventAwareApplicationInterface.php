@@ -26,11 +26,4 @@ interface EventAwareApplicationInterface
      * @return \Cake\Event\EventManagerInterface
      */
     public function events(EventManagerInterface $eventManager): EventManagerInterface;
-
-    /**
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
-     * @deprecated 5.4.0 This method is no longer used. Each plugin's events are now registered during its bootstrapping.
-     */
-    public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface;
 }

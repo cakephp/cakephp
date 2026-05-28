@@ -262,14 +262,6 @@ abstract class BaseApplication implements
     }
 
     /**
-     * @inheritDoc
-     */
-    public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
-    {
-        return $eventManager;
-    }
-
-    /**
      * Register application events.
      *
      * @return void

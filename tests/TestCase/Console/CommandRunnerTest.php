@@ -615,7 +615,7 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app);
         $runner->getEventManager()->on('Console.buildCommands', function () use ($runner): void {
-            // Trigger the events that should have been registered by events() and pluginEvents()
+            // Trigger the events that should have been registered by events()
             $runner->getEventManager()->dispatch('Test.customEvent');
         });
 
