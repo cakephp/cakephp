@@ -26,14 +26,12 @@ class TestAnonymousClass
     #[TestRoute(path: '/create-another')]
     public function createAnother(): object
     {
-        $instance = new #[TestInternal]
+        return new #[TestInternal]
         class implements Stringable {
             public function __toString(): string
             {
                 return 'test';
             }
         };
-
-        return $instance;
     }
 }
