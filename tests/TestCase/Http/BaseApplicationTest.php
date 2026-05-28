@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
