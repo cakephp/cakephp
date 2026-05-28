@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Event\EventListenerRegistrationTrait;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
@@ -31,6 +32,8 @@ use ReflectionClass;
  */
 class BasePlugin implements PluginInterface
 {
+    use EventListenerRegistrationTrait;
+
     /**
      * Do bootstrapping or not
      *
@@ -125,7 +128,6 @@ class BasePlugin implements PluginInterface
                 $this->{$path} = $options[$path];
             }
         }
-
         $this->initialize();
     }
 
@@ -283,6 +285,8 @@ class BasePlugin implements PluginInterface
         if (is_file($bootstrap)) {
             require $bootstrap;
         }
+
+        $this->registerEvents($app);
     }
 
     /**
@@ -309,6 +313,52 @@ class BasePlugin implements PluginInterface
      */
     public function services(ContainerInterface $container): void
     {
+    }
+
+    /**
+     * Define global event listeners for the plugin.
+     *
+     * Listener classes are resolved through the host application's container and
+     * can declare constructor dependencies.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [];
+    }
+
+    /**
+     * Register declarative and imperative application events.
+     *
+     * @param \Cake\Core\PluginApplicationInterface $app The host application
+     * @return void
+     */
+    protected function registerEvents(PluginApplicationInterface $app): void
+    {
+        if (!$this->isEnabled('events')) {
+            return;
+        }
+
+        $eventManager = $app->getEventManager();
+        $listeners = $this->eventListeners();
+        if ($listeners !== []) {
+            if (!$app instanceof ContainerApplicationInterface) {
+                throw new InvalidArgumentException(sprintf(
+                    'Plugin `%s` defines event listeners but the application does not implement %s',
+                    $this->getName(),
+                    ContainerApplicationInterface::class,
+                ));
+            }
+
+            $this->registerEventListeners(
+                $listeners,
+                $eventManager,
+                $app->getContainer(),
+            );
+        }
+
+        $this->events($eventManager);
     }
 
     /**

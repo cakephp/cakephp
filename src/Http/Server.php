@@ -97,7 +97,7 @@ class Server implements EventDispatcherInterface
      * Application bootstrap wrapper.
      *
      * Calls the application's `bootstrap()` hook. After the application the
-     * plugins are bootstrapped.
+     * plugins are bootstrapped and events are registered.
      *
      * @return void
      */

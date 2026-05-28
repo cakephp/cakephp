@@ -32,6 +32,7 @@ use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerRegistrationTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
@@ -62,6 +63,7 @@ abstract class BaseApplication implements
     RoutingApplicationInterface
 {
     use EventDispatcherTrait;
+    use EventListenerRegistrationTrait;
 
     /**
      * @var string Contains the path of the config directory
@@ -176,8 +178,20 @@ abstract class BaseApplication implements
             $this->plugins->addFromConfig($plugins);
         }
 
-        $eventManager = $this->events($this->getEventManager());
-        $this->setEventManager($this->pluginEvents($eventManager));
+        $this->registerEvents();
+    }
+
+    /**
+     * Define global event listeners for the application.
+     *
+     * Listener classes are resolved through the application container and can
+     * declare constructor dependencies.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [];
     }
 
     /**
@@ -248,16 +262,27 @@ abstract class BaseApplication implements
     }
 
     /**
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
+     * @inheritDoc
      */
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
-        foreach ($this->plugins->with('events') as $plugin) {
-            $eventManager = $plugin->events($eventManager);
+        return $eventManager;
+    }
+
+    /**
+     * Register application events.
+     *
+     * @return void
+     */
+    protected function registerEvents(): void
+    {
+        $eventManager = $this->getEventManager();
+        $listeners = $this->eventListeners();
+        if ($listeners) {
+            $this->registerEventListeners($listeners, $eventManager, $this->getContainer());
         }
 
-        return $eventManager;
+        $this->events($eventManager);
     }
 
     /**
