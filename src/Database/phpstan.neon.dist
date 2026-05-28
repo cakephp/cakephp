@@ -9,8 +9,6 @@ parameters:
 		- vendor/
 	ignoreErrors:
 		-
-			identifier: notIdentical.alwaysTrue
-		-
 			identifier: missingType.iterableValue
 		-
 			identifier: new.static
