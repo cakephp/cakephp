@@ -69,19 +69,6 @@ class Lock
     use StaticConfigTrait;
 
     /**
-     * DSN class map for lock engines.
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static ?array $dsnClassMap = [
-        'file' => FileLockEngine::class,
-        'memcached' => MemcachedLockEngine::class,
-        'null' => NullLockEngine::class,
-        'redis' => RedisLockEngine::class,
-    ];
-
-    /**
      * Lock Registry for managing engine instances.
      *
      * @var \Cake\Lock\LockRegistry<\Cake\Lock\LockEngine>
@@ -107,6 +94,21 @@ class Lock
     public static function setRegistry(LockRegistry $registry): void
     {
         static::$registry = $registry;
+    }
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function initDsnClassMap(): array
+    {
+        return [
+            'file' => FileLockEngine::class,
+            'memcached' => MemcachedLockEngine::class,
+            'null' => NullLockEngine::class,
+            'redis' => RedisLockEngine::class,
+        ];
     }
 
     /**
