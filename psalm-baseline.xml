@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="7.0.0-beta17@a7f96f911fc869c40c48ec977e21f01a8ca534bd">
-  <file src="src/Command/PluginLoadCommand.php">
-    <TaintedSSRF>
-      <code><![CDATA[$file]]></code>
-    </TaintedSSRF>
-  </file>
   <file src="src/Controller/ComponentRegistry.php">
     <OverriddenMethodAccess>
       <code><![CDATA[protected function getContainer(): ContainerInterface
@@ -34,11 +29,6 @@
       <code><![CDATA[$update = &$this->_config]]></code>
       <code><![CDATA[$update = &$this->_config]]></code>
     </UnsupportedPropertyReferenceUsage>
-  </file>
-  <file src="src/Core/PluginConfig.php">
-    <TaintedSSRF>
-      <code><![CDATA[$jsonPath]]></code>
-    </TaintedSSRF>
   </file>
   <file src="src/Datasource/EntityTrait.php">
     <UnsupportedPropertyReferenceUsage>

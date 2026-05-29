@@ -53,6 +53,9 @@ class Hash
      * @return mixed The value fetched from the array, or $default if path doesn't exist, is null,
      *   or $data is empty.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-get
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. request body) bleeds into unrelated
+     *   callers of this generic utility (e.g. Configure::read, getParam).
      */
     public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
     {
@@ -297,6 +300,9 @@ class Hash
      * @return \ArrayAccess<array-key, mixed>|array The data with $values inserted.
      * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-insert
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequest::withData) bleeds into
+     *   unrelated callers of this generic utility (e.g. Configure::write).
      */
     public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
     {
@@ -349,6 +355,10 @@ class Hash
      * @param array<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
      * @return \ArrayAccess<array-key, mixed>|array
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally. Without this,
+     *   the ArrayAccess|array $data parameter causes Psalm to dispatch taint through every
+     *   ArrayAccess::offsetSet implementation in the codebase (e.g. Validator) when this method
+     *   is called with tainted request data.
      */
     protected static function _simpleOp(
         string $op,
@@ -401,6 +411,9 @@ class Hash
      * @return \ArrayAccess<array-key, mixed>|array The modified array.
      * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-remove
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequest::withoutData) bleeds into
+     *   unrelated callers of this generic utility (e.g. Configure::delete).
      */
     public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -776,6 +789,10 @@ class Hash
      * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
      * @return array Merged array
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-merge
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequestFactory merging POST body
+     *   with uploaded files) bleeds into unrelated callers (e.g. InstanceConfigTrait merging
+     *   developer configuration, ServerRequest::addDetector merging detector definitions).
      */
     public static function merge(array $data, mixed $merge): array
     {
