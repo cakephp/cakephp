@@ -809,6 +809,19 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $contentType = new ContentTypeNegotiation();
         $preferredType = $contentType->preferredType($request, array_keys($typeMap));
         if ($preferredType) {
+            // If the matched type is not in the client's top-priority Accept group
+            // but HTML is, the client actually prefers an HTML response. Return null
+            // so the default HTML view is used instead of a lower-priority match
+            // (e.g. application/xml at q=0.9 when text/html at q=1.0 was skipped).
+            $parsed = $contentType->parseAccept($request);
+            $topGroup = reset($parsed) ?: [];
+            if (
+                !in_array($preferredType, $topGroup, true) &&
+                array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
+            ) {
+                return null;
+            }
+
             return $typeMap[$preferredType];
         }
 

@@ -248,6 +248,24 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test that a browser's default Accept header (text/html preferred over application/xml)
+     * falls back to HTML rendering instead of picking the lower-priority XML type.
+     */
+    public function testRenderViewClassesBrowserAcceptFallback(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all'],
+        ]);
+        $controller = new ContentTypesController($request);
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
+    }
+
+    /**
      * Test that render() will do content negotiation when supported
      * by the controller.
      */
