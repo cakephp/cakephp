@@ -6,7 +6,12 @@ We support fixing security issues on the following releases:
 
 | Version | Supported          | Security fixes until
 | ------- | ------------------ | --------------------
-| 5.0     | :white_check_mark: | The release of 5.2
+| 5.4     | :white_check_mark: | The release of 5.6
+| 5.3     | :white_check_mark: | The release of 5.5
+| 5.2     | :white_check_mark: | The release of 5.4
+| 5.1     | :x:                | The release of 5.3
+| 5.0     | :x:                | The release of 5.2
+| 4.6     | :white_check_mark: | The release of 6.0
 | 4.5     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
 | 4.4     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
 | 4.3     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
@@ -32,3 +37,4 @@ the CakePHP team will take the following actions:
 * Prepare a post describing the vulnerability, and the possible exploits.
 * Release new versions of all affected versions.
 * Prominently feature the problem in the release announcement
+
