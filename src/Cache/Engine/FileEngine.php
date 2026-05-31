@@ -78,6 +78,14 @@ class FileEngine extends CacheEngine
         'path' => null,
         'prefix' => 'cake_',
         'serialize' => true,
+        /**
+         * Controls the `allowed_classes` option passed to `unserialize()`.
+         * Set to `false` to disallow all object unserialization (safest for
+         * caches that only store scalar/array values), or provide an array of
+         * fully-qualified class names to allow only those classes.
+         * Defaults to `true` (allow all) for backwards compatibility.
+         */
+        'allowedClasses' => true,
     ];
 
     /**
@@ -221,7 +229,10 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            $data = unserialize($data);
+            $allowedClasses = $this->getConfig('allowedClasses');
+            $data = $allowedClasses !== true
+                ? unserialize($data, ['allowed_classes' => $allowedClasses])
+                : unserialize($data);
             $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => $data, 'success' => true]);
 
             return $data;

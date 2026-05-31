@@ -108,6 +108,14 @@ class RedisEngine extends CacheEngine
         'nodes' => [],
         'failover' => null,
         'clearUsesFlushDb' => false,
+        /**
+         * Controls the `allowed_classes` option passed to `unserialize()`.
+         * Set to `false` to disallow all object unserialization (safest for
+         * caches that only store scalar/array values), or provide an array of
+         * fully-qualified class names to allow only those classes.
+         * Defaults to `true` (allow all) for backwards compatibility.
+         */
+        'allowedClasses' => true,
     ];
 
     /**
@@ -667,6 +675,11 @@ class RedisEngine extends CacheEngine
     {
         if (preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
+        }
+
+        $allowedClasses = $this->getConfig('allowedClasses');
+        if ($allowedClasses !== true) {
+            return unserialize($value, ['allowed_classes' => $allowedClasses]);
         }
 
         return unserialize($value);
