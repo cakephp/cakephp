@@ -10,12 +10,4 @@ parameters:
 	ignoreErrors:
 		- '#Unsafe usage of new static\(\).#'
 		-
-			identifier: notIdentical.alwaysTrue
-		-
 			identifier: missingType.iterableValue
-
-		-
-			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
-			identifier: catch.neverThrown
-			count: 1
-			path: Type/DateTimeType.php
