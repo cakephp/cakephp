@@ -2,24 +2,7 @@
 
 ## Supported Versions
 
-We support fixing security issues on the following releases:
-
-| Version | Supported          | Security fixes until
-| ------- | ------------------ | --------------------
-| 5.4     | :white_check_mark: | The release of 5.6
-| 5.3     | :white_check_mark: | The release of 5.5
-| 5.2     | :white_check_mark: | The release of 5.4
-| 5.1     | :x:                | The release of 5.3
-| 5.0     | :x:                | The release of 5.2
-| 4.6     | :white_check_mark: | The release of 6.0
-| 4.5     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
-| 4.4     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
-| 4.3     | :white_check_mark: | 36 Months after the release of 5.0 (09 Sep 2026)
-| 4.2     | :x:                | No longer supported
-| 4.1     | :x:                | No longer supported
-| 4.0     | :x:                | No longer supported
-| 3.10.x  | :x:                | No longer supported
-| 2.10.x  | :x:                | No longer supported
+The supported version list can be found in [GitHub wiki](https://github.com/cakephp/cakephp/wiki#supported-versions).
 
 ## Reporting a Vulnerability
 
