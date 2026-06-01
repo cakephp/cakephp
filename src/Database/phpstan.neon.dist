@@ -11,3 +11,8 @@ parameters:
 		- '#Unsafe usage of new static\(\).#'
 		-
 			identifier: missingType.iterableValue
+		-
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			path: Type/DateTimeType.php
+			reportUnmatched: false
