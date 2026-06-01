@@ -46,7 +46,7 @@ use Cake\Log\LogTrait;
  * - `afterFilter(EventInterface $event)`
  *   Called after the action is complete and the view has been rendered but
  *   before Controller::afterFilter().
- * - `beforeRedirect(EventInterface $event $url, Response $response)`
+ * - `beforeRedirect(EventInterface $event, $url, Response $response)`
  *   Called before a redirect is done. Allows you to change the URL that will
  *   be redirected to by returning a Response instance with new URL set using
  *   Response::location(). Redirection can be prevented by stopping the event
