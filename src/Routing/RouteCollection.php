@@ -294,10 +294,17 @@ class RouteCollection
                 if ($out) {
                     return $out;
                 }
+                $message = sprintf(
+                    'A named route was found for `%s`, but matching failed. Passed parameters: `%s`.',
+                    $name,
+                    (string)json_encode($url),
+                );
+
                 throw new MissingRouteException([
                     'url' => $name,
                     'context' => $context,
-                    'message' => "A named route was found for `{$name}`, but matching failed.",
+                    // Escape `%` so the message survives CakeException's vsprintf() pass unchanged.
+                    'message' => str_replace('%', '%%', $message),
                 ]);
             }
             throw new MissingRouteException(['url' => $name, 'context' => $context]);
