@@ -191,7 +191,7 @@ class CommandRunner implements EventDispatcherInterface
             isset($argv[0])
             && !str_starts_with($argv[0], '-')
             && $this->hasCommandsWithPrefix($commands, $name)
-            && !$this->commandHasArguments($command)
+            && $this->isArgumentlessCommand($command)
         ) {
             $candidate = $name . ' ' . $argv[0];
             if (!$commands->has($candidate)) {
@@ -372,15 +372,17 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
-     * Check whether a command declares its own positional arguments.
+     * Check whether a command is known to accept no positional arguments.
      *
-     * A command that accepts positional arguments treats a trailing token as a real argument,
-     * so it must not be rejected as a mistyped subcommand by the sibling-subcommand check.
+     * Only returns true when the command's option parser can be inspected and declares zero
+     * arguments. When the parser cannot be determined, it errs on the side of caution and
+     * returns false, so a potentially valid command is run rather than rejected by the
+     * sibling-subcommand check as a mistyped subcommand.
      *
      * @param \Cake\Console\CommandInterface $command The resolved command instance to inspect.
      * @return bool
      */
-    protected function commandHasArguments(CommandInterface $command): bool
+    protected function isArgumentlessCommand(CommandInterface $command): bool
     {
         if (!$command instanceof BaseCommand) {
             return false;
@@ -392,7 +394,7 @@ class CommandRunner implements EventDispatcherInterface
             return false;
         }
 
-        return $parser->arguments() !== [];
+        return $parser->arguments() === [];
     }
 
     /**
