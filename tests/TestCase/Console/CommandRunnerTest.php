@@ -27,6 +27,7 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
@@ -208,6 +209,51 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
         $this->assertStringNotContainsString('Unknown command', $messages);
+    }
+
+    /**
+     * Test that a command declaring its own positional arguments is not subject to the
+     * unknown-subcommand check, even when a sibling subcommand sharing its prefix exists.
+     *
+     * For example, given `widget` (which takes a `name` argument), `widget all` is also
+     * registered: `bin/cake widget Articles` must run the `widget` command with `Articles`
+     * as its argument, not be rejected as a mistyped `widget` subcommand.
+     */
+    public function testRunPositionalArgumentNotTreatedAsUnknownSubcommand(): void
+    {
+        $parent = new class extends Command {
+            public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+            {
+                return $parser->addArgument('name', ['help' => 'A name.', 'required' => false]);
+            }
+
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $io->out('ran widget with ' . (string)$args->getArgument('name'));
+
+                return static::CODE_SUCCESS;
+            }
+        };
+        $sibling = new class extends Command {
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                return static::CODE_SUCCESS;
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $app = $this->makeAppWithCommands([
+            'help' => HelpCommand::class,
+            'widget' => $parent,
+            'widget all' => $sibling,
+        ]);
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake', 'widget', 'Articles'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringNotContainsString('Unknown command', $messages);
+        $this->assertStringContainsString('ran widget with Articles', $messages);
     }
 
     /**

@@ -31,6 +31,7 @@ use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
+use Throwable;
 
 /**
  * Run CLI commands for the provided application.
@@ -169,24 +170,6 @@ class CommandRunner implements EventDispatcherInterface
             $name = 'help';
         }
 
-        // If the matched command also has sibling subcommands (e.g. `i18n` exists alongside
-        // `i18n init` / `i18n extract`), an unknown next token is almost always a typo for a
-        // subcommand. Reject it instead of letting it fall through as a positional argument.
-        if (
-            $name !== null
-            && $commands->has($name)
-            && isset($argv[0])
-            && !str_starts_with($argv[0], '-')
-            && $this->hasCommandsWithPrefix($commands, $name)
-        ) {
-            $candidate = $name . ' ' . $argv[0];
-            if (!$commands->has($candidate)) {
-                $io->error($this->unknownSubcommandMessage($commands, $name, $argv[0]));
-
-                return CommandInterface::CODE_ERROR;
-            }
-        }
-
         try {
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
@@ -196,6 +179,28 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         $command = $this->getCommand($io, $commands, $name);
+
+        // If the matched command also has sibling subcommands (e.g. `i18n` exists alongside
+        // `i18n init` / `i18n extract`), an unknown next token is almost always a typo for a
+        // subcommand. Reject it instead of letting it fall through as a positional argument.
+        //
+        // Commands that declare their own positional arguments are exempt: there the next token
+        // is a legitimate argument (e.g. `bake template Articles` alongside `bake template all`),
+        // not a mistyped subcommand, and only the command's own parser can tell the two apart.
+        if (
+            isset($argv[0])
+            && !str_starts_with($argv[0], '-')
+            && $this->hasCommandsWithPrefix($commands, $name)
+            && !$this->commandHasArguments($command)
+        ) {
+            $candidate = $name . ' ' . $argv[0];
+            if (!$commands->has($candidate)) {
+                $io->error($this->unknownSubcommandMessage($commands, $name, $argv[0]));
+
+                return CommandInterface::CODE_ERROR;
+            }
+        }
+
         $result = $this->runCommand($command, $argv, $io);
 
         if ($result === null) {
@@ -364,6 +369,30 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return false;
+    }
+
+    /**
+     * Check whether a command declares its own positional arguments.
+     *
+     * A command that accepts positional arguments treats a trailing token as a real argument,
+     * so it must not be rejected as a mistyped subcommand by the sibling-subcommand check.
+     *
+     * @param \Cake\Console\CommandInterface $command The resolved command instance to inspect.
+     * @return bool
+     */
+    protected function commandHasArguments(CommandInterface $command): bool
+    {
+        if (!$command instanceof BaseCommand) {
+            return false;
+        }
+
+        try {
+            $parser = $command->getOptionParser();
+        } catch (Throwable) {
+            return false;
+        }
+
+        return $parser->arguments() !== [];
     }
 
     /**
