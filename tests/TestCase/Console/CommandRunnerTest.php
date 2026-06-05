@@ -229,7 +229,7 @@ class CommandRunnerTest extends TestCase
 
             public function execute(Arguments $args, ConsoleIo $io): int
             {
-                $io->out('ran widget with ' . (string)$args->getArgument('name'));
+                $io->out('ran widget with ' . $args->getArgument('name'));
 
                 return static::CODE_SUCCESS;
             }
