@@ -285,8 +285,7 @@ class View implements EventDispatcherInterface
     /**
      * ViewBlock class.
      *
-     * @var string
-     * @phpstan-var class-string<\Cake\View\ViewBlock>
+     * @var class-string<\Cake\View\ViewBlock>
      */
     protected string $_viewBlockClass = ViewBlock::class;
 
@@ -650,7 +649,7 @@ class View implements EventDispatcherInterface
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
-     * @param array<string, mixed> $options Array of options. Possible keys are:
+     * @param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options Array of options. Possible keys are:
      *
      * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
      *   If an array, the following keys can be used:
@@ -666,7 +665,6 @@ class View implements EventDispatcherInterface
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
-     * @phpstan-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
      */
     public function element(string $name, array $data = [], array $options = []): string
     {
@@ -1449,8 +1447,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
-     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
-     * @phpstan-return array{string|null, string}
+     * @return array{0:string|null, 1:string} Array with 2 indexes. 0 => plugin name, 1 => filename.
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1655,13 +1652,12 @@ class View implements EventDispatcherInterface
      * @param string $name Element name
      * @param array $data Data
      * @param array<string, mixed> $options Element options
-     * @return array<string, mixed> Element Cache configuration.
-     * @phpstan-return array{key:string, config:string}
+     * @return array{key:string, config:string} Element Cache configuration.
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
-            /** @phpstan-var array{key:string, config:string} $cache */
+            /** @var array{key:string, config:string} $cache */
             $cache = $options['cache'];
             $cache['key'] = 'element_' . $cache['key'];
 

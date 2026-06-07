@@ -51,8 +51,7 @@ class ConnectionManager
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'mysql' => Mysql::class,

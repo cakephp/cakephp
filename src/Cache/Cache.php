@@ -72,8 +72,7 @@ class Cache
      * An array mapping URL schemes to fully qualified caching engine
      * class names.
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,

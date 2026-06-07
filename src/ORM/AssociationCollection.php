@@ -68,13 +68,11 @@ class AssociationCollection implements IteratorAggregate
      * If the alias added contains a `.` the part preceding the `.` will be dropped.
      * This makes using plugins simpler as the Plugin.Class syntax is frequently used.
      *
-     * @param string $alias The association alias
-     * @param \Cake\ORM\Association $association The association to add.
-     * @return \Cake\ORM\Association The association object being added.
-     * @throws \Cake\Core\Exception\CakeException If the alias is already added.
      * @template T of \Cake\ORM\Association
-     * @phpstan-param T $association
-     * @phpstan-return T
+     * @param string $alias The association alias
+     * @param T $association The association to add.
+     * @return T The association object being added.
+     * @throws \Cake\Core\Exception\CakeException If the alias is already added.
      */
     public function add(string $alias, Association $association): Association
     {
@@ -90,14 +88,12 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Creates and adds the Association object to this collection.
      *
-     * @param string $className The name of association class.
+     * @template T of \Cake\ORM\Association
+     * @param class-string<T> $className The name of association class.
      * @param string $associated The alias for the target table.
      * @param array<string, mixed> $options List of options to configure the association definition.
-     * @return \Cake\ORM\Association
+     * @return T
      * @throws \InvalidArgumentException
-     * @template T of \Cake\ORM\Association
-     * @phpstan-param class-string<T> $className
-     * @phpstan-return T
      */
     public function load(string $className, string $associated, array $options = []): Association
     {

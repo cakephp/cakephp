@@ -46,9 +46,8 @@ class RulesProvider
     /**
      * Constructor, sets the default class to use for calling methods
      *
-     * @param object|string $class the default class to proxy
+     * @param object|class-string $class the default class to proxy
      * @throws \ReflectionException
-     * @phpstan-param object|class-string $class
      */
     public function __construct(object|string $class = Validation::class)
     {

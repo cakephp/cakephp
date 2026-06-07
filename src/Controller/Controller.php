@@ -175,8 +175,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Middlewares list.
      *
-     * @var array
-     * @phpstan-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
+     * @var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
     protected array $middlewares = [];
 
@@ -522,12 +521,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Register middleware for the controller.
      *
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
-     * @param array<string, mixed> $options Valid options:
+     * @param array{only?: array|string, except?: array|string} $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
      * @since 4.3.0
-     * @phpstan-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
     {

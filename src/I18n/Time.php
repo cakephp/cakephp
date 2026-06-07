@@ -28,7 +28,7 @@ use Stringable;
  *
  * Adds handy methods and locale-aware formatting helpers.
  *
- * @phpstan-immutable
+ * @immutable
  */
 class Time extends ChronosTime implements JsonSerializable, Stringable
 {

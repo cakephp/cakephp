@@ -133,8 +133,7 @@ class Connection implements ConnectionInterface
      * Creates read and write drivers.
      *
      * @param array<string, mixed> $config Connection config
-     * @return array<string, \Cake\Database\Driver>
-     * @phpstan-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
+     * @return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
      */
     protected function createDrivers(array $config): array
     {

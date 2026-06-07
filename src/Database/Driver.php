@@ -670,13 +670,11 @@ abstract class Driver implements LoggerAwareInterface
     /**
      * Removes aliases from the `WHERE` clause of a query.
      *
-     * @param \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery $query The query to process.
-     * @return \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery The modified query.
+     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
+     * @param T $query The query to process.
+     * @return T The modified query.
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
-     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
-     * @phpstan-param T $query
-     * @phpstan-return T
      */
     protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {

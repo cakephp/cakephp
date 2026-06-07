@@ -78,7 +78,6 @@ class Event implements EventInterface
      *   (usually the object that is generating the event).
      * @param array $data any value you wish to be transported
      *   with this event to it can be read by listeners.
-     * @phpstan-param TSubject|null $subject
      */
     public function __construct(string $name, ?object $subject = null, array $data = [])
     {

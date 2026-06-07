@@ -412,9 +412,8 @@ class Xml
     /**
      * Helper to _fromArray(). It will create children of arrays
      *
-     * @param array<string, mixed> $data Array with information to create children
+     * @param array{dom: \DOMDocument, node: \DOMNode, key: string, format: string, value?: mixed} $data Array with information to create children
      * @return void
-     * @phpstan-param array{dom: \DOMDocument, node: \DOMNode, key: string, format: string, value?: mixed} $data
      */
     protected static function _createChild(array $data): void
     {

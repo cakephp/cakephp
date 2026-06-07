@@ -115,8 +115,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'console' => Engine\ConsoleLog::class,

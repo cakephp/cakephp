@@ -139,16 +139,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * An associative array of objects or classes containing methods
      * used for validation
      *
-     * @var array<string, object|string>
-     * @phpstan-var array<string, object|class-string>
+     * @var array<string, object|class-string>
      */
     protected array $_providers = [];
 
     /**
      * An associative array of objects or classes used as a default provider list
      *
-     * @var array<string, object|string>
-     * @phpstan-var array<string, object|class-string>
+     * @var array<string, object|class-string>
      */
     protected static array $_defaultProviders = [];
 
@@ -314,8 +312,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * when called will receive the full list of providers stored in this validator.
      *
      * @param string $name The name under which the provider should be set.
-     * @param object|string $object Provider object or class name.
-     * @phpstan-param object|class-string $object
+     * @param object|class-string $object Provider object or class name.
      * @return $this
      */
     public function setProvider(string $name, object|string $object)
@@ -351,8 +348,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Associates an object to a name so it can be used as a default provider.
      *
      * @param string $name The name under which the provider should be set.
-     * @param object|string $object Provider object or class name.
-     * @phpstan-param object|class-string $object
+     * @param object|class-string $object Provider object or class name.
      * @return void
      */
     public static function addDefaultProvider(string $name, object|string $object): void

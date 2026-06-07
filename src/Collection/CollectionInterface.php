@@ -811,8 +811,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
-     * @phpstan-return ($keepKeys is true ? array<TKey, TValue> : array<int, TValue>)
-     * @return array<TKey, TValue>|array<int, TValue>
+     * @return ($keepKeys is true ? array<TKey, TValue> : array<int, TValue>)
      */
     public function toArray(bool $keepKeys = true): array;
 

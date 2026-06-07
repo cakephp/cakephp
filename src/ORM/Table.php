@@ -263,8 +263,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the class that represent a single row for this table
      *
-     * @var string|null
-     * @phpstan-var class-string<TEntity>|null
+     * @var class-string<TEntity>|null
      */
     protected ?string $_entityClass = null;
 
@@ -843,11 +842,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Get a behavior from the registry.
      *
-     * @param string $name The behavior alias to get from the registry.
-     * @return \Cake\ORM\Behavior
+     * @param TName $name The behavior alias to get from the registry.
+     * @return (TName is key-of<TBehaviors> ? TBehaviors[TName] : \Cake\ORM\Behavior)
      * @template TName of string
-     * @phpstan-param TName $name The behavior alias to get from the registry.
-     * @phpstan-return (TName is key-of<TBehaviors> ? TBehaviors[TName] : \Cake\ORM\Behavior)
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior

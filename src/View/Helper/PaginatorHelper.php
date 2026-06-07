@@ -755,8 +755,7 @@ class PaginatorHelper extends Helper
      *
      * @param array<string, mixed> $params Params from the numbers() method.
      * @param array<string, mixed> $options Options from the numbers() method.
-     * @return array An array with the start and end numbers.
-     * @phpstan-return array{0: int, 1: int}
+     * @return array{0: int, 1: int} An array with the start and end numbers.
      */
     protected function _getNumbersStartAndEnd(array $params, array $options): array
     {
