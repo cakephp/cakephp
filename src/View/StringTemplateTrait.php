@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
+use Cake\Core\InstanceConfigTrait;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -28,6 +29,8 @@ use function Cake\Core\deprecationWarning;
  */
 trait StringTemplateTrait
 {
+    use InstanceConfigTrait;
+
     /**
      * StringTemplate instance.
      *
