@@ -19,7 +19,6 @@ namespace Cake\ORM\Behavior\Translate;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -41,7 +40,6 @@ use Cake\ORM\Table;
  */
 class EavStrategy implements TranslateStrategyInterface
 {
-    use InstanceConfigTrait;
     use LocatorAwareTrait;
     use TranslateStrategyTrait;
 

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Behavior\Translate;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
@@ -29,6 +30,8 @@ use Cake\ORM\Table;
  */
 trait TranslateStrategyTrait
 {
+    use InstanceConfigTrait;
+
     /**
      * Table instance
      *
