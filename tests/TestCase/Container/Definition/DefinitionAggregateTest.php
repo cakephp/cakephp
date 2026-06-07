@@ -8,6 +8,7 @@ use Cake\Container\Definition\Definition;
 use Cake\Container\Definition\DefinitionAggregate;
 use Cake\Container\Definition\DefinitionInterface;
 use Cake\Container\Exception\NotFoundException;
+use Cake\Test\TestCase\Container\Asset\Bar;
 use Cake\Test\TestCase\Container\Asset\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,9 @@ class DefinitionAggregateTest extends TestCase
             ->once()
             ->with('alias')
             ->andReturnSelf();
+        $definition
+            ->shouldReceive('getAlias')
+            ->andReturn('alias');
 
         $aggregate = (new DefinitionAggregate())->setContainer($container);
         $definition = $aggregate->add('alias', $definition);
@@ -59,9 +63,21 @@ class DefinitionAggregateTest extends TestCase
             $definitions[] = $aggregate->add('alias' . $i, Foo::class);
         }
 
-        foreach ($aggregate->getIterator() as $key => $definition) {
-            self::assertSame($definitions[$key], $definition);
-        }
+        $iterated = iterator_to_array($aggregate->getIterator(), false);
+        self::assertSame($definitions, $iterated);
+    }
+
+    public function testAggregateAddsSameIdTwiceWithDifferentDefinition(): void
+    {
+        $container = new Container();
+        $aggregate = (new DefinitionAggregate())->setContainer($container);
+
+        $aggregate->add('alias', Foo::class);
+        $returned = $aggregate->add('alias', Bar::class);
+
+        self::assertInstanceOf(Definition::class, $returned);
+        self::assertSame(Bar::class, $returned->getConcrete());
+        self::assertInstanceOf(Bar::class, $aggregate->resolve('alias'));
     }
 
     public function testAggregateIteratesAndResolvesDefinition(): void
@@ -126,6 +142,9 @@ class DefinitionAggregateTest extends TestCase
         $container = new Container();
 
         $definition1
+            ->shouldReceive('getAlias')
+            ->andReturn('definition1');
+        $definition1
             ->shouldReceive('setContainer')
             ->once()
             ->with($container)
@@ -142,6 +161,9 @@ class DefinitionAggregateTest extends TestCase
             ->once()
             ->andReturn('definition1');
 
+        $definition2
+            ->shouldReceive('getAlias')
+            ->andReturn('definition2');
         $definition2
             ->shouldReceive('setContainer')
             ->once()
