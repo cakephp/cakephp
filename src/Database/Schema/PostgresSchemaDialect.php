@@ -918,10 +918,11 @@ class PostgresSchemaDialect extends SchemaDialect
             (array)$index->getColumns(),
         );
         $include = '';
-        if ($index->getInclude()) {
+        $includes = $index->getInclude();
+        if ($includes) {
             $included = array_map(
                 $this->_driver->quoteIdentifier(...),
-                $index->getInclude(),
+                $includes,
             );
             $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
         }

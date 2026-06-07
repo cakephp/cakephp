@@ -196,12 +196,16 @@ class HelpFormatter
         $xml->addChild('description', $parser->getDescription());
 
         $options = $xml->addChild('options');
-        foreach ($parser->options() as $option) {
-            $option->xml($options);
+        if ($options !== null) {
+            foreach ($parser->options() as $option) {
+                $option->xml($options);
+            }
         }
         $arguments = $xml->addChild('arguments');
-        foreach ($parser->arguments() as $argument) {
-            $argument->xml($arguments);
+        if ($arguments !== null) {
+            foreach ($parser->arguments() as $argument) {
+                $argument->xml($arguments);
+            }
         }
         $xml->addChild('epilog', $parser->getEpilog());
 

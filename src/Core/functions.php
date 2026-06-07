@@ -248,7 +248,7 @@ if (!function_exists('Cake\Core\env')) {
      * environment information.
      *
      * @param string $key Environment variable name.
-     * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
+     * @param string|float|int|bool|null $default Specify a default value in case the environment variable is not defined.
      * @return string|float|int|bool|null Environment variable setting.
      * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#env
      */
