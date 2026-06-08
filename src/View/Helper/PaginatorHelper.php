@@ -48,7 +48,7 @@ class PaginatorHelper extends Helper
     /**
      * List of helpers used by this helper
      *
-     * @var array
+     * @var array<string>
      */
     protected array $helpers = ['Url', 'Number', 'Html', 'Form'];
 

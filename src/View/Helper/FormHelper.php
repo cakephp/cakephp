@@ -66,7 +66,7 @@ class FormHelper extends Helper
     /**
      * Other helpers used by FormHelper
      *
-     * @var array
+     * @var array<string>
      */
     protected array $helpers = ['Url', 'Html'];
 
