@@ -115,10 +115,9 @@ class DatabaseSession implements SessionHandlerInterface
         $pkField = $this->table->getPrimaryKey();
         assert(is_string($pkField));
         $result = $this->table
-            ->find('all')
+            ->unhydratedFind()
             ->select(['data'])
             ->where([$pkField => $id])
-            ->disableHydration()
             ->first();
 
         if (!$result) {

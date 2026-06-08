@@ -526,10 +526,9 @@ class EavStrategy implements TranslateStrategyInterface
     {
         $association = $this->table->getAssociation($this->translationTable->getAlias());
 
-        $query = $association->find()
+        $query = $association->unhydratedSelectQuery()
             ->select(['id', 'num' => 0])
-            ->where(current($ruleSet))
-            ->disableHydration();
+            ->where(current($ruleSet));
 
         unset($ruleSet[0]);
         foreach ($ruleSet as $i => $conditions) {
