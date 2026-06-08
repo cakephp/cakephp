@@ -42,7 +42,7 @@ class TextHelper extends Helper
     /**
      * helpers
      *
-     * @var array<string>
+     * @var array<int|string, string|array<string, mixed>>
      */
     protected array $helpers = ['Html'];
 

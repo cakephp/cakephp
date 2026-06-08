@@ -34,7 +34,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Other helpers used by BreadcrumbsHelper.
      *
-     * @var array<string>
+     * @var array<int|string, string|array<string, mixed>>
      */
     protected array $helpers = ['Url'];
 
