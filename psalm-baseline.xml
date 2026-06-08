@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="7.0.0-beta17@a7f96f911fc869c40c48ec977e21f01a8ca534bd">
+<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+  <file src="src/Controller/Component/FlashComponent.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+    </MethodSignatureMismatch>
+  </file>
   <file src="src/Controller/ComponentRegistry.php">
     <OverriddenMethodAccess>
       <code><![CDATA[protected function getContainer(): ContainerInterface
@@ -25,6 +31,23 @@
     </OverriddenMethodAccess>
   </file>
   <file src="src/Core/InstanceConfigTrait.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
+      <code><![CDATA[public function deleteConfig(string $key): static]]></code>
+      <code><![CDATA[public function deleteConfig(string $key): static]]></code>
+      <code><![CDATA[public function deleteConfig(string $key): static]]></code>
+      <code><![CDATA[public function deleteConfig(string $key): static]]></code>
+      <code><![CDATA[public function deleteConfig(string $key): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+      <code><![CDATA[public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static]]></code>
+    </MethodSignatureMismatch>
     <UnsupportedPropertyReferenceUsage>
       <code><![CDATA[$update = &$this->config]]></code>
       <code><![CDATA[$update = &$this->config]]></code>
@@ -45,6 +68,16 @@
       <code><![CDATA[SelectQuery]]></code>
     </MethodSignatureMismatch>
   </file>
+  <file src="src/ORM/Query/UnhydratedSelectQuery.php">
+    <MethodSignatureMismatch>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+      <code><![CDATA[UnhydratedSelectQuery]]></code>
+    </MethodSignatureMismatch>
+  </file>
   <file src="src/TestSuite/TestCase.php">
     <NoValue>
       <code><![CDATA[return $this->capturedError;]]></code>
@@ -52,5 +85,13 @@
     <UndefinedVariable>
       <code><![CDATA[$previousHandler]]></code>
     </UndefinedVariable>
+  </file>
+  <file src="src/Validation/Validator.php">
+    <TaintedCallable>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[$callable]]></code>
+    </TaintedCallable>
   </file>
 </files>

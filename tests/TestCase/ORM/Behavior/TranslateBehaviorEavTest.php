@@ -174,9 +174,8 @@ class TranslateBehaviorEavTest extends TestCase
         $entity = $table->newEntity(['author_id' => 2, 'title' => 'Title 4', 'body' => 'Body 4']);
         $table->save($entity);
 
-        $results = $table->find('all', locale: 'cze')
+        $results = $table->unhydratedFind('all', locale: 'cze')
             ->select(['id', 'title', 'body'])
-            ->disableHydration()
             ->orderByAsc('Articles.id')
             ->toArray();
         $expected = [
