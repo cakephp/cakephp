@@ -70,7 +70,7 @@ class DefinitionAggregateTest extends TestCase
     public function testAggregateAddsSameIdTwiceWithDifferentDefinition(): void
     {
         $container = new Container();
-        $aggregate = (new DefinitionAggregate())->setContainer($container);
+        $aggregate = new DefinitionAggregate()->setContainer($container);
 
         $aggregate->add('alias', Foo::class);
         $returned = $aggregate->add('alias', Bar::class);
