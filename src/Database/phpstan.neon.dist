@@ -11,6 +11,8 @@ parameters:
 		-
 			identifier: missingType.iterableValue
 		-
+			identifier: trait.unused
+		-
 			identifier: new.static
 		-
 			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
