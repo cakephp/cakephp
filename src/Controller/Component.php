@@ -73,7 +73,7 @@ class Component implements EventListenerInterface
     /**
      * Other Components this component uses.
      *
-     * @var array
+     * @var array<int|string, string|array<string, mixed>>
      */
     protected array $components = [];
 
