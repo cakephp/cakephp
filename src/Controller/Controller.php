@@ -172,8 +172,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Middlewares list.
      *
-     * @var array
-     * @phpstan-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
+     * @var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
     protected array $middlewares = [];
 
@@ -541,12 +540,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Register middleware for the controller.
      *
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware Middleware.
-     * @param array<string, mixed> $options Valid options:
+     * @param array{only?: array|string, except?: array|string} $options Valid options:
      *  - `only`: (array|string) Only run the middleware for specified actions.
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
      * @since 4.3.0
-     * @phpstan-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
     {
@@ -809,6 +807,19 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $contentType = new ContentTypeNegotiation();
         $preferredType = $contentType->preferredType($request, array_keys($typeMap));
         if ($preferredType) {
+            // If the matched type is not in the client's top-priority Accept group
+            // but HTML is, the client actually prefers an HTML response. Return null
+            // so the default HTML view is used instead of a lower-priority match
+            // (e.g. application/xml at q=0.9 when text/html at q=1.0 was skipped).
+            $parsed = $contentType->parseAccept($request);
+            $topGroup = reset($parsed) ?: [];
+            if (
+                !in_array($preferredType, $topGroup, true) &&
+                array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
+            ) {
+                return null;
+            }
+
             return $typeMap[$preferredType];
         }
 

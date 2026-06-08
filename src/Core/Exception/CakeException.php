@@ -68,6 +68,9 @@ class CakeException extends RuntimeException
      * Get the passed in attributes
      *
      * @return array
+     * @psalm-taint-escape html Exception attributes are developer-defined metadata (e.g. controller
+     *   name, validation rule names) used only in debug output — log files and CLI console — never
+     *   rendered unescaped into HTML responses.
      */
     public function getAttributes(): array
     {

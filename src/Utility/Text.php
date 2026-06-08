@@ -422,10 +422,9 @@ class Text
     /**
      * Unicode and newline aware version of wordwrap.
      *
-     * @phpstan-param non-empty-string $break
      * @param string $text The text to format.
      * @param int $width The width to wrap to. Defaults to 72.
-     * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.
+     * @param non-empty-string $break The line is broken using the optional break parameter. Defaults to '\n'.
      * @param bool $cut If the cut is set to true, the string is always wrapped at the specified width.
      * @return string Formatted text.
      */

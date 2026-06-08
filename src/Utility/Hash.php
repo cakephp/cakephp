@@ -53,6 +53,9 @@ class Hash
      * @return mixed The value fetched from the array, or $default if path doesn't exist, is null,
      *   or $data is empty.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-get
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. request body) bleeds into unrelated
+     *   callers of this generic utility (e.g. Configure::read, getParam).
      */
     public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
     {
@@ -113,10 +116,9 @@ class Hash
      *
      * @param \ArrayAccess<array-key, mixed>|array $data The data to extract from.
      * @param string $path The path to extract.
-     * @return \ArrayAccess<array-key, mixed>|array An array of the extracted values. Returns an empty array
+     * @return ($path is non-empty-string ? array : \ArrayAccess<array-key, mixed>|array) An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-extract
-     * @phpstan-return ($path is non-empty-string ? array : \ArrayAccess<array-key, mixed>|array)
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -294,9 +296,11 @@ class Hash
      * @param T $data The data to insert into.
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
-     * @return \ArrayAccess<array-key, mixed>|array The data with $values inserted.
-     * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
+     * @return (T is array ? array : \ArrayAccess<array-key, mixed>) The data with $values inserted.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-insert
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequest::withData) bleeds into
+     *   unrelated callers of this generic utility (e.g. Configure::write).
      */
     public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
     {
@@ -349,6 +353,10 @@ class Hash
      * @param array<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
      * @return \ArrayAccess<array-key, mixed>|array
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally. Without this,
+     *   the ArrayAccess|array $data parameter causes Psalm to dispatch taint through every
+     *   ArrayAccess::offsetSet implementation in the codebase (e.g. Validator) when this method
+     *   is called with tainted request data.
      */
     protected static function simpleOp(
         string $op,
@@ -398,9 +406,11 @@ class Hash
      * @template T of \ArrayAccess<array-key, mixed>|array
      * @param T $data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return \ArrayAccess<array-key, mixed>|array The modified array.
-     * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
+     * @return (T is array ? array : \ArrayAccess<array-key, mixed>) The modified array.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-remove
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequest::withoutData) bleeds into
+     *   unrelated callers of this generic utility (e.g. Configure::delete).
      */
     public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -553,12 +563,11 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`,
+     * @return ($paths is non-empty-array ? array : null) An array of strings extracted from `$path` and formatted with `$format`,
      *   or null if $paths is empty.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
-     * @phpstan-return ($paths is non-empty-array ? array : null)
      */
     public static function format(array $data, array $paths, string $format): ?array
     {
@@ -731,9 +740,8 @@ class Hash
      * into a multi-dimensional array. So, `['0.Foo.Bar' => 'Far']` becomes
      * `[['Foo' => ['Bar' => 'Far']]]`.
      *
-     * @phpstan-param non-empty-string $separator
      * @param array $data Flattened array
-     * @param string $separator The delimiter used
+     * @param non-empty-string $separator The delimiter used
      * @return array
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-expand
      */
@@ -776,6 +784,10 @@ class Hash
      * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
      * @return array Merged array
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-merge
+     * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
+     *   false positives where taint from one caller (e.g. ServerRequestFactory merging POST body
+     *   with uploaded files) bleeds into unrelated callers (e.g. InstanceConfigTrait merging
+     *   developer configuration, ServerRequest::addDetector merging detector definitions).
      */
     public static function merge(array $data, mixed $merge): array
     {
@@ -1212,12 +1224,11 @@ class Hash
      * - `root` The id of the desired top-most result.
      *
      * @param array $data The data to nest.
-     * @param array<string, string|null> $options Options.
+     * @param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options Options.
      * @return array<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-nest
-     * @phpstan-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
      */
     public static function nest(array $data, array $options = []): array
     {
