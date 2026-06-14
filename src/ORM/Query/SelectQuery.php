@@ -563,38 +563,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     }
 
     /**
-     * Reshape each result via a formatter, rebinding the result type.
-     *
-     * Unlike `formatResults()` (which is typed to preserve the existing result
-     * shape), `reshape()` is for transforms that change the shape of each row
-     * and lets the static type follow that change. The callback receives the
-     * result set and must return an iterable of the new shape; the returned
-     * query is typed `SelectQuery<TNew>`, so `first()`/`firstOrFail()`/`all()`
-     * resolve to the new shape instead of the entity.
-     *
-     * Named `reshape()` rather than `map()` to avoid confusion with the
-     * collection `map()`, which applies per element and returns a collection;
-     * this operates on the whole result set and returns the query.
-     *
-     * ```
-     * $rows = $articles->find()
-     *     ->reshape(fn($results) => $results->map(fn($row) => $row->toArray()))
-     *     ->all();
-     * ```
-     *
-     * @template TNew of \Cake\Datasource\EntityInterface|array
-     * @param \Closure(\Cake\Datasource\ResultSetInterface<array-key, TSubject>, \Cake\ORM\Query\SelectQuery<TSubject>): iterable<TNew> $callback The reshaping callback.
-     * @return \Cake\ORM\Query\SelectQuery<TNew>
-     * @since 5.4.0
-     */
-    public function reshape(Closure $callback): SelectQuery
-    {
-        $this->formatResults($callback, self::OVERWRITE);
-
-        return $this;
-    }
-
-    /**
      * Returns the list of previously registered format routines.
      *
      * @return array<\Closure>
@@ -1583,6 +1551,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When DTO projection is enabled, results will be hydrated into
      * the specified DTO class instead of entity objects.
      *
+     * @deprecated 5.4.0 Use {@see \Cake\ORM\Table::projectAs()} instead. The
+     *   terminal repository method returns a concrete `list<T>` of DTOs, while
+     *   this fluent toggle keeps the query typed as a collection of entities
+     *   and so lies about the projected result shape. Removed in 6.0.
      * @param class-string $dtoClass The DTO class name
      * @return $this
      */

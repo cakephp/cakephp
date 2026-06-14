@@ -2148,56 +2148,6 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Tests that reshape() reshapes rows and registers a single overwrite formatter.
-     *
-     * @return void
-     */
-    public function testReshape(): void
-    {
-        $table = $this->getTableLocator()->get('Authors');
-        $query = $table->find()->where(['id' => 1]);
-        $returned = $query->reshape(function (ResultSetInterface $results) {
-            $out = [];
-            foreach ($results as $row) {
-                $out[] = ['authorId' => $row['id']];
-            }
-
-            return $out;
-        });
-
-        $this->assertSame($query, $returned);
-        $this->assertCount(1, $query->getResultFormatters());
-
-        $first = $query->all()->first();
-        $this->assertSame(['authorId' => 1], $first);
-    }
-
-    /**
-     * Tests that reshape() replaces previously registered formatters (overwrite semantics).
-     *
-     * @return void
-     */
-    public function testReshapeOverwritesFormatters(): void
-    {
-        $table = $this->getTableLocator()->get('Authors');
-        $query = $table->find();
-        $query->formatResults(function (ResultSetInterface $results) {
-            return $results;
-        });
-        $this->assertCount(1, $query->getResultFormatters());
-
-        $query->reshape(function (ResultSetInterface $results) {
-            $out = [];
-            foreach ($results as $row) {
-                $out[] = ['id' => $row['id']];
-            }
-
-            return $out;
-        });
-        $this->assertCount(1, $query->getResultFormatters());
-    }
-
-    /**
      * Tests that results formatters do receive the query object.
      */
     public function testResultFormatterReceivesTheQueryObject(): void
