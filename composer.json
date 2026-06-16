@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4.0,<9",
+        "php": ">=7.4.0,<8.4",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
