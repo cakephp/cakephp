@@ -128,7 +128,11 @@ class Curl implements AdapterInterface
         }
 
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
+            // Respect an explicitly configured `curl.cainfo` (php.ini) before
+            // falling back to the CA bundle shipped with composer/ca-bundle.
+            // This lets enterprise/containerized environments that inject a
+            // custom CA via php.ini work without passing `ssl_cafile` per call.
+            $options['ssl_cafile'] = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
