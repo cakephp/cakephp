@@ -679,7 +679,7 @@ class ViewTest extends TestCase
      */
     public function testElementPathEscape(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(MissingElementException::class);
         $this->expectExceptionMessage('it is not within any view template path.');
         $this->View->element('../../../check');
     }
