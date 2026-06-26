@@ -558,16 +558,22 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('DATA', '354');
 
-        $headers = $message->getHeadersString([
-            'from',
-            'sender',
-            'replyTo',
-            'readReceipt',
-            'to',
-            'cc',
-            'subject',
-            'returnPath',
-        ]);
+        $headers = $message->getHeadersString(
+            [
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'to',
+                'cc',
+                'subject',
+                'returnPath',
+            ],
+            "\r\n",
+            function (string $val): string {
+                return str_replace("\r\n", '', $val);
+            },
+        );
         $message = $this->_prepareMessage($message);
 
         $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");

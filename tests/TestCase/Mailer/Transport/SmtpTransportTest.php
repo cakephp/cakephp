@@ -601,6 +601,52 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
+     * test send strips crlf from headers
+     */
+    public function testSendHeadersStripCrlf(): void
+    {
+        $eol = "\r\n";
+        $date = date(DATE_RFC2822);
+
+        $message = new Message();
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setSubject('injected headers');
+        $message->setMessageId('<abc0123@example.com>');
+
+        $message->setHeaders([
+            'X-inject' => "line one\r\nline two",
+        ]);
+        $message->setBody(['text' => 'oh no']);
+
+        $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
+        $data .= 'To: CakePHP <cake@cakephp.org>' . $eol;
+        $data .= 'X-inject: line oneline two' . $eol;
+        $data .= 'Date: ' . $date . $eol;
+        $data .= 'Message-ID: <abc0123@example.com>' . $eol;
+        $data .= 'Subject: injected headers' . $eol;
+        $data .= "MIME-Version: 1.0{$eol}";
+        $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
+        $data .= 'Content-Transfer-Encoding: 8bit' . $eol;
+        $data .= "\r\n";
+        $data .= "oh no\r\n";
+        $data .= "\r\n\r\n";
+        $data .= "\r\n\r\n.\r\n";
+
+        $this->socket->shouldReceive('read')
+            ->andReturn(
+                "354 OK\r\n",
+                "250 OK\r\n",
+            )
+            ->twice();
+
+        $this->socket->shouldReceive('write')->with("DATA\r\n")->once();
+        $this->socket->shouldReceive('write')->with($data)->once();
+
+        $this->SmtpTransport->sendData($message);
+    }
+
+    /**
      * testQuit method
      */
     public function testQuit(): void
