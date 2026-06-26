@@ -366,7 +366,7 @@ class FunctionsBuilder
      * @param string $name The SQL aggregate function name
      * @param array $params Array of arguments to be passed to the function.
      *     Can be an associative array with the literal value or identifier:
-     *     `['value' => 'literal']` or `['value' => 'identifier']
+     *     `['value' => 'literal']` or `['value' => 'identifier']`
      * @param array $types Array of types that match the names used in `$params`:
      *     `['name' => 'type']`
      * @param string $return Return type of the entire expression. Defaults to float.

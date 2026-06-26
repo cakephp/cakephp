@@ -43,7 +43,9 @@ class CurlTest extends TestCase
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
 
         $this->curl = new Curl();
-        $this->caFile = CaBundle::getBundledCaBundlePath();
+        // Mirror the adapter default: an explicit `curl.cainfo` (php.ini) wins,
+        // otherwise the bundled CA file is used.
+        $this->caFile = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
     }
 
     /**
@@ -120,6 +122,21 @@ class CurlTest extends TestCase
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * An explicitly passed `ssl_cafile` must take precedence over both the
+     * `curl.cainfo` php.ini setting and the bundled CA file.
+     */
+    public function testBuildOptionsExplicitCafileWins(): void
+    {
+        $options = [
+            'ssl_cafile' => '/custom/ca-bundle.pem',
+        ];
+        $request = new Request('http://localhost/things', 'GET');
+        $result = $this->curl->buildOptions($request, $options);
+
+        $this->assertSame('/custom/ca-bundle.pem', $result[CURLOPT_CAINFO]);
     }
 
     /**

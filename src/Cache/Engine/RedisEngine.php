@@ -84,6 +84,12 @@ class RedisEngine extends CacheEngine
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
+     * - `allowedClasses` Controls the `allowed_classes` option passed to `unserialize()`
+     *   when reading values back. Set to `false` to disallow all object unserialization
+     *   (safest when the cache only stores scalar/array values), or provide an array of
+     *   fully qualified class names to allow only those classes. Useful for hardening
+     *   against PHP object injection when a cache backend is shared across applications.
+     *   Defaults to `true` (allow all) for backwards compatibility.
      *
      * @var array<string, mixed>
      */
@@ -106,6 +112,7 @@ class RedisEngine extends CacheEngine
         'nodes' => [],
         'failover' => null,
         'clearUsesFlushDb' => false,
+        'allowedClasses' => true,
     ];
 
     /**
@@ -665,6 +672,11 @@ class RedisEngine extends CacheEngine
     {
         if (preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
+        }
+
+        $allowedClasses = $this->getConfig('allowedClasses');
+        if ($allowedClasses !== true) {
+            return unserialize($value, ['allowed_classes' => $allowedClasses]);
         }
 
         return unserialize($value);

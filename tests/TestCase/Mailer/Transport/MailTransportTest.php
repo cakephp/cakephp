@@ -114,4 +114,45 @@ class MailTransportTest extends TestCase
         $this->assertStringContainsString('Subject: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
     }
+
+    /**
+     * test send strips crlf from headers
+     */
+    public function testSendHeadersStripCrlf(): void
+    {
+        $eol = "\r\n";
+        $date = date(DATE_RFC2822);
+
+        $message = new Message();
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setSubject('injected headers');
+        $message->setMessageId('<abc0123@example.com>');
+
+        $message->setHeaders([
+            'X-inject' => "line one\r\nline two",
+        ]);
+        $message->setBody(['text' => "First Line\nSecond Line"]);
+
+        $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
+        $data .= 'X-inject: line oneline two' . $eol;
+        $data .= 'Date: ' . $date . $eol;
+        $data .= 'Message-ID: <abc0123@example.com>' . $eol;
+        $data .= "MIME-Version: 1.0{$eol}";
+        $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
+        $data .= 'Content-Transfer-Encoding: 8bit';
+
+        $this->MailTransport->expects($this->once())->method('_mail')
+            ->with(
+                'CakePHP <cake@cakephp.org>',
+                'injected headers',
+                implode($eol, ['First Line', 'Second Line', '', '']),
+                $data,
+                '-f',
+            );
+
+        $result = $this->MailTransport->send($message);
+        $this->assertStringContainsString('Subject: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
 }
