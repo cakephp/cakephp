@@ -80,7 +80,6 @@ class AttributeCacheTest extends TestCase
                     name: 'TestClass',
                     declaringClass: 'App\\TestClass',
                 ),
-                pluginName: null,
             ),
         ];
 
@@ -332,7 +331,6 @@ class AttributeCacheTest extends TestCase
                 name: 'show',
                 declaringClass: 'App\\Controller\\UsersController',
             ),
-            pluginName: null,
         );
 
         $cache->write('test_complex', [$attributeInfo]);
@@ -430,7 +428,6 @@ class AttributeCacheTest extends TestCase
                     name: 'Class1',
                     declaringClass: 'Class1',
                 ),
-                pluginName: null,
             ),
             new AttributeInfo(
                 className: 'Class2',
@@ -637,7 +634,6 @@ class AttributeCacheTest extends TestCase
                 name: 'index',
                 declaringClass: 'App\\Controller\\UsersController',
             ),
-            pluginName: null,
         );
 
         $cache->write('test_with_objects', [$attributeInfo]);
@@ -675,7 +671,6 @@ class AttributeCacheTest extends TestCase
                 name: 'execute',
                 declaringClass: 'App\\Service\\TaskService',
             ),
-            pluginName: null,
         );
 
         $cache->write('test_with_enums', [$attributeInfo]);
@@ -720,7 +715,6 @@ class AttributeCacheTest extends TestCase
                 name: 'settings',
                 declaringClass: 'App\\Model\\Entity\\User',
             ),
-            pluginName: null,
         );
 
         $cache->write('test_with_nested', [$attributeInfo]);
