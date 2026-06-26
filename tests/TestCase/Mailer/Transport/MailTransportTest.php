@@ -142,7 +142,7 @@ class MailTransportTest extends TestCase
         $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
         $data .= 'Content-Transfer-Encoding: 8bit';
 
-        $this->MailTransport->expects($this->once())->method('_mail')
+        $this->MailTransport->expects($this->once())->method('mail')
             ->with(
                 'CakePHP <cake@cakephp.org>',
                 'injected headers',

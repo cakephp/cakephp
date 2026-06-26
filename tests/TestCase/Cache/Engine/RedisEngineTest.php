@@ -549,7 +549,7 @@ class RedisEngineTest extends TestCase
      */
     public function testAllowedClassesDefaultAllowsObjects(): void
     {
-        $this->_configCache();
+        $this->configCache();
 
         $data = new stdClass();
         $data->foo = 'bar';
@@ -568,7 +568,7 @@ class RedisEngineTest extends TestCase
      */
     public function testAllowedClassesFalseBlocksObjects(): void
     {
-        $this->_configCache(['allowedClasses' => false]);
+        $this->configCache(['allowedClasses' => false]);
 
         $data = new stdClass();
         $data->foo = 'bar';
@@ -586,7 +586,7 @@ class RedisEngineTest extends TestCase
      */
     public function testAllowedClassesWhitelist(): void
     {
-        $this->_configCache(['allowedClasses' => [stdClass::class]]);
+        $this->configCache(['allowedClasses' => [stdClass::class]]);
 
         $allowed = new stdClass();
         $allowed->foo = 'bar';
@@ -606,7 +606,7 @@ class RedisEngineTest extends TestCase
      */
     public function testAllowedClassesPreservesScalars(): void
     {
-        $this->_configCache(['allowedClasses' => false]);
+        $this->configCache(['allowedClasses' => false]);
 
         $this->assertTrue(Cache::write('int', 42, 'redis'));
         $this->assertSame(42, Cache::read('int', 'redis'));
