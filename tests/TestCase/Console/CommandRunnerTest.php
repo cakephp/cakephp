@@ -28,6 +28,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleIoInterface;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
@@ -227,15 +228,15 @@ class CommandRunnerTest extends TestCase
                 return $parser->addArgument('name', ['help' => 'A name.', 'required' => false]);
             }
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
-                $io->out('ran widget with ' . $args->getArgument('name'));
+                $this->io->out('ran widget with ' . $this->args->getArgument('name'));
 
                 return static::CODE_SUCCESS;
             }
         };
         $sibling = new class extends Command {
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 return static::CODE_SUCCESS;
             }
