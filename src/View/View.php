@@ -1456,7 +1456,7 @@ class View implements EventDispatcherInterface
         }
         $found = false;
         foreach ($this->_paths($plugin) as $path) {
-            if (str_starts_with($absolute, $path)) {
+            if (strpos($absolute, $path) === 0) {
                 $found = true;
                 break;
             }

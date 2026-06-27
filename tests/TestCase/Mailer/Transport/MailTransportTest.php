@@ -117,7 +117,7 @@ class MailTransportTest extends TestCase
      */
     public function testSendHeadersStripCrlf(): void
     {
-        $eol = "\r\n";
+        $eol = version_compare(PHP_VERSION, '8.0', '>=') ? "\r\n" : "\n";
         $date = date(DATE_RFC2822);
 
         $message = new Message();
