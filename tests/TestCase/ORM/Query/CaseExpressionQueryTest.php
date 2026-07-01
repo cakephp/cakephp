@@ -29,7 +29,7 @@ class CaseExpressionQueryTest extends TestCase
     public function testOverwrittenReturnType(): void
     {
         $query = $this->getTableLocator()->get('Products')
-            ->find()
+            ->unhydratedFind()
             ->select(function (SelectQuery $query) {
                 return [
                     'name',
@@ -43,8 +43,7 @@ class CaseExpressionQueryTest extends TestCase
                 ];
             })
             ->orderByAsc('price')
-            ->orderByAsc('name')
-            ->disableHydration();
+            ->orderByAsc('name');
 
         $expected = [
             [
@@ -69,7 +68,7 @@ class CaseExpressionQueryTest extends TestCase
     public function testInferredReturnType(): void
     {
         $query = $this->getTableLocator()->get('Products')
-            ->find()
+            ->unhydratedFind()
             ->select(function (SelectQuery $query) {
                 $expression = $query->expr()
                     ->case()
@@ -86,8 +85,7 @@ class CaseExpressionQueryTest extends TestCase
                     'Products.price',
                     'is_cheap' => $expression,
                 ];
-            })
-            ->disableHydration();
+            });
 
         $expected = [
             [

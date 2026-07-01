@@ -33,7 +33,6 @@ use Cake\ORM\EagerLoader;
 use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Closure;
-use Deprecated;
 use InvalidArgumentException;
 use JsonSerializable;
 use PDO;
@@ -1511,29 +1510,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $this->dirty();
         $this->hydrate = $enable;
 
-        return $this;
-    }
-
-    /**
-     * Disable hydrating entities.
-     *
-     * Disabling hydration will cause array results to be returned for the query
-     * instead of entities.
-     *
-     * @return static<array<string,mixed>>
-     */
-    #[Deprecated(message: <<<'TXT'
-    5.4.0 Use {@see \Cake\ORM\Table::unhydratedFind()} for
-       type-safe non-hydrated reads. The fluent toggle returns a `static`
-       that lies about its result shape; `unhydratedFind()` returns an
-       `UnhydratedSelectQuery` whose type matches the runtime. Removed in 6.0.
-    TXT)]
-    public function disableHydration(): static
-    {
-        $this->dirty();
-        $this->hydrate = false;
-
-        /** @phpstan-ignore return.type */
         return $this;
     }
 
