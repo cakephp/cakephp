@@ -21,6 +21,8 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests FunctionsBuilder class
@@ -172,6 +174,26 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('string', $function->getReturnType());
     }
 
+    public static function invalidValues(): array
+    {
+        return [
+            ['words with spaces'],
+            ["' drop table users --"],
+            [' word '],
+        ];
+    }
+
+    /**
+     * Ensure that only alphanumeric values are accepted for types.
+     */
+    #[DataProvider('invalidValues')]
+    public function testCastInvalidValue(string $type): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`dataType` must be an alphanumeric string');
+        $this->functions->cast('field', $type);
+    }
+
     /**
      * Tests generating a NOW(), CURRENT_TIME() and CURRENT_DATE() function
      */
@@ -209,6 +231,22 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
+    #[DataProvider('invalidValues')]
+    public function testExtractInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->extract($part, 'created');
+    }
+
+    #[DataProvider('invalidValues')]
+    public function testDatePartInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->datePart($part, 'created');
+    }
+
     /**
      * Tests generating a DATE_ADD() function
      */
@@ -222,6 +260,14 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->dateAdd(new IdentifierExpression('created'), -3, 'day');
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
+    }
+
+    #[DataProvider('invalidValues')]
+    public function testDateAddInvalidValue(string $unit): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`unit` must be an alphanumeric string');
+        $this->functions->dateAdd('created', -3, $unit);
     }
 
     /**
