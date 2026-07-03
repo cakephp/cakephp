@@ -173,6 +173,27 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('string', $function->getReturnType());
     }
 
+    public static function invalidValues(): array
+    {
+        return [
+            ['words with spaces'],
+            ["' drop table users --"],
+            [' word '],
+        ];
+    }
+
+    /**
+     * Ensure that only alphanumeric values are accepted for types.
+     *
+     * @dataProvider invalidValues
+     */
+    public function testCastInvalidValue(string $type): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`type` must be an alphanumeric string');
+        $this->functions->cast('field', $type);
+    }
+
     /**
      * Tests missing type in new CAST() wrapper throws exception.
      */
@@ -220,6 +241,26 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
+     * @dataProvider invalidValues
+     */
+    public function testExtractInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->extract($part, 'created');
+    }
+
+    /**
+     * @dataProvider invalidValues
+     */
+    public function testDatePartInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->datePart($part, 'created');
+    }
+
+    /**
      * Tests generating a DATE_ADD() function
      */
     public function testDateAdd(): void
@@ -232,6 +273,16 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->dateAdd(new IdentifierExpression('created'), -3, 'day');
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
+    }
+
+    /**
+     * @dataProvider invalidValues
+     */
+    public function testDateAddInvalidValue(string $unit): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`unit` must be an alphanumeric string');
+        $this->functions->dateAdd('created', -3, $unit);
     }
 
     /**

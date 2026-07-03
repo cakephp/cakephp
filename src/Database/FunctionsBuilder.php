@@ -24,7 +24,11 @@ use function Cake\Core\deprecationWarning;
 /**
  * Contains methods related to generating FunctionExpression objects
  * with most commonly used SQL functions.
+ *
  * This acts as a factory for FunctionExpression objects.
+ *
+ * Supplying user-controlled data to parameters with the `ExpressionInterface|string`
+ * type is **unsafe**. These parameters are included in the final query without escaping.
  */
 class FunctionsBuilder
 {
@@ -41,7 +45,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL SUM function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the sum() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -58,7 +62,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL AVG function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the avg() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -70,7 +74,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL MAX function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the max() function
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -82,7 +86,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL MIN function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the min() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -94,7 +98,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL COUNT function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the count() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -134,7 +138,7 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $type The SQL data type
+     * @param string $type The SQL data type. Must be a simple alphanumeric string.
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function cast($field, string $type = ''): FunctionExpression
@@ -151,7 +155,7 @@ class FunctionsBuilder
         if (empty($type)) {
             throw new InvalidArgumentException('The `$type` in a cast cannot be empty.');
         }
-
+        $this->ensureSimpleString('type', $type);
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
         $expression->setConjunction(' AS')->add([$type => 'literal']);
 
@@ -174,7 +178,7 @@ class FunctionsBuilder
     /**
      * Returns the specified date part from the SQL expression.
      *
-     * @param string $part Part of the date to return.
+     * @param string $part Part of the date to return. Must be a simple alphanumeric string.
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -187,13 +191,14 @@ class FunctionsBuilder
     /**
      * Returns the specified date part from the SQL expression.
      *
-     * @param string $part Part of the date to return.
+     * @param string $part Part of the date to return. Must be a simple alphanumeric string.
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function extract(string $part, $expression, array $types = []): FunctionExpression
     {
+        $this->ensureSimpleString('part', $part);
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
         $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
 
@@ -205,7 +210,7 @@ class FunctionsBuilder
      *
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param string|int $value Value to be added. Use negative to subtract.
-     * @param string $unit Unit of the value e.g. hour or day.
+     * @param string $unit Unit of the value e.g. hour or day. Must be a simple alphanumeric string.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -214,6 +219,7 @@ class FunctionsBuilder
         if (!is_numeric($value)) {
             $value = 0;
         }
+        $this->ensureSimpleString('unit', $unit);
         $interval = $value . ' ' . $unit;
         $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
         $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
@@ -372,5 +378,20 @@ class FunctionsBuilder
         }
 
         return [$expression];
+    }
+
+    /**
+     * Ensures that string values are simple ascii values with no whitespace
+     *
+     * @param string $parameterName The name of the parameter being checked.
+     * @param string $value The value to check
+     * @return void
+     */
+    protected function ensureSimpleString(string $parameterName, string $value): void
+    {
+        if (preg_match('/^[a-zA-Z0-9]+$/', $value)) {
+            return;
+        }
+        throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
     }
 }
