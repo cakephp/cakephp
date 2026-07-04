@@ -19,11 +19,15 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Exception\QueryException;
+use Cake\Database\Expression\PostgresCastExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Postgres driver
@@ -269,5 +273,98 @@ class PostgresTest extends TestCase
         $result = $driver->quote("O\slash");
         $expected = "'O\slash'";
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test jsonValue expression tranformation and parameter binding
+     *
+     * @return void
+     */
+    public function testJsonValueParameterBinding(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $stmt = $connection->insert(
+            'comments',
+            ['article_id' => 1, 'user_id' => 1, 'comment' => ['scores' => [25, 36]]],
+            ['comment' => 'json'],
+        );
+        $this->assertEquals(1, $stmt->rowCount());
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc');
+        $result->closeCursor();
+        $this->assertSame('36', $comment[0]['score']);
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('syntax error at end of jsonpath input');
+        $query->execute();
+    }
+
+    public static function castExpressionProvider(): array
+    {
+        $connection = ConnectionManager::get('test');
+
+        $exp = new QueryExpression('comment');
+        $exp->add('foo');
+
+        $q = new SelectQuery($connection);
+        $q->select(['comment'])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        // expression, expected, message
+        return [
+            [
+                new PostgresCastExpression('comment', 'char'),
+                'SELECT (comment::char) AS "score" FROM comments WHERE id = :c0',
+                'string column names are interpolated',
+            ],
+            [
+                new PostgresCastExpression(['value' => 'comment', 'type' => 'string'], 'char'),
+                'SELECT (:param0::char) AS "score" FROM comments WHERE id = :c1',
+                'array values are bound',
+            ],
+            [
+                new PostgresCastExpression($exp, 'char'),
+                'SELECT ((comment AND foo)::char) AS "score" FROM comments WHERE id = :c0',
+                'query expressions are converted and interpolated',
+            ],
+            [
+                new PostgresCastExpression($q, 'char'),
+                'SELECT ((SELECT comment FROM comments WHERE id = :c0)::char) AS "score" FROM comments WHERE id = :c1',
+                'subqueries are converted and retain bindings',
+            ],
+        ];
+    }
+
+    /**
+     * validate query generation with postgres cast operations
+     */
+    #[DataProvider('castExpressionProvider')]
+    public function testPostgresCastExpression($expression, $expected, $message): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $query = new SelectQuery($connection);
+        $query->select(['score' => $expression])
+            ->from('comments')
+            ->where(['id' => 1]);
+        $sql = $query->sql();
+        $this->assertEquals($expected, $sql, $message);
     }
 }

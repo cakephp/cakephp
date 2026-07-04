@@ -20,6 +20,7 @@ use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\PostgresCastExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query\InsertQuery;
@@ -328,9 +329,9 @@ class Postgres extends Driver
                 $expression->setName('JSONB_PATH_QUERY')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
-                            $p = sprintf('%s::jsonb', $p);
+                            $p = new PostgresCastExpression($p, 'jsonb');
                         } elseif ($key === 1) {
-                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
+                            $p = new PostgresCastExpression($p, 'jsonpath');
                         }
 
                         return $p;
