@@ -1333,9 +1333,9 @@ class Text
      * @param int $showLeading Number of leading characters of each match to leave unmasked.
      * @param int $showTrailing Number of trailing characters of each match to leave unmasked.
      * @param string $maskCharacter Single masking character.
-     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
-     */
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character, or if $showLeading/$showTrailing are negative.
+ */
     public static function maskPartialRegex(string $string, array|string $patterns, int $showLeading = 0, int $showTrailing = 0, string $maskCharacter = '*'): string
     {
         if (!is_array($patterns)) {
