@@ -1325,8 +1325,8 @@ class Text
      * $showLeading + $showTrailing >= match length, the match is returned as-is.
      *
      * Examples:
-     * - maskPartialRegex('Card used: 4242424242424242', '/\d{16}/', 0, 4) => Credit card used: ************4242
-     * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C********d
+     * - maskPartialRegex('Card used: 4242424242424242', '/\d{16}/', 0, 4) => Card used: ************4242
+     * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C*******d
      *
      * @param string $string The input string.
      * @param string[]|string $patterns One or more regex patterns.
