@@ -329,9 +329,7 @@ class Postgres extends Driver
                 $expression->setName('JSONB_PATH_QUERY')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
-                            $p = new PostgresCastExpression($p, 'jsonb');
-                        } elseif ($key === 1) {
-                            $p = new PostgresCastExpression($p, 'jsonpath');
+                            $p = sprintf('%s::jsonb', $p);
                         }
 
                         return $p;
