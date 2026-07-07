@@ -1286,8 +1286,9 @@ class Text
      * Each occurrence of the provided pattern(s) will be replaced by a sequence of the masking character.
      *
      * @param string $string The input string.
-     * @param string[]|string $patterns One or more regex patterns
+     * @param string[]|string $patterns One or more regex patterns.
      * @param string $maskCharacter Single masking character.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
      */
     public static function maskRegex(string $string, array|string $patterns, string $maskCharacter = '*'): string
