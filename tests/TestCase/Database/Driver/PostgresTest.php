@@ -20,14 +20,11 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\QueryException;
-use Cake\Database\Expression\PostgresCastExpression;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Postgres driver

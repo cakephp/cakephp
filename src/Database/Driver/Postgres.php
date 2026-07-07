@@ -20,7 +20,6 @@ use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\PostgresCastExpression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\PostgresCompiler;
 use Cake\Database\Query\InsertQuery;
