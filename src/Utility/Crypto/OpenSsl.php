@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Utility\Crypto;
 
 use Cake\Core\Exception\CakeException;
+use SensitiveParameter;
 
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
@@ -45,7 +46,7 @@ class OpenSsl
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt(string $plain, string $key): string
+    public static function encrypt(string $plain, #[SensitiveParameter] string $key): string
     {
         $method = static::METHOD_AES_256_CBC;
         $ivSize = openssl_cipher_iv_length($method);
@@ -66,7 +67,7 @@ class OpenSsl
      * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function decrypt(string $cipher, string $key): ?string
+    public static function decrypt(string $cipher, #[SensitiveParameter] string $key): ?string
     {
         $method = static::METHOD_AES_256_CBC;
         $ivSize = openssl_cipher_iv_length($method);

@@ -22,6 +22,7 @@ use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
+use SensitiveParameter;
 use function Cake\Core\env;
 
 /**
@@ -393,7 +394,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return string|null Response code for the command.
      */
-    protected function _authPlain(string $username, string $password): ?string
+    protected function _authPlain(string $username, #[SensitiveParameter] string $password): ?string
     {
         return $this->_smtpSend(
             sprintf(
@@ -411,7 +412,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return void
      */
-    protected function _authLogin(string $username, string $password): void
+    protected function _authLogin(string $username, #[SensitiveParameter] string $password): void
     {
         $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
@@ -443,7 +444,7 @@ class SmtpTransport extends AbstractTransport
      * @see https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#smtp-protocol-exchange
      * @see https://developers.google.com/gmail/imap/xoauth2-protocol#smtp_protocol_exchange
      */
-    protected function _authXoauth2(string $username, string $token): void
+    protected function _authXoauth2(string $username, #[SensitiveParameter] string $token): void
     {
         $authString = base64_encode(sprintf(
             "user=%s\1auth=Bearer %s\1\1",
