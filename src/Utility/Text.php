@@ -1286,8 +1286,9 @@ class Text
      * Each occurrence of the provided pattern(s) will be replaced by a sequence of the masking character.
      *
      * @param string $string The input string.
-     * @param string[]|string $patterns One or more regex patterns
+     * @param string[]|string $patterns One or more regex patterns.
      * @param string $maskCharacter Single masking character.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
      */
     public static function maskRegex(string $string, array|string $patterns, string $maskCharacter = '*'): string
@@ -1324,17 +1325,17 @@ class Text
      * $showLeading + $showTrailing >= match length, the match is returned as-is.
      *
      * Examples:
-     * - maskPartialRegex('Card used: 4242424242424242', '/\d{16}/', 0, 4) => Credit card used: ************4242
-     * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C********d
+     * - maskPartialRegex('Card used: 4242424242424242', '/\d{16}/', 0, 4) => Card used: ************4242
+     * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C*******d
      *
      * @param string $string The input string.
      * @param string[]|string $patterns One or more regex patterns.
      * @param int $showLeading Number of leading characters of each match to leave unmasked.
      * @param int $showTrailing Number of trailing characters of each match to leave unmasked.
      * @param string $maskCharacter Single masking character.
-     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
-     */
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character, or if $showLeading/$showTrailing are negative.
+ */
     public static function maskPartialRegex(string $string, array|string $patterns, int $showLeading = 0, int $showTrailing = 0, string $maskCharacter = '*'): string
     {
         if (!is_array($patterns)) {
