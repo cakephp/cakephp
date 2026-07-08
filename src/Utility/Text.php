@@ -1296,7 +1296,7 @@ class Text
             $patterns = [$patterns];
         }
 
-        $patterns = array_unique(array_filter($patterns, fn($n) => $n !== ''));
+        $patterns = array_unique(array_filter($patterns, fn(string $n) => $n !== ''));
 
         if ($string === '' || $patterns === []) {
             return $string;
@@ -1341,7 +1341,7 @@ class Text
             $patterns = [$patterns];
         }
 
-        $patterns = array_unique(array_filter($patterns, fn($n) => $n !== ''));
+        $patterns = array_unique(array_filter($patterns, fn(string $n) => $n !== ''));
 
         if ($string === '' || $patterns === []) {
             return $string;
