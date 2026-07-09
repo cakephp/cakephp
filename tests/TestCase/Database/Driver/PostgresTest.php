@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -236,5 +237,44 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+    }
+
+    /**
+     * test jsonValue expression tranformation and parameter binding
+     *
+     * @return void
+     */
+    public function testJsonValueParameterBinding(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $stmt = $connection->insert(
+            'comments',
+            ['article_id' => 1, 'user_id' => 1, 'comment' => ['scores' => [25, 36]]],
+            ['comment' => 'json'],
+        );
+        $this->assertEquals(1, $stmt->rowCount());
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc');
+        $result->closeCursor();
+        $this->assertSame('36', $comment[0]['score']);
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('syntax error at end of jsonpath input');
+        $query->execute();
     }
 }
