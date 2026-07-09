@@ -2061,4 +2061,141 @@ HTML;
         $this->expectException(InvalidArgumentException::class);
         Text::maskValue($string, $needles, $maskCharacter);
     }
+
+    /**
+     * Data provider for testMaskRegex()
+     *
+     * @return array<string, array>
+     */
+    public static function maskRegexProvider(): array
+    {
+        return [
+            'empty string' => ['', '/\d+/', '*', ''],
+            'empty pattern array' => ['hello', [], '*', 'hello'],
+            'empty pattern string' => ['hello', '', '*', 'hello'],
+            'no match' => ['hello world', '/\d+/', '*', 'hello world'],
+            'single match' => ['my pin is 1234', '/\d+/', '*', 'my pin is ****'],
+            'multiple matches' => ['a1 b22 c333', '/\d+/', '*', 'a* b** c***'],
+            'string pattern' => ['foo bar', '/\b\w+\b/', '*', '*** ***'],
+            'array of patterns applied sequentially' => ['hello 123 world', ['/\d+/', '/[a-z]+/'], '*', '***** *** *****'],
+            'custom mask character' => ['token: abc123', '/[a-z0-9]+/', 'x', 'xxxxx: xxxxxx'],
+            'multibyte string' => ['私は123です', '/\d+/', 'x', '私はxxxです'],
+            'multibyte mask character' => ['secret123', '/\d+/', 'ক', 'secretককক'],
+        ];
+    }
+
+    /**
+     * testMaskRegex method
+     *
+     * @param string $string Input string
+     * @param array|string $patterns Regex patterns
+     * @param string $maskCharacter Mask character
+     * @param string $expected Expected output
+     */
+    #[DataProvider('maskRegexProvider')]
+    public function testMaskRegex(string $string, array|string $patterns, string $maskCharacter, string $expected): void
+    {
+        $result = Text::maskRegex($string, $patterns, $maskCharacter);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Data provider for testMaskRegexThrowsOnInvalidMaskCharacter()
+     *
+     * @return array<string, array>
+     */
+    public static function maskRegexInvalidCharacterProvider(): array
+    {
+        return [
+            'empty mask character' => ['hello', '/\w+/', ''],
+            'multi-character mask' => ['hello', '/\w+/', '**'],
+        ];
+    }
+
+    /**
+     * testMaskRegexThrowsOnInvalidMaskCharacter method
+     *
+     * @param string $string
+     * @param string $patterns
+     * @param string $maskCharacter
+     */
+    #[DataProvider('maskRegexInvalidCharacterProvider')]
+    public function testMaskRegexThrowsOnInvalidMaskCharacter(string $string, string $patterns, string $maskCharacter): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Text::maskRegex($string, $patterns, $maskCharacter);
+    }
+
+    /**
+     * Data provider for testMaskPartialRegex()
+     *
+     * @return array<string, array>
+     */
+    public static function maskPartialRegexProvider(): array
+    {
+        return [
+            'empty string' => ['', '/\d+/', 0, 0, '*', ''],
+            'empty pattern array' => ['secret', [], 0, 0, '*', 'secret'],
+            'empty pattern string' => ['secret', '', 0, 0, '*', 'secret'],
+            'no showLeading or showTrailing masks fully' => ['pin: 1234', '/\d+/', 0, 0, '*', 'pin: ****'],
+            'showLeading only' => ['card: 4242424242424242', '/\d{16}/', 2, 0, '*', 'card: 42**************'],
+            'showTrailing only' => ['card: 4242424242424242', '/\d{16}/', 0, 4, '*', 'card: ************4242'],
+            'showLeading and showTrailing' => ['Secret Codeword', '/\b\w+\b/', 1, 1, '*', 'S****t C******d'],
+            'showLeading + showTrailing equals match length' => ['ab', '/\w+/', 1, 1, '*', 'ab'],
+            'showLeading + showTrailing exceeds match length' => ['a', '/\w+/', 1, 1, '*', 'a'],
+            'multiple matches each partially masked' => ['hello world', '/\b\w+\b/', 2, 1, '*', 'he**o wo**d'],
+            'string pattern' => ['hello', '/\b\w+\b/', 1, 0, '*', 'h****'],
+            'array of patterns applied sequentially' => ['abc 123', ['/[a-z]+/', '/\d+/'], 1, 1, '*', 'a*c 1*3'],
+            'custom mask character' => ['secret', '/\w+/', 2, 1, '-', 'se---t'],
+            'multibyte string' => ['こんにちは', '/.+/u', 1, 1, '*', 'こ***は'],
+        ];
+    }
+
+    /**
+     * testMaskPartialRegex method
+     *
+     * @param string $string Input string
+     * @param array|string $patterns Regex patterns
+     * @param int $showLeading Number of leading chars to leave unmasked
+     * @param int $showTrailing Number of trailing chars to leave unmasked
+     * @param string $maskCharacter Mask character
+     * @param string $expected Expected output
+     */
+    #[DataProvider('maskPartialRegexProvider')]
+    public function testMaskPartialRegex(string $string, array|string $patterns, int $showLeading, int $showTrailing, string $maskCharacter, string $expected): void
+    {
+        $result = Text::maskPartialRegex($string, $patterns, $showLeading, $showTrailing, $maskCharacter);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Data provider for testMaskPartialRegexThrowsOnInvalidInput()
+     *
+     * @return array<string, array>
+     */
+    public static function maskPartialRegexInvalidInputProvider(): array
+    {
+        return [
+            'empty mask character' => ['hello', '/\w+/', 0, 0, ''],
+            'multi-character mask' => ['hello', '/\w+/', 0, 0, '**'],
+            'negative showLeading' => ['hello', '/\w+/', -1, 0, '*'],
+            'negative showTrailing' => ['hello', '/\w+/', 0, -1, '*'],
+        ];
+    }
+
+    /**
+     * testMaskPartialRegexThrowsOnInvalidInput method
+     *
+     * @param string $string
+     * @param string $patterns
+     * @param int $showLeading
+     * @param int $showTrailing
+     * @param string $maskCharacter
+     */
+    #[DataProvider('maskPartialRegexInvalidInputProvider')]
+    public function testMaskPartialRegexThrowsOnInvalidInput(string $string, string $patterns, int $showLeading, int $showTrailing, string $maskCharacter): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Text::maskPartialRegex($string, $patterns, $showLeading, $showTrailing, $maskCharacter);
+    }
 }
