@@ -11,6 +11,10 @@ on:
       - '*'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read # to fetch code (actions/checkout)
 
@@ -195,7 +199,7 @@ jobs:
         key: ${{ steps.key-date.outputs.date }}
 
     - name: Cache PHP extensions
-      uses: actions/cache@v5
+      uses: actions/cache@v6.1.0
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
         key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
@@ -260,7 +264,7 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.phive
@@ -283,7 +287,7 @@ jobs:
 
       - name: Setup phpcs cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ runner.temp }}/phpcs.cache
           key: ${{ runner.os }}-phpcs-${{ hashFiles('phpcs.xml', 'composer.lock') }}
@@ -311,7 +315,7 @@ jobs:
 
       - name: Setup rector cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ runner.temp }}/rector
           key: ${{ runner.os }}-rector-${{ hashFiles('rector.php', 'composer.lock') }}
@@ -357,7 +361,7 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.phive
