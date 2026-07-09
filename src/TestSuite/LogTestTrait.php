@@ -153,7 +153,10 @@ trait LogTestTrait
                     continue;
                 }
                 $loggedMessage = substr($message, strlen($levelPrefix));
-                if ($contains ? str_contains($loggedMessage, $expectedMessage) : $loggedMessage === $expectedMessage) {
+                $matches = $contains
+                    ? str_contains($loggedMessage, $expectedMessage)
+                    : $loggedMessage === $expectedMessage;
+                if ($matches) {
                     $messageFound = true;
                     break;
                 }
