@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Auth;
 
 use Cake\Http\Client\Request;
+use SensitiveParameter;
 
 /**
  * Basic authentication adapter for Cake\Http\Client
@@ -33,7 +34,7 @@ class Basic
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function authentication(Request $request, array $credentials): Request
+    public function authentication(Request $request, #[SensitiveParameter] array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->generateHeader($credentials['username'], $credentials['password']);
@@ -51,7 +52,7 @@ class Basic
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function proxyAuthentication(Request $request, array $credentials): Request
+    public function proxyAuthentication(Request $request, #[SensitiveParameter] array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->generateHeader($credentials['username'], $credentials['password']);
@@ -68,7 +69,7 @@ class Basic
      * @param string $pass Password.
      * @return string
      */
-    protected function generateHeader(string $user, string $pass): string
+    protected function generateHeader(string $user, #[SensitiveParameter] string $pass): string
     {
         return 'Basic ' . base64_encode($user . ':' . $pass);
     }

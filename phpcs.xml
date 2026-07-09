@@ -28,6 +28,11 @@
         </properties>
         <exclude-pattern>tests/test_app/*</exclude-pattern>
     </rule>
+    <rule ref="SlevomatCodingStandard.Attributes.AttributeAndTargetSpacing">
+        <properties>
+            <property name="allowOnSameLine" value="true"/>
+        </properties>
+    </rule>
 
     <!-- pretty sure this is a bug in slevomat -->
     <rule ref="Internal.Exception">

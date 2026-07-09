@@ -62,7 +62,15 @@ class Debugger
      * @var array<string, mixed>
      */
     protected array $defaultConfig = [
-        'outputMask' => [],
+        'outputMask' => [
+            'password' => '********',
+            'login' => '********',
+            'host' => '********',
+            'database' => '********',
+            'port' => '********',
+            'prefix' => '********',
+            'schema' => '********',
+        ],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
         'editorBasePath' => null,
@@ -654,7 +662,7 @@ class Debugger
     /**
      * Export an array type object. Filters out keys used in datasource configuration.
      *
-     * The following keys are replaced with ***'s
+     * By default the following keys are replaced with ***'s
      *
      * - password
      * - login

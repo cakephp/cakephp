@@ -411,7 +411,7 @@ class Column
     /**
      * Gets the column comment.
      *
-     * @return string
+     * @return string|null
      */
     public function getComment(): ?string
     {
@@ -623,7 +623,7 @@ class Column
     /**
      * Convert an index into an array that is compatible with the Column constructor.
      *
-     * @return array
+     * @return array{name: ?string, baseType: ?string, type: string, length: ?int, null: ?bool, default: mixed, generated: ?string, unsigned: ?bool, onUpdate: ?string, collate: ?string, precision: ?int, srid: ?int, comment: ?string, autoIncrement: bool, identity: bool, fixed: ?bool, geometryType?: ?string}
      */
     public function toArray(): array
     {

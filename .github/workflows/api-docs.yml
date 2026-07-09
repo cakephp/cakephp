@@ -22,9 +22,11 @@ jobs:
           private_key: ${{ secrets.CAKEBOT_APP_PRIVATE_KEY }}
 
       - name: Trigger API build
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
         run: >
           curl -XPOST
-          -H 'Authorization: Bearer ${{ steps.app-token.outputs.token }}'
+          -H "Authorization: Bearer ${APP_TOKEN}"
           -H 'Accept: application/vnd.github.v3+json'
           -H 'Content-Type: application/json'
           https://api.github.com/repos/cakephp/cakephp-api-docs/actions/workflows/deploy_2x.yml/dispatches
