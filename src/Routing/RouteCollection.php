@@ -139,7 +139,7 @@ class RouteCollection
 
         $urlPath = $uri->getPath();
         if (str_contains($urlPath, '%')) {
-            $urlPath = urldecode_segments($urlPath);
+            $urlPath = urldecodeSegments($urlPath);
         }
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');

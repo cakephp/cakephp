@@ -64,7 +64,7 @@ function url(UriInterface|array|string|null $url = null, bool $full = false): st
  *
  * @internal
  */
-function urldecode_segments(string $url): string
+function urldecodeSegments(string $url): string
 {
     $parts = explode('/', $url);
     $parts = array_map(
