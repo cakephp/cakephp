@@ -1896,7 +1896,7 @@ class QueryRegressionTest extends TestCase
             ->toArray();
 
         $this->assertCount(2, $results);
-        $this->assertSame([4, 3], array_map(fn (EntityInterface $author) => $author->id, $results));
+        $this->assertSame([4, 3], array_map(fn(EntityInterface $author) => $author->id, $results));
 
         // Second hasMany in the contain list: empty before the fix.
         $this->assertCount(1, $results[0]->comments);
