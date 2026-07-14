@@ -33,6 +33,7 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -592,6 +593,43 @@ class CommandRunnerTest extends TestCase
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertTrue($startedEventTriggered, 'Should have triggered Command.started event.');
         $this->assertTrue($finishedEventTriggered, 'Should have triggered Command.finished event.');
+    }
+
+    /**
+     * Test that run() invokes the command class' lifecycle hook methods.
+     */
+    public function testRunInvokesCommandLifecycleHooks(): void
+    {
+        $command = new class extends Command {
+            public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIo $io): void
+            {
+                $io->out('beforeExecute run');
+            }
+
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $io->out('execute run');
+
+                return static::CODE_SUCCESS;
+            }
+
+            public function afterExecute(EventInterface $event, Arguments $args, ConsoleIo $io, ?int $result): void
+            {
+                $io->out('afterExecute run');
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $app = $this->makeAppWithCommands(['lifecycle' => $command]);
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'lifecycle'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+        $this->assertSame([
+            'beforeExecute run',
+            'execute run',
+            'afterExecute run',
+        ], $output->messages());
     }
 
     /**

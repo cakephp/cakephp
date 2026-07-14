@@ -26,6 +26,7 @@ use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
@@ -440,6 +441,9 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
+            if ($command instanceof EventListenerInterface) {
+                $this->getEventManager()->on($command);
+            }
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }
