@@ -195,7 +195,7 @@ class Route
         $this->defaults['_method'] = $this->normalizeAndValidateMethods($methods);
 
         return $this;
-    }=====
+    }
 
     /**
      * Normalize method names to upper case and validate that they are valid HTTP methods.
