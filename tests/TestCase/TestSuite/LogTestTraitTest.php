@@ -95,12 +95,47 @@ class LogTestTraitTest extends TestCase
     }
 
     /**
+     * Test expecting log messages contains with a partial match in the middle of the message
+     */
+    public function testExpectLogContainsPartial(): void
+    {
+        $this->setupLog('error');
+        Log::error('This message contains 42, which is the only relevant value to the test.');
+        $this->assertLogMessageContains('error', '42');
+        $this->assertLogMessageContains('error', 'relevant value to the test.');
+    }
+
+    /**
+     * Test that partial matches still require the expected level
+     */
+    public function testExpectLogContainsWrongLevelFails(): void
+    {
+        $this->setupLog(['debug', 'error']);
+        Log::error('This message contains 42.');
+
+        $this->expectException(AssertionFailedError::class);
+        $this->assertLogMessageContains('debug', '42');
+    }
+
+    /**
+     * Test that the expected message does not match inside the level prefix
+     */
+    public function testExpectLogContainsDoesNotMatchLevelPrefix(): void
+    {
+        $this->setupLog('error');
+        Log::error('Some message');
+
+        $this->expectException(AssertionFailedError::class);
+        $this->assertLogMessageContains('error', 'error');
+    }
+
+    /**
      * Test expecting log message without setup
      */
     public function testExpectLogWithoutSetup(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Could not find the message `debug: ` in logs.');
+        $this->expectExceptionMessage('Could not find the message `` for level `debug` in logs.');
         $this->assertLogMessage('debug', '');
     }
 

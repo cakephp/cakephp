@@ -23,6 +23,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
+use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
@@ -1848,5 +1849,63 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals('First Article', $result[0]->title);
         $this->assertNotEmpty($result[0]->user);
+    }
+
+    /**
+     * The subquery strategy must not strip the ORDER BY from the query it is given.
+     *
+     * The loader for the first association would otherwise leave the caller's query without an
+     * ORDER BY, so every subsequent loader builds its filtering subquery unordered, pages on the
+     * wrong rows and returns no results at all.
+     */
+    public function testSubqueryStrategyDoesNotMutateOrder(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $query = $authors->find()
+            ->contain(['Articles'])
+            ->orderBy(['Authors.id' => 'DESC'])
+            ->limit(2);
+
+        $this->assertCount(1, $query->clause('order'));
+        $query->all()->toArray();
+        $this->assertCount(1, $query->clause('order'), 'The ORDER BY was removed from the query.');
+    }
+
+    /**
+     * Every hasMany in the contain list must be loaded, not just the first one.
+     *
+     * Ordering by id DESC with a limit of 2 pages onto authors 4 and 3. An unordered subquery
+     * would instead filter on authors 1 and 2, so author 4's comment goes missing.
+     */
+    public function testSubqueryStrategyWithMultipleHasMany(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['strategy' => Association::STRATEGY_SUBQUERY]);
+        $authors->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $results = $this->getTableLocator()->get('Authors')->find()
+            ->contain(['Articles', 'Comments'])
+            ->orderBy(['Authors.id' => 'DESC'])
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertCount(2, $results);
+        $this->assertSame([4, 3], array_map(fn(EntityInterface $author) => $author->id, $results));
+
+        // Second hasMany in the contain list: empty before the fix.
+        $this->assertCount(1, $results[0]->comments);
+        $this->assertSame(4, $results[0]->comments[0]->user_id);
+        $this->assertEmpty($results[0]->articles);
+
+        // First hasMany in the contain list: loaded correctly either way.
+        $this->assertCount(1, $results[1]->articles);
+        $this->assertSame('Second Article', $results[1]->articles[0]->title);
+        $this->assertEmpty($results[1]->comments);
     }
 }
