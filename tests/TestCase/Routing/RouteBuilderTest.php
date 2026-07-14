@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing;
 use BadMethodCallException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
@@ -957,7 +958,7 @@ class RouteBuilderTest extends TestCase
     /**
      * Test using name prefixes.
      */
-    public function testNamePrefixes(): void
+    public function testScopeNamePrefixes(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', [], ['namePrefix' => 'api:']);
         $routes->scope('/v1', ['version' => 1, '_namePrefix' => 'v1:'], function (RouteBuilder $routes): void {
@@ -971,6 +972,41 @@ class RouteBuilderTest extends TestCase
         $all = $this->collection->named();
         $this->assertArrayHasKey('api:v1:ping', $all);
         $this->assertArrayHasKey('web:pong', $all);
+    }
+
+    /**
+     * Test that if an application has scoped middleware on a path prefix,
+     * and fallback routes, that URL decoding in Route::parse() would
+     * decode the %2f that was not accepted in the scope path prefix check.
+     */
+    public function testScopeMiddlewarePathMatch(): void
+    {
+        $gate = function () {
+            return new Response(['body' => 'no', 'status' => 403]);
+        };
+
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->registerMiddleware('gate', $gate);
+        $routes->scope('/admin', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('gate');
+            $routes->connect('/secret', ['controller' => 'Admin', 'action' => 'secret']);
+        });
+        $routes->fallbacks(DashedRoute::class);
+
+        // No encoded / is a standard request.
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/admin/secret',
+        ]));
+        $this->assertEquals(['gate'], $result['_route']->getMiddleware());
+        $this->assertEquals('/admin/secret', $result['_route']->template);
+
+        // Encoded / will not match path prefix. It will match /controller though
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/admin%2Fsecret',
+        ]));
+        $this->assertEquals('/{controller}', $result['_route']->template);
+        $this->assertEquals('Admin%2fsecret', $result['controller']);
+        $this->assertEquals('index', $result['action']);
     }
 
     /**
