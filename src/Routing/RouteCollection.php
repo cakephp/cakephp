@@ -204,15 +204,10 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request): array
     {
         $uri = $request->getUri();
+
         $urlPath = $uri->getPath();
         if (strpos($urlPath, '%') !== false) {
-            // decode urlencoded segments, but don't decode %2f aka /
-            $parts = explode('/', $urlPath);
-            $parts = array_map(
-                fn (string $part) => str_replace('/', '%2f', urldecode($part)),
-                $parts
-            );
-            $urlPath = implode('/', $parts);
+            $urlPath = urldecodeSegments($urlPath);
         }
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');
