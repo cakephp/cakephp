@@ -57,6 +57,9 @@ help:
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
 	@echo ""
+	@echo "lint-src"
+	@echo "  Run php -l against every PHP file in src/."
+	@echo ""
 	@echo "All other tasks are not intended to be run directly."
 .PHONY: help
 
@@ -64,6 +67,10 @@ help:
 test: install
 	vendor/bin/phpunit
 .PHONY: test
+
+lint-src:
+	@contrib/lint-php-src src
+.PHONY: lint-src
 
 
 # Utility target for checking required parameters
@@ -199,5 +206,5 @@ clean-component-%:
 .PHONY: components-clean
 
 # Top level alias for doing a release.
-release: guard-VERSION tag-release components-tag package publish
+release: guard-VERSION lint-src tag-release components-tag package publish
 .PHONY: release
