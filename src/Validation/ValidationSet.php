@@ -19,6 +19,7 @@ namespace Cake\Validation;
 use ArrayAccess;
 use ArrayIterator;
 use Cake\Core\Exception\CakeException;
+use Closure;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -42,23 +43,23 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Denotes whether the field name key must be present in data array
      *
-     * @var callable|string|bool
+     * @var \Closure|string|bool
      */
-    protected $validatePresent = false;
+    protected Closure|string|bool $validatePresent = false;
 
     /**
      * Denotes if a field is allowed to be empty
      *
-     * @var callable|string|bool
+     * @var \Closure|string|bool
      */
-    protected $allowEmpty = false;
+    protected Closure|string|bool $allowEmpty = false;
 
     /**
      * Returns whether a field can be left out.
      *
-     * @return callable|string|bool
+     * @return \Closure|string|bool
      */
-    public function isPresenceRequired(): callable|string|bool
+    public function isPresenceRequired(): Closure|string|bool
     {
         return $this->validatePresent;
     }
@@ -66,10 +67,10 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field is required to be present in data array.
      *
-     * @param callable|string|bool $validatePresent Valid values are true, false, 'create', 'update' or a callable.
+     * @param \Closure|string|bool $validatePresent Valid values are true, false, 'create', 'update' or a Closure.
      * @return $this
      */
-    public function requirePresence(callable|string|bool $validatePresent): static
+    public function requirePresence(Closure|string|bool $validatePresent): static
     {
         $this->validatePresent = $validatePresent;
 
@@ -79,9 +80,9 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns whether a field can be left empty.
      *
-     * @return callable|string|bool
+     * @return \Closure|string|bool
      */
-    public function isEmptyAllowed(): callable|string|bool
+    public function isEmptyAllowed(): Closure|string|bool
     {
         return $this->allowEmpty;
     }
@@ -89,11 +90,11 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets whether a field value is allowed to be empty.
      *
-     * @param callable|string|bool $allowEmpty Valid values are true, false,
-     * 'create', 'update' or a callable.
+     * @param \Closure|string|bool $allowEmpty Valid values are true, false,
+     * 'create', 'update' or a Closure.
      * @return $this
      */
-    public function allowEmpty(callable|string|bool $allowEmpty): static
+    public function allowEmpty(Closure|string|bool $allowEmpty): static
     {
         $this->allowEmpty = $allowEmpty;
 
