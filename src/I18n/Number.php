@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
+use Cake\Core\Exception\CakeException;
 use NumberFormatter;
 
 /**
@@ -301,7 +302,13 @@ class Number
         if (static::$_defaultCurrency === null) {
             $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-            static::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+
+            $currency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+            if ($currency === false) {
+                throw new CakeException('Failed to get currency code from the formatter');
+            }
+
+            return static::$_defaultCurrency = $currency;
         }
 
         return static::$_defaultCurrency;
