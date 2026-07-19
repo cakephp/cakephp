@@ -30,7 +30,7 @@
     "require": {
         "php": ">=8.2",
         "ext-intl": "*",
-        "cakephp/core": "5.4.*@dev",
+        "cakephp/core": "^5.4.0",
         "cakephp/chronos": "^3.3"
     },
     "autoload": {
@@ -48,7 +48,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.4.x-dev"
+            "dev-5.next": "5.5.x-dev"
         }
     }
 }
