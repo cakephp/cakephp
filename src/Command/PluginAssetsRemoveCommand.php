@@ -54,9 +54,6 @@ class PluginAssetsRemoveCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->io = $io;
-        $this->args = $args;
-
         $name = $args->getArgument('name');
         $plugins = $this->_list($name);
 

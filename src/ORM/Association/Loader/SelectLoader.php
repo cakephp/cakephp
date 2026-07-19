@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
@@ -294,11 +296,24 @@ class SelectLoader
     protected function _addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
     {
         $filter = [];
+        $joinFields = [];
         $aliasedTable = $this->sourceAlias;
+        $keyCount = count((array)$key);
+
+        // When source and target use the same alias (self-referential associations
+        // like a tree structure), the subquery join alias would collide with the
+        // outer query's table alias, causing ambiguous column references.
+        // Use a suffixed alias to avoid the collision.
+        if ($aliasedTable === $this->targetAlias) {
+            $aliasedTable = $this->sourceAlias . '_subquery';
+        }
 
         foreach ($subquery->clause('select') as $aliasedField => $field) {
             if (is_int($aliasedField)) {
-                $filter[] = new IdentifierExpression($field);
+                $filter[] = $field;
+                if (count($joinFields) < $keyCount) {
+                    $joinFields[] = $this->_rewriteJoinIdentifier($field, $aliasedTable);
+                }
             } else {
                 $filter[$aliasedField] = $field;
             }
@@ -306,15 +321,42 @@ class SelectLoader
         $subquery->select($filter, true);
 
         if (is_array($key)) {
-            $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
+            $conditions = $this->_createTupleCondition($query, $key, $joinFields, '=');
         } else {
-            $filter = current($filter);
-            $conditions = $query->expr([$key => $filter]);
+            $conditions = $query->expr([$key => $joinFields[0]]);
         }
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
             $conditions,
+        );
+    }
+
+    /**
+     * Rewrites a subquery field reference for use in the outer join condition.
+     *
+     * The subquery body must continue to reference its own internal table alias,
+     * while the outer join condition must reference the alias assigned to the
+     * derived table itself.
+     *
+     * @param mixed $field The original selected field.
+     * @param string $aliasedTable The alias assigned to the joined subquery.
+     * @return mixed
+     */
+    protected function _rewriteJoinIdentifier(mixed $field, string $aliasedTable): mixed
+    {
+        if (!is_string($field)) {
+            return $field;
+        }
+
+        $identifier = preg_replace(
+            '/^' . preg_quote($this->sourceAlias, '/') . '\./',
+            $aliasedTable . '.' . $this->sourceAlias . '__',
+            $field,
+        );
+
+        return new IdentifierExpression(
+            $identifier ?? $field,
         );
     }
 
@@ -444,6 +486,10 @@ class SelectLoader
      * those columns are also included as the fields may be calculated or constant values,
      * that need to be present to ensure the correct association data is loaded.
      *
+     * When a HAVING clause is present the original SELECT aliases are preserved as
+     * well, since HAVING may reference computed aliases that would otherwise be
+     * dropped from the reduced subquery SELECT list.
+     *
      * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to get fields from.
      * @return array<string, array> The list of fields for the subquery.
      */
@@ -459,10 +505,11 @@ class SelectLoader
         $group = array_values($fields);
         $fields = $group;
 
-        /** @var \Cake\Database\Expression\QueryExpression $order */
+        $columns = $query->clause('select');
+
+        /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
         if ($order) {
-            $columns = $query->clause('select');
             // iterateParts() rebuilds the expression from the callback's return value, so each part
             // has to be handed back. Returning nothing would strip the ORDER BY from $query itself,
             // which is the caller's query, not a clone of it.
@@ -473,6 +520,41 @@ class SelectLoader
 
                 return $direction;
             });
+        }
+
+        $having = $query->clause('having');
+        if ($having instanceof QueryExpression && $having->count() > 0) {
+            $reserved = [];
+            foreach ($keys as $k) {
+                $reserved[strtolower(trim((string)$k, '`"[]'))] = true;
+            }
+
+            $havingSql = $having->sql(new ValueBinder());
+            foreach ($columns as $alias => $column) {
+                if (!is_string($alias) || isset($fields[$alias])) {
+                    continue;
+                }
+                $cleanAlias = trim($alias, '`"[]');
+                if (isset($reserved[strtolower($cleanAlias)])) {
+                    continue;
+                }
+                if (preg_match('/\b' . preg_quote($cleanAlias, '/') . '\b/', $havingSql) !== 1) {
+                    continue;
+                }
+                $fields[$alias] = $column;
+
+                $isAggregate = $column instanceof AggregateExpression;
+                if (!$isAggregate && $column instanceof ExpressionInterface) {
+                    $column->traverse(function ($sub) use (&$isAggregate): void {
+                        if ($sub instanceof AggregateExpression) {
+                            $isAggregate = true;
+                        }
+                    });
+                }
+                if (!$isAggregate) {
+                    $group[] = $column;
+                }
+            }
         }
 
         return ['select' => $fields, 'group' => $group];

@@ -27,8 +27,8 @@ use League\Container\Argument\ArgumentReflectorTrait;
 use League\Container\Argument\ArgumentResolverTrait;
 use League\Container\Argument\LiteralArgument;
 use League\Container\Argument\ResolvableArgument;
-use League\Container\Exception\NotFoundException;
 use League\Container\ReflectionContainer;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -40,15 +40,10 @@ use RuntimeException;
  *
  * Handles loading, constructing and binding events for component class objects.
  *
- * @template TSubject of \Cake\Controller\Controller
  * @extends \Cake\Core\ObjectRegistry<\Cake\Controller\Component>
- * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<TSubject>
-     */
     use EventDispatcherTrait;
 
     use ArgumentResolverTrait;
@@ -180,7 +175,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             try {
                 $this->container->extend($class);
                 $hasDefinition = true;
-            } catch (NotFoundException) {
+            } catch (NotFoundExceptionInterface) {
                 // No definition exists yet
             }
 

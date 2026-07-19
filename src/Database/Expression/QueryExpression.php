@@ -260,6 +260,36 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
+     * Adds a new condition to the expression object in the form "field IS DISTINCT FROM value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function isDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new DistinctComparisonExpression($field, $value, $type, 'IS DISTINCT FROM'));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field IS NOT DISTINCT FROM value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function isNotDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new DistinctComparisonExpression($field, $value, $type, 'IS NOT DISTINCT FROM'));
+    }
+
+    /**
      * Adds a new condition to the expression object in the form "field LIKE value".
      *
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
@@ -367,6 +397,28 @@ class QueryExpression implements ExpressionInterface, Countable
 
     /**
      * Adds a new condition to the expression object in the form
+     * "(field IN (value1, value2) OR field IS NULL".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param \Cake\Database\ExpressionInterface|array|string $values the value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function inOrNull(
+        ExpressionInterface|string $field,
+        ExpressionInterface|array|string $values,
+        ?string $type = null,
+    ) {
+        $or = new static([], $this->getTypeMap(), 'OR');
+        $or
+            ->in($field, $values, $type)
+            ->isNull($field);
+
+        return $this->add($or);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form
      * "(field NOT IN (value1, value2) OR field IS NULL".
      *
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
@@ -379,7 +431,7 @@ class QueryExpression implements ExpressionInterface, Countable
         ExpressionInterface|array|string $values,
         ?string $type = null,
     ) {
-        $or = new static([], [], 'OR');
+        $or = new static([], $this->getTypeMap(), 'OR');
         $or
             ->notIn($field, $values, $type)
             ->isNull($field);
@@ -424,6 +476,23 @@ class QueryExpression implements ExpressionInterface, Countable
         $type ??= $this->_calculateType($field);
 
         return $this->add(new BetweenExpression($field, $from, $to, $type));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form
+     * "field NOT BETWEEN from AND to".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values outside the range.
+     * @param mixed $from The initial value of the range.
+     * @param mixed $to The ending value in the comparison range.
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function notBetween(ExpressionInterface|string $field, mixed $from, mixed $to, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new BetweenExpression($field, $from, $to, $type, true));
     }
 
     /**
@@ -690,12 +759,18 @@ class QueryExpression implements ExpressionInterface, Countable
         // like `CONCAT(first_name, ' ', last_name) IN`.
         if ($spaces > 1) {
             $parts = explode(' ', $expression);
-            if (preg_match('/(is not|not \w+)$/i', $expression)) {
-                $last = array_pop($parts);
-                $second = array_pop($parts);
-                $parts[] = "{$second} {$last}";
+            if (preg_match('/is not distinct from$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -4));
+                $parts = array_slice($parts, 0, -4);
+            } elseif (preg_match('/is distinct from$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -3));
+                $parts = array_slice($parts, 0, -3);
+            } elseif (preg_match('/(is not|not \w+)$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -2));
+                $parts = array_slice($parts, 0, -2);
+            } else {
+                $operator = array_pop($parts);
             }
-            $operator = array_pop($parts);
             $expression = implode(' ', $parts);
         } elseif ($spaces === 1) {
             $parts = explode(' ', $expression, 2);
@@ -743,11 +818,18 @@ class QueryExpression implements ExpressionInterface, Countable
             $operator = '!=';
         }
 
-        if ($value === null && $this->_conjunction !== ',') {
+        if (in_array($operator, ['IS DISTINCT FROM', 'IS NOT DISTINCT FROM'], true)) {
+            return new DistinctComparisonExpression($expression, $value, $type, $operator);
+        }
+
+        if (
+            $value === null &&
+            $this->_conjunction !== ','
+        ) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Expression `%s` has invalid `null` value.'
-                    . ' If `null` is a valid value, operator (IS, IS NOT) is missing.',
+                    . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing.',
                     $expression,
                 ),
             );

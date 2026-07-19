@@ -397,7 +397,7 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/articles/add',
                 'accept-charset' => $encoding, 'enctype' => 'multipart/form-data',
             ],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/div',
         ];
@@ -568,6 +568,69 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that `{{inputId}}` template variable is available in inputContainer template.
+     */
+    public function testControlInputIdTemplateVar(): void
+    {
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="title"', $result);
+
+        // Test nested field name
+        $result = $this->Form->control('User.email', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-email"', $result);
+
+        // Test deeply nested field name
+        $result = $this->Form->control('User.address.city', [
+            'templates' => [
+                'inputContainer' => '<div class="input {{type}}" data-input-id="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('data-input-id="user-address-city"', $result);
+    }
+
+    /**
+     * Test that `{{inputId}}` template variable is available in error template.
+     */
+    public function testErrorInputIdTemplateVar(): void
+    {
+        $this->article['errors'] = [
+            'title' => ['error message'],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('title', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="title"', $result);
+        $this->assertStringContainsString('error message', $result);
+
+        // Test nested field name
+        $this->article['errors'] = [
+            'author' => [
+                'name' => ['Author name is required'],
+            ],
+        ];
+        $this->Form->create($this->article);
+
+        $result = $this->Form->control('author.name', [
+            'templates' => [
+                'error' => '<div class="error" aria-describedby="{{inputId}}">{{content}}</div>',
+            ],
+        ]);
+        $this->assertStringContainsString('aria-describedby="author-name"', $result);
+    }
+
+    /**
      * Test ensuring template variables work in template files loaded
      * during control().
      */
@@ -631,7 +694,7 @@ class FormHelperTest extends TestCase
         ];
 
         $extra = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => $override],
             '/div',
         ];
@@ -687,7 +750,7 @@ class FormHelperTest extends TestCase
                 'action' => '/articles/edit/1',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
         ];
@@ -724,7 +787,7 @@ class FormHelperTest extends TestCase
                 'action' => '/Articles/edit/1',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
         ];
@@ -739,7 +802,7 @@ class FormHelperTest extends TestCase
                 'action' => '/Articles/publish/1',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
         ];
@@ -748,7 +811,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->create($this->article, ['url' => '/Articles/publish']);
         $expected = [
             'form' => ['method' => 'post', 'action' => '/Articles/publish', 'accept-charset' => $encoding],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
         ];
@@ -762,7 +825,7 @@ class FormHelperTest extends TestCase
                 'method' => 'post', 'action' => '/Pages/signup/1',
                 'accept-charset' => $encoding,
             ],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PUT'],
             '/div',
         ];
@@ -997,7 +1060,7 @@ class FormHelperTest extends TestCase
         ]);
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/publish', 'accept-charset' => $encoding],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_csrfToken',
@@ -1082,7 +1145,7 @@ class FormHelperTest extends TestCase
             [],
         ]));
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1127,7 +1190,7 @@ class FormHelperTest extends TestCase
         $hash .= ':' . 'Model.valid';
         $hash = urlencode($hash);
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1324,7 +1387,7 @@ class FormHelperTest extends TestCase
         ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1385,7 +1448,7 @@ class FormHelperTest extends TestCase
         ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1524,7 +1587,7 @@ class FormHelperTest extends TestCase
             [],
         ]));
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1614,7 +1677,7 @@ class FormHelperTest extends TestCase
             ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1686,7 +1749,7 @@ class FormHelperTest extends TestCase
             ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1759,7 +1822,7 @@ class FormHelperTest extends TestCase
         ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1818,7 +1881,7 @@ class FormHelperTest extends TestCase
 
         $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1872,7 +1935,7 @@ class FormHelperTest extends TestCase
         $hash = 'f98315a7d5515e5ae32e35f7d680207c085fae69%3AAddresses.id';
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -1929,7 +1992,7 @@ class FormHelperTest extends TestCase
         $encoding = strtolower(Configure::read('App.encoding'));
         $expected = [
             'form' => ['method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_csrfToken',
@@ -2050,7 +2113,7 @@ class FormHelperTest extends TestCase
         ]));
 
         $expected = [
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => [
                 'type' => 'hidden',
                 'name' => '_Token[fields]',
@@ -3938,6 +4001,37 @@ class FormHelperTest extends TestCase
             ];
             $this->assertHtml($expected, $result);
         });
+    }
+
+    /**
+     * Test enumOptions() returns correct value => label mapping for backed enums.
+     */
+    public function testEnumOptions(): void
+    {
+        // Basic backed enum without EnumLabelInterface - labels from humanized case names
+        $result = $this->Form->enumOptions(ArticleStatus::class);
+        $expected = [
+            'Y' => 'Published',
+            'N' => 'Unpublished',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Enum implementing EnumLabelInterface - labels from label() method
+        $result = $this->Form->enumOptions(ArticleStatusLabelInterface::class);
+        $expected = [
+            'Y' => 'Is Published',
+            'N' => 'Is Unpublished',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Integer-backed enum implementing EnumLabelInterface
+        $result = $this->Form->enumOptions(Priority::class);
+        $expected = [
+            1 => 'Is Low',
+            2 => 'Is Medium',
+            3 => 'Is High',
+        ];
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -6995,7 +7089,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postButton('Hi', '/controller/action', ['method' => 'patch']);
         $expected = [
             'form' => ['method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'PATCH'],
             '/div',
             'button' => ['type' => 'submit'],
@@ -7064,13 +7158,13 @@ class FormHelperTest extends TestCase
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1', 'accept-charset' => 'utf-8',
             ],
-            ['div' => ['style' => 'display:none;']],
+            ['div' => ['hidden' => 'hidden']],
             ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey']],
             '/div',
             'button' => ['type' => 'submit'],
             'Delete',
             '/button',
-            ['div' => ['style' => 'display:none;']],
+            ['div' => ['hidden' => 'hidden']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
             ['input' => [
@@ -7093,7 +7187,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7127,7 +7221,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7149,7 +7243,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7171,7 +7265,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7194,7 +7288,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7219,7 +7313,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7254,7 +7348,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7284,7 +7378,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/Posts/delete/1?a=b&amp;c=d',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7342,11 +7436,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name', 'style' => 'display:none;',
+                'name', 'hidden' => 'hidden',
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
             ['input' => [
@@ -7410,11 +7504,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name', 'style' => 'display:none;',
+                'name', 'hidden' => 'hidden',
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => 'id', 'value' => '1']],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => $hash]],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
             '/div',
@@ -7469,11 +7563,11 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST']],
             ['input' => ['type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey']],
-            'div' => ['style' => 'display:none;'],
+            'div' => ['hidden' => 'hidden'],
             ['input' => ['type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/']],
             ['input' => ['type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '']],
             ['input' => [
@@ -7508,7 +7602,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7531,14 +7625,14 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
             [
                 'form' => [
                     'method' => 'post', 'action' => '/posts/delete/2',
-                    'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                    'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
                 ],
             ],
             ['input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'DELETE']],
@@ -7558,7 +7652,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7578,7 +7672,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/4',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
             '/form',
@@ -7597,7 +7691,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'],
             '/form',
@@ -7615,7 +7709,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'form' => [
                 'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
-                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+                'name' => 'preg:/post_\w+/', 'hidden' => 'hidden',
             ],
             'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'],
             '/form',

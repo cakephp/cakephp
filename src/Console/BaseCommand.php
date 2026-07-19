@@ -44,14 +44,9 @@ use Cake\Utility\Inflector;
  *   general logic that applies to command setup.
  * - `afterExecute(EventInterface $event)`
  *   Called immediately after the command's run method, unless an exception occurs.
- *
- * @implements \Cake\Event\EventDispatcherInterface<static>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<static>
-     */
     use EventDispatcherTrait;
 
     /**
@@ -60,6 +55,10 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @var string
      */
     protected string $name = 'cake unknown';
+
+    protected Arguments $args;
+
+    protected ConsoleIo $io;
 
     protected ?CommandFactoryInterface $factory = null;
 
@@ -170,8 +169,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Hook method invoked by CakePHP when a command is about to be executed.
      *
      * Override this method and implement expensive/important setup steps that
-     * should not run on every command run. This method will be called *before*
-     * the options and arguments are validated and processed.
+     * should not run on every command run. This method will be called *after*
+     * the options and arguments are validated and processed, so `$this->args`
+     * and `$this->io` are both available.
      *
      * @return void
      */
@@ -227,7 +227,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io): ?int
     {
-        $this->initialize();
+        $this->io = $io;
 
         $parser = $this->getOptionParser();
         try {
@@ -242,7 +242,10 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
             return static::CODE_ERROR;
         }
+        $this->args = $args;
+
         $this->setOutputLevel($args, $io);
+        $this->initialize();
 
         if ($args->getOption('help')) {
             $this->displayHelp($parser, $args, $io);

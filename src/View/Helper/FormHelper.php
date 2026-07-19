@@ -66,7 +66,7 @@ class FormHelper extends Helper
     /**
      * Other helpers used by FormHelper
      *
-     * @var array
+     * @var array<int|string, string|array<string, mixed>>
      */
     protected array $helpers = ['Url', 'Html'];
 
@@ -173,7 +173,9 @@ class FormHelper extends Helper
             'requiredClass' => 'required',
             // CSS class added to the input when the field has validation errors
             'errorClass' => 'form-error',
-            // Class to use instead of "display:none" style attribute for hidden elements
+            // CSS class for the hidden block / postLink form. When set,
+            // this class is emitted instead of the HTML5 `hidden` boolean
+            // attribute that is used by default.
             'hiddenClass' => '',
             // CSS class added to the input containers
             'containerClass' => 'input',
@@ -217,7 +219,7 @@ class FormHelper extends Helper
      *
      * @var string|null
      */
-    public ?string $requestType = null;
+    protected ?string $requestType = null;
 
     /**
      * Locator for input widgets.
@@ -665,6 +667,13 @@ class FormHelper extends Helper
     /**
      * Wrap the given content in a hidden div.
      *
+     * Defaults to the HTML5 `hidden` boolean attribute, which is functionally
+     * equivalent to `style="display:none;"` but does not require
+     * `style-src 'unsafe-inline'` under a strict Content-Security-Policy.
+     * Apps that need a custom mechanism (e.g. a Tailwind utility class) can
+     * set the `hiddenClass` template option, which takes precedence and
+     * emits `class="…"` instead.
+     *
      * @param string $content Content to wrap.
      * @return string
      */
@@ -673,7 +682,7 @@ class FormHelper extends Helper
         $hiddenClass = $this->templater()->get('hiddenClass');
         $hiddenBlockAttrs = $hiddenClass
             ? ['class' => $hiddenClass]
-            : ['style' => 'display:none;'];
+            : ['hidden' => true];
 
         return $this->formatTemplate('hiddenBlock', [
             'content' => $content,
@@ -816,6 +825,7 @@ class FormHelper extends Helper
         return $this->formatTemplate('error', [
             'content' => $error,
             'id' => $this->_domId($field) . '-error',
+            'inputId' => $this->_domId($field),
         ]);
     }
 
@@ -1188,6 +1198,7 @@ class FormHelper extends Helper
             'errorSuffix' => $errorSuffix,
             'label' => $label,
             'options' => $options,
+            'inputId' => $this->_domId($fieldName),
         ]);
 
         if ($newTemplates) {
@@ -1234,6 +1245,7 @@ class FormHelper extends Helper
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
             'error' => $options['error'],
+            'inputId' => $options['inputId'] ?? '',
             'label' => $options['label'] ?? '',
             'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
@@ -1393,7 +1405,7 @@ class FormHelper extends Helper
      * @param class-string<\BackedEnum> $enumClass Enum class name.
      * @return array<int|string, string>
      */
-    protected function enumOptions(string $enumClass): array
+    public function enumOptions(string $enumClass): array
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
@@ -1926,7 +1938,9 @@ class FormHelper extends Helper
         ];
         $hiddenClass = $this->templater()->get('hiddenClass');
         if ($hiddenClass === '' || $hiddenClass === null) {
-            $formOptions['style'] = 'display:none;';
+            // HTML5 `hidden` boolean attribute — functionally equivalent to
+            // `style="display:none;"` but strict-CSP compatible.
+            $formOptions['hidden'] = true;
         } else {
             $formOptions['class'] = $hiddenClass;
         }
@@ -2448,14 +2462,7 @@ class FormHelper extends Helper
         }
 
         if (!isset($options['name'])) {
-            $endsWithBrackets = '';
-            if (str_ends_with($field, '[]')) {
-                $field = substr($field, 0, -2);
-                $endsWithBrackets = '[]';
-            }
-            $parts = explode('.', $field);
-            $first = array_shift($parts);
-            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $this->_fieldName($field);
         }
 
         if (isset($options['value']) && !isset($options['val'])) {
@@ -2497,6 +2504,29 @@ class FormHelper extends Helper
         }
 
         return $options;
+    }
+
+    /**
+     * Generate the HTML name attribute value from a field name.
+     *
+     * Converts dot notation field names to bracket notation used in HTML forms.
+     * For example, "User.email" becomes "User[email]" and "User.address.city"
+     * becomes "User[address][city]".
+     *
+     * @param string $field Field name in dot notation.
+     * @return string HTML name attribute value.
+     */
+    protected function _fieldName(string $field): string
+    {
+        $endsWithBrackets = '';
+        if (str_ends_with($field, '[]')) {
+            $field = substr($field, 0, -2);
+            $endsWithBrackets = '[]';
+        }
+        $parts = explode('.', $field);
+        $first = array_shift($parts);
+
+        return $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
     }
 
     /**

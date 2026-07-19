@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\CallbackStream;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Link\Link;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
@@ -363,6 +364,149 @@ class ResponseEmitterTest extends TestCase
             'HTTP/1.1 201 Created',
             'Content-Range: bytes 1-4/9',
             'Content-Type: text/plain',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting Link headers from PSR-13 links.
+     */
+    public function testEmitResponseLinks(): void
+    {
+        $response = (new Response())
+            ->withHeader('Content-Type', 'text/html')
+            ->withLink(new Link('/api/users', 'self'))
+            ->withLink(new Link('/api/users?page=2', 'next'));
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html',
+            'Link: </api/users>; rel="self"',
+            'Link: </api/users?page=2>; rel="next"',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting Link headers with attributes.
+     */
+    public function testEmitResponseLinksWithAttributes(): void
+    {
+        $link = (new Link('/css/app.css'))
+            ->withRel('preload')
+            ->withAttribute('as', 'style')
+            ->withAttribute('crossorigin', 'anonymous');
+        $response = (new Response())
+            ->withLink($link);
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html; charset=UTF-8',
+            'Link: </css/app.css>; rel="preload"; as="style"; crossorigin="anonymous"',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting Link headers with boolean attributes.
+     */
+    public function testEmitResponseLinksWithBooleanAttributes(): void
+    {
+        $link = (new Link('/script.js'))
+            ->withRel('preload')
+            ->withAttribute('as', 'script')
+            ->withAttribute('nopush', true)
+            ->withAttribute('disabled', false);
+        $response = (new Response())
+            ->withLink($link);
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html; charset=UTF-8',
+            'Link: </script.js>; rel="preload"; as="script"; nopush',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting Link headers with array attributes.
+     */
+    public function testEmitResponseLinksWithArrayAttributes(): void
+    {
+        $link = (new Link('/api/resource'))
+            ->withRel('self')
+            ->withAttribute('hreflang', ['en', 'de']);
+        $response = (new Response())
+            ->withLink($link);
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html; charset=UTF-8',
+            'Link: </api/resource>; rel="self"; hreflang="en"; hreflang="de"',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test emitting Link headers escapes special characters.
+     */
+    public function testEmitResponseLinksEscapesValues(): void
+    {
+        $link = (new Link('/api/users'))
+            ->withRel('self')
+            ->withAttribute('title', 'A "quoted" value');
+        $response = (new Response())
+            ->withLink($link);
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html; charset=UTF-8',
+            'Link: </api/users>; rel="self"; title="A \"quoted\" value"',
+        ];
+        $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    /**
+     * Test no Link headers emitted when no links present.
+     */
+    public function testEmitResponseNoLinks(): void
+    {
+        $response = (new Response())
+            ->withHeader('Content-Type', 'text/html');
+        $response->getBody()->write('ok');
+
+        ob_start();
+        $this->emitter->emit($response);
+        ob_get_clean();
+
+        $expected = [
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/html',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
     }

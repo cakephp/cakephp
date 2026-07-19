@@ -23,6 +23,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
+use Cake\Database\Schema\Index;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\UniqueKey;
@@ -721,7 +722,7 @@ SQL;
             $this->markTestSkipped('PostGIS extension is not available');
         }
 
-        // GEOMETRY defaults to srid 0 while GEOGRAPHY defaults to srid 4326
+        // Unconstrained columns default to srid 0, typed columns default to 4326 for geography
         $sql = <<<SQL
             CREATE TABLE ref_table (
                 geometry_geometry GEOMETRY,
@@ -749,7 +750,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Geometry',
+                'srid' => 0,
             ],
             'geometry_point' => [
                 'type' => 'geometry',
@@ -758,7 +760,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Point',
+                'srid' => 0,
             ],
             'geometry_point_4236' => [
                 'type' => 'geometry',
@@ -767,7 +770,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
-                'srid' => null,
+                'geometryType' => 'Point',
+                'srid' => 4236,
             ],
             'geography_geometry' => [
                 'type' => 'geography',
@@ -776,6 +780,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Geometry',
+                'srid' => 0,
             ],
             'geography_point' => [
                 'type' => 'geography',
@@ -784,6 +790,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Point',
+                'srid' => 4326,
             ],
             'geography_point_0' => [
                 'type' => 'geography',
@@ -792,6 +800,8 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'geometryType' => 'Point',
+                'srid' => 4326,
             ],
         ];
 
@@ -1572,6 +1582,22 @@ SQL;
                 ['type' => 'index', 'columns' => ['author_id'], 'include' => ['title']],
                 'CREATE INDEX "author_idx" ON "schema_articles" ("author_id") INCLUDE ("title")',
             ],
+            // Access method tests
+            [
+                'title_gin_idx',
+                ['type' => 'index', 'columns' => ['title'], 'accessMethod' => 'gin'],
+                'CREATE INDEX "title_gin_idx" ON "schema_articles" USING gin ("title")',
+            ],
+            [
+                'title_gist_idx',
+                ['type' => 'index', 'columns' => ['title'], 'accessMethod' => 'gist'],
+                'CREATE INDEX "title_gist_idx" ON "schema_articles" USING gist ("title")',
+            ],
+            [
+                'title_hash_idx',
+                ['type' => 'index', 'columns' => ['title'], 'accessMethod' => 'hash'],
+                'CREATE INDEX "title_hash_idx" ON "schema_articles" USING hash ("title")',
+            ],
         ];
     }
 
@@ -1970,6 +1996,65 @@ SQL;
         $this->assertEquals(['id'], $indexes[0]['columns']);
         $this->assertEquals(['site_id'], $indexes[1]['columns']);
         $this->assertEquals(['name'], $indexes[1]['include']);
+    }
+
+    /**
+     * Test creating and describing indexes with non-btree access methods (GIN, GIST, HASH).
+     *
+     * This integration test verifies the full round-trip:
+     * 1. Generate SQL using indexSql() with accessMethod
+     * 2. Execute the SQL on the database
+     * 3. Describe the index and verify accessMethod is reflected
+     */
+    public function testIndexAccessMethodRoundTrip(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $connection->execute('DROP TABLE IF EXISTS schema_index_access_method');
+
+        // Create a table with JSONB column for GIN index testing
+        $sql = <<<SQL
+CREATE TABLE schema_index_access_method (
+    "id" INT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "data" JSONB,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+
+        // Create a TableSchema and add a GIN index
+        $table = (new TableSchema('schema_index_access_method'))
+            ->addColumn('id', ['type' => 'integer'])
+            ->addColumn('data', ['type' => 'json'])
+            ->addColumn('name', ['type' => 'string', 'length' => 255])
+            ->addIndex('data_gin_idx', [
+                'type' => 'index',
+                'columns' => ['data'],
+                'accessMethod' => Index::GIN,
+            ]);
+
+        // Generate and execute the index SQL
+        $dialect = new PostgresSchemaDialect($connection->getDriver());
+        $indexSql = $dialect->indexSql($table, 'data_gin_idx');
+        $connection->execute($indexSql);
+
+        // Describe the index and verify access method is reflected
+        $indexes = $dialect->describeIndexes('schema_index_access_method');
+        $connection->execute('DROP TABLE schema_index_access_method');
+
+        // Find the GIN index in results
+        $ginIndex = null;
+        foreach ($indexes as $index) {
+            if ($index['name'] === 'data_gin_idx') {
+                $ginIndex = $index;
+                break;
+            }
+        }
+
+        $this->assertNotNull($ginIndex, 'GIN index should be found');
+        $this->assertEquals(['data'], $ginIndex['columns']);
+        $this->assertEquals(Index::GIN, $ginIndex['accessMethod']);
     }
 
     public function testDescribeForeignKeySql(): void

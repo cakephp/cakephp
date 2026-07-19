@@ -20,8 +20,8 @@ namespace Cake\Http;
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
+use Cake\Core\ContainerFactory;
 use Cake\Core\ContainerInterface;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
@@ -32,6 +32,7 @@ use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerRegistrationTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
@@ -51,10 +52,6 @@ use Psr\Http\Message\ServerRequestInterface;
  * The application class is responsible for bootstrapping the application,
  * and ensuring that middleware is attached. It is also invoked as the last piece
  * of middleware, and delegates request/response handling to the correct controller.
- *
- * @template TSubject of \Cake\Http\BaseApplication
- * @implements \Cake\Event\EventDispatcherInterface<TSubject>
- * @implements \Cake\Core\PluginApplicationInterface<TSubject>
  */
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
@@ -65,10 +62,8 @@ abstract class BaseApplication implements
     PluginApplicationInterface,
     RoutingApplicationInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<TSubject>
-     */
     use EventDispatcherTrait;
+    use EventListenerRegistrationTrait;
 
     /**
      * @var string Contains the path of the config directory
@@ -190,6 +185,21 @@ abstract class BaseApplication implements
         if (is_array($plugins)) {
             $this->plugins->addFromConfig($plugins);
         }
+
+        $this->registerEvents();
+    }
+
+    /**
+     * Define global event listeners for the application.
+     *
+     * Listener classes are resolved through the application container and can
+     * declare constructor dependencies.
+     *
+     * @return list<class-string<\Cake\Event\EventListenerInterface>>
+     */
+    public function eventListeners(): array
+    {
+        return [];
     }
 
     /**
@@ -260,16 +270,27 @@ abstract class BaseApplication implements
     }
 
     /**
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
+     * @inheritDoc
      */
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
-        foreach ($this->plugins->with('events') as $plugin) {
-            $eventManager = $plugin->events($eventManager);
+        return $eventManager;
+    }
+
+    /**
+     * Register application events.
+     *
+     * @return void
+     */
+    protected function registerEvents(): void
+    {
+        $eventManager = $this->getEventManager();
+        $listeners = $this->eventListeners();
+        if ($listeners) {
+            $this->registerEventListeners($listeners, $eventManager, $this->getContainer());
         }
 
-        return $eventManager;
+        $this->events($eventManager);
     }
 
     /**
@@ -291,11 +312,15 @@ abstract class BaseApplication implements
      * Override this method if you need to use a custom container or
      * want to change how the container is built.
      *
+     * The container type is determined by `Configure::read('App.container')`:
+     * - 'cake': Uses the built-in CakePHP container
+     * - Any other value: Uses the League container (default)
+     *
      * @return \Cake\Core\ContainerInterface
      */
     protected function buildContainer(): ContainerInterface
     {
-        $container = new Container();
+        $container = ContainerFactory::create();
         $this->services($container);
         foreach ($this->plugins->with('services') as $plugin) {
             $plugin->services($container);
@@ -346,9 +371,6 @@ abstract class BaseApplication implements
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
-
-        $eventManager = $this->events($this->getEventManager());
-        $this->setEventManager($this->pluginEvents($eventManager));
 
         $this->controllerFactory ??= new ControllerFactory($container);
 

@@ -37,6 +37,7 @@
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
+        "psr/link": "^2.0",
         "psr/log": "^3.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
@@ -44,6 +45,7 @@
         "cakephp/cache": "self.version",
         "cakephp/collection": "self.version",
         "cakephp/console": "self.version",
+        "cakephp/container": "self.version",
         "cakephp/core": "self.version",
         "cakephp/database": "self.version",
         "cakephp/datasource": "self.version",
@@ -57,6 +59,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "boundwize/structarmed": "^0.14",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
@@ -75,6 +78,7 @@
         "psr/http-factory-implementation": "^1.0",
         "psr/http-server-handler-implementation": "^1.0",
         "psr/http-server-middleware-implementation": "^1.0",
+        "psr/link-implementation": "^2.0",
         "psr/log-implementation": "^3.0",
         "psr/simple-cache-implementation": "^3.0"
     },
@@ -115,7 +119,10 @@
             "Named\\": "tests/test_app/Plugin/Named/src/",
             "TestTheme\\": "tests/test_app/Plugin/TestTheme/src/",
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/"
-        }
+        },
+        "files": [
+            "tests/TestCase/Container/Asset/function.php"
+        ]
     },
     "scripts": {
         "check": [
@@ -126,8 +133,10 @@
         "cs-fix": "phpcbf",
         "stan": [
             "tools/phpstan analyse",
-            "tools/psalm"
+            "tools/psalm",
+            "@structarmed"
         ],
+        "structarmed": "vendor/bin/structarmed analyze src",
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",

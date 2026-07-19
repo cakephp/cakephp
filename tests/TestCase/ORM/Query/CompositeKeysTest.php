@@ -336,6 +336,177 @@ class CompositeKeysTest extends TestCase
     }
 
     /**
+     * Tests subquery eager loading with composite keys when the source query
+     * preserves an ORDER BY alias in the reduced subquery select list.
+     *
+     * The join tuple must only use the composite binding key fields, not the
+     * additional ORDER BY alias that is kept for deterministic limiting.
+     */
+    public function testHasManySubqueryCompositeKeysWithOrderAlias(): void
+    {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'SQL Server does not support ORDER BY on fields not included in GROUP BY',
+        );
+
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $table->hasMany('SiteArticles', [
+            'propertyName' => 'articles',
+            'strategy' => 'subquery',
+            'sort' => ['SiteArticles.id' => 'asc'],
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $query = $table->find();
+        $results = $query
+            ->select(['sort_key' => 'SiteAuthors.name'])
+            ->enableAutoFields()
+            ->contain('SiteArticles')
+            ->orderBy(['sort_key' => 'ASC'])
+            ->limit(2)
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertSame([4, 3], array_column($results, 'id'));
+        $this->assertSame([1, 2], array_column($results, 'site_id'));
+        $this->assertSame([], $results[0]['articles']);
+        $this->assertCount(1, $results[1]['articles']);
+        $this->assertSame(2, $results[1]['articles'][0]['id']);
+    }
+
+    /**
+     * Tests belongsToMany subquery eager loading with composite keys when the
+     * source query preserves an ORDER BY alias in the reduced subquery select list.
+     *
+     * The tuple join against the junction table must ignore preserved aliases and
+     * compare only the composite foreign key pair.
+     */
+    public function testBelongsToManySubqueryCompositeKeysWithOrderAlias(): void
+    {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'SQL Server does not support ORDER BY on fields not included in GROUP BY',
+        );
+
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $articles->belongsToMany('SiteTags', [
+            'strategy' => 'subquery',
+            'targetTable' => $tags,
+            'propertyName' => 'tags',
+            'through' => 'SiteArticlesTags',
+            'sort' => ['SiteTags.id' => 'asc'],
+            'foreignKey' => ['article_id', 'site_id'],
+            'targetForeignKey' => ['tag_id', 'site_id'],
+        ]);
+
+        $query = $articles->find();
+        $results = $query
+            ->select(['sort_key' => 'SiteArticles.title'])
+            ->enableAutoFields()
+            ->contain('SiteTags')
+            ->orderBy(['sort_key' => 'ASC'])
+            ->limit(2)
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertSame([1, 4], array_column($results, 'id'));
+        $this->assertSame([1, 1], array_column($results, 'site_id'));
+        $this->assertCount(2, $results[0]['tags']);
+        $this->assertCount(1, $results[1]['tags']);
+        $this->assertSame([1, 3], array_column($results[0]['tags'], 'id'));
+        $this->assertSame([1], array_column($results[1]['tags'], 'id'));
+    }
+
+    /**
+     * Tests subquery eager loading with composite keys when the source query
+     * preserves a HAVING-referenced alias in the reduced subquery select list.
+     *
+     * The tuple join must still compare only the composite binding keys.
+     */
+    public function testHasManySubqueryCompositeKeysWithHavingAlias(): void
+    {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
+        $table = $this->getTableLocator()->get('SiteAuthors');
+        $table->hasMany('SiteArticles', [
+            'propertyName' => 'articles',
+            'strategy' => 'subquery',
+            'sort' => ['SiteArticles.id' => 'asc'],
+            'foreignKey' => ['author_id', 'site_id'],
+        ]);
+
+        $query = $table->find();
+        $results = $query
+            ->select(['name_length' => $query->func()->length(['SiteAuthors.name' => 'identifier'])])
+            ->enableAutoFields()
+            ->contain('SiteArticles')
+            ->groupBy(['SiteAuthors.id', 'SiteAuthors.site_id'])
+            ->having(['name_length >' => 3], ['name_length' => 'integer'])
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertCount(4, $results);
+        $indexed = [];
+        foreach ($results as $row) {
+            $indexed[$row['id'] . ';' . $row['site_id']] = array_column($row['articles'], 'id');
+        }
+        $this->assertSame([1], $indexed['1;1']);
+        $this->assertSame([], $indexed['2;2']);
+        $this->assertSame([2], $indexed['3;2']);
+        $this->assertSame([], $indexed['4;1']);
+    }
+
+    /**
+     * Tests belongsToMany subquery eager loading with composite keys when the
+     * source query preserves a HAVING-referenced alias in the reduced subquery select list.
+     *
+     * The tuple join against the junction table must ignore preserved aliases.
+     */
+    public function testBelongsToManySubqueryCompositeKeysWithHavingAlias(): void
+    {
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
+        $articles = $this->getTableLocator()->get('SiteArticles');
+        $tags = $this->getTableLocator()->get('SiteTags');
+        $articles->belongsToMany('SiteTags', [
+            'strategy' => 'subquery',
+            'targetTable' => $tags,
+            'propertyName' => 'tags',
+            'through' => 'SiteArticlesTags',
+            'sort' => ['SiteTags.id' => 'asc'],
+            'foreignKey' => ['article_id', 'site_id'],
+            'targetForeignKey' => ['tag_id', 'site_id'],
+        ]);
+
+        $query = $articles->find();
+        $results = $query
+            ->select(['title_length' => $query->func()->length(['SiteArticles.title' => 'identifier'])])
+            ->enableAutoFields()
+            ->contain('SiteTags')
+            ->groupBy(['SiteArticles.id', 'SiteArticles.site_id'])
+            ->having(['title_length >' => 0], ['title_length' => 'integer'])
+            ->enableHydration(false)
+            ->toArray();
+
+        $this->assertCount(4, $results);
+        $indexed = [];
+        foreach ($results as $row) {
+            $indexed[$row['id'] . ';' . $row['site_id']] = array_column($row['tags'], 'id');
+        }
+        $this->assertSame([1, 3], $indexed['1;1']);
+        $this->assertSame([4], $indexed['2;2']);
+        $this->assertSame([], $indexed['3;2']);
+        $this->assertSame([1], $indexed['4;1']);
+    }
+
+    /**
      * Tests loading hasOne with composite keys
      */
     #[DataProvider('strategiesProviderHasOne')]

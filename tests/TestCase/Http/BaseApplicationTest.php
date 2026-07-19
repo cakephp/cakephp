@@ -23,10 +23,13 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
+use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
@@ -34,6 +37,10 @@ use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use TestApp\Event\DependencyInjectedEventListener;
+use TestApp\Event\GreeterService;
 use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
@@ -294,6 +301,69 @@ class BaseApplicationTest extends TestCase
         $this->assertTrue($container->has('testing'));
     }
 
+    public function testServerBuildMiddlewareEventIsCalledOnBootstrap(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $isCalled = false;
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                return $eventManager->on('Server.buildMiddleware', function (EventInterface $event): void {
+                    $this->isCalled = true;
+                });
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response(['status' => 200]);
+            }
+        };
+        $server = new Server($app);
+        $server->run(new ServerRequest());
+
+        $this->assertTrue($app->isCalled);
+    }
+
+    public function testMiddlewareEventIsCaughtByApplicationEventsListener(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $isCalled = false;
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue->add(function (
+                    ServerRequestInterface $request,
+                    RequestHandlerInterface $handler,
+                ): ResponseInterface {
+                    $this->getEventManager()->dispatch(new Event('Test.middlewareEvent'));
+
+                    return $handler->handle($request);
+                });
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                return $eventManager->on('Test.middlewareEvent', function (EventInterface $event): void {
+                    $this->isCalled = true;
+                });
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response(['status' => 200]);
+            }
+        };
+        $server = new Server($app);
+        $server->run(new ServerRequest());
+
+        $this->assertTrue($app->isCalled);
+    }
+
     public function testEventsAreRegistered(): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
@@ -305,6 +375,8 @@ class BaseApplicationTest extends TestCase
         ]);
 
         $app = $this->app;
+        $app->bootstrap();
+        $app->pluginBootstrap();
         $app->handle($request);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
@@ -339,5 +411,73 @@ class BaseApplicationTest extends TestCase
         $runner = new CommandRunner($app);
         $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testEventListenersWithDependencyInjection(): void
+    {
+        static::setAppNamespace();
+
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public function eventListeners(): array
+            {
+                return [DependencyInjectedEventListener::class];
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->addShared(GreeterService::class);
+                $container->addShared(DependencyInjectedEventListener::class)
+                    ->addArgument(GreeterService::class);
+            }
+        };
+
+        $app->bootstrap();
+        $app->getEventManager()->dispatch(new Event('Greeting.before', $app, ['name' => 'Jane']));
+
+        $listener = $app->getContainer()->get(DependencyInjectedEventListener::class);
+        $this->assertInstanceOf(DependencyInjectedEventListener::class, $listener);
+        $this->assertSame('Hello, Jane', $listener->lastGreeting);
+    }
+
+    public function testPluginEventsRegisteredForPluginsAddedAfterParentBootstrap(): void
+    {
+        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+            public bool $pluginEventFired = false;
+
+            public function bootstrap(): void
+            {
+                parent::bootstrap();
+
+                $this->addPlugin(new class ($this) extends BasePlugin {
+                    public function __construct(protected BaseApplication $app)
+                    {
+                        parent::__construct();
+                    }
+
+                    public function events(EventManagerInterface $eventManager): EventManagerInterface
+                    {
+                        return $eventManager->on('DynamicPlugin.event', function (): void {
+                            $this->app->pluginEventFired = true;
+                        });
+                    }
+                });
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        $app->bootstrap();
+        $app->pluginBootstrap();
+        $app->getEventManager()->dispatch('DynamicPlugin.event');
+
+        $this->assertTrue($app->pluginEventFired);
     }
 }

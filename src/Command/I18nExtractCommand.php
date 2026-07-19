@@ -16,16 +16,20 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Helper\ProgressHelper;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Database\Type\Attribute\Label;
 use Cake\Utility\Filesystem;
+use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
+use ReflectionClass;
+use Throwable;
 
 /**
  * Language string extractor
@@ -460,6 +464,8 @@ class I18nExtractCommand extends Command
                 }
             }
 
+            $this->extractFileReflection($file, $code);
+
             if (!$isVerbose) {
                 $progress->increment(1);
                 $progress->draw();
@@ -823,6 +829,116 @@ class I18nExtractCommand extends Command
     }
 
     /**
+     * Extract Label attribute strings from a PHP file using reflection.
+     *
+     * @param string $file Absolute path to the file being processed.
+     * @param string $code File contents.
+     * @return void
+     */
+    protected function extractFileReflection(string $file, string $code): void
+    {
+        $fqn = $this->parseClassName($code);
+        if ($fqn === null) {
+            return;
+        }
+
+        try {
+            // @phpstan-ignore argument.type
+            $reflection = new ReflectionClass($fqn);
+        } catch (Throwable $e) {
+            $this->io->warning(
+                sprintf('Could not reflect class/enum %s in file %s: %s', $fqn, $file, $e->getMessage()),
+            );
+
+            return;
+        }
+
+        if (!$reflection->isEnum()) {
+            return;
+        }
+
+        $relativeFile = '.' . str_replace(ROOT, '', $file);
+
+        foreach ($reflection->getReflectionConstants() as $constant) {
+            if (!$constant->isEnumCase()) {
+                continue;
+            }
+
+            $labelAttributes = $constant->getAttributes(Label::class);
+            if (!$labelAttributes) {
+                continue;
+            }
+
+            /** @var \Cake\Database\Type\Attribute\Label $label */
+            $label = $labelAttributes[0]->newInstance();
+            $details = [
+                'file' => $relativeFile,
+                'line' => 0,
+                'msgctxt' => $label->context,
+            ];
+
+            $this->_addTranslation($label->domain, $label->label, $details);
+        }
+    }
+
+    /**
+     * Parse the fully qualified class/enum name from PHP source code.
+     *
+     * Uses token_get_all() to read the namespace declaration and the first
+     * class or enum name without executing the file.
+     *
+     * @param string $code PHP source code.
+     * @return string|null Fully qualified name, or null if none found.
+     */
+    protected function parseClassName(string $code): ?string
+    {
+        $tokens = token_get_all($code);
+        $namespace = '';
+        $waitingForNamespace = false;
+        $waitingForName = false;
+
+        foreach ($tokens as $token) {
+            if (!is_array($token)) {
+                continue;
+            }
+
+            [$type, $value] = $token;
+
+            if ($type === T_WHITESPACE) {
+                continue;
+            }
+
+            if ($type === T_NAMESPACE) {
+                $waitingForNamespace = true;
+                continue;
+            }
+
+            if ($waitingForNamespace) {
+                if ($type === T_STRING || $type === T_NAME_QUALIFIED) {
+                    $namespace = $value;
+                }
+                $waitingForNamespace = false;
+                continue;
+            }
+
+            if ($type === T_ENUM || $type === T_CLASS) {
+                $waitingForName = true;
+                continue;
+            }
+
+            if ($waitingForName && $type === T_STRING) {
+                return $namespace !== '' ? $namespace . '\\' . $value : $value;
+            }
+
+            if ($waitingForName) {
+                $waitingForName = false;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Search files that may contain translatable strings
      *
      * @return void
@@ -847,15 +963,19 @@ class I18nExtractCommand extends Command
                 continue;
             }
             $path .= DIRECTORY_SEPARATOR;
-            $fs = new Filesystem();
-            $files = $fs->findRecursive($path, '/\.php$/');
-            $files = array_keys(iterator_to_array($files));
-            sort($files);
-            if ($pattern) {
-                $files = preg_grep($pattern, $files, PREG_GREP_INVERT) ?: [];
-                $files = array_values($files);
+            $files = (new Finder())
+                ->in($path)
+                ->name('*.php')
+                ->files();
+            foreach ($files as $file) {
+                $this->_files[] = $file->getPathname();
             }
-            $this->_files = array_merge($this->_files, $files);
+        }
+        $this->_files = array_unique($this->_files);
+        sort($this->_files);
+        if ($pattern) {
+            $this->_files = preg_grep($pattern, $this->_files, PREG_GREP_INVERT) ?: [];
+            $this->_files = array_values($this->_files);
         }
         $this->_files = array_unique($this->_files);
     }

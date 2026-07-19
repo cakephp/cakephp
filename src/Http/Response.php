@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Link\LinkProvider;
 use Cake\I18n\DateTime as CakeDateTime;
 use DateTime;
 use DateTimeInterface;
@@ -29,6 +30,8 @@ use Laminas\Diactoros\MessageTrait;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Link\EvolvableLinkProviderInterface;
+use Psr\Link\LinkInterface;
 use SplFileInfo;
 use Stringable;
 use function Cake\Core\env;
@@ -174,6 +177,13 @@ class Response implements ResponseInterface, Stringable
     protected CookieCollection $_cookies;
 
     /**
+     * Collection of hypermedia links (PSR-13).
+     *
+     * @var \Psr\Link\EvolvableLinkProviderInterface
+     */
+    protected EvolvableLinkProviderInterface $links;
+
+    /**
      * Reason Phrase
      *
      * @var string
@@ -231,6 +241,7 @@ class Response implements ResponseInterface, Stringable
         }
         $this->_setContentType($type);
         $this->_cookies = new CookieCollection();
+        $this->links = new LinkProvider();
     }
 
     /**
@@ -1086,6 +1097,71 @@ class Response implements ResponseInterface, Stringable
     }
 
     /**
+     * Create a new response with a hypermedia link added.
+     *
+     * ### Example
+     *
+     * ```
+     * use Cake\Http\Link\Link;
+     *
+     * $response = $response->withLink(new Link('/api/users', 'self'));
+     * $response = $response->withLink(
+     *     (new Link('/css/app.css'))
+     *         ->withRel('preload')
+     *         ->withAttribute('as', 'style')
+     * );
+     * ```
+     *
+     * @param \Psr\Link\LinkInterface $link The link to add.
+     * @return static
+     */
+    public function withLink(LinkInterface $link): static
+    {
+        $new = clone $this;
+        $new->links = $new->links->withLink($link);
+
+        return $new;
+    }
+
+    /**
+     * Create a new response without a specific hypermedia link.
+     *
+     * @param \Psr\Link\LinkInterface $link The link to remove.
+     * @return static
+     */
+    public function withoutLink(LinkInterface $link): static
+    {
+        $new = clone $this;
+        $new->links = $new->links->withoutLink($link);
+
+        return $new;
+    }
+
+    /**
+     * Get the link provider containing all hypermedia links.
+     *
+     * @return \Psr\Link\EvolvableLinkProviderInterface
+     */
+    public function getLinks(): EvolvableLinkProviderInterface
+    {
+        return $this->links;
+    }
+
+    /**
+     * Get a new instance with provided link provider.
+     *
+     * @param \Psr\Link\EvolvableLinkProviderInterface $links Link provider to set.
+     * @return static
+     */
+    public function withLinkProvider(EvolvableLinkProviderInterface $links): static
+    {
+        $new = clone $this;
+        $new->links = $links;
+
+        return $new;
+    }
+
+    /**
      * Get a CorsBuilder instance for defining CORS headers.
      *
      * @param \Cake\Http\ServerRequest $request Request object
@@ -1271,6 +1347,7 @@ class Response implements ResponseInterface, Stringable
             'file' => $this->_file,
             'fileRange' => $this->_fileRange,
             'cookies' => $this->_cookies,
+            'links' => $this->links,
             'cacheDirectives' => $this->_cacheDirectives,
             'body' => (string)$this->getBody(),
         ];

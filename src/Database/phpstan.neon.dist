@@ -8,9 +8,13 @@ parameters:
 	excludePaths:
 		- vendor/
 	ignoreErrors:
-		- '#Unsafe usage of new static\(\).#'
 		-
 			identifier: missingType.iterableValue
+		-
+			identifier: trait.unused
+
+		-	'#Unsafe usage of new static\(\).#'
+
 		-
 			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
 			identifier: catch.neverThrown

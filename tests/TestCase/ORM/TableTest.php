@@ -1875,7 +1875,10 @@ class TableTest extends TestCase
         $table = new ArticlesTable([
             'connection' => $this->connection,
         ]);
-        $result = $table->find('all')->contain(['Authors' => ['Articles']])->first();
+        // Use select strategy explicitly for nested contain on PostgreSQL compatibility
+        $result = $table->find('all')
+            ->contain(['Authors' => ['Articles' => ['strategy' => 'select']]])
+            ->first();
         $this->assertCount(2, $result->author->articles);
         foreach ($result->author->articles as $article) {
             $this->assertInstanceOf(Article::class, $article);
@@ -2476,6 +2479,94 @@ class TableTest extends TestCase
         $this->assertSame($data, $table->save($data));
         $this->assertFalse($called);
         $this->connection->commit();
+    }
+
+    public function testEntityFinalizedSynchronouslyInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'outertxnuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $this->assertFalse(
+                $entity->isNew(),
+                'Entity saved inside outer transaction must report isNew() === false immediately after save',
+            );
+            $this->assertFalse(
+                $entity->isDirty(),
+                'Entity saved inside outer transaction must be clean immediately after save',
+            );
+            $this->assertSame(
+                'users',
+                $entity->getSource(),
+                'Entity saved inside outer transaction must have source set immediately after save',
+            );
+        });
+    }
+
+    public function testDeleteWorksOnEntitySavedInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'deletetxnuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $result = $table->delete($entity);
+            $this->assertTrue(
+                $result,
+                'Table::delete() must not short-circuit on entity saved inside outer transaction',
+            );
+        });
+    }
+
+    public function testSaveThenUpdateInOuterTransaction(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->transactional(function () use ($table): void {
+            $entity = new Entity([
+                'username' => 'insertupdateuser',
+                'created' => new DateTime('2013-10-10 00:00'),
+                'updated' => new DateTime('2013-10-10 00:00'),
+            ]);
+            $table->saveOrFail($entity);
+
+            $entity->username = 'updateduser';
+            $table->saveOrFail($entity);
+
+            $row = $table->get($entity->id);
+            $this->assertSame('updateduser', $row->username);
+        });
+    }
+
+    public function testEntityFinalizedDespiteEventualRollback(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+
+        $this->connection->begin();
+
+        $entity = new Entity([
+            'username' => 'rollbackfinalizeuser',
+            'created' => new DateTime('2013-10-10 00:00'),
+            'updated' => new DateTime('2013-10-10 00:00'),
+        ]);
+        $table->saveOrFail($entity);
+
+        $this->assertFalse($entity->isNew(), 'Entity must be finalized even if outer transaction will roll back');
+        $this->assertFalse($entity->isDirty(), 'Entity must be clean even if outer transaction will roll back');
+        $this->assertSame('users', $entity->getSource());
+
+        $this->connection->rollback();
     }
 
     /**
@@ -6631,7 +6722,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that deleteOrFail returns the right entity
+     * Tests that the PersistenceFailedException raised by deleteOrFail carries the failing entity.
      */
     public function testDeleteOrFailGetEntity(): void
     {
@@ -6645,6 +6736,166 @@ class TableTest extends TestCase
         } catch (PersistenceFailedException $e) {
             $this->assertSame($entity, $e->getEntity());
         }
+    }
+
+    /**
+     * Tests that passing an entity from a different table to delete()
+     * throws when both tables declare a specific entity class.
+     */
+    public function testDeleteRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Entity of class `TestApp\Model\Entity\Tag` does not match the entity class '
+            . '`TestApp\Model\Entity\Article` configured for table `Articles`.',
+        );
+
+        $articles->delete($tag);
+    }
+
+    /**
+     * Tests that passing an entity from a different table to save()
+     * throws when both tables declare a specific entity class.
+     */
+    public function testSaveRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['name' => 'new']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->save($tag);
+    }
+
+    /**
+     * Tests that the generic Entity class is accepted as an escape hatch,
+     * allowing ad-hoc operations such as ``$table->delete(new Entity(['id' => 1]))``.
+     */
+    public function testDeleteAcceptsGenericEntity(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $entity = new Entity(['id' => 1]);
+        $entity->setNew(false);
+
+        $this->assertTrue($articles->delete($entity));
+    }
+
+    /**
+     * Tests that a table without a custom entity class accepts any entity
+     * subclass, as there is nothing specific to validate against.
+     */
+    public function testDeleteOnGenericTableAcceptsAnyEntity(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(Entity::class);
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
+     * Tests that the cross-table check also fires for deleteMany().
+     */
+    public function testDeleteManyRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = $articles->get(1);
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->deleteMany([$article, $tag]);
+    }
+
+    /**
+     * Tests that the cross-table check also fires for saveMany().
+     */
+    public function testSaveManyRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = new Article(['title' => 'a', 'body' => 'b']);
+        $tag = new Tag(['name' => 'new']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->saveMany([$article, $tag]);
+    }
+
+    /**
+     * Tests that patchEntity() rejects an entity from another table.
+     */
+    public function testPatchEntityRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1, 'name' => 'foo']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->patchEntity($tag, ['title' => 'updated']);
+    }
+
+    /**
+     * Tests that loadInto() rejects an entity from another table.
+     */
+    public function testLoadIntoRejectsEntityFromOtherTable(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->expectException(InvalidArgumentException::class);
+        $articles->loadInto($tag, ['Tags']);
+    }
+
+    /**
+     * Tests that an entity whose source matches the table's registry alias
+     * short-circuits the assertion: it is treated as unambiguously belonging
+     * to this table even if its concrete class would not pass the class check.
+     */
+    public function testAssertEntityClassAcceptsMatchingSource(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+        $tag->setSource('Articles');
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
+     * Tests that disableEntityClassAssertion() skips the class check, restoring
+     * pre-19428 behavior for tables that intentionally accept foreign entities.
+     */
+    public function testDisableEntityClassAssertionSkipsClassCheck(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->disableEntityClassAssertion();
+
+        $tag = new Tag(['id' => 1]);
+        $tag->setNew(false);
+
+        $this->assertTrue($articles->delete($tag));
+    }
+
+    /**
+     * Tests the enable/disable/isEnabled accessor trio for the entity-class
+     * assertion. Setters are chainable and reflect in isEntityClassAssertionEnabled().
+     */
+    public function testEntityClassAssertionAccessors(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $this->assertTrue($articles->isEntityClassAssertionEnabled(), 'Defaults to enabled');
+        $this->assertSame($articles, $articles->disableEntityClassAssertion());
+        $this->assertFalse($articles->isEntityClassAssertionEnabled());
+        $this->assertSame($articles, $articles->enableEntityClassAssertion());
+        $this->assertTrue($articles->isEntityClassAssertionEnabled());
+        $articles->enableEntityClassAssertion(false);
+        $this->assertFalse($articles->isEntityClassAssertionEnabled(), 'enableEntityClassAssertion(false) disables');
     }
 
     /**

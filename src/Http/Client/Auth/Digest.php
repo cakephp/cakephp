@@ -20,6 +20,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\HeaderUtility;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Digest authentication adapter for Cake\Http\Client
@@ -123,7 +124,7 @@ class Digest
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function authentication(Request $request, array $credentials): Request
+    public function authentication(Request $request, #[SensitiveParameter] array $credentials): Request
     {
         if (!isset($credentials['username'], $credentials['password'])) {
             return $request;
@@ -189,7 +190,7 @@ class Digest
      * @param array<string, mixed> $credentials Authentication credentials.
      * @return string
      */
-    protected function _generateHeader(Request $request, array $credentials): string
+    protected function _generateHeader(Request $request, #[SensitiveParameter] array $credentials): string
     {
         $path = $request->getRequestTarget();
 

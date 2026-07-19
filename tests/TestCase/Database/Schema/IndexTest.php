@@ -96,6 +96,35 @@ class IndexTest extends TestCase
         $this->assertSame('status = 1 AND type = "active"', $index->getWhere());
     }
 
+    public function testSetAccessMethod(): void
+    {
+        $index = new Index('title_idx', ['title']);
+        $this->assertNull($index->getAccessMethod());
+
+        $index->setAccessMethod(Index::GIN);
+        $this->assertSame(Index::GIN, $index->getAccessMethod());
+
+        $index->setAccessMethod(Index::GIST);
+        $this->assertSame(Index::GIST, $index->getAccessMethod());
+
+        $index->setAccessMethod(null);
+        $this->assertNull($index->getAccessMethod());
+    }
+
+    public function testToArray(): void
+    {
+        $index = new Index('title_idx', ['title']);
+        $result = $index->toArray();
+
+        $this->assertSame('title_idx', $result['name']);
+        $this->assertSame(['title'], $result['columns']);
+        $this->assertArrayNotHasKey('accessMethod', $result);
+
+        $index->setAccessMethod(Index::GIN);
+        $result = $index->toArray();
+        $this->assertSame(Index::GIN, $result['accessMethod']);
+    }
+
     public function testSetAttributes(): void
     {
         $index = new Index('title_idx', ['title']);

@@ -140,6 +140,7 @@ class Mailer implements EventListenerInterface
      * Mailer's name.
      *
      * @var string
+     * @deprecated 5.4.0 This property is unused.
      */
     public static string $name;
 

@@ -47,6 +47,7 @@ use ReflectionException;
 use ReflectionMethod;
 use function Cake\Core\namespaceSplit;
 use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * Application controller class for organization of business logic.
@@ -92,13 +93,9 @@ use function Cake\Core\pluginSplit;
  * @property \Cake\Controller\Component\FormProtectionComponent $FormProtection
  * @property \Cake\Controller\Component\CheckHttpCacheComponent $CheckHttpCache
  * @link https://book.cakephp.org/5/en/controllers.html
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Controller\Controller>
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Controller\Controller>
-     */
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -161,7 +158,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instance of ComponentRegistry used to create Components
      *
-     * @var \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null
+     * @var \Cake\Controller\ComponentRegistry|null
      */
     protected ?ComponentRegistry $_components = null;
 
@@ -196,7 +193,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   but expect that features that use the request parameters will not work.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null $components ComponentRegistry to use. Defaults to a new instance.
+     * @param \Cake\Controller\ComponentRegistry|null $components ComponentRegistry to use. Defaults to a new instance.
      */
     public function __construct(
         ServerRequest $request,
@@ -254,7 +251,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the component registry for this controller.
      *
-     * @return \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>
+     * @return \Cake\Controller\ComponentRegistry
      */
     public function components(): ComponentRegistry
     {
@@ -281,6 +278,28 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
+        [, $alias] = pluginSplit($name);
+
+        if ($this->defaultTable) {
+            if (str_contains($this->defaultTable, '\\')) {
+                $tableAlias = App::shortName($this->defaultTable, 'Model/Table', 'Table');
+            } else {
+                [, $tableAlias] = pluginSplit($this->defaultTable, true);
+            }
+
+            if ($alias === $tableAlias) {
+                triggerWarning(sprintf(
+                    'Component alias `%s` clashes with the default table name `%s`. ' .
+                    'The table name will take precedence when accessing `$this->%s`. ' .
+                    'Consider using a different component alias or set `Controller::$defaultTable` to ' .
+                    "an empty string if the controller doesn't use a table.",
+                    $alias,
+                    $this->defaultTable,
+                    $alias,
+                ));
+            }
+        }
+
         return $this->components()->load($name, $config);
     }
 
@@ -788,6 +807,19 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $contentType = new ContentTypeNegotiation();
         $preferredType = $contentType->preferredType($request, array_keys($typeMap));
         if ($preferredType) {
+            // If the matched type is not in the client's top-priority Accept group
+            // but HTML is, the client actually prefers an HTML response. Return null
+            // so the default HTML view is used instead of a lower-priority match
+            // (e.g. application/xml at q=0.9 when text/html at q=1.0 was skipped).
+            $parsed = $contentType->parseAccept($request);
+            $topGroup = reset($parsed) ?: [];
+            if (
+                !in_array($preferredType, $topGroup, true) &&
+                array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
+            ) {
+                return null;
+            }
+
             return $typeMap[$preferredType];
         }
 

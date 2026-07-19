@@ -26,6 +26,7 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Cake\ORM\Association;
@@ -52,6 +53,7 @@ class HasManyTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
+        'core.Categories',
         'core.Comments',
         'core.Articles',
         'core.Tags',
@@ -233,13 +235,14 @@ class HasManyTest extends TestCase
     public function testRequiresKeys(): void
     {
         $assoc = new HasMany('Test');
-        $this->assertTrue($assoc->requiresKeys());
-
-        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
+        // Default strategy is now subquery, which doesn't require keys
         $this->assertFalse($assoc->requiresKeys());
 
         $assoc->setStrategy(HasMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+
+        $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
+        $this->assertFalse($assoc->requiresKeys());
     }
 
     /**
@@ -334,7 +337,7 @@ class HasManyTest extends TestCase
             'sort' => ['id' => 'ASC'],
             'strategy' => 'select',
         ];
-        $this->article->hasMany('Comments');
+        $this->article->hasMany('Comments', ['strategy' => 'select']);
 
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
@@ -574,6 +577,8 @@ class HasManyTest extends TestCase
     public function testEagerloaderNoForeignKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
+        // Use select strategy explicitly to test that it throws when foreign key is missing
+        $authors->Articles->setStrategy(Association::STRATEGY_SELECT);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key in `Authors`');
@@ -826,6 +831,207 @@ class HasManyTest extends TestCase
 
         $this->assertCount(0, $result[0]->articles);
         $this->assertCount(1, $result[1]->articles);
+    }
+
+    /**
+     * Subquery strategy when a HAVING-referenced select alias would collide
+     * with the binding key column name. The collision must be avoided to
+     * prevent "Duplicate column name" errors in the generated subquery.
+     */
+    public function testSubqueryWithHavingAliasCollidingWithBindingKey(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        // Alias 'id' collides with the binding key column name. The collision
+        // guard must skip preserving the alias in the generated subquery to
+        // avoid producing a duplicate 'id' column.
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'Authors.id',
+                'id' => $query->func()->concat(['x'], ['string']),
+                'cnt' => $query->func()->count($query->identifier('Authors.id')),
+            ])
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['cnt >=' => 1], ['cnt' => 'integer'])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Subquery strategy when the same alias is referenced by both ORDER BY
+     * and HAVING. The HAVING branch must not re-add an alias already
+     * preserved by the ORDER BY branch.
+     */
+    public function testSubqueryWithHavingAndOrderOnSameAlias(): void
+    {
+        $this->skipIf(
+            ConnectionManager::get('test')->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'name_length' => $query->func()->length(['Authors.name' => 'identifier']),
+            ])
+            ->enableAutoFields()
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['name_length >' => 4], ['name_length' => 'integer'])
+            ->orderBy(['name_length' => 'DESC'])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Subquery strategy + HAVING on an aggregate alias.
+     * The aggregate must be preserved in SELECT but skipped in GROUP BY.
+     */
+    public function testSubqueryWithHavingOnAggregateAlias(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'Authors.id',
+                'Authors.name',
+                'article_count' => $query->func()->count($query->identifier('Articles.id')),
+            ])
+            ->leftJoinWith('Articles')
+            ->contain('Articles')
+            ->groupBy(['Authors.id', 'Authors.name'])
+            ->having(['article_count >' => 0], ['article_count' => 'integer'])
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
+     * Tests subquery strategy when the parent query uses HAVING on a SELECT alias.
+     *
+     * The alias must be preserved in the generated subquery SELECT, otherwise the
+     * HAVING clause references a column that no longer exists.
+     */
+    public function testSubqueryWithHavingOnSelectAlias(): void
+    {
+        $this->skipIf(
+            ConnectionManager::get('test')->getDriver() instanceof Sqlserver,
+            'Sql Server does not provide a portable LENGTH() function',
+        );
+
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'name_length' => $query->func()->length(['Authors.name' => 'identifier']),
+            ])
+            ->enableAutoFields()
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(['name_length >' => 5], ['name_length' => 'integer'])
+            ->toArray();
+
+        $names = array_map(fn(EntityInterface $author): string => $author->name, $result);
+        sort($names);
+        $this->assertSame(['garrett', 'mariano'], $names);
+    }
+
+    /**
+     * Subquery strategy with a self-referential HasMany association.
+     *
+     * When source and target alias are the same (e.g. a tree structure
+     * with parent_id), the subquery join alias must not collide with
+     * the outer query's table alias, which would cause
+     * "Column 'X.id' in SELECT is ambiguous" errors.
+     */
+    public function testSubqueryWithSelfReferentialAssociation(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $Categories->ChildCategories->hasMany('ChildCategories', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('ChildCategories.ChildCategories')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->child_categories);
+        }
+
+        $nestedPropertyLoaded = false;
+        foreach ($result as $category) {
+            foreach ($category->child_categories as $childCategory) {
+                if (isset($childCategory->child_categories)) {
+                    $this->assertIsArray($childCategory->child_categories);
+                    $nestedPropertyLoaded = true;
+                }
+                if (!empty($childCategory->child_categories)) {
+                    $nestedPropertyLoaded = true;
+                }
+            }
+        }
+
+        $this->assertTrue($nestedPropertyLoaded);
+    }
+
+    /**
+     * Subquery strategy with a self-referential HasMany association whose source
+     * alias already ends in `_subquery`.
+     *
+     * The generated alias for the derived table must not collide with the outer
+     * table alias or SQLite will see ambiguous references.
+     */
+    public function testSubqueryWithSelfReferentialAssociationAliasAlreadyUsingSubquerySuffix(): void
+    {
+        $Categories = $this->getTableLocator()->get('Categories');
+        $Categories->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $Categories->Categories_subquery->hasMany('Categories_subquery', [
+            'className' => 'Categories',
+            'foreignKey' => 'parent_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $result = $Categories->find()
+            ->where(['Categories.parent_id' => 0])
+            ->contain('Categories_subquery.Categories_subquery')
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+        foreach ($result as $category) {
+            $this->assertIsArray($category->categories_subquery);
+            foreach ($category->categories_subquery as $childCategory) {
+                $this->assertTrue(isset($childCategory->categories_subquery));
+                $this->assertIsArray($childCategory->categories_subquery);
+            }
+        }
     }
 
     /**

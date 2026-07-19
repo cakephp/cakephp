@@ -1225,6 +1225,79 @@ trait CollectionTrait
     }
 
     /**
+     * Returns a new collection containing only the keys of the elements.
+     *
+     * @return \Cake\Collection\CollectionInterface<int, TValue>
+     */
+    public function keys(): CollectionInterface
+    {
+        $generator = function (): Generator {
+            foreach ($this->optimizeUnwrap() as $key => $value) {
+                yield $key;
+            }
+        };
+
+        return $this->newCollection($generator());
+    }
+
+    /**
+     * Returns a new collection containing only the values, re-indexed with consecutive integers.
+     *
+     * @return \Cake\Collection\CollectionInterface<int, TValue>
+     */
+    public function values(): CollectionInterface
+    {
+        $generator = function (): Generator {
+            foreach ($this->optimizeUnwrap() as $value) {
+                yield $value;
+            }
+        };
+
+        return $this->newCollection($generator());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function implode(string $glue, callable|string|null $path = null): string
+    {
+        $items = $this;
+        if ($path !== null) {
+            $items = $items->extract($path);
+        }
+
+        return implode($glue, $items->toList());
+    }
+
+    /**
+     * Applies callback if condition is truthy.
+     *
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     */
+    public function when(mixed $condition, callable $callback): CollectionInterface
+    {
+        if ($condition) {
+            return $callback($this, $condition);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Applies callback if condition is falsy.
+     *
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     */
+    public function unless(mixed $condition, callable $callback): CollectionInterface
+    {
+        if (!$condition) {
+            return $callback($this, $condition);
+        }
+
+        return $this;
+    }
+
+    /**
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
      *

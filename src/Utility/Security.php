@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Crypto\OpenSsl;
 use InvalidArgumentException;
+use SensitiveParameter;
 
 /**
  * Security Library contains utility methods related to security
@@ -60,7 +62,7 @@ class Security
      * @throws \InvalidArgumentException
      * @link https://book.cakephp.org/5/en/core-libraries/security.html#hashing-data
      */
-    public static function hash(string $string, ?string $algorithm = null, string|bool $salt = false): string
+    public static function hash(string $string, ?string $algorithm = null, #[SensitiveParameter] string|bool $salt = false): string
     {
         if (!$algorithm) {
             $algorithm = static::$hashType;
@@ -196,17 +198,18 @@ class Security
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt(string $plain, string $key, ?string $hmacSalt = null): string
+    public static function encrypt(string $plain, #[SensitiveParameter] string $key, #[SensitiveParameter] ?string $hmacSalt = null): string
     {
         self::_checkKey($key, 'encrypt()');
 
         $hmacSalt ??= static::getSalt();
+
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        [$encryptionKey, $hmacKey] = static::makeEncryptionKeys($key, $hmacSalt);
 
         $crypto = static::engine();
-        $ciphertext = $crypto->encrypt($plain, $key);
-        $hmac = hash_hmac('sha256', $ciphertext, $key);
+        $ciphertext = $crypto->encrypt($plain, $encryptionKey);
+        $hmac = hash_hmac('sha256', $ciphertext, $hmacKey);
 
         return $hmac . $ciphertext;
     }
@@ -219,13 +222,42 @@ class Security
      * @return void
      * @throws \InvalidArgumentException When key length is not 256 bit/32 bytes
      */
-    protected static function _checkKey(string $key, string $method): void
+    protected static function _checkKey(#[SensitiveParameter] string $key, string $method): void
     {
         if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
                 sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method),
             );
         }
+    }
+
+    /**
+     * Generate a key pair of encryption and authentication tokens.
+     *
+     * Encapsulates the two key generation implementations we support.
+     * The previous implementation has a keyspace reduction weakness.
+     *
+     * It is recommended to enable `Security.encryptWithRawKey` in new applications,
+     * to take advantage of longer keys that are longer and have derived encryption
+     * and authentication keys.
+     *
+     * @param string $key The bare key to use.
+     * @param string $hmacSalt The hmac salt to use.
+     * @return array{string, string} A list of $encryption, $authentication keys intended for encrypt() and decrypt().
+     */
+    protected static function makeEncryptionKeys(#[SensitiveParameter] string $key, #[SensitiveParameter] string $hmacSalt): array
+    {
+        if (Configure::read('Security.encryptWithRawKey') === true) {
+            $encryption = hash_hkdf('sha256', $key, 32, 'encryption', $hmacSalt);
+            $authentication = hash_hkdf('sha256', $key, 32, 'authentication', $hmacSalt);
+
+            return [$encryption, $authentication];
+        }
+
+        $hashKey = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+
+        // The old implementation both keys were the same.
+        return [$hashKey, $hashKey];
     }
 
     /**
@@ -238,7 +270,7 @@ class Security
      * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function decrypt(string $cipher, string $key, ?string $hmacSalt = null): ?string
+    public static function decrypt(string $cipher, #[SensitiveParameter] string $key, #[SensitiveParameter] ?string $hmacSalt = null): ?string
     {
         self::_checkKey($key, 'decrypt()');
         if (!$cipher) {
@@ -247,21 +279,21 @@ class Security
         $hmacSalt ??= static::getSalt();
 
         // Generate the encryption and hmac key.
-        $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
+        [$encryptionKey, $hmacKey] = static::makeEncryptionKeys($key, $hmacSalt);
 
         // Split out hmac for comparison
         $macSize = 64;
         $hmac = mb_substr($cipher, 0, $macSize, '8bit');
         $cipher = mb_substr($cipher, $macSize, null, '8bit');
 
-        $compareHmac = hash_hmac('sha256', $cipher, $key);
+        $compareHmac = hash_hmac('sha256', $cipher, $hmacKey);
         if (!static::constantEquals($hmac, $compareHmac)) {
             return null;
         }
 
         $crypto = static::engine();
 
-        return $crypto->decrypt($cipher, $key);
+        return $crypto->decrypt($cipher, $encryptionKey);
     }
 
     /**
@@ -301,7 +333,7 @@ class Security
      * @param string $salt The salt to use for encryption routines.
      * @return void
      */
-    public static function setSalt(string $salt): void
+    public static function setSalt(#[SensitiveParameter] string $salt): void
     {
         static::$_salt = $salt;
     }

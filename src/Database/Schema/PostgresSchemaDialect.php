@@ -112,6 +112,27 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Describes PostGIS specific column information.
+     *
+     * @return array<string, array{name: string, type: string, srid: int}> The column information.
+     */
+    private function describePostgisColumns(string $postgisType, string $table, string $schema, string $catalog): array
+    {
+        $sql = <<<SQL
+            SELECT
+                f_{$postgisType}_column AS name,
+                type,
+                srid
+            FROM public.{$postgisType}_columns
+            WHERE f_table_name = ? AND f_table_schema = ? AND f_table_catalog = ?
+            SQL;
+
+        $columns = $this->_driver->execute($sql, [$table, $schema, $catalog])->fetchAll('assoc');
+
+        return array_combine(array_column($columns, 'name'), $columns);
+    }
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
@@ -279,9 +300,18 @@ class PostgresSchemaDialect extends SchemaDialect
         [$schema, $name] = $this->splitTablename($tableName);
 
         $sql = $this->describeColumnQuery();
-        $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
+        $rows = $this->_driver->execute($sql, [$name, $schema, $config['database']])->fetchAll('assoc');
+
+        $postgisColumns = [];
+        $udtTypes = array_column($rows, 'udt_name');
+        foreach (['geometry', 'geography'] as $postgisType) {
+            if (in_array($postgisType, $udtTypes)) {
+                $postgisColumns += $this->describePostgisColumns($postgisType, $name, $schema, $config['database']);
+            }
+        }
+
         $columns = [];
-        foreach ($statement->fetchAll('assoc') as $row) {
+        foreach ($rows as $row) {
             $type = $row['type'];
             if ($type === 'USER-DEFINED') {
                 $type = $row['udt_name'];
@@ -324,6 +354,12 @@ class PostgresSchemaDialect extends SchemaDialect
             }
             if (isset($row['identity_generation']) && $row['identity_generation']) {
                 $field['generated'] = $row['identity_generation'];
+            }
+
+            // Add PostGIS metadata for geometry/geography columns
+            if (isset($postgisColumns[$row['name']])) {
+                $field['geometryType'] = ucfirst(strtolower($postgisColumns[$row['name']]['type']));
+                $field['srid'] = $postgisColumns[$row['name']]['srid'];
             }
 
             $columns[] = $field;
@@ -375,12 +411,14 @@ class PostgresSchemaDialect extends SchemaDialect
         a.attname,
         i.indisprimary,
         i.indisunique,
-        i.indnkeyatts
+        i.indnkeyatts,
+        am.amname
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
         INNER JOIN pg_catalog.pg_class c2 ON (c2.oid = i.indexrelid)
         INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = c.oid AND i.indrelid::regclass = a.attrelid::regclass)
+        INNER JOIN pg_catalog.pg_am am ON (c2.relam = am.oid)
         WHERE n.nspname = ?
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
@@ -423,6 +461,11 @@ class PostgresSchemaDialect extends SchemaDialect
                 'type' => $type,
                 'columns' => [],
             ];
+            // Include access method for non-btree indexes
+            $accessMethod = $row['amname'] ?? 'btree';
+            if ($accessMethod !== 'btree') {
+                $index['accessMethod'] = $accessMethod;
+            }
         }
         $index['columns'][] = $row['attname'];
         $schema->addIndex($name, $index);
@@ -458,6 +501,11 @@ class PostgresSchemaDialect extends SchemaDialect
                     'columns' => [],
                     'length' => [],
                 ];
+                // Include access method for non-btree indexes
+                $accessMethod = $row['amname'] ?? 'btree';
+                if ($accessMethod !== 'btree') {
+                    $indexes[$name]['accessMethod'] = $accessMethod;
+                }
             }
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
@@ -917,6 +965,14 @@ class PostgresSchemaDialect extends SchemaDialect
             $this->_driver->quoteIdentifier(...),
             (array)$index->getColumns(),
         );
+
+        // Build USING clause for non-btree access methods (gin, gist, spgist, brin, hash)
+        $using = '';
+        $accessMethod = $index->getAccessMethod();
+        if ($accessMethod !== null) {
+            $using = ' USING ' . $accessMethod;
+        }
+
         $include = '';
         $includes = $index->getInclude();
         if ($includes) {
@@ -928,9 +984,10 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)%s',
+            'CREATE INDEX %s ON %s%s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
+            $using,
             implode(', ', $columns),
             $include,
         );

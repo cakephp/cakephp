@@ -71,16 +71,12 @@ use function Cake\Core\pluginSplit;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
- * @implements \Cake\Event\EventDispatcherInterface<static>
  */
 class View implements EventDispatcherInterface
 {
     use CellTrait {
         cell as public;
     }
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<static>
-     */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
     use LogTrait;

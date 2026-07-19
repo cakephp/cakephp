@@ -59,7 +59,17 @@ enum DriverFeatureEnum: string
     case INTERSECT_ALL = 'intersect-all';
 
     /**
-     * Support for order by in set operations (union, intersect)
+     * Except feature support
+     */
+    case EXCEPT = 'except';
+
+    /**
+     * Except all feature support
+     */
+    case EXCEPT_ALL = 'except-all';
+
+    /**
+     * Support for order by in set operations (union, intersect, except)
      */
     case SET_OPERATIONS_ORDER_BY = 'set-operations-order-by';
 
@@ -72,4 +82,14 @@ enum DriverFeatureEnum: string
      * Support for CHECK constraints.
      */
     case CHECK_CONSTRAINTS = 'check-constraints';
+
+    /**
+     * String aggregation via STRING_AGG support.
+     */
+    case STRING_AGG = 'string-agg';
+
+    /**
+     * String aggregation via GROUP_CONCAT support.
+     */
+    case GROUP_CONCAT = 'group-concat';
 }

@@ -53,7 +53,7 @@ trait CellTrait
      * @param array $data Additional arguments for cell method. e.g.:
      *    `cell('TagCloud::smallList', ['a1' => 'v1', 'a2' => 'v2'])` maps to `View\Cell\TagCloud::smallList(v1, v2)`
      * @param array<string, mixed> $options Options for Cell's constructor
-     * @return \Cake\View\Cell<\Cake\View\View> The cell instance
+     * @return \Cake\View\Cell The cell instance
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
      */
     protected function cell(string $cell, array $data = [], array $options = []): Cell
@@ -85,7 +85,7 @@ trait CellTrait
      * @param string $action The action name.
      * @param string|null $plugin The plugin name.
      * @param array<string, mixed> $options The constructor options for the cell.
-     * @return \Cake\View\Cell<\Cake\View\View>
+     * @return \Cake\View\Cell
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
@@ -93,7 +93,7 @@ trait CellTrait
             $options['plugin'] = $plugin;
         }
 
-        /** @var \Cake\View\Cell<\Cake\View\View> $instance */
+        /** @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
 
         $builder = $instance->viewBuilder();

@@ -21,27 +21,24 @@ use Cake\Console\Command\HelpCommand;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
+use Cake\Core\ConsoleHelpHeaderProviderInterface;
 use Cake\Core\ContainerApplicationInterface;
-use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\Utility\Inflector;
+use Throwable;
 
 /**
  * Run CLI commands for the provided application.
- *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Core\ConsoleApplicationInterface>
  */
 class CommandRunner implements EventDispatcherInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Core\ConsoleApplicationInterface>
-     */
     use EventDispatcherTrait;
 
     /**
@@ -138,13 +135,6 @@ class CommandRunner implements EventDispatcherInterface
 
         $this->bootstrap();
 
-        if ($this->app instanceof EventAwareApplicationInterface) {
-            $eventManager = $this->getEventManager();
-            $eventManager = $this->app->events($eventManager);
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $this->setEventManager($eventManager);
-        }
-
         $commands = new CommandCollection([
             'help' => HelpCommand::class,
         ]);
@@ -190,6 +180,28 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         $command = $this->getCommand($io, $commands, $name);
+
+        // If the matched command also has sibling subcommands (e.g. `i18n` exists alongside
+        // `i18n init` / `i18n extract`), an unknown next token is almost always a typo for a
+        // subcommand. Reject it instead of letting it fall through as a positional argument.
+        //
+        // Commands that declare their own positional arguments are exempt: there the next token
+        // is a legitimate argument (e.g. `bake template Articles` alongside `bake template all`),
+        // not a mistyped subcommand, and only the command's own parser can tell the two apart.
+        if (
+            isset($argv[0])
+            && !str_starts_with($argv[0], '-')
+            && $this->hasCommandsWithPrefix($commands, $name)
+            && $this->isArgumentlessCommand($command)
+        ) {
+            $candidate = $name . ' ' . $argv[0];
+            if (!$commands->has($candidate)) {
+                $io->error($this->unknownSubcommandMessage($commands, $name, $argv[0]));
+
+                return CommandInterface::CODE_ERROR;
+            }
+        }
+
         $result = $this->runCommand($command, $argv, $io);
 
         if ($result === null) {
@@ -206,7 +218,7 @@ class CommandRunner implements EventDispatcherInterface
      * Application bootstrap wrapper.
      *
      * Calls the application's `bootstrap()` hook. After the application the
-     * plugins are bootstrapped.
+     * plugins are bootstrapped and events are registered.
      *
      * @return void
      */
@@ -260,6 +272,10 @@ class CommandRunner implements EventDispatcherInterface
         $instance = $commands->get($name);
         if (is_string($instance)) {
             $instance = $this->createCommand($instance);
+        }
+
+        if ($instance instanceof HelpCommand && $this->app instanceof ConsoleHelpHeaderProviderInterface) {
+            $instance->setHeaderLine($this->app->getConsoleHelpHeader());
         }
 
         $instance->setName("{$this->root} {$name}");
@@ -320,7 +336,6 @@ class CommandRunner implements EventDispatcherInterface
     protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
     {
         if (!$name) {
-            $io->error('No command provided. Choose one of the available commands.', 2);
             $name = 'help';
         }
         $name = $this->aliases[$name] ?? $name;
@@ -358,6 +373,64 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
+     * Check whether a command is known to accept no positional arguments.
+     *
+     * Only returns true when the command's option parser can be inspected and declares zero
+     * arguments. When the parser cannot be determined, it errs on the side of caution and
+     * returns false, so a potentially valid command is run rather than rejected by the
+     * sibling-subcommand check as a mistyped subcommand.
+     *
+     * @param \Cake\Console\CommandInterface $command The resolved command instance to inspect.
+     * @return bool
+     */
+    protected function isArgumentlessCommand(CommandInterface $command): bool
+    {
+        if (!$command instanceof BaseCommand) {
+            return false;
+        }
+
+        try {
+            $parser = $command->getOptionParser();
+        } catch (Throwable) {
+            return false;
+        }
+
+        return $parser->arguments() === [];
+    }
+
+    /**
+     * Build the error message shown when a token following a command name doesn't
+     * match any known subcommand of that command.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection.
+     * @param string $name The matched command name (e.g. "i18n").
+     * @param string $token The unknown next token (e.g. "nonsense").
+     * @return string
+     */
+    protected function unknownSubcommandMessage(
+        CommandCollection $commands,
+        string $name,
+        string $token,
+    ): string {
+        $prefix = $name . ' ';
+        $available = [];
+        foreach ($commands->keys() as $key) {
+            if (str_starts_with($key, $prefix)) {
+                $available[] = $key;
+            }
+        }
+        sort($available);
+
+        $message = "Unknown command `{$this->root} {$name} {$token}`.";
+        if ($available !== []) {
+            $message .= "\nAvailable subcommands: `" . implode('`, `', $available) . '`.';
+        }
+        $message .= "\nRun `{$this->root} {$name} --help` to see usage.";
+
+        return $message;
+    }
+
+    /**
      * Execute a Command class.
      *
      * @param \Cake\Console\CommandInterface $command The command to run.
@@ -368,6 +441,9 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
+            if ($command instanceof EventListenerInterface) {
+                $this->getEventManager()->on($command);
+            }
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }

@@ -19,6 +19,7 @@ parameters:
 		- identifier: method.internalClass
 		- identifier: new.internalClass
 		- identifier: trait.unused
+		- identifier: method.templateTypeNotInParameter
 		-
 			identifier: generics.interfaceConflict
 			paths:

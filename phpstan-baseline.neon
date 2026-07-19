@@ -51,7 +51,7 @@ parameters:
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
-			count: 8
+			count: 9
 			path: src/Database/Expression/QueryExpression.php
 
 		-

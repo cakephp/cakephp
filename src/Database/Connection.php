@@ -33,6 +33,8 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Log\Log;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
@@ -41,9 +43,17 @@ use function Cake\Core\env;
 
 /**
  * Represents a connection with a database server.
+ *
+ * ### Events
+ *
+ * - `Connection.afterCommit` Fired after the outermost transaction commits.
+ *   Listeners receive the connection as the event subject. Not fired on
+ *   rollback or for nested commits.
  */
-class Connection implements ConnectionInterface
+class Connection implements ConnectionInterface, EventDispatcherInterface
 {
+    use EventDispatcherTrait;
+
     /**
      * Contains the configuration params for this connection.
      *
@@ -105,6 +115,13 @@ class Connection implements ConnectionInterface
      */
     protected ?NestedTransactionRollbackException $nestedTransactionRollbackException = null;
 
+    /**
+     * Callbacks to execute after the outermost transaction commits.
+     *
+     * @var array<\Closure>
+     */
+    protected array $afterCommitCallbacks = [];
+
     protected QueryFactory $queryFactory;
 
     /**
@@ -133,7 +150,7 @@ class Connection implements ConnectionInterface
      * Creates read and write drivers.
      *
      * @param array<string, mixed> $config Connection config
-     * @return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
+     * @return array{self::ROLE_READ: \Cake\Database\Driver, self::ROLE_WRITE: \Cake\Database\Driver}
      */
     protected function createDrivers(array $config): array
     {
@@ -471,6 +488,26 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Register a callback to run after the outermost transaction commits.
+     *
+     * If no transaction is active, the callback executes immediately.
+     * Callbacks are discarded on rollback.
+     *
+     * @param \Closure $callback Callback to execute after commit.
+     * @return void
+     */
+    public function afterCommit(Closure $callback): void
+    {
+        if (!$this->_transactionStarted) {
+            $callback();
+
+            return;
+        }
+
+        $this->afterCommitCallbacks[] = $callback;
+    }
+
+    /**
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
@@ -493,7 +530,17 @@ class Connection implements ConnectionInterface
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
 
-            return $this->getWriteDriver()->commitTransaction();
+            $result = $this->getWriteDriver()->commitTransaction();
+
+            $callbacks = $this->afterCommitCallbacks;
+            $this->afterCommitCallbacks = [];
+            foreach ($callbacks as $cb) {
+                $cb();
+            }
+
+            $this->dispatchEvent('Connection.afterCommit');
+
+            return $result;
         }
         if ($this->isSavePointsEnabled()) {
             $this->releaseSavePoint((string)$this->_transactionLevel);
@@ -523,6 +570,7 @@ class Connection implements ConnectionInterface
             $this->_transactionLevel = 0;
             $this->_transactionStarted = false;
             $this->nestedTransactionRollbackException = null;
+            $this->afterCommitCallbacks = [];
             $this->getWriteDriver()->rollbackTransaction();
 
             return true;

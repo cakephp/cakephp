@@ -47,6 +47,7 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\InsertQuery;
 use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
@@ -157,13 +158,9 @@ use function Cake\Core\namespaceSplit;
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
  * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table<TBehaviors, TEntity>>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
-    /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\ORM\Table<TBehaviors, TEntity>>
-     */
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -266,6 +263,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @var class-string<TEntity>|null
      */
     protected ?string $_entityClass = null;
+
+    /**
+     * Whether to assert that entities passed to save/delete/patch/loadInto
+     * match the table's configured entity class. Disable per table via
+     * {@see Table::disableEntityClassAssertion()} when foreign entities are
+     * passed intentionally.
+     *
+     * @var bool
+     */
+    protected bool $assertEntityClass = true;
 
     /**
      * Registry key used to create this table object
@@ -744,6 +751,82 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->_entityClass = $class;
 
         return $this;
+    }
+
+    /**
+     * Enables the assertion that entities passed to save/delete/patch/loadInto
+     * match the table's configured entity class.
+     *
+     * @param bool $enable Whether to enable. Defaults to true.
+     * @return $this
+     */
+    public function enableEntityClassAssertion(bool $enable = true)
+    {
+        $this->assertEntityClass = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Disables the entity-class assertion for this table. Use when foreign
+     * entities are passed intentionally (e.g. polymorphic patterns).
+     *
+     * @return $this
+     */
+    public function disableEntityClassAssertion()
+    {
+        $this->assertEntityClass = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the entity-class assertion is enabled for this table.
+     *
+     * @return bool
+     */
+    public function isEntityClassAssertionEnabled(): bool
+    {
+        return $this->assertEntityClass;
+    }
+
+    /**
+     * Asserts that the given entity belongs to this table instance.
+     *
+     * The entity must either be an instance of the table's configured entity
+     * class, or an instance of the generic ``\Cake\ORM\Entity`` class. The
+     * generic class is allowed as an escape hatch for ad-hoc usage such as
+     * ``$table->delete(new Entity(['id' => 1]))``.
+     *
+     * Catches mistakes like ``$this->Invoices->delete($orderEntity)`` where
+     * an entity from a different table is passed.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity to validate.
+     * @return void
+     * @throws \InvalidArgumentException When the entity does not match the
+     *   configured entity class.
+     */
+    protected function assertEntityClass(EntityInterface $entity): void
+    {
+        if (!$this->assertEntityClass) {
+            return;
+        }
+
+        if ($entity->getSource() === $this->getRegistryAlias()) {
+            return;
+        }
+
+        $entityClass = $this->getEntityClass();
+        if ($entity instanceof $entityClass || $entity::class === Entity::class) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'Entity of class `%s` does not match the entity class `%s` configured for table `%s`.',
+            $entity::class,
+            $entityClass,
+            $this->getRegistryAlias(),
+        ));
     }
 
     /**
@@ -1280,6 +1363,50 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Type-safe non-hydrated read. Equivalent in behavior to
+     * `find($type, ...)->disableHydration()` but the type system knows the
+     * results are arrays rather than entities.
+     *
+     * Construction methods (where/join/order/contain/finders) behave the same
+     * as on a regular {@see SelectQuery}; only the result-fetch methods
+     * (first/firstOrFail/all/toArray/iteration) differ in shape.
+     *
+     * ```
+     * $rows = $articlesTable->unhydratedFind()->where(['published' => true])->all();
+     * // $rows: iterable<array<string, mixed>>
+     * ```
+     *
+     * Only finders that mutate and return the query they were given are
+     * supported here (the overwhelming majority). A finder that discards the
+     * passed query and returns a freshly built one (e.g. by delegating to
+     * `find()`) cannot preserve the non-hydrating contract and triggers an
+     * exception rather than a silent hydrated result.
+     *
+     * @param string $type The type of finder to call.
+     * @param mixed ...$args Arguments matching the finder's parameters.
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
+     * @throws \Cake\Core\Exception\CakeException When the finder does not return the passed query.
+     * @since 5.4.0
+     */
+    public function unhydratedFind(string $type = 'all', mixed ...$args): UnhydratedSelectQuery
+    {
+        $query = $this->unhydratedSelectQuery();
+        $result = $this->callFinder($type, $query, ...$args);
+
+        if (!$result instanceof UnhydratedSelectQuery) {
+            throw new CakeException(sprintf(
+                'The `%s` finder must return the query it was given when called via unhydratedFind(); '
+                . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
+                . 'non-hydrating contract — use find() for those.',
+                $type,
+                get_debug_type($result),
+            ));
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns the query as passed.
      *
      * By default findAll() applies no query clauses, you can override this
@@ -1756,6 +1883,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Creates a new non-hydrating select query.
+     *
+     * @return \Cake\ORM\Query\UnhydratedSelectQuery
+     * @since 5.4.0
+     */
+    public function unhydratedSelectQuery(): UnhydratedSelectQuery
+    {
+        return $this->queryFactory->unhydratedSelect($this);
+    }
+
+    /**
      * Creates a new insert query
      *
      * @return \Cake\ORM\Query\InsertQuery
@@ -2025,6 +2163,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
     {
+        $this->assertEntityClass($entity);
+
         $primaryColumns = (array)$this->getPrimaryKey();
 
         if ($options['checkExisting'] && $primaryColumns && $entity->isNew() && $entity->has($primaryColumns)) {
@@ -2583,6 +2723,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processDelete(EntityInterface $entity, ArrayObject $options): bool
     {
+        $this->assertEntityClass($entity);
+
         if ($entity->isNew()) {
             return false;
         }
@@ -3083,6 +3225,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
+        $this->assertEntityClass($entity);
+
         $options['associated'] ??= $this->_associations->keys();
 
         return $this->marshaller()->merge($entity, $data, $options);
@@ -3122,6 +3266,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
+        foreach ($entities as $entity) {
+            $this->assertEntityClass($entity);
+        }
+
         $options['associated'] ??= $this->_associations->keys();
 
         return $this->marshaller()->mergeMany($entities, $data, $options);
@@ -3287,6 +3435,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
+        if ($entities instanceof EntityInterface) {
+            $this->assertEntityClass($entities);
+        } else {
+            foreach ($entities as $entity) {
+                $this->assertEntityClass($entity);
+            }
+        }
+
         /** @var TEntity|array<TEntity> $result */
         $result = (new LazyEagerLoader())->loadInto($entities, $contain, $this);
 

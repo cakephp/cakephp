@@ -143,6 +143,33 @@ class FormProtectionComponent extends Component
     }
 
     /**
+     * Unlock actions from validation.
+     *
+     * @param string|array<string> $actions Action or list of actions to unlock.
+     * @param bool $merge Whether to merge with existing unlocked actions or replace them.
+     * @return $this
+     */
+    public function unlockActions(string|array $actions, bool $merge = true)
+    {
+        return $this->setConfig('unlockedActions', (array)$actions, $merge);
+    }
+
+    /**
+     * Unlock fields from validation.
+     *
+     * Dot notation can be used to unlock nested fields. For example, `user.name`
+     * will unlock the `name` field in the `user` array.
+     *
+     * @param string|array<string> $fields Field or list of fields to unlock.
+     * @param bool $merge Whether to merge with existing unlocked fields or replace them.
+     * @return $this
+     */
+    public function unlockFields(string|array $fields, bool $merge = true)
+    {
+        return $this->setConfig('unlockedFields', (array)$fields, $merge);
+    }
+
+    /**
      * Throws a 400 - Bad request exception or calls custom callback.
      *
      * If `validationFailureCallback` config is specified, it will use this

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
@@ -104,6 +105,33 @@ class SecurityTest extends TestCase
         $this->assertNotEquals($txt, $result, 'Should be encrypted.');
         $this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
         $this->assertSame($txt, Security::decrypt($result, $key));
+    }
+
+    /**
+     * Test encrypt/decrypt with raw key feature.
+     *
+     * Raw keys give results that are more quantum resistant.
+     */
+    public function testEncryptDecryptRawKey(): void
+    {
+        Configure::write('Security.encryptWithRawKey', true);
+
+        $txt = 'The quick brown fox';
+        $key = 'This key is longer than 32 bytes long.';
+        $result = Security::encrypt($txt, $key);
+        $this->assertNotEquals($txt, $result, 'Should be encrypted.');
+        $this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
+        $this->assertSame($txt, Security::decrypt($result, $key));
+
+        Configure::write('Security.encryptWithRawKey', false);
+
+        $oldKeyResult = Security::encrypt($txt, $key);
+        $this->assertNotEquals($txt, $oldKeyResult, 'Should be encrypted.');
+        $this->assertSame($txt, Security::decrypt($oldKeyResult, $key));
+        $this->assertNull(
+            Security::decrypt($result, $key),
+            'value encrypted with new key cannot be decrypted with old',
+        );
     }
 
     /**

@@ -108,4 +108,82 @@ class FilesystemTest extends TestCase
         $this->assertTrue($this->fs->deleteDir($path));
         $this->assertFalse(file_exists($link));
     }
+
+    public function testFindRecursive(): void
+    {
+        $structure = [
+            'file1.php' => 'content',
+            'file2.txt' => 'content',
+            '.hidden' => [
+                'secret.php' => 'should not see this',
+            ],
+            'subdir' => [
+                'file3.php' => 'content',
+            ],
+        ];
+        vfsStream::create($structure);
+
+        $iterator = $this->fs->findRecursive($this->vfsPath);
+
+        $files = [];
+        foreach ($iterator as $file) {
+            $files[] = $file->getFilename();
+        }
+
+        $this->assertContains('file1.php', $files);
+        $this->assertContains('file2.txt', $files);
+        $this->assertContains('file3.php', $files);
+        // Hidden directories should be skipped
+        $this->assertNotContains('.hidden', $files);
+        $this->assertNotContains('secret.php', $files);
+    }
+
+    public function testFind(): void
+    {
+        $structure = [
+            'file1.php' => 'content',
+            'file2.txt' => 'content',
+            'subdir' => [
+                'file3.php' => 'should not see this (non-recursive)',
+            ],
+        ];
+        vfsStream::create($structure);
+
+        $iterator = $this->fs->find($this->vfsPath);
+
+        $files = [];
+        foreach ($iterator as $file) {
+            $files[] = $file->getFilename();
+        }
+
+        // Should only see top-level files, not subdirectories' contents
+        $this->assertContains('file1.php', $files);
+        $this->assertContains('file2.txt', $files);
+        $this->assertContains('subdir', $files);
+        $this->assertNotContains('file3.php', $files);
+    }
+
+    public function testFindWithCustomFilter(): void
+    {
+        $structure = [
+            'file1.php' => 'content',
+            'file2.txt' => 'content',
+            'file3.php' => 'content',
+            'subdir' => [],
+        ];
+        vfsStream::create($structure);
+
+        $filter = fn($file) => $file->isFile() && $file->getExtension() === 'php';
+        $iterator = $this->fs->find($this->vfsPath, $filter);
+
+        $files = [];
+        foreach ($iterator as $file) {
+            $files[] = $file->getFilename();
+        }
+
+        $this->assertContains('file1.php', $files);
+        $this->assertContains('file3.php', $files);
+        $this->assertNotContains('file2.txt', $files);
+        $this->assertNotContains('subdir', $files);
+    }
 }

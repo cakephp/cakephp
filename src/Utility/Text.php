@@ -1189,4 +1189,190 @@ class Text
 
         return (string)preg_replace(array_keys($map), $map, $string);
     }
+
+    /**
+     * Masks a portion of a string with a repeated character.
+     * Replaces characters from $offset to $offset + $length with $maskCharacter.
+     *
+     * If $length is null, it will mask until the end of the string.
+     *
+     * Negative $offset value will count from the end of the string. If the computed $offset is still less than 0, it is clamped to 0.
+     * An $offset at or beyond the string length returns the original string unchanged.
+     *
+     * @param string $string The input string.
+     * @param int $offset Start position of the mask. Negative values count from the end.
+     * @param int|null $length Number of characters to mask. Null masks from $offset to end of string.
+     * @param string $maskCharacter The single Unicode code point character to use as the mask. Defaults to '*'.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
+     * @return string
+     */
+    public static function mask(string $string, int $offset = 0, ?int $length = null, string $maskCharacter = '*'): string
+    {
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        if ($string === '') {
+            return $string;
+        }
+
+        $stringLength = mb_strlen($string);
+
+        if ($offset < 0) {
+            $offset = max(0, $stringLength + $offset);
+        }
+
+        if ($offset >= $stringLength) {
+            return $string;
+        }
+
+        if ($length !== null && $length <= 0) {
+            return $string;
+        }
+
+        $length = $length === null
+            ? $stringLength - $offset
+            : min($length, $stringLength - $offset);
+
+        $start = mb_substr($string, 0, $offset);
+        $mask = str_repeat($maskCharacter, $length);
+        $end = mb_substr($string, $offset + $length);
+
+        return $start . $mask . $end;
+    }
+
+    /**
+     * Masks all occurrences of given substring(s) within a string using a repeated character.
+     *
+     * Each occurrence of the provided substring(s) will be replaced by a sequence
+     * of the masking character.
+     *
+     * @param string $string The input string.
+     * @param string[] $needles List of substrings to search for match (case-sensitive) and mask.
+     * @param string $maskCharacter Single masking character.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
+     * @return string
+     */
+    public static function maskValue(string $string, array $needles, string $maskCharacter = '*'): string
+    {
+        if ($string === '' || $needles === []) {
+            return $string;
+        }
+
+        $needles = array_unique(array_filter($needles, fn($n) => $n !== ''));
+
+        if ($needles === []) {
+            return $string;
+        }
+
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        $escapedForRegex = array_map(function (string $needle) {
+            return preg_quote($needle, '/');
+        }, $needles);
+
+        $regexPattern = '/' . implode('|', $escapedForRegex) . '/u';
+
+        return (string)preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
+            return str_repeat($maskCharacter, mb_strlen($matches[0]));
+        }, $string);
+    }
+
+    /**
+     * Masks all occurrences of given regex pattern(s) within a string using a repeated character.
+     *
+     * Each occurrence of the provided pattern(s) will be replaced by a sequence of the masking character.
+     *
+     * @param string $string The input string.
+     * @param string[]|string $patterns One or more regex patterns.
+     * @param string $maskCharacter Single masking character.
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
+     * @return string
+     */
+    public static function maskRegex(string $string, array|string $patterns, string $maskCharacter = '*'): string
+    {
+        if (!is_array($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        $patterns = array_unique(array_filter($patterns, fn(string $n) => $n !== ''));
+
+        if ($string === '' || $patterns === []) {
+            return $string;
+        }
+
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        foreach ($patterns as $regex) {
+            $string = (string)preg_replace_callback($regex, function ($matches) use ($maskCharacter) {
+                return str_repeat($maskCharacter, mb_strlen($matches[0]));
+            }, $string);
+        }
+
+        return $string;
+    }
+
+    /**
+     * Masks occurrences of given regex pattern(s) within a string, optionally preserving leading/trailing characters of
+     * each match.
+     *
+     * Each occurrence of the provided pattern(s) will have its interior replaced by a sequence of the masking
+     * character, while the first $showLeading and last $showTrailing characters of the match are left unchanged. If
+     * $showLeading + $showTrailing >= match length, the match is returned as-is.
+     *
+     * Examples:
+     * - maskPartialRegex('Card used: 4242424242424242', '/\d{16}/', 0, 4) => Card used: ************4242
+     * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C*******d
+     *
+     * @param string $string The input string.
+     * @param string[]|string $patterns One or more regex patterns.
+     * @param int $showLeading Number of leading characters of each match to leave unmasked.
+     * @param int $showTrailing Number of trailing characters of each match to leave unmasked.
+     * @param string $maskCharacter Single masking character.
+     * @return string
+     * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character, or if $showLeading/$showTrailing are negative.
+     */
+    public static function maskPartialRegex(string $string, array|string $patterns, int $showLeading = 0, int $showTrailing = 0, string $maskCharacter = '*'): string
+    {
+        if (!is_array($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        $patterns = array_unique(array_filter($patterns, fn(string $n) => $n !== ''));
+
+        if ($string === '' || $patterns === []) {
+            return $string;
+        }
+
+        if (mb_strlen($maskCharacter) !== 1) {
+            throw new InvalidArgumentException('Mask character must be a single character.');
+        }
+
+        if ($showLeading < 0 || $showTrailing < 0) {
+            throw new InvalidArgumentException('Leading and trailing character counts must be non-negative.');
+        }
+
+        foreach ($patterns as $regex) {
+            $string = (string)preg_replace_callback($regex, function ($matches) use ($maskCharacter, $showLeading, $showTrailing) {
+                $match = $matches[0];
+                $matchLen = mb_strlen($match);
+                $middleLen = $matchLen - $showLeading - $showTrailing;
+
+                if ($middleLen <= 0) {
+                    return $match;
+                }
+
+                $leading = $showLeading > 0 ? mb_substr($match, 0, $showLeading) : '';
+                $trailing = $showTrailing > 0 ? mb_substr($match, -$showTrailing) : '';
+
+                return $leading . str_repeat($maskCharacter, $middleLen) . $trailing;
+            }, $string);
+        }
+
+        return $string;
+    }
 }

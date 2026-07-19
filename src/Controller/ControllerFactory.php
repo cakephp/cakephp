@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
@@ -31,6 +32,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
+use ReflectionParameter;
 use function Cake\Core\toBool;
 use function Cake\Core\toFloat;
 use function Cake\Core\toInt;
@@ -184,7 +186,14 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     {
         $resolved = [];
         $function = new ReflectionFunction($action);
+        $request = $this->controller->getRequest();
         foreach ($function->getParameters() as $parameter) {
+            $attributeValue = $this->resolveParameterAttribute($parameter, $request);
+            if ($attributeValue !== null) {
+                $resolved[] = $attributeValue;
+                continue;
+            }
+
             $type = $parameter->getType();
 
             // Check for dependency injection for classes
@@ -267,6 +276,25 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
 
         return array_merge($resolved, $passedParams);
+    }
+
+    /**
+     * Resolve parameter value from attributes implementing ParameterAttributeInterface.
+     *
+     * @param \ReflectionParameter $parameter The parameter to resolve
+     * @param \Cake\Http\ServerRequest $request The server request
+     * @return mixed The resolved value or null if no matching attribute found
+     */
+    protected function resolveParameterAttribute(ReflectionParameter $parameter, ServerRequest $request): mixed
+    {
+        foreach ($parameter->getAttributes() as $attribute) {
+            $instance = $attribute->newInstance();
+            if ($instance instanceof ParameterAttributeInterface) {
+                return $instance->resolve($parameter, $request);
+            }
+        }
+
+        return null;
     }
 
     /**

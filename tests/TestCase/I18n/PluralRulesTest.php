@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\PluralRules;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -25,6 +26,15 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class PluralRulesTest extends TestCase
 {
+    /**
+     * tearDown method
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        PluralRules::resetRules();
+    }
+
     /**
      * Returns the notable combinations for locales and numbers
      * with the respective plural form that should be selected
@@ -132,8 +142,44 @@ class PluralRulesTest extends TestCase
      * Tests that the correct plural form is selected for the locale, number combination
      */
     #[DataProvider('localesProvider')]
-    public function testCalculate(string $locale, int $number, int $expected): void
+    public function testCalculateBuiltInPluralForms(string $locale, int $number, int $expected): void
     {
         $this->assertEquals($expected, PluralRules::calculate($locale, $number));
+    }
+
+    /**
+     * Data provider for custom plural rule that returns double the number
+     *
+     * @return array
+     */
+    public static function customResolverProvider(): array
+    {
+        return [
+            ['en', 'en', 2, 4],
+            ['en', 'en_US', 2, 4],
+            ['en_US', 'en', 2, 1],
+            ['special', 'special', 6, 12],
+        ];
+    }
+
+    /**
+     * Tests that the correct plural form is returned when a custom plural rule is set
+     */
+    #[DataProvider('customResolverProvider')]
+    public function testCalculateCustomResolver(string $ruleLocale, string $calcLocale, int $number, int $expected): void
+    {
+        PluralRules::setRule($ruleLocale, fn(int $n) => $n * 2);
+        $this->assertEquals($expected, PluralRules::calculate($calcLocale, $number));
+    }
+
+    /**
+     * Tests that setting a custom plural rule with an incorrect locale throws an exception
+     */
+    public function testCustomResolverInvalidLocale(): void
+    {
+        $invalidLocale = str_repeat('a', INTL_MAX_LOCALE_LEN + 1);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid locale `{$invalidLocale}` provided");
+        PluralRules::setRule($invalidLocale, fn(int $n) => 42);
     }
 }

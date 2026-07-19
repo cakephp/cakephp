@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Command\Command;
 use Cake\Command\SchemacacheBuildCommand;
 use Cake\Command\SchemacacheClearCommand;
 use Cake\Command\VersionCommand;
@@ -26,8 +27,13 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\ConsoleHelpHeaderProviderInterface;
+use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -169,6 +175,89 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test that an unknown token following a command which also has sibling
+     * subcommands is rejected, instead of being silently passed to the base
+     * command as a positional argument.
+     *
+     * For example, given `i18n`, `i18n init` and `i18n extract` are all registered:
+     *   `bin/cake i18n nonsense`
+     * should error rather than silently invoking I18nCommand.
+     */
+    public function testRunUnknownSubcommandErrorsWhenSiblingsExist(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', 'i18n', 'nonsense'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_ERROR, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('Unknown command `cake i18n nonsense`.', $messages);
+        $this->assertStringContainsString('Available subcommands:', $messages);
+        $this->assertStringContainsString('i18n extract', $messages);
+        $this->assertStringContainsString('i18n init', $messages);
+    }
+
+    /**
+     * Test that an option-like token after a parent command does not trigger
+     * the unknown-subcommand check.
+     */
+    public function testRunOptionAfterParentCommandIsNotASubcommand(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', 'i18n', '--help'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringNotContainsString('Unknown command', $messages);
+    }
+
+    /**
+     * Test that a command declaring its own positional arguments is not subject to the
+     * unknown-subcommand check, even when a sibling subcommand sharing its prefix exists.
+     *
+     * For example, given `widget` (which takes a `name` argument), `widget all` is also
+     * registered: `bin/cake widget Articles` must run the `widget` command with `Articles`
+     * as its argument, not be rejected as a mistyped `widget` subcommand.
+     */
+    public function testRunPositionalArgumentNotTreatedAsUnknownSubcommand(): void
+    {
+        $parent = new class extends Command {
+            public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+            {
+                return $parser->addArgument('name', ['help' => 'A name.', 'required' => false]);
+            }
+
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $io->out('ran widget with ' . $args->getArgument('name'));
+
+                return static::CODE_SUCCESS;
+            }
+        };
+        $sibling = new class extends Command {
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                return static::CODE_SUCCESS;
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $app = $this->makeAppWithCommands([
+            'help' => HelpCommand::class,
+            'widget' => $parent,
+            'widget all' => $sibling,
+        ]);
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake', 'widget', 'Articles'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringNotContainsString('Unknown command', $messages);
+        $this->assertStringContainsString('ran widget with Articles', $messages);
+    }
+
+    /**
      * Test using `cake --help` invokes the help command
      */
     public function testRunHelpLongOption(): void
@@ -221,9 +310,36 @@ class CommandRunnerTest extends TestCase
 
         $this->assertSame(0, $result, 'help output is success.');
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
+        $this->assertStringNotContainsString('No command provided. Choose one of the available commands', $messages);
         $this->assertStringContainsString('<info>i18n:</info>', $messages);
         $this->assertStringContainsString('Available Commands:', $messages);
+    }
+
+    /**
+     * Test that apps can provide a custom help header.
+     */
+    public function testRunNoCommandWithCustomHeaderProvider(): void
+    {
+        $app = new class ($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function getConsoleHelpHeader(): string
+            {
+                return '<info>Acme CLI:</info> 1.2.3';
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $runner = new CommandRunner($app);
+        $result = $runner->run(['cake'], $this->getMockIo($output));
+
+        $this->assertSame(0, $result, 'help output is success.');
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('<info>Acme CLI:</info> 1.2.3', $messages);
     }
 
     /**
@@ -480,6 +596,43 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test that run() invokes the command class' lifecycle hook methods.
+     */
+    public function testRunInvokesCommandLifecycleHooks(): void
+    {
+        $command = new class extends Command {
+            public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIo $io): void
+            {
+                $io->out('beforeExecute run');
+            }
+
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $io->out('execute run');
+
+                return static::CODE_SUCCESS;
+            }
+
+            public function afterExecute(EventInterface $event, Arguments $args, ConsoleIo $io, ?int $result): void
+            {
+                $io->out('afterExecute run');
+            }
+        };
+
+        $output = new StubConsoleOutput();
+        $app = $this->makeAppWithCommands(['lifecycle' => $command]);
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'lifecycle'], $this->getMockIo($output));
+
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+        $this->assertSame([
+            'beforeExecute run',
+            'execute run',
+            'afterExecute run',
+        ], $output->messages());
+    }
+
+    /**
      * Test that run calls plugin hook methods
      */
     public function testRunCallsPluginHookMethods(): void
@@ -541,28 +694,61 @@ class CommandRunnerTest extends TestCase
 
                 return $eventManager;
             }
-
-            public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
-            {
-                $eventManager->on('Test.pluginEvent', function (): void {
-                    $this->pluginEventFired = true;
-                });
-
-                return $eventManager;
-            }
         };
 
         $runner = new CommandRunner($app);
         $runner->getEventManager()->on('Console.buildCommands', function () use ($runner): void {
             // Trigger the events that should have been registered by events() and pluginEvents()
             $runner->getEventManager()->dispatch('Test.customEvent');
-            $runner->getEventManager()->dispatch('Test.pluginEvent');
         });
 
         $runner->run(['cake', '--version'], $this->getMockIo($output));
 
         $this->assertTrue($app->customEventFired, 'Custom event should have been fired');
-        $this->assertTrue($app->pluginEventFired, 'Plugin event should have been fired');
+    }
+
+    public function testRunRegistersPluginEventsForCommands(): void
+    {
+        $output = new StubConsoleOutput();
+        $plugin = new class extends BasePlugin {
+            public bool $commandEventFired = false;
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('Test.commandEvent', function (): void {
+                    $this->commandEventFired = true;
+                });
+
+                return $eventManager;
+            }
+        };
+        $command = new class extends Command {
+            public function execute(Arguments $args, ConsoleIo $io): int
+            {
+                $this->getEventManager()->dispatch(new Event('Test.commandEvent'));
+
+                return CommandInterface::CODE_SUCCESS;
+            }
+        };
+        $app = new class ($this->config, $command) extends Application {
+            public function __construct(
+                string $configDir,
+                protected Command $command,
+            ) {
+                parent::__construct($configDir);
+            }
+
+            public function console(CommandCollection $commands): CommandCollection
+            {
+                return $commands->add('test_command', $this->command);
+            }
+        };
+        $app->addPlugin($plugin);
+
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'test_command'], $this->getMockIo($output));
+
+        $this->assertTrue($plugin->commandEventFired, 'Plugin event should have been fired by the command');
     }
 
     protected function makeAppWithCommands(array $commands): BaseApplication
