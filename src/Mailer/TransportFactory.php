@@ -71,10 +71,10 @@ class TransportFactory
      * Finds and builds the instance of the required transport class.
      *
      * @param string $name Name of the config array that needs a transport instance built
-     * @return void
+     * @return \Cake\Mailer\AbstractTransport
      * @throws \InvalidArgumentException When a transport cannot be created.
      */
-    protected static function _buildTransport(string $name): void
+    protected static function _buildTransport(string $name): AbstractTransport
     {
         if (!isset(static::$_config[$name])) {
             throw new InvalidArgumentException(
@@ -88,7 +88,7 @@ class TransportFactory
             );
         }
 
-        static::getRegistry()->load($name, static::$_config[$name]);
+        return static::getRegistry()->load($name, static::$_config[$name]);
     }
 
     /**
@@ -101,12 +101,10 @@ class TransportFactory
     {
         $registry = static::getRegistry();
 
-        if (isset($registry->{$name})) {
-            return $registry->{$name};
+        if ($registry->has($name)) {
+            return $registry->get($name);
         }
 
-        static::_buildTransport($name);
-
-        return $registry->{$name};
+        return static::_buildTransport($name);
     }
 }
