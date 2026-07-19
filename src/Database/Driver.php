@@ -42,6 +42,7 @@ use PDOException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -152,7 +153,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param array<string, mixed> $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $config = [])
+    public function __construct(#[SensitiveParameter] array $config = [])
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
@@ -187,7 +188,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param array<string, mixed> $config configuration to be used for creating connection
      * @return \PDO
      */
-    protected function createPdo(string $dsn, array $config): PDO
+    protected function createPdo(string $dsn, #[SensitiveParameter] array $config): PDO
     {
         $action = fn(): PDO => new PDO(
             $dsn,

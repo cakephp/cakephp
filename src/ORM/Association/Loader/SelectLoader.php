@@ -510,10 +510,15 @@ class SelectLoader
         /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
         if ($order) {
-            $order->iterateParts(function ($direction, $field) use (&$fields, $columns): void {
+            // iterateParts() rebuilds the expression from the callback's return value, so each part
+            // has to be handed back. Returning nothing would strip the ORDER BY from $query itself,
+            // which is the caller's query, not a clone of it.
+            $order->iterateParts(function ($direction, $field) use (&$fields, $columns) {
                 if (isset($columns[$field])) {
                     $fields[$field] = $columns[$field];
                 }
+
+                return $direction;
             });
         }
 

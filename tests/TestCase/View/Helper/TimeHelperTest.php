@@ -141,7 +141,7 @@ class TimeHelperTest extends TestCase
                 'title' => $vancouver->__toString(),
                 'class' => 'time-ago-in-words',
             ],
-            'on ' . $vancouver->format('n/j/y'),
+            'on ' . $vancouver->i18nFormat([IntlDateFormatter::SHORT, IntlDateFormatter::NONE]),
             '/span',
         ];
         $this->assertHtml($expected, $result);

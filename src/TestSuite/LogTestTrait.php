@@ -136,7 +136,7 @@ trait LogTestTrait
         bool $contains = false,
     ): void {
         $messageFound = false;
-        $expectedMessage = sprintf('%s: %s', $level, $expectedMessage);
+        $levelPrefix = $level . ': ';
         foreach (Log::configured() as $engineName) {
             $engineObj = Log::engine($engineName);
             if (!$engineObj instanceof ArrayLog) {
@@ -149,14 +149,21 @@ trait LogTestTrait
                 continue;
             }
             foreach ($messages as $message) {
-                if ($contains && str_contains($message, $expectedMessage) || $message === $expectedMessage) {
+                if (!str_starts_with($message, $levelPrefix)) {
+                    continue;
+                }
+                $loggedMessage = substr($message, strlen($levelPrefix));
+                $matches = $contains
+                    ? str_contains($loggedMessage, $expectedMessage)
+                    : $loggedMessage === $expectedMessage;
+                if ($matches) {
                     $messageFound = true;
                     break;
                 }
             }
         }
         if (!$messageFound) {
-            $failMsg = "Could not find the message `{$expectedMessage}` in logs. " . $failMsg;
+            $failMsg = "Could not find the message `{$expectedMessage}` for level `{$level}` in logs. " . $failMsg;
             $this->fail($failMsg);
         }
         $this->assertTrue(true);
