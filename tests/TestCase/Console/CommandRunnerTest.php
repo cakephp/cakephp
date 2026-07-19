@@ -602,19 +602,19 @@ class CommandRunnerTest extends TestCase
     public function testRunInvokesCommandLifecycleHooks(): void
     {
         $command = new class extends Command {
-            public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIo $io): void
+            public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io): void
             {
                 $io->out('beforeExecute run');
             }
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
-                $io->out('execute run');
+                $this->io->out('execute run');
 
                 return static::CODE_SUCCESS;
             }
 
-            public function afterExecute(EventInterface $event, Arguments $args, ConsoleIo $io, ?int $result): void
+            public function afterExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io, ?int $result): void
             {
                 $io->out('afterExecute run');
             }
