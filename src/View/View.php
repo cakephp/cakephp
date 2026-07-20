@@ -691,7 +691,7 @@ class View implements EventDispatcherInterface
 
         [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
         $paths = iterator_to_array($this->getElementPaths($plugin));
-        throw new MissingElementException([$name . $this->ext, $elementName . $this->ext], $paths);
+        throw new MissingElementException($name . $this->ext, $elementName . $this->ext, $paths);
     }
 
     /**

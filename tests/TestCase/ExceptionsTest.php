@@ -154,7 +154,7 @@ class ExceptionsTest extends TestCase
         $this->assertSame($previous, $error->getPrevious());
         $this->assertSame(100, $error->getCode());
 
-        $error = new MissingElementException('view.ctp', ['path/a/', 'path/b/'], 100, $previous);
+        $error = new MissingElementException('view.ctp', 'view.ctp', ['path/a/', 'path/b/'], 100, $previous);
         $this->assertStringContainsString('Element file `view.ctp` could not be found', $error->getMessage());
         $this->assertStringContainsString('- `path/a/view.ctp`', $error->getMessage());
         $this->assertSame($previous, $error->getPrevious());

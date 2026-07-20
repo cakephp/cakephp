@@ -23,16 +23,6 @@ use Throwable;
 class MissingTemplateException extends CakeException
 {
     /**
-     * @var string|null
-     */
-    protected ?string $templateName = null;
-
-    /**
-     * @var string
-     */
-    protected string $filename;
-
-    /**
      * @var string
      */
     protected string $type = 'Template';
@@ -40,25 +30,17 @@ class MissingTemplateException extends CakeException
     /**
      * Constructor
      *
-     * @param array<string>|string $file Either the file name as a string, or in an array for backwards compatibility.
+     * @param string $filename The file name.
      * @param array<string> $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
-        array|string $file,
+        protected string $filename,
         protected array $paths = [],
         ?int $code = null,
         ?Throwable $previous = null,
     ) {
-        if (is_array($file)) {
-            $this->filename = (string)array_pop($file);
-            $this->templateName = array_pop($file);
-        } else {
-            $this->filename = $file;
-            $this->templateName = null;
-        }
-
         parent::__construct($this->formatMessage(), $code, $previous);
     }
 
@@ -69,8 +51,7 @@ class MissingTemplateException extends CakeException
      */
     public function formatMessage(): string
     {
-        $name = $this->templateName ?? $this->filename;
-        $message = "{$this->type} file `{$name}` could not be found.";
+        $message = "{$this->type} file `{$this->displayName()}` could not be found.";
         if ($this->paths) {
             $message .= "\n\nThe following paths were searched:\n\n";
             foreach ($this->paths as $path) {
@@ -79,6 +60,16 @@ class MissingTemplateException extends CakeException
         }
 
         return $message;
+    }
+
+    /**
+     * Get the name to show in the exception message.
+     *
+     * @return string
+     */
+    protected function displayName(): string
+    {
+        return $this->filename;
     }
 
     /**
