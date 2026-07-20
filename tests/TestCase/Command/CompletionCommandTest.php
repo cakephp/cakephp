@@ -35,7 +35,7 @@ final class CompletionCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
     }
 

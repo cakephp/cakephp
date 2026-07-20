@@ -102,7 +102,7 @@ final class FormHelperTest extends TestCase
 
         Configure::write('Config.language', 'eng');
         Configure::write('App.base', '');
-        static::setAppNamespace('Cake\Test\TestCase\View\Helper');
+        self::setAppNamespace('Cake\Test\TestCase\View\Helper');
 
         $request = new ServerRequest([
             'webroot' => '',

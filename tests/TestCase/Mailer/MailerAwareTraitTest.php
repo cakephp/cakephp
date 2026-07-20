@@ -32,7 +32,7 @@ final class MailerAwareTraitTest extends TestCase
     public function testGetMailer(): void
     {
         $originalAppNamespace = Configure::read('App.namespace');
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $stub = new Stub();
         $this->assertInstanceOf(TestMailer::class, $stub->getMailer('Test'));
@@ -41,7 +41,7 @@ final class MailerAwareTraitTest extends TestCase
         $mailer = $stub->getMailer('Test', ['from' => 'admad@cakephp.org']);
         $this->assertSame(['admad@cakephp.org' => 'admad@cakephp.org'], $mailer->getFrom());
 
-        static::setAppNamespace($originalAppNamespace);
+        self::setAppNamespace($originalAppNamespace);
     }
 
     /**

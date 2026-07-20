@@ -40,7 +40,7 @@ final class TableComplexIdTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

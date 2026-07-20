@@ -43,7 +43,7 @@ final class CheckHttpCacheComponentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $request = (new ServerRequest())
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
             ->withHeader('If-None-Match', '*');

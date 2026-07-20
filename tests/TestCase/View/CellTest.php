@@ -48,7 +48,7 @@ final class CellTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->clearPlugins();
         $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = new ServerRequest();

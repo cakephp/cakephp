@@ -42,7 +42,7 @@ final class MiddlewareQueueTest extends TestCase
     {
         parent::setUp();
 
-        $this->previousNamespace = static::setAppNamespace('TestApp');
+        $this->previousNamespace = self::setAppNamespace('TestApp');
     }
 
     /**
@@ -51,7 +51,7 @@ final class MiddlewareQueueTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        static::setAppNamespace($this->previousNamespace);
+        self::setAppNamespace($this->previousNamespace);
     }
 
     public function testConstructorAddingMiddleware(): void

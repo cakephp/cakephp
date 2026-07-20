@@ -56,7 +56,7 @@ final class TableLocatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $this->_locator = new TableLocator();
     }

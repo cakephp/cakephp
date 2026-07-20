@@ -78,7 +78,7 @@ final class ControllerTest extends TestCase
     {
         parent::setUp();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         Router::reload();
     }
 

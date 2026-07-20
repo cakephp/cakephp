@@ -32,7 +32,7 @@ final class TableGetWithCustomFinderTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     public static function providerForTestGetWithCustomFinder(): array

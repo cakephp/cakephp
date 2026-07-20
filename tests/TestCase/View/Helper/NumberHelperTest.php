@@ -41,7 +41,7 @@ final class NumberHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

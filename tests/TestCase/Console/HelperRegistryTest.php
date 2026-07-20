@@ -41,7 +41,7 @@ final class HelperRegistryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $io = new ConsoleIo(
             new StubConsoleOutput(),
             new StubConsoleOutput(),

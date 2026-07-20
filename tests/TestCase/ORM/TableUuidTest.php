@@ -42,7 +42,7 @@ final class TableUuidTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

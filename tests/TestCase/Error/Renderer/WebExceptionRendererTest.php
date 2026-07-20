@@ -307,7 +307,7 @@ final class WebExceptionRendererTest extends TestCase
      */
     public function testCakeErrorHelpersNotLost(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $exception = new NotFoundException();
         $renderer = new TestAppsExceptionRenderer($exception);
 

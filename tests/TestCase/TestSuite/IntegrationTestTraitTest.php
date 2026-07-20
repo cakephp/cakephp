@@ -62,7 +62,7 @@ final class IntegrationTestTraitTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Router::reload();
         $routesClosure = function (RouteBuilder $routes): void {

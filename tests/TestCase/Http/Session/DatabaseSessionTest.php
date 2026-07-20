@@ -45,7 +45,7 @@ final class DatabaseSessionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->storage = new DatabaseSession();
     }
 

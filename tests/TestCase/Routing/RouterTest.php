@@ -3269,7 +3269,7 @@ final class RouterTest extends TestCase
         $this->assertSame('/FooBar', $result);
 
         // This is needed because tests/bootstrap.php sets App.namespace to 'App'
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
         $routes = Router::createRouteBuilder('/');

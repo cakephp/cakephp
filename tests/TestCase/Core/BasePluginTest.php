@@ -292,7 +292,7 @@ final class BasePluginTest extends TestCase
 
     public function testEventsAreRegistered(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
         $request = $request->withAttribute('params', [
             'controller' => 'Cakes',
@@ -329,7 +329,7 @@ final class BasePluginTest extends TestCase
 
     public function testConsoleEventsAreRegistered(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $basePlugin = new class extends BasePlugin
         {
             public function events(EventManagerInterface $eventManager): EventManagerInterface
@@ -365,7 +365,7 @@ final class BasePluginTest extends TestCase
 
     public function testEventListenersAreRegistered(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $plugin = new class extends BasePlugin
         {
@@ -405,7 +405,7 @@ final class BasePluginTest extends TestCase
      */
     public function testEventListenersResolvedThroughContainerWithDependencyInjection(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $plugin = new class extends BasePlugin
         {
@@ -475,7 +475,7 @@ final class BasePluginTest extends TestCase
 
     public function testEventListenersResolvedThroughContainer(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $plugin = new class extends BasePlugin
         {

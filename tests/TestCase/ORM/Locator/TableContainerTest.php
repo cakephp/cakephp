@@ -28,7 +28,7 @@ final class TableContainerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     public function testTableContainer(): void

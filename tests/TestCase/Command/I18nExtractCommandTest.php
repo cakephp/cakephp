@@ -233,7 +233,7 @@ final class I18nExtractCommandTest extends TestCase
      */
     public function testExtractExcludePlugins(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->exec(
             'i18n extract ' .
             '--extract-core=no ' .
