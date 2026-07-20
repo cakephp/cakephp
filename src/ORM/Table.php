@@ -2040,7 +2040,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $companies->save($entity, [
      *   'associated' => [
      *     'Employees' => [
-     *       'associated' => ['Addresses'],
+     *       'Addresses',
      *       'checkRules' => false
      *     ]
      *   ]
@@ -2984,7 +2984,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      * $article = $this->Articles->newEntity(
      *   $this->request->getData(),
-     *   ['associated' => ['Tags', 'Comments.Users']]
+     *   ['associated' => ['Tags', 'Comments' => ['Users']]]
      * );
      * ```
      *
@@ -3102,6 +3102,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   'associated' => [
      *     'Tags' => ['patchableFields' => ['*' => true]]
      *   ]
+     * ]);
+     * ```
+     *
+     * ```
+     * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
+     *   'associated' => ['Tags' => ['_joinData' => ['Users']]]
      * ]);
      * ```
      *

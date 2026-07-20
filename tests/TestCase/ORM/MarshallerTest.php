@@ -832,7 +832,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $marshaller = new Marshaller($this->tags);
-        $tag = $marshaller->one($data, ['associated' => ['Articles' => [ 'associated' => ['Users', 'Comments']]]]);
+        $tag = $marshaller->one($data, ['associated' => ['Articles' => ['associated' => ['Users', 'Comments']]]]);
 
         $this->assertNotEmpty($tag->articles);
         $this->assertCount(1, $tag->articles);
@@ -853,6 +853,47 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf(Entity::class, $tag->articles[0]->comments[0]);
         $this->assertTrue($tag->articles[0]->comments[0]->isNew());
         $this->assertTrue($tag->articles[0]->comments[1]->isNew());
+
+        $tag = $marshaller->one($data, ['associated' => ['Articles' => ['Users', 'Comments']]]);
+
+        $this->assertInstanceOf(Entity::class, $tag->articles[0]->user);
+        $this->assertSame('newuser', $tag->articles[0]->user->username);
+        $this->assertCount(2, $tag->articles[0]->comments);
+    }
+
+    /**
+     * Test marshalling contain-style nested associations mixed with options.
+     */
+    public function testOneContainStyleNestedAssociationsWithOptions(): void
+    {
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'comments' => [
+                [
+                    'comment' => 'First comment',
+                    'article_id' => 1,
+                    'user' => [
+                        'username' => 'mark',
+                    ],
+                ],
+            ],
+        ];
+        $marshaller = new Marshaller($this->articles);
+        $article = $marshaller->one($data, [
+            'associated' => [
+                'Comments' => [
+                    'fields' => ['comment', 'user'],
+                    'Users',
+                ],
+            ],
+        ]);
+
+        $this->assertCount(1, $article->comments);
+        $this->assertSame('First comment', $article->comments[0]->comment);
+        $this->assertNull($article->comments[0]->article_id);
+        $this->assertInstanceOf(Entity::class, $article->comments[0]->user);
+        $this->assertSame('mark', $article->comments[0]->user->username);
     }
 
     /**
@@ -2282,6 +2323,19 @@ class MarshallerTest extends TestCase
         $this->assertSame(
             $data['tags'][1]['_joinData']['user']['username'],
             $result->tags[1]->_joinData->user->username,
+        );
+
+        $article = $this->articles->get(1, ...['associated' => 'Tags']);
+        $result = $marshall->merge($article, $data, ['associated' => [
+            'Tags' => [
+                '_joinData' => ['Users'],
+            ],
+        ]]);
+
+        $this->assertInstanceOf(Entity::class, $result->tags[0]->_joinData->user);
+        $this->assertSame(
+            $data['tags'][0]['_joinData']['user']['username'],
+            $result->tags[0]->_joinData->user->username,
         );
     }
 

@@ -373,8 +373,12 @@ class AssociationCollectionTest extends TestCase
         $this->assertSame([], $this->associations->normalizeKeys([]));
         $this->assertSame([], $this->associations->normalizeKeys(false));
 
+        $assocs = ['a', 'b', 'd' => ['associated' => ['something']]];
+        $expected = ['a' => [], 'b' => [], 'd' => ['associated' => ['something']]];
+        $this->assertSame($expected, $this->associations->normalizeKeys($assocs));
+
         $assocs = ['a', 'b', 'd' => ['something']];
-        $expected = ['a' => [], 'b' => [], 'd' => ['something']];
+        $expected = ['a' => [], 'b' => [], 'd' => ['associated' => ['something' => []]]];
         $this->assertSame($expected, $this->associations->normalizeKeys($assocs));
 
         $belongsTo = new BelongsTo('', new Table());
