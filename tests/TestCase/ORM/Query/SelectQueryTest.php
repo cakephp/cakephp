@@ -54,7 +54,7 @@ use TestApp\Model\Table\TagsTable;
 /**
  * Tests SelectQuery class
  */
-class SelectQueryTest extends TestCase
+final class SelectQueryTest extends TestCase
 {
     /**
      * Fixture to be used

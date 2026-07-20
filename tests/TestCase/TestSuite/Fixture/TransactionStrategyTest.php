@@ -20,7 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\TransactionStrategy;
 use Cake\TestSuite\TestCase;
 
-class TransactionStrategyTest extends TestCase
+final class TransactionStrategyTest extends TestCase
 {
     protected array $fixtures = ['core.Articles'];
 

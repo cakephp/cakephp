@@ -64,7 +64,7 @@ use TestPlugin\Controller\ErrorController as PluginErrorController;
 use TypeError;
 use function Cake\Core\h;
 
-class WebExceptionRendererTest extends TestCase
+final class WebExceptionRendererTest extends TestCase
 {
     /**
      * @var bool

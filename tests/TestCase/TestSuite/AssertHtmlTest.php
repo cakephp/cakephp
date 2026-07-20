@@ -22,7 +22,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 /**
  * This class helps in indirectly testing the functionality of TestCase::assertHtml
  */
-class AssertHtmlTest extends TestCase
+final class AssertHtmlTest extends TestCase
 {
     /**
      * Test whitespace after HTML tags

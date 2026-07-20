@@ -26,7 +26,7 @@ use Cake\View\Widget\RadioWidget;
 /**
  * Radio test case
  */
-class RadioWidgetTest extends TestCase
+final class RadioWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

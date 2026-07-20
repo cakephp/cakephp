@@ -25,7 +25,7 @@ use Mockery;
 /**
  * Test case for TableRegistry
  */
-class TableRegistryTest extends TestCase
+final class TableRegistryTest extends TestCase
 {
     /**
      * Original TableLocator.

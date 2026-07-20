@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * InsertIterator Test
  */
-class InsertIteratorTest extends TestCase
+final class InsertIteratorTest extends TestCase
 {
     /**
      * Test insert simple path

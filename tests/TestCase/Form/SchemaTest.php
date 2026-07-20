@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Form schema test case.
  */
-class SchemaTest extends TestCase
+final class SchemaTest extends TestCase
 {
     /**
      * Test adding multiple fields.

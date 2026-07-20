@@ -25,7 +25,7 @@ use Mockery;
  * Tests the features related to proxying methods from the Association
  * class to the Table class
  */
-class AssociationProxyTest extends TestCase
+final class AssociationProxyTest extends TestCase
 {
     /**
      * Fixtures to be loaded

@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * BannerHelper test.
  */
-class BannerHelperTest extends TestCase
+final class BannerHelperTest extends TestCase
 {
     /**
      * @var \Cake\Console\Helper\BannerHelper

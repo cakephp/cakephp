@@ -20,7 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\TruncateStrategy;
 use Cake\TestSuite\TestCase;
 
-class TruncateStrategyTest extends TestCase
+final class TruncateStrategyTest extends TestCase
 {
     protected array $fixtures = ['core.Articles'];
 

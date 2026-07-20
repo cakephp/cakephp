@@ -28,7 +28,7 @@ use TestPlugin\Console\Helper\ExampleHelper;
 /**
  * HelperRegistryTest
  */
-class HelperRegistryTest extends TestCase
+final class HelperRegistryTest extends TestCase
 {
     /**
      * @var \Cake\Console\HelperRegistry

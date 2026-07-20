@@ -64,7 +64,7 @@ use TestApp\View\Form\StubContext;
  * @property \Cake\View\Helper\FormHelper $Form
  * @property \Cake\View\View $View
  */
-class FormHelperTest extends TestCase
+final class FormHelperTest extends TestCase
 {
     /**
      * Fixtures to be used

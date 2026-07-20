@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Cache Commands tests.
  */
-class CacheCommandsTest extends TestCase
+final class CacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

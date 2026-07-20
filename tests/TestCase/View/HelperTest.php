@@ -33,7 +33,7 @@ use TestPlugin\View\Helper\OtherHelperHelper;
 /**
  * HelperTest class
  */
-class HelperTest extends TestCase
+final class HelperTest extends TestCase
 {
     /**
      * @var \Cake\View\View

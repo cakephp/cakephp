@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests MIME type lookup and extension mapping.
  */
-class MimeTypeTest extends TestCase
+final class MimeTypeTest extends TestCase
 {
     /**
      * Tests modern image MIME types and their preferred file extensions.

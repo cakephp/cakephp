@@ -14,7 +14,7 @@ use function Cake\Core\env;
 /**
  * RedisClusterEngineTest class
  */
-class RedisClusterEngineTest extends TestCase
+final class RedisClusterEngineTest extends TestCase
 {
     use LogTestTrait;
 

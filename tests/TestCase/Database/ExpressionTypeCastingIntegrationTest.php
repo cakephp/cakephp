@@ -28,7 +28,7 @@ use TestApp\Database\Type\UuidValue;
  * Tests for Expression objects casting values to other expressions
  * using the type classes
  */
-class ExpressionTypeCastingIntegrationTest extends TestCase
+final class ExpressionTypeCastingIntegrationTest extends TestCase
 {
     protected array $fixtures = ['core.OrderedUuidItems'];
 

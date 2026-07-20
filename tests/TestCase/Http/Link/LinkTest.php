@@ -24,7 +24,7 @@ use Psr\Link\LinkInterface;
 /**
  * LinkTest class
  */
-class LinkTest extends TestCase
+final class LinkTest extends TestCase
 {
     /**
      * Test that Link implements PSR-13 interfaces.

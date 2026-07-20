@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Boundwize\StructArmed\Architecture;
+use Boundwize\StructArmed\Rule\Rules\Class_\MustBeFinalRule;
 
 return Architecture::define()
     ->layerPattern('Cache', '/^Cake\\\\Cache\\\\.*$/')
@@ -53,4 +54,10 @@ return Architecture::define()
         'Utility' => ['Core', 'I18n'],
         'Validation' => ['Event', 'ORM', '+Utility'],
         'View' => ['+Cache', 'Form', '+ORM', '+Routing'],
-    ]);
+    ])
+
+    ->rule(
+        'tests_must_be_final',
+        new MustBeFinalRule(layer: 'tests')
+    )
+    ->layerPattern('tests', '/^Cake\\\\Test\\\\TestCase\\\\.*Test$/');

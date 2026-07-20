@@ -13,7 +13,7 @@ use Cake\Test\TestCase\Container\Asset\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class DefinitionAggregateTest extends TestCase
+final class DefinitionAggregateTest extends TestCase
 {
     public function testAggregateAddsDefinition(): void
     {

@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * FlashMessageTest class
  */
-class FlashMessageTest extends TestCase
+final class FlashMessageTest extends TestCase
 {
     /**
      * @var \Cake\Http\FlashMessage

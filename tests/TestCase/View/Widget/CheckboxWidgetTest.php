@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Checkbox test case
  */
-class CheckboxWidgetTest extends TestCase
+final class CheckboxWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

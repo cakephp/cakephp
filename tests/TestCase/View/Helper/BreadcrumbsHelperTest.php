@@ -22,7 +22,7 @@ use Cake\View\Helper\BreadcrumbsHelper;
 use Cake\View\View;
 use LogicException;
 
-class BreadcrumbsHelperTest extends TestCase
+final class BreadcrumbsHelperTest extends TestCase
 {
     /**
      * Instance of the BreadcrumbsHelper

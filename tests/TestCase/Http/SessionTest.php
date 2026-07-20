@@ -31,7 +31,7 @@ use TestPlugin\Http\Session\TestPluginSession;
 /**
  * SessionTest class
  */
-class SessionTest extends TestCase
+final class SessionTest extends TestCase
 {
     /**
      * tearDown method

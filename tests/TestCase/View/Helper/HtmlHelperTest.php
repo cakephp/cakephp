@@ -33,7 +33,7 @@ use function Cake\Core\h;
 /**
  * HtmlHelperTest class
  */
-class HtmlHelperTest extends TestCase
+final class HtmlHelperTest extends TestCase
 {
     /**
      * Regexp for CDATA start block

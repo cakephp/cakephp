@@ -32,7 +32,7 @@ use Traversable;
 /**
  * Tests Validator class
  */
-class ValidatorTest extends TestCase
+final class ValidatorTest extends TestCase
 {
     /**
      * tests getRequiredMessage

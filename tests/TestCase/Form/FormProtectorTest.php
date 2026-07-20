@@ -24,7 +24,7 @@ use Cake\Utility\Security;
 /**
  * FormProtectorTest class
  */
-class FormProtectorTest extends TestCase
+final class FormProtectorTest extends TestCase
 {
     /**
      * @var string

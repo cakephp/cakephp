@@ -25,7 +25,7 @@ use DateTimeImmutable;
 use IntlDateFormatter;
 use InvalidArgumentException;
 
-class TimeTest extends TestCase
+final class TimeTest extends TestCase
 {
     /**
      * @var \Cake\Chronos\Chronos|null

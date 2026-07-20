@@ -29,7 +29,7 @@ use function Cake\Core\env;
 /**
  * RedisEngineTest class
  */
-class RedisEngineTest extends TestCase
+final class RedisEngineTest extends TestCase
 {
     use EngineEventsTrait;
 

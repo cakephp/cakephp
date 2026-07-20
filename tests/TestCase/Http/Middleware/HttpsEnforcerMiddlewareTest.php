@@ -31,7 +31,7 @@ use UnexpectedValueException;
 /**
  * Test for HttpsEnforcerMiddleware
  */
-class HttpsEnforcerMiddlewareTest extends TestCase
+final class HttpsEnforcerMiddlewareTest extends TestCase
 {
     protected function setUp(): void
     {

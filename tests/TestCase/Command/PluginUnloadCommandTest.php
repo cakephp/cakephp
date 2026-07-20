@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * PluginUnloadCommandTest class
  */
-class PluginUnloadCommandTest extends TestCase
+final class PluginUnloadCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
     use PluginConfigFileTrait;

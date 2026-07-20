@@ -31,7 +31,7 @@ use ReflectionClass;
 /**
  * Tests MySQL driver
  */
-class MysqlTest extends TestCase
+final class MysqlTest extends TestCase
 {
     /**
      * setup

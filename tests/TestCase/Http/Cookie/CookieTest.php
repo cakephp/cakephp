@@ -27,7 +27,7 @@ use ValueError;
 /**
  * HTTP cookies test.
  */
-class CookieTest extends TestCase
+final class CookieTest extends TestCase
 {
     /**
      * Generate invalid cookie names.

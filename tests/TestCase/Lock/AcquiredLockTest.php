@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * AcquiredLockTest class
  */
-class AcquiredLockTest extends TestCase
+final class AcquiredLockTest extends TestCase
 {
     /**
      * Test constructor and getters.

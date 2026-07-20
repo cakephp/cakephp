@@ -31,7 +31,7 @@ use Cake\Utility\Security;
 /**
  * FormProtectionComponentTest class
  */
-class FormProtectionComponentTest extends TestCase
+final class FormProtectionComponentTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Controller

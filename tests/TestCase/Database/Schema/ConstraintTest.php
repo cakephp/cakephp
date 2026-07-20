@@ -9,7 +9,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests for the Constraint class.
  */
-class ConstraintTest extends TestCase
+final class ConstraintTest extends TestCase
 {
     public function testSetType(): void
     {

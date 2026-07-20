@@ -28,7 +28,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Tests FunctionsBuilder class
  */
-class FunctionsBuilderTest extends TestCase
+final class FunctionsBuilderTest extends TestCase
 {
     /**
      * @var \Cake\Database\FunctionsBuilder

@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * CheckHttpCacheComponentTest class
  */
-class CheckHttpCacheComponentTest extends TestCase
+final class CheckHttpCacheComponentTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Component\CheckHTtpCacheComponent

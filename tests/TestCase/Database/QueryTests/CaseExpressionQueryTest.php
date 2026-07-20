@@ -30,7 +30,7 @@ use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class CaseExpressionQueryTest extends TestCase
+final class CaseExpressionQueryTest extends TestCase
 {
     protected array $fixtures = [
         ArticlesFixture::class,

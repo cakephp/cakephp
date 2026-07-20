@@ -21,7 +21,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Rule\ValidCount;
 use PHPUnit\Framework\TestCase;
 
-class RuleInvokerTest extends TestCase
+final class RuleInvokerTest extends TestCase
 {
     public function testInvoke(): void
     {

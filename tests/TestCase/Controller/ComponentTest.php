@@ -34,7 +34,7 @@ use TestApp\Controller\ComponentTestController;
 /**
  * ComponentTest class
  */
-class ComponentTest extends TestCase
+final class ComponentTest extends TestCase
 {
     /**
      * setUp method

@@ -23,7 +23,7 @@ use DateTime;
 /**
  * Integration tests for Table class with uuid primary keys.
  */
-class TableComplexIdTest extends TestCase
+final class TableComplexIdTest extends TestCase
 {
     /**
      * Fixtures

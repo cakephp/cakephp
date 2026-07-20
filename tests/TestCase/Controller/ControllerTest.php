@@ -59,7 +59,7 @@ use TestPlugin\Model\Table\TestPluginCommentsTable;
 /**
  * ControllerTest class
  */
-class ControllerTest extends TestCase
+final class ControllerTest extends TestCase
 {
     /**
      * fixtures property

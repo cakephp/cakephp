@@ -23,7 +23,7 @@ use function Cake\Collection\collection;
 /**
  * FunctionsTest class
  */
-class FunctionsTest extends TestCase
+final class FunctionsTest extends TestCase
 {
     /**
      * Tests that the collection() method is a shortcut for new Collection

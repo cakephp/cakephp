@@ -23,7 +23,7 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
-class ConsoleIntegrationTestTraitTest extends TestCase
+final class ConsoleIntegrationTestTraitTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

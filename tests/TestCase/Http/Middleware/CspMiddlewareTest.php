@@ -28,7 +28,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Content Security Policy Middleware Test
  */
-class CspMiddlewareTest extends TestCase
+final class CspMiddlewareTest extends TestCase
 {
     /**
      * Provides the request handler

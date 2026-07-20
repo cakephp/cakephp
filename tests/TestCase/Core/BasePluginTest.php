@@ -53,7 +53,7 @@ use TestPlugin\TestPluginPlugin as TestPlugin;
 /**
  * BasePluginTest class
  */
-class BasePluginTest extends TestCase
+final class BasePluginTest extends TestCase
 {
     /**
      * tearDown method

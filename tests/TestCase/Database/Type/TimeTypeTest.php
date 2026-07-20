@@ -31,7 +31,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test for the Time type.
  */
-class TimeTypeTest extends TestCase
+final class TimeTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\TimeType

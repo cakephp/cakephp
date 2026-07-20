@@ -26,7 +26,7 @@ use Mockery;
 /**
  * Tests BelongsToManySaveAssociatedOnlyEntitiesAppendTest class
  */
-class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
+final class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
 {
     /**
      * @var \Cake\ORM\Table

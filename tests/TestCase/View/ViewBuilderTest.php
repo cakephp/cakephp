@@ -34,7 +34,7 @@ use TestApp\View\TestViewWithDefaultConfig;
 /**
  * View builder test case.
  */
-class ViewBuilderTest extends TestCase
+final class ViewBuilderTest extends TestCase
 {
     public function testSetVar(): void
     {

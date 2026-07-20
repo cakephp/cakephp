@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
-class TableValidationWithDefinerTest extends TestCase
+final class TableValidationWithDefinerTest extends TestCase
 {
     /**
      * Tests that it is possible to define custom validator methods

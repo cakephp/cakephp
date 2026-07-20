@@ -46,7 +46,7 @@ use TestPlugin\TestPluginPlugin as TestPlugin;
 /**
  * Base application test.
  */
-class BaseApplicationTest extends TestCase
+final class BaseApplicationTest extends TestCase
 {
     /**
      * @var \Cake\Http\BaseApplication

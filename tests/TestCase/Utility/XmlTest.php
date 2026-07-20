@@ -36,7 +36,7 @@ use TypeError;
 /**
  * XmlTest class
  */
-class XmlTest extends TestCase
+final class XmlTest extends TestCase
 {
     /**
      * setUp method

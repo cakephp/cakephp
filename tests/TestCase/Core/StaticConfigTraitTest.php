@@ -27,7 +27,7 @@ use TypeError;
 /**
  * StaticConfigTraitTest class
  */
-class StaticConfigTraitTest extends TestCase
+final class StaticConfigTraitTest extends TestCase
 {
     /**
      * @var object

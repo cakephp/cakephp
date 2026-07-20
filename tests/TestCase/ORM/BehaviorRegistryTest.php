@@ -35,7 +35,7 @@ use TestPlugin\Model\Behavior\PersisterOneBehavior;
 /**
  * Test case for BehaviorRegistry.
  */
-class BehaviorRegistryTest extends TestCase
+final class BehaviorRegistryTest extends TestCase
 {
     /**
      * @var \Cake\ORM\BehaviorRegistry

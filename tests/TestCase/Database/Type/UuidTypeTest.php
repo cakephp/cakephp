@@ -24,7 +24,7 @@ use PDO;
 /**
  * Test for the Uuid type.
  */
-class UuidTypeTest extends TestCase
+final class UuidTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\UuidType

@@ -10,7 +10,7 @@ use InvalidArgumentException;
 /**
  * Tests for the ForeignKey class.
  */
-class ForeignKeyTest extends TestCase
+final class ForeignKeyTest extends TestCase
 {
     public function testSetType(): void
     {

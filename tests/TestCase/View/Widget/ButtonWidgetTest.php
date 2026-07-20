@@ -24,7 +24,7 @@ use Cake\View\Widget\ButtonWidget;
 /**
  * Basic input test.
  */
-class ButtonWidgetTest extends TestCase
+final class ButtonWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

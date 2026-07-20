@@ -11,7 +11,7 @@ use Cake\Container\ServiceProvider\ServiceProviderAggregate;
 use Cake\Container\ServiceProvider\ServiceProviderInterface;
 use PHPUnit\Framework\TestCase;
 
-class ServiceProviderAggregateTest extends TestCase
+final class ServiceProviderAggregateTest extends TestCase
 {
     protected function getServiceProvider(): ServiceProviderInterface
     {

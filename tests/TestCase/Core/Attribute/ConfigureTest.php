@@ -10,7 +10,7 @@ use Cake\TestSuite\TestCase;
 use League\Container\ReflectionContainer;
 use TypeError;
 
-class ConfigureTest extends TestCase
+final class ConfigureTest extends TestCase
 {
     /**
      * @return void

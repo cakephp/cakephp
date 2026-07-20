@@ -22,7 +22,7 @@ use Cake\View\Form\ArrayContext;
 /**
  * Array context test case.
  */
-class ArrayContextTest extends TestCase
+final class ArrayContextTest extends TestCase
 {
     /**
      * setup method.

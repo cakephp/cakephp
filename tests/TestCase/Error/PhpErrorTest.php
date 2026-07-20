@@ -20,7 +20,7 @@ use Cake\Error\PhpError;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class PhpErrorTest extends TestCase
+final class PhpErrorTest extends TestCase
 {
     public function testBasicGetters(): void
     {

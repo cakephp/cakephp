@@ -24,7 +24,7 @@ use Cake\View\Widget\BasicWidget;
 /**
  * Basic input test.
  */
-class BasicWidgetTest extends TestCase
+final class BasicWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

@@ -23,7 +23,7 @@ use TestApp\Model\Entity\TranslateTestEntity;
 /**
  * Translate behavior test case
  */
-class TranslateTraitTest extends TestCase
+final class TranslateTraitTest extends TestCase
 {
     /**
      * Tests that missing translation entries are created automatically

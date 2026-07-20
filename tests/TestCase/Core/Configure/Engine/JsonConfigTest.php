@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * JsonConfigTest
  */
-class JsonConfigTest extends TestCase
+final class JsonConfigTest extends TestCase
 {
     /**
      * @var string

@@ -29,7 +29,7 @@ use UnexpectedValueException;
 /**
  * Behavior test case
  */
-class TimestampBehaviorTest extends TestCase
+final class TimestampBehaviorTest extends TestCase
 {
     /**
      * fixtures

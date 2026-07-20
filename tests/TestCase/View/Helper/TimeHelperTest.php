@@ -29,7 +29,7 @@ use IntlDateFormatter;
 /**
  * TimeHelperTest class
  */
-class TimeHelperTest extends TestCase
+final class TimeHelperTest extends TestCase
 {
     /**
      * The test time frozen by the test bootstrap, restored after each test.

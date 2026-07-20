@@ -30,7 +30,7 @@ use TestApp\Database\Type\IntType;
 /**
  * Test case for Table
  */
-class TableSchemaTest extends TestCase
+final class TableSchemaTest extends TestCase
 {
     protected array $fixtures = [
         'core.Articles',

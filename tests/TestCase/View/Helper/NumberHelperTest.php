@@ -26,7 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * NumberHelperTest class
  */
-class NumberHelperTest extends TestCase
+final class NumberHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\View

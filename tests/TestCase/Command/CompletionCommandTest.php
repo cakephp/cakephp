@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * CompletionCommandTest
  */
-class CompletionCommandTest extends TestCase
+final class CompletionCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

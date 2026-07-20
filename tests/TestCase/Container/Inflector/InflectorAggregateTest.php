@@ -10,7 +10,7 @@ use Cake\Container\Inflector\InflectorAggregate;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 
-class InflectorAggregateTest extends TestCase
+final class InflectorAggregateTest extends TestCase
 {
     public function testAggregateAddsInflector(): void
     {

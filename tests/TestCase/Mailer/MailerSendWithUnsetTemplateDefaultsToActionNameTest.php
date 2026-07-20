@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Mailer\Mailer;
 use Cake\TestSuite\TestCase;
 
-class MailerSendWithUnsetTemplateDefaultsToActionNameTest extends TestCase
+final class MailerSendWithUnsetTemplateDefaultsToActionNameTest extends TestCase
 {
     public function testSendAction(): void
     {

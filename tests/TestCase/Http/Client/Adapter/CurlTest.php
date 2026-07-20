@@ -25,7 +25,7 @@ use Composer\CaBundle\CaBundle;
 /**
  * HTTP curl adapter test.
  */
-class CurlTest extends TestCase
+final class CurlTest extends TestCase
 {
     /**
      * @var \Cake\Http\Client\Adapter\Curl

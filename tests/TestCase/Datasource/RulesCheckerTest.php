@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the integration between the ORM and the domain checker
  */
-class RulesCheckerTest extends TestCase
+final class RulesCheckerTest extends TestCase
 {
     /**
      * Test adding rule for create and update

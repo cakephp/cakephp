@@ -9,7 +9,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests for the UniqueKey class.
  */
-class UniqueKeyTest extends TestCase
+final class UniqueKeyTest extends TestCase
 {
     public function testSetType(): void
     {

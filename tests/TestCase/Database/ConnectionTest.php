@@ -54,7 +54,7 @@ use function Cake\Core\namespaceSplit;
 /**
  * Tests Connection class
  */
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     /**
      * @var array<string>

@@ -23,7 +23,7 @@ use Exception;
 /**
  * ArrayEngineTest class
  */
-class NullEngineTest extends TestCase
+final class NullEngineTest extends TestCase
 {
     /**
      * setUp method

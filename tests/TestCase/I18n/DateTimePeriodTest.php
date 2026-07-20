@@ -23,7 +23,7 @@ use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
 
-class DateTimePeriodTest extends TestCase
+final class DateTimePeriodTest extends TestCase
 {
     public function testDateTimePeriod(): void
     {

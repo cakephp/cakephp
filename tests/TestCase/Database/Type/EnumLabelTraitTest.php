@@ -27,7 +27,7 @@ use TestApp\Model\Enum\ArticleStatusTraitLabeled;
 /**
  * Tests for EnumLabelTrait.
  */
-class EnumLabelTraitTest extends TestCase
+final class EnumLabelTraitTest extends TestCase
 {
     /**
      * Restore i18n state after each test so translator changes do not bleed between tests.

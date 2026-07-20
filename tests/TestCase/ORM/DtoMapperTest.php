@@ -28,7 +28,7 @@ use TestApp\Dto\SimpleArticleDto;
 /**
  * DtoMapper test case.
  */
-class DtoMapperTest extends TestCase
+final class DtoMapperTest extends TestCase
 {
     protected DtoMapper $mapper;
 

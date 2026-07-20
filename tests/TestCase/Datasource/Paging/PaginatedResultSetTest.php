@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use function Cake\Collection\collection;
 
-class PaginatedResultSetTest extends TestCase
+final class PaginatedResultSetTest extends TestCase
 {
     public function testItems(): void
     {

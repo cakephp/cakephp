@@ -26,7 +26,7 @@ use PDO;
 /**
  * Test for the Float type.
  */
-class FloatTypeTest extends TestCase
+final class FloatTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\FloatType

@@ -26,7 +26,7 @@ use Mockery;
 /**
  * Test that BaseCommand hydrates $args and $io properties.
  */
-class BaseCommandTest extends TestCase
+final class BaseCommandTest extends TestCase
 {
     /**
      * Test that $this->args is available inside execute()

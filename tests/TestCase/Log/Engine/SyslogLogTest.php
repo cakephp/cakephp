@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * SyslogLogTest class
  */
-class SyslogLogTest extends TestCase
+final class SyslogLogTest extends TestCase
 {
     /**
      * Tests that the connection to the logger is open with the right arguments

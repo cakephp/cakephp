@@ -13,7 +13,7 @@ use Cake\Test\TestCase\Container\Asset\FooCallable;
 use Error;
 use PHPUnit\Framework\TestCase;
 
-class DefinitionTest extends TestCase
+final class DefinitionTest extends TestCase
 {
     public function testDefinitionResolvesClosureWithDefinedArgs(): void
     {

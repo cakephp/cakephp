@@ -30,7 +30,7 @@ use InvalidArgumentException;
 use TestApp\Mailer\TestMailer;
 use function Cake\Core\env;
 
-class MailerTest extends TestCase
+final class MailerTest extends TestCase
 {
     /**
      * @var array

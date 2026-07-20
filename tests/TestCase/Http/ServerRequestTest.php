@@ -36,7 +36,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * ServerRequest Test
  */
-class ServerRequestTest extends TestCase
+final class ServerRequestTest extends TestCase
 {
     /**
      * Test custom detector with extra arguments.

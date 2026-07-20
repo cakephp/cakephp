@@ -30,7 +30,7 @@ use Throwable;
 /**
  * Test case for runner.
  */
-class RunnerTest extends TestCase
+final class RunnerTest extends TestCase
 {
     /**
      * @var \Cake\Http\MiddlewareQueue

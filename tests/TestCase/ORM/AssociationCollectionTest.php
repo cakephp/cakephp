@@ -33,7 +33,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * AssociationCollection test case.
  */
-class AssociationCollectionTest extends TestCase
+final class AssociationCollectionTest extends TestCase
 {
     /**
      * @var AssociationCollection

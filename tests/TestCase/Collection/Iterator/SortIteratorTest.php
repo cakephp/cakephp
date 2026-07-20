@@ -32,7 +32,7 @@ use const SORT_NUMERIC;
 /**
  * SortIterator Test
  */
-class SortIteratorTest extends TestCase
+final class SortIteratorTest extends TestCase
 {
     /**
      * Tests sorting numbers with an identity callbacks

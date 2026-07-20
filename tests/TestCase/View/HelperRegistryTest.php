@@ -30,7 +30,7 @@ use TestPlugin\View\Helper\OtherHelperHelper;
 /**
  * HelperRegistryTest
  */
-class HelperRegistryTest extends TestCase
+final class HelperRegistryTest extends TestCase
 {
     /**
      * @var \Cake\View\HelperRegistry

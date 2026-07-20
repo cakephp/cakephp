@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Digest authentication test
  */
-class DigestTest extends TestCase
+final class DigestTest extends TestCase
 {
     /**
      * @var \Cake\Http\Client

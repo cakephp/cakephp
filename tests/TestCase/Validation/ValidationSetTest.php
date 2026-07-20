@@ -25,7 +25,7 @@ use Cake\Validation\ValidationSet;
 /**
  * ValidationSetTest
  */
-class ValidationSetTest extends TestCase
+final class ValidationSetTest extends TestCase
 {
     /**
      * testGetRule method
