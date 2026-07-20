@@ -803,7 +803,6 @@ class Cookie implements CookieInterface
 
     /**
      * Explode method to return array from string set in CookieComponent::_flatten()
-     * Maintains reading backwards compatibility with 1.x CookieComponent::_flatten().
      *
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return array|string Map of key and values
@@ -816,15 +815,6 @@ class Cookie implements CookieInterface
             return json_decode($string, true) ?? $string;
         }
 
-        $array = [];
-        foreach (explode(',', $string) as $pair) {
-            $key = explode('|', $pair);
-            if (!isset($key[1])) {
-                return $key[0];
-            }
-            $array[$key[0]] = $key[1];
-        }
-
-        return $array;
+        return $string;
     }
 }
