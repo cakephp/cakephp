@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Tests Sqlite driver
  */
-class SqliteTest extends TestCase
+final class SqliteTest extends TestCase
 {
     protected function tearDown(): void
     {

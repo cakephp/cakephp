@@ -30,7 +30,7 @@ use TestApp\TestCase\Event\EventTestListener;
 /**
  * Tests the Cake\Event\EventManager class functionality
  */
-class EventManagerTest extends TestCase
+final class EventManagerTest extends TestCase
 {
     /**
      * Test attach() with a listener interface.

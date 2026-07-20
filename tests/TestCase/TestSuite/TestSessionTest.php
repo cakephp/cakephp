@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\TestSuite;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestSession;
 
-class TestSessionTest extends TestCase
+final class TestSessionTest extends TestCase
 {
     /**
      * @var array

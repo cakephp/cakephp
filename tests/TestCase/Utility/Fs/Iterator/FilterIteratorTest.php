@@ -31,7 +31,7 @@ use SplFileInfo;
 /**
  * FilterIteratorTest class
  */
-class FilterIteratorTest extends TestCase
+final class FilterIteratorTest extends TestCase
 {
     /**
      * Test virtual filesystem

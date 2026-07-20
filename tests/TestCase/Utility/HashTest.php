@@ -28,7 +28,7 @@ use stdClass;
 /**
  * HashTest
  */
-class HashTest extends TestCase
+final class HashTest extends TestCase
 {
     /**
      * Data provider

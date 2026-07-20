@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * AssetTest class
  */
-class AssetTest extends TestCase
+final class AssetTest extends TestCase
 {
     /**
      * @var \Cake\Routing\RouteBuilder

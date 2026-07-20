@@ -28,7 +28,7 @@ use TestApp\Core\TestApp;
 /**
  * AppTest class
  */
-class AppTest extends TestCase
+final class AppTest extends TestCase
 {
     /**
      * tearDown method

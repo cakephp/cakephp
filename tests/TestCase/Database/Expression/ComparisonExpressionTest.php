@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests Comparison class
  */
-class ComparisonExpressionTest extends TestCase
+final class ComparisonExpressionTest extends TestCase
 {
     /**
      * Test sql generation using IdentifierExpression

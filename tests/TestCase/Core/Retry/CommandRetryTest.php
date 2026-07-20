@@ -23,7 +23,7 @@ use TestApp\Database\Retry\TestRetryStrategy;
 /**
  * Tests for the CommandRetry class
  */
-class CommandRetryTest extends TestCase
+final class CommandRetryTest extends TestCase
 {
     /**
      * Simple retry test

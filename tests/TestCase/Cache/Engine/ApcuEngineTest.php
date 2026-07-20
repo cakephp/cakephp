@@ -24,7 +24,7 @@ use DateInterval;
 /**
  * ApcuEngineTest class
  */
-class ApcuEngineTest extends TestCase
+final class ApcuEngineTest extends TestCase
 {
     use EngineEventsTrait;
 

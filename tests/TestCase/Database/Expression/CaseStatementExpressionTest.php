@@ -42,7 +42,7 @@ use TestApp\Database\Type\CustomExpressionType;
 use TestApp\View\Object\TestObjectWithToString;
 use TypeError;
 
-class CaseStatementExpressionTest extends TestCase
+final class CaseStatementExpressionTest extends TestCase
 {
     // region Type handling
 

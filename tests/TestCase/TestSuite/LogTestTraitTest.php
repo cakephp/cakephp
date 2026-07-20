@@ -26,7 +26,7 @@ use TestApp\Log\Engine\TestAppLog;
 /**
  * Tests LogTrait assertions
  */
-class LogTestTraitTest extends TestCase
+final class LogTestTraitTest extends TestCase
 {
     use LogTestTrait;
 

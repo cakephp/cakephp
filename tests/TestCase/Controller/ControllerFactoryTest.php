@@ -37,7 +37,7 @@ use TestPlugin\Controller\TestPluginController;
 /**
  * Test case for ControllerFactory.
  */
-class ControllerFactoryTest extends TestCase
+final class ControllerFactoryTest extends TestCase
 {
     /**
      * @var \Cake\Controller\ControllerFactory

@@ -35,7 +35,7 @@ use TestApp\View\CustomJsonView;
  *
  * For testing both View\Cell & Utility\CellTrait
  */
-class CellTest extends TestCase
+final class CellTest extends TestCase
 {
     /**
      * @var \Cake\View\View

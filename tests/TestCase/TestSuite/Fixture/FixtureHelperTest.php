@@ -31,7 +31,7 @@ use TestPlugin\Test\Fixture\ArticlesFixture as PluginArticlesFixture;
 use TestPlugin\Test\Fixture\Blog\CommentsFixture as PluginCommentsFixture;
 use UnexpectedValueException;
 
-class FixtureHelperTest extends TestCase
+final class FixtureHelperTest extends TestCase
 {
     protected array $fixtures = ['core.Articles'];
 

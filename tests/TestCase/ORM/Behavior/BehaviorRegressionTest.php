@@ -25,7 +25,7 @@ use TestApp\Model\Entity\NumberTree;
 /**
  * Behavior regression tests
  */
-class BehaviorRegressionTest extends TestCase
+final class BehaviorRegressionTest extends TestCase
 {
     /**
      * fixtures

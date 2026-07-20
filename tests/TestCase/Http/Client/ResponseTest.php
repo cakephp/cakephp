@@ -23,7 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * HTTP response test.
  */
-class ResponseTest extends TestCase
+final class ResponseTest extends TestCase
 {
     /**
      * Test parsing headers and reading with PSR7 methods.

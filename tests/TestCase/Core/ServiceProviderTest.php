@@ -25,7 +25,7 @@ use TestApp\ServiceProvider\PersonServiceProvider;
 /**
  * ServiceProviderTest
  */
-class ServiceProviderTest extends TestCase
+final class ServiceProviderTest extends TestCase
 {
     public function testBootstrapHook(): void
     {

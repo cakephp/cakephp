@@ -24,7 +24,7 @@ use Cake\Utility\Filesystem;
 /**
  * I18nExtractCommandTest
  */
-class I18nExtractCommandTest extends TestCase
+final class I18nExtractCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

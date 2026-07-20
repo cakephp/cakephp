@@ -80,7 +80,7 @@ use TestPlugin\Model\Table\CommentsTable;
  * Tests Table class
  */
 #[AllowMockObjectsWithoutExpectations]
-class TableTest extends TestCase
+final class TableTest extends TestCase
 {
     /**
      * @var string[]

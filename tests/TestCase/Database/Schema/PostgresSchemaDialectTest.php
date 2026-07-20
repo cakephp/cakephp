@@ -37,7 +37,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Postgres schema test case.
  */
-class PostgresSchemaDialectTest extends TestCase
+final class PostgresSchemaDialectTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.

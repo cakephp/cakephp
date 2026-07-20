@@ -24,7 +24,7 @@ use TestApp\Mailer\TestMailer;
 /**
  * MailerAwareTrait test case
  */
-class MailerAwareTraitTest extends TestCase
+final class MailerAwareTraitTest extends TestCase
 {
     /**
      * Test getMailer

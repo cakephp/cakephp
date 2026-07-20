@@ -36,7 +36,7 @@ use TestApp\Dto\SimpleArticleDto;
 /**
  * ResultSetFactory test case.
  */
-class ResultSetFactoryTest extends TestCase
+final class ResultSetFactoryTest extends TestCase
 {
     /**
      * @var array<string>

@@ -9,7 +9,7 @@ use Cake\Test\TestCase\Container\Asset\Bar;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class InflectorTest extends TestCase
+final class InflectorTest extends TestCase
 {
     public function testInflectorSetsExpectedMethodCalls(): void
     {

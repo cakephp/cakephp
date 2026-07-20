@@ -27,7 +27,7 @@ use Exception;
 /**
  * FlashComponentTest class
  */
-class FlashComponentTest extends TestCase
+final class FlashComponentTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Component\FlashComponent

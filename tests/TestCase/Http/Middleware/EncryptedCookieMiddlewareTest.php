@@ -29,7 +29,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for EncryptedCookieMiddleware
  */
-class EncryptedCookieMiddlewareTest extends TestCase
+final class EncryptedCookieMiddlewareTest extends TestCase
 {
     use CookieCryptTrait;
 

@@ -24,7 +24,7 @@ use function Cake\Core\env;
 /**
  * MemcachedLockEngineTest class
  */
-class MemcachedLockEngineTest extends TestCase
+final class MemcachedLockEngineTest extends TestCase
 {
     /**
      * @var \Cake\Lock\Engine\MemcachedLockEngine|null

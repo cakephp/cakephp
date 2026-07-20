@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 /**
  * ConsoleIo test.
  */
-class ConsoleIoTest extends TestCase
+final class ConsoleIoTest extends TestCase
 {
     /**
      * @var \Cake\Console\ConsoleIo

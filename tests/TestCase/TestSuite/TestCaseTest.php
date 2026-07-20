@@ -47,7 +47,7 @@ use function Cake\Core\deprecationWarning;
  * TestCaseTest
  */
 #[AllowMockObjectsWithoutExpectations]
-class TestCaseTest extends TestCase
+final class TestCaseTest extends TestCase
 {
     protected function setUp(): void
     {

@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * TextHelperTest class
  */
-class TextHelperTest extends TestCase
+final class TextHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\Helper\TextHelper

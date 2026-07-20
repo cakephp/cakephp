@@ -24,7 +24,7 @@ use InvalidArgumentException;
 /**
  * SortableFieldsBuilder Test Case
  */
-class SortableFieldsBuilderTest extends TestCase
+final class SortableFieldsBuilderTest extends TestCase
 {
     /**
      * Test basic add() functionality

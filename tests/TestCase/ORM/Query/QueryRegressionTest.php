@@ -37,7 +37,7 @@ use function Cake\Collection\collection;
 /**
  * Contains regression test for the Query builder
  */
-class QueryRegressionTest extends TestCase
+final class QueryRegressionTest extends TestCase
 {
     /**
      * Fixture to be used

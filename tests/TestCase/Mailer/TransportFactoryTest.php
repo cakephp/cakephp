@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * TransportFactory Test class
  */
-class TransportFactoryTest extends TestCase
+final class TransportFactoryTest extends TestCase
 {
     /**
      * @var array

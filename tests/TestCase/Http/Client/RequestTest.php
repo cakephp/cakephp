@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * HTTP request test.
  */
-class RequestTest extends TestCase
+final class RequestTest extends TestCase
 {
     /**
      * test string ata, header and constructor

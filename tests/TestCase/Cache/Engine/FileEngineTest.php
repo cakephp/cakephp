@@ -25,7 +25,7 @@ use DateInterval;
 /**
  * FileEngineTest class
  */
-class FileEngineTest extends TestCase
+final class FileEngineTest extends TestCase
 {
     use EngineEventsTrait;
 

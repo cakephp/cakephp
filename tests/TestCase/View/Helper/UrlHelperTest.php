@@ -30,7 +30,7 @@ use function Cake\Core\h;
 /**
  * UrlHelperTest class
  */
-class UrlHelperTest extends TestCase
+final class UrlHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\Helper\UrlHelper

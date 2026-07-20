@@ -27,7 +27,7 @@ require_once CAKE . 'Core/functions_global.php';
 /**
  * Test cases for functions in Core\functions_global.php
  */
-class FunctionsGlobalTest extends TestCase
+final class FunctionsGlobalTest extends TestCase
 {
     /**
      * Test cases for env()

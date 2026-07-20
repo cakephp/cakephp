@@ -25,7 +25,7 @@ use Error;
 /**
  * ValidationRuleTest
  */
-class ValidationRuleTest extends TestCase
+final class ValidationRuleTest extends TestCase
 {
     /**
      * Auxiliary method to test custom validators

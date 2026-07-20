@@ -24,7 +24,7 @@ use Cake\View\Widget\TextareaWidget;
 /**
  * Textarea input test.
  */
-class TextareaWidgetTest extends TestCase
+final class TextareaWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

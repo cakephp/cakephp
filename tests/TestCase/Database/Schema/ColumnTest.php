@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Database\Type\IntType;
 
-class ColumnTest extends TestCase
+final class ColumnTest extends TestCase
 {
     public function testSetName(): void
     {

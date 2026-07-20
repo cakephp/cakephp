@@ -37,7 +37,7 @@ use function Cake\Routing\urlArray;
 /**
  * RouterTest class
  */
-class RouterTest extends TestCase
+final class RouterTest extends TestCase
 {
     /**
      * setUp method

@@ -28,7 +28,7 @@ use TestApp\Middleware\SampleMiddleware;
 /**
  * Test case for the MiddlewareQueue
  */
-class MiddlewareQueueTest extends TestCase
+final class MiddlewareQueueTest extends TestCase
 {
     /**
      * @var string

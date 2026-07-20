@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Database session test.
  */
-class DatabaseSessionTest extends TestCase
+final class DatabaseSessionTest extends TestCase
 {
     /**
      * @var array

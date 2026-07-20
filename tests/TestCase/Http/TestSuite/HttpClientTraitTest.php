@@ -21,7 +21,7 @@ use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class HttpClientTraitTest extends TestCase
+final class HttpClientTraitTest extends TestCase
 {
     use HttpClientTrait;
 

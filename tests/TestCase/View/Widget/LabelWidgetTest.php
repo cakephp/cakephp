@@ -24,7 +24,7 @@ use Cake\View\Widget\LabelWidget;
 /**
  * Label test case.
  */
-class LabelWidgetTest extends TestCase
+final class LabelWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

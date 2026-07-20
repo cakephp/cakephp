@@ -44,7 +44,7 @@ use Throwable;
 /**
  * Test for ErrorHandlerMiddleware
  */
-class ErrorHandlerMiddlewareTest extends TestCase
+final class ErrorHandlerMiddlewareTest extends TestCase
 {
     /**
      * @var \Cake\Log\Engine\ArrayLog

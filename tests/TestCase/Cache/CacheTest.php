@@ -35,7 +35,7 @@ use TestPlugin\Cache\Engine\TestPluginCacheEngine;
 /**
  * CacheTest class
  */
-class CacheTest extends TestCase
+final class CacheTest extends TestCase
 {
     /**
      * setUp method

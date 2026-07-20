@@ -28,7 +28,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
-class CommonTableExpressionQueryTest extends TestCase
+final class CommonTableExpressionQueryTest extends TestCase
 {
     /**
      * @inheritDoc

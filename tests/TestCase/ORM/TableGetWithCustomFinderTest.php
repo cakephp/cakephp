@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class TableGetWithCustomFinderTest extends TestCase
+final class TableGetWithCustomFinderTest extends TestCase
 {
     protected ConnectionInterface $connection;
 

@@ -28,7 +28,7 @@ use TestPlugin\Log\Engine\TestPluginLog;
 /**
  * LogTest class
  */
-class LogTest extends TestCase
+final class LogTest extends TestCase
 {
     protected function setUp(): void
     {

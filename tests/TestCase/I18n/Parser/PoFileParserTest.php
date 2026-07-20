@@ -29,7 +29,7 @@ use function Cake\I18n\__x;
 /**
  * Tests the PoFileLoader
  */
-class PoFileParserTest extends TestCase
+final class PoFileParserTest extends TestCase
 {
     /**
      * Locale folder path

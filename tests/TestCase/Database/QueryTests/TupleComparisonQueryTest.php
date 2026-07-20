@@ -39,7 +39,7 @@ use PDOException;
  *
  * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
  */
-class TupleComparisonQueryTest extends TestCase
+final class TupleComparisonQueryTest extends TestCase
 {
     /**
      * @inheritDoc

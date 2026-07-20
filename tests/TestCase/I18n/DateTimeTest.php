@@ -28,7 +28,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * DateTimeTest class
  */
-class DateTimeTest extends TestCase
+final class DateTimeTest extends TestCase
 {
     /**
      * @var \Cake\Chronos\Chronos|null
