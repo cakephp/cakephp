@@ -59,7 +59,7 @@ final class BehaviorRegistryTest extends TestCase
         $this->Table = new Table(['table' => 'articles']);
         $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

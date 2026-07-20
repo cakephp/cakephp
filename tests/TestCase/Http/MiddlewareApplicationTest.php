@@ -33,7 +33,7 @@ final class MiddlewareApplicationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

@@ -95,7 +95,7 @@ final class ConnectionTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
 
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     protected function tearDown(): void

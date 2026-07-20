@@ -209,7 +209,7 @@ final class HelperRegistryTest extends TestCase
      */
     public function testReset(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(
@@ -230,7 +230,7 @@ final class HelperRegistryTest extends TestCase
      */
     public function testUnload(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(

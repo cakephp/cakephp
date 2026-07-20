@@ -58,7 +58,7 @@ final class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Log::reset();
         Log::setConfig('error_test', [

@@ -59,7 +59,7 @@ final class BaseApplicationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->app = new class (dirname(__DIR__, 2)) extends BaseApplication
         {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
@@ -383,7 +383,7 @@ final class BaseApplicationTest extends TestCase
 
     public function testConsoleEventsAreRegistered(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $app = new class (dirname(__DIR__, 2)) extends BaseApplication
         {
             public function routes(RouteBuilder $routes): void
@@ -415,7 +415,7 @@ final class BaseApplicationTest extends TestCase
 
     public function testEventListenersWithDependencyInjection(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public function eventListeners(): array

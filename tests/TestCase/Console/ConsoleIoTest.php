@@ -58,7 +58,7 @@ final class ConsoleIoTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $this->out = Mockery::mock(ConsoleOutput::class)->shouldIgnoreMissing();
         $this->err = Mockery::mock(ConsoleOutput::class)->shouldIgnoreMissing();

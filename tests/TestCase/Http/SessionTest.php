@@ -502,7 +502,7 @@ final class SessionTest extends TestCase
     #[RunInSeparateProcess]
     public function testUsingAppLibsHandler(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $config = [
             'defaults' => 'cake',
             'handler' => [
@@ -525,7 +525,7 @@ final class SessionTest extends TestCase
     #[RunInSeparateProcess]
     public function testUsingPluginHandler(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
 
         $config = [
@@ -547,7 +547,7 @@ final class SessionTest extends TestCase
     #[RunInSeparateProcess]
     public function testEngineWithPreMadeInstance(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $engine = new TestAppLibSession();
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());

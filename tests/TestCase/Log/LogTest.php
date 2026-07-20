@@ -48,7 +48,7 @@ final class LogTest extends TestCase
      */
     public function testImportingLoggers(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
 
         Log::setConfig('libtest', [
@@ -544,7 +544,7 @@ final class LogTest extends TestCase
      */
     public function testPassingScopeToEngine(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Log::reset();
 

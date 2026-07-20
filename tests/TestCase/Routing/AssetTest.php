@@ -45,7 +45,7 @@ final class AssetTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
         $this->builder = Router::createRouteBuilder('/');
         $this->builder->fallbacks();
