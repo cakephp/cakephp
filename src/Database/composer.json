@@ -45,12 +45,5 @@
         "cakephp/i18n": "If you are using locale-aware datetime formats.",
         "cakephp/log": "If you want to use query logging without providing a logger yourself.",
         "cakephp/utility": "If you want to use EnumLabelTrait."
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "extra": {
-        "branch-alias": {
-            "dev-5.next": "5.5.x-dev"
-        }
     }
 }

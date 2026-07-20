@@ -32,10 +32,5 @@
         "files": [
             "functions.php"
         ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-5.next": "5.5.x-dev"
-        }
     }
 }

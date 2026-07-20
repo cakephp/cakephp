@@ -34,12 +34,5 @@
         "psr-4": {
             "Cake\\Cache\\": "."
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "extra": {
-        "branch-alias": {
-            "dev-5.next": "5.5.x-dev"
-        }
     }
 }

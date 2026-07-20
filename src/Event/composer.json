@@ -30,12 +30,5 @@
         "psr-4": {
             "Cake\\Event\\": "."
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "extra": {
-        "branch-alias": {
-            "dev-5.next": "5.5.x-dev"
-        }
     }
 }
