@@ -333,7 +333,7 @@ jobs:
 
       - name: Run StructArmed
         if: always()
-        run: vendor/bin/structarmed analyze src tests
+        run: vendor/bin/structarmed analyze src/ tests/
 
   split-packages-stan:
     name: Static Analysis for Split Packages
