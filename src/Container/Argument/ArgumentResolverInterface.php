@@ -9,7 +9,7 @@ use ReflectionFunctionAbstract;
 interface ArgumentResolverInterface extends ContainerAwareInterface
 {
     /**
-     * @param array<\Cake\Container\Argument\LiteralArgument|\Cake\Container\Argument\ResolvableArgument> $arguments
+     * @param array<\Cake\Container\Argument\ArgumentInterface> $arguments
      * @return array
      */
     public function resolveArguments(array $arguments): array;

@@ -147,7 +147,7 @@ trait ArgumentResolverTrait
         // purposely don't define a type here so that any typing errors
         // from the consuming code bubble up
         /** @var \Cake\Container\Attribute\AttributeInterface $instance */
-        return new LiteralArgument($instance->resolve(), null);
+        return new LiteralArgument($instance->resolve());
     }
 
     /**
