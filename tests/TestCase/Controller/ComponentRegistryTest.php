@@ -16,13 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use Cake\Container\Container;
 use Cake\Container\ReflectionContainer;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
-use Cake\Core\Container;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Container\DefinitionContainerInterface;
+
 /**
  * Interface for applications that configure and use a dependency injection container.
  */
@@ -28,10 +30,10 @@ interface ContainerApplicationInterface
      * using `get()`. Dependencies and parameters will be resolved based
      * on service definitions.
      *
-     * @param \Cake\Core\ContainerInterface $container The container to add services to
+     * @param \Cake\Container\DefinitionContainerInterface $container The container to add services to
      * @return void
      */
-    public function services(ContainerInterface $container): void;
+    public function services(DefinitionContainerInterface $container): void;
 
     /**
      * Create a new container and register services.
@@ -39,7 +41,7 @@ interface ContainerApplicationInterface
      * This will `register()` services provided by both the application
      * and any plugins if the application has plugin support.
      *
-     * @return \Cake\Core\ContainerInterface A populated container
+     * @return \Cake\Container\DefinitionContainerInterface A populated container
      */
-    public function getContainer(): ContainerInterface;
+    public function getContainer(): DefinitionContainerInterface;
 }

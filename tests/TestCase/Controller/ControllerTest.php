@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use AssertionError;
+use Cake\Container\Container;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
-use Cake\Core\Container;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;

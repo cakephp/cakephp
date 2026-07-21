@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
@@ -110,10 +111,10 @@ interface PluginInterface
     /**
      * Register plugin services to the application's container
      *
-     * @param \Cake\Core\ContainerInterface $container Container instance.
+     * @param \Cake\Container\DefinitionContainerInterface $container Container instance.
      * @return void
      */
-    public function services(ContainerInterface $container): void;
+    public function services(DefinitionContainerInterface $container): void;
 
     /**
      * Register plugin events to the application's event manager.

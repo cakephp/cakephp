@@ -238,10 +238,9 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
-     * @param \Psr\Container\ContainerInterface $container
-     * @return $this
+     * @inheritDoc
      */
-    public function delegate(ContainerInterface $container)
+    public function delegate(ContainerInterface $container): DefinitionContainerInterface
     {
         $this->delegates[] = $container;
 

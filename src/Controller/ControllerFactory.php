@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
-use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
@@ -52,9 +52,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Constructor
      *
-     * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
+     * @param \Cake\Container\DefinitionContainerInterface $container The container to build controllers with.
      */
-    public function __construct(protected ContainerInterface $container)
+    public function __construct(protected DefinitionContainerInterface $container)
     {
     }
 

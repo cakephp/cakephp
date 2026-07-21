@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Core\Attribute;
 
+use Cake\Container\Container;
 use Cake\Container\ReflectionContainer;
 use Cake\Core\Configure;
-use Cake\Core\Container;
 use Cake\Test\TestCase\Core\Attribute\Configure\FakeClient;
 use Cake\TestSuite\TestCase;
 use TypeError;

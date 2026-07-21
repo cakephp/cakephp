@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\Container;
+use Cake\Container\Container;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use TestApp\ServiceProvider\EmptyServiceProvider;

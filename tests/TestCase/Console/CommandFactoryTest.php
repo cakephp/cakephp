@@ -19,7 +19,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
-use Cake\Core\Container;
+use Cake\Container\Container;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use stdClass;

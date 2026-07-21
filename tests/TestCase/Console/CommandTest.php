@@ -28,7 +28,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\StubConsoleOutput;
-use Cake\Core\Container;
+use Cake\Container\Container;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;

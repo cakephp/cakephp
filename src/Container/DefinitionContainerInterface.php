@@ -44,6 +44,12 @@ interface DefinitionContainerInterface extends ContainerInterface
     public function addShared(string $id, mixed $concrete = null): DefinitionInterface;
 
     /**
+     * @param \Psr\Container\ContainerInterface $container The container instance to use as delegation
+     * @return self
+     */
+    public function delegate(ContainerInterface $container): self;
+
+    /**
      * @param string $id
      * @return \Cake\Container\Definition\DefinitionInterface
      */

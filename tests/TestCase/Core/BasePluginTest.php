@@ -19,10 +19,10 @@ use Cake\Console\CommandCollection;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Container\Container;
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
-use Cake\Core\Container;
-use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\Event;
@@ -374,7 +374,7 @@ class BasePluginTest extends TestCase
                 return [CustomTestEventListenerInterface::class];
             }
 
-            public function services(ContainerInterface $container): void
+            public function services(DefinitionContainerInterface $container): void
             {
                 $container->addShared(CustomTestEventListenerInterface::class);
             }
@@ -414,7 +414,7 @@ class BasePluginTest extends TestCase
                 return [DependencyInjectedEventListener::class];
             }
 
-            public function services(ContainerInterface $container): void
+            public function services(DefinitionContainerInterface $container): void
             {
                 $container->addShared(GreeterService::class);
                 $container->addShared(DependencyInjectedEventListener::class)
@@ -484,7 +484,7 @@ class BasePluginTest extends TestCase
                 return [CustomTestEventListenerInterface::class];
             }
 
-            public function services(ContainerInterface $container): void
+            public function services(DefinitionContainerInterface $container): void
             {
                 $container->addShared(CustomTestEventListenerInterface::class);
             }

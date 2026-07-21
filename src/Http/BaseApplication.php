@@ -18,11 +18,11 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
+use Cake\Container\Container;
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
-use Cake\Core\ContainerInterface;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
@@ -80,9 +80,9 @@ abstract class BaseApplication implements
     /**
      * Container
      *
-     * @var \Cake\Core\ContainerInterface|null
+     * @var \Cake\Container\DefinitionContainerInterface|null
      */
-    protected ?ContainerInterface $container = null;
+    protected ?DefinitionContainerInterface $container = null;
 
     /**
      * Constructor
@@ -283,9 +283,9 @@ abstract class BaseApplication implements
      * The first time the container is fetched it will be constructed
      * and stored for future calls.
      *
-     * @return \Cake\Core\ContainerInterface
+     * @return \Cake\Container\DefinitionContainerInterface
      */
-    public function getContainer(): ContainerInterface
+    public function getContainer(): DefinitionContainerInterface
     {
         return $this->container ??= $this->buildContainer();
     }
@@ -296,9 +296,9 @@ abstract class BaseApplication implements
      * Override this method if you need to use a custom container or
      * want to change how the container is built.
      *
-     * @return \Cake\Core\ContainerInterface
+     * @return \Cake\Container\DefinitionContainerInterface
      */
-    protected function buildContainer(): ContainerInterface
+    protected function buildContainer(): DefinitionContainerInterface
     {
         $container = new Container();
         $this->services($container);
@@ -307,7 +307,7 @@ abstract class BaseApplication implements
         }
 
         $event = $this->dispatchEvent('Application.buildContainer', ['container' => $container]);
-        if ($event->getResult() instanceof ContainerInterface) {
+        if ($event->getResult() instanceof DefinitionContainerInterface) {
             return $event->getResult();
         }
 
@@ -317,10 +317,10 @@ abstract class BaseApplication implements
     /**
      * Register application container services.
      *
-     * @param \Cake\Core\ContainerInterface $container The Container to update.
+     * @param \Cake\Container\DefinitionContainerInterface $container The Container to update.
      * @return void
      */
-    public function services(ContainerInterface $container): void
+    public function services(DefinitionContainerInterface $container): void
     {
     }
 
@@ -350,7 +350,7 @@ abstract class BaseApplication implements
     ): ResponseInterface {
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
-        $container->add(ContainerInterface::class, $container);
+        $container->add(DefinitionContainerInterface::class, $container);
 
         $this->controllerFactory ??= new ControllerFactory($container);
 

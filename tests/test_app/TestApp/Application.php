@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Container\ReflectionContainer;
 use Cake\Core\Configure;
-use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
@@ -101,9 +101,9 @@ class Application extends BaseApplication
     /**
      * Container register hook
      *
-     * @param \Cake\Core\ContainerInterface $container The container to update
+     * @param \Cake\Container\DefinitionContainerInterface $container The container to update
      */
-    public function services(ContainerInterface $container): void
+    public function services(DefinitionContainerInterface $container): void
     {
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
         $container->add(DependencyCommand::class)

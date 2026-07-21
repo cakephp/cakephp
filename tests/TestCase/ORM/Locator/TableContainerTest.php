@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Container\Container;
 use Cake\Container\Exception\NotFoundException;
-use Cake\Core\Container;
 use Cake\ORM\Locator\TableContainer;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\ArticlesTable;
