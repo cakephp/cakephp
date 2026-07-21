@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace TestApp\ServiceProvider;
 
 use Cake\Container\ContainerInterface;
-use Cake\Core\ServiceProvider;
+use Cake\Container\ServiceProvider;
 
 class PersonServiceProvider extends ServiceProvider
 {

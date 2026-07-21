@@ -14,9 +14,8 @@ declare(strict_types=1);
  * @since         4.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Core;
+namespace Cake\Container;
 
-use Cake\Container\ContainerInterface;
 use Cake\Container\ServiceProvider\AbstractServiceProvider;
 use Cake\Container\ServiceProvider\BootableServiceProviderInterface;
 use LogicException;
