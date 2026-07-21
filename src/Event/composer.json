@@ -24,6 +24,7 @@
     },
     "require": {
         "php": ">=8.4",
+        "cakephp/container": "6.0.*@dev",
         "cakephp/core": "6.0.*@dev"
     },
     "autoload": {

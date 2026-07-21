@@ -25,6 +25,7 @@
     "require": {
         "php": ">=8.4",
         "cakephp/collection": "6.0.*@dev",
+        "cakephp/container": "6.0.*@dev",
         "cakephp/core": "6.0.*@dev",
         "cakephp/datasource": "6.0.*@dev",
         "cakephp/database": "6.0.*@dev",
