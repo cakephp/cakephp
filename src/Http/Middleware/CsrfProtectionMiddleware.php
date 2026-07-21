@@ -204,22 +204,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Test if the token predates salted tokens.
-     *
-     * These tokens are hexadecimal values and equal
-     * to the token with checksum length. While they are vulnerable
-     * to BREACH they should rotate over time and support will be dropped
-     * in 5.x.
-     *
-     * @param string $token The token to test.
-     * @return bool
-     */
-    protected function isHexadecimalToken(string $token): bool
-    {
-        return preg_match('/^[a-f0-9]{' . static::TOKEN_WITH_CHECKSUM_LENGTH . '}$/', $token) === 1;
-    }
-
-    /**
      * Create a new token to be used for CSRF protection
      *
      * @return string
@@ -243,9 +227,6 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function saltToken(string $token): string
     {
-        if ($this->isHexadecimalToken($token)) {
-            return $token;
-        }
         $decoded = base64_decode($token, true);
         if ($decoded === false) {
             throw new InvalidArgumentException('Invalid token data.');
@@ -265,17 +246,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Remove the salt from a CSRF token.
      *
-     * If the token is not TOKEN_VALUE_LENGTH * 2 it is an old
-     * unsalted value that is supported for backwards compatibility.
+     * Returns the token unchanged if it isn't a validly-salted value
+     * (e.g. malformed or tampered-with input).
      *
      * @param string $token The token that could be salty.
      * @return string An unsalted token.
      */
     public function unsaltToken(string $token): string
     {
-        if ($this->isHexadecimalToken($token)) {
-            return $token;
-        }
         $decoded = base64_decode($token, true);
         if ($decoded === false || strlen($decoded) !== static::TOKEN_WITH_CHECKSUM_LENGTH * 2) {
             return $token;
@@ -300,13 +278,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function verifyToken(string $token): bool
     {
-        // If we have a hexadecimal value we're in a compatibility mode from before
-        // tokens were salted on each request.
-        if ($this->isHexadecimalToken($token)) {
-            $decoded = $token;
-        } else {
-            $decoded = base64_decode($token, true);
-        }
+        $decoded = base64_decode($token, true);
         if (!$decoded || strlen($decoded) <= static::TOKEN_VALUE_LENGTH) {
             return false;
         }
