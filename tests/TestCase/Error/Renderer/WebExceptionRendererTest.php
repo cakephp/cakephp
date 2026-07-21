@@ -587,14 +587,14 @@ class WebExceptionRendererTest extends TestCase
                 404,
             ],
             [
-                new MissingTemplateException(['file' => '/posts/about.ctp']),
+                new MissingTemplateException('/posts/about.ctp'),
                 [
                     "/posts\/about.ctp/",
                 ],
                 500,
             ],
             [
-                new MissingLayoutException(['file' => 'layouts/my_layout.ctp']),
+                new MissingLayoutException('layouts/my_layout.ctp'),
                 [
                     '/Missing Layout/',
                     "/layouts\/my_layout.ctp/",

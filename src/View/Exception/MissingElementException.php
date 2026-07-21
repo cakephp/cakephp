@@ -14,6 +14,8 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
+use Throwable;
+
 /**
  * Used when an element file cannot be found.
  */
@@ -23,4 +25,31 @@ class MissingElementException extends MissingTemplateException
      * @var string
      */
     protected string $type = 'Element';
+
+    /**
+     * Constructor
+     *
+     * @param string $name The element name that was requested (e.g. including a plugin prefix).
+     * @param string $file The element filename that was searched for.
+     * @param array<string> $paths The path list that the element could not be found in.
+     * @param int|null $code The code of the error.
+     * @param \Throwable|null $previous the previous exception.
+     */
+    public function __construct(
+        protected string $name,
+        string $file,
+        array $paths = [],
+        ?int $code = null,
+        ?Throwable $previous = null,
+    ) {
+        parent::__construct($file, $paths, $code, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    protected function displayName(): string
+    {
+        return $this->name;
+    }
 }
