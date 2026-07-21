@@ -6,9 +6,9 @@ namespace Cake\Container;
 use Cake\Container\Definition\DefinitionInterface;
 use Cake\Container\Inflector\InflectorInterface;
 use Cake\Container\ServiceProvider\ServiceProviderInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-interface DefinitionContainerInterface extends ContainerInterface
+interface ContainerInterface extends PsrContainerInterface
 {
     /**
      * @param string $id
@@ -47,7 +47,7 @@ interface DefinitionContainerInterface extends ContainerInterface
      * @param \Psr\Container\ContainerInterface $container The container instance to use as delegation
      * @return self
      */
-    public function delegate(ContainerInterface $container): self;
+    public function delegate(PsrContainerInterface $container): self;
 
     /**
      * @param string $id

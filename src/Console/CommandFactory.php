@@ -14,7 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 
 /**
  * This is a factory for creating Command instances.
@@ -27,9 +27,9 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * Constructor
      *
-     * @param \Cake\Container\DefinitionContainerInterface|null $container The container to use if available.
+     * @param \Cake\Container\ContainerInterface|null $container The container to use if available.
      */
-    public function __construct(protected ?DefinitionContainerInterface $container = null)
+    public function __construct(protected ?ContainerInterface $container = null)
     {
     }
 

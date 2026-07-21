@@ -20,7 +20,7 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Container\Container;
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -107,7 +107,7 @@ class BaseApplicationTest extends TestCase
         $this->assertSame('Hello Jane', '' . $result->getBody());
         $container = $app->getContainer();
         $this->assertSame($request, $container->get(ServerRequest::class));
-        $this->assertSame($container, $container->get(DefinitionContainerInterface::class));
+        $this->assertSame($container, $container->get(ContainerInterface::class));
     }
 
     public function testAddPluginValidShortName(): void
@@ -238,7 +238,7 @@ class BaseApplicationTest extends TestCase
         $app = $this->app;
         $container = $app->getContainer();
 
-        $this->assertInstanceOf(DefinitionContainerInterface::class, $container);
+        $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertSame($container, $app->getContainer(), 'Should return a reference');
     }
 
@@ -248,12 +248,12 @@ class BaseApplicationTest extends TestCase
         $called = false;
         $app->getEventManager()->on('Application.buildContainer', function ($event, $container) use (&$called): void {
             $this->assertInstanceOf(BaseApplication::class, $event->getSubject());
-            $this->assertInstanceOf(DefinitionContainerInterface::class, $container);
+            $this->assertInstanceOf(ContainerInterface::class, $container);
             $called = true;
         });
 
         $container = $app->getContainer();
-        $this->assertInstanceOf(DefinitionContainerInterface::class, $container);
+        $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertTrue($called, 'Listener should be called');
     }
 
@@ -268,7 +268,7 @@ class BaseApplicationTest extends TestCase
         });
 
         $container = $app->getContainer();
-        $this->assertInstanceOf(DefinitionContainerInterface::class, $container);
+        $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertTrue($container->has('testing'));
     }
 
@@ -399,7 +399,7 @@ class BaseApplicationTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function services(DefinitionContainerInterface $container): void
+            public function services(ContainerInterface $container): void
             {
                 $container->addShared(GreeterService::class);
                 $container->addShared(DependencyInjectedEventListener::class)

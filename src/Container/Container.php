@@ -14,9 +14,9 @@ use Cake\Container\Inflector\InflectorInterface;
 use Cake\Container\ServiceProvider\ServiceProviderAggregate;
 use Cake\Container\ServiceProvider\ServiceProviderAggregateInterface;
 use Cake\Container\ServiceProvider\ServiceProviderInterface;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-class Container implements DefinitionContainerInterface
+class Container implements ContainerInterface
 {
     /**
      * @var bool
@@ -96,9 +96,9 @@ class Container implements DefinitionContainerInterface
      * ```
      *
      * @param array<int|string, array<class-string>|class-string> $definitions
-     * @return \Cake\Container\DefinitionContainerInterface
+     * @return \Cake\Container\ContainerInterface
      */
-    public function addDefinitions(array $definitions): DefinitionContainerInterface
+    public function addDefinitions(array $definitions): ContainerInterface
     {
         foreach ($definitions as $id => $definition) {
             if (is_int($id) && is_string($definition)) {
@@ -118,7 +118,7 @@ class Container implements DefinitionContainerInterface
      * @param bool $shared
      * @return \Psr\Container\ContainerInterface
      */
-    public function defaultToShared(bool $shared = true): ContainerInterface
+    public function defaultToShared(bool $shared = true): PsrContainerInterface
     {
         $this->defaultToShared = $shared;
 
@@ -147,7 +147,7 @@ class Container implements DefinitionContainerInterface
     /**
      * @inheritDoc
      */
-    public function addServiceProvider(ServiceProviderInterface $provider): DefinitionContainerInterface
+    public function addServiceProvider(ServiceProviderInterface $provider): ContainerInterface
     {
         $this->providers->add($provider);
 
@@ -240,7 +240,7 @@ class Container implements DefinitionContainerInterface
     /**
      * @inheritDoc
      */
-    public function delegate(ContainerInterface $container): DefinitionContainerInterface
+    public function delegate(PsrContainerInterface $container): ContainerInterface
     {
         $this->delegates[] = $container;
 

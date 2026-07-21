@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
@@ -52,9 +52,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Constructor
      *
-     * @param \Cake\Container\DefinitionContainerInterface $container The container to build controllers with.
+     * @param \Cake\Container\ContainerInterface $container The container to build controllers with.
      */
-    public function __construct(protected DefinitionContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
     }
 

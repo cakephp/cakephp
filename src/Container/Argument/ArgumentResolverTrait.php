@@ -5,11 +5,11 @@ namespace Cake\Container\Argument;
 
 use Cake\Container\Attribute\AttributeInterface;
 use Cake\Container\ContainerAwareInterface;
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Container\Exception\ContainerException;
 use Cake\Container\Exception\NotFoundException;
 use Cake\Container\ReflectionContainer;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionAttribute;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
@@ -46,7 +46,7 @@ trait ArgumentResolverTrait
 
             // resolve the argument from the container, if it happens to be another
             // argument wrapper, use that value
-            if ($container instanceof ContainerInterface && $container->has($argValue)) {
+            if ($container instanceof PsrContainerInterface && $container->has($argValue)) {
                 try {
                     $arg = $container->get($argValue);
 
@@ -153,5 +153,5 @@ trait ArgumentResolverTrait
     /**
      * @inheritDoc
      */
-    abstract public function getContainer(): DefinitionContainerInterface;
+    abstract public function getContainer(): ContainerInterface;
 }

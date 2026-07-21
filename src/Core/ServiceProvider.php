@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Container\ServiceProvider\AbstractServiceProvider;
 use Cake\Container\ServiceProvider\BootableServiceProviderInterface;
 use LogicException;
@@ -60,10 +60,10 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * files or do any other work when the service provider is added to the
      * container.
      *
-     * @param \Cake\Container\DefinitionContainerInterface $container The container to add services to.
+     * @param \Cake\Container\ContainerInterface $container The container to add services to.
      * @return void
      */
-    public function bootstrap(DefinitionContainerInterface $container): void
+    public function bootstrap(ContainerInterface $container): void
     {
     }
 
@@ -107,8 +107,8 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * All services registered in this method should also be included in the $provides
      * property so that services can be located.
      *
-     * @param \Cake\Container\DefinitionContainerInterface $container The container to add services to.
+     * @param \Cake\Container\ContainerInterface $container The container to add services to.
      * @return void
      */
-    abstract public function services(DefinitionContainerInterface $container): void;
+    abstract public function services(ContainerInterface $container): void;
 }

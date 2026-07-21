@@ -19,7 +19,7 @@ namespace Cake\Controller;
 use Cake\Container\Argument\ArgumentResolverTrait;
 use Cake\Container\Argument\LiteralArgument;
 use Cake\Container\Argument\ResolvableArgument;
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
@@ -57,11 +57,11 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Constructor.
      *
      * @param \Cake\Controller\Controller|null $controller Controller instance.
-     * @param \Cake\Container\DefinitionContainerInterface|null $container Container instance.
+     * @param \Cake\Container\ContainerInterface|null $container Container instance.
      */
     public function __construct(
         ?Controller $controller = null,
-        protected ?DefinitionContainerInterface $container = null,
+        protected ?ContainerInterface $container = null,
     ) {
         if ($controller !== null) {
             $this->setController($controller);
@@ -201,9 +201,9 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Get container instance.
      *
-     * @return \Cake\Container\DefinitionContainerInterface
+     * @return \Cake\Container\ContainerInterface
      */
-    protected function getContainer(): DefinitionContainerInterface
+    protected function getContainer(): ContainerInterface
     {
         if ($this->container === null) {
             throw new CakeException('Container not set.');

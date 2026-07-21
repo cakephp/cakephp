@@ -5,7 +5,7 @@ namespace Cake\Test\TestCase\Container\Inflector;
 
 use Cake\Container\Container;
 use Cake\Container\ContainerAwareInterface;
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Container\Inflector\InflectorAggregate;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
@@ -37,14 +37,14 @@ class InflectorAggregateTest extends TestCase
     {
         $aggregate = new InflectorAggregate();
         $containerAware = new class implements ContainerAwareInterface {
-            public ?DefinitionContainerInterface $container = null;
+            public ?ContainerInterface $container = null;
 
-            public function getContainer(): DefinitionContainerInterface
+            public function getContainer(): ContainerInterface
             {
                 return $this->container;
             }
 
-            public function setContainer(DefinitionContainerInterface $container): ContainerAwareInterface
+            public function setContainer(ContainerInterface $container): ContainerAwareInterface
             {
                 $this->container = $container;
 
