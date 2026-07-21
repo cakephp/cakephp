@@ -339,4 +339,16 @@ class FunctionsGlobalTest extends TestCase
             $this->assertTrue(true);
         });
     }
+
+    /**
+     * Test triggerWarning() with an explicit error level.
+     */
+    public function testTriggerWarningCustomLevel(): void
+    {
+        $error = $this->captureError(E_ALL, function (): void {
+            triggerWarning('This is just a notice', E_USER_NOTICE);
+        });
+        $this->assertSame(E_USER_NOTICE, $error->getCode());
+        $this->assertMatchesRegularExpression('/This is just a notice/', $error->getMessage());
+    }
 }

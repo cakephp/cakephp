@@ -385,6 +385,19 @@ class FunctionsTest extends TestCase
         });
     }
 
+    /**
+     * Test triggerWarning() with an explicit error level.
+     */
+    public function testTriggerWarningCustomLevel(): void
+    {
+        $this->expectNoticeMessageMatches('/This is just a notice/', function (): void {
+            $this->withErrorReporting(E_ALL, function (): void {
+                triggerWarning('This is just a notice', E_USER_NOTICE);
+                $this->assertTrue(true);
+            });
+        });
+    }
+
     #[DataProvider('toStringProvider')]
     public function testToString(mixed $rawValue, ?string $expected): void
     {

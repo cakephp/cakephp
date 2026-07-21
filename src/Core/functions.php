@@ -304,14 +304,15 @@ if (!function_exists('Cake\Core\env')) {
 
 if (!function_exists('Cake\Core\triggerWarning')) {
     /**
-     * Triggers an E_USER_WARNING.
+     * Triggers a user-level PHP error/warning/notice.
      *
      * @param string $message The warning message.
+     * @param int $level The error level to trigger. Defaults to `E_USER_WARNING`.
      * @return void
      */
-    function triggerWarning(string $message): void
+    function triggerWarning(string $message, int $level = E_USER_WARNING): void
     {
-        trigger_error($message, E_USER_WARNING);
+        trigger_error($message, $level);
     }
 }
 

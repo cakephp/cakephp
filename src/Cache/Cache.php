@@ -28,6 +28,7 @@ use Cake\Core\StaticConfigTrait;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
+use function Cake\Core\triggerWarning;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
@@ -159,7 +160,7 @@ class Cache
         } catch (RuntimeException $e) {
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                triggerWarning($e->getMessage());
 
                 return;
             }

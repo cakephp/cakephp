@@ -24,6 +24,7 @@ use Cake\Lock\Engine\RedisLockEngine;
 use Cake\Lock\Exception\InvalidArgumentException;
 use Closure;
 use RuntimeException;
+use function Cake\Core\triggerWarning;
 
 /**
  * Lock provides a consistent interface to distributed locking.
@@ -135,7 +136,7 @@ class Lock
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
             $registry->set($name, new NullLockEngine());
-            trigger_error($e->getMessage(), E_USER_WARNING);
+            triggerWarning($e->getMessage());
         }
     }
 

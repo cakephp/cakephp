@@ -31,6 +31,7 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * An Association is a relationship established between two tables and is used
@@ -575,9 +576,8 @@ abstract class Association
         ) {
             $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
                 ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
-            trigger_error(
+            triggerWarning(
                 sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
-                E_USER_WARNING,
             );
         }
 
