@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Container\Argument\ArgumentResolverTrait;
+use Cake\Container\Argument\LiteralArgument;
+use Cake\Container\Argument\ResolvableArgument;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
@@ -23,11 +26,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use League\Container\Argument\ArgumentReflectorTrait;
-use League\Container\Argument\ArgumentResolverTrait;
-use League\Container\Argument\LiteralArgument;
-use League\Container\Argument\ResolvableArgument;
-use League\Container\ReflectionContainer;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
@@ -47,8 +45,6 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     use EventDispatcherTrait;
 
     use ArgumentResolverTrait;
-
-    use ArgumentReflectorTrait;
 
     /**
      * The controller that this collection is associated with.
@@ -222,7 +218,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      *
      * @param \ReflectionFunctionAbstract $method The constructor to reflect on
      * @param array<string, mixed> $args Named arguments to pass as literals (e.g., ['config' => []])
-     * @return array<\League\Container\Argument\LiteralArgument|\League\Container\Argument\ResolvableArgument>
+     * @return array<\Cake\Container\Argument\LiteralArgument|\Cake\Container\Argument\ResolvableArgument>
      */
     protected function reflectArguments(ReflectionFunctionAbstract $method, array $args = []): array
     {
@@ -267,19 +263,5 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         }
 
         return $this->resolveArguments($arguments);
-    }
-
-    /**
-     * Get the mode of the container.
-     *
-     * This method is used to determine how the container should resolve
-     * dependencies and arguments.
-     *
-     * @return int The mode of the container.
-     * @internal
-     */
-    protected function getMode(): int
-    {
-        return ReflectionContainer::AUTO_WIRING;
     }
 }

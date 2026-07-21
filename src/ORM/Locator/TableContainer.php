@@ -23,8 +23,11 @@ use Psr\Container\ContainerInterface;
  * Dependency injection container for Tables. Will create Tables
  * as if fetchTable() was called with default options.
  *
- * Register as a delegate in your Application::services() function
- * before any auto-wire delegates.
+ * Register as a delegate in your Application::services() function.
+ * `Cake\Core\Container` enables auto-wiring by default, which resolves
+ * any existing class by reflection before other delegates are checked -
+ * call `$container->disableAutoWiring()` first if you want this delegate
+ * to take priority for `*Table` classes over bare reflection.
  */
 class TableContainer implements ContainerInterface
 {

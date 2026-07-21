@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Cake\Container\Argument;
 
+use Cake\Container\Attribute\AttributeInterface;
+use Cake\Container\ContainerAwareInterface;
 use Cake\Container\DefinitionContainerInterface;
 use Cake\Container\Exception\ContainerException;
 use Cake\Container\Exception\NotFoundException;
 use Cake\Container\ReflectionContainer;
 use Psr\Container\ContainerInterface;
+use ReflectionAttribute;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 
@@ -83,6 +86,15 @@ trait ArgumentResolverTrait
                 continue;
             }
 
+            // next we see if we have an attribute that can resolve the argument
+            foreach ($param->getAttributes() as $attribute) {
+                $argument = $this->resolveArgumentFromAttribute($attribute);
+                if ($argument !== false) {
+                    $arguments[] = $argument;
+                    continue 2;
+                }
+            }
+
             $type = $param->getType();
 
             if ($type instanceof ReflectionNamedType) {
@@ -111,6 +123,31 @@ trait ArgumentResolverTrait
         }
 
         return $this->resolveArguments($arguments);
+    }
+
+    /**
+     * Attempt to resolve a parameter's value from one of its PHP attributes.
+     *
+     * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
+     * @return \Cake\Container\Argument\LiteralArgumentInterface|false
+     */
+    protected function resolveArgumentFromAttribute(ReflectionAttribute $attribute): LiteralArgumentInterface|false
+    {
+        $attrClass = $attribute->getName();
+
+        if (!is_subclass_of($attrClass, AttributeInterface::class)) {
+            return false;
+        }
+
+        $instance = $attribute->newInstance();
+        if ($instance instanceof ContainerAwareInterface) {
+            $instance->setContainer($this->getContainer());
+        }
+
+        // purposely don't define a type here so that any typing errors
+        // from the consuming code bubble up
+        /** @var \Cake\Container\Attribute\AttributeInterface $instance */
+        return new LiteralArgument($instance->resolve(), null);
     }
 
     /**

@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use League\Container\DefinitionContainerInterface;
-use League\Container\ServiceProvider\AbstractServiceProvider;
-use League\Container\ServiceProvider\BootableServiceProviderInterface;
+use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\ServiceProvider\AbstractServiceProvider;
+use Cake\Container\ServiceProvider\BootableServiceProviderInterface;
 use LogicException;
 
 /**
@@ -63,7 +63,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     /**
      * Delegate to the bootstrap() method
      *
-     * This method wraps the league/container function so users
+     * This method wraps the underlying container's boot() function so users
      * only need to use the CakePHP bootstrap() interface.
      *
      * @return void
@@ -92,7 +92,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * Call the abstract services() method.
      *
      * This method primarily exists as a shim between the interface
-     * that league/container has and the one we want to offer in CakePHP.
+     * that the underlying container has and the one we want to offer in CakePHP.
      *
      * @return void
      */

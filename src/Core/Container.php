@@ -16,13 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use League\Container\Container as LeagueContainer;
+use Cake\Container\Container as CakeContainer;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
  * Dependency Injection container
- *
- * Based on the container out of League\Container
  */
-class Container extends LeagueContainer implements ContainerInterface
+class Container extends CakeContainer implements ContainerInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function delegate(PsrContainerInterface $container): PsrContainerInterface
+    {
+        parent::delegate($container);
+
+        return $this;
+    }
 }

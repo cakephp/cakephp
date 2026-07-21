@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use League\Container\DefinitionContainerInterface;
+use Cake\Container\DefinitionContainerInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
@@ -26,7 +26,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
  * methods to add services and service providers to the container.
  *
  * The methods defined in this interface use the conventions provided
- * by league/container as that is the library that CakePHP uses.
+ * by cakephp/container as that is the library that CakePHP uses.
  */
 interface ContainerInterface extends DefinitionContainerInterface
 {

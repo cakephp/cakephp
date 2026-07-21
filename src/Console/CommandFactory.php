@@ -38,7 +38,9 @@ class CommandFactory implements CommandFactoryInterface
      */
     public function create(string $className): CommandInterface
     {
-        if ($this->container?->has($className)) {
+        // `has()` also returns true for any existing class due to auto-wiring,
+        // so `hasDefinition()` is used here to check for an explicit registration only.
+        if ($this->container?->hasDefinition($className)) {
             return $this->container->get($className);
         }
 
