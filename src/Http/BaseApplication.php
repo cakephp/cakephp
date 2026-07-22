@@ -18,11 +18,11 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
-use Cake\Container\Container;
 use Cake\Container\ContainerInterface;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
+use Cake\Core\ContainerFactory;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
@@ -293,14 +293,18 @@ abstract class BaseApplication implements
     /**
      * Build the service container
      *
-     * Override this method if you need to use a custom container or
-     * want to change how the container is built.
+     * Override this method if you need to change how the container is built.
+     *
+     * The container class is determined by `Configure::read('App.container')`,
+     * which defaults to `Cake\Container\Container`. Set it to the name of a
+     * class implementing `Cake\Container\ContainerInterface` to use a custom
+     * container implementation.
      *
      * @return \Cake\Container\ContainerInterface
      */
     protected function buildContainer(): ContainerInterface
     {
-        $container = new Container();
+        $container = ContainerFactory::create();
         $this->services($container);
         foreach ($this->plugins->with('services') as $plugin) {
             $plugin->services($container);
