@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use function Cake\Core\triggerWarning;
 
 if (!function_exists('debug')) {
     /**
@@ -132,9 +133,8 @@ if (!function_exists('breakpoint')) {
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(\Psy\Shell::class)) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
-        trigger_error(
+        triggerWarning(
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING,
         );
 
         return null;

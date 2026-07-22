@@ -19,6 +19,7 @@ namespace Cake\Log\Engine;
 use Cake\Log\Formatter\DefaultFormatter;
 use Cake\Utility\Text;
 use Stringable;
+use function Cake\Core\triggerWarning;
 
 /**
  * File Storage stream for Logging. Writes logs to different files
@@ -145,10 +146,10 @@ class FileLog extends BaseLog
 
         if (!$selfError && !$exists && !chmod($pathname, (int)$mask)) {
             $selfError = true;
-            trigger_error(vsprintf(
+            triggerWarning(vsprintf(
                 'Could not apply permission mask `%s` on log file `%s`',
                 [$mask, $pathname],
-            ), E_USER_WARNING);
+            ));
             $selfError = false;
         }
     }

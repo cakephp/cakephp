@@ -329,7 +329,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $trace = debug_backtrace();
         $parts = explode('\\', static::class);
-        trigger_error(
+        triggerWarning(
             sprintf(
                 'Undefined property `%s::$%s` in `%s` on line %s',
                 array_pop($parts),

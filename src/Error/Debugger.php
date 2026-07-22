@@ -43,6 +43,7 @@ use ReflectionProperty;
 use Throwable;
 use function Cake\Core\h;
 use function Cake\Core\pr;
+use function Cake\Core\triggerWarning;
 
 /**
  * Provide custom logging and error handling.
@@ -865,7 +866,7 @@ class Debugger
     {
         $salt = Security::getSalt();
         if ($salt === '__SALT__' || strlen($salt) < 32) {
-            trigger_error(
+            triggerWarning(
                 'Please change the value of `Security.salt` in `ROOT/config/app_local.php` ' .
                 'to a random value of at least 32 characters.',
                 E_USER_NOTICE,

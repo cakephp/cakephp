@@ -25,6 +25,7 @@ use Cake\Http\Cookie\CookieInterface;
 use Laminas\Diactoros\RelativeStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Link\LinkInterface;
+use function Cake\Core\triggerWarning;
 
 /**
  * Emits a Response to the PHP Server API.
@@ -55,7 +56,7 @@ class ResponseEmitter
         $line = 0;
         if (headers_sent($file, $line)) {
             $message = "Unable to emit headers. Headers sent in file={$file} line={$line}";
-            trigger_error($message, E_USER_WARNING);
+            triggerWarning($message);
         }
 
         $this->emitStatusLine($response);

@@ -34,6 +34,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SplFileObject;
+use function Cake\Core\triggerWarning;
 
 /**
  * File Storage engine for cache. Filestorage is the slowest cache storage
@@ -426,18 +427,18 @@ class FileEngine extends CacheEngine
             try {
                 $this->File = $path->openFile('c+');
             } catch (Exception $e) {
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                triggerWarning($e->getMessage());
 
                 return false;
             }
             unset($path);
 
             if (!$exists && !chmod($this->File->getPathname(), (int)$this->config['mask'])) {
-                trigger_error(sprintf(
+                triggerWarning(sprintf(
                     'Could not apply permission mask `%s` on cache file `%s`',
                     $this->File->getPathname(),
                     $this->config['mask'],
-                ), E_USER_WARNING);
+                ));
             }
         }
 
@@ -463,10 +464,10 @@ class FileEngine extends CacheEngine
         $isWritableDir = ($dir->isDir() && $dir->isWritable());
         if (!$success || ($this->init && !$isWritableDir)) {
             $this->init = false;
-            trigger_error(sprintf(
+            triggerWarning(sprintf(
                 '%s is not writable',
                 $this->config['path'],
-            ), E_USER_WARNING);
+            ));
         }
 
         return $success;

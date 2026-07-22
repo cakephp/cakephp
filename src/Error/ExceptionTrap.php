@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use function Cake\Core\env;
+use function Cake\Core\triggerWarning;
 
 /**
  * Entry point to CakePHP's exception handling.
@@ -373,6 +374,6 @@ class ExceptionTrap
             $exception->getFile(),
             $exception->getLine(),
         );
-        trigger_error($message, E_USER_WARNING);
+        triggerWarning($message);
     }
 }
