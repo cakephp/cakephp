@@ -73,6 +73,38 @@ class Column
     }
 
     /**
+     * Re-initializes nullable properties that may be absent when unserializing
+     * column data produced by an older CakePHP version.
+     *
+     * Nullable column attributes were added incrementally (e.g. `geometryType`
+     * and `fixed` after `Column` first shipped). A serialized payload created
+     * before a given promoted property existed does not contain it, and PHP does
+     * not apply the promoted default on the unserialize path. Reading such a
+     * property would otherwise fail with "Typed property ...::$fixed must not be
+     * accessed before initialization". This surfaces via the schema metadata
+     * cache and the Migrations plugin's `schema-dump-*.lock` files.
+     *
+     * @return void
+     */
+    public function __wakeup(): void
+    {
+        $this->null ??= null;
+        $this->length ??= null;
+        $this->generated ??= null;
+        $this->precision ??= null;
+        $this->increment ??= null;
+        $this->after ??= null;
+        $this->onUpdate ??= null;
+        $this->comment ??= null;
+        $this->unsigned ??= null;
+        $this->collate ??= null;
+        $this->srid ??= null;
+        $this->geometryType ??= null;
+        $this->baseType ??= null;
+        $this->fixed ??= null;
+    }
+
+    /**
      * Sets the column name.
      *
      * @param string $name Name
