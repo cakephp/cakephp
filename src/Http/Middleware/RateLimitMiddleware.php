@@ -278,19 +278,15 @@ class RateLimitMiddleware implements MiddlewareInterface
 
         if (is_array($this->config['ipHeader'])) {
             foreach ($this->config['ipHeader'] as $header) {
-                $headerKey = 'HTTP_' . strtoupper(str_replace('-', '_', $header));
-                if (!empty($params[$headerKey])) {
-                    $ips = explode(',', $params[$headerKey]);
-
-                    return trim($ips[0]);
+                $value = $request->getHeaderLine($header);
+                if ($value !== null) {
+                    return $value;
                 }
             }
         } elseif (is_string($this->config['ipHeader'])) {
-            $headerKey = 'HTTP_' . strtoupper(str_replace('-', '_', $this->config['ipHeader']));
-            if (!empty($params[$headerKey])) {
-                $ips = explode(',', $params[$headerKey]);
-
-                return trim($ips[0]);
+            $value = $request->getHeaderLine($this->config['ipHeader']);
+            if ($value !== '') {
+                return $value;
             }
         }
 
