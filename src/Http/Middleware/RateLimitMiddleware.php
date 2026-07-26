@@ -23,7 +23,6 @@ use Cake\Http\RateLimit\FixedWindowRateLimiter;
 use Cake\Http\RateLimit\RateLimiterInterface;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
 use Cake\Http\RateLimit\TokenBucketRateLimiter;
-use Cake\Http\ServerRequest;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
