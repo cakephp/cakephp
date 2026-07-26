@@ -93,7 +93,7 @@ class RateLimitMiddleware implements MiddlewareInterface
      * - `identifierCallback`: Closure|null to generate custom identifier, overrides `identifier` option
      * - `limitCallback`: Closure|null to determine dynamic limits based on request/identifier
      * - `ipHeader`: Header name(s) to check for client IP (default: 'remote_addr'). If your application
-     *    is behind a loadbalance or CDN, you may need to use `x-forwarded-for` to get the original
+     *    is behind a load balancer or CDN, you may need to use `x-forwarded-for` to get the original
      *    client IP.
      * - `includeRetryAfter`: Whether to include Retry-After header (default: true)
      * - `keyGenerator`: Closure|null to generate custom cache keys for rate limiting
