@@ -316,22 +316,22 @@ class RateLimitMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testProxyHeaders(): void
+    public function testProxyHeadersWithTrustProxy(): void
     {
         $middleware = new RateLimitMiddleware([
             'limit' => 1,
             'window' => 60,
             'cache' => 'rate_limit_test',
+            'ipHeader' => 'x-forwarded-for',
         ]);
-
-        // Test Cloudflare header
+        // Prime the ratelimiter
         $request = new ServerRequest([
             'environment' => [
                 'REMOTE_ADDR' => '127.0.0.1',
-                'HTTP_CF_CONNECTING_IP' => '192.168.1.100',
             ],
         ]);
-        $middleware->process($request, $this->handler);
+        $resp = $middleware->process($request, $this->handler);
+        $this->assertEquals($resp->getStatusCode(), 200);
 
         // Test X-Forwarded-For
         $request2 = new ServerRequest([
@@ -340,9 +340,44 @@ class RateLimitMiddlewareTest extends TestCase
                 'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.0.0.1',
             ],
         ]);
-        $middleware->process($request2, $this->handler);
-
+        $resp = $middleware->process($request2, $this->handler);
         // Different IPs should work
-        $this->assertTrue(true);
+        $this->assertEquals($resp->getStatusCode(), 200);
+    }
+
+    /**
+     * Test proxy headers for IP detection
+     *
+     * @return void
+     */
+    public function testProxyHeadersNoTrustProxy(): void
+    {
+        $middleware = new RateLimitMiddleware([
+            'limit' => 1,
+            'window' => 60,
+            'cache' => 'rate_limit_test',
+        ]);
+        // Prime the ratelimiter
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+            ],
+        ]);
+        $resp = $middleware->process($request, $this->handler);
+        $this->assertEquals($resp->getStatusCode(), 200);
+
+        // X-Forwarded-For is not considered by default as it can be spoofed trivially.
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.0.0.1',
+            ],
+        ]);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
     }
 }

@@ -23,6 +23,7 @@ use Cake\Http\RateLimit\FixedWindowRateLimiter;
 use Cake\Http\RateLimit\RateLimiterInterface;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
 use Cake\Http\RateLimit\TokenBucketRateLimiter;
+use Cake\Http\ServerRequest;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -92,7 +93,9 @@ class RateLimitMiddleware implements MiddlewareInterface
      * - `costCallback`: Closure|null to calculate custom cost for requests (default: 1 per request)
      * - `identifierCallback`: Closure|null to generate custom identifier, overrides `identifier` option
      * - `limitCallback`: Closure|null to determine dynamic limits based on request/identifier
-     * - `ipHeader`: Header name(s) to check for client IP (default: 'x-forwarded-for')
+     * - `ipHeader`: Header name(s) to check for client IP (default: 'remote_addr'). If your application
+     *    is behind a loadbalance or CDN, you may need to use `x-forwarded-for` to get the original
+     *    client IP.
      * - `includeRetryAfter`: Whether to include Retry-After header (default: true)
      * - `keyGenerator`: Closure|null to generate custom cache keys for rate limiting
      * - `tokenHeaders`: Array of headers to check for API tokens (default: ['Authorization', 'X-API-Key'])
@@ -114,7 +117,7 @@ class RateLimitMiddleware implements MiddlewareInterface
         'costCallback' => null,
         'identifierCallback' => null,
         'limitCallback' => null,
-        'ipHeader' => 'x-forwarded-for',
+        'ipHeader' => 'remote_addr',
         'includeRetryAfter' => true,
         'keyGenerator' => null,
         'tokenHeaders' => ['Authorization', 'X-API-Key'],
@@ -279,7 +282,7 @@ class RateLimitMiddleware implements MiddlewareInterface
         if (is_array($this->config['ipHeader'])) {
             foreach ($this->config['ipHeader'] as $header) {
                 $value = $request->getHeaderLine($header);
-                if ($value !== null) {
+                if ($value !== '') {
                     return $value;
                 }
             }
