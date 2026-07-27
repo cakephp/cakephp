@@ -385,5 +385,19 @@ class RateLimitMiddlewareTest extends TestCase
         } catch (TooManyRequestsException $e) {
             $this->assertStringContainsString('limit exceeded', $e->getMessage());
         }
+
+        // Remote-Addr as a header is also ignored.
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_REMOTE_ADDR' => '192.168.1.101',
+            ],
+        ]);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
     }
 }
