@@ -324,25 +324,31 @@ class RateLimitMiddlewareTest extends TestCase
             'cache' => 'rate_limit_test',
             'ipHeader' => 'x-forwarded-for',
         ]);
-        // Prime the ratelimiter
+        // Prime the ratelimiter for the client (left-most entry of the chain).
         $request = new ServerRequest([
-            'environment' => [
-                'REMOTE_ADDR' => '127.0.0.1',
-            ],
-        ]);
-        $resp = $middleware->process($request, $this->handler);
-        $this->assertEquals($resp->getStatusCode(), 200);
-
-        // Test X-Forwarded-For
-        $request2 = new ServerRequest([
             'environment' => [
                 'REMOTE_ADDR' => '127.0.0.1',
                 'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.0.0.1',
             ],
         ]);
-        $resp = $middleware->process($request2, $this->handler);
-        // Different IPs should work
-        $this->assertEquals($resp->getStatusCode(), 200);
+        $resp = $middleware->process($request, $this->handler);
+        $this->assertSame(200, $resp->getStatusCode());
+
+        // Same client IP, different downstream proxy hop must resolve to the same
+        // identifier and exceed the limit. Guards against keying on the full chain,
+        // which an attacker could vary to bypass the limit.
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.9.9.9',
+            ],
+        ]);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
     }
 
     /**
@@ -364,7 +370,7 @@ class RateLimitMiddlewareTest extends TestCase
             ],
         ]);
         $resp = $middleware->process($request, $this->handler);
-        $this->assertEquals($resp->getStatusCode(), 200);
+        $this->assertSame(200, $resp->getStatusCode());
 
         // X-Forwarded-For is not considered by default as it can be spoofed trivially.
         $request = new ServerRequest([

@@ -93,8 +93,10 @@ class RateLimitMiddleware implements MiddlewareInterface
      * - `identifierCallback`: Closure|null to generate custom identifier, overrides `identifier` option
      * - `limitCallback`: Closure|null to determine dynamic limits based on request/identifier
      * - `ipHeader`: Header name(s) to check for client IP (default: 'remote_addr'). If your application
-     *    is behind a load balancer or CDN, you may need to use `x-forwarded-for` to get the original
-     *    client IP.
+     *    is behind a load balancer or CDN, set this to the forwarded header (e.g. `x-forwarded-for`) to
+     *    get the original client IP. The left-most entry of a comma-separated chain is used. WARNING:
+     *    forwarded headers are client-supplied and trivially spoofable unless a trusted proxy overwrites
+     *    them. Only opt in when a proxy you control sets the header; otherwise rate limits can be bypassed.
      * - `includeRetryAfter`: Whether to include Retry-After header (default: true)
      * - `keyGenerator`: Closure|null to generate custom cache keys for rate limiting
      * - `tokenHeaders`: Array of headers to check for API tokens (default: ['Authorization', 'X-API-Key'])
@@ -278,17 +280,23 @@ class RateLimitMiddleware implements MiddlewareInterface
     {
         $params = $request->getServerParams();
 
-        if (is_array($this->config['ipHeader'])) {
-            foreach ($this->config['ipHeader'] as $header) {
-                $value = $request->getHeaderLine($header);
-                if ($value !== '') {
-                    return $value;
+        foreach ((array)$this->config['ipHeader'] as $header) {
+            // 'remote_addr' is a sentinel for the connecting IP, not an HTTP header.
+            if (strtolower($header) === 'remote_addr') {
+                if (!empty($params['REMOTE_ADDR'])) {
+                    return $params['REMOTE_ADDR'];
                 }
+
+                continue;
             }
-        } elseif (is_string($this->config['ipHeader'])) {
-            $value = $request->getHeaderLine($this->config['ipHeader']);
+
+            $value = $request->getHeaderLine($header);
             if ($value !== '') {
-                return $value;
+                // Forwarded headers may carry a chain "client, proxy1, proxy2";
+                // the left-most entry is the originating client.
+                $ips = explode(',', $value);
+
+                return trim($ips[0]);
             }
         }
 
