@@ -260,7 +260,17 @@ class ExceptionTrap
         if ($megabytes > 0) {
             $this->increaseMemoryLimit($megabytes * 1024);
         }
-        $error = error_get_last();
+        $this->handleLastError(error_get_last());
+    }
+
+    /**
+     * Handle the last PHP error captured during shutdown.
+     *
+     * @param array<string, mixed>|null $error The last PHP error.
+     * @return void
+     */
+    protected function handleLastError(?array $error): void
+    {
         if (!is_array($error)) {
             return;
         }
@@ -273,9 +283,16 @@ class ExceptionTrap
         if (!in_array($error['type'], $fatals, true)) {
             return;
         }
+        $description = $error['message'];
+        $trace = $error['trace'] ?? [];
+        if (is_array($trace) && $trace) {
+            $formattedTrace = Debugger::formatTrace($trace, ['format' => 'text', 'args' => false]);
+            assert(is_string($formattedTrace));
+            $description .= "\nStack Trace:\n" . $formattedTrace;
+        }
         $this->handleFatalError(
             $error['type'],
-            $error['message'],
+            $description,
             $error['file'],
             $error['line'],
         );
