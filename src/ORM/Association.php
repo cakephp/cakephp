@@ -221,7 +221,6 @@ abstract class Association
             'joinType',
             'tableLocator',
             'propertyName',
-            'sourceTable',
             'targetTable',
         ];
         foreach ($defaults as $property) {

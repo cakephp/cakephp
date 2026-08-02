@@ -356,7 +356,6 @@ class BelongsToMany extends Association
         }
         if (!$target->hasAssociation($sAlias)) {
             $target->belongsToMany($sAlias, [
-                'sourceTable' => $target,
                 'targetTable' => $source,
                 'foreignKey' => $this->getTargetForeignKey(),
                 'targetForeignKey' => $this->getForeignKey(),
