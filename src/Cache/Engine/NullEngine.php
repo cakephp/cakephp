@@ -31,7 +31,7 @@ class NullEngine extends CacheEngine
      */
     public function init(array $config = []): bool
     {
-        return true;
+        return parent::init($config);
     }
 
     /**

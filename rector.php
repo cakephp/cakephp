@@ -136,4 +136,23 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector::class,
         // and rewrites `$x ?: []` in ways that can change behavior on undefined/empty values.
         \Rector\DeadCode\Rector\Ternary\RemoveUselessTernaryRector::class,
+
+        // New in rector 2.5 - skipped to keep the version bump behavior-neutral.
+        // Together these touch ~226 files, mostly docblock removal. Whether to apply
+        // them is a separate decision from getting CI green again.
+        \Rector\CodeQuality\Rector\BooleanNot\NegatedAndsToPositiveOrsRector::class,
+        \Rector\CodeQuality\Rector\Property\FixClassCaseSensitivityVarDocblockRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveMixedDocblockOverruledByNativeTypeRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveParentDelegatingClassMethodRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveReturnTagIncompatibleWithNativeTypeRector::class,
+        \Rector\DeadCode\Rector\ClassMethod\RemoveUselessUnionReturnDocblockRector::class,
+        \Rector\DeadCode\Rector\Property\RemoveDefaultValueFromAssignedPropertyRector::class,
+        \Rector\DeadCode\Rector\StmtsAwareInterface\RemoveDeadInstanceOfAssertRector::class,
+        \Rector\Php80\Rector\NotIdentical\MbStrContainsRector::class,
+        \Rector\TypeDeclaration\Rector\ClassMethod\ArrayParamTypeByMethodCallTypeRector::class,
+        \Rector\TypeDeclaration\Rector\ClassMethod\ScalarParamTypeByMethodCallTypeRector::class,
+        \Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeFromAssertInstanceOfRector::class,
+        \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeForArrayMapRector::class,
+        \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromVariableCallRector::class,
     ]);
