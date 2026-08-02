@@ -493,10 +493,9 @@ class SelectLoader
     /**
      * Calculate the fields that need to participate in a subquery.
      *
-     * Normally this includes the binding key columns. If the subquery keeps an ORDER BY,
-     * whatever it sorts on joins the GROUP BY as well, and aliased columns are additionally
-     * kept in the SELECT list as they may be calculated or constant values, that need to be
-     * present to ensure the correct association data is loaded.
+     * Normally this includes the binding key columns. If the subquery keeps an ORDER BY, whatever
+     * it sorts on joins the GROUP BY too, and aliased columns additionally stay in the SELECT list
+     * as they may be calculated or constant values needed to load the correct association data.
      *
      * When a HAVING clause is present the original SELECT aliases are preserved as
      * well, since HAVING may reference computed aliases that would otherwise be
@@ -521,30 +520,26 @@ class SelectLoader
 
         /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
-        // _buildSubquery() only keeps the ORDER BY when the query is limited. Its columns then have
-        // to take part in the GROUP BY as well, or strict databases such as Postgres reject the
-        // reduced subquery with a grouping error.
+        // _buildSubquery() only keeps the ORDER BY when the query is limited.
         if ($order && $query->clause('limit') !== null) {
             // iterateParts() rebuilds the expression from the callback's return value, so each part
             // has to be handed back. Returning nothing would strip the ORDER BY from $query itself,
             // which is the caller's query, not a clone of it.
             $order->iterateParts(function ($direction, $field) use (&$fields, &$group, $columns) {
-                // Only named parts can reference a SELECT alias. A numeric key means the part
-                // carries its own column, and must not be looked up as a SELECT offset.
+                // A numeric key carries its own column and must not be read as a SELECT offset.
                 if (is_string($field) && isset($columns[$field])) {
                     $column = $columns[$field];
                     $fields[$field] = $column;
                 } else {
-                    $column = $this->_orderColumn($field, $direction);
+                    $column = $this->orderColumn($field, $direction);
                 }
 
-                // Constant SELECT values, as in `select(['score' => 100])`, are not columns and
-                // neither can nor need to be grouped.
+                // Constant values such as `select(['score' => 100])` are not columns.
                 if (!is_string($column) && !$column instanceof ExpressionInterface) {
                     return $direction;
                 }
 
-                if (!$this->_isAggregate($column) && !in_array($column, $group, true)) {
+                if (!$this->isAggregate($column) && !in_array($column, $group, true)) {
                     $group[] = $column;
                 }
 
@@ -573,7 +568,7 @@ class SelectLoader
                 }
                 $fields[$alias] = $column;
 
-                if (!$this->_isAggregate($column)) {
+                if (!$this->isAggregate($column)) {
                     $group[] = $column;
                 }
             }
@@ -585,16 +580,15 @@ class SelectLoader
     /**
      * Resolves the column an ORDER BY part sorts on, so it can join the subquery GROUP BY.
      *
-     * Associative parts (`['Articles.title' => 'ASC']`) carry the column as their key, while
-     * orderByAsc()/orderByDesc() and raw expressions keep it in the value instead. Parts that
-     * are plain SQL fragments (`orderBy('Articles.title DESC')`) cannot be told apart from their
-     * sort direction and are left untouched.
+     * Associative parts (`['Articles.title' => 'ASC']`) carry it as their key, orderByAsc()/
+     * orderByDesc() and raw expressions in the value. Plain SQL fragments such as
+     * `orderBy('Articles.title DESC')` cannot be told apart from their direction.
      *
      * @param mixed $field The key of the ORDER BY part.
      * @param mixed $direction The value of the ORDER BY part.
      * @return \Cake\Database\ExpressionInterface|string|null The column, or null if it cannot be resolved.
      */
-    protected function _orderColumn(mixed $field, mixed $direction): ExpressionInterface|string|null
+    protected function orderColumn(mixed $field, mixed $direction): ExpressionInterface|string|null
     {
         if (is_string($field)) {
             return $field;
@@ -614,12 +608,12 @@ class SelectLoader
     }
 
     /**
-     * Checks whether a SELECT column aggregates rows, in which case it must stay out of the GROUP BY.
+     * Checks whether a column aggregates rows, in which case it must stay out of the GROUP BY.
      *
      * @param mixed $column The column to check.
      * @return bool
      */
-    protected function _isAggregate(mixed $column): bool
+    protected function isAggregate(mixed $column): bool
     {
         if (!$column instanceof ExpressionInterface) {
             return false;

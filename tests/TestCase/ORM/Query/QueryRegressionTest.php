@@ -20,12 +20,9 @@ use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Log\QueryLogger;
-use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
-use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
@@ -33,6 +30,8 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Log\AbstractLogger;
+use Stringable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
@@ -1970,13 +1969,27 @@ class QueryRegressionTest extends TestCase
      */
     public function testSubqueryStrategyGroupsByOrderedColumns(): void
     {
-        Log::setConfig('queries', ['className' => 'Array']);
-        $driver = ConnectionManager::get('test')->getDriver();
+        $logger = new class extends AbstractLogger {
+            /**
+             * @var array<string>
+             */
+            public array $messages = [];
+
+            /**
+             * @inheritDoc
+             */
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->messages[] = (string)$message;
+            }
+        };
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $driver = $articles->getConnection()->getDriver();
         $previousLogger = $driver->getLogger();
-        $driver->setLogger(new QueryLogger());
+        $driver->setLogger($logger);
 
         try {
-            $articles = $this->getTableLocator()->get('Articles');
             $articles->belongsTo('Authors');
             $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
 
@@ -1987,23 +2000,23 @@ class QueryRegressionTest extends TestCase
                 ->limit(2)
                 ->all()
                 ->toArray();
-
-            $messages = array_filter(
-                Log::engine('queries')->read(),
-                fn(string $message): bool => str_contains($message, 'FROM comments'),
-            );
-            $this->assertNotEmpty($messages);
-
-            $sql = array_pop($messages);
-            $this->assertSame(1, preg_match('/GROUP BY (.+?)(?= ORDER BY| HAVING| LIMIT|\))/', $sql, $matches), $sql);
-            $this->assertStringContainsString('name', $matches[1], $sql);
         } finally {
             if ($previousLogger) {
                 $driver->setLogger($previousLogger);
             } else {
                 $driver->disableQueryLogging();
             }
-            Log::reset();
         }
+
+        // The filtering subquery is the only grouped statement the query above runs.
+        $grouped = array_filter(
+            $logger->messages,
+            fn(string $message): bool => str_contains($message, 'GROUP BY'),
+        );
+        $this->assertCount(1, $grouped, implode("\n", $logger->messages));
+
+        $sql = array_pop($grouped);
+        $this->assertSame(1, preg_match('/GROUP BY (.+?)(?= ORDER BY| HAVING| LIMIT|\))/', $sql, $matches), $sql);
+        $this->assertStringContainsString('name', $matches[1], $sql);
     }
 }
