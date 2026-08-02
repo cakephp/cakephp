@@ -18,6 +18,7 @@ namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
@@ -492,9 +493,10 @@ class SelectLoader
     /**
      * Calculate the fields that need to participate in a subquery.
      *
-     * Normally this includes the binding key columns. If there is a an ORDER BY,
-     * those columns are also included as the fields may be calculated or constant values,
-     * that need to be present to ensure the correct association data is loaded.
+     * Normally this includes the binding key columns. If the subquery keeps an ORDER BY,
+     * whatever it sorts on joins the GROUP BY as well, and aliased columns are additionally
+     * kept in the SELECT list as they may be calculated or constant values, that need to be
+     * present to ensure the correct association data is loaded.
      *
      * When a HAVING clause is present the original SELECT aliases are preserved as
      * well, since HAVING may reference computed aliases that would otherwise be
@@ -519,13 +521,31 @@ class SelectLoader
 
         /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
-        if ($order) {
+        // _buildSubquery() only keeps the ORDER BY when the query is limited. Its columns then have
+        // to take part in the GROUP BY as well, or strict databases such as Postgres reject the
+        // reduced subquery with a grouping error.
+        if ($order && $query->clause('limit') !== null) {
             // iterateParts() rebuilds the expression from the callback's return value, so each part
             // has to be handed back. Returning nothing would strip the ORDER BY from $query itself,
             // which is the caller's query, not a clone of it.
-            $order->iterateParts(function ($direction, $field) use (&$fields, $columns) {
-                if (isset($columns[$field])) {
-                    $fields[$field] = $columns[$field];
+            $order->iterateParts(function ($direction, $field) use (&$fields, &$group, $columns) {
+                // Only named parts can reference a SELECT alias. A numeric key means the part
+                // carries its own column, and must not be looked up as a SELECT offset.
+                if (is_string($field) && isset($columns[$field])) {
+                    $column = $columns[$field];
+                    $fields[$field] = $column;
+                } else {
+                    $column = $this->_orderColumn($field, $direction);
+                }
+
+                // Constant SELECT values, as in `select(['score' => 100])`, are not columns and
+                // neither can nor need to be grouped.
+                if (!is_string($column) && !$column instanceof ExpressionInterface) {
+                    return $direction;
+                }
+
+                if (!$this->_isAggregate($column) && !in_array($column, $group, true)) {
+                    $group[] = $column;
                 }
 
                 return $direction;
@@ -553,21 +573,69 @@ class SelectLoader
                 }
                 $fields[$alias] = $column;
 
-                $isAggregate = $column instanceof AggregateExpression;
-                if (!$isAggregate && $column instanceof ExpressionInterface) {
-                    $column->traverse(function ($sub) use (&$isAggregate): void {
-                        if ($sub instanceof AggregateExpression) {
-                            $isAggregate = true;
-                        }
-                    });
-                }
-                if (!$isAggregate) {
+                if (!$this->_isAggregate($column)) {
                     $group[] = $column;
                 }
             }
         }
 
         return ['select' => $fields, 'group' => $group];
+    }
+
+    /**
+     * Resolves the column an ORDER BY part sorts on, so it can join the subquery GROUP BY.
+     *
+     * Associative parts (`['Articles.title' => 'ASC']`) carry the column as their key, while
+     * orderByAsc()/orderByDesc() and raw expressions keep it in the value instead. Parts that
+     * are plain SQL fragments (`orderBy('Articles.title DESC')`) cannot be told apart from their
+     * sort direction and are left untouched.
+     *
+     * @param mixed $field The key of the ORDER BY part.
+     * @param mixed $direction The value of the ORDER BY part.
+     * @return \Cake\Database\ExpressionInterface|string|null The column, or null if it cannot be resolved.
+     */
+    protected function _orderColumn(mixed $field, mixed $direction): ExpressionInterface|string|null
+    {
+        if (is_string($field)) {
+            return $field;
+        }
+
+        if ($direction instanceof FieldInterface) {
+            $field = $direction->getField();
+
+            return is_string($field) || $field instanceof ExpressionInterface ? $field : null;
+        }
+
+        if ($direction instanceof ExpressionInterface) {
+            return $direction;
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks whether a SELECT column aggregates rows, in which case it must stay out of the GROUP BY.
+     *
+     * @param mixed $column The column to check.
+     * @return bool
+     */
+    protected function _isAggregate(mixed $column): bool
+    {
+        if (!$column instanceof ExpressionInterface) {
+            return false;
+        }
+        if ($column instanceof AggregateExpression) {
+            return true;
+        }
+
+        $isAggregate = false;
+        $column->traverse(function ($sub) use (&$isAggregate): void {
+            if ($sub instanceof AggregateExpression) {
+                $isAggregate = true;
+            }
+        });
+
+        return $isAggregate;
     }
 
     /**
