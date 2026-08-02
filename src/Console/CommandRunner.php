@@ -341,7 +341,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function hasCommandsWithPrefix(CommandCollection $commands, string $prefix): bool
     {
-        return array_any($commands->keys(), fn($name) => str_starts_with($name, $prefix . ' '));
+        return array_any($commands->keys(), fn(string $name) => str_starts_with($name, $prefix . ' '));
     }
 
     /**

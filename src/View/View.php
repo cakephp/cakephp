@@ -1422,7 +1422,7 @@ class View implements EventDispatcherInterface
             return $file;
         }
 
-        $found = array_any($this->paths($plugin), fn($path) => str_starts_with($absolute, $path));
+        $found = array_any($this->paths($plugin), fn(string $path) => str_starts_with($absolute, $path));
         if (!$found) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',

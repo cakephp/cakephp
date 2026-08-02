@@ -56,7 +56,7 @@ final class FilenameFilterIterator extends FilterIterator
     {
         $filename = $this->current()->getFilename();
 
-        $matches = array_any($this->patterns, fn($pattern) => Path::matches($pattern, $filename));
+        $matches = array_any($this->patterns, fn(string $pattern) => Path::matches($pattern, $filename));
 
         return $this->negate ? !$matches : $matches;
     }

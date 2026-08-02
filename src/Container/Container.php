@@ -218,7 +218,7 @@ class Container implements DefinitionContainerInterface
             return true;
         }
 
-        return array_any($this->delegates, fn($delegate) => $delegate->has($id));
+        return array_any($this->delegates, fn(ContainerInterface $delegate) => $delegate->has($id));
     }
 
     /**
