@@ -36,6 +36,10 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL RAND function.
      *
+     * Driver transformations:
+     *  - **Postgres**: random()
+     *  - **Sqlite**: abs(random() % 1)
+     *
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function rand(): FunctionExpression
@@ -132,6 +136,11 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a string concatenation
      *
+     * Driver transformations:
+     *  - **Postgres**: expression1 || expression2 || expression3 ...
+     *  - **Sqlite**: expression1 || expression2 || expression3 ...
+     *  - **SqlServer**: expression1 + expression2 + expression3 ...
+     *
      * @param array $args List of strings or expressions to concatenate
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -174,6 +183,11 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing the difference in days between
      * two dates.
      *
+     * Driver transformations:
+     *  - **Postgres**: expression1 - expression2
+     *  - **Sqlite**: ROUND(JULIANDAY(expression1) - JULIANDAY(expression2))
+     *  - **SqlServer**: datediff(day, expression1, expression2)
+     *
      * @param array $args List of expressions to obtain the difference in days.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -202,6 +216,11 @@ class FunctionsBuilder
     /**
      * Returns the specified date part from the SQL expression.
      *
+     * Driver transformations:
+     *  - **Postgres**: extract(part FROM expression)
+     *  - **Sqlite**: strftime('%part', expression)
+     *  - **SqlServer**: datepart(part, expression)
+     *
      * @param string $part Part of the date to return. Must be a simple alphanumeric string.
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
@@ -217,6 +236,11 @@ class FunctionsBuilder
 
     /**
      * Add the time unit to the date expression
+     *
+     * Driver transformations:
+     *  - **Postgres**: expression + interval 'value unit'
+     *  - **Sqlite**: datetime(expression, 'value unit')
+     *  - **SqlServer**: dateadd(unit, value, expression)
      *
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param string|int $value Value to be added. Use negative to subtract.
@@ -244,6 +268,11 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
      *
+     * Driver transformations:
+     *  - **Postgres**: extract(DOW FROM expression) + 1
+     *  - **Sqlite**: strftime('%w', expression) + 1
+     *  - **SqlServer**: datepart(WEEKDAY, expression)
+     *
      * @param \Cake\Database\ExpressionInterface|string $expression the function argument
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -270,6 +299,20 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing a call that will return the current
      * date and time. By default it returns both date and time, but you can also
      * make it generate only the date or only the time.
+     *
+     * Driver transformations:
+     *  - **Postgres**:
+     *    - datetime: localtimestamp(0)
+     *    - date: cast(localtimestamp(0) AS date)
+     *    - time: cast(localtimestamp(0) AS time)
+     *  - **Sqlite**:
+     *    - datetime: datetime('now')
+     *    - date: date('now')
+     *    - time: time('now')
+     *  - **SqlServer**:
+     *    - datetime: getutcdate()
+     *    - date: convert(date, getutcdate())
+     *    - time: convert(time, getutcdate())
      *
      * @param string $type (datetime|date|time)
      * @return \Cake\Database\Expression\FunctionExpression
@@ -352,6 +395,10 @@ class FunctionsBuilder
 
     /**
      * Returns a FunctionExpression representing the Json Value
+     *
+     * Driver transformations:
+     *  - **Postgres**: jsonb_path_query
+     *  - **Sqlite**: json_extract
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
      * @param string $jsonPath A valid JSON PATH Query

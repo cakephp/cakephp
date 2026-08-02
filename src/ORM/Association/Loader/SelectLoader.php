@@ -22,6 +22,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\PostgresCompiler;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
 use Cake\ORM\Query\SelectQuery;
@@ -312,7 +313,7 @@ class SelectLoader
             if (is_int($aliasedField)) {
                 $filter[] = $field;
                 if (count($joinFields) < $keyCount) {
-                    $joinFields[] = $this->rewriteJoinIdentifier($field, $aliasedTable);
+                    $joinFields[] = $this->rewriteJoinIdentifier($query, $field, $aliasedTable);
                 }
             } else {
                 $filter[$aliasedField] = $field;
@@ -339,25 +340,34 @@ class SelectLoader
      * while the outer join condition must reference the alias assigned to the
      * derived table itself.
      *
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Target table's query
      * @param mixed $field The original selected field.
      * @param string $aliasedTable The alias assigned to the joined subquery.
      * @return mixed
      */
-    protected function rewriteJoinIdentifier(mixed $field, string $aliasedTable): mixed
+    protected function rewriteJoinIdentifier(SelectQuery $query, mixed $field, string $aliasedTable): mixed
     {
         if (!is_string($field)) {
             return $field;
         }
 
-        $identifier = preg_replace(
-            '/^' . preg_quote($this->sourceAlias, '/') . '\./',
-            $aliasedTable . '.' . $this->sourceAlias . '__',
-            $field,
-        );
+        $identifier = $field;
+        $selectAlias = null;
+        if (preg_match('/^' . preg_quote($this->sourceAlias, '/') . '\.(.+)$/', $field, $matches)) {
+            $selectAlias = $this->sourceAlias . '__' . $matches[1];
+            $identifier = $aliasedTable . '.' . $selectAlias;
+        }
 
-        return new IdentifierExpression(
-            $identifier ?? $field,
-        );
+        $driver = $query->getDriver();
+        if (
+            $selectAlias !== null &&
+            !$driver->isAutoQuotingEnabled() &&
+            $driver->newCompiler() instanceof PostgresCompiler
+        ) {
+            $identifier = $aliasedTable . '.' . $driver->quoteIdentifier($selectAlias);
+        }
+
+        return new IdentifierExpression($identifier);
     }
 
     /**

@@ -103,7 +103,7 @@ class Response extends Message implements ResponseInterface
      *
      * @var string
      */
-    protected string $reasonPhrase;
+    protected string $reasonPhrase = '';
 
     /**
      * Cached decoded XML data.
