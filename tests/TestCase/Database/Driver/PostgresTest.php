@@ -249,6 +249,27 @@ class PostgresTest extends TestCase
         );
     }
 
+    public function testConcatCastsBoundParams(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select([
+                'title' => $query->func()->concat(['title' => 'identifier', "' string'" => 'literal', ' is ', 1]),
+            ])
+            ->from('articles')
+            ->where(['id' => 1]);
+
+        $this->assertEqualsSql(
+            <<<'SQL'
+            SELECT (CONCAT(title, ' string', CAST(:param0 AS text), CAST(:param1 AS text))) AS title FROM articles WHERE id = :c2
+            SQL,
+            $query->sql(),
+        );
+    }
+
     /**
      * Tests driver-specific feature support check.
      */

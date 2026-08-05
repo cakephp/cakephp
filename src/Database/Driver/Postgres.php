@@ -294,8 +294,15 @@ class Postgres extends Driver
     {
         switch ($expression->getName()) {
             case 'CONCAT':
-                // CONCAT function is expressed as exp1 || exp2
-                $expression->setName('')->setConjunction(' ||');
+                $expression->iterateParts(function ($p) {
+                    if (is_array($p)) {
+                        return (new FunctionExpression('CAST', [$p['value']], array_filter([$p['type']]), 'string'))
+                            ->setConjunction(' AS')
+                            ->add(['text' => 'literal']);
+                    }
+
+                    return $p;
+                });
                 break;
             case 'DATEDIFF':
                 $expression
