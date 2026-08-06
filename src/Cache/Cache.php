@@ -96,7 +96,7 @@ class Cache
      * @see \Cake\Cache\Cache::pool()
      * @var array<string, true>
      */
-    protected static array $_building = [];
+    protected static array $building = [];
 
     /**
      * Group to Config mapping
@@ -219,7 +219,7 @@ class Cache
             return $registry->get($config);
         }
 
-        if (isset(static::$_building[$config])) {
+        if (isset(static::$building[$config])) {
             // Reentered while this pool is still being constructed. An engine that cannot reach
             // its backend may log that failure, and the logger may in turn ask for a cache pool -
             // for example one that stores database schema metadata. Nothing is registered yet at
@@ -228,11 +228,11 @@ class Cache
             return new NullEngine();
         }
 
-        static::$_building[$config] = true;
+        static::$building[$config] = true;
         try {
             static::_buildEngine($config);
         } finally {
-            unset(static::$_building[$config]);
+            unset(static::$building[$config]);
         }
 
         return $registry->get($config);
