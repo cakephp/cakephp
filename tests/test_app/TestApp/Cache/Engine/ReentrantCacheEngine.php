@@ -34,7 +34,7 @@ class ReentrantCacheEngine extends ArrayEngine
      *
      * @var \Psr\SimpleCache\CacheInterface|null
      */
-    public static $reentrantPool = null;
+    public static $reentrantPool;
 
     /**
      * @param array<string, mixed> $config
