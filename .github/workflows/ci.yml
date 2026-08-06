@@ -21,10 +21,11 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
+    continue-on-error: ${{ matrix.php-version == '8.6' }}
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.5']
+        php-version: ['8.2', '8.5', '8.6']
         db-type: [sqlite, pgsql]
         dependencies: ['highest']
         include:
@@ -49,6 +50,10 @@ jobs:
             dependencies: highest
 
           - php-version: '8.5'
+            db-type: 'mysql'
+            dependencies: highest
+
+          - php-version: '8.6'
             db-type: 'mysql'
             dependencies: highest
 
@@ -135,7 +140,7 @@ jobs:
       uses: ramsey/composer-install@v4
       with:
         dependency-versions: ${{ matrix.dependencies }}
-        composer-options: "${{ matrix.composer-options }}"
+        composer-options: "${{ matrix.php-version == '8.6' && '--ignore-platform-req=php' || matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.2' && matrix.db-type == 'mysql'
