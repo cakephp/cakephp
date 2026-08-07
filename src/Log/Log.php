@@ -131,6 +131,15 @@ class Log
     protected static bool $_dirtyConfig = false;
 
     /**
+     * Loggers currently dispatching a message, keyed by stream name.
+     *
+     * Used to detect a logger reentering itself, see {@link \Cake\Log\Log::write()}.
+     *
+     * @var array<string, true>
+     */
+    protected static array $writing = [];
+
+    /**
      * LogEngineRegistry class
      *
      * @var \Cake\Log\LogEngineRegistry
@@ -332,6 +341,16 @@ class Log
      * then the logged message will be ignored and silently dropped. You can check if this has happened
      * by inspecting the return of write(). If false the message was not handled.
      *
+     * ### Reentrant log messages
+     *
+     * A logger that writes through a subsystem which logs its own failures can end up being asked
+     * to write again while it is still handling a message. A logger storing rows in a table is the
+     * usual example: the insert is picked up by the query logger, which writes a log message, which
+     * reaches the same logger. Left alone this repeats until the process runs out of memory.
+     *
+     * While a logger is dispatching, it will not be handed another message. The nested message goes
+     * to `error_log()` instead so it is not lost, and the other configured loggers still receive it.
+     *
      * @param string|int $level The severity level of the message being written.
      *    The value must be an integer or string matching a known level.
      * @param \Stringable|string $message Message content to log
@@ -377,7 +396,23 @@ class Log
                 is_array($scopes) && array_intersect((array)$context['scope'], $scopes);
 
             if ($correctLevel && $inScope) {
-                $logger->log($level, $message, $context);
+                if (isset(static::$writing[$streamName])) {
+                    error_log(sprintf(
+                        '[cake][%s] %s (dropped: logger `%s` reentered while writing)',
+                        $level,
+                        $message,
+                        $streamName,
+                    ));
+
+                    continue;
+                }
+
+                static::$writing[$streamName] = true;
+                try {
+                    $logger->log($level, $message, $context);
+                } finally {
+                    unset(static::$writing[$streamName]);
+                }
                 $logged = true;
             }
         }
