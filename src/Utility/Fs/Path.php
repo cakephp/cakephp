@@ -54,6 +54,42 @@ class Path
     }
 
     /**
+     * Checks if a path is absolute.
+     *
+     * @param string $path The path to check
+     * @return bool True if the path is absolute
+     */
+    public static function isAbsolute(string $path): bool
+    {
+        $path = str_replace('\\', '/', $path);
+
+        return str_starts_with($path, '/') || preg_match('/^[A-Za-z]:\//', $path) === 1;
+    }
+
+    /**
+     * Makes a path absolute, using a base path if the given path is not already absolute.
+     *
+     * Note that the resulting path is not resolved: any `..` or `.` segments in $path
+     * are preserved as-is, consistent with join() and normalize().
+     *
+     * @param string $path The path to make absolute
+     * @param string $from The base path to use when $path is relative. Expected to already be absolute.
+     * @return string The absolute path
+     */
+    public static function makeAbsolute(string $path, string $from): string
+    {
+        if (static::isAbsolute($path)) {
+            return str_replace('\\', '/', $path);
+        }
+
+        if ($path === '') {
+            return str_replace('\\', '/', $from);
+        }
+
+        return static::join($from, $path);
+    }
+
+    /**
      * Makes a path relative to a base path.
      *
      * @param string $path The absolute path to make relative
