@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,7 @@ declare(strict_types=1);
  * @since         1.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
@@ -133,7 +135,7 @@ class I18nExtractCommand extends Command
      */
     public static function getDescription(): string
     {
-        return 'Extract i18n POT files from application source files.';
+        return 'Extract i18n POT files from application source and template files.';
     }
 
     /**
@@ -257,7 +259,7 @@ class I18nExtractCommand extends Command
                 $io->err('');
                 $io->error(
                     'The directory path you supplied was ' .
-                    'not found. Please try again.',
+                        'not found. Please try again.',
                 );
                 $io->err('');
             }
@@ -370,7 +372,7 @@ class I18nExtractCommand extends Command
         $parser->setDescription([
             static::getDescription(),
             'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
+                'provided to the <info>__</info> family of functions are extracted.',
         ])->addOption('app', [
             'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
@@ -445,26 +447,34 @@ class I18nExtractCommand extends Command
             if ($isVerbose) {
                 $io->verbose(sprintf('Processing %s...', $file));
             }
-
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'twig') {
+                if ($this->_isTwigUsable()) {
+                    $_parser = 'twig';
+                } else {
+                    $io->warning('Twig is not installed. Please install Twig to extract translations from twig templates.');
+                    continue;
+                }
+                $_parser = 'twig';
+            } else {
+                $_parser = 'php';
+            }
             $code = (string)file_get_contents($file);
 
             if (preg_match($pattern, $code) === 1) {
-                $allTokens = token_get_all($code);
-
-                $this->_tokens = [];
-                foreach ($allTokens as $token) {
-                    if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
-                        $this->_tokens[] = $token;
-                    }
+                if ($_parser === 'twig') {
+                    $this->_tokenizeAsTwig($code, $file);
+                } else {
+                    $this->_tokenizeAsPHP($code, $file);
                 }
-                unset($allTokens);
 
                 foreach ($functions as $functionName => $map) {
-                    $this->_parse($io, $functionName, $map);
+                    if ($_parser === 'twig') {
+                        $this->_parseAsTwig($io, $functionName, $map);
+                    } else {
+                        $this->_parseAsPHP($io, $functionName, $map);
+                    }
                 }
             }
-
-            $this->extractFileReflection($file, $code);
 
             if (!$isVerbose) {
                 $progress->increment(1);
@@ -481,7 +491,7 @@ class I18nExtractCommand extends Command
      * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
      * @return void
      */
-    protected function _parse(ConsoleIo $io, string $functionName, array $map): void
+    protected function _parseAsPHP(ConsoleIo $io, string $functionName, array $map): void
     {
         $count = 0;
         $tokenCount = count($this->_tokens);
@@ -533,6 +543,85 @@ class I18nExtractCommand extends Command
                 }
             }
             $count++;
+        }
+    }
+
+    /**
+     * Parse Twig tokens
+     *
+     * @param \Cake\Console\ConsoleIo $io The io instance
+     * @param string $functionName Function name that indicates translatable string (e.g: '__')
+     * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
+     * @return void
+     */
+    protected function _parseAsTwig(ConsoleIo $io, string $functionName, array $map): void
+    {
+        /** @var \Twig\Token $token */
+        foreach ($this->_tokens as $count => $token) {
+            if ($token->test(\Twig\Token::NAME_TYPE, $functionName)) {
+                switch ($functionName) {
+                    case '__':
+                        $singular = $this->_tokens[$count + 2]->getValue();
+                        break;
+                    case '__n':
+                        $singular = $this->_tokens[$count + 2]->getValue();
+                        $plural = $this->_tokens[$count + 4]->getValue();
+                        break;
+                    case '__d':
+                        $domain = $this->_tokens[$count + 2]->getValue();
+                        $singular = $this->_tokens[$count + 4]->getValue();
+                        break;
+                    case '__dn':
+                        $domain = $this->_tokens[$count + 2]->getValue();
+                        $singular = $this->_tokens[$count + 4]->getValue();
+                        $plural = $this->_tokens[$count + 6]->getValue();
+                        break;
+                    case '__x':
+                        $context = $this->_tokens[$count + 2]->getValue();
+                        $singular = $this->_tokens[$count + 4]->getValue();
+                        break;
+                    case '__xn':
+                        $context = $this->_tokens[$count + 2]->getValue();
+                        $singular = $this->_tokens[$count + 4]->getValue();
+                        $plural = $this->_tokens[$count + 6]->getValue();
+                        break;
+                    case '__dx':
+                        $domain = $this->_tokens[$count + 2]->getValue();
+                        $context = $this->_tokens[$count + 4]->getValue();
+                        $singular = $this->_tokens[$count + 6]->getValue();
+                        break;
+                    case '__dxn':
+                        $domain = $this->_tokens[$count + 2]->getValue();
+                        $context = $this->_tokens[$count + 4]->getValue();
+                        $singular = $this->_tokens[$count + 6]->getValue();
+                        $plural = $this->_tokens[$count + 8]->getValue();
+                        break;
+                }
+                $domain ??= 'default';
+                $details = [
+                    'file' => $this->_file,
+                    'line' => $token->getLine(),
+                ];
+                $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
+                if (in_array('plural', $map)) {
+                    if (isset($plural)) {
+                        $details['msgid_plural'] = $plural;
+                    } else {
+                        $this->_markerError($io, $this->_file, $token->getLine(), $functionName, $token->getOffset());
+                        continue;
+                    }
+                }
+
+                if (in_array('context', $map)) {
+                    if (isset($context)) {
+                        $details['msgctxt'] = $context;
+                    } else {
+                        $this->_markerError($io, $this->_file, $token->getLine(), $functionName, $token->getOffset());
+                        continue;
+                    }
+                }
+                $this->_addTranslation($domain, $singular, $details);
+            }
         }
     }
 
@@ -1007,5 +1096,62 @@ class I18nExtractCommand extends Command
         }
 
         return is_dir($path) && is_writable($path);
+    }
+
+    /**
+     * Checks whether the Twig templating system is available.
+     *
+     * @return bool true if Twig is autoloadable and usable, false otherwise
+     */
+    protected function _isTwigUsable(): bool
+    {
+        if (!class_exists('Twig\Environment')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Parses the given PHP source code for tokens, filtering out whitespace and inline HTML.
+     *
+     * @param string $code Source code of the file to parse
+     * @param string $file File name and path of the file to parse
+     * @return void
+     */
+    protected function _tokenizeAsPHP(string $code, string $file): void
+    {
+        $allTokens = token_get_all($code);
+        $this->_tokens = [];
+        foreach ($allTokens as $token) {
+            if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
+                $this->_tokens[] = $token;
+            }
+        }
+        unset($allTokens);
+    }
+
+    /**
+     * Parses the given Twig source code for tokens.
+     *
+     * @param string $code Source code of the file to parse
+     * @param string $file File name and path of the file to parse
+     * @return void
+     */
+    protected function _tokenizeAsTwig(string $code, string $file): void
+    {
+        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader());
+        /**
+         * @var \Twig\TokenStream $stream
+         */
+        $stream = $twig->tokenize(new \Twig\Source(code: $code, name: $file, path: $file));
+        $this->_tokens = [];
+        while (!$stream->isEOF()) {
+            $token = $stream->next();
+            if (! $token->test(\Twig\Token::TEXT_TYPE) && ! $token->test(\Twig\Token::BLOCK_END_TYPE)) {
+                $this->_tokens[] = $token;
+            }
+        }
+        unset($stream);
     }
 }
