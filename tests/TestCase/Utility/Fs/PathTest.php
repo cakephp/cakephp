@@ -40,6 +40,72 @@ class PathTest extends TestCase
         $this->assertSame('', Path::normalize('/'));
     }
 
+    public function testIsAbsolute(): void
+    {
+        $this->assertTrue(Path::isAbsolute('/var/www'));
+        $this->assertTrue(Path::isAbsolute('/'));
+        $this->assertTrue(Path::isAbsolute('C:/Windows'));
+        $this->assertTrue(Path::isAbsolute('C:\\Windows'));
+
+        $this->assertFalse(Path::isAbsolute('src/Model'));
+        $this->assertFalse(Path::isAbsolute('./src/Model'));
+        $this->assertFalse(Path::isAbsolute('../src/Model'));
+        $this->assertFalse(Path::isAbsolute(''));
+
+        // Lowercase drive letters are valid too
+        $this->assertTrue(Path::isAbsolute('d:/folder'));
+
+        // A drive letter without a following slash is drive-relative on Windows, not absolute
+        $this->assertFalse(Path::isAbsolute('C:folder'));
+
+        // UNC paths are absolute
+        $this->assertTrue(Path::isAbsolute('\\\\server\\share'));
+    }
+
+    public function testMakeAbsolute(): void
+    {
+        $this->assertSame(
+            '/var/www/src/file.php',
+            Path::makeAbsolute('src/file.php', '/var/www'),
+        );
+
+        $this->assertSame(
+            '/var/www/src/file.php',
+            Path::makeAbsolute('/var/www/src/file.php', '/tmp'),
+        );
+
+        $this->assertSame(
+            '/var/www',
+            Path::makeAbsolute('', '/var/www'),
+        );
+
+        $this->assertSame(
+            '/var/www/src/../config',
+            Path::makeAbsolute('../config', '/var/www/src'),
+        );
+
+        $this->assertSame(
+            'C:/project/src/file.php',
+            Path::makeAbsolute('src/file.php', 'C:/project'),
+        );
+    }
+
+    public function testMakeAbsoluteWithBackslashes(): void
+    {
+        // Absolute path with backslashes: base is ignored, separators are normalized.
+        // This is the one branch not exercised by the existing tests.
+        $this->assertSame(
+            'C:/other/file.php',
+            Path::makeAbsolute('C:\\other\\file.php', '/var/www'),
+        );
+
+        // Relative path with backslashes joined with a Unix base
+        $this->assertSame(
+            '/var/www/src/file.php',
+            Path::makeAbsolute('src\\file.php', '/var/www'),
+        );
+    }
+
     public function testMakeRelative(): void
     {
         $this->assertSame('src/Model/Table.php', Path::makeRelative('/var/www/src/Model/Table.php', '/var/www'));
