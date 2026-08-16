@@ -1063,7 +1063,9 @@ class Hash
 
         if ($type === 'locale') {
             // SORT_LOCALE_STRING was deprecated in PHP 8.6, use Collator instead.
-            $collator = new Collator(setlocale(LC_COLLATE, '0') ?: '');
+            $locale = setlocale(LC_COLLATE, '0') ?: '';
+            $locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
+            $collator = new Collator($locale);
             $pairs = array_map(
                 static fn(mixed $value, string|int $key): array => [$value, $key],
                 $values,
@@ -1071,7 +1073,19 @@ class Hash
             );
             usort(
                 $pairs,
-                static fn(array $a, array $b): int => $collator->compare((string)$a[0], (string)$b[0]),
+                static function (array $a, array $b) use ($collator): int {
+                    $result = $collator->compare((string)$a[0], (string)$b[0]);
+                    if ($result === false) {
+                        $result = 0;
+                    }
+                    if ($result !== 0) {
+                        return $result;
+                    }
+
+                    $result = $collator->compare((string)$a[1], (string)$b[1]);
+
+                    return $result === false ? 0 : $result;
+                },
             );
             if ($dir === SORT_DESC) {
                 $pairs = array_reverse($pairs);
