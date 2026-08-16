@@ -1813,6 +1813,7 @@ class FormHelper extends Helper
      * - `escapeTitle` - HTML entity encode the title of the button. Defaults to true.
      * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
+     * - Any other key is used as an HTML attribute on the generated `<button>` element.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array<string, mixed> $options Array of options and HTML attributes.
@@ -1856,7 +1857,7 @@ class FormHelper extends Helper
      * - `method` - Request method to use. Set to 'delete' or others to simulate
      *   HTTP/1.1 DELETE (or others) request. Defaults to 'post'.
      * - `form` - Array with any option that FormHelper::create() can take
-     * - Other options is the same of button method.
+     * - Other options are the same as for button(). HTML attributes are applied to the generated `<button>` element.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $title The button's caption. Not automatically HTML encoded
@@ -1908,7 +1909,8 @@ class FormHelper extends Helper
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      * - `block` - Set to true to append form to view block "postLink" or provide
      *   custom block name.
-     * - Other options are the same of HtmlHelper::link() method.
+     * - Other options are the same as for HtmlHelper::link(). HTML attributes are applied to the generated `<a>`
+     *   element.
      * - The option `onclick` will be replaced.
      *
      * @param string $title The content to be wrapped by <a> tags.
@@ -2058,7 +2060,7 @@ class FormHelper extends Helper
      *
      * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
      * - `templateVars` - Additional template variables for the input element and its container.
-     * - Other attributes will be assigned to the input element.
+     * - Other attributes will be assigned to the generated `<input>` or `<button>` element.
      *
      * @param string|null $caption The label appearing on the button OR if string contains :// or the
      *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
