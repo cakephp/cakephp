@@ -324,8 +324,8 @@ class I18nExtractCommandTest extends TestCase
             '--paths=' . TEST_APP . 'TestApp/ ' .
             '--output=' . $this->path . DS,
         );
-        $this->assertNotNull($this->_err);
-        $this->assertEmpty($this->_err->messages(), 'Should not have output to stderr');
+        $this->assertNotNull($this->err);
+        $this->assertEmpty($this->err->messages(), 'Should not have output to stderr');
         $this->assertExitSuccess();
 
         $this->assertFileExists($this->path . DS . 'cake.pot');
