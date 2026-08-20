@@ -21,6 +21,7 @@ use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Event\Attribute\EventListener;
 use Cake\Event\Exception\EventAttributeException;
+use Closure;
 use ReflectionMethod;
 
 /**
@@ -34,7 +35,10 @@ use ReflectionMethod;
  * ```php
  * public function events(EventManagerInterface $eventManager): EventManagerInterface
  * {
- *     $eventManager->attachAttributes();
+ *     new AttributeEventListenerConnector(
+ *         $eventManager,
+ *         $this->getContainer()->get(...),
+ *     )->connect();
  *
  *     return $eventManager;
  * }
@@ -49,12 +53,25 @@ use ReflectionMethod;
 class AttributeEventListenerConnector
 {
     /**
+     * Resolves listener class names to instances.
+     *
+     * @var \Closure(string): object
+     */
+    private readonly Closure $listenerResolver;
+
+    /**
      * Constructs an AttributeEventListenerConnector.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager Event manager to attach listeners to.
+     * @param callable|null $listenerResolver Resolver used to create listener instances.
      */
-    public function __construct(protected readonly EventManagerInterface $eventManager)
-    {
+    public function __construct(
+        protected readonly EventManagerInterface $eventManager,
+        ?callable $listenerResolver = null,
+    ) {
+        $this->listenerResolver = $listenerResolver === null
+            ? static fn(string $className): object => new $className()
+            : Closure::fromCallable($listenerResolver);
     }
 
     /**
@@ -111,10 +128,13 @@ class AttributeEventListenerConnector
 
         $listener = $this->createListener($className);
         foreach ($registrations as $registration) {
+            $options = $registration['priority'] === null
+                ? []
+                : ['priority' => $registration['priority']];
             $this->eventManager->on(
                 $registration['event'],
                 $listener->{$registration['method']}(...),
-                ['priority' => $registration['priority']],
+                $options,
             );
         }
     }
@@ -126,7 +146,7 @@ class AttributeEventListenerConnector
      *
      * @param string $className Fully qualified class name.
      * @param list<\Cake\AttributeResolver\ValueObject\AttributeInfo> $infos Attribute metadata sorted by line number.
-     * @return list<array{event: string, method: string, priority: int}>
+     * @return list<array{event: string, method: string, priority: int|null}>
      * @throws \Cake\Event\Exception\EventAttributeException When a listener method cannot be resolved.
      */
     protected function resolveRegistrations(string $className, array $infos): array
@@ -166,8 +186,9 @@ class AttributeEventListenerConnector
                 ));
             }
 
-            $priority = $attribute->priority ?? EventManager::$defaultPriority;
-            $key = $attribute->event . "\0" . $priority . "\0" . $methodName;
+            $priority = $attribute->priority;
+            $priorityKey = $priority === null ? 'default' : 'priority:' . $priority;
+            $key = $attribute->event . "\0" . $priorityKey . "\0" . $methodName;
 
             if (isset($seen[$key])) {
                 continue;
@@ -233,16 +254,24 @@ class AttributeEventListenerConnector
     }
 
     /**
-     * Instantiates a listener class.
+     * Resolves a listener class to an instance.
      *
-     * Isolated in a protected method to allow subclasses to override instantiation
-     * (e.g. for container-aware creation).
+     * Uses the configured listener resolver. By default, listener classes are
+     * instantiated directly.
      *
-     * @param string $className Fully qualified class name to instantiate.
+     * @param string $className Fully qualified class name to resolve.
      * @return object Listener instance.
      */
     protected function createListener(string $className): object
     {
-        return new $className();
+        $listener = ($this->listenerResolver)($className);
+        if (!is_object($listener)) {
+            throw new EventAttributeException(sprintf(
+                'Listener resolver must return an object for "%s".',
+                $className,
+            ));
+        }
+
+        return $listener;
     }
 }

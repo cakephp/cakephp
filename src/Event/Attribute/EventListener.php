@@ -59,8 +59,8 @@ readonly class EventListener
      * Initializes an event listener attribute definition.
      *
      * @param string $event Event name to listen to (e.g. `'Order.afterPlace'`).
-     * @param int|null $priority Listener priority. When null, the current value of
-     *   `EventManager::$defaultPriority` is used at connection time.
+     * @param int|null $priority Listener priority. When null, the receiving event
+     *   manager's default priority is used at connection time.
      * @param string|null $method Explicit method name to use as the listener callable.
      *   Only applicable for class-level attributes; ignored when the attribute is placed on a method.
      */

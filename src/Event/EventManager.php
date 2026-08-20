@@ -467,20 +467,19 @@ class EventManager implements EventManagerInterface
      * ### Example
      *
      * ```php
-     * public function events(EventManager $eventManager): EventManagerInterface
-     * {
-     *     $eventManager->registerAttributeListeners();
-     *
-     *     return $eventManager;
-     * }
+     * $eventManager = new EventManager();
+     * $eventManager->registerAttributeListeners();
      * ```
      *
      * @param string $config Attribute resolver config name.
+     * @param callable|null $listenerResolver Resolver used to create listener instances.
      * @return $this
      */
-    public function registerAttributeListeners(string $config = 'default'): static
-    {
-        $connector = new AttributeEventListenerConnector($this);
+    public function registerAttributeListeners(
+        string $config = 'default',
+        ?callable $listenerResolver = null,
+    ): static {
+        $connector = new AttributeEventListenerConnector($this, $listenerResolver);
         $connector->connect($config);
 
         return $this;

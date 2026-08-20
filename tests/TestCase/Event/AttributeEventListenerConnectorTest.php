@@ -25,7 +25,9 @@ use Cake\Event\EventManagerInterface;
 use Cake\Event\Exception\EventAttributeException;
 use Cake\TestSuite\TestCase;
 use ReflectionProperty;
+use stdClass;
 use TestApp\Event\Listener\ClassLevelMethodListener;
+use TestApp\Event\Listener\ContainerAwareListener;
 use TestApp\Event\Listener\InferredMethodListener;
 use TestApp\Event\Listener\InvokableListener;
 use TestApp\Event\Listener\OrdersListener;
@@ -277,6 +279,36 @@ class AttributeEventListenerConnectorTest extends TestCase
     }
 
     /**
+     * Tests that an omitted priority uses the receiving event manager's default priority.
+     *
+     * @return void
+     */
+    public function testDefaultPriorityUsesEventManagerImplementation(): void
+    {
+        AttributeResolver::setConfig('default-priority-test', [
+            'paths' => ['Event/Listener/OrdersListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $manager = new class extends EventManager {
+            /**
+             * The default priority for listeners registered on this manager.
+             *
+             * @var int
+             */
+            public static int $defaultPriority = 42;
+        };
+
+        new AttributeEventListenerConnector($manager)->connect('default-priority-test');
+
+        $prioritised = $manager->prioritisedListeners('Order.afterPlace');
+        $this->assertSame([42, 5], array_keys($prioritised));
+
+        AttributeResolver::drop('default-priority-test');
+    }
+
+    /**
      * Tests that abstract classes with EventListener attributes are silently skipped.
      *
      * @return void
@@ -519,5 +551,42 @@ class AttributeEventListenerConnectorTest extends TestCase
         $this->assertCount(2, $manager->listeners('Order.afterPlace'));
 
         AttributeResolver::drop('default');
+    }
+
+    /**
+     * Tests that EventManager registration resolves listeners through the provided resolver.
+     *
+     * @return void
+     */
+    public function testRegisterAttributeListenersUsesListenerResolver(): void
+    {
+        AttributeResolver::setConfig('container-aware-listener-test', [
+            'paths' => ['Event/Listener/ContainerAwareListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $manager = new EventManager();
+        $service = new stdClass();
+        $listener = new ContainerAwareListener($service);
+        $resolvedClasses = [];
+
+        $result = $manager->registerAttributeListeners(
+            'container-aware-listener-test',
+            function (string $className) use ($listener, &$resolvedClasses): object {
+                $resolvedClasses[] = $className;
+
+                return $listener;
+            },
+        );
+
+        $manager->dispatch(new Event('Order.afterPlace', $this));
+
+        $this->assertSame($manager, $result);
+        $this->assertSame([ContainerAwareListener::class], $resolvedClasses);
+        $this->assertSame($service, $listener->service);
+        $this->assertTrue($listener->wasCalled);
+
+        AttributeResolver::drop('container-aware-listener-test');
     }
 }
