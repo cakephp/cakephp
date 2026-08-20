@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\Core\Container;
+use Cake\Container\Container;
+use Cake\Container\Exception\NotFoundException;
 use Cake\ORM\Locator\TableContainer;
 use Cake\TestSuite\TestCase;
-use League\Container\Exception\NotFoundException;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\FakeTable;
 
@@ -34,6 +34,9 @@ class TableContainerTest extends TestCase
     public function testTableContainer(): void
     {
         $container = new Container();
+        // Auto-wiring is enabled by default and would resolve ArticlesTable
+        // via bare reflection before TableContainer gets a chance to.
+        $container->disableAutoWiring();
         $container->delegate(new TableContainer());
 
         $table = $container->get(ArticlesTable::class);
@@ -44,6 +47,7 @@ class TableContainerTest extends TestCase
     public function testTableContainerMissingTable(): void
     {
         $container = new Container();
+        $container->disableAutoWiring();
         $container->delegate(new TableContainer());
 
         $this->expectException(NotFoundException::class);

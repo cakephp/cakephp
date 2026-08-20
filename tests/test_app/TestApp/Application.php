@@ -17,15 +17,15 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
+use Cake\Container\ContainerInterface;
+use Cake\Container\ReflectionContainer;
 use Cake\Core\Configure;
-use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
-use League\Container\ReflectionContainer;
 use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DependencyCommand;
@@ -101,7 +101,7 @@ class Application extends BaseApplication
     /**
      * Container register hook
      *
-     * @param \Cake\Core\ContainerInterface $container The container to update
+     * @param \Cake\Container\ContainerInterface $container The container to update
      */
     public function services(ContainerInterface $container): void
     {

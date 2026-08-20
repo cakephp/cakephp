@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use Cake\Core\ContainerInterface;
+use Cake\Container\ContainerInterface;
 use InvalidArgumentException;
 
 /**
@@ -34,7 +34,7 @@ trait EventListenerRegistrationTrait
      *
      * @param list<class-string<\Cake\Event\EventListenerInterface>> $listeners FQCNs to register.
      * @param \Cake\Event\EventManagerInterface $eventManager Manager the listeners are attached to.
-     * @param \Cake\Core\ContainerInterface $container Container used to resolve each listener.
+     * @param \Cake\Container\ContainerInterface $container Container used to resolve each listener.
      * @return void
      * @throws \InvalidArgumentException When an entry is not a class string implementing
      *    `EventListenerInterface`.

@@ -16,18 +16,6 @@
 
         return $this->container;
     }]]></code>
-      <code><![CDATA[protected function getContainer(): ContainerInterface
-    {
-        if ($this->container === null) {
-            throw new CakeException('Container not set.');
-        }
-
-        return $this->container;
-    }]]></code>
-      <code><![CDATA[protected function getMode(): int
-    {
-        return ReflectionContainer::AUTO_WIRING;
-    }]]></code>
     </OverriddenMethodAccess>
   </file>
   <file src="src/Core/InstanceConfigTrait.php">

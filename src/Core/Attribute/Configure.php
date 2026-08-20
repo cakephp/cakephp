@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Core\Attribute;
 
 use Attribute;
+use Cake\Container\Attribute\AttributeInterface;
 use Cake\Core\Configure as CakeConfigure;
-use League\Container\Attribute\AttributeInterface;
 
 /**
  * Configure attribute for dependency injection container delegate.

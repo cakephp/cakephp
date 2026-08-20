@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Error\Renderer;
 
+use Cake\Container\Container;
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Container;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\HttpErrorCodeInterface;
 use Cake\Core\Exception\MissingPluginException;

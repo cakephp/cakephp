@@ -9,14 +9,14 @@ use Cake\Container\Exception\ContainerException;
 trait ContainerAwareTrait
 {
     /**
-     * @var \Cake\Container\DefinitionContainerInterface|null
+     * @var \Cake\Container\ContainerInterface|null
      */
-    protected ?DefinitionContainerInterface $container = null;
+    protected ?ContainerInterface $container = null;
 
     /**
      * @inheritDoc
      */
-    public function setContainer(DefinitionContainerInterface $container): ContainerAwareInterface
+    public function setContainer(ContainerInterface $container): ContainerAwareInterface
     {
         $this->container = $container;
 
@@ -34,9 +34,9 @@ trait ContainerAwareTrait
     /**
      * @inheritDoc
      */
-    public function getContainer(): DefinitionContainerInterface
+    public function getContainer(): ContainerInterface
     {
-        if ($this->container instanceof DefinitionContainerInterface) {
+        if ($this->container instanceof ContainerInterface) {
             return $this->container;
         }
 

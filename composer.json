@@ -31,7 +31,6 @@
         "composer/ca-bundle": "^1.5",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
-        "league/container": "^5.1",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.1",

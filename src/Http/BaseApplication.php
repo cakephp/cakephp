@@ -18,11 +18,11 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
+use Cake\Container\ContainerInterface;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerFactory;
-use Cake\Core\ContainerInterface;
 use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
@@ -80,7 +80,7 @@ abstract class BaseApplication implements
     /**
      * Container
      *
-     * @var \Cake\Core\ContainerInterface|null
+     * @var \Cake\Container\ContainerInterface|null
      */
     protected ?ContainerInterface $container = null;
 
@@ -283,7 +283,7 @@ abstract class BaseApplication implements
      * The first time the container is fetched it will be constructed
      * and stored for future calls.
      *
-     * @return \Cake\Core\ContainerInterface
+     * @return \Cake\Container\ContainerInterface
      */
     public function getContainer(): ContainerInterface
     {
@@ -293,14 +293,14 @@ abstract class BaseApplication implements
     /**
      * Build the service container
      *
-     * Override this method if you need to use a custom container or
-     * want to change how the container is built.
+     * Override this method if you need to change how the container is built.
      *
-     * The container type is determined by `Configure::read('App.container')`:
-     * - 'cake': Uses the built-in CakePHP container
-     * - Any other value: Uses the League container (default)
+     * The container class is determined by `Configure::read('App.container')`,
+     * which defaults to `Cake\Container\Container`. Set it to the name of a
+     * class implementing `Cake\Container\ContainerInterface` to use a custom
+     * container implementation.
      *
-     * @return \Cake\Core\ContainerInterface
+     * @return \Cake\Container\ContainerInterface
      */
     protected function buildContainer(): ContainerInterface
     {
@@ -321,7 +321,7 @@ abstract class BaseApplication implements
     /**
      * Register application container services.
      *
-     * @param \Cake\Core\ContainerInterface $container The Container to update.
+     * @param \Cake\Container\ContainerInterface $container The Container to update.
      * @return void
      */
     public function services(ContainerInterface $container): void
