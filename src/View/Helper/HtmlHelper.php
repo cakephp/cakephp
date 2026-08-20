@@ -38,7 +38,7 @@ class HtmlHelper extends Helper
     /**
      * List of helpers used by this helper
      *
-     * @var array
+     * @var array<int|string, string|array<string, mixed>>
      */
     protected array $helpers = ['Url'];
 
@@ -521,11 +521,10 @@ class HtmlHelper extends Helper
     /**
      * Generate the "importmap" script tag.
      *
-     * @param array $map Map array.
+     * @param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map Map array.
      * @param array<string, mixed> $options Same options as `UrlHelper::script()`.
      * @return string
      * @since 5.2.0
-     * @phpstan-param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map
      */
     public function importmap(array $map, array $options = []): string
     {

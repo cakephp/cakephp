@@ -178,12 +178,16 @@ class Marshaller
      *  ```
      *  $result = $marshaller->one($data, [
      *    'associated' => [
-     *      'Tags' => [
-     *        'associated' => ['DeeperAssoc1', 'DeeperAssoc2']
-     *      ]
+     *      'Tags' => ['DeeperAssoc1', 'DeeperAssoc2']
      *    ]
      *  ]);
      *  ```
+     *
+     * ```
+     * $result = $marshaller->one($data, [
+     *   'associated' => ['Tags' => ['_joinData' => ['Users']]]
+     * ]);
+     * ```
      *
      * @param array<string, mixed> $data The data to hydrate.
      * @param array<string, mixed> $options List of options
@@ -553,9 +557,7 @@ class Marshaller
      * ```
      * $result = $marshaller->merge($entity, $data, [
      *   'associated' => [
-     *     'Tags' => [
-     *       'associated' => ['DeeperAssoc1', 'DeeperAssoc2']
-     *     ]
+     *     'Tags' => ['DeeperAssoc1', 'DeeperAssoc2']
      *   ]
      * ]);
      * ```

@@ -22,6 +22,7 @@ use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
+use SensitiveParameter;
 use function Cake\Core\env;
 
 /**
@@ -202,8 +203,7 @@ class SmtpTransport extends AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
-     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
-     * @phpstan-return array{headers: string, message: string, ...}
+     * @return array{headers: string, message: string, ...} Contains 'headers' and 'message' keys. Additional keys allowed.
      * @throws \Cake\Network\Exception\SocketException
      */
     public function send(Message $message): array
@@ -394,7 +394,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return string|null Response code for the command.
      */
-    protected function authPlain(string $username, string $password): ?string
+    protected function authPlain(string $username, #[SensitiveParameter] string $password): ?string
     {
         return $this->smtpSend(
             sprintf(
@@ -412,7 +412,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return void
      */
-    protected function authLogin(string $username, string $password): void
+    protected function authLogin(string $username, #[SensitiveParameter] string $password): void
     {
         $replyCode = $this->smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
@@ -444,7 +444,7 @@ class SmtpTransport extends AbstractTransport
      * @see https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#smtp-protocol-exchange
      * @see https://developers.google.com/gmail/imap/xoauth2-protocol#smtp_protocol_exchange
      */
-    protected function authXoauth2(string $username, string $token): void
+    protected function authXoauth2(string $username, #[SensitiveParameter] string $token): void
     {
         $authString = base64_encode(sprintf(
             "user=%s\1auth=Bearer %s\1\1",
@@ -558,16 +558,22 @@ class SmtpTransport extends AbstractTransport
     {
         $this->smtpSend('DATA', '354');
 
-        $headers = $message->getHeadersString([
-            'from',
-            'sender',
-            'replyTo',
-            'readReceipt',
-            'to',
-            'cc',
-            'subject',
-            'returnPath',
-        ]);
+        $headers = $message->getHeadersString(
+            [
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'to',
+                'cc',
+                'subject',
+                'returnPath',
+            ],
+            "\r\n",
+            function (string $val): string {
+                return str_replace("\r\n", '', $val);
+            },
+        );
         $message = $this->prepareMessage($message);
 
         $this->smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");

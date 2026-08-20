@@ -429,8 +429,10 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Returns the referer that referred this request.
      *
-     * @param bool $local Attempt to return a local address.
-     *   Local addresses do not contain hostnames.
+     * @param bool $local When true, return the referer as a host-stripped local path,
+     *   or null if the referer is not on the same origin as this application.
+     *   When false, return the raw referer URL as-is. In both cases null is returned
+     *   when no referer is available.
      * @return string|null The referring address for this request or null.
      */
     public function referer(bool $local = true): ?string
@@ -497,7 +499,7 @@ class ServerRequest implements ServerRequestInterface
     public function is(array|string $type, mixed ...$args): bool
     {
         if (is_array($type)) {
-            return array_any($type, fn($type) => $this->is($type));
+            return array_any($type, fn(string $type) => $this->is($type));
         }
 
         $type = strtolower($type);
@@ -663,7 +665,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function isAll(array $types): bool
     {
-        return array_all($types, fn($type) => $this->is($type));
+        return array_all($types, fn(string $type) => $this->is($type));
     }
 
     /**

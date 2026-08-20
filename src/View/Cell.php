@@ -32,6 +32,7 @@ use Exception;
 use ReflectionException;
 use ReflectionMethod;
 use Stringable;
+use function Cake\Core\triggerWarning;
 
 /**
  * Cell base.
@@ -266,12 +267,12 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         try {
             return $this->render();
         } catch (Exception $e) {
-            trigger_error(sprintf(
+            triggerWarning(sprintf(
                 'Could not render cell - %s [%s, line %d]',
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine(),
-            ), E_USER_WARNING);
+            ));
 
             return '';
         /** @phpstan-ignore-next-line */

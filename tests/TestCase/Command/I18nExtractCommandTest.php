@@ -324,10 +324,13 @@ class I18nExtractCommandTest extends TestCase
             '--paths=' . TEST_APP . 'TestApp/ ' .
             '--output=' . $this->path . DS,
         );
+        $this->assertNotNull($this->err);
+        $this->assertEmpty($this->err->messages(), 'Should not have output to stderr');
         $this->assertExitSuccess();
 
         $this->assertFileExists($this->path . DS . 'cake.pot');
         $result = file_get_contents($this->path . DS . 'cake.pot');
+        $this->assertTrue(is_string($result));
 
         $pattern = '/#: Console\/Templates\//';
         $this->assertDoesNotMatchRegularExpression($pattern, $result);

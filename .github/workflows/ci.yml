@@ -12,6 +12,10 @@ on:
       - '*'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read # to fetch code (actions/checkout)
 
@@ -97,7 +101,7 @@ jobs:
           sleep 2
         done
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         persist-credentials: false
 
@@ -151,7 +155,7 @@ jobs:
 
     - name: Submit code coverage
       if: matrix.php-version == '8.4'
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@v7
       with:
         files: coverage.xml,coverage-database.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -165,7 +169,7 @@ jobs:
       PHP_VERSION: '8.4'
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         persist-credentials: false
 
@@ -182,7 +186,7 @@ jobs:
         key: ${{ steps.key-date.outputs.date }}
 
     - name: Cache PHP extensions
-      uses: actions/cache@v5
+      uses: actions/cache@v6.1.0
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
         key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
@@ -229,7 +233,7 @@ jobs:
       PHPSTAN_TESTS: 1
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -247,7 +251,7 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.phive
@@ -270,7 +274,7 @@ jobs:
 
       - name: Setup phpcs cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ runner.temp }}/phpcs.cache
           key: ${{ runner.os }}-phpcs-${{ hashFiles('phpcs.xml', 'composer.lock') }}
@@ -298,7 +302,7 @@ jobs:
 
       - name: Setup rector cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ runner.temp }}/rector
           key: ${{ runner.os }}-rector-${{ hashFiles('rector.php', 'composer.lock') }}
@@ -314,6 +318,10 @@ jobs:
           RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
         run: composer rector-setup && composer rector-check
 
+      - name: Run StructArmed
+        if: always()
+        run: vendor/bin/structarmed analyze src
+
   split-packages-stan:
     name: Static Analysis for Split Packages
     runs-on: ubuntu-24.04
@@ -322,7 +330,7 @@ jobs:
       PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5,99BF4D9A33D65E1E'
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -340,7 +348,7 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.phive

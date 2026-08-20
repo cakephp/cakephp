@@ -438,18 +438,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         if (isset(static::$columnExtras[$attrs['type']])) {
             $expected += static::$columnExtras[$attrs['type']];
         }
-        // Remove any attributes that weren't in the allow list.
-        // This is to provide backwards compatible keys
-        $remove = array_diff(array_keys($attrs), array_keys($expected));
-        foreach ($remove as $key) {
-            unset($attrs[$key]);
-        }
 
         if (isset($attrs['baseType']) && $attrs['baseType'] === $attrs['type']) {
             unset($attrs['baseType']);
         }
 
-        return $attrs;
+        // Remove any attributes that weren't in the allow list.
+        // This is to provide backwards compatible keys
+        return array_intersect_key($attrs, $expected);
     }
 
     /**
@@ -801,7 +797,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function hasAutoincrement(): bool
     {
-        return array_any($this->columns, fn($column) => $column->getIdentity());
+        return array_any($this->columns, fn(Column $column) => $column->getIdentity());
     }
 
     /**

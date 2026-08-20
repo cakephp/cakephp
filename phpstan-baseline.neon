@@ -67,12 +67,6 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: '#^Strict comparison using \!\=\= between Cake\\Database\\TypeMap and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: src/Database/Expression/WhenThenExpression.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2

@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Container\ContainerInterface;
 use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
-use Cake\Core\ContainerInterface;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
@@ -52,7 +52,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Constructor
      *
-     * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
+     * @param \Cake\Container\ContainerInterface $container The container to build controllers with.
      */
     public function __construct(protected ContainerInterface $container)
     {
@@ -82,9 +82,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             new ComponentRegistry(container: $this->container),
         );
 
-        // Get the controller from the container if defined.
-        // The request is in the container by default.
-        if ($this->container->has($className)) {
+        // Get the controller from the container if the user explicitly defined it.
+        // `has()` also returns true for any existing class due to auto-wiring,
+        // so `hasDefinition()` is used here to check for an explicit registration only.
+        if ($this->container->hasDefinition($className)) {
             $controller = $this->container->get($className);
         } else {
             $components = $this->container->get(ComponentRegistry::class);
@@ -200,7 +201,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             // Check for dependency injection for classes
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                 $typeName = $type->getName();
-                if ($this->container->has($typeName)) {
+                // `has()` also returns true for any existing class due to auto-wiring,
+                // so `hasDefinition()` is used here to check for an explicit registration only.
+                if ($this->container->hasDefinition($typeName)) {
                     $resolved[] = $this->container->get($typeName);
                     continue;
                 }

@@ -18,14 +18,14 @@ use Cake\Validation\Validator;
 class ContactForm extends Form
 {
 
-    protected function _buildSchema(Schema $schema)
+    protected function buildSchema(Schema $schema): Schema
     {
         return $schema->addField('name', 'string')
             ->addField('email', ['type' => 'string'])
             ->addField('body', ['type' => 'text']);
     }
 
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): Validator
     {
         return $validator->add('name', 'length', [
                 'rule' => ['minLength', 10],
@@ -36,7 +36,7 @@ class ContactForm extends Form
             ]);
     }
 
-    protected function _execute(array $data)
+    protected function process(array $data): bool
     {
         // Send an email.
         return true;

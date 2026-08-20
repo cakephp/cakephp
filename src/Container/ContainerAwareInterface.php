@@ -6,13 +6,13 @@ namespace Cake\Container;
 interface ContainerAwareInterface
 {
     /**
-     * @return \Cake\Container\DefinitionContainerInterface
+     * @return \Cake\Container\ContainerInterface
      */
-    public function getContainer(): DefinitionContainerInterface;
+    public function getContainer(): ContainerInterface;
 
     /**
-     * @param \Cake\Container\DefinitionContainerInterface $container
+     * @param \Cake\Container\ContainerInterface $container
      * @return $this
      */
-    public function setContainer(DefinitionContainerInterface $container): self;
+    public function setContainer(ContainerInterface $container): self;
 }

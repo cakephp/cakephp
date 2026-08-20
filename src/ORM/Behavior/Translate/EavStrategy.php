@@ -19,7 +19,6 @@ namespace Cake\ORM\Behavior\Translate;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -41,7 +40,6 @@ use Cake\ORM\Table;
  */
 class EavStrategy implements TranslateStrategyInterface
 {
-    use InstanceConfigTrait;
     use LocatorAwareTrait;
     use TranslateStrategyTrait;
 
@@ -528,10 +526,9 @@ class EavStrategy implements TranslateStrategyInterface
     {
         $association = $this->table->getAssociation($this->translationTable->getAlias());
 
-        $query = $association->find()
+        $query = $association->unhydratedSelectQuery()
             ->select(['id', 'num' => 0])
-            ->where(current($ruleSet))
-            ->disableHydration();
+            ->where(current($ruleSet));
 
         unset($ruleSet[0]);
         foreach ($ruleSet as $i => $conditions) {

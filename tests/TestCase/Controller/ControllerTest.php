@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller;
 
 use AssertionError;
+use Cake\Container\Container;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
-use Cake\Core\Container;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
@@ -245,6 +245,24 @@ class ControllerTest extends TestCase
 
         $controller->addViewClasses([XmlView::class]);
         $this->assertSame([PlainTextView::class, XmlView::class], $controller->viewClasses());
+    }
+
+    /**
+     * Test that a browser's default Accept header (text/html preferred over application/xml)
+     * falls back to HTML rendering instead of picking the lower-priority XML type.
+     */
+    public function testRenderViewClassesBrowserAcceptFallback(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'environment' => ['HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'],
+            'params' => ['plugin' => null, 'controller' => 'ContentTypes', 'action' => 'all'],
+        ]);
+        $controller = new ContentTypesController($request);
+        $controller->all();
+        $response = $controller->render();
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
 
     /**

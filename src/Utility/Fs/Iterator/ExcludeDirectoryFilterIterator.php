@@ -58,7 +58,7 @@ final class ExcludeDirectoryFilterIterator extends RecursiveFilterIterator
         // Check if directory name matches any excluded names
         $filename = $current->getFilename();
 
-        return array_all($this->excludeDirs, fn($excluded) => $filename !== $excluded);
+        return array_all($this->excludeDirs, fn(string $excluded) => $filename !== $excluded);
     }
 
     /**

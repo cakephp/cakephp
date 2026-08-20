@@ -55,6 +55,7 @@ class MiddlewareDispatcher
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
             $spec['environment'],
         );
+        /** @phpstan-ignore offsetAccess.notFound */
         if (str_contains($environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
         }

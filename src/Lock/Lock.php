@@ -17,10 +17,14 @@ declare(strict_types=1);
 namespace Cake\Lock;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Lock\Engine\FileLockEngine;
+use Cake\Lock\Engine\MemcachedLockEngine;
 use Cake\Lock\Engine\NullLockEngine;
+use Cake\Lock\Engine\RedisLockEngine;
 use Cake\Lock\Exception\InvalidArgumentException;
 use Closure;
 use RuntimeException;
+use function Cake\Core\triggerWarning;
 
 /**
  * Lock provides a consistent interface to distributed locking.
@@ -66,24 +70,11 @@ class Lock
     use StaticConfigTrait;
 
     /**
-     * DSN class map for lock engines.
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $_dsnClassMap = [
-        'file' => Engine\FileLockEngine::class,
-        'memcached' => Engine\MemcachedLockEngine::class,
-        'null' => Engine\NullLockEngine::class,
-        'redis' => Engine\RedisLockEngine::class,
-    ];
-
-    /**
      * Lock Registry for managing engine instances.
      *
      * @var \Cake\Lock\LockRegistry<\Cake\Lock\LockEngine>
      */
-    protected static LockRegistry $_registry;
+    protected static LockRegistry $registry;
 
     /**
      * Returns the Lock Registry instance.
@@ -92,7 +83,7 @@ class Lock
      */
     public static function getRegistry(): LockRegistry
     {
-        return static::$_registry ??= new LockRegistry();
+        return static::$registry ??= new LockRegistry();
     }
 
     /**
@@ -103,7 +94,22 @@ class Lock
      */
     public static function setRegistry(LockRegistry $registry): void
     {
-        static::$_registry = $registry;
+        static::$registry = $registry;
+    }
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function initDsnClassMap(): array
+    {
+        return [
+            'file' => FileLockEngine::class,
+            'memcached' => MemcachedLockEngine::class,
+            'null' => NullLockEngine::class,
+            'redis' => RedisLockEngine::class,
+        ];
     }
 
     /**
@@ -114,7 +120,7 @@ class Lock
      * @throws \RuntimeException If engine loading fails.
      * @return void
      */
-    protected static function _buildEngine(string $name): void
+    protected static function buildEngine(string $name): void
     {
         $registry = static::getRegistry();
 
@@ -130,7 +136,7 @@ class Lock
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
             $registry->set($name, new NullLockEngine());
-            trigger_error($e->getMessage(), E_USER_WARNING);
+            triggerWarning($e->getMessage());
         }
     }
 
@@ -148,7 +154,7 @@ class Lock
             return $registry->get($config);
         }
 
-        static::_buildEngine($config);
+        static::buildEngine($config);
 
         return $registry->get($config);
     }

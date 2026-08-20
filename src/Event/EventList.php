@@ -86,6 +86,6 @@ class EventList implements Countable, IteratorAggregate
      */
     public function hasEvent(string $name): bool
     {
-        return array_any($this->events, fn($event) => $event->getName() === $name);
+        return array_any($this->events, fn(EventInterface $event) => $event->getName() === $name);
     }
 }

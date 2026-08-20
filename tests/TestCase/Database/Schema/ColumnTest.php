@@ -8,12 +8,39 @@ use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use Closure;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Database\Type\IntType;
 
 class ColumnTest extends TestCase
 {
+    /**
+     * Unserializing column data created by an older CakePHP version (where a
+     * promoted property such as `fixed` or `geometryType` did not yet exist)
+     * must not throw "must not be accessed before initialization".
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19562
+     * @return void
+     */
+    public function testUnserializeLegacyDataWithoutNewProperties(): void
+    {
+        $column = new Column('created', 'string');
+        // Simulate a legacy serialized payload: remove properties added after
+        // Column first shipped so they are absent from the serialized data.
+        Closure::bind(function (): void {
+            unset($this->fixed, $this->geometryType);
+        }, $column, Column::class)();
+
+        $restored = unserialize(serialize($column));
+
+        $this->assertInstanceOf(Column::class, $restored);
+        $this->assertNull($restored->getFixed());
+        $result = $restored->toArray();
+        $this->assertNull($result['fixed']);
+        $this->assertArrayNotHasKey('geometryType', $result);
+    }
+
     public function testSetName(): void
     {
         $column = new Column('body', 'string');

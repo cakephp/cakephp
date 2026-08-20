@@ -23,8 +23,8 @@
     },
     "require": {
         "php": ">=8.4",
+        "cakephp/container": "6.0.*@dev",
         "cakephp/utility": "6.0.*@dev",
-        "league/container": "^5.1",
         "psr/container": "^1.1 || ^2.0"
     },
     "autoload": {
@@ -40,8 +40,7 @@
     },
     "suggest": {
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
-        "cakephp/cache": "To use Configure::store() and restore().",
-        "league/container": "To use Container and ServiceProvider classes"
+        "cakephp/cache": "To use Configure::store() and restore()."
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

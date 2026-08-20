@@ -141,7 +141,7 @@ trait ExtractTrait
         }
 
         return function ($value) use ($matchers) {
-            return array_all($matchers, fn($match) => $match($value));
+            return array_all($matchers, fn(Closure $match) => $match($value));
         };
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         5.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Http\Test\TestCase;
+namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\MimeType;
 use Cake\TestSuite\TestCase;

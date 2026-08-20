@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -28,7 +28,8 @@ jobs:
 
       - name: Push split packages
         env:
+          CURRENT_BRANCH: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GH_SPLIT_PACKAGES_WRITE_TOKEN }}
         run: |
-          make CURRENT_BRANCH=${{ github.ref_name }} components
+          make CURRENT_BRANCH="${CURRENT_BRANCH}" components
           make clean-components-branches

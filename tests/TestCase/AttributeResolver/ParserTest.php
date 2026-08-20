@@ -186,7 +186,7 @@ class ParserTest extends TestCase
 
         // Should find attributes on TestAnonymousClass and its methods
         $this->assertGreaterThan(0, count($results), 'Should find some attributes in file');
-        $hasMainClass = array_any($results, fn($result) => str_contains($result->target->declaringClass ?? '', 'TestAnonymousClass'));
+        $hasMainClass = array_any($results, fn(AttributeInfo $result) => str_contains($result->target->declaringClass ?? '', 'TestAnonymousClass'));
         $this->assertTrue($hasMainClass, 'Main class TestAnonymousClass should be found');
     }
 
@@ -311,15 +311,15 @@ class ParserTest extends TestCase
         $attrArray = array_values($multipleAttrs);
 
         // One should have constant
-        $hasConstant = array_any($attrArray, fn($attr) => isset($attr->arguments['constant']));
+        $hasConstant = array_any($attrArray, fn(AttributeInfo $attr) => isset($attr->arguments['constant']));
         $this->assertTrue($hasConstant);
 
         // One should have enum
-        $hasEnum = array_any($attrArray, fn($attr) => isset($attr->arguments['enum']));
+        $hasEnum = array_any($attrArray, fn(AttributeInfo $attr) => isset($attr->arguments['enum']));
         $this->assertTrue($hasEnum);
 
         // One should have object
-        $hasObject = array_any($attrArray, fn($attr) => isset($attr->arguments['object']));
+        $hasObject = array_any($attrArray, fn(AttributeInfo $attr) => isset($attr->arguments['object']));
         $this->assertTrue($hasObject);
     }
 

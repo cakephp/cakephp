@@ -28,6 +28,7 @@ use Cake\Core\StaticConfigTrait;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
+use function Cake\Core\triggerWarning;
 
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
@@ -79,6 +80,14 @@ class Cache
      * @var bool
      */
     protected static bool $enabled = true;
+
+    /**
+     * Names of the pools currently being constructed, used to detect reentrant calls.
+     *
+     * @see \Cake\Cache\Cache::pool()
+     * @var array<string, true>
+     */
+    protected static array $building = [];
 
     /**
      * Group to Config mapping
@@ -159,7 +168,7 @@ class Cache
         } catch (RuntimeException $e) {
             if (!array_key_exists('fallback', $config)) {
                 $registry->set($name, new NullEngine());
-                trigger_error($e->getMessage(), E_USER_WARNING);
+                triggerWarning($e->getMessage());
 
                 return;
             }
@@ -218,7 +227,21 @@ class Cache
             return $registry->get($config);
         }
 
-        static::buildEngine($config);
+        if (isset(static::$building[$config])) {
+            // Reentered while this pool is still being constructed. An engine that cannot reach
+            // its backend may log that failure, and the logger may in turn ask for a cache pool -
+            // for example one that stores database schema metadata. Nothing is registered yet at
+            // that point, so without this check the two would call each other until the process
+            // runs out of memory. Degrade to a null engine instead.
+            return new NullEngine();
+        }
+
+        static::$building[$config] = true;
+        try {
+            static::buildEngine($config);
+        } finally {
+            unset(static::$building[$config]);
+        }
 
         return $registry->get($config);
     }

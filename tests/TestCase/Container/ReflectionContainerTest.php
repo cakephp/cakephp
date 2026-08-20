@@ -6,6 +6,7 @@ namespace Cake\Test\TestCase\Container;
 use Cake\Container\Container;
 use Cake\Container\Exception\NotFoundException;
 use Cake\Container\ReflectionContainer;
+use Cake\Test\TestCase\Container\Asset\AttributeClient;
 use Cake\Test\TestCase\Container\Asset\Bar;
 use Cake\Test\TestCase\Container\Asset\Foo;
 use Cake\Test\TestCase\Container\Asset\FooCallable;
@@ -219,5 +220,14 @@ class ReflectionContainerTest extends TestCase
 
         $this->assertInstanceOf($classWithConstructor, $item);
         $this->assertInstanceOf($dependencyClass, $item->bar);
+    }
+
+    public function testReflectArgumentsResolvesValueFromAttribute(): void
+    {
+        $container = new ReflectionContainer();
+        $item = $container->get(AttributeClient::class);
+
+        $this->assertInstanceOf(AttributeClient::class, $item);
+        $this->assertSame('RESOLVED-VALUE', $item->value);
     }
 }

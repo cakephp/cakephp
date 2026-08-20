@@ -4230,6 +4230,69 @@ class TableTest extends TestCase
         ]));
     }
 
+    /**
+     * Tests that deep save options accept contain-style nested association arrays.
+     */
+    public function testSaveDeepAssociationContainStyleOptions(): void
+    {
+        $articles = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['insert'])
+            ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
+            ->getMock();
+        $authors = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['insert'])
+            ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
+            ->getMock();
+        $supervisors = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['insert'])
+            ->setConstructorArgs([[
+                'table' => 'authors',
+                'alias' => 'supervisors',
+                'connection' => $this->connection,
+            ]])
+            ->getMock();
+
+        $articles->belongsTo('authors', ['targetTable' => $authors]);
+        $authors->hasOne('supervisors', ['targetTable' => $supervisors]);
+
+        $entity = new Entity([
+            'title' => 'bar',
+            'author' => new Entity([
+                'name' => 'Juan',
+                'supervisor' => new Entity(['name' => 'Marc']),
+            ]),
+        ]);
+        $entity->setNew(true);
+        $entity->author->setNew(true);
+        $entity->author->supervisor->setNew(true);
+
+        $articles->expects($this->once())
+            ->method('insert')
+            ->with($entity, ['title' => 'bar'])
+            ->willReturn($entity);
+
+        $authors->expects($this->once())
+            ->method('insert')
+            ->with($entity->author, ['name' => 'Juan'])
+            ->willReturn($entity->author);
+
+        $supervisors->expects($this->once())
+            ->method('insert')
+            ->with($entity->author->supervisor, ['name' => 'Marc'])
+            ->willReturn($entity->author->supervisor);
+
+        $this->assertSame($entity, $articles->save($entity, [
+            'associated' => [
+                'authors' => [
+                    'supervisors' => [
+                        'atomic' => false,
+                        'associated' => false,
+                    ],
+                ],
+            ],
+        ]));
+    }
+
     public function testBelongsToFluentInterface(): void
     {
         /** @var \TestApp\Model\Table\ArticlesTable $articles */

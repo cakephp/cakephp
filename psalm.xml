@@ -27,10 +27,5 @@
         <MissingFile errorLevel="suppress"/>
         <UndefinedConstant errorLevel="suppress" />
         <UndefinedClass errorLevel="suppress" />
-
-        <!-- All the taint -->
-        <TaintedCallable errorLevel="suppress"/>
-        <TaintedFile errorLevel="suppress"/>
-        <TaintedHtml errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

@@ -31,7 +31,6 @@
         "composer/ca-bundle": "^1.5",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
-        "league/container": "^5.1",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.1",
@@ -61,6 +60,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "boundwize/structarmed": "^0.14",
         "cakephp/cakephp-codesniffer": "6.x-dev",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
@@ -134,15 +134,17 @@
         "cs-fix": "phpcbf",
         "stan": [
             "tools/phpstan analyse",
-            "tools/psalm"
+            "tools/psalm",
+            "@structarmed"
         ],
+        "structarmed": "vendor/bin/structarmed analyze src",
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
         "psalm-baseline": "tools/psalm --set-baseline=psalm-baseline.xml",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
-        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.3.1\" && mv composer.backup composer.json",
+        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.5.0\" && mv composer.backup composer.json",
         "rector-check": "vendor/bin/rector process --dry-run",
         "rector-fix": "vendor/bin/rector process",
         "test": "phpunit",

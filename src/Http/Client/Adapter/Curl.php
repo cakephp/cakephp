@@ -71,9 +71,7 @@ class Curl implements AdapterInterface
             throw new NetworkException($message, $request);
         }
 
-        $responses = $this->createResponse($ch, $body);
-
-        return $responses;
+        return $this->createResponse($ch, $body);
     }
 
     /**
@@ -128,7 +126,7 @@ class Curl implements AdapterInterface
         }
 
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
+            $options['ssl_cafile'] = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.

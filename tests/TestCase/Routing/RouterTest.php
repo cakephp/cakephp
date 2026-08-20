@@ -3555,11 +3555,9 @@ class RouterTest extends TestCase
      */
     protected function makeRequest($url, $method): ServerRequest
     {
-        $request = new ServerRequest([
+        return new ServerRequest([
             'url' => $url,
             'environment' => ['REQUEST_METHOD' => $method],
         ]);
-
-        return $request;
     }
 }

@@ -1514,23 +1514,6 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     }
 
     /**
-     * Disable hydrating entities.
-     *
-     * Disabling hydration will cause array results to be returned for the query
-     * instead of entities.
-     *
-     * @return static<array<string,mixed>>
-     */
-    public function disableHydration(): static
-    {
-        $this->dirty();
-        $this->hydrate = false;
-
-        /** @phpstan-ignore return.type */
-        return $this;
-    }
-
-    /**
      * Returns the current hydration mode.
      *
      * @return bool

@@ -39,6 +39,7 @@ use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use Closure;
@@ -173,11 +174,10 @@ class SelectQueryTest extends TestCase
     public function testSelectAlso(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = new SelectQuery($table);
+        $query = new UnhydratedSelectQuery($table);
         $results = $query
             ->selectAlso(['extra' => 'id'])
             ->where(['author_id' => 3])
-            ->disableHydration()
             ->first();
 
         $this->assertSame(
@@ -185,12 +185,11 @@ class SelectQueryTest extends TestCase
             $results,
         );
 
-        $query = new SelectQuery($table);
+        $query = new UnhydratedSelectQuery($table);
         $results = $query
             ->select('id')
             ->selectAlso(['extra' => 'id'])
             ->where(['author_id' => 3])
-            ->disableHydration()
             ->first();
 
         $this->assertSame(
@@ -198,12 +197,11 @@ class SelectQueryTest extends TestCase
             $results,
         );
 
-        $query = new SelectQuery($table);
+        $query = new UnhydratedSelectQuery($table);
         $results = $query
             ->selectAlso(['extra' => 'id'])
             ->select('id')
             ->where(['author_id' => 3])
-            ->disableHydration()
             ->first();
 
         $this->assertSame(
@@ -616,9 +614,9 @@ class SelectQueryTest extends TestCase
             'strategy' => $strategy,
             'sort' => 'tag_id',
         ]);
-        $query = new SelectQuery($table);
+        $query = new UnhydratedSelectQuery($table);
 
-        $results = $query->select()->contain('Tags')->disableHydration()->toArray();
+        $results = $query->select()->contain('Tags')->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -679,7 +677,6 @@ class SelectQueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
-            ->disableHydration()
             ->toArray();
         $expected = [
             [
@@ -724,13 +721,12 @@ class SelectQueryTest extends TestCase
      */
     public function testFilteringByHasManyNoHydration(): void
     {
-        $query = new SelectQuery($this->table);
+        $query = new UnhydratedSelectQuery($this->table);
         $table = $this->getTableLocator()->get('Articles');
         $table->hasMany('Comments');
 
         $results = $query->setRepository($table)
             ->select()
-            ->disableHydration()
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -3522,8 +3518,7 @@ class SelectQueryTest extends TestCase
         ]);
         $table->save($newArticle);
         $results = $table
-            ->find()
-            ->disableHydration()
+            ->unhydratedFind()
             ->contain('Authors')
             ->leftJoinWith('Authors')
             ->all();
@@ -3572,8 +3567,7 @@ class SelectQueryTest extends TestCase
         ];
         $this->assertEquals($expected, $results->toList());
         $results = $table
-            ->find()
-            ->disableHydration()
+            ->unhydratedFind()
             ->contain('Authors')
             ->leftJoinWith('Authors')
             ->where(['Articles.author_id is' => null])
@@ -3592,8 +3586,7 @@ class SelectQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
         $table
-            ->find()
-            ->disableHydration()
+            ->unhydratedFind()
             ->contain('Tags')
             ->leftJoinWith('Tags')
             ->all();
@@ -3977,7 +3970,7 @@ class SelectQueryTest extends TestCase
             });
 
         $query = $table
-            ->find()
+            ->unhydratedFind()
             ->with(function (CommonTableExpression $cte) use ($cteQuery) {
                 return $cte
                     ->name('cte')
@@ -3987,8 +3980,7 @@ class SelectQueryTest extends TestCase
             ->enableAutoFields()
             ->from([$table->getAlias() => 'cte'])
             ->where(['row_num' => 1], ['row_num' => 'integer'])
-            ->orderBy(['id' => 'ASC'])
-            ->disableHydration();
+            ->orderBy(['id' => 'ASC']);
 
         $expected = [
             [
@@ -4029,7 +4021,7 @@ class SelectQueryTest extends TestCase
             ->setStrategy(BelongsTo::STRATEGY_SELECT);
 
         $articles
-            ->find()
+            ->unhydratedFind()
             ->contain('Comments', function (SelectQuery $query) {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
@@ -4056,7 +4048,6 @@ class SelectQueryTest extends TestCase
 
                 return $query;
             })
-            ->disableHydration()
             ->disableResultsCasting()
             ->firstOrFail();
     }
@@ -4099,13 +4090,12 @@ class SelectQueryTest extends TestCase
                 'foreignKey' => 'author_id',
             ]);
 
-        $result = $comments->find()
+        $result = $comments->unhydratedFind()
             ->contain('Authors')
             ->contain('Articles', function (SelectQuery $q) {
                 return $q->contain('Authors');
             })
             ->where(['Comments.id' => 1])
-            ->disableHydration()
             ->toArray();
 
         $this->assertEquals(2, $result[0]['author']['id']);
@@ -4134,11 +4124,10 @@ class SelectQueryTest extends TestCase
 
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
-        $comments->find()
+        $comments->unhydratedFind()
             ->leftJoinWith('Authors')
             ->leftJoinWith('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))
             ->where(['Comments.id' => 1])
-            ->disableHydration()
             ->all();
     }
 
@@ -4164,11 +4153,10 @@ class SelectQueryTest extends TestCase
 
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
-        $comments->find()
+        $comments->unhydratedFind()
             ->leftJoinWith('Authors')
             ->matching('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))
             ->where(['Comments.id' => 1])
-            ->disableHydration()
             ->all();
     }
 }

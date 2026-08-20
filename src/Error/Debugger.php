@@ -43,6 +43,7 @@ use ReflectionProperty;
 use Throwable;
 use function Cake\Core\h;
 use function Cake\Core\pr;
+use function Cake\Core\triggerWarning;
 
 /**
  * Provide custom logging and error handling.
@@ -62,7 +63,15 @@ class Debugger
      * @var array<string, mixed>
      */
     protected array $defaultConfig = [
-        'outputMask' => [],
+        'outputMask' => [
+            'password' => '********',
+            'login' => '********',
+            'host' => '********',
+            'database' => '********',
+            'port' => '********',
+            'prefix' => '********',
+            'schema' => '********',
+        ],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
         'editorBasePath' => null,
@@ -654,7 +663,7 @@ class Debugger
     /**
      * Export an array type object. Filters out keys used in datasource configuration.
      *
-     * The following keys are replaced with ***'s
+     * By default the following keys are replaced with ***'s
      *
      * - password
      * - login
@@ -857,7 +866,7 @@ class Debugger
     {
         $salt = Security::getSalt();
         if ($salt === '__SALT__' || strlen($salt) < 32) {
-            trigger_error(
+            triggerWarning(
                 'Please change the value of `Security.salt` in `ROOT/config/app_local.php` ' .
                 'to a random value of at least 32 characters.',
                 E_USER_NOTICE,

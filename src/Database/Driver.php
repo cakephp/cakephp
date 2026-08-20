@@ -42,6 +42,7 @@ use PDOException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 use Stringable;
 
 /**
@@ -152,7 +153,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param array<string, mixed> $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $config = [])
+    public function __construct(#[SensitiveParameter] array $config = [])
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
@@ -187,7 +188,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param array<string, mixed> $config configuration to be used for creating connection
      * @return \PDO
      */
-    protected function createPdo(string $dsn, array $config): PDO
+    protected function createPdo(string $dsn, #[SensitiveParameter] array $config): PDO
     {
         $action = fn(): PDO => new PDO(
             $dsn,
@@ -670,13 +671,11 @@ abstract class Driver implements LoggerAwareInterface
     /**
      * Removes aliases from the `WHERE` clause of a query.
      *
-     * @param \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery $query The query to process.
-     * @return \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery The modified query.
+     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
+     * @param T $query The query to process.
+     * @return T The modified query.
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
-     * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
-     * @phpstan-param T $query
-     * @phpstan-return T
      */
     protected function removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {

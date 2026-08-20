@@ -352,7 +352,6 @@ class AttributeCollectionTest extends TestCase
                 name: 'TestController',
                 declaringClass: 'App\Controller\TestController',
             ),
-            pluginName: null,
         );
 
         // Pass AttributeInfo objects directly (not arrays)
@@ -380,7 +379,6 @@ class AttributeCollectionTest extends TestCase
                 name: 'FirstController',
                 declaringClass: 'App\Controller\FirstController',
             ),
-            pluginName: null,
         );
 
         $attributeInfo2 = new AttributeInfo(
@@ -394,7 +392,6 @@ class AttributeCollectionTest extends TestCase
                 name: 'index',
                 declaringClass: 'App\Controller\SecondController',
             ),
-            pluginName: null,
         );
 
         $collection = new AttributeCollection([$attributeInfo1, $attributeInfo2]);

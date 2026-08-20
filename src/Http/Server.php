@@ -97,7 +97,7 @@ class Server implements EventDispatcherInterface
      * Application bootstrap wrapper.
      *
      * Calls the application's `bootstrap()` hook. After the application the
-     * plugins are bootstrapped.
+     * plugins are bootstrapped and events are registered.
      *
      * @return void
      */
@@ -133,7 +133,9 @@ class Server implements EventDispatcherInterface
         $request = null;
         if ($this->app instanceof ContainerApplicationInterface) {
             $container = $this->app->getContainer();
-            if ($container->has(ServerRequest::class)) {
+            // `has()` also returns true for any existing class due to auto-wiring,
+            // so `hasDefinition()` is used here to check for an explicit registration only.
+            if ($container->hasDefinition(ServerRequest::class)) {
                 $request = $container->get(ServerRequest::class);
             }
         }

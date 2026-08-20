@@ -30,6 +30,7 @@ use DateInterval;
 use LogicException;
 use SplFileInfo;
 use Throwable;
+use function Cake\Core\triggerWarning;
 
 /**
  * PHP Cache Engine
@@ -130,11 +131,11 @@ class PhpEngine extends CacheEngine
         try {
             $exported = VarExporter::export($value);
         } catch (Throwable $e) {
-            trigger_error(sprintf(
+            triggerWarning(sprintf(
                 'PhpEngine failed to export value for key `%s`: %s',
                 $key,
                 $e->getMessage(),
-            ), E_USER_WARNING);
+            ));
 
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
                 'key' => $key, 'value' => $value, 'success' => false, 'ttl' => $duration,
@@ -194,11 +195,11 @@ class PhpEngine extends CacheEngine
             $value = require $path;
         } catch (Throwable $e) {
             // Corrupt cache file
-            trigger_error(sprintf(
+            triggerWarning(sprintf(
                 'PhpEngine failed to read cache file `%s`: %s',
                 $path,
                 $e->getMessage(),
-            ), E_USER_WARNING);
+            ));
             $this->deleteFile($path);
 
             $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
@@ -460,10 +461,10 @@ class PhpEngine extends CacheEngine
         $isWritableDir = ($dir->isDir() && $dir->isWritable());
         if (!$success || ($this->init && !$isWritableDir)) {
             $this->init = false;
-            trigger_error(sprintf(
+            triggerWarning(sprintf(
                 '%s is not writable',
                 $this->config['path'],
-            ), E_USER_WARNING);
+            ));
         }
 
         return $success;

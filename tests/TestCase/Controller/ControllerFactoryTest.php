@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use Cake\Container\Container;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
-use Cake\Core\Container;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -45,7 +45,7 @@ class ControllerFactoryTest extends TestCase
     protected $factory;
 
     /**
-     * @var \Cake\Core\Container
+     * @var \Cake\Container\Container
      */
     protected $container;
 

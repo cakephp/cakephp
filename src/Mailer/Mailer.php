@@ -145,8 +145,7 @@ class Mailer implements EventListenerInterface
     /**
      * Message class name.
      *
-     * @var string
-     * @phpstan-var class-string<\Cake\Mailer\Message>
+     * @var class-string<\Cake\Mailer\Message>
      */
     protected string $messageClass = Message::class;
 
@@ -281,8 +280,7 @@ class Mailer implements EventListenerInterface
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
-     * @phpstan-return array{headers: string, message: string, ...}
+     * @return array{headers: string, message: string, ...} Contains 'headers' and 'message' keys. Additional keys allowed.
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
@@ -339,8 +337,7 @@ class Mailer implements EventListenerInterface
      * Render content and send email using configured transport.
      *
      * @param string $content Content.
-     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
-     * @phpstan-return array{headers: string, message: string, ...}
+     * @return array{headers: string, message: string, ...} Contains 'headers' and 'message' keys. Additional keys allowed.
      */
     public function deliver(string $content = ''): array
     {
@@ -518,8 +515,7 @@ class Mailer implements EventListenerInterface
     /**
      * Log the email message delivery.
      *
-     * @param array<string, mixed> $contents The content with 'headers' and 'message' keys.
-     * @phpstan-param array{headers: string, message: string, ...} $contents
+     * @param array{headers: string, message: string, ...} $contents The content with 'headers' and 'message' keys.
      * @return void
      */
     protected function logDelivery(array $contents): void

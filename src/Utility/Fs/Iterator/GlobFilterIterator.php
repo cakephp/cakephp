@@ -55,6 +55,6 @@ final class GlobFilterIterator extends FilterIterator
             $this->basePath,
         );
 
-        return array_any($this->patterns, fn($pattern) => Path::matches($pattern, $relativePath));
+        return array_any($this->patterns, fn(string $pattern) => Path::matches($pattern, $relativePath));
     }
 }

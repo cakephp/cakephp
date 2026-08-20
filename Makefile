@@ -5,7 +5,7 @@
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
-COMPONENTS=attribute-resolver cache console core collection database datasource event filesystem form http i18n log ORM utility validation
+COMPONENTS=attribute-resolver cache console core collection container database datasource event filesystem form http i18n log ORM utility validation
 CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings
@@ -57,6 +57,9 @@ help:
 	@echo "test"
 	@echo "  Run the tests for CakePHP."
 	@echo ""
+	@echo "lint-src"
+	@echo "  Run php -l against every PHP file in src/."
+	@echo ""
 	@echo "All other tasks are not intended to be run directly."
 .PHONY: help
 
@@ -64,6 +67,10 @@ help:
 test: install
 	vendor/bin/phpunit
 .PHONY: test
+
+lint-src:
+	@contrib/lint-php-src src
+.PHONY: lint-src
 
 
 # Utility target for checking required parameters
@@ -146,7 +153,7 @@ package: clean dist/cakephp-$(DASH_VERSION).zip
 # Publish app skeleton with dependencies zipballs to Github.
 publish: guard-VERSION dist/cakephp-$(DASH_VERSION).zip
 	@echo "Creating draft release for $(VERSION). prerelease=$(PRERELEASE)"
-	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{"tag_name": "$(VERSION)", "name": "CakePHP $(VERSION) released", "draft": true, "prerelease": $(PRERELEASE)}' > release.json
+	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/cakephp/releases -d '{"tag_name": "$(VERSION)", "name": "CakePHP $(VERSION)", "draft": true, "prerelease": $(PRERELEASE)}' > release.json
 	# Extract id out of response json.
 	php -r '$$f = file_get_contents("./release.json"); $$d = json_decode($$f, true); file_put_contents("./id.txt", $$d["id"]);'
 	@echo "Uploading zip file to github."
@@ -199,5 +206,5 @@ clean-component-%:
 .PHONY: components-clean
 
 # Top level alias for doing a release.
-release: guard-VERSION tag-release components-tag package publish
+release: guard-VERSION lint-src tag-release components-tag package publish
 .PHONY: release

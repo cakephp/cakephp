@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Cake\Container\Argument;
 
-use Cake\Container\DefinitionContainerInterface;
+use Cake\Container\Attribute\AttributeInterface;
+use Cake\Container\ContainerAwareInterface;
+use Cake\Container\ContainerInterface;
 use Cake\Container\Exception\ContainerException;
 use Cake\Container\Exception\NotFoundException;
 use Cake\Container\ReflectionContainer;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
+use ReflectionAttribute;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 
@@ -43,7 +46,7 @@ trait ArgumentResolverTrait
 
             // resolve the argument from the container, if it happens to be another
             // argument wrapper, use that value
-            if ($container instanceof ContainerInterface && $container->has($argValue)) {
+            if ($container instanceof PsrContainerInterface && $container->has($argValue)) {
                 try {
                     $arg = $container->get($argValue);
 
@@ -83,6 +86,15 @@ trait ArgumentResolverTrait
                 continue;
             }
 
+            // next we see if we have an attribute that can resolve the argument
+            foreach ($param->getAttributes() as $attribute) {
+                $argument = $this->resolveArgumentFromAttribute($attribute);
+                if ($argument !== false) {
+                    $arguments[] = $argument;
+                    continue 2;
+                }
+            }
+
             $type = $param->getType();
 
             if ($type instanceof ReflectionNamedType) {
@@ -114,7 +126,32 @@ trait ArgumentResolverTrait
     }
 
     /**
+     * Attempt to resolve a parameter's value from one of its PHP attributes.
+     *
+     * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
+     * @return \Cake\Container\Argument\LiteralArgumentInterface|false
+     */
+    protected function resolveArgumentFromAttribute(ReflectionAttribute $attribute): LiteralArgumentInterface|false
+    {
+        $attrClass = $attribute->getName();
+
+        if (!is_subclass_of($attrClass, AttributeInterface::class)) {
+            return false;
+        }
+
+        $instance = $attribute->newInstance();
+        if ($instance instanceof ContainerAwareInterface) {
+            $instance->setContainer($this->getContainer());
+        }
+
+        // purposely don't define a type here so that any typing errors
+        // from the consuming code bubble up
+        /** @var \Cake\Container\Attribute\AttributeInterface $instance */
+        return new LiteralArgument($instance->resolve());
+    }
+
+    /**
      * @inheritDoc
      */
-    abstract public function getContainer(): DefinitionContainerInterface;
+    abstract public function getContainer(): ContainerInterface;
 }

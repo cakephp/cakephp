@@ -814,11 +814,10 @@ class TreeBehavior extends Behavior
         $primaryKey = $this->getPrimaryKey();
         $order = $config['recoverOrder'] ?: $primaryKey;
 
-        $nodes = $this->scope($this->table->selectQuery())
+        $nodes = $this->scope($this->table->unhydratedSelectQuery())
             ->select($primaryKey)
             ->where([$parent . ' IS' => $parentId])
             ->orderBy($order)
-            ->disableHydration()
             ->all();
 
         foreach ($nodes as $node) {
