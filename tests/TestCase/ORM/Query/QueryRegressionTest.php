@@ -30,6 +30,8 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Log\AbstractLogger;
+use Stringable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
@@ -1907,5 +1909,114 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(1, $results[1]->articles);
         $this->assertSame('Second Article', $results[1]->articles[0]->title);
         $this->assertEmpty($results[1]->comments);
+    }
+
+    /**
+     * Ordering on a column other than the binding key must not produce an invalid subquery.
+     *
+     * The filtering subquery reduces its SELECT to the binding key and groups by it. Sorting it by
+     * a column that takes part in neither is rejected by Postgres with a grouping error, so the
+     * ordered columns have to join the GROUP BY.
+     */
+    public function testSubqueryStrategyOrderedByNonKeyColumn(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+        $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $results = $articles->find()
+            ->contain(['Comments'])
+            ->innerJoinWith('Authors')
+            ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertSame([2, 1], array_map(fn(EntityInterface $article) => $article->id, $results));
+
+        // Only reachable when the subquery kept the same ordered window as the parent query.
+        $this->assertCount(2, $results[0]->comments);
+        $this->assertCount(4, $results[1]->comments);
+    }
+
+    /**
+     * orderByAsc()/orderByDesc() store the column inside an OrderClauseExpression under a numeric
+     * key instead of using the column as the key, and have to reach the GROUP BY just the same.
+     */
+    public function testSubqueryStrategyOrderedByExpression(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+        $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $results = $articles->find()
+            ->contain(['Comments'])
+            ->innerJoinWith('Authors')
+            ->orderByAsc('Authors.name')
+            ->orderByAsc('Articles.id')
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertSame([2, 1], array_map(fn(EntityInterface $article) => $article->id, $results));
+        $this->assertCount(2, $results[0]->comments);
+        $this->assertCount(4, $results[1]->comments);
+    }
+
+    /**
+     * Databases that do not enforce grouping, such as SQLite, accept the invalid subquery, so the
+     * GROUP BY has to be asserted on the generated SQL as well.
+     */
+    public function testSubqueryStrategyGroupsByOrderedColumns(): void
+    {
+        $logger = new class extends AbstractLogger {
+            /**
+             * @var array<string>
+             */
+            public array $messages = [];
+
+            /**
+             * @inheritDoc
+             */
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->messages[] = (string)$message;
+            }
+        };
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $driver = $articles->getConnection()->getDriver();
+        $previousLogger = $driver->getLogger();
+        $driver->setLogger($logger);
+
+        try {
+            $articles->belongsTo('Authors');
+            $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+            $articles->find()
+                ->contain(['Comments'])
+                ->innerJoinWith('Authors')
+                ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
+                ->limit(2)
+                ->all()
+                ->toArray();
+        } finally {
+            if ($previousLogger) {
+                $driver->setLogger($previousLogger);
+            } else {
+                $driver->disableQueryLogging();
+            }
+        }
+
+        // The filtering subquery is the only grouped statement the query above runs.
+        $grouped = array_filter(
+            $logger->messages,
+            fn(string $message): bool => str_contains($message, 'GROUP BY'),
+        );
+        $this->assertCount(1, $grouped, implode("\n", $logger->messages));
+
+        $sql = array_pop($grouped);
+        $this->assertSame(1, preg_match('/GROUP BY (.+?)(?= ORDER BY| HAVING| LIMIT|\))/', $sql, $matches), $sql);
+        $this->assertStringContainsString('name', $matches[1], $sql);
     }
 }

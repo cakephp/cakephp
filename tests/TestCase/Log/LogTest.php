@@ -17,11 +17,15 @@ namespace Cake\Test\TestCase\Log;
 
 use BadMethodCallException;
 use Cake\Core\Exception\CakeException;
+use Cake\Log\Engine\BaseLog;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RuntimeException;
+use Stringable;
+use TestApp\Log\Engine\ReentrantLog;
 use TestApp\Log\Engine\TestAppLog;
 use TestPlugin\Log\Engine\TestPluginLog;
 
@@ -30,6 +34,11 @@ use TestPlugin\Log\Engine\TestPluginLog;
  */
 class LogTest extends TestCase
 {
+    /**
+     * @var string|null
+     */
+    protected ?string $errorLogBackup = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,6 +50,29 @@ class LogTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+
+        if ($this->errorLogBackup !== null) {
+            ini_set('error_log', $this->errorLogBackup);
+            $this->errorLogBackup = null;
+        }
+    }
+
+    /**
+     * Sends error_log() output to a file for the duration of the test, so a suppressed
+     * reentrant message does not end up in the test runner's output.
+     */
+    protected function captureErrorLog(): string
+    {
+        $file = TMP . 'error_log_capture.log';
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        $previous = ini_get('error_log');
+        $this->errorLogBackup = $previous === false ? '' : $previous;
+        ini_set('error_log', $file);
+
+        return $file;
     }
 
     /**
@@ -649,5 +681,105 @@ class LogTest extends TestCase
             return $instance;
         });
         $this->assertSame($instance, Log::engine('default'));
+    }
+
+    /**
+     * A logger that writes a log message from inside its own log() must not be handed that
+     * message while it is still dispatching, or it calls itself until the process dies.
+     */
+    public function testWriteDoesNotReenterTheSameLogger(): void
+    {
+        $file = $this->captureErrorLog();
+        $logger = new ReentrantLog();
+        Log::setConfig('reentrant', $logger);
+
+        Log::write('error', 'the original problem');
+
+        $this->assertSame(['the original problem'], $logger->messages);
+        $this->assertStringContainsString(
+            'dropped: logger `reentrant` reentered while writing',
+            (string)file_get_contents($file),
+            'The suppressed message should still be recorded somewhere.',
+        );
+    }
+
+    /**
+     * The nested message still reaches the other configured loggers. Only the one that is already
+     * dispatching is skipped, so a per-logger cycle does not silence the rest of the stack.
+     */
+    public function testWriteStillDispatchesNestedMessageToOtherLoggers(): void
+    {
+        $this->captureErrorLog();
+        $reentrant = new ReentrantLog();
+        $bystander = new class extends BaseLog {
+            public array $messages = [];
+
+            public function log($level, Stringable|string $message, array $context = []): void
+            {
+                $this->messages[] = (string)$message;
+            }
+        };
+        Log::setConfig('reentrant', $reentrant);
+        Log::setConfig('bystander', $bystander);
+
+        Log::write('error', 'the original problem');
+
+        $this->assertSame(['the original problem'], $reentrant->messages);
+        $this->assertSame(
+            ['INSERT INTO logs ...', 'the original problem'],
+            $bystander->messages,
+            'The bystander should have received the nested message as well as the original.',
+        );
+    }
+
+    /**
+     * The marker is cleared once dispatch finishes, so a later write is handled normally rather
+     * than being mistaken for a reentrant one forever.
+     */
+    public function testLoggerIsWritableAgainAfterReentrantWrite(): void
+    {
+        $this->captureErrorLog();
+        $logger = new ReentrantLog();
+        Log::setConfig('reentrant', $logger);
+
+        Log::write('error', 'first');
+        Log::write('error', 'second');
+
+        $this->assertSame(['first', 'second'], $logger->messages);
+    }
+
+    /**
+     * A logger that throws must not leave itself marked as dispatching, otherwise one failure
+     * would silence it for the rest of the process.
+     */
+    public function testMarkerIsClearedWhenTheLoggerThrows(): void
+    {
+        $logger = new class extends BaseLog {
+            public bool $explode = true;
+
+            public array $messages = [];
+
+            public function log($level, Stringable|string $message, array $context = []): void
+            {
+                if ($this->explode) {
+                    throw new RuntimeException('logger blew up');
+                }
+
+                $this->messages[] = (string)$message;
+            }
+        };
+        Log::setConfig('exploding', $logger);
+
+        try {
+            Log::write('error', 'first');
+            $this->fail('Expected the logger failure to propagate.');
+        } catch (RuntimeException $e) {
+            $this->assertSame('logger blew up', $e->getMessage());
+        }
+
+        $logger->explode = false;
+        Log::write('error', 'second');
+
+        $this->assertSame(['second'], $logger->messages);
     }
 }
