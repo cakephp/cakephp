@@ -194,8 +194,10 @@ class AttributeEventListenerConnector
                 ));
             }
 
-            $reflection = new ReflectionMethod($className, $methodName);
-            if (!$reflection->isPublic()) {
+            $isPublic = $info->target->type === AttributeTargetType::METHOD
+                ? $info->target->isPublicMethodTarget()
+                : new ReflectionMethod($className, $methodName)->isPublic();
+            if (!$isPublic) {
                 throw new EventAttributeException(sprintf(
                     'Method "%s::%s()" must be public to be used as an event listener. '
                     . 'Declared on event "%s" in %s at line %d.',

@@ -618,6 +618,29 @@ class AttributeEventListenerConnectorTest extends TestCase
     }
 
     /**
+     * Tests that a class-level EventListener referencing a non-public method throws EventAttributeException.
+     *
+     * @return void
+     */
+    public function testClassLevelNonPublicMethodThrowsException(): void
+    {
+        $manager = new EventManager();
+
+        AttributeResolver::setConfig(self::ERROR_CONFIG, [
+            'paths' => ['Event/Listener/ClassLevelNonPublicMethodListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $connector = new AttributeEventListenerConnector($manager);
+
+        $this->expectException(EventAttributeException::class);
+        $this->expectExceptionMessageMatches('/must be public/');
+
+        $connector->connect(self::ERROR_CONFIG);
+    }
+
+    /**
      * Tests that duplicate event+priority+method combinations are registered only once.
      *
      * Deduplication prevents double registration when the same attribute metadata
