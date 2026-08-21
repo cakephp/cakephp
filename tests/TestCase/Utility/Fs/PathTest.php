@@ -46,6 +46,7 @@ class PathTest extends TestCase
         $this->assertTrue(Path::isAbsolute('/'));
         $this->assertTrue(Path::isAbsolute('C:/Windows'));
         $this->assertTrue(Path::isAbsolute('C:\\Windows'));
+        $this->assertTrue(Path::isAbsolute('/../src/Model'));
 
         $this->assertFalse(Path::isAbsolute('src/Model'));
         $this->assertFalse(Path::isAbsolute('./src/Model'));
@@ -87,6 +88,11 @@ class PathTest extends TestCase
         $this->assertSame(
             'C:/project/src/file.php',
             Path::makeAbsolute('src/file.php', 'C:/project'),
+        );
+
+        $this->assertSame(
+            '/src/Model',
+            Path::makeAbsolute('/../src/Model', '/var/www'),
         );
     }
 
