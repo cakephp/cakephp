@@ -473,13 +473,15 @@ class EventManager implements EventManagerInterface
      *
      * @param string $config Attribute resolver config name.
      * @param callable|null $listenerResolver Resolver used to create listener instances.
+     * @param callable|null $managerResolver Resolver used to resolve named event managers.
      * @return $this
      */
     public function registerAttributeListeners(
         string $config = 'default',
         ?callable $listenerResolver = null,
+        ?callable $managerResolver = null,
     ): static {
-        $connector = new AttributeEventListenerConnector($this, $listenerResolver);
+        $connector = new AttributeEventListenerConnector($this, $listenerResolver, $managerResolver);
         $connector->connect($config);
 
         return $this;

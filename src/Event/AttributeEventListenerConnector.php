@@ -23,6 +23,7 @@ use Cake\Event\Attribute\EventListener;
 use Cake\Event\Exception\EventAttributeException;
 use Closure;
 use ReflectionMethod;
+use Throwable;
 
 /**
  * Connects event listeners declared via PHP attributes to an event manager.
@@ -60,18 +61,30 @@ class AttributeEventListenerConnector
     private readonly Closure $listenerResolver;
 
     /**
+     * Resolves named event managers.
+     *
+     * @var \Closure(string): mixed|null
+     */
+    private readonly ?Closure $managerResolver;
+
+    /**
      * Constructs an AttributeEventListenerConnector.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager Event manager to attach listeners to.
      * @param callable|null $listenerResolver Resolver used to create listener instances.
+     * @param callable|null $managerResolver Resolver used to resolve named event managers.
      */
     public function __construct(
         protected readonly EventManagerInterface $eventManager,
         ?callable $listenerResolver = null,
+        ?callable $managerResolver = null,
     ) {
         $this->listenerResolver = $listenerResolver === null
             ? static fn(string $className): object => new $className()
             : Closure::fromCallable($listenerResolver);
+        $this->managerResolver = $managerResolver === null
+            ? null
+            : Closure::fromCallable($managerResolver);
     }
 
     /**
@@ -128,10 +141,11 @@ class AttributeEventListenerConnector
 
         $listener = $this->createListener($className);
         foreach ($registrations as $registration) {
+            $eventManager = $this->resolveEventManager($registration);
             $options = $registration['priority'] === null
                 ? []
                 : ['priority' => $registration['priority']];
-            $this->eventManager->on(
+            $eventManager->on(
                 $registration['event'],
                 $listener->{$registration['method']}(...),
                 $options,
@@ -146,7 +160,14 @@ class AttributeEventListenerConnector
      *
      * @param string $className Fully qualified class name.
      * @param list<\Cake\AttributeResolver\ValueObject\AttributeInfo> $infos Attribute metadata sorted by line number.
-     * @return list<array{event: string, method: string, priority: int|null}>
+     * @return list<array{
+     *     event: string,
+     *     filePath: string,
+     *     lineNumber: int,
+     *     manager: string|null,
+     *     method: string,
+     *     priority: int|null
+     * }>
      * @throws \Cake\Event\Exception\EventAttributeException When a listener method cannot be resolved.
      */
     protected function resolveRegistrations(string $className, array $infos): array
@@ -187,8 +208,10 @@ class AttributeEventListenerConnector
             }
 
             $priority = $attribute->priority;
+            $manager = $attribute->manager;
+            $managerKey = $manager === null ? 'default' : 'manager:' . $manager;
             $priorityKey = $priority === null ? 'default' : 'priority:' . $priority;
-            $key = $attribute->event . "\0" . $priorityKey . "\0" . $methodName;
+            $key = $attribute->event . "\0" . $managerKey . "\0" . $priorityKey . "\0" . $methodName;
 
             if (isset($seen[$key])) {
                 continue;
@@ -197,12 +220,76 @@ class AttributeEventListenerConnector
             $seen[$key] = true;
             $registrations[] = [
                 'event' => $attribute->event,
+                'filePath' => $info->filePath,
+                'lineNumber' => $info->lineNumber,
+                'manager' => $manager,
                 'method' => $methodName,
                 'priority' => $priority,
             ];
         }
 
         return $registrations;
+    }
+
+    /**
+     * Resolves the event manager that a listener registration should be attached to.
+     *
+     * @param array{
+     *     event: string,
+     *     filePath: string,
+     *     lineNumber: int,
+     *     manager: string|null,
+     *     method: string,
+     *     priority: int|null
+     * } $registration Listener registration metadata.
+     * @return \Cake\Event\EventManagerInterface
+     * @throws \Cake\Event\Exception\EventAttributeException When the named manager cannot be resolved.
+     */
+    protected function resolveEventManager(array $registration): EventManagerInterface
+    {
+        if ($registration['manager'] === null) {
+            return $this->eventManager;
+        }
+
+        if ($this->managerResolver === null) {
+            throw new EventAttributeException(sprintf(
+                'Event manager "%s" cannot be resolved because no manager resolver is configured. '
+                . 'Declared on event "%s" in %s at line %d.',
+                $registration['manager'],
+                $registration['event'],
+                $registration['filePath'],
+                $registration['lineNumber'],
+            ));
+        }
+
+        try {
+            $eventManager = ($this->managerResolver)($registration['manager']);
+        } catch (Throwable $exception) {
+            throw new EventAttributeException(
+                sprintf(
+                    'Event manager "%s" could not be resolved for event "%s" in %s at line %d.',
+                    $registration['manager'],
+                    $registration['event'],
+                    $registration['filePath'],
+                    $registration['lineNumber'],
+                ),
+                previous: $exception,
+            );
+        }
+
+        if (!$eventManager instanceof EventManagerInterface) {
+            throw new EventAttributeException(sprintf(
+                'Event manager resolver must return an instance of %s for "%s". '
+                . 'Declared on event "%s" in %s at line %d.',
+                EventManagerInterface::class,
+                $registration['manager'],
+                $registration['event'],
+                $registration['filePath'],
+                $registration['lineNumber'],
+            ));
+        }
+
+        return $eventManager;
     }
 
     /**

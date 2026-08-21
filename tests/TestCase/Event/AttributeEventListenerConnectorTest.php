@@ -24,12 +24,14 @@ use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Event\Exception\EventAttributeException;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use ReflectionProperty;
 use stdClass;
 use TestApp\Event\Listener\ClassLevelMethodListener;
 use TestApp\Event\Listener\ContainerAwareListener;
 use TestApp\Event\Listener\InferredMethodListener;
 use TestApp\Event\Listener\InvokableListener;
+use TestApp\Event\Listener\MultipleManagerListener;
 use TestApp\Event\Listener\OrdersListener;
 use TestApp\Event\Listener\PriorityListener;
 
@@ -306,6 +308,121 @@ class AttributeEventListenerConnectorTest extends TestCase
         $this->assertSame([42, 5], array_keys($prioritised));
 
         AttributeResolver::drop('default-priority-test');
+    }
+
+    /**
+     * Tests that listeners can be attached to the default and a named event manager.
+     *
+     * @return void
+     */
+    public function testConnectsListenersToMultipleEventManagers(): void
+    {
+        AttributeResolver::setConfig('multiple-managers-test', [
+            'paths' => ['Event/Listener/MultipleManagerListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $defaultManager = new EventManager();
+        $ordersManager = new EventManager();
+        $listener = new MultipleManagerListener();
+        $resolvedManagers = [];
+        $result = $defaultManager->registerAttributeListeners(
+            'multiple-managers-test',
+            static fn(string $className): object => $listener,
+            function (string $name) use ($ordersManager, &$resolvedManagers): EventManagerInterface {
+                $resolvedManagers[] = $name;
+
+                if ($name === 'orders') {
+                    return $ordersManager;
+                }
+
+                throw new InvalidArgumentException(sprintf('Unknown event manager "%s".', $name));
+            },
+        );
+
+        $this->assertSame($defaultManager, $result);
+        $this->assertCount(1, $defaultManager->listeners('Order.afterPlace'));
+        $this->assertCount(2, $ordersManager->listeners('Order.afterPlace'));
+        $this->assertSame(['orders', 'orders'], $resolvedManagers);
+
+        $defaultManager->dispatch(new Event('Order.afterPlace', $this));
+        $ordersManager->dispatch(new Event('Order.afterPlace', $this));
+
+        $this->assertSame(['default', 'orders', 'default'], $listener->called);
+
+        AttributeResolver::drop('multiple-managers-test');
+    }
+
+    /**
+     * Tests that a named manager without a resolver throws an attribute exception.
+     *
+     * @return void
+     */
+    public function testNamedManagerWithoutResolverThrowsException(): void
+    {
+        AttributeResolver::setConfig(self::ERROR_CONFIG, [
+            'paths' => ['Event/Listener/MultipleManagerListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $connector = new AttributeEventListenerConnector(new EventManager());
+
+        $this->expectException(EventAttributeException::class);
+        $this->expectExceptionMessageMatches('/no manager resolver is configured/');
+
+        $connector->connect(self::ERROR_CONFIG);
+    }
+
+    /**
+     * Tests that an invalid named manager resolver result throws an attribute exception.
+     *
+     * @return void
+     */
+    public function testInvalidNamedManagerResolverResultThrowsException(): void
+    {
+        AttributeResolver::setConfig(self::ERROR_CONFIG, [
+            'paths' => ['Event/Listener/MultipleManagerListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $connector = new AttributeEventListenerConnector(
+            new EventManager(),
+            managerResolver: static fn(string $name): object => new stdClass(),
+        );
+
+        $this->expectException(EventAttributeException::class);
+        $this->expectExceptionMessageMatches('/must return an instance/');
+
+        $connector->connect(self::ERROR_CONFIG);
+    }
+
+    /**
+     * Tests that a failing named manager resolver throws an attribute exception.
+     *
+     * @return void
+     */
+    public function testFailingNamedManagerResolverThrowsException(): void
+    {
+        AttributeResolver::setConfig(self::ERROR_CONFIG, [
+            'paths' => ['Event/Listener/MultipleManagerListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $connector = new AttributeEventListenerConnector(
+            new EventManager(),
+            managerResolver: static fn(string $name): never => throw new InvalidArgumentException(
+                sprintf('Unknown event manager "%s".', $name),
+            ),
+        );
+
+        $this->expectException(EventAttributeException::class);
+        $this->expectExceptionMessageMatches('/orders.*could not be resolved/');
+
+        $connector->connect(self::ERROR_CONFIG);
     }
 
     /**

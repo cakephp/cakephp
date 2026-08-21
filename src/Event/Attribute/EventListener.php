@@ -51,6 +51,12 @@ use Attribute;
  *     public function __invoke(EventInterface $event): void {}
  * }
  * ```
+ *
+ * Target a named event manager:
+ * ```php
+ * #[EventListener('Order.afterPlace', manager: 'orders')]
+ * public function updateOrderMetrics(EventInterface $event): void {}
+ * ```
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 readonly class EventListener
@@ -63,11 +69,14 @@ readonly class EventListener
      *   manager's default priority is used at connection time.
      * @param string|null $method Explicit method name to use as the listener callable.
      *   Only applicable for class-level attributes; ignored when the attribute is placed on a method.
+     * @param string|null $manager Named event manager to register the listener on.
+     *   When null, the connector's primary event manager is used.
      */
     public function __construct(
         public string $event,
         public ?int $priority = null,
         public ?string $method = null,
+        public ?string $manager = null,
     ) {
     }
 }
