@@ -67,26 +67,63 @@ class Path
     }
 
     /**
-     * Makes a path absolute, using a base path if the given path is not already absolute.
+     * Resolves `.` and `..` segments in an absolute, forward-slash-normalized path.
      *
-     * Note that the resulting path is not resolved: any `..` or `.` segments in $path
-     * are preserved as-is, consistent with join() and normalize().
+     * Segments that would go above the root (e.g. an extra `..` at the root level)
+     * are simply dropped, since there is nothing above the root to resolve to.
+     *
+     * @param string $path The absolute path to resolve
+     * @return string The resolved path
+     */
+    protected static function resolveDotSegments(string $path): string
+    {
+        $root = '';
+
+        if (preg_match('/^[A-Za-z]:\//', $path) === 1) {
+            $root = substr($path, 0, 3);
+            $path = substr($path, 3);
+        } elseif (str_starts_with($path, '/')) {
+            $root = '/';
+            $path = substr($path, 1);
+        }
+
+        $resolved = [];
+        foreach (explode('/', $path) as $segment) {
+            if ($segment === '' || $segment === '.') {
+                continue;
+            }
+
+            if ($segment === '..') {
+                array_pop($resolved);
+
+                continue;
+            }
+
+            $resolved[] = $segment;
+        }
+
+        return $root . implode('/', $resolved);
+    }
+
+    /**
+     * Makes a path absolute, using a base path if the given path is not already absolute,
+     * and resolves any `.` and `..` segments in the result.
      *
      * @param string $path The path to make absolute
      * @param string $from The base path to use when $path is relative. Expected to already be absolute.
-     * @return string The absolute path
+     * @return string The absolute, resolved path
      */
     public static function makeAbsolute(string $path, string $from): string
     {
         if (static::isAbsolute($path)) {
-            return str_replace('\\', '/', $path);
+            $absolute = str_replace('\\', '/', $path);
+        } elseif ($path === '') {
+            $absolute = str_replace('\\', '/', $from);
+        } else {
+            $absolute = static::join($from, $path);
         }
 
-        if ($path === '') {
-            return str_replace('\\', '/', $from);
-        }
-
-        return static::join($from, $path);
+        return static::resolveDotSegments($absolute);
     }
 
     /**

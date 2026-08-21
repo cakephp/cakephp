@@ -80,7 +80,7 @@ class PathTest extends TestCase
         );
 
         $this->assertSame(
-            '/var/www/src/../config',
+            '/var/www/config',
             Path::makeAbsolute('../config', '/var/www/src'),
         );
 
@@ -103,6 +103,51 @@ class PathTest extends TestCase
         $this->assertSame(
             '/var/www/src/file.php',
             Path::makeAbsolute('src\\file.php', '/var/www'),
+        );
+    }
+
+    public function testMakeAbsoluteResolvesDotSegments(): void
+    {
+        // Multiple ".." segments walk up more than one level
+        $this->assertSame(
+            '/var/etc/passwd',
+            Path::makeAbsolute('../../etc/passwd', '/var/www/src'),
+        );
+
+        // "." segments are simply dropped
+        $this->assertSame(
+            '/var/www/src/file.php',
+            Path::makeAbsolute('./src/./file.php', '/var/www'),
+        );
+
+        // ".." segments that would go above the root are dropped, not an error
+        $this->assertSame(
+            '/etc',
+            Path::makeAbsolute('../../../../etc', '/var/www'),
+        );
+
+        // Already-absolute paths are resolved too, not just the joined ones
+        $this->assertSame(
+            '/var/etc/passwd',
+            Path::makeAbsolute('/var/www/../etc/passwd', '/tmp'),
+        );
+
+        // Resolution also works on Windows-style drive paths
+        $this->assertSame(
+            'C:/var/www/config',
+            Path::makeAbsolute('..\\config', 'C:\\var\\www\\src'),
+        );
+
+        // A single "." resolves to just the base
+        $this->assertSame(
+            '/var/www',
+            Path::makeAbsolute('.', '/var/www'),
+        );
+
+        // ".." at the root stays at the root
+        $this->assertSame(
+            '/',
+            Path::makeAbsolute('..', '/'),
         );
     }
 
