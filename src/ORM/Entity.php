@@ -66,9 +66,6 @@ class Entity implements EntityInterface, InvalidPropertyInterface
         }
 
         if ($properties) {
-            // Remember the original field names here.
-            $this->setOriginalField(array_keys($properties));
-
             $this->patch($properties, [
                 'asOriginal' => true,
                 'setter' => $options['useSetters'],
