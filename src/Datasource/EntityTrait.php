@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Error;
 use InvalidArgumentException;
 use ReflectionProperty;
 
@@ -39,11 +40,15 @@ trait EntityTrait
     protected array $dynamicFields = [];
 
     /**
-     * Holds field names for initialized properties
+     * Tracks field names that have been routed into declared class properties
+     * through the entity API (set()/patch()/hydration).
      *
-     * @var array<string, string>
+     * Fields stored in $dynamicFields are tracked by that array's keys, this
+     * map only covers values living inside declared properties.
+     *
+     * @var array<string, true>
      */
-    protected array $propertyFields = [];
+    protected array $assignedProps = [];
 
     /**
      * Holds all fields that have been changed and their original values for this entity.
@@ -165,8 +170,8 @@ trait EntityTrait
      */
     protected static array $restrictedProperties = [
         'dynamicFields' => true,
-        'propertyFields' => true,
         'reflectionCache' => true,
+        'assignedProps' => true,
         'original' => true,
         'originalFields' => true,
         'hidden' => true,
@@ -358,16 +363,12 @@ trait EntityTrait
             if (
                 $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->original) &&
-                isset($this->propertyFields[$name])
+                ($isDynamic || isset($this->assignedProps[$name]))
             ) {
                 $existing = $isDynamic ? $this->dynamicFields[$name] : $ref?->getRawValue($this);
                 if ($value !== $existing) {
                     $this->original[$name] = $existing;
                 }
-            }
-
-            if (!isset($this->propertyFields[$name])) {
-                $this->propertyFields[$name] = $name;
             }
 
             if ($useSetter) {
@@ -380,6 +381,10 @@ trait EntityTrait
                 $ref->setRawValue($this, $value);
             } else {
                 $this->dynamicFields[$name] = $value;
+            }
+
+            if ($ref !== null) {
+                $this->assignedProps[$name] = true;
             }
         }
 
@@ -540,7 +545,7 @@ trait EntityTrait
     public function getOriginalValues(): array
     {
         $originals = $this->original;
-        foreach ($this->propertyFields as $key) {
+        foreach ($this->initializedFieldNames() as $key) {
             if (
                 !array_key_exists($key, $originals) &&
                 $this->isOriginalField($key)
@@ -581,7 +586,9 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         return array_all((array)$field, function ($prop) {
-            return !(!isset($this->propertyFields[$prop]) && !static::accessor($prop, 'get'));
+            return array_key_exists($prop, $this->dynamicFields)
+                || isset($this->assignedProps[$prop])
+                || static::accessor($prop, 'get');
         });
     }
 
@@ -625,12 +632,10 @@ trait EntityTrait
     public function unset(array|string $field): static
     {
         foreach ((array)$field as $p) {
-            unset($this->dynamicFields[$p], $this->dirty[$p]);
+            unset($this->dynamicFields[$p], $this->dirty[$p], $this->assignedProps[$p]);
             if ($this->propertyExists($p)) {
                 unset($this->{$p});
             }
-
-            unset($this->propertyFields[$p]);
         }
 
         return $this;
@@ -709,7 +714,7 @@ trait EntityTrait
      */
     public function getVisible(): array
     {
-        $fields = array_merge($this->propertyFields, $this->virtual);
+        $fields = array_merge($this->initializedFieldNames(), $this->virtual);
 
         return array_values(array_diff($fields, $this->hidden));
     }
@@ -1021,7 +1026,7 @@ trait EntityTrait
         $this->errors = [];
         $this->invalid = [];
         $this->original = [];
-        $this->setOriginalField($this->propertyFields, false);
+        $this->setOriginalField($this->initializedFieldNames(), false);
     }
 
     /**
@@ -1036,7 +1041,7 @@ trait EntityTrait
     public function setNew(bool $new): static
     {
         if ($new) {
-            foreach ($this->propertyFields as $k) {
+            foreach ($this->initializedFieldNames() as $k) {
                 $this->dirty[$k] = true;
             }
         }
@@ -1079,7 +1084,7 @@ trait EntityTrait
 
         $this->hasBeenVisited = true;
         try {
-            foreach ($this->propertyFields as $field) {
+            foreach ($this->initializedFieldNames() as $field) {
                 $value = $this->getRawValue($field);
 
                 if ($this->readHasErrors($value)) {
@@ -1105,7 +1110,7 @@ trait EntityTrait
             return [];
         }
 
-        $diff = array_diff($this->propertyFields, array_keys($this->errors));
+        $diff = array_diff($this->initializedFieldNames(), array_keys($this->errors));
         $values = [];
         foreach ($diff as $field) {
             $values[$field] = $this->getRawValue($field);
@@ -1568,7 +1573,35 @@ trait EntityTrait
             return null;
         }
 
-        return $ref->getRawValue($this);
+        try {
+            return $ref->getRawValue($this);
+        } catch (Error) {
+            // Virtual properties without backing storage cannot be read raw.
+            // Fall back to the hooked read.
+            return $this->{$field};
+        }
+    }
+
+    /**
+     * Names of all fields that currently hold a value assigned through the
+     * entity API.
+     *
+     * @return list<string>
+     */
+    protected function initializedFieldNames(): array
+    {
+        /** @var list<string> $names */
+        $names = [];
+
+        foreach ($this->dynamicFields as $name => $_) {
+            $names[] = (string)$name;
+        }
+
+        foreach ($this->assignedProps as $name => $_) {
+            $names[] = $name;
+        }
+
+        return $names;
     }
 
     /**
@@ -1592,7 +1625,7 @@ trait EntityTrait
     public function __debugInfo(): array
     {
         $fields = [];
-        foreach ($this->propertyFields as $field) {
+        foreach ($this->initializedFieldNames() as $field) {
             $fields[$field] = $this->getRawValue($field);
         }
         $fields += $this->dynamicFields;
