@@ -159,28 +159,28 @@ trait EntityTrait
     protected bool $requireFieldPresence = false;
 
     /**
-     * List of properties that are not treated as fields.
+     * Map of properties that are not treated as fields.
      *
-     * @var array<string, string>
+     * @var array<string, true>
      */
     protected static array $restrictedProperties = [
-        'dynamicFields' => 'dynamicFields',
-        'propertyFields' => 'propertyFields',
-        'reflectionCache' => 'reflectionCache',
-        'original' => 'original',
-        'originalFields' => 'originalFields',
-        'hidden' => 'hidden',
-        'virtual' => 'virtual',
-        'dirty' => 'dirty',
-        'accessors' => 'accessors',
-        'new' => 'new',
-        'errors' => 'errors',
-        'invalid' => 'invalid',
-        'patchable' => 'patchable',
-        'registryAlias' => 'registryAlias',
-        'hasBeenVisited' => 'hasBeenVisited',
-        'requireFieldPresence' => 'requireFieldPresence',
-        'restrictedProperties' => 'restrictedProperties',
+        'dynamicFields' => true,
+        'propertyFields' => true,
+        'reflectionCache' => true,
+        'original' => true,
+        'originalFields' => true,
+        'hidden' => true,
+        'virtual' => true,
+        'dirty' => true,
+        'accessors' => true,
+        'new' => true,
+        'errors' => true,
+        'invalid' => true,
+        'patchable' => true,
+        'registryAlias' => true,
+        'hasBeenVisited' => true,
+        'requireFieldPresence' => true,
+        'restrictedProperties' => true,
     ];
 
     /**

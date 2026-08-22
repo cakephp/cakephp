@@ -1674,7 +1674,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     }
 
     /**
-     * Test that EntityTrait::$restrictedProperties list matches the list of
+     * Test that Entity::$restrictedProperties list matches the list of
      * properties declared in the trait.
      */
     public function testRestrictedPropertiesMatchesTraitProperties(): void
@@ -1682,15 +1682,15 @@ class EntityWithConcretePropertiesTest extends TestCase
         $reflectedTrait = new ReflectionClass(EntityTrait::class);
         $properties = [];
         foreach ($reflectedTrait->getProperties() as $property) {
-            $properties[] = $property->getName();
+            $properties[$property->getName()] = true;
         }
 
         $reflectedEntity = new ReflectionClass(Entity::class);
         $restrictedProperty = $reflectedEntity->getProperty('restrictedProperties');
         $restrictedProperties = $restrictedProperty->getValue();
 
-        sort($properties);
-        sort($restrictedProperties);
+        ksort($properties);
+        ksort($restrictedProperties);
 
         $this->assertSame($properties, $restrictedProperties);
     }
