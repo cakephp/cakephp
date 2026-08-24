@@ -365,6 +365,7 @@ trait EntityTrait
                 !array_key_exists($name, $this->original) &&
                 ($isDynamic || isset($this->assignedProps[$name]))
             ) {
+                /** @phpstan-ignore-next-line method.nonObject */
                 $existing = $isDynamic ? $this->dynamicFields[$name] : $ref->getRawValue($this);
                 if ($value !== $existing) {
                     $this->original[$name] = $existing;
