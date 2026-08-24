@@ -48,7 +48,7 @@
         "cakephp/cache": "If you decide to use Query caching.",
         "cakephp/i18n": "If you are using Translate/TimestampBehavior or Chronos types."
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
