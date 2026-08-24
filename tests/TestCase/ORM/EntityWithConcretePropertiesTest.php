@@ -1710,10 +1710,10 @@ class EntityWithConcretePropertiesTest extends TestCase
 
         $this->assertInstanceOf(\ReflectionProperty::class, $method->invoke(null, 'id'));
         $this->assertInstanceOf(\ReflectionProperty::class, $method->invoke(null, 'title'));
-        $this->assertNull($method->invoke(null, 'nonexistent'));
-        // Restricted properties should return null
-        $this->assertNull($method->invoke(null, 'dirty'));
-        $this->assertNull($method->invoke(null, 'reflectionCache'));
+        $this->assertFalse($method->invoke(null, 'nonexistent'));
+        // Restricted properties should return false
+        $this->assertFalse($method->invoke(null, 'dirty'));
+        $this->assertFalse($method->invoke(null, 'reflectionCache'));
     }
 
     /**

@@ -99,7 +99,7 @@ trait EntityTrait
     /**
      * Per-class cache of ReflectionProperty instances for concrete field properties.
      *
-     * @var array<class-string, array<string, \ReflectionProperty|null>>
+     * @var array<class-string, array<string, \ReflectionProperty|false>>
      */
     protected static array $reflectionCache = [];
 
@@ -349,7 +349,7 @@ trait EntityTrait
 
             if ($asOriginal || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
-            } elseif ($isDynamic || $ref === null || $value !== null) {
+            } elseif ($isDynamic || !$ref || $value !== null) {
                 continue;
             }
 
@@ -365,25 +365,25 @@ trait EntityTrait
                 !array_key_exists($name, $this->original) &&
                 ($isDynamic || isset($this->assignedProps[$name]))
             ) {
-                $existing = $isDynamic ? $this->dynamicFields[$name] : $ref?->getRawValue($this);
+                $existing = $isDynamic ? $this->dynamicFields[$name] : $ref->getRawValue($this);
                 if ($value !== $existing) {
                     $this->original[$name] = $existing;
                 }
             }
 
             if ($useSetter) {
-                if ($ref !== null) {
+                if ($ref) {
                     $this->{$name} = $value;
                 } else {
                     $this->dynamicFields[$name] = $value;
                 }
-            } elseif ($ref !== null) {
+            } elseif ($ref) {
                 $ref->setRawValue($this, $value);
             } else {
                 $this->dynamicFields[$name] = $value;
             }
 
-            if ($ref !== null) {
+            if ($ref) {
                 $this->assignedProps[$name] = true;
             }
         }
@@ -409,7 +409,7 @@ trait EntityTrait
             $existing = $this->dynamicFields[$field];
         } else {
             $ref = static::getReflectionProperty($field);
-            if ($ref === null || !$ref->isInitialized($this)) {
+            if (!$ref || !$ref->isInitialized($this)) {
                 return true;
             }
             $existing = $ref->getRawValue($this);
@@ -1488,19 +1488,21 @@ trait EntityTrait
      */
     protected function propertyExists(string $field): bool
     {
-        return static::getReflectionProperty($field) !== null;
+        return (bool)static::getReflectionProperty($field);
     }
 
     /**
      * Get cached ReflectionProperty for a concrete field property.
      *
-     * Returns null if the property doesn't exist, is a restricted
-     * (infrastructure) property, or is static.
+     * Returns false if the property doesn't exist, is a restricted
+     * (infrastructure) property, or is static. Using false as the
+     * negative-cache sentinel allows isset() to serve both cache hit
+     * types with a single lookup.
      *
      * @param string $field The field name.
-     * @return \ReflectionProperty|null
+     * @return \ReflectionProperty|false
      */
-    protected static function getReflectionProperty(string $field): ?ReflectionProperty
+    protected static function getReflectionProperty(string $field): ReflectionProperty|false
     {
         $class = static::class;
 
@@ -1508,20 +1510,13 @@ trait EntityTrait
             return static::$reflectionCache[$class][$field];
         }
 
-        if (isset(static::$reflectionCache[$class]) && array_key_exists($field, static::$reflectionCache[$class])) {
-            return null;
-        }
-
         if (isset(static::$restrictedProperties[$field]) || !property_exists(static::class, $field)) {
-            static::$reflectionCache[$class][$field] = null;
-
-            return null;
+            return static::$reflectionCache[$class][$field] = false;
         }
 
         $ref = new ReflectionProperty(static::class, $field);
-        static::$reflectionCache[$class][$field] = $ref->isStatic() ? null : $ref;
 
-        return static::$reflectionCache[$class][$field];
+        return static::$reflectionCache[$class][$field] = $ref->isStatic() ? false : $ref;
     }
 
     /**
@@ -1544,7 +1539,7 @@ trait EntityTrait
 
         $ref = static::getReflectionProperty($field);
 
-        if ($ref === null) {
+        if (!$ref) {
             $this->dynamicFields[$field] = $value;
 
             return;
@@ -1569,7 +1564,7 @@ trait EntityTrait
 
         $ref = static::getReflectionProperty($field);
 
-        if ($ref === null) {
+        if (!$ref) {
             return null;
         }
 
