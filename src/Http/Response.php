@@ -444,7 +444,7 @@ class Response implements ResponseInterface, Stringable
      *
      * E.g.: setTypeMap('xhtml', ['application/xhtml+xml', 'application/xhtml'])
      *
-     * This is needed for RequestHandlerComponent and recognition of types.
+     * This is needed for recognition of types.
      *
      * @param string $type Content type.
      * @param array<string>|string $mimeType Definition of the mime type.
