@@ -40,7 +40,7 @@
         "ext-intl": "To use Text::transliterate() or Text::slug()",
         "lib-ICU": "To use Text::transliterate() or Text::slug()"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

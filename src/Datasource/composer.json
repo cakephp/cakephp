@@ -43,7 +43,7 @@
         "cakephp/collection": "If you decide to use ResultSetInterface.",
         "cakephp/cache": "If you decide to use Query caching."
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

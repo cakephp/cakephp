@@ -44,7 +44,7 @@
     "suggest": {
         "cakephp/cache": "Require this if you want automatic caching of translators"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
