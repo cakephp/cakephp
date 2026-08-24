@@ -350,6 +350,47 @@ class ExceptionTrapTest extends TestCase
         $this->assertSame('', $out);
     }
 
+    public function testHandleLastErrorIncludesFatalErrorTrace(): void
+    {
+        $trap = new class extends ExceptionTrap {
+            public ?array $fatalError = null;
+
+            public function processLastError(?array $error): void
+            {
+                $this->handleLastError($error);
+            }
+
+            public function handleFatalError(int $code, string $description, string $file, int $line): void
+            {
+                $this->fatalError = compact('code', 'description', 'file', 'line');
+            }
+        };
+
+        $trap->processLastError([
+            'type' => E_ERROR,
+            'message' => 'Allowed memory size exhausted',
+            'file' => '/app/query.php',
+            'line' => 42,
+            'trace' => [
+                [
+                    'file' => '/app/query.php',
+                    'line' => 42,
+                    'class' => 'App\\Service\\ReportService',
+                    'type' => '->',
+                    'function' => 'generate',
+                    'args' => ['secret value'],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(E_ERROR, $trap->fatalError['code']);
+        $this->assertSame('/app/query.php', $trap->fatalError['file']);
+        $this->assertSame(42, $trap->fatalError['line']);
+        $this->assertStringContainsString('Stack Trace:', $trap->fatalError['description']);
+        $this->assertStringContainsString('App\\Service\\ReportService->generate()', $trap->fatalError['description']);
+        $this->assertStringNotContainsString('secret value', $trap->fatalError['description']);
+    }
+
     public function testHandleFatalErrorText(): void
     {
         $trap = new ExceptionTrap([

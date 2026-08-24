@@ -26,6 +26,21 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class ResponseTest extends TestCase
 {
     /**
+     * A response built without a status line still has a usable reason phrase.
+     *
+     * `_parseHeaders()` only assigns the reason phrase when it encounters an
+     * `HTTP/x.y NNN` status line, so without one the property stayed
+     * uninitialized and `getReasonPhrase()` raised an Error despite its
+     * `string` return type.
+     */
+    public function testGetReasonPhraseWithoutStatusLine(): void
+    {
+        $response = new Response([], 'Okay body.');
+
+        $this->assertSame('', $response->getReasonPhrase());
+    }
+
+    /**
      * Test parsing headers and reading with PSR7 methods.
      */
     public function testHeaderParsingPsr7(): void
