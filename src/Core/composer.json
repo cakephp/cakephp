@@ -42,5 +42,12 @@
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
         "cakephp/cache": "To use Configure::store() and restore().",
         "league/container": "To use Container and ServiceProvider classes"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.5.x-dev"
+        }
     }
 }

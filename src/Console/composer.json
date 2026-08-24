@@ -37,5 +37,12 @@
         "psr-4": {
             "Cake\\Console\\": "."
         }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.5.x-dev"
+        }
     }
 }

@@ -63,5 +63,12 @@
         "cakephp/cache": "To use cache session storage",
         "cakephp/orm": "To use database session storage",
         "paragonie/csp-builder": "To use CspMiddleware"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.5.x-dev"
+        }
     }
 }
