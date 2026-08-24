@@ -1997,11 +1997,12 @@ class QueryRegressionTest extends TestCase
             $articles->belongsTo('Authors');
             $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
 
-            $articles->find()
+            $results = $articles->find()
                 ->contain(['Comments'])
                 ->innerJoinWith('Authors')
                 ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
-                ->limit(2)
+                ->limit(1)
+                ->offset(1)
                 ->all()
                 ->toArray();
         } finally {
@@ -2011,6 +2012,10 @@ class QueryRegressionTest extends TestCase
                 $driver->disableQueryLogging();
             }
         }
+
+        $this->assertCount(1, $results);
+        $this->assertSame(1, $results[0]->id);
+        $this->assertCount(4, $results[0]->comments);
 
         $subqueries = array_filter(
             $logger->messages,
