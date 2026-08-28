@@ -33,7 +33,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @const string
      */
-    protected const DEFAULT_SCHEMA = 'public';
+    final protected const DEFAULT_SCHEMA = 'public';
 
     /**
      * @const string
