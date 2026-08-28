@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * Tests LoggedQuery class
  */
-class LoggedQueryTest extends TestCase
+final class LoggedQueryTest extends TestCase
 {
     protected $driver;
 

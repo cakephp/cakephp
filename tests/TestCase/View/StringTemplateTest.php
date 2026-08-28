@@ -22,7 +22,7 @@ use Cake\View\StringTemplate;
 use InvalidArgumentException;
 use stdClass;
 
-class StringTemplateTest extends TestCase
+final class StringTemplateTest extends TestCase
 {
     /**
      * @var \Cake\View\StringTemplate

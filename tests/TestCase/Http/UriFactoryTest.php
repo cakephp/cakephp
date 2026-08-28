@@ -24,7 +24,7 @@ use Laminas\Diactoros\Uri;
 /**
  * Test case for the uri factory.
  */
-class UriFactoryTest extends TestCase
+final class UriFactoryTest extends TestCase
 {
     public function testCreateUri(): void
     {

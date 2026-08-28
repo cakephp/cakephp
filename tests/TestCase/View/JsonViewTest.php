@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * JsonViewTest
  */
-class JsonViewTest extends TestCase
+final class JsonViewTest extends TestCase
 {
     protected function setUp(): void
     {

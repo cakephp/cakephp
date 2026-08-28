@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * CompletionCommandTest
  */
-class CompletionCommandTest extends TestCase
+final class CompletionCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
@@ -35,7 +35,7 @@ class CompletionCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
     }
 

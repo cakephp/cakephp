@@ -28,7 +28,7 @@ use InvalidArgumentException;
 use TestApp\Cache\Engine\RecordingCacheEngine;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
-class TranslatorRegistryTest extends TestCase
+final class TranslatorRegistryTest extends TestCase
 {
     /**
      * Test Package null initialization from cache

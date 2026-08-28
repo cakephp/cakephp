@@ -9,7 +9,7 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use TestApp\Database\Type\ColumnSchemaAwareType;
 
-class ColumnSchemaAwareTypeIntegrationTest extends TestCase
+final class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 {
     protected array $fixtures = [
         'core.ColumnSchemaAwareTypeValues',

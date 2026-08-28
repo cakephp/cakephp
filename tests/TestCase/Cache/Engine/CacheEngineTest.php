@@ -8,7 +8,7 @@ use DateInterval;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
-class CacheEngineTest extends TestCase
+final class CacheEngineTest extends TestCase
 {
     public static function durationProvider(): array
     {

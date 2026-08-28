@@ -35,7 +35,7 @@ use TestApp\Model\Table\ArticlesTable;
 /**
  * Tests the LinkConstraint rule.
  */
-class LinkConstraintTest extends TestCase
+final class LinkConstraintTest extends TestCase
 {
     /**
      * Fixtures.

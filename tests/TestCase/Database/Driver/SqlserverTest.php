@@ -34,7 +34,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Tests Sqlserver driver
  */
-class SqlserverTest extends TestCase
+final class SqlserverTest extends TestCase
 {
     /**
      * @var bool

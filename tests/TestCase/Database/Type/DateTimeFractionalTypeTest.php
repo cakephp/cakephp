@@ -26,7 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test for the DateTime type.
  */
-class DateTimeFractionalTypeTest extends TestCase
+final class DateTimeFractionalTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\DateTimeFractionalType

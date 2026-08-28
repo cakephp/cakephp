@@ -28,7 +28,7 @@ use TestApp\Model\Enum\Priority;
 /**
  * TreeHelper test.
  */
-class TreeHelperTest extends TestCase
+final class TreeHelperTest extends TestCase
 {
     /**
      * @var \Cake\Console\Helper\TreeHelper

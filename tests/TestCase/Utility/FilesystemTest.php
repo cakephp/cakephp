@@ -23,7 +23,7 @@ use org\bovigo\vfs\vfsStream;
 /**
  * Filesystem class
  */
-class FilesystemTest extends TestCase
+final class FilesystemTest extends TestCase
 {
     protected $vfs;
 

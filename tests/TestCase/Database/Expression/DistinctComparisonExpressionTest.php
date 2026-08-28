@@ -22,7 +22,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
-class DistinctComparisonExpressionTest extends TestCase
+final class DistinctComparisonExpressionTest extends TestCase
 {
     public function testSqlWithIdentifierValue(): void
     {

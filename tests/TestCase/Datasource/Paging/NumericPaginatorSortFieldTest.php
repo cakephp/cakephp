@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * NumericPaginator SortField Integration Test Case
  */
-class NumericPaginatorSortFieldTest extends TestCase
+final class NumericPaginatorSortFieldTest extends TestCase
 {
     /**
      * @var array<string>

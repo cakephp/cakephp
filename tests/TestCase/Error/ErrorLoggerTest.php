@@ -29,7 +29,7 @@ use TestApp\Log\Engine\TestAppLog;
 /**
  * ErrorLogger Test
  */
-class ErrorLoggerTest extends TestCase
+final class ErrorLoggerTest extends TestCase
 {
     /**
      * @var \Cake\Error\ErrorLogger

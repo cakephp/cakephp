@@ -26,7 +26,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for LocaleSelectorMiddleware
  */
-class LocaleSelectorMiddlewareTest extends TestCase
+final class LocaleSelectorMiddlewareTest extends TestCase
 {
     /**
      * @var string

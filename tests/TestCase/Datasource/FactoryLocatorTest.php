@@ -24,7 +24,7 @@ use TestApp\Datasource\StubFactory;
 /**
  * FactoryLocatorTest test case
  */
-class FactoryLocatorTest extends TestCase
+final class FactoryLocatorTest extends TestCase
 {
     /**
      * Test get factory

@@ -24,7 +24,7 @@ use Cake\View\Form\ContextFactory;
 /**
  * ContextFactory test case.
  */
-class ContextFactoryTest extends TestCase
+final class ContextFactoryTest extends TestCase
 {
     public function testGetException(): void
     {

@@ -25,7 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * MiddlewareApplication test.
  */
-class MiddlewareApplicationTest extends TestCase
+final class MiddlewareApplicationTest extends TestCase
 {
     /**
      * Setup
@@ -33,7 +33,7 @@ class MiddlewareApplicationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

@@ -24,7 +24,7 @@ use NoRewindIterator;
 /**
  * BufferedIterator Test
  */
-class BufferedIteratorTest extends TestCase
+final class BufferedIteratorTest extends TestCase
 {
     /**
      * Tests that items are cached once iterated over them

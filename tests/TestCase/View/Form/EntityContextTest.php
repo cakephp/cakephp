@@ -33,7 +33,7 @@ use TestApp\Model\Entity\Tag;
 /**
  * Entity context test case.
  */
-class EntityContextTest extends TestCase
+final class EntityContextTest extends TestCase
 {
     /**
      * Fixtures to use.

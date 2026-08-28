@@ -28,7 +28,7 @@ use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 /**
  * HTTP stream adapter test.
  */
-class StreamTest extends TestCase
+final class StreamTest extends TestCase
 {
     /**
      * @var \Cake\Http\Client\Adapter\Stream

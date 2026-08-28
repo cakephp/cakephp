@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * I18nCommand test.
  */
-class I18nCommandTest extends TestCase
+final class I18nCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

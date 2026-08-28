@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * TextHelperTest class
  */
-class TextHelperTest extends TestCase
+final class TextHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\Helper\TextHelper
@@ -44,7 +44,7 @@ class TextHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Text = new TextHelper($this->View);
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

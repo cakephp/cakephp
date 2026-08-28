@@ -30,7 +30,7 @@ use TestPlugin\TestPluginPlugin as TestPlugin;
 /**
  * PluginCollection Test
  */
-class PluginCollectionTest extends TestCase
+final class PluginCollectionTest extends TestCase
 {
     public function testConstructor(): void
     {

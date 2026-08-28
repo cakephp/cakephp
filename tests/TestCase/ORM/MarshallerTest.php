@@ -34,7 +34,7 @@ use TestApp\Model\Table\GreedyCommentsTable;
 /**
  * Marshaller test case
  */
-class MarshallerTest extends TestCase
+final class MarshallerTest extends TestCase
 {
     protected array $fixtures = [
         'core.Articles',

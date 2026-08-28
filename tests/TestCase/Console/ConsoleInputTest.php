@@ -24,7 +24,7 @@ use function Cake\Core\env;
 /**
  * ConsoleInput test.
  */
-class ConsoleInputTest extends TestCase
+final class ConsoleInputTest extends TestCase
 {
     /**
      * @var \Cake\Console\ConsoleInput

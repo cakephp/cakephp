@@ -27,7 +27,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Routing\Route\AddQueryParamRoute;
 
-class RouteCollectionTest extends TestCase
+final class RouteCollectionTest extends TestCase
 {
     /**
      * @var \Cake\Routing\RouteCollection

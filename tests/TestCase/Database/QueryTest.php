@@ -27,7 +27,7 @@ use InvalidArgumentException;
 /**
  * Tests Query class
  */
-class QueryTest extends TestCase
+final class QueryTest extends TestCase
 {
     use QueryAssertsTrait;
 

@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * FilterIterator test
  */
-class FilterIteratorTest extends TestCase
+final class FilterIteratorTest extends TestCase
 {
     /**
      * Tests that the iterator works correctly

@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Integration tests for Table class with uuid primary keys.
  */
-class TableUuidTest extends TestCase
+final class TableUuidTest extends TestCase
 {
     /**
      * Fixtures
@@ -42,7 +42,7 @@ class TableUuidTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**
