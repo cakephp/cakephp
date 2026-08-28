@@ -1722,6 +1722,36 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that counting a query with buffered results disabled does not leave the
+     * connection busy for the queries that follow it.
+     */
+    public function testCountWithBufferedResultsDisabled(): void
+    {
+        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        // Behaviors such as TranslateBehavior configure associations with closures that
+        // reference the query they are given. That reference cycle keeps the query used
+        // for counting, and its statement, alive until the cycle collector runs.
+        $table->getEventManager()
+            ->on('Model.beforeFind', function (EventInterface $event, SelectQuery $query): void {
+                $query->contain([
+                    'Authors' => [
+                        'queryBuilder' => function (SelectQuery $q) use ($query): SelectQuery {
+                            return $q->where([$query->getRepository()->aliasField('id') . ' IS NOT' => null]);
+                        },
+                    ],
+                ]);
+            });
+
+        $query = $table->find()->disableBufferedResults();
+        $this->assertSame(3, $query->count());
+        $this->assertCount(3, $query->all()->toArray());
+    }
+
+    /**
      * Tests that beforeFind is only ever called once, even if you trigger it again in the beforeFind
      */
     public function testBeforeFindCalledOnce(): void

@@ -1467,7 +1467,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 ->execute();
         }
 
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        try {
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+        } finally {
+            // A count always returns a single row, and leaving an unbuffered statement
+            // open would keep the connection busy until the statement is garbage
+            // collected.
+            $statement->closeCursor();
+        }
 
         return $result === false ? 0 : (int)$result['count'];
     }
