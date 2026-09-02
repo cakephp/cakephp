@@ -244,6 +244,9 @@ class EagerLoader
 
         $options += ['joinType' => SelectQuery::JOIN_TYPE_INNER];
         $sharedOptions = ['negateMatch' => false, 'matching' => true] + $options;
+        // The builder belongs to the last association in the path. Inheriting it would
+        // apply the target's conditions to every association leading up to it as well.
+        unset($sharedOptions['queryBuilder']);
 
         $contains = [];
         $nested = &$contains;
@@ -658,6 +661,8 @@ class EagerLoader
             return $results;
         }
 
+        $this->correctSubqueryStrategy($external, $query);
+
         $collected = $this->_collectKeys($external, $query, $results);
 
         foreach ($external as $meta) {
@@ -793,6 +798,43 @@ class EagerLoader
             'forMatching' => $asMatching,
             'targetProperty' => $targetProperty ?: $assoc->getProperty(),
         ]);
+    }
+
+    /**
+     * Switches associations away from the subquery strategy when the subquery filter
+     * would not describe the rows the query returned.
+     *
+     * The filter groups by the source binding key and inherits the query's LIMIT, so
+     * the limit cuts the distinct keys instead of the rows. Both sets only coincide
+     * while the association is owned by the query's own repository. As soon as it hangs
+     * off another association, many rows share one key and the filter returns a
+     * different, largely disjoint set of keys.
+     *
+     * @param array<\Cake\ORM\EagerLoadable> $external The list of external associations to be loaded.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query the associations are loaded for.
+     * @return void
+     */
+    protected function correctSubqueryStrategy(array $external, SelectQuery $query): void
+    {
+        if ($query->clause('limit') === null) {
+            return;
+        }
+
+        $primaryAlias = $query->getRepository()->getAlias();
+        foreach ($external as $meta) {
+            $config = $meta->getConfig();
+            $instance = $meta->instance();
+            $strategy = $config['strategy'] ?? $instance->getStrategy();
+            if (
+                $strategy !== Association::STRATEGY_SUBQUERY ||
+                $instance->getSource()->getAlias() === $primaryAlias
+            ) {
+                continue;
+            }
+
+            $config['strategy'] = Association::STRATEGY_SELECT;
+            $meta->setConfig($config);
+        }
     }
 
     /**

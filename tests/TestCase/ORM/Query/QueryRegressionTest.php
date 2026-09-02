@@ -54,6 +54,7 @@ class QueryRegressionTest extends TestCase
         'core.AuthorsTags',
         'core.Comments',
         'core.FeaturedTags',
+        'core.Profiles',
         'core.SpecialTags',
         'core.TagsTranslations',
         'core.Translates',
@@ -2018,5 +2019,92 @@ class QueryRegressionTest extends TestCase
         $sql = array_pop($grouped);
         $this->assertSame(1, preg_match('/GROUP BY (.+?)(?= ORDER BY| HAVING| LIMIT|\))/', $sql, $matches), $sql);
         $this->assertStringContainsString('name', $matches[1], $sql);
+    }
+
+    /**
+     * Test for https://github.com/cakephp/cakephp/issues/19608
+     *
+     * The conditions of a nested innerJoinWith() belong to that association's join only.
+     * Databases that do not resolve the ON clause strictly, such as SQLite, accept the
+     * misplaced reference, so the condition has to be counted in the generated SQL.
+     */
+    public function testNestedMatchingConditionsStayOnTheirOwnJoin(): void
+    {
+        $logger = new class extends AbstractLogger {
+            /**
+             * @var array<string>
+             */
+            public array $messages = [];
+
+            /**
+             * @inheritDoc
+             */
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->messages[] = (string)$message;
+            }
+        };
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+        $articles->Comments->getTarget()->belongsTo('Profiles', ['foreignKey' => 'user_id']);
+        $articles->belongsToMany('Tags', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $driver = $articles->getConnection()->getDriver();
+        $previousLogger = $driver->getLogger();
+        $driver->setLogger($logger);
+
+        try {
+            $articles->find()
+                ->contain(['Tags'])
+                ->innerJoinWith('Comments', fn(SelectQuery $q): SelectQuery => $q->innerJoinWith(
+                    'Profiles',
+                    fn(SelectQuery $q): SelectQuery => $q->where(['Profiles.last_name' => 'iglesias']),
+                ))
+                ->all()
+                ->toArray();
+        } finally {
+            if ($previousLogger) {
+                $driver->setLogger($previousLogger);
+            } else {
+                $driver->disableQueryLogging();
+            }
+        }
+
+        // The filtering subquery built for Tags is the only grouped statement the query above runs.
+        $grouped = array_filter(
+            $logger->messages,
+            fn(string $message): bool => str_contains($message, 'GROUP BY'),
+        );
+        $this->assertCount(1, $grouped, implode("\n", $logger->messages));
+
+        $sql = array_pop($grouped);
+        $this->assertSame(1, substr_count($sql, 'last_name'), $sql);
+    }
+
+    /**
+     * Test for https://github.com/cakephp/cakephp/issues/19609
+     *
+     * The subquery filter groups by the source binding key and inherits the query's LIMIT,
+     * so for an association that hangs off another association it describes a different set
+     * of keys than the rows the query returned.
+     */
+    public function testLimitedQueryLoadsNestedAssociationOfJoinedTable(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->Articles->getTarget()
+            ->belongsToMany('Tags', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $comment = $comments->find()
+            ->contain(['Articles' => ['Tags']])
+            ->orderBy(['Articles.id' => 'ASC'])
+            ->limit(1)
+            ->offset(1)
+            ->all()
+            ->first();
+
+        $this->assertSame(1, $comment->article->id);
+        $this->assertCount(2, $comment->article->tags);
     }
 }
