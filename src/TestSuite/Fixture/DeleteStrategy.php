@@ -29,9 +29,10 @@ namespace Cake\TestSuite\Fixture;
  * a lot cheaper, so test suites with many fixtures can spend noticeably less time in
  * teardown with this strategy.
  *
- * The trade off is that `DELETE` does not reset auto increment counters. Tests that
- * assert on generated primary keys, or fixtures whose records rely on the counter
- * starting from 1 for each test, need `TruncateStrategy` instead.
+ * The trade off is that `DELETE` does not reset auto increment counters. Fixtures
+ * whose records omit their primary key, and which other fixtures or assertions then
+ * refer to by id, need that counter to start from 1 in every test and have to keep
+ * using `TruncateStrategy`.
  */
 class DeleteStrategy implements FixtureStrategyInterface
 {
