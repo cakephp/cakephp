@@ -16,63 +16,64 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite\Fixture;
 
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\DeleteStrategy;
 use Cake\TestSuite\TestCase;
 
 class DeleteStrategyTest extends TestCase
 {
-    protected array $fixtures = ['core.Articles'];
+    /**
+     * The tables the strategy is exercised against are declared as fixtures so that
+     * the default truncate strategy resets their identity counters once the test is
+     * done. Deleting rows does not reset them, and the records of these fixtures
+     * have no explicit ids.
+     *
+     * @var array<string>
+     */
+    protected array $fixtures = ['core.Articles', 'core.Products', 'core.Orders'];
 
     /**
      * Tests delete strategy.
      */
     public function testStrategy(): void
     {
-        /**
-         * @var \Cake\Database\Connection $connection
-         */
         $connection = ConnectionManager::get('test');
-        $connection->deleteQuery()->delete('articles')->execute()->closeCursor();
-        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
-        $this->assertEmpty($rows->fetchAll());
-        $rows->closeCursor();
+        assert($connection instanceof Connection);
+        $this->emptyTables($connection);
 
         $strategy = new DeleteStrategy();
         $strategy->setupTest(['core.Articles']);
-        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
-        $this->assertNotEmpty($rows->fetchAll());
-        $rows->closeCursor();
+        $this->assertNotEmpty($this->readTable($connection, 'articles'));
 
         $strategy->teardownTest();
-        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
-        $this->assertEmpty($rows->fetchAll());
-        $rows->closeCursor();
+        $this->assertEmpty($this->readTable($connection, 'articles'));
     }
 
     /**
-     * Tests that tables referenced by other fixtures can be emptied.
+     * Tests that fixtures referencing each other can be emptied.
      */
     public function testStrategyWithConstraints(): void
     {
-        /**
-         * @var \Cake\Database\Connection $connection
-         */
         $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $this->emptyTables($connection);
 
+        // Orders has a foreign key to products, so it has to be emptied first.
         $strategy = new DeleteStrategy();
-        $strategy->setupTest(['core.Articles', 'core.ArticlesTags', 'core.Tags']);
-        $strategy->teardownTest();
+        $strategy->setupTest(['core.Orders', 'core.Products']);
+        foreach (['products', 'orders'] as $table) {
+            $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
+        }
 
-        foreach (['articles', 'articles_tags', 'tags'] as $table) {
-            $rows = $connection->selectQuery()->select('*')->from($table)->execute();
-            $this->assertEmpty($rows->fetchAll(), sprintf('Table `%s` was not emptied.', $table));
-            $rows->closeCursor();
+        $strategy->teardownTest();
+        foreach (['products', 'orders'] as $table) {
+            $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
         }
     }
 
     /**
-     * Tests that no fixtures is a no-op.
+     * Tests that a test without fixtures is a no-op.
      */
     public function testStrategyWithoutFixtures(): void
     {
@@ -81,5 +82,33 @@ class DeleteStrategyTest extends TestCase
         $strategy = new DeleteStrategy();
         $strategy->setupTest([]);
         $strategy->teardownTest();
+    }
+
+    /**
+     * Removes the rows inserted by this test case's fixtures, children first.
+     *
+     * @param \Cake\Database\Connection $connection Test connection
+     * @return void
+     */
+    protected function emptyTables(Connection $connection): void
+    {
+        foreach (['orders', 'products', 'articles'] as $table) {
+            $connection->deleteQuery()->delete($table)->execute()->closeCursor();
+            $this->assertEmpty($this->readTable($connection, $table));
+        }
+    }
+
+    /**
+     * @param \Cake\Database\Connection $connection Test connection
+     * @param string $table Table name
+     * @return array
+     */
+    protected function readTable(Connection $connection, string $table): array
+    {
+        $statement = $connection->selectQuery()->select('*')->from($table)->execute();
+        $rows = $statement->fetchAll();
+        $statement->closeCursor();
+
+        return $rows;
     }
 }
