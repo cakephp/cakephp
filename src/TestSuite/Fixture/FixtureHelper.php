@@ -227,6 +227,65 @@ class FixtureHelper
     }
 
     /**
+     * Deletes the rows of the fixture tables.
+     *
+     * @param array<\Cake\Datasource\FixtureInterface> $fixtures Test fixtures
+     * @return void
+     * @since 5.5.0
+     * @internal
+     */
+    public function delete(array $fixtures): void
+    {
+        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
+            if (!$connection instanceof Connection) {
+                $this->truncateConnection($connection, $groupFixtures);
+
+                return;
+            }
+
+            // Unlike truncate, delete is subject to foreign keys on every driver, so the
+            // fixtures can be emptied in the reverse of their insertion order whenever
+            // they can be sorted. Constraints are only disabled when they cannot be.
+            $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
+            if ($sortedFixtures !== null) {
+                $this->deleteConnection($connection, array_reverse($sortedFixtures));
+            } else {
+                ConnectionHelper::runWithoutConstraints(
+                    $connection,
+                    fn(Connection $connection) => $this->deleteConnection($connection, $groupFixtures),
+                );
+            }
+        }, $fixtures);
+    }
+
+    /**
+     * Deletes the rows of all fixtures for a connection and provides friendly errors for bad data.
+     *
+     * @param \Cake\Database\Connection $connection Fixture connection
+     * @param array<\Cake\Datasource\FixtureInterface> $fixtures Connection fixtures
+     * @return void
+     */
+    protected function deleteConnection(Connection $connection, array $fixtures): void
+    {
+        foreach ($fixtures as $fixture) {
+            try {
+                $connection->deleteQuery()
+                    ->delete($fixture->sourceName())
+                    ->execute()
+                    ->closeCursor();
+            } catch (PDOException $exception) {
+                $message = sprintf(
+                    'Unable to delete rows from table `%s`.'
+                        . " Fixture records might have invalid data or unknown constraints.\n%s",
+                    $fixture->sourceName(),
+                    $exception->getMessage(),
+                );
+                throw new CakeException($message);
+            }
+        }
+    }
+
+    /**
      * Sort fixtures with foreign constraints last if possible, otherwise returns null.
      *
      * @param \Cake\Database\Connection $connection Database connection
