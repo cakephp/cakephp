@@ -264,6 +264,7 @@ class TableSchemaTest extends TestCase
             'default' => null,
             'null' => null,
             'comment' => null,
+            'charset' => null,
             'collate' => null,
         ];
         $this->assertEquals($expected, $result);
