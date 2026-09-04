@@ -39,6 +39,7 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Log\Log;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\Router;
@@ -60,6 +61,7 @@ use TestApp\Error\Exception\MissingWidgetThingException;
 use TestApp\Error\Renderer\MyCustomExceptionRenderer;
 use TestApp\Error\Renderer\TestAppsExceptionRenderer;
 use TestPlugin\Controller\ErrorController as PluginErrorController;
+use TypeError;
 use function Cake\Core\h;
 
 class WebExceptionRendererTest extends TestCase
@@ -95,6 +97,7 @@ class WebExceptionRendererTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
+        Log::drop('test_error');
         if ($this->restoreError) {
             restore_error_handler();
         }
@@ -748,6 +751,86 @@ class WebExceptionRendererTest extends TestCase
         sort($helpers);
         $this->assertEquals([], $helpers);
         $this->assertStringContainsString('Helper class `Fail`', (string)$response->getBody());
+    }
+
+    /**
+     * Test that a missing template named after the exception class is not logged,
+     * falling back to error500 is expected in that case.
+     */
+    public function testRenderMissingOptionalTemplateNotLogged(): void
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+            'scopes' => ['cake.error'],
+        ]);
+        $exception = new TypeError('Bad type');
+        $ExceptionRenderer = new WebExceptionRenderer($exception);
+
+        $response = $ExceptionRenderer->render();
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertStringContainsString('Bad type', (string)$response->getBody());
+        $this->assertSame([], Log::engine('test_error')->read());
+    }
+
+    /**
+     * Test that a missing error400/error500 template is still logged.
+     */
+    public function testRenderMissingRequiredTemplateLogged(): void
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+            'scopes' => ['cake.error'],
+        ]);
+        Configure::write('debug', false);
+        $request = (new ServerRequest())
+            ->withParam('controller', 'Foo')
+            ->withParam('action', 'bar')
+            ->withParam('prefix', 'CustomPrefix');
+        $exception = new NotFoundException('Page not found');
+        $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
+
+        $response = $ExceptionRenderer->render();
+
+        $this->assertSame(404, $response->getStatusCode());
+        $logs = Log::engine('test_error')->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('Failed to render error template `error400`', $logs[0]);
+    }
+
+    /**
+     * Test that a template missing from within an exception template is still logged.
+     */
+    public function testRenderMissingTemplateInOptionalTemplateLogged(): void
+    {
+        Log::setConfig('test_error', [
+            'className' => 'Array',
+            'scopes' => ['cake.error'],
+        ]);
+        $exception = new TypeError('Bad type');
+        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+        $controller = new class (new ServerRequest()) extends Controller {
+            public function render(?string $template = null, ?string $layout = null): Response
+            {
+                if ($template === 'typeError') {
+                    throw new MissingTemplateException('Error/parent.php');
+                }
+
+                return parent::render($template, $layout);
+            }
+        };
+        $controller->viewBuilder()->setTemplatePath('Error');
+        $ExceptionRenderer->setController($controller);
+
+        $response = $ExceptionRenderer->render();
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertStringContainsString('Bad type', (string)$response->getBody());
+        $logs = Log::engine('test_error')->read();
+        $this->assertCount(1, $logs);
+        $this->assertStringContainsString('Failed to render error template `typeError`', $logs[0]);
+        $this->assertStringContainsString('Error/parent.php', $logs[0]);
     }
 
     /**
