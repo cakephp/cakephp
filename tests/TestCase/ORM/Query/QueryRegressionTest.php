@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
@@ -1964,10 +1965,13 @@ class QueryRegressionTest extends TestCase
     }
 
     /**
-     * Databases that do not enforce grouping, such as SQLite, accept the invalid subquery, so the
-     * GROUP BY has to be asserted on the generated SQL as well.
+     * MariaDB filtering subqueries should use DISTINCT for deduplication.
+     *
+     * A GROUP BY combined with ORDER BY, LIMIT, and OFFSET triggers MariaDB's lateral-derived
+     * optimization, which can apply the page window per joined row and return incorrect associations.
+     * Other drivers retain the existing GROUP BY behavior.
      */
-    public function testSubqueryStrategyGroupsByOrderedColumns(): void
+    public function testSubqueryStrategyDeduplicatesPaginatedResults(): void
     {
         $logger = new class extends AbstractLogger {
             /**
@@ -1993,11 +1997,12 @@ class QueryRegressionTest extends TestCase
             $articles->belongsTo('Authors');
             $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
 
-            $articles->find()
+            $results = $articles->find()
                 ->contain(['Comments'])
                 ->innerJoinWith('Authors')
                 ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
-                ->limit(2)
+                ->limit(1)
+                ->offset(1)
                 ->all()
                 ->toArray();
         } finally {
@@ -2008,15 +2013,26 @@ class QueryRegressionTest extends TestCase
             }
         }
 
-        // The filtering subquery is the only grouped statement the query above runs.
-        $grouped = array_filter(
-            $logger->messages,
-            fn(string $message): bool => str_contains($message, 'GROUP BY'),
-        );
-        $this->assertCount(1, $grouped, implode("\n", $logger->messages));
+        $this->assertCount(1, $results);
+        $this->assertSame(1, $results[0]->id);
+        $this->assertCount(4, $results[0]->comments);
 
-        $sql = array_pop($grouped);
-        $this->assertSame(1, preg_match('/GROUP BY (.+?)(?= ORDER BY| HAVING| LIMIT|\))/', $sql, $matches), $sql);
-        $this->assertStringContainsString('name', $matches[1], $sql);
+        $subqueries = array_filter(
+            $logger->messages,
+            fn(string $message): bool => str_contains($message, 'INNER JOIN (SELECT'),
+        );
+        $this->assertCount(1, $subqueries, implode("\n", $logger->messages));
+
+        $sql = array_pop($subqueries);
+        if ($driver instanceof Mysql && $driver->isMariadb()) {
+            $this->assertStringContainsString('INNER JOIN (SELECT DISTINCT', $sql);
+            $this->assertStringNotContainsString('GROUP BY', $sql);
+            $this->assertMatchesRegularExpression('/SELECT DISTINCT .+name.+ FROM/', $sql);
+
+            return;
+        }
+
+        $this->assertStringNotContainsString('SELECT DISTINCT', $sql);
+        $this->assertMatchesRegularExpression('/GROUP BY .+name/', $sql);
     }
 }
