@@ -446,6 +446,7 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'A title',
+                'charset' => null,
                 'collate' => 'utf8_general_ci',
             ],
             'body' => [
@@ -455,6 +456,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
@@ -559,6 +561,7 @@ SQL;
             $expected['config']['type'] = 'text';
             $expected['config']['length'] = 4294967295;
             $expected['config']['comment'] = '';
+            $expected['config']['charset'] = null;
             $expected['config']['collate'] = 'utf8mb4_bin';
         }
         // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
@@ -1190,6 +1193,16 @@ SQL;
                 'title',
                 ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'utf8_unicode_ci'],
                 '`title` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL',
+            ],
+            [
+                'title',
+                ['type' => 'string', 'null' => false, 'charset' => 'ascii'],
+                '`title` VARCHAR(255) CHARACTER SET ascii NOT NULL',
+            ],
+            [
+                'title',
+                ['type' => 'string', 'charset' => 'ascii', 'collate' => 'ascii_bin'],
+                '`title` VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin',
             ],
             // Text
             [

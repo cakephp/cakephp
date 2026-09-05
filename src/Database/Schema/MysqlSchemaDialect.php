@@ -850,8 +850,13 @@ SQL;
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_UUID,
         ];
-        if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
-            $out .= ' COLLATE ' . $column['collate'];
+        if (in_array($column['type'], $hasCollate, true)) {
+            if (isset($column['charset']) && $column['charset'] !== '') {
+                $out .= ' CHARACTER SET ' . $column['charset'];
+            }
+            if (isset($column['collate']) && $column['collate'] !== '') {
+                $out .= ' COLLATE ' . $column['collate'];
+            }
         }
 
         if (isset($column['null']) && $column['null'] === false) {

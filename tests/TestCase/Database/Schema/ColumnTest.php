@@ -231,6 +231,7 @@ class ColumnTest extends TestCase
             'length' => 255,
             'null' => false,
             'default' => 'default_value',
+            'charset' => 'utf8mb4',
             'collate' => 'utf8mb4_general_ci',
         ];
         $column->setAttributes($options);
@@ -238,6 +239,7 @@ class ColumnTest extends TestCase
         $this->assertSame(255, $column->getLength());
         $this->assertFalse($column->isNull());
         $this->assertSame('default_value', $column->getDefault());
+        $this->assertSame('utf8mb4', $column->getCharset());
         $this->assertSame('utf8mb4_general_ci', $column->getCollate());
     }
 
