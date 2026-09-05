@@ -62,7 +62,6 @@
         "boundwize/structarmed": "^0.14",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
-        "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6",
         "paragonie/csp-builder": "^2.3 || ^3.0",
         "phpunit/phpunit": "^11.5.3 || ^12.1.3 || ^13.0"
