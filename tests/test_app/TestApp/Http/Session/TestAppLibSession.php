@@ -3,34 +3,18 @@ declare(strict_types=1);
 
 namespace TestApp\Http\Session;
 
-use SessionHandlerInterface;
+use Cake\Http\Session\AbstractSession;
 
 /**
  * Test suite app/Http/Session session handler
  */
-class TestAppLibSession implements SessionHandlerInterface
+class TestAppLibSession extends AbstractSession
 {
     public $options = [];
 
     public function __construct(array $options = [])
     {
         $this->options = $options;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function open($path, $name): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function close(): bool
-    {
-        return true;
     }
 
     /**
