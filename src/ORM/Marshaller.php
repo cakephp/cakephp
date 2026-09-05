@@ -870,7 +870,7 @@ class Marshaller
 
             $joinData = $this->fieldValue($entity, $junctionProperty);
             if ($joinData instanceof EntityInterface) {
-                $extra[spl_object_hash($entity)] = $joinData;
+                $extra[spl_object_id($entity)] = $joinData;
             }
         }
 
@@ -886,7 +886,7 @@ class Marshaller
 
         $records = $this->mergeMany($original, $value, $options);
         foreach ($records as $record) {
-            $hash = spl_object_hash($record);
+            $hash = spl_object_id($record);
             $value = $this->fieldValue($record, $junctionProperty);
 
             // Already an entity, no further marshaling required.
