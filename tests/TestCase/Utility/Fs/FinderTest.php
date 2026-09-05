@@ -1118,9 +1118,10 @@ class FinderTest extends TestCase
         // Should exclude depth 0 files, only get nested files
         $this->assertGreaterThan(0, $paths);
         // All paths should have at least one subdirectory
+        $basePath = FsFixture::path('root/src') . DIRECTORY_SEPARATOR;
         foreach ($paths as $path) {
-            $relativePath = str_replace(FsFixture::path('root/src') . '/', '', $path);
-            $this->assertStringContainsString('/', $relativePath);
+            $relativePath = str_replace($basePath, '', $path);
+            $this->assertStringContainsString(DIRECTORY_SEPARATOR, $relativePath);
         }
     }
 
@@ -1139,9 +1140,10 @@ class FinderTest extends TestCase
 
         // Should only get files deeper than depth 0
         $this->assertGreaterThan(0, $paths);
+        $basePath = FsFixture::path('root/src') . DIRECTORY_SEPARATOR;
         foreach ($paths as $path) {
-            $relativePath = str_replace(FsFixture::path('root/src') . '/', '', $path);
-            $this->assertStringContainsString('/', $relativePath);
+            $relativePath = str_replace($basePath, '', $path);
+            $this->assertStringContainsString(DIRECTORY_SEPARATOR, $relativePath);
         }
     }
 
