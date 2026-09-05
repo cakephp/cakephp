@@ -19,6 +19,7 @@ use ArrayAccess;
 use Cake\Core\Exception\CakeException;
 use Collator;
 use InvalidArgumentException;
+use Throwable;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_NATURAL;
@@ -1063,16 +1064,17 @@ class Hash
 
         if ($type === 'locale') {
             // SORT_LOCALE_STRING was deprecated in PHP 8.6, use Collator instead.
-$locale = setlocale(LC_COLLATE, '0') ?: '';
-$locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
-if ($locale === 'C' || $locale === 'POSIX') {
-    $locale = '';
-}
-try {
-    $collator = new Collator($locale);
-} catch (\Throwable) {
-    $collator = new Collator('');
-}
+            $locale = setlocale(LC_COLLATE, '0') ?: '';
+            $locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
+            if ($locale === 'C' || $locale === 'POSIX') {
+                $locale = '';
+            }
+            try {
+                $collator = new Collator($locale);
+            } catch (Throwable) {
+                $collator = new Collator('');
+            }
+            $pairs = array_map(
                 static fn(mixed $value, string|int $key): array => [$value, $key],
                 $values,
                 $keys,
