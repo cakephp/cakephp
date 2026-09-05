@@ -64,12 +64,14 @@ final class FsFixture
     {
         foreach ($structure as $name => $content) {
             $path = $parent . DS . $name;
-            if (is_array($content)) {
-                mkdir($path);
-                self::create($content, $path);
-            } else {
-                file_put_contents($path, (string)$content);
-            }
+if (is_array($content)) {
+    if (!is_dir($path)) {
+        mkdir($path, 0777, true);
+    }
+    self::create($content, $path);
+} else {
+    file_put_contents($path, (string)$content);
+}
         }
     }
 

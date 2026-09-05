@@ -1063,10 +1063,16 @@ class Hash
 
         if ($type === 'locale') {
             // SORT_LOCALE_STRING was deprecated in PHP 8.6, use Collator instead.
-            $locale = setlocale(LC_COLLATE, '0') ?: '';
-            $locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
-            $collator = new Collator($locale);
-            $pairs = array_map(
+$locale = setlocale(LC_COLLATE, '0') ?: '';
+$locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
+if ($locale === 'C' || $locale === 'POSIX') {
+    $locale = '';
+}
+try {
+    $collator = new Collator($locale);
+} catch (\Throwable) {
+    $collator = new Collator('');
+}
                 static fn(mixed $value, string|int $key): array => [$value, $key],
                 $values,
                 $keys,
