@@ -328,11 +328,10 @@ class AttributeEventListenerConnectorTest extends TestCase
             function (string $name) use ($ordersManager, &$resolvedManagers): EventManagerInterface {
                 $resolvedManagers[] = $name;
 
-                if ($name === 'orders') {
-                    return $ordersManager;
-                }
-
-                throw new InvalidArgumentException(sprintf('Unknown event manager "%s".', $name));
+                return match ($name) {
+                    'orders' => $ordersManager,
+                    default => throw new InvalidArgumentException(sprintf('Unknown event manager "%s".', $name)),
+                };
             },
         );
 
