@@ -294,11 +294,6 @@ class AttributeEventListenerConnectorTest extends TestCase
         ]);
 
         $manager = new class extends EventManager {
-            /**
-             * The default priority for listeners registered on this manager.
-             *
-             * @var int
-             */
             public static int $defaultPriority = 42;
         };
 

@@ -22,6 +22,7 @@ use Attribute;
  * Declares an event listener for a class or method using PHP attributes.
  *
  * When placed on a method, registers that method as the listener callable.
+ *
  * When placed on a class, resolves the callable using the following priority:
  *  1. The explicit `$method` argument when provided.
  *  2. `__invoke()` when present on the class.

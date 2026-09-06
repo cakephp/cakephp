@@ -91,6 +91,9 @@ class AttributeEventListenerConnector
      * Resolves all EventListener attributes from the configured resolver collection
      * and registers the discovered listeners on the event manager.
      *
+     * Event listeners are connected by class name, then declaration line number.
+     * When listeners have the same priority, this determines their invocation order.
+     *
      * @param string $config Attribute resolver config name.
      * @return void
      */
@@ -154,7 +157,7 @@ class AttributeEventListenerConnector
     }
 
     /**
-     * Resolves the listener registrations for a class, validating each declaration.
+     * Resolves the listener registrations for a class.
      *
      * Returns a deduplicated list of registrations ordered by line number.
      *
@@ -180,34 +183,6 @@ class AttributeEventListenerConnector
             $attribute = $info->getInstance(EventListener::class);
 
             $methodName = $this->resolveMethodName($info, $attribute, $className);
-
-            if (!method_exists($className, $methodName)) {
-                throw new EventAttributeException(sprintf(
-                    'Method "%s::%s()" does not exist. '
-                    . "Declare it or update the `method` argument of `#[EventListener('%s')]` "
-                    . 'in %s at line %d.',
-                    $className,
-                    $methodName,
-                    $attribute->event,
-                    $info->filePath,
-                    $info->lineNumber,
-                ));
-            }
-
-            $isPublic = $info->target->type === AttributeTargetType::METHOD
-                ? $info->target->isPublicMethodTarget()
-                : new ReflectionMethod($className, $methodName)->isPublic();
-            if (!$isPublic) {
-                throw new EventAttributeException(sprintf(
-                    'Method "%s::%s()" must be public to be used as an event listener. '
-                    . 'Declared on event "%s" in %s at line %d.',
-                    $className,
-                    $methodName,
-                    $attribute->event,
-                    $info->filePath,
-                    $info->lineNumber,
-                ));
-            }
 
             $priority = $attribute->priority;
             $manager = $attribute->manager;
@@ -298,6 +273,7 @@ class AttributeEventListenerConnector
      * Resolves the listener method name for the given attribute and target.
      *
      * Resolution order:
+     *
      *  1. For method-level attributes: the name of the method the attribute is placed on.
      *  2. For class-level attributes: the explicit `method` argument when provided.
      *  3. For class-level attributes: `__invoke` when present on the class.
@@ -307,22 +283,49 @@ class AttributeEventListenerConnector
      * @param \Cake\Event\Attribute\EventListener $attribute Instantiated attribute.
      * @param string $className Fully qualified class name.
      * @return string Resolved method name.
+     * @throws \Cake\Event\Exception\EventAttributeException When the resolved method does not exist or is not public.
      */
     protected function resolveMethodName(AttributeInfo $info, EventListener $attribute, string $className): string
     {
         if ($info->target->type === AttributeTargetType::METHOD) {
-            return $info->target->name;
+            $methodName = $info->target->name;
+        } elseif ($attribute->method !== null) {
+            $methodName = $attribute->method;
+        } elseif (method_exists($className, '__invoke')) {
+            $methodName = '__invoke';
+        } else {
+            $methodName = $this->inferMethodName($attribute->event);
         }
 
-        if ($attribute->method !== null) {
-            return $attribute->method;
+        if (!method_exists($className, $methodName)) {
+            throw new EventAttributeException(sprintf(
+                'Method "%s::%s()" does not exist. '
+                . "Declare it or update the `method` argument of `#[EventListener('%s')]` "
+                . 'in %s at line %d.',
+                $className,
+                $methodName,
+                $attribute->event,
+                $info->filePath,
+                $info->lineNumber,
+            ));
         }
 
-        if (method_exists($className, '__invoke')) {
-            return '__invoke';
+        $isPublic = $info->target->type === AttributeTargetType::METHOD
+            ? $info->target->isPublicMethodTarget()
+            : new ReflectionMethod($className, $methodName)->isPublic();
+        if (!$isPublic) {
+            throw new EventAttributeException(sprintf(
+                'Method "%s::%s()" must be public to be used as an event listener. '
+                . 'Declared on event "%s" in %s at line %d.',
+                $className,
+                $methodName,
+                $attribute->event,
+                $info->filePath,
+                $info->lineNumber,
+            ));
         }
 
-        return $this->inferMethodName($attribute->event);
+        return $methodName;
     }
 
     /**
