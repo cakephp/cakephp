@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Event;
 
 use Cake\AttributeResolver\AttributeResolver;
 use Cake\Cache\Cache;
+use Cake\Container\Container;
 use Cake\Event\AttributeEventListenerConnector;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
@@ -722,5 +723,39 @@ class AttributeEventListenerConnectorTest extends TestCase
         $this->assertTrue($listener->wasCalled);
 
         AttributeResolver::drop('container-aware-listener-test');
+    }
+
+    /**
+     * Tests that listener resolution supports Cake's dependency injection container.
+     *
+     * @return void
+     */
+    public function testRegisterAttributeListenersUsesCakeContainer(): void
+    {
+        AttributeResolver::setConfig('container-di-listener-test', [
+            'paths' => ['Event/Listener/ContainerAwareListener.php'],
+            'basePath' => APP,
+            'cache' => false,
+        ]);
+
+        $service = new stdClass();
+        $container = new Container();
+        $container->addShared(stdClass::class, $service);
+        $container->addShared(ContainerAwareListener::class)
+            ->addArgument(stdClass::class, 'service');
+
+        $manager = new EventManager();
+        $manager->registerAttributeListeners(
+            'container-di-listener-test',
+            static fn(string $className): object => $container->get($className),
+        );
+
+        $manager->dispatch(new Event('Order.afterPlace', $this));
+
+        $listener = $container->get(ContainerAwareListener::class);
+        $this->assertSame($service, $listener->service);
+        $this->assertTrue($listener->wasCalled);
+
+        AttributeResolver::drop('container-di-listener-test');
     }
 }
