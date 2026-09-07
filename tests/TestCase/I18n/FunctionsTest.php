@@ -29,7 +29,7 @@ use function Cake\I18n\toDateTime;
 /**
  * Test cases for functions in I18n\functions.php
  */
-class FunctionsTest extends TestCase
+final class FunctionsTest extends TestCase
 {
     #[DataProvider('toDateTimeProvider')]
     public function testToDateTime(mixed $rawValue, string $format, ?DateTime $expected): void

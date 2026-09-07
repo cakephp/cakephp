@@ -28,7 +28,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
  * Test case
  */
 #[AllowMockObjectsWithoutExpectations]
-class MailTransportTest extends TestCase
+final class MailTransportTest extends TestCase
 {
     /**
      * @var \Cake\Mailer\Transport\MailTransport|\PHPUnit\Framework\MockObject\MockObject

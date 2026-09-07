@@ -22,7 +22,7 @@ use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Driver\TestDriver;
 
-class ConnectionHelperTest extends TestCase
+final class ConnectionHelperTest extends TestCase
 {
     protected function tearDown(): void
     {

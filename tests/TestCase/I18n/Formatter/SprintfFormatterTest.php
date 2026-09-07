@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * SprintfFormatter tests
  */
-class SprintfFormatterTest extends TestCase
+final class SprintfFormatterTest extends TestCase
 {
     /**
      * Tests that variables are interpolated correctly

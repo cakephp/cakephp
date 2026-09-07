@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests WindowExpression class
  */
-class WindowExpressionTest extends TestCase
+final class WindowExpressionTest extends TestCase
 {
     /**
      * Tests an empty window expression

@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class TableGetWithCustomFinderTest extends TestCase
+final class TableGetWithCustomFinderTest extends TestCase
 {
     protected ConnectionInterface $connection;
 
@@ -32,7 +32,7 @@ class TableGetWithCustomFinderTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     public static function providerForTestGetWithCustomFinder(): array

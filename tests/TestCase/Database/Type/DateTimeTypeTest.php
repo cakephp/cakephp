@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test for the DateTime type.
  */
-class DateTimeTypeTest extends TestCase
+final class DateTimeTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\DateTimeType

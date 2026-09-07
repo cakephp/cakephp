@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ExtractIterator Test
  */
-class ExtractIteratorTest extends TestCase
+final class ExtractIteratorTest extends TestCase
 {
     /**
      * Tests it is possible to extract a column in the first level of an array

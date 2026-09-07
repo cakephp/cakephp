@@ -14,7 +14,7 @@ use stdClass;
 /**
  * EventFiredWith Test
  */
-class EventFiredWithTest extends TestCase
+final class EventFiredWithTest extends TestCase
 {
     /**
      * tests EventFiredWith constraint

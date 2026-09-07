@@ -26,7 +26,7 @@ use Stringable;
 /**
  * Tests QueryLogger class
  */
-class QueryLoggerTest extends TestCase
+final class QueryLoggerTest extends TestCase
 {
     /**
      * Tear down

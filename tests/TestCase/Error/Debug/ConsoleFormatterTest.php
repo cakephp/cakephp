@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ConsoleFormatterTest
  */
-class ConsoleFormatterTest extends TestCase
+final class ConsoleFormatterTest extends TestCase
 {
     /**
      * Test dumping a graph that contains all possible nodes.

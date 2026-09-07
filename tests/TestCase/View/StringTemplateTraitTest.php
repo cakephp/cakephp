@@ -23,7 +23,7 @@ use TestApp\View\TestStringTemplate;
 /**
  * StringTemplateTraitTest class
  */
-class StringTemplateTraitTest extends TestCase
+final class StringTemplateTraitTest extends TestCase
 {
     /**
      * @var \TestApp\View\TestStringTemplate

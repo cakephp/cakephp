@@ -24,7 +24,7 @@ use Mockery;
 /**
  * Tests ValueBinder class
  */
-class ValueBinderTest extends TestCase
+final class ValueBinderTest extends TestCase
 {
     /**
      * test the bind method

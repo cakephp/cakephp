@@ -24,7 +24,7 @@ use Cake\View\XmlView;
 /**
  * ViewVarsTrait test case
  */
-class ViewVarsTraitTest extends TestCase
+final class ViewVarsTraitTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Controller

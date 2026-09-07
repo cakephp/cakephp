@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the Cake\Event\EvenList class functionality
  */
-class EventListTest extends TestCase
+final class EventListTest extends TestCase
 {
     /**
      * testAddEventAndFlush

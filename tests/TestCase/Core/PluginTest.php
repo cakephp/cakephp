@@ -24,7 +24,7 @@ use TestPlugin\TestPluginPlugin as TestPlugin;
 /**
  * PluginTest class
  */
-class PluginTest extends TestCase
+final class PluginTest extends TestCase
 {
     /**
      * Setup

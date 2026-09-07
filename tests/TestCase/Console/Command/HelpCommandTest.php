@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * HelpCommand test.
  */
-class HelpCommandTest extends TestCase
+final class HelpCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

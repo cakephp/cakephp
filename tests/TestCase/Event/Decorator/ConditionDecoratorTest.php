@@ -26,7 +26,7 @@ use InvalidArgumentException;
 /**
  * Tests the Cake\Event\Event class functionality
  */
-class ConditionDecoratorTest extends TestCase
+final class ConditionDecoratorTest extends TestCase
 {
     /**
      * testCanTriggerIf

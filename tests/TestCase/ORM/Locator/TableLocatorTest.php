@@ -41,7 +41,7 @@ use TestPluginTwo\Model\Table\CommentsTable as PluginTwoCommentsTable;
 /**
  * Test case for TableLocator
  */
-class TableLocatorTest extends TestCase
+final class TableLocatorTest extends TestCase
 {
     /**
      * TableLocator instance.
@@ -56,7 +56,7 @@ class TableLocatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $this->_locator = new TableLocator();
     }

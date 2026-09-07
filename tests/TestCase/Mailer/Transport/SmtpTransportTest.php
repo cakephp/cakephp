@@ -29,7 +29,7 @@ use TestApp\Mailer\Transport\SmtpTestTransport;
 /**
  * Test case
  */
-class SmtpTransportTest extends TestCase
+final class SmtpTransportTest extends TestCase
 {
     /**
      * @var \TestApp\Mailer\Transport\SmtpTestTransport

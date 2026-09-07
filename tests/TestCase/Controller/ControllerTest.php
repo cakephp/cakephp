@@ -59,7 +59,7 @@ use TestPlugin\Model\Table\TestPluginCommentsTable;
 /**
  * ControllerTest class
  */
-class ControllerTest extends TestCase
+final class ControllerTest extends TestCase
 {
     /**
      * fixtures property
@@ -78,7 +78,7 @@ class ControllerTest extends TestCase
     {
         parent::setUp();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         Router::reload();
     }
 

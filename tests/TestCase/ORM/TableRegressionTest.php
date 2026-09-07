@@ -23,7 +23,7 @@ use InvalidArgumentException;
 /**
  * Contains regression test for the Table class
  */
-class TableRegressionTest extends TestCase
+final class TableRegressionTest extends TestCase
 {
     /**
      * Fixture to be used

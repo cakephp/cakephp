@@ -27,7 +27,7 @@ use Transliterator;
 /**
  * TextTest class
  */
-class TextTest extends TestCase
+final class TextTest extends TestCase
 {
     /**
      * @var \Cake\Utility\Text

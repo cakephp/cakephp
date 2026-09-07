@@ -22,7 +22,7 @@ use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
 
-class TestEmailTransportTest extends TestCase
+final class TestEmailTransportTest extends TestCase
 {
     /**
      * setUp

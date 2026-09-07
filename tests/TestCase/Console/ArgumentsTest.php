@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Arguments test case.
  */
-class ArgumentsTest extends TestCase
+final class ArgumentsTest extends TestCase
 {
     /**
      * Get all arguments

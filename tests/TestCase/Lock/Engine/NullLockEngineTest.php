@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * NullLockEngineTest class
  */
-class NullLockEngineTest extends TestCase
+final class NullLockEngineTest extends TestCase
 {
     /**
      * @var \Cake\Lock\Engine\NullLockEngine

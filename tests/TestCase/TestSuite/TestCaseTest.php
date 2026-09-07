@@ -47,7 +47,7 @@ use function Cake\Core\deprecationWarning;
  * TestCaseTest
  */
 #[AllowMockObjectsWithoutExpectations]
-class TestCaseTest extends TestCase
+final class TestCaseTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -379,7 +379,7 @@ class TestCaseTest extends TestCase
     {
         $this->skipIf(version_compare(Version::id(), '12.0.0', '>='), 'This test is not compatible with PHPUnit 12');
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         // No methods will be mocked if $methods argument of getMockForModel() is empty.
         $Posts = $this->getMockForModel('Posts');
         $entity = new Entity([]);
@@ -416,7 +416,7 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModelWithPlugin(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
@@ -478,7 +478,7 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModelSetTable(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         ConnectionManager::alias('test', 'custom_i18n_datasource');
 
         $I18n = $this->getMockForModel('CustomI18n', ['save']);
@@ -494,7 +494,7 @@ class TestCaseTest extends TestCase
      */
     public function testMockModel(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $entity = new Entity([]);
 
         $Posts = $this->mockModel('Posts');
@@ -531,7 +531,7 @@ class TestCaseTest extends TestCase
      */
     public function testMockModelWithPlugin(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->mockModel('TestPlugin.TestPluginComments');
 
@@ -591,7 +591,7 @@ class TestCaseTest extends TestCase
      */
     public function testMockModelSetTable(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         ConnectionManager::alias('test', 'custom_i18n_datasource');
 
         $I18n = $this->mockModel('CustomI18n');

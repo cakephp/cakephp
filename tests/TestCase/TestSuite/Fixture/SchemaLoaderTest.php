@@ -26,7 +26,7 @@ use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
-class SchemaLoaderTest extends TestCase
+final class SchemaLoaderTest extends TestCase
 {
     /**
      * @var bool|null

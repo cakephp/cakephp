@@ -50,7 +50,7 @@ use function Cake\Collection\collection;
 /**
  * Tests SelectQuery class
  */
-class SelectQueryTest extends TestCase
+final class SelectQueryTest extends TestCase
 {
     use QueryAssertsTrait;
 

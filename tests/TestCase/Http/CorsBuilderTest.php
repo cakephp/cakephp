@@ -7,7 +7,7 @@ use Cake\Http\CorsBuilder;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 
-class CorsBuilderTest extends TestCase
+final class CorsBuilderTest extends TestCase
 {
     /**
      * test allowOrigin() setting allow-origin

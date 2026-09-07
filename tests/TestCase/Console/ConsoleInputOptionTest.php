@@ -25,7 +25,7 @@ use SimpleXMLElement;
 /**
  * ConsoleInputOptionTest
  */
-class ConsoleInputOptionTest extends TestCase
+final class ConsoleInputOptionTest extends TestCase
 {
     /**
      * @var \Cake\Console\ConsoleInputOption|\PHPUnit\Framework\MockObject\MockObject

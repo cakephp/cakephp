@@ -26,7 +26,7 @@ use Cake\View\Widget\NestingLabelWidget;
 /**
  * MultiCheckbox test case.
  */
-class MultiCheckboxWidgetTest extends TestCase
+final class MultiCheckboxWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

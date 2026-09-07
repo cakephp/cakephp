@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Translate behavior test case
  */
-class TreeBehaviorTest extends TestCase
+final class TreeBehaviorTest extends TestCase
 {
     /**
      * fixtures

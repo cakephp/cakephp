@@ -23,7 +23,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use TestPlugin\Test\Fixture\TestableArticlesFixture;
 
-class TestFixtureTest extends TestCase
+final class TestFixtureTest extends TestCase
 {
     /**
      * Test that plugin fixtures automatically get their plugin prefix in the alias.

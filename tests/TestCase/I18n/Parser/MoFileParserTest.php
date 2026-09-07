@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the MoFileLoader
  */
-class MoFileParserTest extends TestCase
+final class MoFileParserTest extends TestCase
 {
     /**
      * Locale folder path

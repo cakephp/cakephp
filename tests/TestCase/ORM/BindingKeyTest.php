@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Integration tests for using the bindingKey in associations
  */
-class BindingKeyTest extends TestCase
+final class BindingKeyTest extends TestCase
 {
     /**
      * Fixture to be used

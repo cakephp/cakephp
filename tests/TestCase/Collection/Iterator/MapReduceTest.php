@@ -23,7 +23,7 @@ use LogicException;
 /**
  * Tests MapReduce class
  */
-class MapReduceTest extends TestCase
+final class MapReduceTest extends TestCase
 {
     /**
      * Tests the creation of an inversed index of words to documents using

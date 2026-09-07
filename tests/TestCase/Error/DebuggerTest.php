@@ -48,7 +48,7 @@ use TestApp\Utility\ThrowsDebugInfo;
  * !!! change line numbers which are used in the tests
  */
 #[AllowMockObjectsWithoutExpectations]
-class DebuggerTest extends TestCase
+final class DebuggerTest extends TestCase
 {
     /**
      * @var bool

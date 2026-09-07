@@ -31,7 +31,7 @@ use PHPUnit\Framework\Constraint\LogicalNot;
 /**
  * Tests EmailTrait assertions
  */
-class EmailTraitTest extends TestCase
+final class EmailTraitTest extends TestCase
 {
     use EmailTrait;
 

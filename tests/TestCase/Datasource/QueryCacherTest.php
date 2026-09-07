@@ -25,7 +25,7 @@ use stdClass;
 /**
  * Query cacher test
  */
-class QueryCacherTest extends TestCase
+final class QueryCacherTest extends TestCase
 {
     /**
      * @var \Cake\Cache\CacheEngineInterface

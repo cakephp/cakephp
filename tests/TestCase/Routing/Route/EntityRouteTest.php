@@ -27,7 +27,7 @@ use TestApp\Model\Enum\Priority;
 /**
  * Test case for EntityRoute
  */
-class EntityRouteTest extends TestCase
+final class EntityRouteTest extends TestCase
 {
     /**
      * test that route keys take precedence to object properties.

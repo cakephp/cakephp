@@ -33,7 +33,7 @@ use ValueError;
 /**
  * Test for the String type.
  */
-class EnumTypeTest extends TestCase
+final class EnumTypeTest extends TestCase
 {
     /**
      * @inheritDoc

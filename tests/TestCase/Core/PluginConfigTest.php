@@ -20,7 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;
 
-class PluginConfigTest extends TestCase
+final class PluginConfigTest extends TestCase
 {
     protected string $pluginsListPath;
 

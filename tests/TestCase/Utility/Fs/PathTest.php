@@ -22,7 +22,7 @@ use Cake\Utility\Fs\Path;
 /**
  * Path test case
  */
-class PathTest extends TestCase
+final class PathTest extends TestCase
 {
     public function testNormalize(): void
     {

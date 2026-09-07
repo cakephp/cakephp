@@ -41,7 +41,7 @@ use TestApp\Database\Driver\StubDriver;
 /**
  * Tests Driver class
  */
-class DriverTest extends TestCase
+final class DriverTest extends TestCase
 {
     /**
      * @var \TestApp\Database\Driver\StubDriver

@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * CounterCacheCommandTest class
  */
-class CounterCacheCommandTest extends TestCase
+final class CounterCacheCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

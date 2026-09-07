@@ -28,7 +28,7 @@ use TestApp\Core\TestApp;
 /**
  * AppTest class
  */
-class AppTest extends TestCase
+final class AppTest extends TestCase
 {
     /**
      * tearDown method
@@ -53,7 +53,7 @@ class AppTest extends TestCase
     #[DataProvider('classNameProvider')]
     public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $i = 0;
         TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
             if ($i++ === 0) {
@@ -98,7 +98,7 @@ class AppTest extends TestCase
     #[DataProvider('shortNameProvider')]
     public function testShortName($class, $type, $suffix = '', $expected = false): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $return = TestApp::shortName($class, $type, $suffix);
         $this->assertSame($expected, $return);
@@ -109,7 +109,7 @@ class AppTest extends TestCase
      */
     public function testShortNameWithNestedAppNamespace(): void
     {
-        static::setAppNamespace('TestApp/Nested');
+        self::setAppNamespace('TestApp/Nested');
 
         $return = TestApp::shortName(
             'TestApp/Nested/Controller/PagesController',
@@ -118,7 +118,7 @@ class AppTest extends TestCase
         );
         $this->assertSame('Pages', $return);
 
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

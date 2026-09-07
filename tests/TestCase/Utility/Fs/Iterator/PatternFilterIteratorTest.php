@@ -29,7 +29,7 @@ use RecursiveIteratorIterator;
 /**
  * Tests for pattern-based filter iterators
  */
-class PatternFilterIteratorTest extends TestCase
+final class PatternFilterIteratorTest extends TestCase
 {
     /**
      * @var \org\bovigo\vfs\vfsStreamDirectory

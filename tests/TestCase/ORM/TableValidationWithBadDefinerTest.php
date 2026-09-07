@@ -18,7 +18,7 @@ use AssertionError;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
-class TableValidationWithBadDefinerTest extends TestCase
+final class TableValidationWithBadDefinerTest extends TestCase
 {
     /**
      * Tests that a InvalidArgumentException is thrown if the custom validator does not return an Validator instance

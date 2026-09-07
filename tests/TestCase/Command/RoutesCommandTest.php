@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
 /**
  * RoutesCommandTest
  */
-class RoutesCommandTest extends TestCase
+final class RoutesCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

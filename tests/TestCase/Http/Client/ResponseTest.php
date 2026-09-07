@@ -23,7 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * HTTP response test.
  */
-class ResponseTest extends TestCase
+final class ResponseTest extends TestCase
 {
     /**
      * A response built without a status line still has a usable reason phrase.

@@ -44,7 +44,7 @@ use Throwable;
 /**
  * Test for ErrorHandlerMiddleware
  */
-class ErrorHandlerMiddlewareTest extends TestCase
+final class ErrorHandlerMiddlewareTest extends TestCase
 {
     /**
      * @var \Cake\Log\Engine\ArrayLog
@@ -58,7 +58,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         parent::setUp();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Log::reset();
         Log::setConfig('error_test', [

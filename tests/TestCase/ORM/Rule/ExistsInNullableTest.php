@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the ExistsInNullable rule
  */
-class ExistsInNullableTest extends TestCase
+final class ExistsInNullableTest extends TestCase
 {
     /**
      * Fixtures to be loaded

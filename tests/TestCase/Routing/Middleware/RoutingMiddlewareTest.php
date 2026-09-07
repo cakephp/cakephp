@@ -38,7 +38,7 @@ use TestApp\Routing\Route\HeaderRedirectRoute;
 /**
  * Test for RoutingMiddleware
  */
-class RoutingMiddlewareTest extends TestCase
+final class RoutingMiddlewareTest extends TestCase
 {
     protected $log = [];
 

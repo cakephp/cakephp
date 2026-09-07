@@ -29,7 +29,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * XmlViewTest
  */
-class XmlViewTest extends TestCase
+final class XmlViewTest extends TestCase
 {
     protected array $fixtures = ['core.Authors'];
 

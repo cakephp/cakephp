@@ -24,7 +24,7 @@ use function Cake\Routing\urlArray;
 /**
  * FunctionsTest class
  */
-class FunctionsTest extends TestCase
+final class FunctionsTest extends TestCase
 {
     /**
      * Tests that the url() method is a shortcut Router::url()

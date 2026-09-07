@@ -28,7 +28,7 @@ use stdClass;
 /**
  * HashTest
  */
-class HashTest extends TestCase
+final class HashTest extends TestCase
 {
     /**
      * Data provider
@@ -274,8 +274,8 @@ class HashTest extends TestCase
     public static function articleDataSets(): array
     {
         return [
-            [static::articleData()],
-            [static::articleDataObject()],
+            [self::articleData()],
+            [self::articleDataObject()],
         ];
     }
 
@@ -1937,7 +1937,7 @@ class HashTest extends TestCase
      */
     public function testInsertMulti(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::insert($data, '{n}.Article.insert', 'value');
         $this->assertSame('value', $result[0]['Article']['insert']);
@@ -1981,7 +1981,7 @@ class HashTest extends TestCase
      */
     public function testInsertMultiWord(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::insert($data, '{n}.{s}.insert', 'value');
         $this->assertSame('value', $result[0]['Article']['insert']);
@@ -2189,7 +2189,7 @@ class HashTest extends TestCase
      */
     public function testRemoveMulti(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::remove($data, '{n}.Article.title');
         $this->assertFalse(isset($result[0]['Article']['title']));
@@ -2318,7 +2318,7 @@ class HashTest extends TestCase
         $result = Hash::combine([], '{n}.User.id', '{n}.User.Data');
         $this->assertEmpty($result);
 
-        $a = static::userData();
+        $a = self::userData();
 
         $result = Hash::combine($a, '{n}.User.id');
         $expected = [2 => null, 14 => null, 25 => null];
@@ -2351,7 +2351,7 @@ class HashTest extends TestCase
         $result = Hash::combine([], null, '{n}.User.Data');
         $this->assertEmpty($result);
 
-        $a = static::userData();
+        $a = self::userData();
 
         $result = Hash::combine($a, null);
         $expected = [0 => null, 1 => null, 2 => null];
@@ -2407,7 +2407,7 @@ class HashTest extends TestCase
      */
     public function testCombineWithGroupPath(): void
     {
-        $a = static::userData();
+        $a = self::userData();
 
         $result = Hash::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
         $expected = [
@@ -2511,7 +2511,7 @@ class HashTest extends TestCase
      */
     public function testCombineWithFormatting(): void
     {
-        $a = static::userData();
+        $a = self::userData();
 
         $result = Hash::combine(
             $a,
@@ -2593,7 +2593,7 @@ class HashTest extends TestCase
      */
     public function testFormat(): void
     {
-        $data = static::userData();
+        $data = self::userData();
 
         $result = Hash::format(
             $data,
@@ -2651,7 +2651,7 @@ class HashTest extends TestCase
      */
     public function testMap(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::map($data, '{n}.Article.id', $this->mapCallback(...));
         $expected = [2, 4, 6, 8, 10];
@@ -2663,7 +2663,7 @@ class HashTest extends TestCase
      */
     public function testApply(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::apply($data, '{n}.Article.id', 'array_sum');
         $this->assertSame(15, $result);
@@ -2674,7 +2674,7 @@ class HashTest extends TestCase
      */
     public function testReduce(): void
     {
-        $data = static::articleData();
+        $data = self::articleData();
 
         $result = Hash::reduce($data, '{n}.Article.id', $this->reduceCallback(...));
         $this->assertSame(15, $result);

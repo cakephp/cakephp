@@ -29,7 +29,7 @@ use TestApp\Database\Type\FooType;
 /**
  * Tests TypeFactory class
  */
-class TypeFactoryTest extends TestCase
+final class TypeFactoryTest extends TestCase
 {
     /**
      * Original type map

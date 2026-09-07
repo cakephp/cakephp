@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * AssetTest class
  */
-class AssetTest extends TestCase
+final class AssetTest extends TestCase
 {
     /**
      * @var \Cake\Routing\RouteBuilder
@@ -45,7 +45,7 @@ class AssetTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
         $this->builder = Router::createRouteBuilder('/');
         $this->builder->fallbacks();

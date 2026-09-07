@@ -8,7 +8,7 @@ use Cake\Container\Argument\LiteralArgument;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class TypedArgumentTest extends TestCase
+final class TypedArgumentTest extends TestCase
 {
     public function testLiteralArgumentSetsAndGetsArgument(): void
     {

@@ -26,7 +26,7 @@ use PDO;
 /**
  * Test for the String type.
  */
-class StringTypeTest extends TestCase
+final class StringTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\TypeInterface

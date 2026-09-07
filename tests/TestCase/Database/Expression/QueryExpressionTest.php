@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Tests QueryExpression class
  */
-class QueryExpressionTest extends TestCase
+final class QueryExpressionTest extends TestCase
 {
     /**
      * Test setConjunction()/getConjunction() works.

@@ -28,7 +28,7 @@ use function Cake\Core\env;
 /**
  * MemcachedEngineTest class
  */
-class MemcachedEngineTest extends TestCase
+final class MemcachedEngineTest extends TestCase
 {
     use EngineEventsTrait;
 

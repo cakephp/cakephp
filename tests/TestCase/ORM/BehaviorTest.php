@@ -27,7 +27,7 @@ use TestApp\Model\Behavior\TestBehavior;
 /**
  * Behavior test case
  */
-class BehaviorTest extends TestCase
+final class BehaviorTest extends TestCase
 {
     /**
      * Test the side effects of the constructor.

@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * SocketTest class
  */
-class SocketTest extends TestCase
+final class SocketTest extends TestCase
 {
     /**
      * @var \Cake\Network\Socket

@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * FileLogTest class
  */
-class FileLogTest extends TestCase
+final class FileLogTest extends TestCase
 {
     /**
      * testLogFileWriting method

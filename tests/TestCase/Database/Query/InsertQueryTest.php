@@ -29,7 +29,7 @@ use InvalidArgumentException;
 /**
  * Tests InsertQuery class
  */
-class InsertQueryTest extends TestCase
+final class InsertQueryTest extends TestCase
 {
     use QueryAssertsTrait;
 

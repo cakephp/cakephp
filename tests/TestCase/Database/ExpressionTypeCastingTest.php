@@ -29,7 +29,7 @@ use TestApp\Database\Type\TestType;
  * Tests for Expression objects casting values to other expressions
  * using the type classes
  */
-class ExpressionTypeCastingTest extends TestCase
+final class ExpressionTypeCastingTest extends TestCase
 {
     /**
      * Setups a mock for FunctionsBuilder

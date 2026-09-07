@@ -37,7 +37,7 @@ use TestApp\Test\Fixture\LettersFixture;
 /**
  * Test case for TestFixture
  */
-class TestFixtureTest extends TestCase
+final class TestFixtureTest extends TestCase
 {
     /**
      * Fixtures for this test.

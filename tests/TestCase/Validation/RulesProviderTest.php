@@ -25,7 +25,7 @@ use TestApp\Validation\CustomProvider;
  *
  * @deprecated
  */
-class RulesProviderTest extends TestCase
+final class RulesProviderTest extends TestCase
 {
     /**
      * Tests that RulesProvider proxies the method correctly and removes the

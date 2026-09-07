@@ -27,7 +27,7 @@ use stdClass;
 /**
  * Test for the String type.
  */
-class JsonTypeTest extends TestCase
+final class JsonTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\JsonType

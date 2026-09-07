@@ -26,7 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test for the DateTimeTimezone type.
  */
-class DateTimeTimezoneTypeTest extends TestCase
+final class DateTimeTimezoneTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\DateTimeTimezoneType

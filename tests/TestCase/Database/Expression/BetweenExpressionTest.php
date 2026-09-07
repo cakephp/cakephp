@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests BetweenExpression class
  */
-class BetweenExpressionTest extends TestCase
+final class BetweenExpressionTest extends TestCase
 {
     /**
      * Tests that BETWEEN expression is generated correctly

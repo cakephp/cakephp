@@ -10,7 +10,7 @@ use Closure;
 /**
  * Tests for the Index class.
  */
-class IndexTest extends TestCase
+final class IndexTest extends TestCase
 {
     public function testSetType(): void
     {

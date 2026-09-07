@@ -21,7 +21,7 @@ use Cake\TestSuite\TestCase;
 
 require_once CAKE . 'Routing/functions_global.php';
 
-class FunctionsGlobalTest extends TestCase
+final class FunctionsGlobalTest extends TestCase
 {
     /**
      * Tests that the url() method is a shortcut Router::url()

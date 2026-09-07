@@ -27,7 +27,7 @@ use TestApp\Form\FormSchema;
 /**
  * Form test case.
  */
-class FormTest extends TestCase
+final class FormTest extends TestCase
 {
     /**
      * Test setSchema() and getSchema()

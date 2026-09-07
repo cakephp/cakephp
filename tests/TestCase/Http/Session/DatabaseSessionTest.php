@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Database session test.
  */
-class DatabaseSessionTest extends TestCase
+final class DatabaseSessionTest extends TestCase
 {
     /**
      * @var array
@@ -45,7 +45,7 @@ class DatabaseSessionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->storage = new DatabaseSession();
     }
 

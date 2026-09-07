@@ -23,12 +23,12 @@ use League\Container\Exception\NotFoundException;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\FakeTable;
 
-class TableContainerTest extends TestCase
+final class TableContainerTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     public function testTableContainer(): void

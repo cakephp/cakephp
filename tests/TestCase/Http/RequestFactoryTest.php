@@ -23,7 +23,7 @@ use Laminas\Diactoros\Uri;
 /**
  * Test case for the request factory.
  */
-class RequestFactoryTest extends TestCase
+final class RequestFactoryTest extends TestCase
 {
     public function testCreateRequest(): void
     {

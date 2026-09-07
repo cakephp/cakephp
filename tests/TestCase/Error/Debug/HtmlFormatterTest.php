@@ -30,7 +30,7 @@ use DomDocument;
 /**
  * HtmlFormatterTest
  */
-class HtmlFormatterTest extends TestCase
+final class HtmlFormatterTest extends TestCase
 {
     /**
      * Test dumping a graph that contains all possible nodes.

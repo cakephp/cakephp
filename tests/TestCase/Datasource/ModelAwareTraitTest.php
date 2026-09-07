@@ -29,7 +29,7 @@ use UnexpectedValueException;
 /**
  * ModelAwareTrait test case
  */
-class ModelAwareTraitTest extends TestCase
+final class ModelAwareTraitTest extends TestCase
 {
     protected function tearDown(): void
     {

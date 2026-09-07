@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * PaginatorHelperTest class
  */
-class PaginatorHelperTest extends TestCase
+final class PaginatorHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\View

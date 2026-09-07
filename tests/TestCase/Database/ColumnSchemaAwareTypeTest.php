@@ -10,7 +10,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Type\ColumnSchemaAwareType;
 
-class ColumnSchemaAwareTypeTest extends TestCase
+final class ColumnSchemaAwareTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Connection

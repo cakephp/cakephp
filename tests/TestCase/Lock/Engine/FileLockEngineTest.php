@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * FileLockEngineTest class
  */
-class FileLockEngineTest extends TestCase
+final class FileLockEngineTest extends TestCase
 {
     /**
      * @var \Cake\Lock\Engine\FileLockEngine

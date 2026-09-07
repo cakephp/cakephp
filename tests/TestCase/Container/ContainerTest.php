@@ -15,7 +15,7 @@ use Cake\Test\TestCase\Container\Asset\BarInterface;
 use Cake\Test\TestCase\Container\Asset\Foo;
 use PHPUnit\Framework\TestCase;
 
-class ContainerTest extends TestCase
+final class ContainerTest extends TestCase
 {
     public function testContainerAddsAndGets(): void
     {

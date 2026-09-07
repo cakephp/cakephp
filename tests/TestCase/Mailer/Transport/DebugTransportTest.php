@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case
  */
-class DebugTransportTest extends TestCase
+final class DebugTransportTest extends TestCase
 {
     /**
      * @var \Cake\Mailer\Transport\DebugTransport

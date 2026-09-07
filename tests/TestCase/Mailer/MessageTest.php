@@ -30,7 +30,7 @@ use function Cake\Core\env;
 /**
  * MessageTest class
  */
-class MessageTest extends TestCase
+final class MessageTest extends TestCase
 {
     /**
      * @var \Cake\Mailer\Message
