@@ -79,7 +79,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $commands = $this->commands->getIterator();
         if ($commands instanceof ArrayIterator) {
-            $commands->ksort();
+            $commands = iterator_to_array($commands);
+            ksort($commands);
         }
 
         // Filter by command prefix if provided
