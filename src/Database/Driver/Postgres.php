@@ -301,7 +301,7 @@ class Postgres extends Driver
             case 'CONCAT':
                 $expression->iterateParts(function ($p) {
                     if (is_array($p)) {
-                        return (new FunctionExpression('CAST', [$p['value']], array_filter([$p['type']]), 'string'))
+                        return new FunctionExpression('CAST', [$p['value']], array_filter([$p['type']]), 'string')
                             ->setConjunction(' AS')
                             ->add(['text' => 'literal']);
                     }

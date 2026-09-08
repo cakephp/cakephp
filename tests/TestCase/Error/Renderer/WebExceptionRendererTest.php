@@ -763,7 +763,7 @@ class WebExceptionRendererTest extends TestCase
             'scopes' => ['cake.error'],
         ]);
         Configure::write('debug', false);
-        $request = (new ServerRequest())
+        $request = new ServerRequest()
             ->withParam('controller', 'Foo')
             ->withParam('action', 'bar')
             ->withParam('prefix', 'CustomPrefix');

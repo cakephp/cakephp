@@ -33,12 +33,12 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @const string
      */
-    final protected const DEFAULT_SCHEMA = 'public';
+    final protected const string DEFAULT_SCHEMA = 'public';
 
     /**
      * @const string
      */
-    public const GENERATED_BY_DEFAULT = 'BY DEFAULT';
+    public const string GENERATED_BY_DEFAULT = 'BY DEFAULT';
 
     /**
      * Generate the SQL to list the tables and views.
