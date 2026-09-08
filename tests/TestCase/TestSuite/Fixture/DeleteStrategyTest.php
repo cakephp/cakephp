@@ -85,6 +85,87 @@ class DeleteStrategyTest extends TestCase
     }
 
     /**
+     * Deleting rows does not reset identity counters, so fixtures which omit their
+     * primary key get fresh ids on every cycle. This is the documented trade off of
+     * the strategy, and the reason `TruncateStrategy` stays the default.
+     */
+    public function testStrategyDoesNotResetIdentityCounters(): void
+    {
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $this->emptyTables($connection);
+
+        // The articles fixture records have no explicit ids.
+        $strategy = new DeleteStrategy();
+        $strategy->setupTest(['core.Articles']);
+        $firstIds = $this->readIds($connection, 'articles');
+        $strategy->teardownTest();
+
+        $strategy->setupTest(['core.Articles']);
+        $secondIds = $this->readIds($connection, 'articles');
+
+        $this->assertCount(3, $firstIds);
+        $this->assertCount(3, $secondIds);
+        $this->assertGreaterThan(
+            max($firstIds),
+            min($secondIds),
+            'The identity counter is expected to keep counting across setup cycles.',
+        );
+
+        // A row inserted without an id during the test continues from there rather
+        // than colliding with the fixture records.
+        $connection->insertQuery()
+            ->insert(['author_id', 'title', 'body', 'published'])
+            ->into('articles')
+            ->values(['author_id' => 1, 'title' => 'Fourth', 'body' => 'Body', 'published' => 'Y'])
+            ->execute()
+            ->closeCursor();
+
+        $ids = $this->readIds($connection, 'articles');
+        $this->assertCount(4, $ids);
+        $this->assertGreaterThan(max($secondIds), max($ids));
+
+        $strategy->teardownTest();
+        $this->assertEmpty($this->readTable($connection, 'articles'));
+    }
+
+    /**
+     * Fixtures whose records carry explicit ids are unaffected, and come back
+     * unchanged on every cycle.
+     */
+    public function testStrategyKeepsExplicitIdsStable(): void
+    {
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $this->emptyTables($connection);
+
+        $strategy = new DeleteStrategy();
+        $strategy->setupTest(['core.Products']);
+        $firstIds = $this->readIds($connection, 'products');
+        $strategy->teardownTest();
+
+        $strategy->setupTest(['core.Products']);
+        $secondIds = $this->readIds($connection, 'products');
+        $strategy->teardownTest();
+
+        $this->assertSame([1, 2, 3], $firstIds);
+        $this->assertSame($firstIds, $secondIds);
+    }
+
+    /**
+     * @param \Cake\Database\Connection $connection Test connection
+     * @param string $table Table name
+     * @return array<int>
+     */
+    protected function readIds(Connection $connection, string $table): array
+    {
+        $ids = array_map(intval(...), array_column($this->readTable($connection, $table), 'id'));
+        sort($ids);
+
+        return $ids;
+    }
+
+    /**
      * Removes the rows inserted by this test case's fixtures, children first.
      *
      * @param \Cake\Database\Connection $connection Test connection
@@ -106,7 +187,7 @@ class DeleteStrategyTest extends TestCase
     protected function readTable(Connection $connection, string $table): array
     {
         $statement = $connection->selectQuery()->select('*')->from($table)->execute();
-        $rows = $statement->fetchAll();
+        $rows = $statement->fetchAll('assoc');
         $statement->closeCursor();
 
         return $rows;
