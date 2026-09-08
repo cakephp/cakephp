@@ -34,12 +34,9 @@ namespace Cake\TestSuite\Fixture;
  * refer to by id, need that counter to start from 1 in every test and have to keep
  * using `TruncateStrategy`.
  *
- * Because `DELETE` is subject to foreign keys, the tables are emptied in the reverse of
- * the order the fixtures are inserted in. That order is not a topological sort of the
- * schema: it only separates the tables which have foreign keys from the tables which do
- * not. Whenever one of the fixture tables references another fixture table which itself
- * has foreign keys the order is abandoned and the rows are deleted with the constraints
- * disabled, exactly like `TruncateStrategy` does.
+ * Unlike `TRUNCATE`, `DELETE` is subject to foreign keys on every driver, so the rows
+ * are removed with the constraints disabled and the order of the fixtures does not
+ * matter.
  */
 class DeleteStrategy implements FixtureStrategyInterface
 {

@@ -243,20 +243,12 @@ class FixtureHelper
                 return;
             }
 
-            // Unlike truncate, delete is subject to foreign keys on every driver, so the
-            // fixtures are emptied in the reverse of the order they are inserted in.
-            // That order only covers foreign keys pointing at tables which have none of
-            // their own; sortByConstraint() gives up on anything deeper and the delete
-            // runs with the constraints disabled instead.
-            $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
-            if ($sortedFixtures !== null) {
-                $this->deleteConnection($connection, array_reverse($sortedFixtures));
-            } else {
-                ConnectionHelper::runWithoutConstraints(
-                    $connection,
-                    fn(Connection $connection) => $this->deleteConnection($connection, $groupFixtures),
-                );
-            }
+            // Unlike truncate, delete is subject to foreign keys on every driver, so
+            // the constraints are disabled rather than the fixtures ordered.
+            ConnectionHelper::runWithoutConstraints(
+                $connection,
+                fn(Connection $connection) => $this->deleteConnection($connection, $groupFixtures),
+            );
         }, $fixtures);
     }
 
@@ -289,13 +281,6 @@ class FixtureHelper
 
     /**
      * Sort fixtures with foreign constraints last if possible, otherwise returns null.
-     *
-     * This is not a topological sort. The fixtures are only split into the tables which
-     * have foreign keys and the tables which do not, which is enough to order inserts as
-     * long as every foreign key points at a table without foreign keys of its own. As
-     * soon as one constrained table references another constrained table null is returned
-     * instead, even when the dependency graph is acyclic, and callers are expected to fall
-     * back to disabling the constraints.
      *
      * @param \Cake\Database\Connection $connection Database connection
      * @param array<\Cake\Datasource\FixtureInterface> $fixtures Database fixtures
