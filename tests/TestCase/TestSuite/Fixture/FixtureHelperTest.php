@@ -42,6 +42,15 @@ class FixtureHelperTest extends TestCase
     public const SELF_REFERENCING_TABLE = 'fixture_selves';
 
     /**
+     * The primary key of those tables.
+     *
+     * Deliberately not named `id`: every dialect turns a lone integer primary key which
+     * is named `id` into an auto increment column, and sqlserver then rejects the
+     * explicit keys these fixtures carry unless IDENTITY_INSERT is switched on.
+     */
+    public const PRIMARY_KEY = 'pk';
+
+    /**
      * The chain of tables created on demand by the delete tests, parents first.
      *
      * @var array<string>
@@ -500,8 +509,8 @@ class FixtureHelperTest extends TestCase
             public string $table = FixtureHelperTest::SELF_REFERENCING_TABLE;
 
             public array $records = [
-                ['id' => 1, 'parent_id' => null],
-                ['id' => 2, 'parent_id' => 1],
+                [FixtureHelperTest::PRIMARY_KEY => 1, 'parent_id' => null],
+                [FixtureHelperTest::PRIMARY_KEY => 2, 'parent_id' => 1],
             ];
 
             public function connection(): string
@@ -529,13 +538,13 @@ class FixtureHelperTest extends TestCase
         $schemas = [];
         $parent = null;
         foreach ($this->nestedTables as $table) {
-            $columns = ['id' => ['type' => 'integer']];
+            $columns = [static::PRIMARY_KEY => ['type' => 'integer', 'null' => false]];
             if ($parent !== null) {
                 $columns['parent_id'] = ['type' => 'integer', 'null' => false];
             }
 
             $schema = new TableSchema($table, $columns);
-            $schema->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+            $schema->addConstraint('primary', ['type' => 'primary', 'columns' => [static::PRIMARY_KEY]]);
             if ($parent !== null) {
                 // No cascades: sqlserver rejects them on self references, and the
                 // point of these tables is that the rows cannot go unless the
@@ -543,7 +552,7 @@ class FixtureHelperTest extends TestCase
                 $schema->addConstraint("{$table}_parent_id_fk", [
                     'type' => 'foreign',
                     'columns' => ['parent_id'],
-                    'references' => [$parent, 'id'],
+                    'references' => [$parent, static::PRIMARY_KEY],
                     'update' => 'noAction',
                     'delete' => 'noAction',
                 ]);
@@ -555,14 +564,14 @@ class FixtureHelperTest extends TestCase
 
         // A table referencing itself, the other shape a fixture order cannot cover.
         $self = new TableSchema(static::SELF_REFERENCING_TABLE, [
-            'id' => ['type' => 'integer'],
+            static::PRIMARY_KEY => ['type' => 'integer', 'null' => false],
             'parent_id' => ['type' => 'integer', 'null' => true],
         ]);
-        $self->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
+        $self->addConstraint('primary', ['type' => 'primary', 'columns' => [static::PRIMARY_KEY]]);
         $self->addConstraint(static::SELF_REFERENCING_TABLE . '_parent_id_fk', [
             'type' => 'foreign',
             'columns' => ['parent_id'],
-            'references' => [static::SELF_REFERENCING_TABLE, 'id'],
+            'references' => [static::SELF_REFERENCING_TABLE, static::PRIMARY_KEY],
             'update' => 'noAction',
             'delete' => 'noAction',
         ]);
@@ -616,7 +625,7 @@ class FixtureHelperTest extends TestCase
         $fixtures = [];
         $parent = null;
         foreach ($this->nestedTables as $table) {
-            $record = ['id' => 1];
+            $record = [static::PRIMARY_KEY => 1];
             if ($parent !== null) {
                 $record['parent_id'] = 1;
             }
