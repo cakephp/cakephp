@@ -345,16 +345,9 @@ class FixtureHelperTest extends TestCase
             }
         };
 
-        $helper = new class extends FixtureHelper {
-            protected function sortByConstraint(Connection $connection, array $fixtures): ?array
-            {
-                return $fixtures;
-            }
-        };
-
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to delete rows from table `this_table_does_not_exist`.');
-        $helper->delete([$fixture]);
+        (new FixtureHelper())->delete([$fixture]);
     }
 
     /**
@@ -429,8 +422,7 @@ class FixtureHelperTest extends TestCase
     }
 
     /**
-     * Tests that fixture tables referencing a table without foreign keys of its own
-     * are emptied in the reverse of their insertion order, constraints left enabled.
+     * Tests that fixture tables referencing each other are emptied.
      */
     public function testDeleteFixturesWithConstraints(): void
     {
@@ -442,7 +434,7 @@ class FixtureHelperTest extends TestCase
             $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
         }
 
-        // Orders references products, which references nothing, so the fixtures sort.
+        // Orders references products, so the rows cannot go in fixture order.
         $helper = new FixtureHelper();
         $helper->delete($helper->loadFixtures(['core.Orders', 'core.Products']));
         foreach (['products', 'orders'] as $table) {
@@ -451,33 +443,7 @@ class FixtureHelperTest extends TestCase
     }
 
     /**
-     * sortByConstraint() only separates the tables which have foreign keys from the
-     * tables which do not, so a table referencing another constrained table cannot be
-     * ordered even though the graph is acyclic.
-     */
-    public function testSortByConstraintGivesUpOnNestedConstraints(): void
-    {
-        /**
-         * @var \Cake\Database\Connection $connection
-         */
-        $connection = ConnectionManager::get('test');
-        $this->createNestedTables($connection);
-
-        $helper = $this->sortingHelper();
-        $fixtures = $this->nestedFixtures();
-        $this->assertNull(
-            $helper->sortFixtures($connection, $fixtures),
-            'Nested constraints are expected to be reported as unsortable.',
-        );
-
-        // The same fixtures without the deepest table are one level only, and do sort.
-        array_pop($fixtures);
-        $this->assertNotNull($helper->sortFixtures($connection, $fixtures));
-    }
-
-    /**
-     * Tests that fixtures which cannot be sorted are deleted with the constraints
-     * disabled instead.
+     * Tests that a chain of foreign keys deeper than one level is emptied too.
      */
     public function testDeleteFixturesWithNestedConstraints(): void
     {
@@ -501,8 +467,7 @@ class FixtureHelperTest extends TestCase
     }
 
     /**
-     * A table holding a foreign key to itself cannot be sorted either, so its rows are
-     * deleted with the constraints disabled.
+     * Tests that a table holding a foreign key to itself is emptied too.
      */
     public function testDeleteFixturesWithSelfReferencingConstraint(): void
     {
@@ -527,33 +492,12 @@ class FixtureHelperTest extends TestCase
             }
         };
 
-        $this->assertNull(
-            $this->sortingHelper()->sortFixtures($connection, [$fixture]),
-            'A self referencing table is expected to be reported as unsortable.',
-        );
-
         $helper = new FixtureHelper();
         $helper->insert([$fixture]);
         $this->assertCount(2, $this->readTable($connection, $table));
 
         $helper->delete([$fixture]);
         $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
-    }
-
-    /**
-     * A helper exposing the protected sorting used to decide whether the constraints
-     * have to be disabled.
-     *
-     * @return \Cake\TestSuite\Fixture\FixtureHelper
-     */
-    protected function sortingHelper(): FixtureHelper
-    {
-        return new class extends FixtureHelper {
-            public function sortFixtures(Connection $connection, array $fixtures): ?array
-            {
-                return $this->sortByConstraint($connection, $fixtures);
-            }
-        };
     }
 
     /**
@@ -576,8 +520,8 @@ class FixtureHelperTest extends TestCase
             $schema->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
             if ($parent !== null) {
                 // No cascades: sqlserver rejects them on self references, and the
-                // point of these tables is that the rows cannot go without the
-                // constraints being disabled.
+                // point of these tables is that the rows cannot go unless the
+                // constraints are disabled.
                 $schema->addConstraint("{$table}_parent_id_fk", [
                     'type' => 'foreign',
                     'columns' => ['parent_id'],
@@ -591,7 +535,7 @@ class FixtureHelperTest extends TestCase
             $parent = $table;
         }
 
-        // A table referencing itself is reported as unsortable for the same reason.
+        // A table referencing itself, the other shape a fixture order cannot cover.
         $self = new TableSchema(static::SELF_REFERENCING_TABLE, [
             'id' => ['type' => 'integer'],
             'parent_id' => ['type' => 'integer', 'null' => true],
