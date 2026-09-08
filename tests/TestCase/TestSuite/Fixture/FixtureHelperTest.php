@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
+use Cake\Database\Query\DeleteQuery;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -76,6 +77,7 @@ class FixtureHelperTest extends TestCase
         ConnectionManager::dropAlias('test1');
         ConnectionManager::dropAlias('test2');
         ConnectionManager::drop('fake');
+        ConnectionManager::drop('failing');
         $this->dropNestedTables();
     }
 
@@ -329,15 +331,31 @@ class FixtureHelperTest extends TestCase
 
     /**
      * Tests handling PDO errors when deleting rows.
+     *
+     * The error is raised by the connection rather than by deleting from a table which
+     * does not exist, the way the insert and truncate tests above raise theirs from the
+     * fixture. Postgres can only defer constraints inside a transaction, and a statement
+     * failing there aborts it, so restoring the constraints afterwards would fail too and
+     * mask the error this is about.
      */
     public function testDeleteFixturesException(): void
     {
+        ConnectionManager::setConfig('failing', new class (ConnectionManager::get('test')->config()) extends Connection {
+            public function deleteQuery(
+                ?string $table = null,
+                array $conditions = [],
+                array $types = [],
+            ): DeleteQuery {
+                throw new PDOException('Missing key');
+            }
+        });
+
         $fixture = new class extends TestFixture {
-            public string $table = 'this_table_does_not_exist';
+            public string $table = 'articles';
 
             public function connection(): string
             {
-                return 'test';
+                return 'failing';
             }
 
             protected function _schemaFromReflection(): void
@@ -346,7 +364,7 @@ class FixtureHelperTest extends TestCase
         };
 
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Unable to delete rows from table `this_table_does_not_exist`.');
+        $this->expectExceptionMessage('Unable to delete rows from table `articles`.');
         (new FixtureHelper())->delete([$fixture]);
     }
 
