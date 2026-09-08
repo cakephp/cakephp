@@ -307,7 +307,7 @@ class RedisEngineTest extends TestCase
             )
             ->andReturn(true);
 
-        $Redis->shouldReceive('_createRedisInstance')
+        $Redis->shouldReceive('createRedisInstance')
             ->once()
             ->andReturn($phpredis);
 
@@ -460,7 +460,7 @@ class RedisEngineTest extends TestCase
             )
             ->andReturn(true);
 
-        $Redis->shouldReceive('_createRedisInstance')
+        $Redis->shouldReceive('createRedisInstance')
             ->once()
             ->andReturn($phpredis);
 
