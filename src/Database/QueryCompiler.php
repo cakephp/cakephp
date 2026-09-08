@@ -483,7 +483,7 @@ class QueryCompiler
     /**
      * Builds the optimizer hint comment part.
      *
-     * @param list<string> $parts The optmizer hints
+     * @param list<string> $parts The optimizer hints
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string Optimizer hint comment
@@ -515,7 +515,7 @@ class QueryCompiler
     }
 
     /**
-     * Helper function used to covert ExpressionInterface objects inside an array
+     * Helper function used to convert ExpressionInterface objects inside an array
      * into their string representation.
      *
      * @param array $expressions list of strings and ExpressionInterface objects

@@ -35,7 +35,7 @@
     "provide": {
         "psr/log-implementation": "^3.0"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

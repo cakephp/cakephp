@@ -43,7 +43,7 @@
         "cakephp/cache": "To use Configure::store() and restore().",
         "league/container": "To use Container and ServiceProvider classes"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

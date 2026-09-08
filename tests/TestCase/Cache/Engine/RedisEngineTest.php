@@ -293,8 +293,42 @@ class RedisEngineTest extends TestCase
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
 
+        $phpredis->shouldReceive('select')
+            ->once()
+            ->with((int)$Redis->getConfig('database'))
+            ->andReturn(true);
+
+        $phpredis->shouldReceive('connect')
+            ->once()
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->andReturn(true);
+
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'ssl_ca' => $cafile, // Will not be used since TLS is not true
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    public function testConnectTransientContextWithTLS(): void
+    {
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
         $context = [
-            'ssl' => [
+            'stream' => [
                 'cafile' => $cafile,
             ],
         ];
@@ -307,7 +341,7 @@ class RedisEngineTest extends TestCase
         $phpredis->shouldReceive('connect')
             ->once()
             ->with(
-                $Redis->getConfig('server'),
+                'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 null,
@@ -325,8 +359,8 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
             'persistent' => false,
             'ssl_ca' => $cafile,
+            'tls' => true,
         ];
-
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
 
@@ -411,8 +445,45 @@ class RedisEngineTest extends TestCase
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
 
+        $phpredis->shouldReceive('select')
+            ->once()
+            ->with((int)$Redis->getConfig('database'))
+            ->andReturn(true);
+
+        $phpredis->shouldReceive('pconnect')
+            ->once()
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+            )
+            ->andReturn(true);
+
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => true,
+            'ssl_ca' => $cafile, // Will not be used since TLS is not true
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    public function testConnectPersistentContextWithTLS(): void
+    {
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
         $context = [
-            'ssl' => [
+            'stream' => [
                 'cafile' => $cafile,
             ],
         ];
@@ -425,7 +496,7 @@ class RedisEngineTest extends TestCase
         $phpredis->shouldReceive('pconnect')
             ->once()
             ->with(
-                $Redis->getConfig('server'),
+                'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 $expectedPersistentId,
@@ -443,6 +514,7 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
             'persistent' => true,
             'ssl_ca' => $cafile,
+            'tls' => true,
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }

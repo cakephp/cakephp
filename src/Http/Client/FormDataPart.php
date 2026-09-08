@@ -223,7 +223,7 @@ class FormDataPart implements Stringable
      */
     protected function _headerParameterToString(string $name, string $value): string
     {
-        $transliterated = Text::transliterate(str_replace('"', '', $value));
+        $transliterated = Text::transliterate(str_replace(['"', "\r", "\n"], '', $value));
         $return = sprintf('%s="%s"', $name, $transliterated);
         if ($this->charset !== null && $value !== $transliterated) {
             $return .= sprintf("; %s*=%s''%s", $name, strtolower($this->charset), rawurlencode($value));
