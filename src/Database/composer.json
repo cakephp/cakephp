@@ -46,7 +46,7 @@
         "cakephp/log": "If you want to use query logging without providing a logger yourself.",
         "cakephp/utility": "If you want to use EnumLabelTrait."
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

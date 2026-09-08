@@ -241,11 +241,23 @@ class RedisEngine extends CacheEngine
             'ssl_ca' => 'cafile',
             'ssl_key' => 'local_pk',
             'ssl_cert' => 'local_cert',
+            'verify_peer' => 'verify_peer',
+            'verify_peer_name' => 'verify_peer_name',
+            'allow_self_signed' => 'allow_self_signed',
         ];
 
         $ssl = [];
-        foreach ($map as $key => $context) {
-            if (!empty($this->config[$key])) {
+        if ($tls !== '') {
+            foreach ($map as $key => $context) {
+                if (!array_key_exists($key, $this->config)) {
+                    continue;
+                }
+
+                $value = $this->config[$key];
+                if ($value === null || $value === '') {
+                    continue;
+                }
+
                 $ssl[$context] = $this->config[$key];
             }
         }
@@ -302,7 +314,7 @@ class RedisEngine extends CacheEngine
             null,
             0,
             0.0,
-            ['ssl' => $ssl],
+            ['stream' => $ssl],
         );
     }
 
@@ -334,7 +346,7 @@ class RedisEngine extends CacheEngine
             $persistentId,
             0,
             0.0,
-            ['ssl' => $ssl],
+            ['stream' => $ssl],
         );
     }
 

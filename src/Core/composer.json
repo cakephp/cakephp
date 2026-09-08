@@ -42,7 +42,7 @@
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
         "cakephp/cache": "To use Configure::store() and restore()."
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {

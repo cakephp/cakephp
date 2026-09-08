@@ -395,6 +395,7 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'a title',
+                'charset' => null,
                 'collate' => null,
             ],
             'body' => [
@@ -404,6 +405,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'author_id' => [
@@ -660,6 +662,7 @@ SQL;
                 'length' => 50,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'bio' => [

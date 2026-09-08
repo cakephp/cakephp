@@ -395,6 +395,7 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'body' => [
@@ -404,6 +405,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'author_id' => [
@@ -449,6 +451,7 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'field2' => [
@@ -458,6 +461,7 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'location' => [
@@ -497,6 +501,7 @@ SQL;
                 'length' => null,
                 'null' => true,
                 'default' => null,
+                'charset' => null,
                 'collate' => null,
                 'precision' => null,
                 'comment' => null,

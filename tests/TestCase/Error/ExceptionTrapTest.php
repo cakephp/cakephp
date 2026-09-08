@@ -258,8 +258,7 @@ class ExceptionTrapTest extends TestCase
         ob_get_clean();
 
         $logs = Log::engine('test_error')->read();
-        $this->assertCount(1, $logs);
-        $this->assertStringContainsString('MissingTemplateException - Failed to render', $logs[0]);
+        $this->assertSame([], $logs);
         $this->assertTrue($this->triggered, 'Should have triggered event when skipping logging.');
     }
 

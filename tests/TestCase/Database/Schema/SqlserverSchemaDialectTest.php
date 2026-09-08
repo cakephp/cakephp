@@ -305,6 +305,7 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'Japanese_Unicode_CI_AI',
             ],
             'body' => [
@@ -314,6 +315,7 @@ SQL;
                 'length' => 1000,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'author_id' => [
@@ -408,6 +410,7 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'field2' => [
@@ -417,6 +420,7 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'field3' => [
@@ -426,6 +430,7 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
         ];

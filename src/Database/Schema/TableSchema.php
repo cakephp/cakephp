@@ -206,15 +206,19 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     protected static array $columnExtras = [
         'string' => [
+            'charset' => null,
             'collate' => null,
         ],
         'char' => [
+            'charset' => null,
             'collate' => null,
         ],
         'text' => [
+            'charset' => null,
             'collate' => null,
         ],
         'uuid' => [
+            'charset' => null,
             'collate' => null,
         ],
         'tinyinteger' => [

@@ -413,7 +413,7 @@ abstract class Driver implements LoggerAwareInterface
     }
 
     /**
-     * Returns the decorators to be applied to the result set incase of a SelectQuery.
+     * Returns the decorators to be applied to the result set in case of a SelectQuery.
      *
      * @param \Cake\Database\Query|string $query The query to be decorated.
      * @return array<\Closure>

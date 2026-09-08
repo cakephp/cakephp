@@ -209,6 +209,30 @@ class FormDataTest extends TestCase
             '',
         ];
         $this->assertSame(implode("\r\n", $expected), $result);
+
+        $file = new UploadedFile(
+            CORE_PATH . 'VERSION.txt',
+            filesize(CORE_PATH . 'VERSION.txt'),
+            0,
+            "VERSION.txt\r\nRCPT TO:test@example.com",
+            'text/plain',
+        );
+
+        $data = new FormData();
+        $data->add("upload\r\nSEND TO:foo@example.com", $file);
+        $boundary = $data->boundary();
+        $result = (string)$data;
+
+        $expected = [
+            '--' . $boundary,
+            'Content-Disposition: form-data; name="uploadSEND TO:foo@example.com"; filename="VERSION.txtRCPT TO:test@example.com"',
+            'Content-Type: text/plain',
+            '',
+            (string)$file->getStream(),
+            '--' . $boundary . '--',
+            '',
+        ];
+        $this->assertSame(implode("\r\n", $expected), $result);
     }
 
     /**

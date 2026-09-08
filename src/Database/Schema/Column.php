@@ -49,6 +49,7 @@ class Column
      * @param string|null $geometryType Geometry type for geometry fields (e.g., Point, Polygon)
      * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
      * @param bool|null $fixed Whether the column is fixed-length (BINARY vs VARBINARY)
+     * @param string|null $charset Character set for the column
      */
     public function __construct(
         protected string $name,
@@ -69,6 +70,7 @@ class Column
         protected ?string $geometryType = null,
         protected ?string $baseType = null,
         protected ?bool $fixed = null,
+        protected ?string $charset = null,
     ) {
     }
 
@@ -102,6 +104,7 @@ class Column
         $this->geometryType ??= null;
         $this->baseType ??= null;
         $this->fixed ??= null;
+        $this->charset ??= null;
     }
 
     /**
@@ -517,6 +520,29 @@ class Column
     }
 
     /**
+     * Sets the column character set.
+     *
+     * @param string $charset Character set
+     * @return $this
+     */
+    public function setCharset(string $charset)
+    {
+        $this->charset = $charset;
+
+        return $this;
+    }
+
+    /**
+     * Gets the column character set.
+     *
+     * @return string|null
+     */
+    public function getCharset(): ?string
+    {
+        return $this->charset;
+    }
+
+    /**
      * Sets the column SRID for geometry fields.
      *
      * @param int $srid SRID
@@ -617,6 +643,7 @@ class Column
             'unsigned',
             'type',
             'properties',
+            'charset',
             'collate',
             'srid',
             'geometryType',
@@ -655,7 +682,7 @@ class Column
     /**
      * Convert an index into an array that is compatible with the Column constructor.
      *
-     * @return array{name: ?string, baseType: ?string, type: string, length: ?int, null: ?bool, default: mixed, generated: ?string, unsigned: ?bool, onUpdate: ?string, collate: ?string, precision: ?int, srid: ?int, comment: ?string, autoIncrement: bool, identity: bool, fixed: ?bool, geometryType?: ?string}
+     * @return array{name: ?string, baseType: ?string, type: string, length: ?int, null: ?bool, default: mixed, generated: ?string, unsigned: ?bool, onUpdate: ?string, charset: ?string, collate: ?string, precision: ?int, srid: ?int, comment: ?string, autoIncrement: bool, identity: bool, fixed: ?bool, geometryType?: ?string}
      */
     public function toArray(): array
     {
@@ -680,6 +707,7 @@ class Column
             'generated' => $this->getGenerated(),
             'unsigned' => $this->getUnsigned(),
             'onUpdate' => $this->getOnUpdate(),
+            'charset' => $this->getCharset(),
             'collate' => $this->getCollate(),
             'precision' => $precision,
             'srid' => $this->getSrid(),

@@ -574,7 +574,7 @@ abstract class Association
             && in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)
         ) {
             $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
+                ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
             triggerWarning(
                 sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
             );

@@ -377,6 +377,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      */
     protected function outputMessage(string $template, bool $skipControllerCheck = false): Response
     {
+        $isOptionalTemplate = false;
         try {
             $method = $this->method ?: $this->method($this->error);
 
@@ -392,17 +393,23 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                     $this->controller->render();
                 }
             } else {
+                $isOptionalTemplate = $template === $method &&
+                    !in_array($template, ['error400', 'error500'], true);
                 $this->controller->render($template);
             }
 
             return $this->shutdown();
         } catch (MissingTemplateException $e) {
-            Log::warning(
-                "MissingTemplateException - Failed to render error template `{$template}` . Error: {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
-                'cake.error',
-            );
             $attributes = $e->getAttributes();
+            $isOptionalTemplateMissing = $isOptionalTemplate &&
+                str_contains($attributes['file'], Inflector::underscore($template));
+            if (!$isOptionalTemplateMissing) {
+                Log::warning(
+                    "MissingTemplateException - Failed to render error template `{$template}` . Error: {$e->getMessage()}" .
+                        "\nStack Trace\n: {$e->getTraceAsString()}",
+                    'cake.error',
+                );
+            }
             if (
                 $e instanceof MissingLayoutException ||
                 str_contains($attributes['file'], 'error500')

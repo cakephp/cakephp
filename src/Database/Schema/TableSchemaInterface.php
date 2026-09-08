@@ -231,7 +231,7 @@ interface TableSchemaInterface extends SchemaInterface
     public const string TYPE_LINESTRING = 'linestring';
 
     /**
-     * Polgon column type
+     * Polygon column type
      *
      * @var string
      */

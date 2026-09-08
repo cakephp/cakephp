@@ -38,7 +38,7 @@
     "suggest": {
         "cakephp/i18n": "If you want to use Validation::localizedTime()"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
