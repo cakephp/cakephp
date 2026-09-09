@@ -262,18 +262,25 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testGetTimestamp(): void
     {
-        $table = $this->getTableInstance();
-        $behavior = new TimestampBehavior($table);
+        $previousTestNow = DateTime::getTestNow();
+        $now = new DateTime('2026-01-01 12:00:00');
+        DateTime::setTestNow($now);
 
-        $return = $behavior->timestamp();
-        $this->assertInstanceOf(
-            DateTime::class,
-            $return,
-            'Should return a timestamp object',
-        );
+        try {
+            $table = $this->getTableInstance();
+            $behavior = new TimestampBehavior($table);
 
-        // Compare timestamps within tolerance to avoid flaky tests during slow CI runs
-        $this->assertEqualsWithDelta(time(), $return->getTimestamp(), 120);
+            $return = $behavior->timestamp();
+            $this->assertInstanceOf(
+                DateTime::class,
+                $return,
+                'Should return a timestamp object',
+            );
+
+            $this->assertSame($now->getTimestamp(), $return->getTimestamp());
+        } finally {
+            DateTime::setTestNow($previousTestNow);
+        }
     }
 
     /**
