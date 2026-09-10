@@ -123,7 +123,7 @@ class PostgresSchemaDialect extends SchemaDialect
                 f_{$postgisType}_column AS name,
                 type,
                 srid
-            FROM {$postgisType}_columns
+            FROM {$schema}.{$postgisType}_columns
             WHERE f_table_name = ? AND f_table_schema = ? AND f_table_catalog = ?
             SQL;
 
