@@ -237,4 +237,22 @@ class StaticConfigTraitTest extends TestCase
         ];
         $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
     }
+
+    /**
+     * Tests parsing DSN with URL-encoded credentials
+     */
+    public function testParseDsnEncodedCredentials(): void
+    {
+        $dsn = 'mysql://us%3Aer:p%40ss%2Fword@localhost:3306/my%20db';
+        $expected = [
+            'className' => 'mysql',
+            'host' => 'localhost',
+            'password' => 'p@ss/word',
+            'path' => '/my%20db',
+            'port' => 3306,
+            'scheme' => 'mysql',
+            'username' => 'us:er',
+        ];
+        $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
+    }
 }
