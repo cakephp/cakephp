@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FieldInterface;
@@ -484,8 +485,18 @@ class SelectLoader
             }
         }
 
-        $fields = $this->_subqueryFields($query);
-        $filterQuery->select($fields['select'], true)->groupBy($fields['group']);
+        $driver = $filterQuery->getDriver();
+        $useDistinct = !$filterQuery->clause('group')
+            && $driver instanceof Mysql
+            && $driver->isMariadb();
+        $fields = $this->_subqueryFields($query, $useDistinct);
+        $filterQuery->select($fields['select'], true);
+        if ($useDistinct) {
+            // DISTINCT deduplicates joined rows without triggering MariaDB's lateral GROUP BY optimization.
+            $filterQuery->distinct();
+        } else {
+            $filterQuery->groupBy($fields['group']);
+        }
 
         return $filterQuery;
     }
@@ -502,9 +513,10 @@ class SelectLoader
      * dropped from the reduced subquery SELECT list.
      *
      * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to get fields from.
+     * @param bool $includeOrderFields Whether ordered fields should be included in the SELECT list.
      * @return array<string, array> The list of fields for the subquery.
      */
-    protected function _subqueryFields(SelectQuery $query): array
+    protected function _subqueryFields(SelectQuery $query, bool $includeOrderFields = false): array
     {
         $keys = (array)$this->bindingKey;
 
@@ -525,7 +537,15 @@ class SelectLoader
             // iterateParts() rebuilds the expression from the callback's return value, so each part
             // has to be handed back. Returning nothing would strip the ORDER BY from $query itself,
             // which is the caller's query, not a clone of it.
-            $order->iterateParts(function ($direction, $field) use (&$fields, &$group, $columns) {
+            $order->iterateParts(function (
+                $direction,
+                $field,
+            ) use (
+                &$fields,
+                &$group,
+                $columns,
+                $includeOrderFields,
+            ) {
                 // A numeric key carries its own column and must not be read as a SELECT offset.
                 if (is_string($field) && isset($columns[$field])) {
                     $column = $columns[$field];
@@ -537,6 +557,16 @@ class SelectLoader
                 // Constant values such as `select(['score' => 100])` are not columns.
                 if (!is_string($column) && !$column instanceof ExpressionInterface) {
                     return $direction;
+                }
+
+                $selectColumn = $column;
+                // Auto-quoting may have already converted the order field to SQL. Keep that form
+                // as an expression so aliasFields() does not quote it a second time.
+                if (is_string($column) && $column !== '' && str_contains('`"[', $column[0])) {
+                    $selectColumn = new QueryExpression($column);
+                }
+                if ($includeOrderFields && !in_array($selectColumn, $fields, true)) {
+                    $fields[] = $selectColumn;
                 }
 
                 if (!$this->isAggregate($column) && !in_array($column, $group, true)) {
