@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
-use Cake\Database\Driver\Mysql;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FieldInterface;
@@ -24,7 +24,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
-use Cake\Database\PostgresCompiler;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
 use Cake\ORM\Query\SelectQuery;
@@ -364,7 +363,7 @@ class SelectLoader
         if (
             $selectAlias !== null &&
             !$driver->isAutoQuotingEnabled() &&
-            $driver->newCompiler() instanceof PostgresCompiler
+            $driver->supports(DriverFeatureEnum::CASE_SENSITIVE_QUOTED_IDENTIFIERS)
         ) {
             $identifier = $aliasedTable . '.' . $driver->quoteIdentifier($selectAlias);
         }
@@ -486,9 +485,7 @@ class SelectLoader
         }
 
         $driver = $filterQuery->getDriver();
-        $useDistinct = !$filterQuery->clause('group')
-            && $driver instanceof Mysql
-            && $driver->isMariadb();
+        $useDistinct = !$filterQuery->clause('group') && $driver->supports(DriverFeatureEnum::SUBQUERY_FILTER_DISTINCT);
         $fields = $this->_subqueryFields($query, $useDistinct);
         $filterQuery->select($fields['select'], true);
         if ($useDistinct) {
