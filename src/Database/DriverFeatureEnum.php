@@ -92,4 +92,18 @@ enum DriverFeatureEnum: string
      * String aggregation via GROUP_CONCAT support.
      */
     case GROUP_CONCAT = 'group-concat';
+
+    /**
+     * Whether or not the driver uses case sensitive quoted identifiers
+     *
+     * Postgres driver requires uses this.
+     */
+    case CASE_SENSITIVE_QUOTED_IDENTIFIERS = 'case-sensitive-quoted-identifier';
+
+    /**
+     * Whether the driver requires DISTINCT on grouped filtering sub-queries
+     *
+     * Mysql + MariaDB use this.
+     */
+    case SUBQUERY_FILTER_DISTINCT = 'subquery-fitler-distinct';
 }
