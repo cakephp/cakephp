@@ -31,7 +31,7 @@ use TestPlugin\Model\Table\CommentsTable;
 /**
  * Tests Association class
  */
-class AssociationTest extends TestCase
+final class AssociationTest extends TestCase
 {
     /**
      * @var \TestApp\Model\Table\TestTable

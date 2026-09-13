@@ -27,7 +27,7 @@ use Exception;
 /**
  * FlashComponentTest class
  */
-class FlashComponentTest extends TestCase
+final class FlashComponentTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Component\FlashComponent
@@ -50,7 +50,7 @@ class FlashComponentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->Controller = new Controller(new ServerRequest(['session' => new Session()]));
         $ComponentRegistry = new ComponentRegistry($this->Controller);
         $this->Flash = new FlashComponent($ComponentRegistry);

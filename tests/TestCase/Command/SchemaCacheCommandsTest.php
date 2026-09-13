@@ -27,7 +27,7 @@ use Mockery;
 /**
  * SchemaCacheCommands test.
  */
-class SchemaCacheCommandsTest extends TestCase
+final class SchemaCacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

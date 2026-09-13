@@ -24,7 +24,7 @@ use Cake\Database\ValueBinder;
 /**
  * Tests FunctionExpression class
  */
-class AggregateExpressionTest extends FunctionExpressionTest
+final class AggregateExpressionTest extends FunctionExpressionTest
 {
     /**
      * @var string The expression class to test with

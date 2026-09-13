@@ -17,7 +17,7 @@ use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 
-class ArgumentResolverTest extends TestCase
+final class ArgumentResolverTest extends TestCase
 {
     public function testResolverResolvesFromContainer(): void
     {

@@ -23,7 +23,7 @@ use Exception;
 /**
  * IcuFormatter tests
  */
-class IcuFormatterTest extends TestCase
+final class IcuFormatterTest extends TestCase
 {
     /**
      * Tests that empty values can be used as formatting strings

@@ -26,7 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * DateTimeWidget test case
  */
-class DateTimeWidgetTest extends TestCase
+final class DateTimeWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

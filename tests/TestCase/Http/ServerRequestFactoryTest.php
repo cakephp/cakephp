@@ -31,7 +31,7 @@ use Psr\Http\Message\UploadedFileInterface;
 /**
  * Test case for the server factory.
  */
-class ServerRequestFactoryTest extends TestCase
+final class ServerRequestFactoryTest extends TestCase
 {
     /**
      * Test fromGlobals reads super globals

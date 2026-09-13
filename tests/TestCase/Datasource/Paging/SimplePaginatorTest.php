@@ -21,7 +21,7 @@ use Cake\Datasource\Paging\SimplePaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Entity;
 
-class SimplePaginatorTest extends NumericPaginatorTest
+final class SimplePaginatorTest extends NumericPaginatorTest
 {
     protected function setUp(): void
     {

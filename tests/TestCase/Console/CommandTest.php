@@ -43,7 +43,7 @@ use TestApp\Command\NonInteractiveCommand;
 /**
  * Test case for Console\Command
  */
-class CommandTest extends TestCase
+final class CommandTest extends TestCase
 {
     /**
      * test orm locator is setup

@@ -41,7 +41,7 @@ require_once __DIR__ . '/stubs.php';
 /**
  * Test Case for Validation Class
  */
-class ValidationTest extends TestCase
+final class ValidationTest extends TestCase
 {
     /**
      * tearDown method

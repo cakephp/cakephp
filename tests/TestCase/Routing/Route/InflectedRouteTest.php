@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for InflectedRoute
  */
-class InflectedRouteTest extends TestCase
+final class InflectedRouteTest extends TestCase
 {
     /**
      * test that routes match their pattern.

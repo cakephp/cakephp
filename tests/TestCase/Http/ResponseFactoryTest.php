@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for the response factory.
  */
-class ResponseFactoryTest extends TestCase
+final class ResponseFactoryTest extends TestCase
 {
     public function testCreateResponse(): void
     {

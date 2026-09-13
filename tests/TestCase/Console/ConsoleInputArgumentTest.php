@@ -25,7 +25,7 @@ use SimpleXMLElement;
 /**
  * ConsoleInputArgumentTest
  */
-class ConsoleInputArgumentTest extends TestCase
+final class ConsoleInputArgumentTest extends TestCase
 {
     public static function dataProperties(): array
     {

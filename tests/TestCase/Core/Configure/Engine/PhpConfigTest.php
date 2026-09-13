@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * PhpConfigTest
  */
-class PhpConfigTest extends TestCase
+final class PhpConfigTest extends TestCase
 {
     /**
      * @var string

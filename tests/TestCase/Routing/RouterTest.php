@@ -37,7 +37,7 @@ use function Cake\Routing\urlArray;
 /**
  * RouterTest class
  */
-class RouterTest extends TestCase
+final class RouterTest extends TestCase
 {
     /**
      * setUp method
@@ -3269,7 +3269,7 @@ class RouterTest extends TestCase
         $this->assertSame('/FooBar', $result);
 
         // This is needed because tests/bootstrap.php sets App.namespace to 'App'
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         Router::defaultRouteClass('DashedRoute');
         $routes = Router::createRouteBuilder('/');

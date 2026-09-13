@@ -30,7 +30,7 @@ use TestApp\Routing\Route\ProtectedRoute;
 /**
  * Test case for Route
  */
-class RouteTest extends TestCase
+final class RouteTest extends TestCase
 {
     /**
      * setUp method

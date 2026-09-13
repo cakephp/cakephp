@@ -25,7 +25,7 @@ use PDOException;
 /**
  * Tests QueryException class
  */
-class QueryExceptionTest extends TestCase
+final class QueryExceptionTest extends TestCase
 {
     /**
      * Test exception with string query

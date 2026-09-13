@@ -34,7 +34,7 @@ use TestApp\View\TestViewWithDefaultConfig;
 /**
  * View builder test case.
  */
-class ViewBuilderTest extends TestCase
+final class ViewBuilderTest extends TestCase
 {
     public function testSetVar(): void
     {
@@ -254,7 +254,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildAppViewMissing(): void
     {
-        static::setAppNamespace('Nope');
+        self::setAppNamespace('Nope');
         $builder = new ViewBuilder();
         $view = $builder->build();
         $this->assertInstanceOf(View::class, $view);
@@ -265,7 +265,7 @@ class ViewBuilderTest extends TestCase
      */
     public function testBuildAppViewPresent(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $builder = new ViewBuilder();
         $view = $builder->build();
         $this->assertInstanceOf(AppView::class, $view);

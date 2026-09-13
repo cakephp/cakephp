@@ -36,7 +36,7 @@ use TestApp\Service\TestService;
 use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
 
-class ComponentRegistryTest extends TestCase
+final class ComponentRegistryTest extends TestCase
 {
     /**
      * @var \Cake\Controller\ComponentRegistry
