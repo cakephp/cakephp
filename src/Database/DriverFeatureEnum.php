@@ -101,9 +101,9 @@ enum DriverFeatureEnum: string
     case CASE_SENSITIVE_QUOTED_IDENTIFIERS = 'case-sensitive-quoted-identifier';
 
     /**
-     * Whether the driver requires DISTINCT on grouped filtering sub-queries
+     * Whether the driver requires DISTINCT instead of GROUP BY in filtering sub-queries
      *
-     * Mysql + MariaDB use this.
+     * MariaDB needs this to work around an optimization flaw.
      */
-    case SUBQUERY_FILTER_DISTINCT = 'subquery-fitler-distinct';
+    case SUBQUERY_FILTER_DISTINCT = 'subquery-filter-distinct';
 }
