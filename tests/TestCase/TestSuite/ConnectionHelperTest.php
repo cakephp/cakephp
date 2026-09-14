@@ -16,10 +16,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\TestCase;
+use Closure;
 use TestApp\Database\Driver\TestDriver;
 
 class ConnectionHelperTest extends TestCase
@@ -97,5 +100,65 @@ class ConnectionHelperTest extends TestCase
 
         ConnectionHelper::enableQueryLogging(['query_logging']);
         $this->assertTrue($connection->getDriver()->log(''));
+    }
+
+    /**
+     * Drivers like Postgres don't allow disabling constraints outside of a
+     * transaction, so runWithoutConstraints() must wrap the call in one.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19474
+     */
+    public function testRunWithoutConstraintsWrapsInTransactionWhenDriverRequiresIt(): void
+    {
+        $driver = $this->createMock(Driver::class);
+        $driver->method('supports')
+            ->with(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)
+            ->willReturn(false);
+
+        $connection = $this->getMockBuilder(Connection::class)
+            ->onlyMethods(['getWriteDriver', 'transactional', 'disableConstraints'])
+            ->setConstructorArgs([['driver' => TestDriver::class]])
+            ->getMock();
+        $connection->method('getWriteDriver')->willReturn($driver);
+
+        $connection->expects($this->once())
+            ->method('transactional')
+            ->willReturnCallback(fn(Closure $callback) => $callback($connection));
+        $connection->expects($this->once())
+            ->method('disableConstraints')
+            ->willReturnCallback(fn(Closure $callback) => $callback($connection));
+
+        $called = false;
+        ConnectionHelper::runWithoutConstraints($connection, function () use (&$called): void {
+            $called = true;
+        });
+
+        $this->assertTrue($called, 'Callback should still be invoked.');
+    }
+
+    public function testRunWithoutConstraintsSkipsTransactionWhenDriverSupportsIt(): void
+    {
+        $driver = $this->createMock(Driver::class);
+        $driver->method('supports')
+            ->with(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)
+            ->willReturn(true);
+
+        $connection = $this->getMockBuilder(Connection::class)
+            ->onlyMethods(['getWriteDriver', 'transactional', 'disableConstraints'])
+            ->setConstructorArgs([['driver' => TestDriver::class]])
+            ->getMock();
+        $connection->method('getWriteDriver')->willReturn($driver);
+
+        $connection->expects($this->never())->method('transactional');
+        $connection->expects($this->once())
+            ->method('disableConstraints')
+            ->willReturnCallback(fn(Closure $callback) => $callback($connection));
+
+        $called = false;
+        ConnectionHelper::runWithoutConstraints($connection, function () use (&$called): void {
+            $called = true;
+        });
+
+        $this->assertTrue($called, 'Callback should still be invoked.');
     }
 }

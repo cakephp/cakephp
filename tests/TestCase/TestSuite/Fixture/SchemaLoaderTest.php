@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
@@ -24,6 +25,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 
 class SchemaLoaderTest extends TestCase
@@ -123,6 +125,51 @@ class SchemaLoaderTest extends TestCase
         $statement = $connection->execute('SELECT * FROM schema_loader_second');
         $result = $statement->fetchAll();
         $this->assertCount(0, $result, 'Table should be empty.');
+    }
+
+    /**
+     * loadInternalFile() must disable constraints via
+     * ConnectionHelper::runWithoutConstraints() rather than calling
+     * Connection::disableConstraints() directly, so that drivers requiring
+     * a transaction wrapper (e.g. Postgres) don't emit a warning.
+     *
+     * Simulates such a driver by overriding supports() to report
+     * DISABLE_CONSTRAINT_WITHOUT_TRANSACTION as false, then asserts
+     * Connection::transactional() is used to wrap the constraint disabling.
+     * Prior to the fix, SchemaLoader called disableConstraints() directly
+     * and transactional() would never have been invoked.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19474
+     */
+    public function testLoadInternalFileWrapsConstraintDisablingInTransactionForDriversThatRequireIt(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        $driver = new class (['database' => $this->truncateDbFile]) extends Sqlite {
+            public function supports(DriverFeatureEnum $feature): bool
+            {
+                if ($feature === DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION) {
+                    return false;
+                }
+
+                return parent::supports($feature);
+            }
+        };
+
+        $connection = $this->getMockBuilder(Connection::class)
+            ->onlyMethods(['transactional'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+        $connection->expects($this->once())
+            ->method('transactional')
+            ->willReturnCallback(fn(Closure $callback) => $callback($connection));
+
+        ConnectionManager::setConfig('test_schema_loader', $connection);
+
+        $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
+
+        $tables = $connection->getSchemaCollection()->listTables();
+        $this->assertContains('schema_generator', $tables);
     }
 
     public function testLoadInternalFiles(): void
