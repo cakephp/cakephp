@@ -43,7 +43,7 @@
   </file>
   <file src="src/Datasource/EntityTrait.php">
     <UnsupportedPropertyReferenceUsage>
-      <code><![CDATA[$value = &$this->fields[$field]]]></code>
+      <code><![CDATA[$value = &$this->dynamicFields[$field]]]></code>
     </UnsupportedPropertyReferenceUsage>
   </file>
   <file src="src/ORM/Query/SelectQuery.php">

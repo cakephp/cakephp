@@ -66,11 +66,18 @@ class Entity implements EntityInterface, InvalidPropertyInterface
         }
 
         if ($properties) {
-            //Remember the original field names here.
-            $this->setOriginalField(array_keys($properties));
+            if ($options['markClean'] && !$options['useSetters'] && !$options['guard']) {
+                $this->setOriginalField(array_keys($properties));
 
-            if ($options['markClean'] && !$options['useSetters']) {
-                $this->fields = $properties;
+                foreach ($properties as $field => $value) {
+                    $rp = static::getReflectionProperty($field);
+                    if ($rp) {
+                        $rp->setRawValue($this, $value);
+                        $this->assignedProps[$field] = true;
+                    } else {
+                        $this->dynamicFields[$field] = $value;
+                    }
+                }
 
                 return;
             }
