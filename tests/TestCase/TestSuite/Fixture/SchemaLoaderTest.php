@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\CheckConstraint;
@@ -27,6 +28,8 @@ use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
 use Closure;
 use InvalidArgumentException;
+use Psr\Log\AbstractLogger;
+use Stringable;
 
 class SchemaLoaderTest extends TestCase
 {
@@ -133,43 +136,73 @@ class SchemaLoaderTest extends TestCase
      * Connection::disableConstraints() directly, so that drivers requiring
      * a transaction wrapper (e.g. Postgres) don't emit a warning.
      *
-     * Simulates such a driver by overriding supports() to report
-     * DISABLE_CONSTRAINT_WITHOUT_TRANSACTION as false, then asserts
-     * Connection::transactional() is used to wrap the constraint disabling.
-     * Prior to the fix, SchemaLoader called disableConstraints() directly
-     * and transactional() would never have been invoked.
+     * Runs against the real `test` connection so that this is only
+     * meaningfully exercised on drivers that actually require the wrapper
+     * (Postgres), rather than simulating one. On other drivers this test is
+     * skipped in favor of testLoadInternalFileSkipsTransactionForDriversThatSupportIt().
      *
      * @link https://github.com/cakephp/cakephp/issues/19474
      */
     public function testLoadInternalFileWrapsConstraintDisablingInTransactionForDriversThatRequireIt(): void
     {
-        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $driver = $connection->getWriteDriver();
 
-        $driver = new class (['database' => $this->truncateDbFile]) extends Sqlite {
-            public function supports(DriverFeatureEnum $feature): bool
-            {
-                if ($feature === DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION) {
-                    return false;
-                }
+        $this->skipIf(
+            $driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            'This driver supports disabling constraints without a transaction.',
+        );
 
-                return parent::supports($feature);
-            }
-        };
+        try {
+            $queries = $this->captureQueries($driver, function (): void {
+                $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test');
+            });
 
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['transactional'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
-        $connection->expects($this->once())
-            ->method('transactional')
-            ->willReturnCallback(fn(Closure $callback) => $callback($connection));
+            $tables = $connection->getSchemaCollection()->listTables();
+            $this->assertContains('schema_generator', $tables);
+            $this->assertSame(
+                ['BEGIN', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL(), 'COMMIT'],
+                $this->filterQueries($queries, $driver),
+                'Constraint disabling must be wrapped in a transaction for drivers that require it.',
+            );
+        } finally {
+            ConnectionHelper::dropTables('test', ['schema_generator', 'schema_generator_comment']);
+        }
+    }
 
-        ConnectionManager::setConfig('test_schema_loader', $connection);
+    /**
+     * Runs against the real `test` connection; only meaningful for drivers
+     * that support disabling constraints without a transaction. On drivers
+     * that require one (Postgres), this test is skipped in favor of
+     * testLoadInternalFileWrapsConstraintDisablingInTransactionForDriversThatRequireIt().
+     */
+    public function testLoadInternalFileSkipsTransactionForDriversThatSupportIt(): void
+    {
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $driver = $connection->getWriteDriver();
 
-        $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
+        $this->skipIf(
+            !$driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            'This driver requires a transaction to disable constraints.',
+        );
 
-        $tables = $connection->getSchemaCollection()->listTables();
-        $this->assertContains('schema_generator', $tables);
+        try {
+            $queries = $this->captureQueries($driver, function (): void {
+                $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test');
+            });
+
+            $tables = $connection->getSchemaCollection()->listTables();
+            $this->assertContains('schema_generator', $tables);
+            $this->assertSame(
+                [$driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()],
+                $this->filterQueries($queries, $driver),
+                'No transaction should be started for drivers that support disabling constraints directly.',
+            );
+        } finally {
+            ConnectionHelper::dropTables('test', ['schema_generator', 'schema_generator_comment']);
+        }
     }
 
     public function testLoadInternalFiles(): void
@@ -218,5 +251,51 @@ class SchemaLoaderTest extends TestCase
         file_put_contents($tmpFile, $query);
 
         return $tmpFile;
+    }
+
+    /**
+     * Runs $callback while capturing the SQL statements $driver logs, in order.
+     *
+     * @return array<string>
+     */
+    private function captureQueries(Driver $driver, Closure $callback): array
+    {
+        $logger = new class extends AbstractLogger {
+            /**
+             * @var array<string>
+             */
+            public array $queries = [];
+
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->queries[] = (string)$message;
+            }
+        };
+        $driver->setLogger($logger);
+
+        try {
+            $callback();
+        } finally {
+            $driver->disableQueryLogging();
+        }
+
+        return $logger->queries;
+    }
+
+    /**
+     * Narrows a captured query log down to the statements relevant to
+     * constraint disabling and transaction boundaries, preserving order.
+     *
+     * @param array<string> $queries
+     * @return array<string>
+     */
+    private function filterQueries(array $queries, Driver $driver): array
+    {
+        $relevant = ['BEGIN', 'COMMIT', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()];
+
+        return array_values(array_filter(
+            $queries,
+            fn(string $query): bool => in_array($query, $relevant, true),
+        ));
     }
 }
