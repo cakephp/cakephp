@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
+use Cake\Database\Query\DeleteQuery;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Test\Fixture\ArticlesFixture;
@@ -26,6 +28,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Test\Fixture\ArticlesFixture as CompanyArticlesFixture;
 use PDOException;
+use TestApp\Datasource\FakeConnection;
 use TestApp\Test\Fixture\ArticlesFixture as AppArticlesFixture;
 use TestPlugin\Test\Fixture\ArticlesFixture as PluginArticlesFixture;
 use TestPlugin\Test\Fixture\Blog\CommentsFixture as PluginCommentsFixture;
@@ -33,7 +36,45 @@ use UnexpectedValueException;
 
 class FixtureHelperTest extends TestCase
 {
-    protected array $fixtures = ['core.Articles'];
+    /**
+     * A table holding a foreign key to itself, created on demand by the delete tests.
+     */
+    public const SELF_REFERENCING_TABLE = 'fixture_selves';
+
+    /**
+     * The primary key of those tables.
+     *
+     * Deliberately not named `id`: every dialect turns a lone integer primary key which
+     * is named `id` into an auto increment column, and sqlserver then rejects the
+     * explicit keys these fixtures carry unless IDENTITY_INSERT is switched on.
+     */
+    public const PRIMARY_KEY = 'pk';
+
+    /**
+     * The chain of tables created on demand by the delete tests, parents first.
+     *
+     * @var array<string>
+     */
+    protected array $nestedTables = [
+        'fixture_grandparents',
+        'fixture_parents',
+        'fixture_children',
+    ];
+
+    /**
+     * Whether those tables have to be dropped on teardown.
+     */
+    protected bool $nestedTablesCreated = false;
+
+    /**
+     * `Orders` and `Products` are only used by the delete tests below, but they are
+     * declared here so that the default truncate strategy resets their identity
+     * counters afterwards. Deleting rows does not reset them, and the records of the
+     * orders fixture have no explicit ids.
+     *
+     * @var array<string>
+     */
+    protected array $fixtures = ['core.Articles', 'core.Products', 'core.Orders'];
 
     /**
      * Clean up after test.
@@ -44,6 +85,9 @@ class FixtureHelperTest extends TestCase
         $this->clearPlugins();
         ConnectionManager::dropAlias('test1');
         ConnectionManager::dropAlias('test2');
+        ConnectionManager::drop('fake');
+        ConnectionManager::drop('failing');
+        $this->dropNestedTables();
     }
 
     /**
@@ -272,5 +316,350 @@ class FixtureHelperTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to truncate table `');
         $helper->truncate([$fixture]);
+    }
+
+    /**
+     * Tests deleting the rows of fixtures.
+     */
+    public function testDeleteFixtures(): void
+    {
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
+        $this->assertNotEmpty($rows->fetchAll());
+        $rows->closeCursor();
+
+        $helper = new FixtureHelper();
+        $helper->delete($helper->loadFixtures(['core.Articles']));
+        $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
+        $this->assertEmpty($rows->fetchAll());
+        $rows->closeCursor();
+    }
+
+    /**
+     * Tests handling PDO errors when deleting rows.
+     *
+     * The error is raised by the connection rather than by deleting from a table which
+     * does not exist, the way the insert and truncate tests above raise theirs from the
+     * fixture. Postgres can only defer constraints inside a transaction, and a statement
+     * failing there aborts it, so restoring the constraints afterwards would fail too and
+     * mask the error this is about.
+     */
+    public function testDeleteFixturesException(): void
+    {
+        ConnectionManager::setConfig('failing', new class (ConnectionManager::get('test')->config()) extends Connection {
+            public function deleteQuery(
+                ?string $table = null,
+                array $conditions = [],
+                array $types = [],
+            ): DeleteQuery {
+                throw new PDOException('Missing key');
+            }
+        });
+
+        $fixture = new class extends TestFixture {
+            public string $table = 'articles';
+
+            public function connection(): string
+            {
+                return 'failing';
+            }
+
+            protected function _schemaFromReflection(): void
+            {
+            }
+        };
+
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Unable to delete rows from table `articles`.');
+        (new FixtureHelper())->delete([$fixture]);
+    }
+
+    /**
+     * Connections which are not database connections have no delete query builder,
+     * so they keep going through FixtureInterface::truncate().
+     */
+    public function testDeleteFixturesWithoutDatabaseConnection(): void
+    {
+        ConnectionManager::setConfig('fake', ['className' => FakeConnection::class]);
+
+        $fixture = new class extends TestFixture {
+            public bool $truncated = false;
+
+            public function connection(): string
+            {
+                return 'fake';
+            }
+
+            protected function _schemaFromReflection(): void
+            {
+            }
+
+            public function truncate(ConnectionInterface $connection): bool
+            {
+                $this->truncated = true;
+
+                return true;
+            }
+        };
+
+        (new FixtureHelper())->delete([$fixture]);
+        $this->assertTrue($fixture->truncated);
+    }
+
+    /**
+     * Tests that fixtures are deleted once per connection.
+     */
+    public function testDeleteFixturesPerConnection(): void
+    {
+        ConnectionManager::alias('test', 'test1');
+        ConnectionManager::alias('test', 'test2');
+
+        $articles = new class extends TestFixture {
+            public string $table = 'articles';
+
+            public function connection(): string
+            {
+                return 'test1';
+            }
+        };
+        $orders = new class extends TestFixture {
+            public string $table = 'orders';
+
+            public function connection(): string
+            {
+                return 'test2';
+            }
+        };
+
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        foreach (['articles', 'orders'] as $table) {
+            $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
+        }
+
+        (new FixtureHelper())->delete([$articles, $orders]);
+        foreach (['articles', 'orders'] as $table) {
+            $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
+        }
+    }
+
+    /**
+     * Tests that fixture tables referencing each other are emptied.
+     */
+    public function testDeleteFixturesWithConstraints(): void
+    {
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        foreach (['products', 'orders'] as $table) {
+            $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
+        }
+
+        // Orders references products, so the rows cannot go in fixture order.
+        $helper = new FixtureHelper();
+        $helper->delete($helper->loadFixtures(['core.Orders', 'core.Products']));
+        foreach (['products', 'orders'] as $table) {
+            $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
+        }
+    }
+
+    /**
+     * Tests that a chain of foreign keys deeper than one level is emptied too.
+     */
+    public function testDeleteFixturesWithNestedConstraints(): void
+    {
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        $this->createNestedTables($connection);
+
+        $helper = new FixtureHelper();
+        $fixtures = $this->nestedFixtures();
+        $helper->insert($fixtures);
+        foreach ($this->nestedTables as $table) {
+            $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
+        }
+
+        $helper->delete($fixtures);
+        foreach ($this->nestedTables as $table) {
+            $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
+        }
+    }
+
+    /**
+     * Tests that a table holding a foreign key to itself is emptied too.
+     */
+    public function testDeleteFixturesWithSelfReferencingConstraint(): void
+    {
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        $this->createNestedTables($connection);
+
+        $table = static::SELF_REFERENCING_TABLE;
+        $fixture = new class extends TestFixture {
+            public string $table = FixtureHelperTest::SELF_REFERENCING_TABLE;
+
+            public array $records = [
+                [FixtureHelperTest::PRIMARY_KEY => 1, 'parent_id' => null],
+                [FixtureHelperTest::PRIMARY_KEY => 2, 'parent_id' => 1],
+            ];
+
+            public function connection(): string
+            {
+                return 'test';
+            }
+        };
+
+        $helper = new FixtureHelper();
+        $helper->insert([$fixture]);
+        $this->assertCount(2, $this->readTable($connection, $table));
+
+        $helper->delete([$fixture]);
+        $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
+    }
+
+    /**
+     * Builds a three level chain of tables, so that the middle table both has a foreign
+     * key and is referenced by one, plus a table holding a foreign key to itself.
+     *
+     * @return array<\Cake\Database\Schema\TableSchema>
+     */
+    protected function nestedTableSchemas(): array
+    {
+        $schemas = [];
+        $parent = null;
+        foreach ($this->nestedTables as $table) {
+            $columns = [static::PRIMARY_KEY => ['type' => 'integer', 'null' => false]];
+            if ($parent !== null) {
+                $columns['parent_id'] = ['type' => 'integer', 'null' => false];
+            }
+
+            $schema = new TableSchema($table, $columns);
+            $schema->addConstraint('primary', ['type' => 'primary', 'columns' => [static::PRIMARY_KEY]]);
+            if ($parent !== null) {
+                // No cascades: sqlserver rejects them on self references, and the
+                // point of these tables is that the rows cannot go unless the
+                // constraints are disabled.
+                $schema->addConstraint("{$table}_parent_id_fk", [
+                    'type' => 'foreign',
+                    'columns' => ['parent_id'],
+                    'references' => [$parent, static::PRIMARY_KEY],
+                    'update' => 'noAction',
+                    'delete' => 'noAction',
+                ]);
+            }
+
+            $schemas[] = $schema;
+            $parent = $table;
+        }
+
+        // A table referencing itself, the other shape a fixture order cannot cover.
+        $self = new TableSchema(static::SELF_REFERENCING_TABLE, [
+            static::PRIMARY_KEY => ['type' => 'integer', 'null' => false],
+            'parent_id' => ['type' => 'integer', 'null' => true],
+        ]);
+        $self->addConstraint('primary', ['type' => 'primary', 'columns' => [static::PRIMARY_KEY]]);
+        $self->addConstraint(static::SELF_REFERENCING_TABLE . '_parent_id_fk', [
+            'type' => 'foreign',
+            'columns' => ['parent_id'],
+            'references' => [static::SELF_REFERENCING_TABLE, static::PRIMARY_KEY],
+            'update' => 'noAction',
+            'delete' => 'noAction',
+        ]);
+        $schemas[] = $self;
+
+        return $schemas;
+    }
+
+    /**
+     * @param \Cake\Database\Connection $connection Test connection
+     * @return void
+     */
+    protected function createNestedTables(Connection $connection): void
+    {
+        foreach ($this->nestedTableSchemas() as $schema) {
+            foreach ($schema->createSql($connection) as $sql) {
+                $connection->execute($sql);
+            }
+        }
+        $this->nestedTablesCreated = true;
+    }
+
+    /**
+     * @return void
+     */
+    protected function dropNestedTables(): void
+    {
+        if (!$this->nestedTablesCreated) {
+            return;
+        }
+
+        /**
+         * @var \Cake\Database\Connection $connection
+         */
+        $connection = ConnectionManager::get('test');
+        foreach (array_reverse($this->nestedTableSchemas()) as $schema) {
+            foreach ($schema->dropSql($connection) as $sql) {
+                $connection->execute($sql);
+            }
+        }
+        $this->nestedTablesCreated = false;
+    }
+
+    /**
+     * One fixture per nested table, parents first.
+     *
+     * @return array<\Cake\Datasource\FixtureInterface>
+     */
+    protected function nestedFixtures(): array
+    {
+        $fixtures = [];
+        $parent = null;
+        foreach ($this->nestedTables as $table) {
+            $record = [static::PRIMARY_KEY => 1];
+            if ($parent !== null) {
+                $record['parent_id'] = 1;
+            }
+
+            $fixtures[] = new class ($table, $record) extends TestFixture {
+                public function __construct(string $table, array $record)
+                {
+                    $this->table = $table;
+                    $this->records = [$record];
+                    parent::__construct();
+                }
+
+                public function connection(): string
+                {
+                    return 'test';
+                }
+            };
+            $parent = $table;
+        }
+
+        return $fixtures;
+    }
+
+    /**
+     * @param \Cake\Database\Connection $connection Test connection
+     * @param string $table Table name
+     * @return array
+     */
+    protected function readTable(Connection $connection, string $table): array
+    {
+        $statement = $connection->selectQuery()->select('*')->from($table)->execute();
+        $rows = $statement->fetchAll('assoc');
+        $statement->closeCursor();
+
+        return $rows;
     }
 }
