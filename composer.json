@@ -62,6 +62,7 @@
     "require-dev": {
         "boundwize/structarmed": "^0.14",
         "cakephp/cakephp-codesniffer": "6.x-dev",
+        "cakephp/mago-rules": "dev-main",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6.12",
@@ -159,5 +160,7 @@
         "branch-alias": {
             "6.x-dev": "6.0.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

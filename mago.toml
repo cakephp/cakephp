@@ -1,0 +1,32 @@
+#:schema vendor/carthage-software/mago/schema.json
+# Welcome to Mago!
+# For full documentation, see https://mago.carthage.software/1.47.6/en/tools/overview/
+
+extends = "vendor/cakephp/mago-rules/cakephp.mago.toml"
+
+version = "1"
+php-version = "8.4.0"
+
+[source]
+workspace = "."
+paths = ["config/", "src/"]
+includes = ["vendor", "tests/bootstrap.php"]
+excludes = [
+    "vendor/**/tests/**",
+    "vendor/**/test/**",
+    "vendor/**/Tests/**",
+]
+
+[source.glob]
+literal-separator = true
+
+[linter]
+excludes = ["tests"]
+
+[linter.rules]
+halstead = { enabled = false }
+kan-defect = { enabled = false }
+cyclomatic-complexity = { enabled = false }
+too-many-properties = { enabled = false }
+too-many-methods = { enabled = false }
+excessive-parameter-list = { enabled = false }
