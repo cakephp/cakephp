@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\TestSuite\Fixture;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
-use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
@@ -136,73 +135,42 @@ class SchemaLoaderTest extends TestCase
      * Connection::disableConstraints() directly, so that drivers requiring
      * a transaction wrapper (e.g. Postgres) don't emit a warning.
      *
-     * Runs against the real `test` connection so that this is only
-     * meaningfully exercised on drivers that actually require the wrapper
-     * (Postgres), rather than simulating one. On other drivers this test is
-     * skipped in favor of testLoadInternalFileSkipsTransactionForDriversThatSupportIt().
+     * loadInternalFile() drops every table on the given connection, so it
+     * can't safely run against the shared `test` connection (it would wipe
+     * every fixture table for the rest of the suite) - it needs an isolated
+     * connection, same as the other tests in this file. That means this
+     * test can only exercise the "driver supports it directly" branch for
+     * real; the "driver requires a transaction" branch (Postgres) is
+     * already proven against a real Postgres connection by
+     * ConnectionHelperTest::testRunWithoutConstraintsWrapsInTransactionWhenDriverRequiresIt(),
+     * since loadInternalFile() delegates straight to
+     * ConnectionHelper::runWithoutConstraints() for this.
      *
      * @link https://github.com/cakephp/cakephp/issues/19474
      */
-    public function testLoadInternalFileWrapsConstraintDisablingInTransactionForDriversThatRequireIt(): void
+    public function testLoadInternalFileDisablesConstraintsViaConnectionHelper(): void
     {
-        $connection = ConnectionManager::get('test');
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        ConnectionManager::setConfig('test_schema_loader', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => $this->truncateDbFile,
+        ]);
+        $connection = ConnectionManager::get('test_schema_loader');
         assert($connection instanceof Connection);
         $driver = $connection->getWriteDriver();
 
-        $this->skipIf(
-            $driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
-            'This driver supports disabling constraints without a transaction.',
+        $queries = $this->captureQueries($driver, function (): void {
+            $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
+        });
+
+        $tables = $connection->getSchemaCollection()->listTables();
+        $this->assertContains('schema_generator', $tables);
+        $this->assertSame(
+            [$driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()],
+            $this->filterQueries($queries, $driver),
+            'Constraint disabling must go through ConnectionHelper::runWithoutConstraints().',
         );
-
-        try {
-            $queries = $this->captureQueries($driver, function (): void {
-                $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test');
-            });
-
-            $tables = $connection->getSchemaCollection()->listTables();
-            $this->assertContains('schema_generator', $tables);
-            $this->assertSame(
-                ['BEGIN', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL(), 'COMMIT'],
-                $this->filterQueries($queries, $driver),
-                'Constraint disabling must be wrapped in a transaction for drivers that require it.',
-            );
-        } finally {
-            ConnectionHelper::dropTables('test', ['schema_generator', 'schema_generator_comment']);
-        }
-    }
-
-    /**
-     * Runs against the real `test` connection; only meaningful for drivers
-     * that support disabling constraints without a transaction. On drivers
-     * that require one (Postgres), this test is skipped in favor of
-     * testLoadInternalFileWrapsConstraintDisablingInTransactionForDriversThatRequireIt().
-     */
-    public function testLoadInternalFileSkipsTransactionForDriversThatSupportIt(): void
-    {
-        $connection = ConnectionManager::get('test');
-        assert($connection instanceof Connection);
-        $driver = $connection->getWriteDriver();
-
-        $this->skipIf(
-            !$driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
-            'This driver requires a transaction to disable constraints.',
-        );
-
-        try {
-            $queries = $this->captureQueries($driver, function (): void {
-                $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test');
-            });
-
-            $tables = $connection->getSchemaCollection()->listTables();
-            $this->assertContains('schema_generator', $tables);
-            $this->assertSame(
-                [$driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()],
-                $this->filterQueries($queries, $driver),
-                'No transaction should be started for drivers that support disabling constraints directly.',
-            );
-        } finally {
-            ConnectionHelper::dropTables('test', ['schema_generator', 'schema_generator_comment']);
-        }
     }
 
     public function testLoadInternalFiles(): void
