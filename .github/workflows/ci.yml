@@ -264,6 +264,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
+      - name: Run mago formatter
+        if: always()
+        run: vendor/bin/mago format --dry-run && vendor/bin/mago format --check
+
+      - name: Run mago linter
+        if: always()
+        run: vendor/bin/mago lint --minimum-report-level=error --minimum-fail-level=error --reporting-format=github
+
       - name: Run phpstan
         if: always()
         run: tools/phpstan analyse --error-format=github
