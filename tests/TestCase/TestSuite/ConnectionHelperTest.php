@@ -16,10 +16,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\TestCase;
+use Closure;
+use Psr\Log\AbstractLogger;
+use Stringable;
 use TestApp\Database\Driver\TestDriver;
 
 class ConnectionHelperTest extends TestCase
@@ -97,5 +102,120 @@ class ConnectionHelperTest extends TestCase
 
         ConnectionHelper::enableQueryLogging(['query_logging']);
         $this->assertTrue($connection->getDriver()->log(''));
+    }
+
+    /**
+     * Drivers like Postgres don't allow disabling constraints outside of a
+     * transaction, so runWithoutConstraints() must wrap the call in one.
+     *
+     * Runs against the real `test` connection so that this is only
+     * meaningfully exercised on drivers that actually require it (Postgres),
+     * rather than simulating one via mocks. On other drivers this test is
+     * skipped in favor of testRunWithoutConstraintsSkipsTransactionWhenDriverSupportsIt().
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19474
+     */
+    public function testRunWithoutConstraintsWrapsInTransactionWhenDriverRequiresIt(): void
+    {
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $driver = $connection->getWriteDriver();
+
+        $this->skipIf(
+            $driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            'This driver supports disabling constraints without a transaction.',
+        );
+
+        $called = false;
+        $queries = $this->captureQueries($driver, function () use ($connection, &$called): void {
+            ConnectionHelper::runWithoutConstraints($connection, function () use (&$called): void {
+                $called = true;
+            });
+        });
+
+        $this->assertTrue($called, 'Callback should still be invoked.');
+        $this->assertSame(
+            ['BEGIN', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL(), 'COMMIT'],
+            $this->filterQueries($queries, $driver),
+            'Constraint disabling must be wrapped in a transaction for drivers that require it.',
+        );
+    }
+
+    /**
+     * Runs against the real `test` connection; only meaningful for drivers
+     * that support disabling constraints without a transaction. On drivers
+     * that require one (Postgres), this test is skipped in favor of
+     * testRunWithoutConstraintsWrapsInTransactionWhenDriverRequiresIt().
+     */
+    public function testRunWithoutConstraintsSkipsTransactionWhenDriverSupportsIt(): void
+    {
+        $connection = ConnectionManager::get('test');
+        assert($connection instanceof Connection);
+        $driver = $connection->getWriteDriver();
+
+        $this->skipIf(
+            !$driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            'This driver requires a transaction to disable constraints.',
+        );
+
+        $called = false;
+        $queries = $this->captureQueries($driver, function () use ($connection, &$called): void {
+            ConnectionHelper::runWithoutConstraints($connection, function () use (&$called): void {
+                $called = true;
+            });
+        });
+
+        $this->assertTrue($called, 'Callback should still be invoked.');
+        $this->assertSame(
+            [$driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()],
+            $this->filterQueries($queries, $driver),
+            'No transaction should be started for drivers that support disabling constraints directly.',
+        );
+    }
+
+    /**
+     * Runs $callback while capturing the SQL statements $driver logs, in order.
+     *
+     * @return array<string>
+     */
+    private function captureQueries(Driver $driver, Closure $callback): array
+    {
+        $logger = new class extends AbstractLogger {
+            /**
+             * @var array<string>
+             */
+            public array $queries = [];
+
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->queries[] = (string)$message;
+            }
+        };
+        $driver->setLogger($logger);
+
+        try {
+            $callback();
+        } finally {
+            $driver->disableQueryLogging();
+        }
+
+        return $logger->queries;
+    }
+
+    /**
+     * Narrows a captured query log down to the statements relevant to
+     * constraint disabling and transaction boundaries, preserving order.
+     *
+     * @param array<string> $queries
+     * @return array<string>
+     */
+    private function filterQueries(array $queries, Driver $driver): array
+    {
+        $relevant = ['BEGIN', 'COMMIT', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()];
+
+        return array_values(array_filter(
+            $queries,
+            fn(string $query): bool => in_array($query, $relevant, true),
+        ));
     }
 }

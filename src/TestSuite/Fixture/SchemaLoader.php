@@ -152,7 +152,7 @@ class SchemaLoader
          * @var \Cake\Database\Connection $connection
          */
         $connection = ConnectionManager::get($connectionName);
-        $connection->disableConstraints(function (Connection $connection) use ($tables): void {
+        ConnectionHelper::runWithoutConstraints($connection, function (Connection $connection) use ($tables): void {
             foreach ($tables as $tableName => $table) {
                 $name = $table['table'] ?? $tableName;
                 if (!is_string($name)) {
