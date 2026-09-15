@@ -24,6 +24,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
+use Cake\Log\Engine\ArrayLog;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
@@ -31,8 +32,6 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Psr\Log\AbstractLogger;
-use Stringable;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
@@ -1974,21 +1973,7 @@ class QueryRegressionTest extends TestCase
      */
     public function testSubqueryStrategyDeduplicatesPaginatedResults(): void
     {
-        $logger = new class extends AbstractLogger {
-            /**
-             * @var array<string>
-             */
-            public array $messages = [];
-
-            /**
-             * @inheritDoc
-             */
-            public function log($level, string|Stringable $message, array $context = []): void
-            {
-                $this->messages[] = (string)$message;
-            }
-        };
-
+        $logger = new ArrayLog();
         $articles = $this->getTableLocator()->get('Articles');
         $driver = $articles->getConnection()->getDriver();
         $previousLogger = $driver->getLogger();
@@ -2019,10 +2004,10 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(4, $results[0]->comments);
 
         $subqueries = array_filter(
-            $logger->messages,
+            $logger->read(),
             fn(string $message): bool => str_contains($message, 'INNER JOIN (SELECT'),
         );
-        $this->assertCount(1, $subqueries, implode("\n", $logger->messages));
+        $this->assertCount(1, $subqueries, implode("\n", $logger->read()));
 
         $sql = array_pop($subqueries);
         if ($driver instanceof Mysql && $driver->isMariadb()) {
@@ -2046,21 +2031,6 @@ class QueryRegressionTest extends TestCase
      */
     public function testNestedMatchingConditionsStayOnTheirOwnJoin(): void
     {
-        $logger = new class extends AbstractLogger {
-            /**
-             * @var array<string>
-             */
-            public array $messages = [];
-
-            /**
-             * @inheritDoc
-             */
-            public function log($level, string|Stringable $message, array $context = []): void
-            {
-                $this->messages[] = (string)$message;
-            }
-        };
-
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('Comments');
         $articles->Comments->getTarget()->belongsTo('Profiles', ['foreignKey' => 'user_id']);
@@ -2068,6 +2038,7 @@ class QueryRegressionTest extends TestCase
 
         $driver = $articles->getConnection()->getDriver();
         $previousLogger = $driver->getLogger();
+        $logger = new ArrayLog();
         $driver->setLogger($logger);
 
         try {
@@ -2087,12 +2058,26 @@ class QueryRegressionTest extends TestCase
             }
         }
 
+        $logs = $logger->read();
+        if ($driver instanceof Mysql && $driver->isMariadb()) {
+            // Mariadb requires a specific query optimization that replaces GROUP BY with DISTINCT
+            $distinct = array_filter(
+                $logs,
+                fn(string $message): bool => str_contains($message, 'SELECT DISTINCT'),
+            );
+            $this->assertCount(1, $distinct, implode("\n", $logs));
+            $sql = array_pop($distinct);
+            $this->assertSame(1, substr_count($sql, 'last_name'), $sql);
+
+            return;
+        }
+
         // The filtering subquery built for Tags is the only grouped statement the query above runs.
         $grouped = array_filter(
-            $logger->messages,
+            $logs,
             fn(string $message): bool => str_contains($message, 'GROUP BY'),
         );
-        $this->assertCount(1, $grouped, implode("\n", $logger->messages));
+        $this->assertCount(1, $grouped, implode("\n", $logs));
 
         $sql = array_pop($grouped);
         $this->assertSame(1, substr_count($sql, 'last_name'), $sql);
