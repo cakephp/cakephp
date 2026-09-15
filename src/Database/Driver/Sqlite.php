@@ -215,6 +215,8 @@ class Sqlite extends Driver
             DriverFeature::SET_OPERATIONS_ORDER_BY => false,
             DriverFeature::OPTIMIZER_HINT_COMMENT => false,
             DriverFeature::CHECK_CONSTRAINTS => true,
+            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => true,
+            DriverFeature::SUBQUERY_FILTER_DISTINCT => false,
         };
     }
 
