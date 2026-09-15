@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM\Association\Loader;
 
-use Cake\Database\DriverFeature;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FieldInterface;
