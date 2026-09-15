@@ -217,6 +217,8 @@ class Postgres extends Driver
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
             DriverFeatureEnum::CHECK_CONSTRAINTS => true,
+            DriverFeatureEnum::CASE_SENSITIVE_QUOTED_IDENTIFIERS => true,
+            DriverFeatureEnum::SUBQUERY_FILTER_DISTINCT => false,
         };
     }
 

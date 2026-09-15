@@ -321,6 +321,8 @@ class Mysql extends Driver
             DriverFeatureEnum::CHECK_CONSTRAINTS => $versionCompare(),
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
+            DriverFeatureEnum::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
+            DriverFeatureEnum::SUBQUERY_FILTER_DISTINCT => $this->isMariaDb(),
         };
     }
 
