@@ -50,7 +50,7 @@ class Sqlserver extends Driver
      * @inheritDoc
      */
     protected const array RETRY_ERROR_CODES = [
-        40613, // Azure Sql Database paused
+        40_613, // Azure Sql Database paused
     ];
 
     /**
@@ -70,7 +70,7 @@ class Sqlserver extends Driver
         'database' => null,
         'port' => '',
         // PDO::SQLSRV_ENCODING_UTF8
-        'encoding' => 65001,
+        'encoding' => 65_001,
         'flags' => [],
         'init' => [],
         'settings' => [],

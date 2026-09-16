@@ -336,7 +336,7 @@ class Route
             // Placeholder name, e.g. "foo"
             $name = $matchArray[1][0];
             // Placeholder with colon/braces, e.g. "{foo}"
-            $search = preg_quote($matchArray[0][0]);
+            $search = preg_quote($matchArray[0][0], '#');
             if (isset($this->options[$name])) {
                 $option = '';
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {

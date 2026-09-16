@@ -1,0 +1,3501 @@
+variant = "strict"
+
+[[entries."config/bootstrap.php".issues]]
+code = "strict-types"
+start_line = 0
+end_line = 0
+
+[[entries."config/config.php".issues]]
+code = "strict-types"
+start_line = 0
+end_line = 0
+
+[[entries."src/AttributeResolver/AttributeCache.php".issues]]
+code = "prefer-static-closure"
+start_line = 174
+end_line = 174
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-arrow-function"
+start_line = 289
+end_line = 289
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-arrow-function"
+start_line = 343
+end_line = 343
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-arrow-function"
+start_line = 356
+end_line = 356
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-arrow-function"
+start_line = 369
+end_line = 369
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 246
+end_line = 248
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 266
+end_line = 268
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 327
+end_line = 329
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-static-closure"
+start_line = 289
+end_line = 289
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-static-closure"
+start_line = 343
+end_line = 343
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-static-closure"
+start_line = 356
+end_line = 356
+
+[[entries."src/AttributeResolver/AttributeCollection.php".issues]]
+code = "prefer-static-closure"
+start_line = 369
+end_line = 369
+
+[[entries."src/AttributeResolver/Parser.php".issues]]
+code = "prefer-static-closure"
+start_line = 645
+end_line = 645
+
+[[entries."src/AttributeResolver/Scanner.php".issues]]
+code = "prefer-arrow-function"
+start_line = 211
+end_line = 211
+
+[[entries."src/AttributeResolver/Scanner.php".issues]]
+code = "prefer-early-continue"
+start_line = 195
+end_line = 197
+
+[[entries."src/AttributeResolver/Scanner.php".issues]]
+code = "prefer-static-closure"
+start_line = 189
+end_line = 189
+
+[[entries."src/AttributeResolver/Scanner.php".issues]]
+code = "prefer-static-closure"
+start_line = 211
+end_line = 211
+
+[[entries."src/Cache/CacheEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 208
+end_line = 210
+
+[[entries."src/Cache/Engine/ApcuEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 214
+end_line = 216
+
+[[entries."src/Cache/Engine/ApcuEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 274
+end_line = 282
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 403
+end_line = 403
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 265
+end_line = 265
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 360
+end_line = 360
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 459
+end_line = 459
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 525
+end_line = 525
+
+[[entries."src/Cache/Engine/FileEngine.php".issues]]
+code = "prefer-static-closure"
+start_line = 505
+end_line = 505
+
+[[entries."src/Cache/Engine/MemcachedEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 517
+end_line = 519
+
+[[entries."src/Cache/Engine/MemcachedEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 570
+end_line = 573
+
+[[entries."src/Cache/Engine/PhpEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 365
+end_line = 365
+
+[[entries."src/Cache/Engine/PhpEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 396
+end_line = 396
+
+[[entries."src/Cache/Engine/PhpEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 429
+end_line = 429
+
+[[entries."src/Cache/Engine/PhpEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 457
+end_line = 457
+
+[[entries."src/Cache/Engine/RedisEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 186
+end_line = 188
+
+[[entries."src/Collection/CollectionInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 839
+end_line = 839
+
+[[entries."src/Collection/CollectionInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 891
+end_line = 891
+
+[[entries."src/Collection/CollectionInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1118
+end_line = 1118
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "loop-does-not-iterate"
+start_line = 506
+end_line = 508
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "loop-does-not-iterate"
+start_line = 1078
+end_line = 1080
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 348
+end_line = 348
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 834
+end_line = 834
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1047
+end_line = 1047
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "no-empty-loop"
+start_line = 532
+end_line = 534
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "no-redundant-math"
+start_line = 552
+end_line = 552
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 257
+end_line = 257
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 815
+end_line = 815
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1155
+end_line = 1155
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 90
+end_line = 90
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 102
+end_line = 102
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 104
+end_line = 104
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 114
+end_line = 114
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 222
+end_line = 222
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 257
+end_line = 257
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 415
+end_line = 415
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 416
+end_line = 416
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 567
+end_line = 567
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 712
+end_line = 712
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 758
+end_line = 758
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 784
+end_line = 784
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 792
+end_line = 792
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 815
+end_line = 815
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 968
+end_line = 968
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1028
+end_line = 1028
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1050
+end_line = 1050
+
+[[entries."src/Collection/CollectionTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1155
+end_line = 1155
+
+[[entries."src/Collection/ExtractTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 137
+end_line = 137
+
+[[entries."src/Collection/ExtractTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 142
+end_line = 142
+
+[[entries."src/Collection/ExtractTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 137
+end_line = 137
+
+[[entries."src/Collection/ExtractTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 142
+end_line = 142
+
+[[entries."src/Collection/ExtractTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 143
+end_line = 143
+
+[[entries."src/Collection/Iterator/FilterIterator.php".issues]]
+code = "prefer-early-continue"
+start_line = 87
+end_line = 89
+
+[[entries."src/Collection/Iterator/TreeIterator.php".issues]]
+code = "prefer-static-closure"
+start_line = 105
+end_line = 105
+
+[[entries."src/Command/I18nExtractCommand.php".issues]]
+code = "prefer-arrow-function"
+start_line = 538
+end_line = 538
+
+[[entries."src/Command/I18nExtractCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 446
+end_line = 448
+
+[[entries."src/Command/I18nExtractCommand.php".issues]]
+code = "prefer-static-closure"
+start_line = 538
+end_line = 538
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 92
+end_line = 92
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 93
+end_line = 93
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 224
+end_line = 224
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-error-control-operator"
+start_line = 166
+end_line = 166
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-error-control-operator"
+start_line = 202
+end_line = 202
+
+[[entries."src/Command/PluginAssetsTrait.php".issues]]
+code = "no-error-control-operator"
+start_line = 231
+end_line = 231
+
+[[entries."src/Command/PluginLoadCommand.php".issues]]
+code = "no-error-control-operator"
+start_line = 137
+end_line = 137
+
+[[entries."src/Command/PluginLoadCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 83
+end_line = 85
+
+[[entries."src/Command/PluginLoadCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 180
+end_line = 182
+
+[[entries."src/Command/PluginLoadCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 185
+end_line = 187
+
+[[entries."src/Command/PluginUnloadCommand.php".issues]]
+code = "no-error-control-operator"
+start_line = 80
+end_line = 80
+
+[[entries."src/Command/RoutesCommand.php".issues]]
+code = "prefer-arrow-function"
+start_line = 84
+end_line = 84
+
+[[entries."src/Command/RoutesCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 100
+end_line = 116
+
+[[entries."src/Command/RoutesCommand.php".issues]]
+code = "prefer-static-closure"
+start_line = 84
+end_line = 84
+
+[[entries."src/Console/Command/HelpCommand.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 125
+end_line = 125
+
+[[entries."src/Console/Command/HelpCommand.php".issues]]
+code = "prefer-arrow-function"
+start_line = 478
+end_line = 478
+
+[[entries."src/Console/Command/HelpCommand.php".issues]]
+code = "prefer-early-continue"
+start_line = 109
+end_line = 111
+
+[[entries."src/Console/Command/HelpCommand.php".issues]]
+code = "prefer-static-closure"
+start_line = 478
+end_line = 478
+
+[[entries."src/Console/CommandRunner.php".issues]]
+code = "prefer-early-continue"
+start_line = 389
+end_line = 391
+
+[[entries."src/Console/CommandRunner.php".issues]]
+code = "prefer-static-closure"
+start_line = 343
+end_line = 343
+
+[[entries."src/Console/CommandRunner.php".issues]]
+code = "sensitive-parameter"
+start_line = 384
+end_line = 384
+
+[[entries."src/Console/ConsoleInput.php".issues]]
+code = "prefer-static-closure"
+start_line = 110
+end_line = 110
+
+[[entries."src/Console/ConsoleIo.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 603
+end_line = 603
+
+[[entries."src/Console/ConsoleIoInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 39
+end_line = 39
+
+[[entries."src/Console/ConsoleIoInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 301
+end_line = 301
+
+[[entries."src/Console/ConsoleOptionParser.php".issues]]
+code = "no-insecure-comparison"
+start_line = 590
+end_line = 590
+
+[[entries."src/Console/ConsoleOptionParser.php".issues]]
+code = "prefer-early-continue"
+start_line = 614
+end_line = 623
+
+[[entries."src/Console/ConsoleOutput.php".issues]]
+code = "prefer-early-continue"
+start_line = 278
+end_line = 280
+
+[[entries."src/Console/Exception/MissingOptionException.php".issues]]
+code = "prefer-early-continue"
+start_line = 57
+end_line = 59
+
+[[entries."src/Console/HelpFormatter.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 182
+end_line = 182
+
+[[entries."src/Console/Helper/TreeHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 59
+end_line = 59
+
+[[entries."src/Console/HelperRegistry.php".issues]]
+code = "inline-variable-return"
+start_line = 59
+end_line = 59
+
+[[entries."src/Console/TestSuite/Constraint/ContentsContainRow.php".issues]]
+code = "prefer-arrow-function"
+start_line = 34
+end_line = 34
+
+[[entries."src/Console/TestSuite/Constraint/ContentsContainRow.php".issues]]
+code = "prefer-static-closure"
+start_line = 34
+end_line = 34
+
+[[entries."src/Container/Container.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 278
+end_line = 278
+
+[[entries."src/Container/Container.php".issues]]
+code = "prefer-early-continue"
+start_line = 309
+end_line = 320
+
+[[entries."src/Container/Container.php".issues]]
+code = "prefer-static-closure"
+start_line = 220
+end_line = 220
+
+[[entries."src/Container/Definition/Definition.php".issues]]
+code = "strict-behavior"
+start_line = 273
+end_line = 273
+
+[[entries."src/Container/Definition/DefinitionAggregate.php".issues]]
+code = "prefer-early-continue"
+start_line = 24
+end_line = 26
+
+[[entries."src/Container/Definition/DefinitionAggregate.php".issues]]
+code = "prefer-early-continue"
+start_line = 115
+end_line = 117
+
+[[entries."src/Container/Definition/DefinitionAggregate.php".issues]]
+code = "prefer-early-continue"
+start_line = 131
+end_line = 133
+
+[[entries."src/Container/Definition/DefinitionInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 93
+end_line = 93
+
+[[entries."src/Controller/Component.php".issues]]
+code = "prefer-early-continue"
+start_line = 177
+end_line = 179
+
+[[entries."src/Controller/Controller.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 856
+end_line = 856
+
+[[entries."src/Controller/ControllerFactory.php".issues]]
+code = "tagged-todo"
+start_line = 96
+end_line = 96
+
+[[entries."src/Core/BasePlugin.php".issues]]
+code = "prefer-early-continue"
+start_line = 122
+end_line = 124
+
+[[entries."src/Core/BasePlugin.php".issues]]
+code = "prefer-early-continue"
+start_line = 127
+end_line = 129
+
+[[entries."src/Core/Configure.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 325
+end_line = 325
+
+[[entries."src/Core/Configure.php".issues]]
+code = "prefer-arrow-function"
+start_line = 276
+end_line = 276
+
+[[entries."src/Core/Configure.php".issues]]
+code = "prefer-static-closure"
+start_line = 276
+end_line = 276
+
+[[entries."src/Core/Configure/FileConfigTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 44
+end_line = 44
+
+[[entries."src/Core/PluginCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 374
+end_line = 376
+
+[[entries."src/Core/PluginConfig.php".issues]]
+code = "no-error-control-operator"
+start_line = 92
+end_line = 92
+
+[[entries."src/Core/PluginConfig.php".issues]]
+code = "prefer-early-continue"
+start_line = 179
+end_line = 183
+
+[[entries."src/Core/StaticConfigTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 183
+end_line = 183
+
+[[entries."src/Core/StaticConfigTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 183
+end_line = 183
+
+[[entries."src/Core/functions.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 150
+end_line = 150
+
+[[entries."src/Database/Connection.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 593
+end_line = 593
+
+[[entries."src/Database/Connection.php".issues]]
+code = "no-literal-password"
+start_line = 849
+end_line = 849
+
+[[entries."src/Database/Driver.php".issues]]
+code = "prefer-early-continue"
+start_line = 572
+end_line = 574
+
+[[entries."src/Database/Driver.php".issues]]
+code = "prefer-static-closure"
+start_line = 192
+end_line = 192
+
+[[entries."src/Database/Driver.php".issues]]
+code = "prefer-static-closure"
+start_line = 691
+end_line = 691
+
+[[entries."src/Database/Driver/Mysql.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 320
+end_line = 320
+
+[[entries."src/Database/Driver/Mysql.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 326
+end_line = 326
+
+[[entries."src/Database/Driver/Mysql.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 327
+end_line = 327
+
+[[entries."src/Database/Driver/Mysql.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 328
+end_line = 328
+
+[[entries."src/Database/Driver/Mysql.php".issues]]
+code = "prefer-arrow-function"
+start_line = 302
+end_line = 302
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 214
+end_line = 214
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 216
+end_line = 216
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 217
+end_line = 217
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 218
+end_line = 218
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 219
+end_line = 219
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 220
+end_line = 220
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 221
+end_line = 221
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 222
+end_line = 222
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 223
+end_line = 223
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 224
+end_line = 224
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 225
+end_line = 225
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "prefer-static-closure"
+start_line = 303
+end_line = 303
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "prefer-static-closure"
+start_line = 317
+end_line = 317
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "prefer-static-closure"
+start_line = 345
+end_line = 345
+
+[[entries."src/Database/Driver/Postgres.php".issues]]
+code = "prefer-static-closure"
+start_line = 362
+end_line = 362
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 209
+end_line = 209
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 210
+end_line = 210
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 211
+end_line = 211
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 212
+end_line = 212
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 213
+end_line = 213
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 214
+end_line = 214
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 215
+end_line = 215
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 216
+end_line = 216
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 217
+end_line = 217
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 218
+end_line = 218
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "no-error-control-operator"
+start_line = 151
+end_line = 151
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "prefer-arrow-function"
+start_line = 274
+end_line = 274
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "prefer-static-closure"
+start_line = 274
+end_line = 274
+
+[[entries."src/Database/Driver/Sqlite.php".issues]]
+code = "prefer-static-closure"
+start_line = 311
+end_line = 311
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 291
+end_line = 291
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 292
+end_line = 292
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 293
+end_line = 293
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 294
+end_line = 294
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 295
+end_line = 295
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 296
+end_line = 296
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 297
+end_line = 297
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 298
+end_line = 298
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 299
+end_line = 299
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "no-duplicate-match-arm"
+start_line = 300
+end_line = 300
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 370
+end_line = 370
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 409
+end_line = 409
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 437
+end_line = 437
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 460
+end_line = 460
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 513
+end_line = 513
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 542
+end_line = 542
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 553
+end_line = 553
+
+[[entries."src/Database/Driver/Sqlserver.php".issues]]
+code = "prefer-static-closure"
+start_line = 575
+end_line = 575
+
+[[entries."src/Database/Expression/BetweenExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 110
+end_line = 112
+
+[[entries."src/Database/Expression/BetweenExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 140
+end_line = 142
+
+[[entries."src/Database/Expression/CommonTableExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 125
+end_line = 127
+
+[[entries."src/Database/Expression/CommonTableExpression.php".issues]]
+code = "prefer-static-closure"
+start_line = 189
+end_line = 189
+
+[[entries."src/Database/Expression/ComparisonExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 184
+end_line = 186
+
+[[entries."src/Database/Expression/FunctionExpression.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 105
+end_line = 105
+
+[[entries."src/Database/Expression/FunctionExpression.php".issues]]
+code = "no-sprintf-concat"
+start_line = 157
+end_line = 157
+
+[[entries."src/Database/Expression/QueryExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 613
+end_line = 616
+
+[[entries."src/Database/Expression/QueryExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 853
+end_line = 855
+
+[[entries."src/Database/Expression/QueryExpression.php".issues]]
+code = "prefer-static-closure"
+start_line = 570
+end_line = 570
+
+[[entries."src/Database/Expression/QueryExpression.php".issues]]
+code = "prefer-static-closure"
+start_line = 660
+end_line = 660
+
+[[entries."src/Database/Expression/StringAggExpression.php".issues]]
+code = "no-sprintf-concat"
+start_line = 108
+end_line = 108
+
+[[entries."src/Database/Expression/StringAggExpression.php".issues]]
+code = "no-sprintf-concat"
+start_line = 114
+end_line = 114
+
+[[entries."src/Database/Expression/StringAggExpression.php".issues]]
+code = "no-sprintf-concat"
+start_line = 120
+end_line = 120
+
+[[entries."src/Database/Expression/ValuesExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 276
+end_line = 279
+
+[[entries."src/Database/Expression/WindowExpression.php".issues]]
+code = "prefer-early-continue"
+start_line = 104
+end_line = 106
+
+[[entries."src/Database/IdentifierQuoter.php".issues]]
+code = "prefer-early-continue"
+start_line = 272
+end_line = 274
+
+[[entries."src/Database/Log/LoggedQuery.php".issues]]
+code = "prefer-early-continue"
+start_line = 255
+end_line = 257
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 407
+end_line = 407
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 438
+end_line = 438
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 469
+end_line = 469
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 512
+end_line = 512
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 613
+end_line = 613
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 929
+end_line = 929
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1199
+end_line = 1199
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1228
+end_line = 1228
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1263
+end_line = 1263
+
+[[entries."src/Database/Query.php".issues]]
+code = "no-unsafe-finally"
+start_line = 1747
+end_line = 1754
+
+[[entries."src/Database/Query.php".issues]]
+code = "prefer-early-continue"
+start_line = 1698
+end_line = 1700
+
+[[entries."src/Database/Query.php".issues]]
+code = "prefer-static-closure"
+start_line = 1512
+end_line = 1512
+
+[[entries."src/Database/Query.php".issues]]
+code = "prefer-static-closure"
+start_line = 1734
+end_line = 1734
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 166
+end_line = 166
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 215
+end_line = 215
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 323
+end_line = 323
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 528
+end_line = 528
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 562
+end_line = 562
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 603
+end_line = 603
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 683
+end_line = 683
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 718
+end_line = 718
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 756
+end_line = 756
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 791
+end_line = 791
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 829
+end_line = 829
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 864
+end_line = 864
+
+[[entries."src/Database/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 929
+end_line = 929
+
+[[entries."src/Database/QueryCompiler.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 526
+end_line = 526
+
+[[entries."src/Database/QueryCompiler.php".issues]]
+code = "prefer-static-closure"
+start_line = 364
+end_line = 364
+
+[[entries."src/Database/Retry/ErrorCodeWaitStrategy.php".issues]]
+code = "strict-behavior"
+start_line = 45
+end_line = 45
+
+[[entries."src/Database/Schema/Index.php".issues]]
+code = "tagged-todo"
+start_line = 29
+end_line = 29
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "no-sprintf-concat"
+start_line = 926
+end_line = 926
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 477
+end_line = 479
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 921
+end_line = 923
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 612
+end_line = 612
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 618
+end_line = 618
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 624
+end_line = 624
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 626
+end_line = 626
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 732
+end_line = 732
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 745
+end_line = 745
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 760
+end_line = 760
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "tagged-todo"
+start_line = 432
+end_line = 432
+
+[[entries."src/Database/Schema/MysqlSchemaDialect.php".issues]]
+code = "tagged-todo"
+start_line = 794
+end_line = 794
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "no-sprintf-concat"
+start_line = 949
+end_line = 949
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 255
+end_line = 257
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 524
+end_line = 526
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 255
+end_line = 255
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 784
+end_line = 784
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 797
+end_line = 797
+
+[[entries."src/Database/Schema/PostgresSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 819
+end_line = 819
+
+[[entries."src/Database/Schema/SchemaDialect.php".issues]]
+code = "no-assign-in-condition"
+start_line = 276
+end_line = 276
+
+[[entries."src/Database/Schema/SchemaDialect.php".issues]]
+code = "no-assign-in-condition"
+start_line = 318
+end_line = 318
+
+[[entries."src/Database/Schema/SchemaDialect.php".issues]]
+code = "prefer-static-closure"
+start_line = 460
+end_line = 460
+
+[[entries."src/Database/Schema/SchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 345
+end_line = 345
+
+[[entries."src/Database/Schema/SqliteSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 319
+end_line = 323
+
+[[entries."src/Database/Schema/SqliteSchemaDialect.php".issues]]
+code = "tagged-todo"
+start_line = 152
+end_line = 152
+
+[[entries."src/Database/Schema/SqlserverSchemaDialect.php".issues]]
+code = "no-sprintf-concat"
+start_line = 789
+end_line = 789
+
+[[entries."src/Database/Schema/SqlserverSchemaDialect.php".issues]]
+code = "prefer-early-continue"
+start_line = 441
+end_line = 443
+
+[[entries."src/Database/Schema/SqlserverSchemaDialect.php".issues]]
+code = "strict-behavior"
+start_line = 863
+end_line = 863
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "prefer-early-continue"
+start_line = 398
+end_line = 400
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "prefer-early-continue"
+start_line = 600
+end_line = 609
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "prefer-early-continue"
+start_line = 639
+end_line = 641
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "prefer-early-continue"
+start_line = 715
+end_line = 723
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "prefer-static-closure"
+start_line = 803
+end_line = 803
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "strict-behavior"
+start_line = 818
+end_line = 818
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "strict-behavior"
+start_line = 824
+end_line = 824
+
+[[entries."src/Database/Schema/TableSchema.php".issues]]
+code = "tagged-todo"
+start_line = 864
+end_line = 864
+
+[[entries."src/Database/Schema/TableSchemaInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 294
+end_line = 294
+
+[[entries."src/Database/Type/DateTimeType.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 381
+end_line = 381
+
+[[entries."src/Database/Type/DateType.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 204
+end_line = 204
+
+[[entries."src/Database/Type/DecimalType.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 152
+end_line = 152
+
+[[entries."src/Database/Type/FloatType.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 132
+end_line = 132
+
+[[entries."src/Database/Type/TimeType.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 230
+end_line = 230
+
+[[entries."src/Database/ValueBinder.php".issues]]
+code = "no-insecure-comparison"
+start_line = 70
+end_line = 70
+
+[[entries."src/Database/ValueBinder.php".issues]]
+code = "sensitive-parameter"
+start_line = 67
+end_line = 67
+
+[[entries."src/Datasource/ConnectionManager.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 202
+end_line = 202
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 37
+end_line = 37
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 53
+end_line = 53
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 87
+end_line = 87
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 110
+end_line = 110
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 134
+end_line = 134
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 144
+end_line = 144
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 154
+end_line = 154
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 258
+end_line = 258
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 275
+end_line = 275
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 327
+end_line = 327
+
+[[entries."src/Datasource/EntityInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 347
+end_line = 347
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 458
+end_line = 458
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 524
+end_line = 524
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 651
+end_line = 651
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 682
+end_line = 682
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 862
+end_line = 862
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 954
+end_line = 954
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 978
+end_line = 978
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1041
+end_line = 1041
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1070
+end_line = 1070
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1160
+end_line = 1160
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1361
+end_line = 1361
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 588
+end_line = 588
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1122
+end_line = 1122
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-early-continue"
+start_line = 549
+end_line = 554
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-early-continue"
+start_line = 866
+end_line = 868
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1122
+end_line = 1122
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1320
+end_line = 1320
+
+[[entries."src/Datasource/EntityTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 1415
+end_line = 1415
+
+[[entries."src/Datasource/InvalidPropertyInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 42
+end_line = 42
+
+[[entries."src/Datasource/Paging/NumericPaginator.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 777
+end_line = 777
+
+[[entries."src/Datasource/Paging/SortField.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 92
+end_line = 92
+
+[[entries."src/Datasource/Paging/SortableFieldsBuilder.php".issues]]
+code = "prefer-early-continue"
+start_line = 74
+end_line = 77
+
+[[entries."src/Datasource/QueryInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 39
+end_line = 39
+
+[[entries."src/Datasource/QueryInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 255
+end_line = 255
+
+[[entries."src/Datasource/QueryInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 413
+end_line = 413
+
+[[entries."src/Error/Debugger.php".issues]]
+code = "no-literal-password"
+start_line = 66
+end_line = 66
+
+[[entries."src/Error/Debugger.php".issues]]
+code = "strict-behavior"
+start_line = 431
+end_line = 431
+
+[[entries."src/Error/ErrorLogger.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 94
+end_line = 94
+
+[[entries."src/Error/ErrorLogger.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 161
+end_line = 161
+
+[[entries."src/Error/ErrorLoggerInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 40
+end_line = 40
+
+[[entries."src/Error/ErrorLoggerInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 54
+end_line = 54
+
+[[entries."src/Error/ErrorRendererInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 33
+end_line = 33
+
+[[entries."src/Error/ExceptionTrap.php".issues]]
+code = "prefer-early-continue"
+start_line = 363
+end_line = 366
+
+[[entries."src/Error/Renderer/HtmlErrorRenderer.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 42
+end_line = 42
+
+[[entries."src/Error/Renderer/TextErrorRenderer.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 39
+end_line = 39
+
+[[entries."src/Error/Renderer/WebExceptionRenderer.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 377
+end_line = 377
+
+[[entries."src/Error/functions.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 34
+end_line = 34
+
+[[entries."src/Error/functions_global.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 34
+end_line = 34
+
+[[entries."src/Event/AttributeEventListenerConnector.php".issues]]
+code = "prefer-static-closure"
+start_line = 112
+end_line = 112
+
+[[entries."src/Event/EventList.php".issues]]
+code = "prefer-static-closure"
+start_line = 88
+end_line = 88
+
+[[entries."src/Event/EventManager.php".issues]]
+code = "prefer-early-continue"
+start_line = 181
+end_line = 184
+
+[[entries."src/Form/FormProtector.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 116
+end_line = 116
+
+[[entries."src/Form/FormProtector.php".issues]]
+code = "prefer-arrow-function"
+start_line = 174
+end_line = 174
+
+[[entries."src/Form/FormProtector.php".issues]]
+code = "prefer-static-closure"
+start_line = 174
+end_line = 174
+
+[[entries."src/Http/BaseApplication.php".issues]]
+code = "no-error-control-operator"
+start_line = 175
+end_line = 175
+
+[[entries."src/Http/Client/Adapter/Curl.php".issues]]
+code = "no-nested-ternary"
+start_line = 177
+end_line = 179
+
+[[entries."src/Http/Client/Adapter/Curl.php".issues]]
+code = "prefer-early-continue"
+start_line = 143
+end_line = 145
+
+[[entries."src/Http/Client/Adapter/Stream.php".issues]]
+code = "prefer-early-continue"
+start_line = 99
+end_line = 101
+
+[[entries."src/Http/Client/Adapter/Stream.php".issues]]
+code = "prefer-early-continue"
+start_line = 226
+end_line = 229
+
+[[entries."src/Http/Client/Auth/Digest.php".issues]]
+code = "strict-behavior"
+start_line = 202
+end_line = 202
+
+[[entries."src/Http/Client/Auth/Oauth.php".issues]]
+code = "no-assign-in-condition"
+start_line = 380
+end_line = 380
+
+[[entries."src/Http/Cookie/CookieCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 203
+end_line = 205
+
+[[entries."src/Http/Cookie/CookieInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 210
+end_line = 210
+
+[[entries."src/Http/Cookie/CookieInterface.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 225
+end_line = 225
+
+[[entries."src/Http/Link/Link.php".issues]]
+code = "prefer-static-closure"
+start_line = 122
+end_line = 122
+
+[[entries."src/Http/Link/LinkProvider.php".issues]]
+code = "prefer-static-closure"
+start_line = 76
+end_line = 76
+
+[[entries."src/Http/Link/LinkProvider.php".issues]]
+code = "prefer-static-closure"
+start_line = 107
+end_line = 107
+
+[[entries."src/Http/Middleware/CsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 227
+end_line = 227
+
+[[entries."src/Http/Middleware/CsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 254
+end_line = 254
+
+[[entries."src/Http/Middleware/CsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 278
+end_line = 278
+
+[[entries."src/Http/Middleware/CsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 302
+end_line = 302
+
+[[entries."src/Http/Middleware/EncryptedCookieMiddleware.php".issues]]
+code = "prefer-early-continue"
+start_line = 104
+end_line = 106
+
+[[entries."src/Http/Middleware/EncryptedCookieMiddleware.php".issues]]
+code = "prefer-early-continue"
+start_line = 121
+end_line = 124
+
+[[entries."src/Http/Middleware/RateLimitMiddleware.php".issues]]
+code = "no-literal-password"
+start_line = 57
+end_line = 57
+
+[[entries."src/Http/Middleware/RateLimitMiddleware.php".issues]]
+code = "no-literal-password"
+start_line = 62
+end_line = 62
+
+[[entries."src/Http/Middleware/SecurityHeadersMiddleware.php".issues]]
+code = "prefer-static-closure"
+start_line = 255
+end_line = 255
+
+[[entries."src/Http/Middleware/SessionCsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 163
+end_line = 163
+
+[[entries."src/Http/Middleware/SessionCsrfProtectionMiddleware.php".issues]]
+code = "sensitive-parameter"
+start_line = 186
+end_line = 186
+
+[[entries."src/Http/Middleware/SessionCsrfProtectionMiddleware.php".issues]]
+code = "strict-behavior"
+start_line = 165
+end_line = 165
+
+[[entries."src/Http/MiddlewareQueue.php".issues]]
+code = "prefer-early-continue"
+start_line = 169
+end_line = 178
+
+[[entries."src/Http/MiddlewareQueue.php".issues]]
+code = "prefer-early-continue"
+start_line = 202
+end_line = 211
+
+[[entries."src/Http/Response.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 617
+end_line = 617
+
+[[entries."src/Http/Response.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 680
+end_line = 680
+
+[[entries."src/Http/Response.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 824
+end_line = 824
+
+[[entries."src/Http/Response/AbstractStreamResponse.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 186
+end_line = 186
+
+[[entries."src/Http/Response/JsonStreamResponse.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 268
+end_line = 268
+
+[[entries."src/Http/Response/JsonStreamResponse.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 299
+end_line = 299
+
+[[entries."src/Http/ServerRequest.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 437
+end_line = 437
+
+[[entries."src/Http/ServerRequest.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1734
+end_line = 1734
+
+[[entries."src/Http/ServerRequest.php".issues]]
+code = "no-redundant-math"
+start_line = 1088
+end_line = 1088
+
+[[entries."src/Http/ServerRequest.php".issues]]
+code = "no-redundant-math"
+start_line = 1109
+end_line = 1109
+
+[[entries."src/Http/ServerRequest.php".issues]]
+code = "strict-behavior"
+start_line = 623
+end_line = 623
+
+[[entries."src/Http/Session.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 616
+end_line = 616
+
+[[entries."src/Http/Session.php".issues]]
+code = "prefer-early-continue"
+start_line = 579
+end_line = 581
+
+[[entries."src/I18n/Date.php".issues]]
+code = "inline-variable-return"
+start_line = 191
+end_line = 191
+
+[[entries."src/I18n/Date.php".issues]]
+code = "no-multi-assignments"
+start_line = 191
+end_line = 191
+
+[[entries."src/I18n/DateTime.php".issues]]
+code = "inline-variable-return"
+start_line = 368
+end_line = 368
+
+[[entries."src/I18n/DateTime.php".issues]]
+code = "no-multi-assignments"
+start_line = 368
+end_line = 368
+
+[[entries."src/I18n/DateTime.php".issues]]
+code = "prefer-early-continue"
+start_line = 550
+end_line = 552
+
+[[entries."src/I18n/Parser/MoFileParser.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 162
+end_line = 162
+
+[[entries."src/I18n/Parser/PoFileParser.php".issues]]
+code = "no-assign-in-condition"
+start_line = 90
+end_line = 90
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 177
+end_line = 177
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 179
+end_line = 179
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 181
+end_line = 181
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 183
+end_line = 183
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 185
+end_line = 185
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 186
+end_line = 186
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 188
+end_line = 189
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 189
+end_line = 189
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 190
+end_line = 190
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 192
+end_line = 192
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 194
+end_line = 194
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 196
+end_line = 199
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 197
+end_line = 199
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 198
+end_line = 199
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 199
+end_line = 199
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 201
+end_line = 202
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 202
+end_line = 202
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 204
+end_line = 204
+
+[[entries."src/I18n/PluralRules.php".issues]]
+code = "no-nested-ternary"
+start_line = 205
+end_line = 205
+
+[[entries."src/I18n/RelativeTimeFormatter.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 41
+end_line = 41
+
+[[entries."src/I18n/RelativeTimeFormatter.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 205
+end_line = 205
+
+[[entries."src/I18n/TranslatorRegistry.php".issues]]
+code = "prefer-static-closure"
+start_line = 455
+end_line = 455
+
+[[entries."src/Lock/AcquiredLock.php".issues]]
+code = "sensitive-parameter"
+start_line = 41
+end_line = 41
+
+[[entries."src/Lock/Engine/FileLockEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 157
+end_line = 157
+
+[[entries."src/Lock/Engine/FileLockEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 196
+end_line = 196
+
+[[entries."src/Lock/Engine/FileLockEngine.php".issues]]
+code = "no-error-control-operator"
+start_line = 283
+end_line = 283
+
+[[entries."src/Lock/Engine/FileLockEngine.php".issues]]
+code = "no-insecure-comparison"
+start_line = 182
+end_line = 182
+
+[[entries."src/Lock/Engine/MemcachedLockEngine.php".issues]]
+code = "no-insecure-comparison"
+start_line = 149
+end_line = 149
+
+[[entries."src/Lock/Engine/MemcachedLockEngine.php".issues]]
+code = "no-insecure-comparison"
+start_line = 187
+end_line = 187
+
+[[entries."src/Lock/Engine/RedisLockEngine.php".issues]]
+code = "prefer-early-continue"
+start_line = 190
+end_line = 192
+
+[[entries."src/Mailer/Mailer.php".issues]]
+code = "prefer-early-continue"
+start_line = 373
+end_line = 376
+
+[[entries."src/Mailer/Mailer.php".issues]]
+code = "prefer-early-continue"
+start_line = 383
+end_line = 386
+
+[[entries."src/Mailer/Message.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1897
+end_line = 1897
+
+[[entries."src/Mailer/Message.php".issues]]
+code = "prefer-early-continue"
+start_line = 911
+end_line = 917
+
+[[entries."src/Mailer/Message.php".issues]]
+code = "prefer-early-continue"
+start_line = 1516
+end_line = 1518
+
+[[entries."src/Mailer/Message.php".issues]]
+code = "prefer-static-closure"
+start_line = 1897
+end_line = 1897
+
+[[entries."src/Mailer/Message.php".issues]]
+code = "prefer-static-closure"
+start_line = 1925
+end_line = 1925
+
+[[entries."src/Mailer/Transport/MailTransport.php".issues]]
+code = "no-error-control-operator"
+start_line = 90
+end_line = 90
+
+[[entries."src/Mailer/Transport/MailTransport.php".issues]]
+code = "prefer-arrow-function"
+start_line = 55
+end_line = 55
+
+[[entries."src/Mailer/Transport/MailTransport.php".issues]]
+code = "prefer-static-closure"
+start_line = 55
+end_line = 55
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "prefer-arrow-function"
+start_line = 572
+end_line = 572
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "prefer-early-continue"
+start_line = 240
+end_line = 245
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "prefer-early-continue"
+start_line = 276
+end_line = 279
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "prefer-early-continue"
+start_line = 287
+end_line = 291
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "prefer-static-closure"
+start_line = 572
+end_line = 572
+
+[[entries."src/Mailer/Transport/SmtpTransport.php".issues]]
+code = "strict-behavior"
+start_line = 259
+end_line = 259
+
+[[entries."src/ORM/Association.php".issues]]
+code = "prefer-early-continue"
+start_line = 226
+end_line = 228
+
+[[entries."src/ORM/Association.php".issues]]
+code = "prefer-static-closure"
+start_line = 779
+end_line = 779
+
+[[entries."src/ORM/Association.php".issues]]
+code = "prefer-static-closure"
+start_line = 970
+end_line = 970
+
+[[entries."src/ORM/Association.php".issues]]
+code = "prefer-static-closure"
+start_line = 1010
+end_line = 1010
+
+[[entries."src/ORM/Association.php".issues]]
+code = "prefer-static-closure"
+start_line = 1033
+end_line = 1033
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 234
+end_line = 234
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 587
+end_line = 587
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 899
+end_line = 899
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1441
+end_line = 1441
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1446
+end_line = 1446
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-early-continue"
+start_line = 973
+end_line = 975
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-early-continue"
+start_line = 1355
+end_line = 1358
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-early-continue"
+start_line = 1389
+end_line = 1392
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 531
+end_line = 531
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 1441
+end_line = 1441
+
+[[entries."src/ORM/Association/BelongsToMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 1446
+end_line = 1446
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 649
+end_line = 649
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 386
+end_line = 386
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 404
+end_line = 404
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 500
+end_line = 500
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-arrow-function"
+start_line = 505
+end_line = 505
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 295
+end_line = 295
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 302
+end_line = 302
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 386
+end_line = 386
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 404
+end_line = 404
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 500
+end_line = 500
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 505
+end_line = 505
+
+[[entries."src/ORM/Association/HasMany.php".issues]]
+code = "prefer-static-closure"
+start_line = 544
+end_line = 544
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 515
+end_line = 515
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "prefer-early-continue"
+start_line = 272
+end_line = 278
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "prefer-early-continue"
+start_line = 412
+end_line = 414
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 652
+end_line = 652
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 731
+end_line = 731
+
+[[entries."src/ORM/Association/Loader/SelectLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 752
+end_line = 752
+
+[[entries."src/ORM/AssociationCollection.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 263
+end_line = 263
+
+[[entries."src/ORM/AssociationCollection.php".issues]]
+code = "prefer-static-closure"
+start_line = 166
+end_line = 166
+
+[[entries."src/ORM/Behavior/CounterCacheBehavior.php".issues]]
+code = "prefer-arrow-function"
+start_line = 386
+end_line = 386
+
+[[entries."src/ORM/Behavior/CounterCacheBehavior.php".issues]]
+code = "prefer-early-continue"
+start_line = 276
+end_line = 279
+
+[[entries."src/ORM/Behavior/CounterCacheBehavior.php".issues]]
+code = "prefer-early-continue"
+start_line = 326
+end_line = 329
+
+[[entries."src/ORM/Behavior/CounterCacheBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 386
+end_line = 386
+
+[[entries."src/ORM/Behavior/TimestampBehavior.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 145
+end_line = 145
+
+[[entries."src/ORM/Behavior/TimestampBehavior.php".issues]]
+code = "prefer-early-continue"
+start_line = 181
+end_line = 185
+
+[[entries."src/ORM/Behavior/Translate/EavStrategy.php".issues]]
+code = "prefer-arrow-function"
+start_line = 178
+end_line = 178
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-early-continue"
+start_line = 231
+end_line = 234
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-early-continue"
+start_line = 606
+end_line = 614
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 271
+end_line = 271
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 317
+end_line = 317
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 483
+end_line = 483
+
+[[entries."src/ORM/Behavior/Translate/ShadowTableStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 549
+end_line = 549
+
+[[entries."src/ORM/Behavior/Translate/TranslateStrategyTrait.php".issues]]
+code = "prefer-early-continue"
+start_line = 122
+end_line = 124
+
+[[entries."src/ORM/Behavior/TranslateBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 340
+end_line = 340
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 409
+end_line = 409
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 437
+end_line = 437
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 873
+end_line = 873
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 230
+end_line = 230
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 242
+end_line = 242
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 360
+end_line = 360
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 369
+end_line = 369
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 628
+end_line = 628
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 639
+end_line = 639
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 717
+end_line = 717
+
+[[entries."src/ORM/Behavior/TreeBehavior.php".issues]]
+code = "prefer-static-closure"
+start_line = 728
+end_line = 728
+
+[[entries."src/ORM/EagerLoader.php".issues]]
+code = "prefer-early-continue"
+start_line = 550
+end_line = 552
+
+[[entries."src/ORM/EagerLoader.php".issues]]
+code = "prefer-early-continue"
+start_line = 623
+end_line = 630
+
+[[entries."src/ORM/EagerLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 260
+end_line = 260
+
+[[entries."src/ORM/EagerLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 384
+end_line = 384
+
+[[entries."src/ORM/LazyEagerLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 77
+end_line = 77
+
+[[entries."src/ORM/LazyEagerLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 82
+end_line = 82
+
+[[entries."src/ORM/LazyEagerLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 151
+end_line = 151
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-arrow-function"
+start_line = 689
+end_line = 689
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-arrow-function"
+start_line = 713
+end_line = 713
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-early-continue"
+start_line = 244
+end_line = 246
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-early-continue"
+start_line = 255
+end_line = 257
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-early-continue"
+start_line = 456
+end_line = 458
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-early-continue"
+start_line = 478
+end_line = 481
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-early-continue"
+start_line = 620
+end_line = 622
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-static-closure"
+start_line = 442
+end_line = 442
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-static-closure"
+start_line = 681
+end_line = 681
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-static-closure"
+start_line = 689
+end_line = 689
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-static-closure"
+start_line = 713
+end_line = 713
+
+[[entries."src/ORM/Marshaller.php".issues]]
+code = "prefer-static-closure"
+start_line = 716
+end_line = 716
+
+[[entries."src/ORM/Query/SelectQuery.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 421
+end_line = 421
+
+[[entries."src/ORM/Query/SelectQuery.php".issues]]
+code = "prefer-early-continue"
+start_line = 1441
+end_line = 1444
+
+[[entries."src/ORM/ResultSetFactory.php".issues]]
+code = "prefer-arrow-function"
+start_line = 61
+end_line = 61
+
+[[entries."src/ORM/ResultSetFactory.php".issues]]
+code = "prefer-arrow-function"
+start_line = 297
+end_line = 297
+
+[[entries."src/ORM/ResultSetFactory.php".issues]]
+code = "prefer-arrow-function"
+start_line = 303
+end_line = 303
+
+[[entries."src/ORM/ResultSetFactory.php".issues]]
+code = "prefer-early-continue"
+start_line = 204
+end_line = 207
+
+[[entries."src/ORM/Rule/ExistsIn.php".issues]]
+code = "prefer-early-continue"
+start_line = 129
+end_line = 131
+
+[[entries."src/ORM/Rule/ExistsIn.php".issues]]
+code = "prefer-early-continue"
+start_line = 159
+end_line = 161
+
+[[entries."src/ORM/Rule/ExistsIn.php".issues]]
+code = "prefer-static-closure"
+start_line = 136
+end_line = 136
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 1348
+end_line = 1348
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 1672
+end_line = 1672
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 1850
+end_line = 1850
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 1906
+end_line = 1906
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 2971
+end_line = 2971
+
+[[entries."src/ORM/Table.php".issues]]
+code = "inline-variable-return"
+start_line = 3360
+end_line = 3360
+
+[[entries."src/ORM/Table.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1684
+end_line = 1684
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1645
+end_line = 1645
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-arrow-function"
+start_line = 2272
+end_line = 2272
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-early-continue"
+start_line = 594
+end_line = 602
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-early-continue"
+start_line = 2280
+end_line = 2288
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-early-continue"
+start_line = 2307
+end_line = 2313
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-early-continue"
+start_line = 2453
+end_line = 2456
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-early-continue"
+start_line = 2819
+end_line = 2821
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 1510
+end_line = 1510
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 1549
+end_line = 1549
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 1583
+end_line = 1583
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 1645
+end_line = 1645
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 2272
+end_line = 2272
+
+[[entries."src/ORM/Table.php".issues]]
+code = "prefer-static-closure"
+start_line = 2488
+end_line = 2488
+
+[[entries."src/Routing/AttributeRouteConnector.php".issues]]
+code = "prefer-static-closure"
+start_line = 106
+end_line = 106
+
+[[entries."src/Routing/AttributeRouteConnector.php".issues]]
+code = "prefer-static-closure"
+start_line = 339
+end_line = 339
+
+[[entries."src/Routing/Route/DashedRoute.php".issues]]
+code = "prefer-early-continue"
+start_line = 122
+end_line = 124
+
+[[entries."src/Routing/Route/EntityRoute.php".issues]]
+code = "prefer-early-continue"
+start_line = 54
+end_line = 56
+
+[[entries."src/Routing/Route/RedirectTrait.php".issues]]
+code = "prefer-early-continue"
+start_line = 79
+end_line = 81
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "no-redundant-math"
+start_line = 561
+end_line = 561
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-arrow-function"
+start_line = 804
+end_line = 804
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-early-continue"
+start_line = 520
+end_line = 522
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-early-continue"
+start_line = 607
+end_line = 609
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-early-continue"
+start_line = 716
+end_line = 719
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-static-closure"
+start_line = 130
+end_line = 130
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-static-closure"
+start_line = 788
+end_line = 788
+
+[[entries."src/Routing/Route/Route.php".issues]]
+code = "prefer-static-closure"
+start_line = 804
+end_line = 804
+
+[[entries."src/Routing/RouteBuilder.php".issues]]
+code = "prefer-early-continue"
+start_line = 788
+end_line = 798
+
+[[entries."src/Routing/RouteBuilder.php".issues]]
+code = "prefer-early-continue"
+start_line = 1024
+end_line = 1028
+
+[[entries."src/Routing/RouteCollection.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 359
+end_line = 359
+
+[[entries."src/Routing/RouteCollection.php".issues]]
+code = "prefer-early-continue"
+start_line = 405
+end_line = 408
+
+[[entries."src/Routing/Router.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 373
+end_line = 373
+
+[[entries."src/Routing/Router.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 716
+end_line = 716
+
+[[entries."src/Routing/Router.php".issues]]
+code = "prefer-early-continue"
+start_line = 242
+end_line = 244
+
+[[entries."src/Routing/Router.php".issues]]
+code = "prefer-early-continue"
+start_line = 622
+end_line = 625
+
+[[entries."src/TestSuite/ConnectionHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 133
+end_line = 133
+
+[[entries."src/TestSuite/ConnectionHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 153
+end_line = 153
+
+[[entries."src/TestSuite/ConnectionHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 155
+end_line = 155
+
+[[entries."src/TestSuite/ConnectionHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 156
+end_line = 156
+
+[[entries."src/TestSuite/Constraint/Email/MailContains.php".issues]]
+code = "no-sprintf-concat"
+start_line = 92
+end_line = 92
+
+[[entries."src/TestSuite/Constraint/Email/MailContainsHtml.php".issues]]
+code = "no-sprintf-concat"
+start_line = 40
+end_line = 40
+
+[[entries."src/TestSuite/Constraint/Email/MailContainsText.php".issues]]
+code = "no-sprintf-concat"
+start_line = 40
+end_line = 40
+
+[[entries."src/TestSuite/Constraint/Email/MailSubjectContains.php".issues]]
+code = "no-sprintf-concat"
+start_line = 80
+end_line = 80
+
+[[entries."src/TestSuite/Constraint/EventFiredWith.php".issues]]
+code = "prefer-arrow-function"
+start_line = 50
+end_line = 50
+
+[[entries."src/TestSuite/Constraint/EventFiredWith.php".issues]]
+code = "prefer-static-closure"
+start_line = 50
+end_line = 50
+
+[[entries."src/TestSuite/Fixture/SchemaLoader.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 49
+end_line = 49
+
+[[entries."src/TestSuite/Fixture/SchemaLoader.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 50
+end_line = 50
+
+[[entries."src/TestSuite/Fixture/SchemaLoader.php".issues]]
+code = "no-global"
+start_line = 55
+end_line = 55
+
+[[entries."src/TestSuite/Fixture/SchemaLoader.php".issues]]
+code = "no-global"
+start_line = 142
+end_line = 142
+
+[[entries."src/TestSuite/Fixture/SchemaLoader.php".issues]]
+code = "prefer-static-closure"
+start_line = 154
+end_line = 154
+
+[[entries."src/TestSuite/Fixture/TestFixture.php".issues]]
+code = "prefer-static-closure"
+start_line = 245
+end_line = 245
+
+[[entries."src/TestSuite/Fixture/TransactionStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 58
+end_line = 58
+
+[[entries."src/TestSuite/Fixture/TransactionStrategy.php".issues]]
+code = "prefer-static-closure"
+start_line = 87
+end_line = 87
+
+[[entries."src/TestSuite/IntegrationTestTrait.php".issues]]
+code = "prefer-arrow-function"
+start_line = 736
+end_line = 736
+
+[[entries."src/TestSuite/IntegrationTestTrait.php".issues]]
+code = "prefer-static-closure"
+start_line = 736
+end_line = 736
+
+[[entries."src/TestSuite/LogTestTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 135
+end_line = 135
+
+[[entries."src/TestSuite/LogTestTrait.php".issues]]
+code = "strict-behavior"
+start_line = 81
+end_line = 81
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 94
+end_line = 94
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 642
+end_line = 642
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 668
+end_line = 668
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 707
+end_line = 707
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 759
+end_line = 759
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 924
+end_line = 924
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "prefer-early-continue"
+start_line = 933
+end_line = 939
+
+[[entries."src/TestSuite/TestCase.php".issues]]
+code = "prefer-static-closure"
+start_line = 182
+end_line = 182
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 129
+end_line = 129
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 132
+end_line = 132
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 160
+end_line = 160
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 196
+end_line = 196
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 202
+end_line = 202
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 212
+end_line = 212
+
+[[entries."src/Utility/Filesystem.php".issues]]
+code = "no-error-control-operator"
+start_line = 242
+end_line = 242
+
+[[entries."src/Utility/Fs/Iterator/ContainsPathFilterIterator.php".issues]]
+code = "prefer-early-continue"
+start_line = 106
+end_line = 109
+
+[[entries."src/Utility/Fs/Iterator/ContainsPathFilterIterator.php".issues]]
+code = "prefer-early-continue"
+start_line = 115
+end_line = 118
+
+[[entries."src/Utility/Fs/Iterator/ExcludeDirectoryFilterIterator.php".issues]]
+code = "prefer-static-closure"
+start_line = 60
+end_line = 60
+
+[[entries."src/Utility/Fs/Iterator/FilenameFilterIterator.php".issues]]
+code = "prefer-static-closure"
+start_line = 58
+end_line = 58
+
+[[entries."src/Utility/Fs/Iterator/GlobFilterIterator.php".issues]]
+code = "prefer-static-closure"
+start_line = 57
+end_line = 57
+
+[[entries."src/Utility/Fs/Path.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 34
+end_line = 34
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "no-assign-in-condition"
+start_line = 875
+end_line = 875
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1184
+end_line = 1184
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "no-insecure-comparison"
+start_line = 218
+end_line = 218
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 159
+end_line = 161
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 169
+end_line = 177
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 334
+end_line = 341
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 592
+end_line = 594
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 676
+end_line = 678
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "prefer-early-continue"
+start_line = 1192
+end_line = 1195
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "sensitive-parameter"
+start_line = 193
+end_line = 193
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "sensitive-parameter"
+start_line = 212
+end_line = 212
+
+[[entries."src/Utility/Hash.php".issues]]
+code = "strict-behavior"
+start_line = 1267
+end_line = 1267
+
+[[entries."src/Utility/Inflector.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 242
+end_line = 242
+
+[[entries."src/Utility/Inflector.php".issues]]
+code = "prefer-early-continue"
+start_line = 217
+end_line = 219
+
+[[entries."src/Utility/Inflector.php".issues]]
+code = "prefer-early-continue"
+start_line = 302
+end_line = 306
+
+[[entries."src/Utility/Inflector.php".issues]]
+code = "prefer-early-continue"
+start_line = 357
+end_line = 361
+
+[[entries."src/Utility/MergeVariablesTrait.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 103
+end_line = 103
+
+[[entries."src/Utility/Text.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 449
+end_line = 449
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1270
+end_line = 1270
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1276
+end_line = 1276
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1309
+end_line = 1309
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-early-continue"
+start_line = 149
+end_line = 151
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 238
+end_line = 238
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 739
+end_line = 739
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1260
+end_line = 1260
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1270
+end_line = 1270
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1276
+end_line = 1276
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1298
+end_line = 1298
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1309
+end_line = 1309
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1343
+end_line = 1343
+
+[[entries."src/Utility/Text.php".issues]]
+code = "prefer-static-closure"
+start_line = 1358
+end_line = 1358
+
+[[entries."src/Utility/Xml.php".issues]]
+code = "prefer-static-closure"
+start_line = 151
+end_line = 151
+
+[[entries."src/Utility/Xml.php".issues]]
+code = "prefer-static-closure"
+start_line = 184
+end_line = 184
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1219
+end_line = 1219
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1273
+end_line = 1273
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1325
+end_line = 1325
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1358
+end_line = 1358
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1538
+end_line = 1538
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1224
+end_line = 1224
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "prefer-static-closure"
+start_line = 510
+end_line = 510
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "prefer-static-closure"
+start_line = 1065
+end_line = 1065
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "prefer-static-closure"
+start_line = 1224
+end_line = 1224
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "strict-behavior"
+start_line = 1112
+end_line = 1112
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "strict-behavior"
+start_line = 1115
+end_line = 1115
+
+[[entries."src/Validation/Validation.php".issues]]
+code = "strict-behavior"
+start_line = 1245
+end_line = 1245
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 626
+end_line = 626
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 1103
+end_line = 1103
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 2177
+end_line = 2177
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 3023
+end_line = 3023
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 3062
+end_line = 3062
+
+[[entries."src/Validation/Validator.php".issues]]
+code = "prefer-static-closure"
+start_line = 3261
+end_line = 3261
+
+[[entries."src/View/Cell.php".issues]]
+code = "prefer-early-continue"
+start_line = 117
+end_line = 119
+
+[[entries."src/View/Form/ContextFactory.php".issues]]
+code = "prefer-static-closure"
+start_line = 61
+end_line = 61
+
+[[entries."src/View/Form/ContextFactory.php".issues]]
+code = "prefer-static-closure"
+start_line = 80
+end_line = 80
+
+[[entries."src/View/Form/ContextFactory.php".issues]]
+code = "prefer-static-closure"
+start_line = 88
+end_line = 88
+
+[[entries."src/View/Form/ContextFactory.php".issues]]
+code = "prefer-static-closure"
+start_line = 96
+end_line = 96
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "loop-does-not-iterate"
+start_line = 135
+end_line = 138
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "loop-does-not-iterate"
+start_line = 203
+end_line = 206
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 628
+end_line = 628
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "prefer-arrow-function"
+start_line = 584
+end_line = 584
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "prefer-arrow-function"
+start_line = 634
+end_line = 634
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "prefer-static-closure"
+start_line = 584
+end_line = 584
+
+[[entries."src/View/Form/EntityContext.php".issues]]
+code = "prefer-static-closure"
+start_line = 634
+end_line = 634
+
+[[entries."src/View/Helper.php".issues]]
+code = "prefer-early-continue"
+start_line = 173
+end_line = 175
+
+[[entries."src/View/Helper/FormHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1440
+end_line = 1440
+
+[[entries."src/View/Helper/FormHelper.php".issues]]
+code = "prefer-early-continue"
+start_line = 1240
+end_line = 1243
+
+[[entries."src/View/Helper/FormHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 2550
+end_line = 2550
+
+[[entries."src/View/Helper/FormHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 2714
+end_line = 2714
+
+[[entries."src/View/Helper/FormHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 2715
+end_line = 2715
+
+[[entries."src/View/Helper/HtmlHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 675
+end_line = 675
+
+[[entries."src/View/Helper/HtmlHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 806
+end_line = 806
+
+[[entries."src/View/Helper/HtmlHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 853
+end_line = 853
+
+[[entries."src/View/Helper/HtmlHelper.php".issues]]
+code = "no-insecure-comparison"
+start_line = 161
+end_line = 161
+
+[[entries."src/View/Helper/PaginatorHelper.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 249
+end_line = 249
+
+[[entries."src/View/Helper/PaginatorHelper.php".issues]]
+code = "prefer-arrow-function"
+start_line = 1277
+end_line = 1277
+
+[[entries."src/View/Helper/PaginatorHelper.php".issues]]
+code = "prefer-static-closure"
+start_line = 1277
+end_line = 1277
+
+[[entries."src/View/StringTemplate.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 323
+end_line = 323
+
+[[entries."src/View/StringTemplate.php".issues]]
+code = "prefer-early-continue"
+start_line = 305
+end_line = 307
+
+[[entries."src/View/View.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1444
+end_line = 1444
+
+[[entries."src/View/View.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 1589
+end_line = 1589
+
+[[entries."src/View/View.php".issues]]
+code = "prefer-early-continue"
+start_line = 353
+end_line = 355
+
+[[entries."src/View/View.php".issues]]
+code = "prefer-static-closure"
+start_line = 1424
+end_line = 1424
+
+[[entries."src/View/ViewBuilder.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 170
+end_line = 170
+
+[[entries."src/View/ViewBuilder.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 503
+end_line = 503
+
+[[entries."src/View/ViewBuilder.php".issues]]
+code = "prefer-arrow-function"
+start_line = 681
+end_line = 681
+
+[[entries."src/View/ViewBuilder.php".issues]]
+code = "prefer-static-closure"
+start_line = 681
+end_line = 681
+
+[[entries."src/View/ViewVarsTrait.php".issues]]
+code = "prefer-early-continue"
+start_line = 62
+end_line = 65
+
+[[entries."src/View/Widget/BasicWidget.php".issues]]
+code = "no-redundant-math"
+start_line = 181
+end_line = 181
+
+[[entries."src/View/Widget/MultiCheckboxWidget.php".issues]]
+code = "strict-behavior"
+start_line = 266
+end_line = 266
+
+[[entries."src/View/Widget/MultiCheckboxWidget.php".issues]]
+code = "strict-behavior"
+start_line = 286
+end_line = 286
+
+[[entries."src/View/Widget/RadioWidget.php".issues]]
+code = "strict-behavior"
+start_line = 144
+end_line = 144
+
+[[entries."src/View/Widget/SelectBoxWidget.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 212
+end_line = 212
+
+[[entries."src/View/Widget/SelectBoxWidget.php".issues]]
+code = "no-boolean-flag-parameter"
+start_line = 248
+end_line = 248
+
+[[entries."src/View/Widget/SelectBoxWidget.php".issues]]
+code = "strict-behavior"
+start_line = 327
+end_line = 327
+
+[[entries."src/View/Widget/SelectBoxWidget.php".issues]]
+code = "strict-behavior"
+start_line = 344
+end_line = 344

@@ -200,7 +200,7 @@ trait PluginAssetsTrait
     protected function createDirectory(string $dir): bool
     {
         // phpcs:disable
-        $result = @mkdir($dir, 0777 ^ umask(), true);
+        $result = @mkdir($dir, 0o777 ^ umask(), true);
         // phpcs:enable
 
         if ($result) {

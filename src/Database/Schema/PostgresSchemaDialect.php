@@ -538,7 +538,8 @@ class PostgresSchemaDialect extends SchemaDialect
     private function describeForeignKeyQuery(): string
     {
         // phpcs:disable Generic.Files.LineLength
-        $sql = 'SELECT
+
+        return 'SELECT
         c.conname AS name,
         c.contype AS type,
         a.attname AS column_name,
@@ -560,8 +561,6 @@ class PostgresSchemaDialect extends SchemaDialect
         AND cl.relname = ?
         ORDER BY name, column_order ASC, references_field_order ASC';
         // phpcs:enable Generic.Files.LineLength
-
-        return $sql;
     }
 
     /**

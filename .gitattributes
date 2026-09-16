@@ -46,6 +46,7 @@ psalm-baseline.xml export-ignore
 rector.php export-ignore
 structarmed.php export-ignore
 mago.toml export-ignore
+mago-lint-baseline.toml export-ignore
 
 tests/composer.lock export-ignore
 tests/phpstan.neon export-ignore

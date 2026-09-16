@@ -158,7 +158,7 @@ class BasicWidget implements WidgetInterface
     {
         $maxLength = $context->getMaxLength($fieldName);
         if ($maxLength !== null) {
-            $data['maxlength'] = min($maxLength, 100000);
+            $data['maxlength'] = min($maxLength, 100_000);
         }
 
         return $data;

@@ -1123,9 +1123,7 @@ trait EntityTrait
                 ->filter(function ($value) {
                     return is_array($value) || $value instanceof EntityInterface;
                 })
-                ->map(function ($value) {
-                    return $this->readError($value);
-                })
+                ->map($this->readError(...))
                 ->filter()
                 ->toArray();
         } finally {

@@ -282,7 +282,7 @@ class MemcachedEngine extends CacheEngine
         } else {
             $position = strpos($server, ':');
         }
-        $port = 11211;
+        $port = 11_211;
         $host = $server;
         if ($position !== false) {
             $host = substr($server, 0, $position);

@@ -546,7 +546,8 @@ class PaginatorHelper extends Helper
             && $options['sort'] === $paging['sortDefault']
             && strtolower($options['direction']) === strtolower($paging['directionDefault'])
         ) {
-            $options['sort'] = $options['direction'] = null;
+            $options['sort'] = null;
+            $options['direction'] = null;
         }
         $baseUrl = $this->config['options']['url'] ?? [];
         if (!empty($paging['scope'])) {

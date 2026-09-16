@@ -50,7 +50,7 @@ class MemcachedLockEngine extends LockEngine
      * @var array<string, mixed>
      */
     protected array $defaultConfig = [
-        'servers' => [['127.0.0.1', 11211]],
+        'servers' => [['127.0.0.1', 11_211]],
         'prefix' => 'lock_',
         'ttl' => 300,
         'persistent' => false,
@@ -91,7 +91,7 @@ class MemcachedLockEngine extends LockEngine
         if ($this->memcached->getServerList() === []) {
             $servers = [];
             foreach ($this->config['servers'] as $server) {
-                $servers[] = [$server[0], (int)($server[1] ?? 11211), 1];
+                $servers[] = [$server[0], (int)($server[1] ?? 11_211), 1];
             }
             $this->memcached->addServers($servers);
         }

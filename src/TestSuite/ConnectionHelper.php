@@ -98,7 +98,7 @@ class ConnectionHelper
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn(string $table) => $collection->describe($table), $tables);
+        $schemas = array_map($collection->describe(...), $tables);
 
         $dialect = $connection->getWriteDriver()->schemaDialect();
         foreach ($schemas as $schema) {
@@ -129,7 +129,7 @@ class ConnectionHelper
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn(string $table) => $collection->describe($table), $tables);
+        $schemas = array_map($collection->describe(...), $tables);
 
         self::runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getWriteDriver()->schemaDialect();

@@ -270,7 +270,7 @@ jobs:
 
       - name: Run mago linter
         if: always()
-        run: vendor/bin/mago lint --minimum-report-level=error --minimum-fail-level=error --reporting-format=github
+        run: vendor/bin/mago lint --fail-on-out-of-sync-baseline
 
       - name: Run phpstan
         if: always()
