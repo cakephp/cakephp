@@ -22,7 +22,6 @@ literal-separator = true
 
 [linter]
 excludes = ["tests"]
-baseline-variant = "strict"
 baseline = "mago-lint-baseline.toml"
 
 [linter.rules]
