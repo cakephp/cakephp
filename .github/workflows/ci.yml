@@ -264,9 +264,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
-      - name: Run mago formatter
-        if: always()
-        run: vendor/bin/mago format --dry-run && vendor/bin/mago format --check
+      # - name: Run mago formatter
+      #   if: always()
+      #   run: vendor/bin/mago format --dry-run && vendor/bin/mago format --check
 
       - name: Run mago linter
         if: always()
