@@ -96,7 +96,7 @@ class ConnectionHelper
         $skip = ['spatial_ref_sys'];
         $allTables = array_diff($allTables, $skip);
 
-        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables === null ? $allTables : array_intersect($tables, $allTables);
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map($collection->describe(...), $tables);
 
@@ -127,7 +127,7 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTablesWithoutViews();
-        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables === null ? $allTables : array_intersect($tables, $allTables);
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map($collection->describe(...), $tables);
 

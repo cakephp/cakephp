@@ -678,7 +678,7 @@ class Route
             $hostOptions['_base'] = $context['_base'];
         }
 
-        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        $query = empty($url['?']) ? [] : (array)$url['?'];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so it is not part of

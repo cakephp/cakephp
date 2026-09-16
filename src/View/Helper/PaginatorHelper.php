@@ -1225,7 +1225,7 @@ class PaginatorHelper extends Helper
             'type' => 'select',
             'label' => __('View'),
             'default' => $default,
-            'value' => $limit !== null ? (int)$limit : null,
+            'value' => $limit === null ? null : (int)$limit,
             'options' => $limits,
             'onChange' => 'this.form.requestSubmit()',
         ]);

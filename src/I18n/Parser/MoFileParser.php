@@ -129,7 +129,7 @@ class MoFileParser
 
             if ($pluralId !== null || str_contains($translated, "\000")) {
                 $translated = explode("\000", $translated);
-                $plurals = $pluralId !== null ? $translated : null;
+                $plurals = $pluralId === null ? null : $translated;
                 $translated = $translated[0];
             }
 

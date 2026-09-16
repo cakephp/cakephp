@@ -167,7 +167,7 @@ class Parser
             // Capture class name and return immediately (PSR-4: one class per file)
             if ($waitingForClass && $token->id === T_STRING) {
                 $className = $token->text;
-                $fullyQualifiedName = $namespace !== '' ? $namespace . '\\' . $className : $className;
+                $fullyQualifiedName = $namespace === '' ? $className : $namespace . '\\' . $className;
 
                 return [$fullyQualifiedName];
             }

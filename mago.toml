@@ -36,3 +36,5 @@ excessive-parameter-list = { enabled = false }
 no-ini-set = { enabled = false }
 function-name = { enabled = false } # This rule expects function names in snake_case while we use camelBacked
 assert-description = { enabled = false }
+no-negated-ternary = { enabled = true }
+no-parameter-shadowing = { enabled = true }

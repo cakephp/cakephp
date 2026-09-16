@@ -205,7 +205,7 @@ class ArrayContext implements ContextInterface
             return true;
         }
 
-        return $required !== null ? (bool)$required : null;
+        return $required === null ? null : (bool)$required;
     }
 
     /**
