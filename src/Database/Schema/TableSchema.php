@@ -44,14 +44,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @var int
      */
-    public const int LENGTH_MEDIUM = 16777215;
+    public const int LENGTH_MEDIUM = 16_777_215;
 
     /**
      * Column length when using a `long` column type
      *
      * @var int
      */
-    public const int LENGTH_LONG = 4294967295;
+    public const int LENGTH_LONG = 4_294_967_295;
 
     /**
      * Primary constraint type

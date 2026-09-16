@@ -41,7 +41,7 @@ function debug(mixed $var, ?bool $showHtml = null, bool $showFrom = true): mixed
     $location = [];
     if ($showFrom) {
         $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
-        if (isset($trace[0]['line']) && isset($trace[0]['file'])) {
+        if (isset($trace[0]['line'], $trace[0]['file'])) {
             $location = [
                 'line' => $trace[0]['line'],
                 'file' => $trace[0]['file'],

@@ -231,13 +231,13 @@ class ExceptionTrap
             if ($event->isStopped()) {
                 return;
             }
-            $exception = $event->getData('exception');
-            assert($exception instanceof Throwable);
+            $excpn = $event->getData('exception');
+            assert($excpn instanceof Throwable);
 
-            $renderer = $this->renderer($exception, $request);
+            $renderer = $this->renderer($excpn, $request);
             $renderer->write($event->getResult() ?: $renderer->render());
-        } catch (Throwable $exception) {
-            $this->logInternalError($exception);
+        } catch (Throwable $excpn) {
+            $this->logInternalError($excpn);
         }
         // Use this constant as a proxy for cakephp tests.
         if (PHP_SAPI === 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {

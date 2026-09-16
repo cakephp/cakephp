@@ -98,6 +98,7 @@ class ReconnectStrategy implements RetryStrategyInterface
             // Make sure we free any resources associated with the old connection
             $this->connection->getDriver()->disconnect();
         } catch (Exception) {
+            // @mago-expect lint:no-empty-catch-clause Nothing to do if disconnect fails
         }
 
         try {

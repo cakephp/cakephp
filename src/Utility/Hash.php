@@ -133,7 +133,7 @@ class Hash
                 return [$data];
             }
 
-            return $data !== null ? (array)$data : [];
+            return $data === null ? [] : (array)$data;
         }
 
         if (!str_contains($path, '[')) {

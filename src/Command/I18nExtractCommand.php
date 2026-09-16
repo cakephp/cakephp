@@ -148,7 +148,7 @@ class I18nExtractCommand extends Command
         );
         $defaultPathIndex = 0;
         while (true) {
-            $currentPaths = $this->paths !== [] ? $this->paths : ['None'];
+            $currentPaths = $this->paths === [] ? ['None'] : $this->paths;
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths),
@@ -914,7 +914,7 @@ class I18nExtractCommand extends Command
             }
 
             if ($waitingForName && $type === T_STRING) {
-                return $namespace !== '' ? $namespace . '\\' . $value : $value;
+                return $namespace === '' ? $value : $namespace . '\\' . $value;
             }
 
             if ($waitingForName) {
@@ -989,7 +989,7 @@ class I18nExtractCommand extends Command
     protected function isPathUsable(string $path): bool
     {
         if (!is_dir($path)) {
-            mkdir($path, 0777 ^ umask(), true);
+            mkdir($path, 0o777 ^ umask(), true);
         }
 
         return is_dir($path) && is_writable($path);

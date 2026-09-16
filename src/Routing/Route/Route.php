@@ -336,7 +336,7 @@ class Route
             // Placeholder name, e.g. "foo"
             $name = $matchArray[1][0];
             // Placeholder with colon/braces, e.g. "{foo}"
-            $search = preg_quote($matchArray[0][0]);
+            $search = preg_quote($matchArray[0][0], '#');
             if (isset($this->options[$name])) {
                 $option = '';
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
@@ -678,7 +678,7 @@ class Route
             $hostOptions['_base'] = $context['_base'];
         }
 
-        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        $query = empty($url['?']) ? [] : (array)$url['?'];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so it is not part of

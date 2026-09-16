@@ -258,9 +258,9 @@ class SqlserverSchemaDialect extends SchemaDialect
         foreach ($statement->fetchAll('assoc') as $row) {
             $field = $this->convertColumn(
                 $row['type'],
-                $row['char_length'] !== null ? (int)$row['char_length'] : null,
-                $row['precision'] !== null ? (int)$row['precision'] : null,
-                $row['scale'] !== null ? (int)$row['scale'] : null,
+                $row['char_length'] === null ? null : (int)$row['char_length'],
+                $row['precision'] === null ? null : (int)$row['precision'],
+                $row['scale'] === null ? null : (int)$row['scale'],
             );
 
             if (!empty($row['autoincrement'])) {

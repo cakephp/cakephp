@@ -485,18 +485,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $rules = $name;
         }
 
-        foreach ($rules as $name => $rule) {
-            if (is_numeric($name)) {
+        foreach ($rules as $key => $val) {
+            if (is_numeric($key)) {
                 throw new InvalidArgumentException(
                     'You cannot add validation rules without a name. Update your rules array to have string keys.',
                 );
             }
 
-            if (is_array($rule)) {
-                $rule = $this->normalizeRuleArray($name, $rule);
+            if (is_array($val)) {
+                $val = $this->normalizeRuleArray($key, $val);
             }
 
-            $validationSet->add($name, $rule);
+            $validationSet->add($key, $val);
         }
 
         return $this;

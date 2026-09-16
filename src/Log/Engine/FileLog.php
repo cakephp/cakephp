@@ -53,9 +53,9 @@ class FileLog extends BaseLog
         'levels' => [],
         'scopes' => [],
         'rotate' => 10,
-        'size' => 10485760, // 10MB
+        'size' => 10_485_760, // 10MB
         'mask' => null,
-        'dirMask' => 0777,
+        'dirMask' => 0o777,
         'formatter' => [
             'className' => DefaultFormatter::class,
         ],

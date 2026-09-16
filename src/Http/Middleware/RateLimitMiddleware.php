@@ -202,7 +202,7 @@ class RateLimitMiddleware implements MiddlewareInterface
         }
 
         $params = $request->getAttribute('params', []);
-        if (isset($params['_rateLimiter']) && isset($this->config['limiters'][$params['_rateLimiter']])) {
+        if (isset($params['_rateLimiter'], $this->config['limiters'][$params['_rateLimiter']])) {
             return $this->config['limiters'][$params['_rateLimiter']];
         }
 

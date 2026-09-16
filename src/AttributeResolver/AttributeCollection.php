@@ -174,9 +174,9 @@ class AttributeCollection implements IteratorAggregate, Countable
      */
     protected function intersectWithActive(array $matchingIds): static
     {
-        $activeIds = $this->activeIds !== null
-            ? array_values(array_intersect($this->getActiveIds(), $matchingIds))
-            : $matchingIds;
+        $activeIds = $this->activeIds === null
+            ? $matchingIds
+            : array_values(array_intersect($this->getActiveIds(), $matchingIds));
 
         return $this->withActiveIds($activeIds);
     }

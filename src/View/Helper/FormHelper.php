@@ -1418,12 +1418,12 @@ class FormHelper extends Helper
         $hasLabel = is_a($enumClass, EnumLabelInterface::class, true);
 
         $values = [];
-        foreach ($enumClass::cases() as $enumClass) {
+        foreach ($enumClass::cases() as $case) {
             /**
              * @phpstan-ignore-next-line
              */
-            $values[$enumClass->value] = $hasLabel ? $enumClass->label()
-                : Inflector::humanize(Inflector::underscore($enumClass->name));
+            $values[$case->value] = $hasLabel ? $case->label()
+                : Inflector::humanize(Inflector::underscore($case->name));
         }
 
         return $values;
@@ -2518,7 +2518,7 @@ class FormHelper extends Helper
         $parts = explode('.', $field);
         $first = array_shift($parts);
 
-        return $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+        return $first . ($parts === [] ? '' : '[' . implode('][', $parts) . ']') . $endsWithBrackets;
     }
 
     /**

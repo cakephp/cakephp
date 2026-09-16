@@ -298,7 +298,7 @@ class TranslatorRegistry
         $locale ??= $this->getLocale();
 
         $prefix = $this->resolveCacheKeyPrefix($name, $locale);
-        $bucket = $prefix !== '' ? $prefix : static::DEFAULT_BUCKET;
+        $bucket = $prefix === '' ? static::DEFAULT_BUCKET : $prefix;
 
         if (isset($this->registry[$bucket][$name][$locale])) {
             return $this->registry[$bucket][$name][$locale];
@@ -310,9 +310,9 @@ class TranslatorRegistry
 
         // Cache keys cannot contain / if they go to file engine.
         $keyName = str_replace('/', '.', $name);
-        $key = $prefix !== ''
-            ? "translations.{$prefix}.{$keyName}.{$locale}"
-            : "translations.{$keyName}.{$locale}";
+        $key = $prefix === ''
+            ? "translations.{$keyName}.{$locale}"
+            : "translations.{$prefix}.{$keyName}.{$locale}";
         /** @var \Cake\I18n\Translator|null $translator */
         $translator = $this->cacher->get($key);
 

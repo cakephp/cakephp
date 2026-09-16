@@ -149,7 +149,7 @@ abstract class BaseApplication implements
         try {
             $this->addPlugin($name, $config);
         } catch (MissingPluginException) {
-            // Do not halt if the plugin is missing
+            // @mago-expect lint:no-empty-catch-clause Do not halt if the plugin is missing
         }
 
         return $this;

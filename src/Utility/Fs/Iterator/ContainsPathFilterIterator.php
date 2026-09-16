@@ -75,7 +75,7 @@ final class ContainsPathFilterIterator extends RecursiveFilterIterator
         }
 
         // Normalize string patterns for cross-platform compatibility
-        $this->stringPatterns = array_map(fn(string $p) => Path::normalize($p), $stringPatterns);
+        $this->stringPatterns = array_map(Path::normalize(...), $stringPatterns);
 
         // Normalize regex patterns (normalize the paths they'll match against)
         $this->regexPatterns = $regexPatterns;

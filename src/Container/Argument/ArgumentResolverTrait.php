@@ -56,6 +56,7 @@ trait ArgumentResolverTrait
 
                     continue;
                 } catch (NotFoundException) {
+                    // @mago-expect lint:no-empty-catch-clause
                 }
             }
 

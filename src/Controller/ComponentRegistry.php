@@ -168,7 +168,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
                 $this->container->extend($class);
                 $hasDefinition = true;
             } catch (NotFoundExceptionInterface) {
-                // No definition exists yet
+                // @mago-expect lint:no-empty-catch-clause No definition exists yet
             }
 
             if (!$hasDefinition) {

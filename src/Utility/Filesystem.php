@@ -138,7 +138,7 @@ class Filesystem
         }
 
         if (!$exists) {
-            chmod($filename, 0666 & ~umask());
+            chmod($filename, 0o666 & ~umask());
         }
     }
 
@@ -150,7 +150,7 @@ class Filesystem
      * @return void
      * @throws \Cake\Core\Exception\CakeException When directory creation fails.
      */
-    public function mkdir(string $dir, int $mode = 0777): void
+    public function mkdir(string $dir, int $mode = 0o777): void
     {
         if (is_dir($dir)) {
             return;

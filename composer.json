@@ -62,6 +62,7 @@
     "require-dev": {
         "boundwize/structarmed": "^0.14",
         "cakephp/cakephp-codesniffer": "6.x-dev",
+        "cakephp/mago-rules": "dev-main",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6.12",
@@ -142,6 +143,7 @@
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
         "psalm-baseline": "tools/psalm --set-baseline=psalm-baseline.xml",
+        "mago-lint-baseline": "vendor/bin/mago lint --generate-baseline --baseline mago-lint-baseline.toml",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.5.0\" && mv composer.backup composer.json",
@@ -159,5 +161,7 @@
         "branch-alias": {
             "6.x-dev": "6.0.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

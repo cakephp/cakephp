@@ -210,7 +210,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         $diff = $futureTime - $pastTime;
 
         // If more than a week, then take into account the length of months
-        if ($diff >= 604800) {
+        if ($diff >= 604_800) {
             $future = [];
             [
                 $future['H'],
@@ -264,7 +264,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 }
             }
 
-            if (!$months && $years >= 1 && $diff < $years * 31536000) {
+            if (!$months && $years >= 1 && $diff < $years * 31_536_000) {
                 $months = 11;
                 $years--;
             }
@@ -282,9 +282,9 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $years = 0;
             $months = 0;
             $weeks = 0;
-            $days = floor($diff / 86400);
+            $days = floor($diff / 86_400);
 
-            $diff -= $days * 86400;
+            $diff -= $days * 86_400;
 
             $hours = floor($diff / 3600);
             $diff -= $hours * 3600;

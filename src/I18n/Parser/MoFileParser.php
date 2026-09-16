@@ -32,7 +32,7 @@ class MoFileParser
      *
      * @var int
      */
-    public const int MO_LITTLE_ENDIAN_MAGIC = 0x950412de;
+    public const int MO_LITTLE_ENDIAN_MAGIC = 0x9504_12de;
 
     /**
      * Magic used for validating the format of a MO file as well as
@@ -40,7 +40,7 @@ class MoFileParser
      *
      * @var int
      */
-    public const int MO_BIG_ENDIAN_MAGIC = 0xde120495;
+    public const int MO_BIG_ENDIAN_MAGIC = 0xde12_0495;
 
     /**
      * The size of the header of a MO file in bytes.
@@ -129,7 +129,7 @@ class MoFileParser
 
             if ($pluralId !== null || str_contains($translated, "\000")) {
                 $translated = explode("\000", $translated);
-                $plurals = $pluralId !== null ? $translated : null;
+                $plurals = $pluralId === null ? null : $translated;
                 $translated = $translated[0];
             }
 

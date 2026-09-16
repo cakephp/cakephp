@@ -837,7 +837,7 @@ abstract class TestCase extends BaseTestCase
                             ['.*?', '.+?'],
                             $matches[1],
                         );
-                        $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
+                        $quotes = $val === $matches[1] ? '["\']?' : '["\']';
 
                         $explanations[] = sprintf('Attribute `%s` matches `%s`', $attr, $val);
                     } else {
