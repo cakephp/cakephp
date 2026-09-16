@@ -22,13 +22,12 @@ use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Engine\ArrayLog;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
 use Closure;
 use InvalidArgumentException;
-use Psr\Log\AbstractLogger;
-use Stringable;
 
 class SchemaLoaderTest extends TestCase
 {
@@ -228,17 +227,7 @@ class SchemaLoaderTest extends TestCase
      */
     private function captureQueries(Driver $driver, Closure $callback): array
     {
-        $logger = new class extends AbstractLogger {
-            /**
-             * @var array<string>
-             */
-            public array $queries = [];
-
-            public function log($level, string|Stringable $message, array $context = []): void
-            {
-                $this->queries[] = (string)$message;
-            }
-        };
+        $logger = new ArrayLog();
         $driver->setLogger($logger);
 
         try {
@@ -247,7 +236,10 @@ class SchemaLoaderTest extends TestCase
             $driver->disableQueryLogging();
         }
 
-        return $logger->queries;
+        return array_map(
+            static fn(string $message): string => str_starts_with($message, 'debug: ') ? substr($message, 7) : $message,
+            $logger->read(),
+        );
     }
 
     /**
