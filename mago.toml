@@ -32,7 +32,7 @@ too-many-properties = { enabled = false }
 too-many-methods = { enabled = false }
 excessive-parameter-list = { enabled = false }
 
-# These should probably moved into the common cakephp.mago.toml
+# These should probably be moved into the common cakephp.mago.toml
 no-ini-set = { enabled = false }
 function-name = { enabled = false } # This rule expects function names in snake_case while we use camelBacked
 assert-description = { enabled = false }
