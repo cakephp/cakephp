@@ -1517,13 +1517,13 @@ end_line = 1070
 
 [[entries."src/Datasource/EntityTrait.php".issues]]
 code = "no-boolean-flag-parameter"
-start_line = 1160
-end_line = 1160
+start_line = 1163
+end_line = 1163
 
 [[entries."src/Datasource/EntityTrait.php".issues]]
 code = "no-boolean-flag-parameter"
-start_line = 1361
-end_line = 1361
+start_line = 1364
+end_line = 1364
 
 [[entries."src/Datasource/EntityTrait.php".issues]]
 code = "prefer-arrow-function"
@@ -1552,13 +1552,13 @@ end_line = 1122
 
 [[entries."src/Datasource/EntityTrait.php".issues]]
 code = "prefer-static-closure"
-start_line = 1320
-end_line = 1320
+start_line = 1323
+end_line = 1323
 
 [[entries."src/Datasource/EntityTrait.php".issues]]
 code = "prefer-static-closure"
-start_line = 1415
-end_line = 1415
+start_line = 1418
+end_line = 1418
 
 [[entries."src/Datasource/InvalidPropertyInterface.php".issues]]
 code = "no-boolean-flag-parameter"

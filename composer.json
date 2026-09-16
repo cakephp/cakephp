@@ -143,6 +143,7 @@
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
         "psalm-baseline": "tools/psalm --set-baseline=psalm-baseline.xml",
+        "mago-lint-baseline": "vendor/bin/mago lint --generate-baseline --baseline mago-lint-baseline.toml",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.5.0\" && mv composer.backup composer.json",
