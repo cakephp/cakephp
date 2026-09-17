@@ -1202,6 +1202,30 @@ HTML;
     }
 
     /**
+     * Tests that transferEncoding can be set through configuration.
+     */
+    public function testConfigTransferEncoding(): void
+    {
+        $message = new Message();
+        $this->assertNull($message->getTransferEncoding());
+        $this->assertSame('8bit', $message->getContentTransferEncoding());
+
+        $message = new Message(['transferEncoding' => 'quoted-printable']);
+        $this->assertSame('quoted-printable', $message->getTransferEncoding());
+        $this->assertSame('quoted-printable', $message->getContentTransferEncoding());
+    }
+
+    /**
+     * Tests that an invalid transferEncoding in the configuration is rejected.
+     */
+    public function testConfigTransferEncodingInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Message(['transferEncoding' => 'invalid']);
+    }
+
+    /**
      * Test transferEncoding
      */
     public function testTransferEncoding(): void

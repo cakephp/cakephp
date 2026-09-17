@@ -1512,6 +1512,7 @@ class Message implements JsonSerializable
             'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
             'cc', 'bcc', 'messageId', 'domain', 'subject', 'attachments',
             'emailFormat', 'emailPattern', 'charset', 'headerCharset',
+            'transferEncoding',
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
