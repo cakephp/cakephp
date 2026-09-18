@@ -1560,6 +1560,52 @@ SQL;
     }
 
     /**
+     * Column provider for the unsigned attribute on unmapped types.
+     *
+     * @return array
+     */
+    public static function unmappedUnsignedColumnSqlProvider(): array
+    {
+        return [
+            [
+                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null],
+                '`amount` DOUBLE',
+            ],
+            [
+                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null, 'unsigned' => false],
+                '`amount` DOUBLE',
+            ],
+            [
+                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null, 'unsigned' => true],
+                '`amount` DOUBLE UNSIGNED',
+            ],
+            [
+                [
+                    'name' => 'amount',
+                    'type' => 'double',
+                    'length' => null,
+                    'precision' => null,
+                    'unsigned' => true,
+                    'null' => false,
+                ],
+                '`amount` DOUBLE UNSIGNED NOT NULL',
+            ],
+        ];
+    }
+
+    /**
+     * A type with no abstract mapping keeps its unsigned attribute.
+     */
+    #[DataProvider('unmappedUnsignedColumnSqlProvider')]
+    public function testColumnDefinitionSqlUnmappedTypeUnsigned(array $data, string $expected): void
+    {
+        $driver = $this->_getMockedDriver();
+        $dialect = new MysqlSchemaDialect($driver);
+
+        $this->assertSame($expected, $dialect->columnDefinitionSql($data));
+    }
+
+    /**
      * Provide data for testing constraintSql
      *
      * @return array
