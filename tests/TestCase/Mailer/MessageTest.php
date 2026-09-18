@@ -1216,6 +1216,90 @@ HTML;
     }
 
     /**
+     * The body must actually be encoded, not merely labelled: a conforming
+     * reader decodes what the header announces.
+     *
+     * @return void
+     */
+    public function testBodyIsBase64EncodedWhenDeclared(): void
+    {
+        $body = "Line one with a non-ascii character: \u{00e4}\nLine two\n" . str_repeat('x', 90);
+
+        $message = new Message(['transferEncoding' => 'base64']);
+        $message->setEmailFormat(Message::MESSAGE_TEXT);
+        $message->setBody([Message::MESSAGE_TEXT => $body]);
+
+        $wire = implode("\r\n", $message->getBody());
+
+        $this->assertStringNotContainsString('Line one', $wire, 'The body must not go out in the clear.');
+        $this->assertSame(
+            str_replace("\n", "\r\n", $body),
+            rtrim((string)base64_decode($wire, true), "\r\n"),
+            'The decoded body must match what an 8bit delivery puts on the wire.',
+        );
+        foreach (explode("\r\n", $wire) as $line) {
+            $this->assertLessThanOrEqual(76, strlen($line));
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testBodyIsQuotedPrintableEncodedWhenDeclared(): void
+    {
+        $body = "Line one with a non-ascii character: \u{00e4}\nLine two\n" . str_repeat('x', 90);
+
+        $message = new Message(['transferEncoding' => 'quoted-printable']);
+        $message->setEmailFormat(Message::MESSAGE_TEXT);
+        $message->setBody([Message::MESSAGE_TEXT => $body]);
+
+        $wire = implode("\r\n", $message->getBody());
+
+        $this->assertStringContainsString('=C3=A4', $wire);
+        $this->assertSame(
+            str_replace("\n", "\r\n", $body),
+            rtrim(quoted_printable_decode($wire), "\r\n"),
+            'The decoded body must match what an 8bit delivery puts on the wire.',
+        );
+    }
+
+    /**
+     * 7bit, 8bit and binary mean "no transformation" — the body must be
+     * handed over untouched.
+     *
+     * @return void
+     */
+    public function testBodyIsNotEncodedForPassThroughEncodings(): void
+    {
+        foreach (['7bit', '8bit', 'binary'] as $encoding) {
+            $message = new Message(['transferEncoding' => $encoding]);
+            $message->setEmailFormat(Message::MESSAGE_TEXT);
+            $message->setBody([Message::MESSAGE_TEXT => 'Plain body']);
+
+            $this->assertStringContainsString(
+                'Plain body',
+                implode("\r\n", $message->getBody()),
+                sprintf('%s must not transform the body.', $encoding),
+            );
+        }
+    }
+
+    /**
+     * getBody() must stay free of side effects — calling it twice may not
+     * encode twice.
+     *
+     * @return void
+     */
+    public function testRepeatedGetBodyDoesNotEncodeTwice(): void
+    {
+        $message = new Message(['transferEncoding' => 'base64']);
+        $message->setEmailFormat(Message::MESSAGE_TEXT);
+        $message->setBody([Message::MESSAGE_TEXT => 'Plain body']);
+
+        $this->assertSame($message->getBody(), $message->getBody());
+    }
+
+    /**
      * Tests that an invalid transferEncoding in the configuration is rejected.
      */
     public function testConfigTransferEncodingInvalid(): void
