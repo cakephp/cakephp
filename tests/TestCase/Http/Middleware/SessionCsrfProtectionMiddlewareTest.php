@@ -29,7 +29,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for SessionCsrfProtection
  */
-class SessionCsrfProtectionMiddlewareTest extends TestCase
+final class SessionCsrfProtectionMiddlewareTest extends TestCase
 {
     /**
      * Data provider for HTTP method tests.

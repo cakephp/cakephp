@@ -26,7 +26,7 @@ use SplFileInfo;
 /**
  * PluginAssetsCommandsTest class
  */
-class PluginAssetsCommandsTest extends TestCase
+final class PluginAssetsCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 

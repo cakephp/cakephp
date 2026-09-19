@@ -29,7 +29,7 @@ use LogicException;
 /**
  * ConsoleOptionParserTest
  */
-class ConsoleOptionParserTest extends TestCase
+final class ConsoleOptionParserTest extends TestCase
 {
     private ConsoleIo $io;
 

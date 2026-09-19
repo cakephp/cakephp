@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * IniConfigTest
  */
-class IniConfigTest extends TestCase
+final class IniConfigTest extends TestCase
 {
     /**
      * Test data to serialize and unserialize.

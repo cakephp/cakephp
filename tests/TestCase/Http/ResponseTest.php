@@ -39,7 +39,7 @@ use Psr\Http\Message\StreamInterface;
 /**
  * ResponseTest
  */
-class ResponseTest extends TestCase
+final class ResponseTest extends TestCase
 {
     /**
      * SERVER variable backup.

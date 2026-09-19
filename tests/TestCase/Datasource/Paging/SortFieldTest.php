@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * SortField Test Case
  */
-class SortFieldTest extends TestCase
+final class SortFieldTest extends TestCase
 {
     /**
      * Test constructor and getters

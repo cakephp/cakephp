@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests the Cake\Event\Event class functionality
  */
-class SubjectFilterDecoratorTest extends TestCase
+final class SubjectFilterDecoratorTest extends TestCase
 {
     /**
      * testCanTrigger

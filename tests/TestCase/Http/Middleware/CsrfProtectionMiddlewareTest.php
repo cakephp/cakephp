@@ -35,7 +35,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for CsrfProtection
  */
-class CsrfProtectionMiddlewareTest extends TestCase
+final class CsrfProtectionMiddlewareTest extends TestCase
 {
     protected function createOldToken(): string
     {

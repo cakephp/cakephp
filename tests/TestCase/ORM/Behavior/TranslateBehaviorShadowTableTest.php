@@ -31,7 +31,7 @@ use TestApp\Model\Entity\TranslateBakedArticle;
 /**
  * TranslateBehavior test case
  */
-class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
+final class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 {
     protected array $fixtures = [
         'core.Articles',

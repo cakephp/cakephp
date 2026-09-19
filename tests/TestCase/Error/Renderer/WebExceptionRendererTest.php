@@ -64,7 +64,7 @@ use TestPlugin\Controller\ErrorController as PluginErrorController;
 use TypeError;
 use function Cake\Core\h;
 
-class WebExceptionRendererTest extends TestCase
+final class WebExceptionRendererTest extends TestCase
 {
     /**
      * @var bool
@@ -307,7 +307,7 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testCakeErrorHelpersNotLost(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
         $exception = new NotFoundException();
         $renderer = new TestAppsExceptionRenderer($exception);
 

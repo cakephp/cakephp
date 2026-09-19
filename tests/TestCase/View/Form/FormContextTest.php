@@ -24,7 +24,7 @@ use Cake\View\Form\FormContext;
 /**
  * Form context test case.
  */
-class FormContextTest extends TestCase
+final class FormContextTest extends TestCase
 {
     /**
      * setup method.

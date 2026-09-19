@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests WindowExpression class
  */
-class WindowQueryTest extends TestCase
+final class WindowQueryTest extends TestCase
 {
     protected array $fixtures = [
         'core.Comments',

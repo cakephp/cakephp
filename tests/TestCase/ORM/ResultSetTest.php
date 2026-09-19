@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ResultSet test case.
  */
-class ResultSetTest extends TestCase
+final class ResultSetTest extends TestCase
 {
     /**
      * @var array<string>

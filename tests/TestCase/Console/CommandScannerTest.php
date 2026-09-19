@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for the CommandScanner
  */
-class CommandScannerTest extends TestCase
+final class CommandScannerTest extends TestCase
 {
     /**
      * @inheritDoc

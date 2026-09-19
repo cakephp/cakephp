@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
 use Closure;
 use InvalidArgumentException;
 
-class SchemaLoaderTest extends TestCase
+final class SchemaLoaderTest extends TestCase
 {
     /**
      * @var bool|null

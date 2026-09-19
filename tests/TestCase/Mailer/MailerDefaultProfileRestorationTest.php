@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Mailer\Mailer;
 use Cake\TestSuite\TestCase;
 
-class MailerDefaultProfileRestorationTest extends TestCase
+final class MailerDefaultProfileRestorationTest extends TestCase
 {
     public function testSendAction(): void
     {

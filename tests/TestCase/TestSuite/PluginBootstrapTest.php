@@ -26,7 +26,7 @@ use function Cake\TestSuite\enablePluginLoadingForTests;
 /**
  * Tests for the global plugin loading function in src/TestSuite/functions.php
  */
-class PluginBootstrapTest extends TestCase
+final class PluginBootstrapTest extends TestCase
 {
     use IntegrationTestTrait;
 

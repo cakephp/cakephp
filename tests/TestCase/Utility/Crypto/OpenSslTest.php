@@ -22,7 +22,7 @@ use Cake\Utility\Crypto\OpenSsl;
 /**
  * Openssl engine tests.
  */
-class OpenSslTest extends TestCase
+final class OpenSslTest extends TestCase
 {
     private OpenSsl $crypt;
 

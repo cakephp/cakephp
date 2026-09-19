@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ServiceConfigTest
  */
-class ServiceConfigTest extends TestCase
+final class ServiceConfigTest extends TestCase
 {
     public function testGet(): void
     {

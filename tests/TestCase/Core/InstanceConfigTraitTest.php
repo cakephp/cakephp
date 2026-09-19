@@ -23,7 +23,7 @@ use InvalidArgumentException;
 use TestApp\Config\ReadOnlyTestInstanceConfig;
 use TestApp\Config\TestInstanceConfig;
 
-class InstanceConfigTraitTest extends TestCase
+final class InstanceConfigTraitTest extends TestCase
 {
     /**
      * @var \TestApp\Config\TestInstanceConfig

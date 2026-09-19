@@ -28,7 +28,7 @@ use IntlDateFormatter;
 /**
  * TimeHelperTest class
  */
-class TimeHelperTest extends TestCase
+final class TimeHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\Helper\TimeHelper

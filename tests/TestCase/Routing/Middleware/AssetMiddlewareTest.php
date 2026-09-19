@@ -26,7 +26,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for AssetMiddleware
  */
-class AssetMiddlewareTest extends TestCase
+final class AssetMiddlewareTest extends TestCase
 {
     /**
      * setup
