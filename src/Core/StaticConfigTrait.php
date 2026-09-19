@@ -277,6 +277,13 @@ REGEXP;
             }
         }
 
+        if (isset($parsed['username'])) {
+            $parsed['username'] = urldecode($parsed['username']);
+        }
+        if (isset($parsed['password'])) {
+            $parsed['password'] = urldecode($parsed['password']);
+        }
+
         $query = '';
 
         if (isset($parsed['query'])) {
