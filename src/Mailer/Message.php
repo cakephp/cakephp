@@ -1362,7 +1362,7 @@ class Message implements JsonSerializable
                 $msg[] = 'Content-Transfer-Encoding: ' . $this->getContentTransferEncoding();
                 $msg[] = '';
             }
-            $content = explode("\n", $this->textMessage);
+            $content = explode("\n", $this->encodeBodyContent($this->textMessage));
             $msg = array_merge($msg, $content);
             $msg[] = '';
             $msg[] = '';
@@ -1378,7 +1378,7 @@ class Message implements JsonSerializable
                 $msg[] = 'Content-Transfer-Encoding: ' . $this->getContentTransferEncoding();
                 $msg[] = '';
             }
-            $content = explode("\n", $this->htmlMessage);
+            $content = explode("\n", $this->encodeBodyContent($this->htmlMessage));
             $msg = array_merge($msg, $content);
             $msg[] = '';
             $msg[] = '';
@@ -1835,6 +1835,34 @@ class Message implements JsonSerializable
         }
 
         return chunk_split(base64_encode($content));
+    }
+
+    /**
+     * Applies the message's transfer encoding to a body part.
+     *
+     * `base64` and `quoted-printable` describe a transformation of the
+     * content. Without applying it the header announces an encoding that was
+     * never performed, and a conforming reader decodes the body into garbage.
+     * `7bit`, `8bit` and `binary` mean "no transformation" and pass through.
+     *
+     * The content is normalised to CRLF before encoding because that is how it
+     * reaches the wire: getBody() splits on "\n" and the renderer joins the
+     * lines with "\r\n" again. Encoding the same bytes keeps the delivered
+     * body identical to an 8bit delivery — only its representation changes.
+     * The return value is "\n"-separated for exactly that reason.
+     *
+     * @param string $content Body part to encode.
+     * @return string Encoded content, lines separated by "\n".
+     */
+    protected function encodeBodyContent(string $content): string
+    {
+        $wire = str_replace("\n", "\r\n", $content);
+
+        return match ($this->getContentTransferEncoding()) {
+            'base64' => rtrim(chunk_split(base64_encode($wire), 76, "\n"), "\n"),
+            'quoted-printable' => str_replace("\r\n", "\n", quoted_printable_encode($wire)),
+            default => $content,
+        };
     }
 
     /**
