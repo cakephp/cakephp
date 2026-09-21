@@ -50,7 +50,9 @@ trait CommonQueryTrait
         $map = $table->getSchema()->typeMap();
         $fields = [];
         foreach ($map as $f => $type) {
-            $fields[$f] = $fields[$alias . '.' . $f] = $fields[$alias . '__' . $f] = $type;
+            $fields[$f] = $type;
+            $fields[$alias . '.' . $f] = $type;
+            $fields[$alias . '__' . $f] = $type;
         }
         $this->getTypeMap()->addDefaults($fields);
 

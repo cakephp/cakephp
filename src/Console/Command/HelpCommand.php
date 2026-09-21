@@ -329,7 +329,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $io->out("<info>{$prefix}:</info>");
 
             foreach ($cmds as $cmd) {
-                $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
+                $fullName = $cmd['subcommand'] === null ? $prefix : $prefix . ' ' . $cmd['subcommand'];
                 $description = $cmd['description'];
 
                 $padding = str_repeat(' ', $nameColumnWidth - 2 - strlen($fullName));

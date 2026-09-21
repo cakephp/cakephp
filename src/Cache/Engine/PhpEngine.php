@@ -69,8 +69,8 @@ class PhpEngine extends CacheEngine
     protected array $defaultConfig = [
         'duration' => 0,
         'groups' => [],
-        'mask' => 0664,
-        'dirMask' => 0777,
+        'mask' => 0o664,
+        'dirMask' => 0o777,
         'path' => null,
         'prefix' => 'cake_',
     ];

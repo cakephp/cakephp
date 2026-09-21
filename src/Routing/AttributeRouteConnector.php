@@ -642,7 +642,7 @@ class AttributeRouteConnector
         $prefix = null;
         $prefixPath = '';
         if ($parts !== []) {
-            $prefixSegments = array_map(static fn(string $segment): string => Inflector::camelize($segment), $parts);
+            $prefixSegments = array_map(Inflector::camelize(...), $parts);
             $prefix = implode('/', $prefixSegments);
             $prefixPath = '/' . implode('/', array_map(Inflector::dasherize(...), $parts));
         }

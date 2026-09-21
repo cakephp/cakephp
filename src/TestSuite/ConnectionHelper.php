@@ -96,9 +96,9 @@ class ConnectionHelper
         $skip = ['spatial_ref_sys'];
         $allTables = array_diff($allTables, $skip);
 
-        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables === null ? $allTables : array_intersect($tables, $allTables);
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn(string $table) => $collection->describe($table), $tables);
+        $schemas = array_map($collection->describe(...), $tables);
 
         $dialect = $connection->getWriteDriver()->schemaDialect();
         foreach ($schemas as $schema) {
@@ -127,9 +127,9 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
 
         $allTables = $collection->listTablesWithoutViews();
-        $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
+        $tables = $tables === null ? $allTables : array_intersect($tables, $allTables);
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn(string $table) => $collection->describe($table), $tables);
+        $schemas = array_map($collection->describe(...), $tables);
 
         self::runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getWriteDriver()->schemaDialect();

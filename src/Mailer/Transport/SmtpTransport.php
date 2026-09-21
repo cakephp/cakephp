@@ -96,7 +96,7 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->disconnect();
         } catch (Exception) {
-            // avoid fatal error on script termination
+            // @mago-expect lint:no-empty-catch-clause avoid fatal error on script termination
         }
     }
 

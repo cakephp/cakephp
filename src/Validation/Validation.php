@@ -953,6 +953,7 @@ class Validation
                 }
             }
         } catch (ReflectionException) {
+            // @mago-expect lint:no-empty-catch-clause Nothing to do here as expection is thrown below.
         }
 
         if ($backingType === null) {

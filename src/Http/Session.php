@@ -649,7 +649,7 @@ class Session
         $this->start();
         $params = session_get_cookie_params();
         unset($params['lifetime']);
-        $params['expires'] = time() - 42000;
+        $params['expires'] = time() - 42_000;
         setcookie(
             (string)session_name(),
             '',

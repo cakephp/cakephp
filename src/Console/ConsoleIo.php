@@ -632,7 +632,7 @@ class ConsoleIo implements ConsoleIoInterface
             // Create the directory using the current user permissions.
             $directory = dirname($path);
             if (!file_exists($directory)) {
-                mkdir($directory, 0777 ^ umask(), true);
+                mkdir($directory, 0o777 ^ umask(), true);
             }
 
             $file = new SplFileObject($path, 'w');

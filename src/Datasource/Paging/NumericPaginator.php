@@ -388,9 +388,9 @@ class NumericPaginator implements PaginatorInterface
         $this->addPrevNextParams($data);
         $this->addSortingParams($data);
 
-        $this->pagingParams['limit'] = (int)$data['defaults']['limit'] !== (int)$data['options']['limit']
-            ? $data['options']['limit']
-            : null;
+        $this->pagingParams['limit'] = (int)$data['defaults']['limit'] === (int)$data['options']['limit']
+            ? null
+            : $data['options']['limit'];
 
         // Add sortableFields configuration for view helpers
         if (isset($data['options']['sortableFields'])) {

@@ -72,7 +72,7 @@ class FileLockEngine extends LockEngine
 
         // Ensure lock directory exists
         if (!is_dir($this->config['path'])) {
-            mkdir($this->config['path'], 0777, true);
+            mkdir($this->config['path'], 0o777, true);
         }
 
         return true;

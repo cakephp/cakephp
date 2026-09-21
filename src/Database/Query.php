@@ -413,17 +413,17 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $ctes = is_array($cte) ? $cte : [$cte];
-        foreach ($ctes as $cte) {
-            if ($cte instanceof Closure) {
+        foreach ($ctes as $exp) {
+            if ($exp instanceof Closure) {
                 $query = $this->getConnection()->selectQuery();
-                $cte = $cte(new CommonTableExpression(), $query);
-                if (!($cte instanceof CommonTableExpression)) {
+                $exp = $exp(new CommonTableExpression(), $query);
+                if (!($exp instanceof CommonTableExpression)) {
                     throw new CakeException(
                         'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
                     );
                 }
             }
-            $this->parts['with'][] = $cte;
+            $this->parts['with'][] = $exp;
         }
 
         return $this;

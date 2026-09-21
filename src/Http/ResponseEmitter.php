@@ -151,7 +151,7 @@ class ResponseEmitter
             'HTTP/%s %d%s',
             $response->getProtocolVersion(),
             $response->getStatusCode(),
-            ($reasonPhrase ? ' ' . $reasonPhrase : ''),
+            $reasonPhrase ? ' ' . $reasonPhrase : '',
         ));
     }
 

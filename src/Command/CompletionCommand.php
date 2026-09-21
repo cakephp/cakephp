@@ -148,8 +148,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             if (!$verbose && str_contains($commandName, '.')) {
                 $shortName = explode('.', $commandName)[1];
                 if (
-                    isset($commandClasses[$shortName]) &&
-                    isset($commandClasses[$commandName]) &&
+                    isset($commandClasses[$shortName], $commandClasses[$commandName]) &&
                     $commandClasses[$shortName] === $commandClasses[$commandName]
                 ) {
                     continue;

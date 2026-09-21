@@ -553,9 +553,9 @@ class SqliteSchemaDialect extends SchemaDialect
 
         if (preg_match_all($pattern, $createSql, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $index => $match) {
-                $name = !empty($match[1])
-                    ? trim($match[1], '"`[]')
-                    : 'check_' . $index;
+                $name = empty($match[1])
+                    ? 'check_' . $index
+                    : trim($match[1], '"`[]');
                 $expression = trim($match[2]);
 
                 $constraints[] = [

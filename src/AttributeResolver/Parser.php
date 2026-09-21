@@ -86,11 +86,11 @@ class Parser
 
                     yield from $this->parseClass($reflection, $realFilePath, $fileTime, $pluginName);
                 } catch (Throwable) {
-                    // Skip classes that fail reflection
+                    // @mago-expect lint:no-empty-catch-clause Skip classes that fail reflection
                 }
             }
         } catch (Throwable) {
-            // Skip files that fail parsing
+            // @mago-expect lint:no-empty-catch-clause Skip files that fail parsing
         }
     }
 
@@ -167,7 +167,7 @@ class Parser
             // Capture class name and return immediately (PSR-4: one class per file)
             if ($waitingForClass && $token->id === T_STRING) {
                 $className = $token->text;
-                $fullyQualifiedName = $namespace !== '' ? $namespace . '\\' . $className : $className;
+                $fullyQualifiedName = $namespace === '' ? $className : $namespace . '\\' . $className;
 
                 return [$fullyQualifiedName];
             }

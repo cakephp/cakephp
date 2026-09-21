@@ -1124,6 +1124,7 @@ trait EntityTrait
                     return is_array($value) || $value instanceof EntityInterface;
                 })
                 ->map(function ($value) {
+                    // @mago-expect lint:prefer-first-class-callable
                     return $this->readError($value);
                 })
                 ->filter()

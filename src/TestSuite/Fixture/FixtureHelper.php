@@ -116,8 +116,8 @@ class FixtureHelper
             $groups[$fixture->connection()][] = $fixture;
         }
 
-        foreach ($groups as $connectionName => $fixtures) {
-            $callback(ConnectionManager::get($connectionName), $fixtures);
+        foreach ($groups as $connectionName => $group) {
+            $callback(ConnectionManager::get($connectionName), $group);
         }
     }
 

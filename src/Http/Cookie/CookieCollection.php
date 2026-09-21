@@ -73,7 +73,7 @@ class CookieCollection implements IteratorAggregate, Countable
             try {
                 $cookies[] = Cookie::createFromHeaderString($value, $defaults);
             } catch (Exception | TypeError) {
-                // Don't blow up on invalid cookies
+                // @mago-expect lint:no-empty-catch-clause Don't blow up on invalid cookies
             }
         }
 
