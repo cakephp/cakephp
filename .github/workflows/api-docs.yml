@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get Cakebot App Token
         id: app-token
-        uses: getsentry/action-github-app-token@v3
+        uses: getsentry/action-github-app-token@d4b5da6c5e37703f8c3b3e43abb5705b46e159cc # v3
         with:
           app_id: ${{ secrets.CAKEBOT_APP_ID }}
           private_key: ${{ secrets.CAKEBOT_APP_PRIVATE_KEY }}
