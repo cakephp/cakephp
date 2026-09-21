@@ -238,9 +238,7 @@ class FixtureHelper
     {
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if (!$connection instanceof Connection) {
-                $this->truncateConnection($connection, $groupFixtures);
-
-                return;
+                throw new CakeException('Connection does not support delete, use an alternative fixture strategy');
             }
 
             // Unlike truncate, delete is subject to foreign keys on every driver, so

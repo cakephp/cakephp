@@ -379,7 +379,7 @@ class FixtureHelperTest extends TestCase
 
     /**
      * Connections which are not database connections have no delete query builder,
-     * so they keep going through FixtureInterface::truncate().
+     * so the delete strategy refuses them instead of silently truncating.
      */
     public function testDeleteFixturesWithoutDatabaseConnection(): void
     {
@@ -405,8 +405,16 @@ class FixtureHelperTest extends TestCase
             }
         };
 
-        (new FixtureHelper())->delete([$fixture]);
-        $this->assertTrue($fixture->truncated);
+        try {
+            (new FixtureHelper())->delete([$fixture]);
+            $this->fail('Expected an exception for a connection without delete support.');
+        } catch (CakeException $e) {
+            $this->assertSame(
+                'Connection does not support delete, use an alternative fixture strategy',
+                $e->getMessage(),
+            );
+        }
+        $this->assertFalse($fixture->truncated);
     }
 
     /**
