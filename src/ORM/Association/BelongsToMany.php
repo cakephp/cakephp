@@ -302,7 +302,7 @@ class BelongsToMany extends Association
      * @param string $junctionProperty Property name.
      * @return $this
      */
-    public function setJunctionProperty(string $junctionProperty)
+    public function setJunctionProperty(string $junctionProperty): static
     {
         $this->junctionProperty = $junctionProperty;
 

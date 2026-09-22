@@ -124,7 +124,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Can be a FQCN or CommandInterface instance.
      * @return $this
      */
-    public function replace(string $oldName, string $newName, CommandInterface|string $command)
+    public function replace(string $oldName, string $newName, CommandInterface|string $command): static
     {
         $this->remove($oldName);
         $this->add($newName, $command);

@@ -46,7 +46,7 @@ class UniqueKey extends Constraint
      * @param array<string>|string $columns Columns
      * @return $this
      */
-    public function setColumns(string|array $columns)
+    public function setColumns(string|array $columns): static
     {
         $this->columns = (array)$columns;
 
@@ -69,7 +69,7 @@ class UniqueKey extends Constraint
      * @param string $type Type
      * @return $this
      */
-    public function setType(string $type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -92,7 +92,7 @@ class UniqueKey extends Constraint
      * @param string $name Name
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -118,7 +118,7 @@ class UniqueKey extends Constraint
      * @param array<string, int> $length array of length values
      * @return $this
      */
-    public function setLength(array $length)
+    public function setLength(array $length): static
     {
         $this->length = $length;
 

@@ -757,7 +757,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param bool $enable Whether to enable. Defaults to true.
      * @return $this
      */
-    public function enableEntityClassAssertion(bool $enable = true)
+    public function enableEntityClassAssertion(bool $enable = true): static
     {
         $this->assertEntityClass = $enable;
 
@@ -770,7 +770,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return $this
      */
-    public function disableEntityClassAssertion()
+    public function disableEntityClassAssertion(): static
     {
         $this->assertEntityClass = false;
 

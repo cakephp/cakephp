@@ -267,7 +267,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function isDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    public function isDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -282,7 +282,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function isNotDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    public function isNotDistinctFrom(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -408,7 +408,7 @@ class QueryExpression implements ExpressionInterface, Countable
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
         ?string $type = null,
-    ) {
+    ): static {
         $or = new static([], $this->getTypeMap(), 'OR');
         $or
             ->in($field, $values, $type)
@@ -488,7 +488,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function notBetween(ExpressionInterface|string $field, mixed $from, mixed $to, ?string $type = null)
+    public function notBetween(ExpressionInterface|string $field, mixed $from, mixed $to, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -817,13 +817,12 @@ class QueryExpression implements ExpressionInterface, Countable
         }
 
         if ($value === null && $this->conjunction !== ',') {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Expression `%s` has invalid `null` value.'
-                    . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing.',
-                    $expression,
-                ),
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Expression `%s` has invalid `null` value.'
+                . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
+                . ' is missing.',
+                $expression,
+            ));
         }
 
         return new ComparisonExpression($expression, $value, $type, $operator);

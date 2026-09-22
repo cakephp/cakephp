@@ -436,7 +436,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param bool $overwrite Whether to replace existing hints
      * @return $this
      */
-    public function optimizerHint(array|string $hint, bool $overwrite = false)
+    public function optimizerHint(array|string $hint, bool $overwrite = false): static
     {
         $hints = array_values((array)$hint);
         $this->parts['optimizerHint'] = $overwrite ? $hints : array_merge($this->parts['optimizerHint'], $hints);

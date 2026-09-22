@@ -57,9 +57,11 @@ class FileLockEngineTest extends TestCase
             $files = glob($this->lockPath . '/*');
             if ($files) {
                 foreach ($files as $file) {
+                    // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
                     @unlink($file);
                 }
             }
+            // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
             @rmdir($this->lockPath);
         }
     }

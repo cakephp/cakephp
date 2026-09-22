@@ -1081,7 +1081,7 @@ abstract class TestCase extends BaseTestCase
      * Mock a model with Mockery mocks, maintain fixtures and table association
      *
      * @template T of \Cake\ORM\Table
-     * @param string|class-string<T> $alias The alias or the FQCN of the model to get a mock for.
+     * @param class-string<T>|string $alias The alias or the FQCN of the model to get a mock for.
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @return (T|\Cake\ORM\Table)&\Mockery\LegacyMockInterface
      */

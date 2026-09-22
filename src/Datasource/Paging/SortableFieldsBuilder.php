@@ -120,7 +120,7 @@ class SortableFieldsBuilder
      * @param \Cake\Datasource\Paging\SortField|string ...$fields The sort fields to add
      * @return $this
      */
-    public function add(string $sortKey, SortField|string ...$fields)
+    public function add(string $sortKey, SortField|string ...$fields): static
     {
         if ($fields === []) {
             // If no fields provided, use the key as the field name
@@ -142,7 +142,7 @@ class SortableFieldsBuilder
      * @param mixed $value The sort field(s) - can be string, SortField, or array
      * @return $this
      */
-    protected function set(string $sortKey, mixed $value)
+    protected function set(string $sortKey, mixed $value): static
     {
         if (is_string($value)) {
             $this->map[$sortKey] = $value;

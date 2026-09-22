@@ -46,7 +46,7 @@ class CheckConstraint extends Constraint
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setExpression(string $expression)
+    public function setExpression(string $expression): static
     {
         if (trim($expression) === '') {
             throw new InvalidArgumentException('Check constraint expression cannot be empty');

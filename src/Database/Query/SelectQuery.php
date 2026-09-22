@@ -827,7 +827,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param bool $overwrite whether to reset the list of queries to be operated or not
      * @return $this
      */
-    public function except(Query|string $query, bool $overwrite = false)
+    public function except(Query|string $query, bool $overwrite = false): static
     {
         if ($overwrite) {
             $this->parts['except'] = [];
@@ -862,7 +862,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param bool $overwrite whether to reset the list of queries to be operated or not
      * @return $this
      */
-    public function exceptAll(Query|string $query, bool $overwrite = false)
+    public function exceptAll(Query|string $query, bool $overwrite = false): static
     {
         if ($overwrite) {
             $this->parts['except'] = [];

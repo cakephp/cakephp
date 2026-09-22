@@ -214,7 +214,7 @@ class RouteBuilder
      * @param array<string, mixed> $options Default route options like _host, _https, _port, etc.
      * @return $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $this->defaultOptions = $options;
 

@@ -113,7 +113,7 @@ class Column
      * @param string $name Name
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -158,7 +158,7 @@ class Column
      * @param string|null $baseType Base type
      * @return $this
      */
-    public function setBaseType(?string $baseType)
+    public function setBaseType(?string $baseType): static
     {
         $this->baseType = $baseType;
 
@@ -176,7 +176,7 @@ class Column
      * @param string $type Column type
      * @return $this
      */
-    public function setType(string $type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -199,7 +199,7 @@ class Column
      * @param int|null $length Length
      * @return $this
      */
-    public function setLength(?int $length)
+    public function setLength(?int $length): static
     {
         $this->length = $length;
 
@@ -222,7 +222,7 @@ class Column
      * @param bool $null Null
      * @return $this
      */
-    public function setNull(bool $null)
+    public function setNull(bool $null): static
     {
         $this->null = $null;
 
@@ -255,7 +255,7 @@ class Column
      * @param mixed $default Default
      * @return $this
      */
-    public function setDefault(mixed $default)
+    public function setDefault(mixed $default): static
     {
         $this->default = $default;
 
@@ -278,7 +278,7 @@ class Column
      * @param string|null $generated Generated option
      * @return $this
      */
-    public function setGenerated(?string $generated)
+    public function setGenerated(?string $generated): static
     {
         $this->generated = $generated;
 
@@ -301,7 +301,7 @@ class Column
      * @param bool $identity Identity
      * @return $this
      */
-    public function setIdentity(bool $identity)
+    public function setIdentity(bool $identity): static
     {
         $this->identity = $identity;
 
@@ -334,7 +334,7 @@ class Column
      * @param string $after After
      * @return $this
      */
-    public function setAfter(string $after)
+    public function setAfter(string $after): static
     {
         $this->after = $after;
 
@@ -361,7 +361,7 @@ class Column
      * @param string $update On Update function
      * @return $this
      */
-    public function setOnUpdate(string $update)
+    public function setOnUpdate(string $update): static
     {
         $this->onUpdate = $update;
 
@@ -387,7 +387,7 @@ class Column
      * @param int|null $precision Number precision
      * @return $this
      */
-    public function setPrecision(?int $precision)
+    public function setPrecision(?int $precision): static
     {
         $this->precision = $precision;
 
@@ -413,7 +413,7 @@ class Column
      * @param int $increment Number increment
      * @return $this
      */
-    public function setIncrement(int $increment)
+    public function setIncrement(int $increment): static
     {
         $this->increment = $increment;
 
@@ -436,7 +436,7 @@ class Column
      * @param string|null $comment Comment
      * @return $this
      */
-    public function setComment(?string $comment)
+    public function setComment(?string $comment): static
     {
         $this->comment = $comment;
 
@@ -459,7 +459,7 @@ class Column
      * @param bool $unsigned Signed
      * @return $this
      */
-    public function setUnsigned(bool $unsigned)
+    public function setUnsigned(bool $unsigned): static
     {
         $this->unsigned = $unsigned;
 
@@ -502,7 +502,7 @@ class Column
      * @param string $collation Collation
      * @return $this
      */
-    public function setCollate(string $collation)
+    public function setCollate(string $collation): static
     {
         $this->collate = $collation;
 
@@ -525,7 +525,7 @@ class Column
      * @param string $charset Character set
      * @return $this
      */
-    public function setCharset(string $charset)
+    public function setCharset(string $charset): static
     {
         $this->charset = $charset;
 
@@ -548,7 +548,7 @@ class Column
      * @param int $srid SRID
      * @return $this
      */
-    public function setSrid(int $srid)
+    public function setSrid(int $srid): static
     {
         $this->srid = $srid;
 
@@ -571,7 +571,7 @@ class Column
      * @param string $geometryType Geometry type (e.g., Point, Polygon)
      * @return $this
      */
-    public function setGeometryType(string $geometryType)
+    public function setGeometryType(string $geometryType): static
     {
         $this->geometryType = $geometryType;
 
@@ -596,7 +596,7 @@ class Column
      * @param bool $fixed Fixed
      * @return $this
      */
-    public function setFixed(bool $fixed)
+    public function setFixed(bool $fixed): static
     {
         $this->fixed = $fixed;
 
@@ -660,7 +660,7 @@ class Column
      * @throws \RuntimeException
      * @return $this
      */
-    public function setAttributes(array $attributes)
+    public function setAttributes(array $attributes): static
     {
         $validOptions = $this->getValidOptions();
         if (isset($attributes['identity']) && $attributes['identity'] && !isset($attributes['null'])) {

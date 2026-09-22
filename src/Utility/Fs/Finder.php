@@ -154,7 +154,7 @@ class Finder
      * @param string $path The directory path
      * @return $this
      */
-    public function in(string $path)
+    public function in(string $path): static
     {
         $this->paths[] = $path;
 
@@ -167,7 +167,7 @@ class Finder
      * @param string $pattern Glob pattern (e.g., '*.php')
      * @return $this
      */
-    public function name(string $pattern)
+    public function name(string $pattern): static
     {
         $this->names[] = $pattern;
 
@@ -180,7 +180,7 @@ class Finder
      * @param string $pattern Glob pattern to exclude (e.g., '*.rb', '*Test.php')
      * @return $this
      */
-    public function notName(string $pattern)
+    public function notName(string $pattern): static
     {
         $this->notNames[] = $pattern;
 
@@ -193,7 +193,7 @@ class Finder
      * @param string $directory Directory name to exclude
      * @return $this
      */
-    public function exclude(string $directory)
+    public function exclude(string $directory): static
     {
         $this->exclude[] = $directory;
 
@@ -206,7 +206,7 @@ class Finder
      * @param string $pattern Path pattern (e.g., 'Controller')
      * @return $this
      */
-    public function path(string $pattern)
+    public function path(string $pattern): static
     {
         $this->pathPatterns[] = $pattern;
 
@@ -219,7 +219,7 @@ class Finder
      * @param string $pattern Path pattern to exclude
      * @return $this
      */
-    public function notPath(string $pattern)
+    public function notPath(string $pattern): static
     {
         $this->notPathPatterns[] = $pattern;
 
@@ -234,7 +234,7 @@ class Finder
      * @param string $pattern Glob pattern (e.g., 'src/**\/*.php', 'tests/**\/*Test.php')
      * @return $this
      */
-    public function pattern(string $pattern)
+    public function pattern(string $pattern): static
     {
         $this->globPatterns[] = $pattern;
 
@@ -255,7 +255,7 @@ class Finder
      * @param \Closure(\SplFileInfo, string): bool $callback Filter callback
      * @return $this
      */
-    public function filter(Closure $callback)
+    public function filter(Closure $callback): static
     {
         $this->filters[] = $callback;
 
@@ -269,7 +269,7 @@ class Finder
      * @param \Cake\Utility\Fs\Enum\DepthOperator $operator The comparison operator (default: EQUAL)
      * @return $this
      */
-    public function depth(int $level, DepthOperator $operator = DepthOperator::EQUAL)
+    public function depth(int $level, DepthOperator $operator = DepthOperator::EQUAL): static
     {
         $this->depths[] = [$operator, $level];
 
@@ -282,7 +282,7 @@ class Finder
      * @param bool $ignore Whether to ignore hidden files
      * @return $this
      */
-    public function ignoreHiddenFiles(bool $ignore = true)
+    public function ignoreHiddenFiles(bool $ignore = true): static
     {
         $this->ignoreHiddenFiles = $ignore;
 
@@ -294,7 +294,7 @@ class Finder
      * @param bool $recursive Whether to search recursively (default: true)
      * @return $this
      */
-    public function recursive(bool $recursive = true)
+    public function recursive(bool $recursive = true): static
     {
         $this->recursive = $recursive;
 
