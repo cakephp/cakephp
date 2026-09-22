@@ -62,8 +62,11 @@ class Security
      * @throws \InvalidArgumentException
      * @link https://book.cakephp.org/5/en/core-libraries/security.html#hashing-data
      */
-    public static function hash(string $string, ?string $algorithm = null, #[SensitiveParameter] string|bool $salt = false): string
-    {
+    public static function hash(
+        string $string,
+        ?string $algorithm = null,
+        #[SensitiveParameter] string|bool $salt = false,
+    ): string {
         if (!$algorithm) {
             $algorithm = static::$hashType;
         }
@@ -198,8 +201,11 @@ class Security
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt(string $plain, #[SensitiveParameter] string $key, #[SensitiveParameter] ?string $hmacSalt = null): string
-    {
+    public static function encrypt(
+        string $plain,
+        #[SensitiveParameter] string $key,
+        #[SensitiveParameter] ?string $hmacSalt = null,
+    ): string {
         self::_checkKey($key, 'encrypt()');
 
         $hmacSalt ??= static::getSalt();
@@ -245,8 +251,10 @@ class Security
      * @param string $hmacSalt The hmac salt to use.
      * @return array{string, string} A list of $encryption, $authentication keys intended for encrypt() and decrypt().
      */
-    protected static function makeEncryptionKeys(#[SensitiveParameter] string $key, #[SensitiveParameter] string $hmacSalt): array
-    {
+    protected static function makeEncryptionKeys(
+        #[SensitiveParameter] string $key,
+        #[SensitiveParameter] string $hmacSalt,
+    ): array {
         if (Configure::read('Security.encryptWithRawKey') === true) {
             $encryption = hash_hkdf('sha256', $key, 32, 'encryption', $hmacSalt);
             $authentication = hash_hkdf('sha256', $key, 32, 'authentication', $hmacSalt);
@@ -270,8 +278,11 @@ class Security
      * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function decrypt(string $cipher, #[SensitiveParameter] string $key, #[SensitiveParameter] ?string $hmacSalt = null): ?string
-    {
+    public static function decrypt(
+        string $cipher,
+        #[SensitiveParameter] string $key,
+        #[SensitiveParameter] ?string $hmacSalt = null,
+    ): ?string {
         self::_checkKey($key, 'decrypt()');
         if (!$cipher) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');

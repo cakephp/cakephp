@@ -826,13 +826,12 @@ class QueryExpression implements ExpressionInterface, Countable
             $value === null &&
             $this->_conjunction !== ','
         ) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Expression `%s` has invalid `null` value.'
-                    . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing.',
-                    $expression,
-                ),
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Expression `%s` has invalid `null` value.'
+                . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
+                . ' is missing.',
+                $expression,
+            ));
         }
 
         return new ComparisonExpression($expression, $value, $type, $operator);
