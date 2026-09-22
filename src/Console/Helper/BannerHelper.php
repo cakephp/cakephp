@@ -43,7 +43,7 @@ class BannerHelper extends Helper
      * @param int $padding The padding value to use.
      * @return $this
      */
-    public function withPadding(int $padding)
+    public function withPadding(int $padding): static
     {
         if ($padding < 0) {
             throw new InvalidArgumentException('padding must be greater than 0');
@@ -59,7 +59,7 @@ class BannerHelper extends Helper
      * @param string $style The style value to use.
      * @return $this
      */
-    public function withStyle(string $style)
+    public function withStyle(string $style): static
     {
         $this->style = $style;
 

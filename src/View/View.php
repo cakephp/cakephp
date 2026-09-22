@@ -515,7 +515,7 @@ class View implements EventDispatcherInterface
      * @param string $path Path for layout files.
      * @return $this
      */
-    public function setLayoutPath(string $path)
+    public function setLayoutPath(string $path): static
     {
         $this->layoutPath = $path;
 
@@ -629,7 +629,7 @@ class View implements EventDispatcherInterface
      * @param string $name Layout file name to set.
      * @return $this
      */
-    public function setLayout(string $name)
+    public function setLayout(string $name): static
     {
         $this->layout = $name;
 
@@ -973,7 +973,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
-    public function prepend(string $name, mixed $value)
+    public function prepend(string $name, mixed $value): static
     {
         $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 
@@ -1256,7 +1256,7 @@ class View implements EventDispatcherInterface
      * @see \Cake\View\View::$subDir
      * @since 3.7.0
      */
-    public function setSubDir(string $subDir)
+    public function setSubDir(string $subDir): static
     {
         $this->subDir = $subDir;
 

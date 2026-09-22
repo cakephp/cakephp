@@ -38,7 +38,7 @@ class DistinctComparisonExpression extends ComparisonExpression
      * @param bool $not Whether to wrap the expression in `NOT (...)`
      * @return $this
      */
-    public function setNot(bool $not)
+    public function setNot(bool $not): static
     {
         $this->isNot = $not;
 

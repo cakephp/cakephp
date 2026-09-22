@@ -1205,8 +1205,12 @@ class Text
      * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
      */
-    public static function mask(string $string, int $offset = 0, ?int $length = null, string $maskCharacter = '*'): string
-    {
+    public static function mask(
+        string $string,
+        int $offset = 0,
+        ?int $length = null,
+        string $maskCharacter = '*',
+    ): string {
         if (mb_strlen($maskCharacter) !== 1) {
             throw new InvalidArgumentException('Mask character must be a single character.');
         }
@@ -1247,7 +1251,7 @@ class Text
      * of the masking character.
      *
      * @param string $string The input string.
-     * @param string[] $needles List of substrings to search for match (case-sensitive) and mask.
+     * @param array<string> $needles List of substrings to search for match (case-sensitive) and mask.
      * @param string $maskCharacter Single masking character.
      * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
@@ -1285,7 +1289,7 @@ class Text
      * Each occurrence of the provided pattern(s) will be replaced by a sequence of the masking character.
      *
      * @param string $string The input string.
-     * @param string[]|string $patterns One or more regex patterns.
+     * @param array<string>|string $patterns One or more regex patterns.
      * @param string $maskCharacter Single masking character.
      * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character.
      * @return string
@@ -1328,15 +1332,20 @@ class Text
      * - maskPartialRegex('Secret Codeword', '/\b\w+\b/', 1, 1) => S****t C*******d
      *
      * @param string $string The input string.
-     * @param string[]|string $patterns One or more regex patterns.
+     * @param array<string>|string $patterns One or more regex patterns.
      * @param int $showLeading Number of leading characters of each match to leave unmasked.
      * @param int $showTrailing Number of trailing characters of each match to leave unmasked.
      * @param string $maskCharacter Single masking character.
      * @return string
      * @throws \InvalidArgumentException If $maskCharacter is not exactly a single character, or if $showLeading/$showTrailing are negative.
      */
-    public static function maskPartialRegex(string $string, array|string $patterns, int $showLeading = 0, int $showTrailing = 0, string $maskCharacter = '*'): string
-    {
+    public static function maskPartialRegex(
+        string $string,
+        array|string $patterns,
+        int $showLeading = 0,
+        int $showTrailing = 0,
+        string $maskCharacter = '*',
+    ): string {
         if (!is_array($patterns)) {
             $patterns = [$patterns];
         }
@@ -1356,20 +1365,24 @@ class Text
         }
 
         foreach ($patterns as $regex) {
-            $string = (string)preg_replace_callback($regex, function ($matches) use ($maskCharacter, $showLeading, $showTrailing) {
-                $match = $matches[0];
-                $matchLen = mb_strlen($match);
-                $middleLen = $matchLen - $showLeading - $showTrailing;
+            $string = (string)preg_replace_callback(
+                $regex,
+                function ($matches) use ($maskCharacter, $showLeading, $showTrailing) {
+                    $match = $matches[0];
+                    $matchLen = mb_strlen($match);
+                    $middleLen = $matchLen - $showLeading - $showTrailing;
 
-                if ($middleLen <= 0) {
-                    return $match;
-                }
+                    if ($middleLen <= 0) {
+                        return $match;
+                    }
 
-                $leading = $showLeading > 0 ? mb_substr($match, 0, $showLeading) : '';
-                $trailing = $showTrailing > 0 ? mb_substr($match, -$showTrailing) : '';
+                    $leading = $showLeading > 0 ? mb_substr($match, 0, $showLeading) : '';
+                    $trailing = $showTrailing > 0 ? mb_substr($match, -$showTrailing) : '';
 
-                return $leading . str_repeat($maskCharacter, $middleLen) . $trailing;
-            }, $string);
+                    return $leading . str_repeat($maskCharacter, $middleLen) . $trailing;
+                },
+                $string,
+            );
         }
 
         return $string;

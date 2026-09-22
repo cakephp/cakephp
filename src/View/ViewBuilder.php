@@ -330,7 +330,7 @@ class ViewBuilder implements JsonSerializable
      * @return $this
      * @since 4.1.0
      */
-    public function addHelper(string $helper, array $options = [])
+    public function addHelper(string $helper, array $options = []): static
     {
         [$plugin, $name] = pluginSplit($helper);
         if ($plugin) {
@@ -534,7 +534,7 @@ class ViewBuilder implements JsonSerializable
      * @param self::MERGE_DEEP|self::MERGE_SHALLOW $strategy The merge strategy.
      * @return $this
      */
-    public function setConfigMergeStrategy(string $strategy)
+    public function setConfigMergeStrategy(string $strategy): static
     {
         if (!in_array($strategy, [self::MERGE_DEEP, self::MERGE_SHALLOW], true)) {
             throw new InvalidArgumentException('Invalid merge strategy. Valid options are: `deep`, `shallow`.');

@@ -5,18 +5,13 @@
     <file>tests/</file>
 
     <rule ref="CakePHP"/>
-    <arg value="nps"/>
+    <arg value="ps"/>
     <arg name="colors"/>
     <arg name="parallel" value="8"/>
     <arg name="cache" value=".phpcs.cache"/>
 
     <arg value="s"/>
 
-    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint" />
-
-    <rule ref="CakePHP.Classes.ReturnTypeHint.InvalidSelf">
-        <severity>0</severity>
-    </rule>
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <property name="rootNamespaces" type="array">

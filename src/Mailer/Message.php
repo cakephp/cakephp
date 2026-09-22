@@ -1241,7 +1241,7 @@ class Message implements JsonSerializable
         ?string $mimetype = null,
         ?string $contentId = null,
         ?bool $contentDisposition = null,
-    ) {
+    ): static {
         $name ??= 0;
 
         $this->addAttachments([$name => [
