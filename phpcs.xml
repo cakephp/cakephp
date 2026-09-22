@@ -5,7 +5,7 @@
     <file>tests/</file>
 
     <rule ref="CakePHP"/>
-    <arg value="nps"/>
+    <arg value="ps"/>
     <arg name="colors"/>
     <arg name="parallel" value="8"/>
     <arg name="cache" value=".phpcs.cache"/>
