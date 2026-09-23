@@ -1373,6 +1373,12 @@ SQL;
                 ['type' => 'float', 'length' => 11, 'precision' => 3],
                 '`value` FLOAT(11,3)',
             ],
+            // Double
+            [
+                'value',
+                ['type' => 'double'],
+                '`value` DOUBLE',
+            ],
             // Boolean
             [
                 'checked',
@@ -1560,49 +1566,17 @@ SQL;
     }
 
     /**
-     * Column provider for the unsigned attribute on unmapped types.
-     *
-     * @return array
+     * TableSchema drops `unsigned` on types it has no mapping for, so this
+     * can't go through columnSqlProvider.
      */
-    public static function unmappedUnsignedColumnSqlProvider(): array
+    public function testColumnDefinitionSqlUnmappedTypeUnsigned(): void
     {
-        return [
-            [
-                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null],
-                '`amount` DOUBLE',
-            ],
-            [
-                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null, 'unsigned' => false],
-                '`amount` DOUBLE',
-            ],
-            [
-                ['name' => 'amount', 'type' => 'double', 'length' => null, 'precision' => null, 'unsigned' => true],
-                '`amount` DOUBLE UNSIGNED',
-            ],
-            [
-                [
-                    'name' => 'amount',
-                    'type' => 'double',
-                    'length' => null,
-                    'precision' => null,
-                    'unsigned' => true,
-                    'null' => false,
-                ],
-                '`amount` DOUBLE UNSIGNED NOT NULL',
-            ],
-        ];
-    }
+        $dialect = new MysqlSchemaDialect($this->_getMockedDriver());
 
-    /**
-     * A type with no abstract mapping keeps its unsigned attribute.
-     */
-    #[DataProvider('unmappedUnsignedColumnSqlProvider')]
-    public function testColumnDefinitionSqlUnmappedTypeUnsigned(array $data, string $expected): void
-    {
-        $driver = $this->_getMockedDriver();
-        $dialect = new MysqlSchemaDialect($driver);
-
-        $this->assertSame($expected, $dialect->columnDefinitionSql($data));
+        $this->assertSame(
+            '`value` DOUBLE UNSIGNED NOT NULL',
+            $dialect->columnDefinitionSql(['name' => 'value', 'type' => 'double', 'unsigned' => true, 'null' => false]),
+        );
     }
 
     /**
