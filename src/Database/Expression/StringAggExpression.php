@@ -53,8 +53,11 @@ class StringAggExpression extends AggregateExpression
      * @param array<string, string>|array<string|null> $types Types for function arguments.
      * @param \Cake\Database\ExpressionInterface|array|string|null $orderBy Aggregate-local ordering.
      */
-    public function __construct(array $params = [], array $types = [], ExpressionInterface|array|string|null $orderBy = null)
-    {
+    public function __construct(
+        array $params = [],
+        array $types = [],
+        ExpressionInterface|array|string|null $orderBy = null,
+    ) {
         parent::__construct('STRING_AGG', $params, $types);
         if ($orderBy !== null) {
             $this->setAggregateOrderBy($orderBy);
