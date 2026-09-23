@@ -112,6 +112,8 @@ use InvalidArgumentException;
  * @method string getCharset() Charset getter. {@see \Cake\Mailer\Message::getCharset()}
  * @method $this setHeaderCharset($charset) HeaderCharset setter. {@see \Cake\Mailer\Message::setHeaderCharset()}
  * @method string getHeaderCharset() HeaderCharset getter. {@see \Cake\Mailer\Message::getHeaderCharset()}
+ * @method $this setTransferEncoding(?string $encoding) TransferEncoding setter. {@see \Cake\Mailer\Message::setTransferEncoding()}
+ * @method string|null getTransferEncoding() TransferEncoding getter. {@see \Cake\Mailer\Message::getTransferEncoding()}
  * @method $this setSubject($subject) Sets subject. {@see \Cake\Mailer\Message::setSubject()}
  * @method string getSubject() Gets subject. {@see \Cake\Mailer\Message::getSubject()}
  * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
