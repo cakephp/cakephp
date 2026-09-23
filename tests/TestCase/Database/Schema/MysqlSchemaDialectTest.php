@@ -1566,8 +1566,7 @@ SQL;
     }
 
     /**
-     * TableSchema drops `unsigned` on types it has no mapping for, so this
-     * can't go through columnSqlProvider.
+     * Test that unmapped types keep the unsigned attribute.
      */
     public function testColumnDefinitionSqlUnmappedTypeUnsigned(): void
     {
