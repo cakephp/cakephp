@@ -284,6 +284,10 @@ REGEXP;
             unset($parsed['query']);
         }
 
+        foreach ($parsed as $key => $value) {
+            $parsed[$key] = rawurldecode($value);
+        }
+
         parse_str($query, $queryArgs);
 
         /**
