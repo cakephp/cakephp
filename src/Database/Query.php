@@ -26,6 +26,7 @@ use Closure;
 use InvalidArgumentException;
 use Stringable;
 use Throwable;
+use WeakMap;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -1664,6 +1665,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * that it does a full depth traversal of the entire expression tree. This will execute
      * the provided callback function for each ExpressionInterface object that is
      * stored inside this query at any nesting depth in any part of the query.
+     * Each expression object is passed to the callback once per traversal.
      *
      * Callback will receive as first parameter the currently visited expression.
      *
@@ -1673,8 +1675,9 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function traverseExpressions(Closure $callback)
     {
+        $visited = new WeakMap();
         foreach ($this->_parts as $part) {
-            $this->_expressionsVisitor($part, $callback);
+            $this->_expressionsVisitor($part, $callback, $visited);
         }
 
         return $this;
@@ -1687,20 +1690,28 @@ abstract class Query implements ExpressionInterface, Stringable
      *   array of expressions.
      * @param \Closure $callback The callback to be executed for each ExpressionInterface
      *   found inside this query.
+     * @param \WeakMap<\Cake\Database\ExpressionInterface, bool>|null $visited Expressions already visited.
      * @return void
      */
-    protected function _expressionsVisitor(mixed $expression, Closure $callback): void
+    protected function _expressionsVisitor(mixed $expression, Closure $callback, ?WeakMap $visited = null): void
     {
+        $visited ??= new WeakMap();
+
         if (is_array($expression)) {
             foreach ($expression as $e) {
-                $this->_expressionsVisitor($e, $callback);
+                $this->_expressionsVisitor($e, $callback, $visited);
             }
 
             return;
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
+            if ($visited->offsetExists($expression)) {
+                return;
+            }
+            $visited[$expression] = true;
+
+            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback, $visited));
 
             if (!$expression instanceof self) {
                 $callback($expression);

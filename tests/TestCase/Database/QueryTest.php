@@ -17,11 +17,13 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Connection;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 
 /**
@@ -351,6 +353,59 @@ class QueryTest extends TestCase
 
         $this->query->with([$cte2, fn($query) => $cte1], true);
         $this->assertSame([$cte2, $cte1], $this->query->clause('with'));
+    }
+
+    public function testTraverseExpressionsVisitsEachExpressionOnce(): void
+    {
+        $leaf = new QueryExpression(['a' => 1]);
+        $conditions = $leaf;
+        $expressions = [$leaf];
+        for ($i = 0; $i < 10; $i++) {
+            $right = new QueryExpression(["b$i" => $i], [], 'OR');
+            $conditions = new QueryExpression([$conditions, $right]);
+            $expressions[] = $right;
+            $expressions[] = $conditions;
+        }
+
+        $subquery = $this->connection->selectQuery('id', 'comments')->where(['id' => 1]);
+        $conditions->add($subquery);
+        $conditions->add($leaf);
+        $query = $this->connection->selectQuery('id', 'articles')->where($conditions);
+
+        $visits = [];
+        $query->traverseExpressions(function ($expression) use (&$visits): void {
+            $id = spl_object_id($expression);
+            $visits[$id] = ($visits[$id] ?? 0) + 1;
+        });
+
+        foreach ($expressions as $expression) {
+            $this->assertSame(1, $visits[spl_object_id($expression)] ?? null);
+        }
+        $this->assertSame(1, $visits[spl_object_id($subquery->clause('where'))] ?? null);
+        $this->assertSame([1], array_values(array_unique($visits)));
+    }
+
+    public function testExpressionsVisitorAcceptsTwoArguments(): void
+    {
+        $query = new class ($this->connection) extends Query
+        {
+            public function visitExpression(ExpressionInterface $expression, Closure $callback): void
+            {
+                $this->_expressionsVisitor($expression, $callback);
+            }
+        };
+
+        $leaf = new QueryExpression(['a' => 1]);
+        $root = new QueryExpression([$leaf]);
+        $visits = [];
+        $query->visitExpression($root, function ($expression) use (&$visits): void {
+            $id = spl_object_id($expression);
+            $visits[$id] = ($visits[$id] ?? 0) + 1;
+        });
+
+        $this->assertSame(1, $visits[spl_object_id($root)]);
+        $this->assertSame(1, $visits[spl_object_id($leaf)]);
+        $this->assertSame([1], array_values(array_unique($visits)));
     }
 
     /**
