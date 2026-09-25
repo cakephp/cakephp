@@ -361,7 +361,7 @@ class QueryTest extends TestCase
         $conditions = $leaf;
         $expressions = [$leaf];
         for ($i = 0; $i < 10; $i++) {
-            $right = new QueryExpression(["b$i" => $i], [], 'OR');
+            $right = new QueryExpression(["b{$i}" => $i], [], 'OR');
             $conditions = new QueryExpression([$conditions, $right]);
             $expressions[] = $right;
             $expressions[] = $conditions;
@@ -393,6 +393,11 @@ class QueryTest extends TestCase
             {
                 $this->_expressionsVisitor($expression, $callback);
             }
+
+            protected function _expressionsVisitor(mixed $expression, Closure $callback): void
+            {
+                parent::_expressionsVisitor($expression, $callback);
+            }
         };
 
         $leaf = new QueryExpression(['a' => 1]);
@@ -406,6 +411,29 @@ class QueryTest extends TestCase
         $this->assertSame(1, $visits[spl_object_id($root)]);
         $this->assertSame(1, $visits[spl_object_id($leaf)]);
         $this->assertSame([1], array_values(array_unique($visits)));
+    }
+
+    public function testTraverseExpressionsCanBeNested(): void
+    {
+        $query = $this->connection->selectQuery('id', 'articles')->where(['a' => 1, 'b' => 2]);
+        $expected = [];
+        $query->traverseExpressions(function ($expression) use (&$expected): void {
+            $expected[] = spl_object_id($expression);
+        });
+
+        $outer = [];
+        $inner = [];
+        $query->traverseExpressions(function ($expression) use ($query, &$outer, &$inner): void {
+            $outer[] = spl_object_id($expression);
+            if ($inner === []) {
+                $query->traverseExpressions(function ($nested) use (&$inner): void {
+                    $inner[] = spl_object_id($nested);
+                });
+            }
+        });
+
+        $this->assertSame($expected, $outer);
+        $this->assertSame($expected, $inner);
     }
 
     /**
