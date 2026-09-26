@@ -26,6 +26,7 @@ use Closure;
 use InvalidArgumentException;
 use Stringable;
 use Throwable;
+use WeakMap;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -154,6 +155,11 @@ abstract class Query implements ExpressionInterface, Stringable
      * @var \Cake\Database\FunctionsBuilder|null
      */
     protected ?FunctionsBuilder $_functionsBuilder = null;
+
+    /**
+     * @var \WeakMap<\Cake\Database\ExpressionInterface, bool>|null
+     */
+    protected ?WeakMap $visitedExpressions = null;
 
     /**
      * Constructor.
@@ -1664,6 +1670,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * that it does a full depth traversal of the entire expression tree. This will execute
      * the provided callback function for each ExpressionInterface object that is
      * stored inside this query at any nesting depth in any part of the query.
+     * Each expression object is passed to the callback once per traversal.
      *
      * Callback will receive as first parameter the currently visited expression.
      *
@@ -1673,8 +1680,17 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function traverseExpressions(Closure $callback)
     {
-        foreach ($this->_parts as $part) {
-            $this->_expressionsVisitor($part, $callback);
+        /** @var \WeakMap<\Cake\Database\ExpressionInterface, bool> $visited */
+        $visited = new WeakMap();
+        $previousVisited = $this->visitedExpressions;
+        $this->visitedExpressions = $visited;
+
+        try {
+            foreach ($this->_parts as $part) {
+                $this->_expressionsVisitor($part, $callback);
+            }
+        } finally {
+            $this->visitedExpressions = $previousVisited;
         }
 
         return $this;
@@ -1688,9 +1704,16 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param \Closure $callback The callback to be executed for each ExpressionInterface
      *   found inside this query.
      * @return void
+     * @throws \Cake\Core\Exception\CakeException When called outside of `traverseExpressions()`.
      */
     protected function _expressionsVisitor(mixed $expression, Closure $callback): void
     {
+        if ($this->visitedExpressions === null) {
+            throw new CakeException(
+                'Expression traversal requires `visitedExpressions` to be set. Use `traverseExpressions()` instead.',
+            );
+        }
+
         if (is_array($expression)) {
             foreach ($expression as $e) {
                 $this->_expressionsVisitor($e, $callback);
@@ -1700,6 +1723,11 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($expression instanceof ExpressionInterface) {
+            if ($this->visitedExpressions->offsetExists($expression)) {
+                return;
+            }
+            $this->visitedExpressions[$expression] = true;
+
             $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
