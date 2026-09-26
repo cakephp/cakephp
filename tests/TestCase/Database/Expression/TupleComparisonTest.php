@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * Tests TupleComparison class
  */
-class TupleComparisonTest extends TestCase
+final class TupleComparisonTest extends TestCase
 {
     /**
      * Tests generating a function with no arguments

@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Oauth test.
  */
-class OauthTest extends TestCase
+final class OauthTest extends TestCase
 {
     private string $privateKeyString;
 

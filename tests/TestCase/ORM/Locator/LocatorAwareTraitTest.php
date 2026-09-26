@@ -28,7 +28,7 @@ use UnexpectedValueException;
 /**
  * LocatorAwareTrait test case
  */
-class LocatorAwareTraitTest extends TestCase
+final class LocatorAwareTraitTest extends TestCase
 {
     /**
      * @var object|\Cake\ORM\Locator\LocatorAwareTrait

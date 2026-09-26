@@ -37,7 +37,7 @@ use TestPlugin\Controller\TestPluginController;
 /**
  * Test case for ControllerFactory.
  */
-class ControllerFactoryTest extends TestCase
+final class ControllerFactoryTest extends TestCase
 {
     /**
      * @var \Cake\Controller\ControllerFactory
@@ -55,7 +55,7 @@ class ControllerFactoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->container = new Container();
         $this->factory = new ControllerFactory($this->container);
     }

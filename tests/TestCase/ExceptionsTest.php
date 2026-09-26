@@ -77,7 +77,7 @@ use Cake\View\Exception\MissingViewException;
 use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class ExceptionsTest extends TestCase
+final class ExceptionsTest extends TestCase
 {
     /**
      * Tests simple exceptions work.

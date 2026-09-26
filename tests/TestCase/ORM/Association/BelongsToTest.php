@@ -33,7 +33,7 @@ use Mockery;
 /**
  * Tests BelongsTo class
  */
-class BelongsToTest extends TestCase
+final class BelongsToTest extends TestCase
 {
     /**
      * Fixtures to use.

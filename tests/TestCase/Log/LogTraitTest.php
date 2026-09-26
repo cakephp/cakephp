@@ -25,7 +25,7 @@ use Psr\Log\LogLevel;
 /**
  * Test case for LogTrait
  */
-class LogTraitTest extends TestCase
+final class LogTraitTest extends TestCase
 {
     protected function tearDown(): void
     {

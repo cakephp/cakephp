@@ -28,7 +28,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * DateTest class
  */
-class DateTest extends TestCase
+final class DateTest extends TestCase
 {
     /**
      * setup

@@ -8,7 +8,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
-class HeaderUtilityTest extends TestCase
+final class HeaderUtilityTest extends TestCase
 {
     /**
      * Tests getting a parsed representation of a Link header

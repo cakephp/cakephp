@@ -26,7 +26,7 @@ use Cake\View\Widget\SelectBoxWidget;
 /**
  * SelectBox test case
  */
-class SelectBoxWidgetTest extends TestCase
+final class SelectBoxWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

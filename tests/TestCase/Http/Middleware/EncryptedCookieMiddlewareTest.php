@@ -29,7 +29,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for EncryptedCookieMiddleware
  */
-class EncryptedCookieMiddlewareTest extends TestCase
+final class EncryptedCookieMiddlewareTest extends TestCase
 {
     use CookieCryptTrait;
 
@@ -49,7 +49,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     {
         parent::setup();
 
-        static::$encryptedString = $this->_encrypt('secret data', 'aes');
+        self::$encryptedString = $this->_encrypt('secret data', 'aes');
 
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
@@ -113,9 +113,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
     {
         return [
             'empty' => [''],
-            'wrong prefix' => [substr_replace(static::$encryptedString, 'foo', 0, 3)],
-            'altered' => [str_replace('M', 'A', static::$encryptedString)],
-            'invalid chars' => [str_replace('M', 'M#', static::$encryptedString)],
+            'wrong prefix' => [substr_replace(self::$encryptedString, 'foo', 0, 3)],
+            'altered' => [str_replace('M', 'A', self::$encryptedString)],
+            'invalid chars' => [str_replace('M', 'M#', self::$encryptedString)],
         ];
     }
 

@@ -24,7 +24,7 @@ require_once CAKE . 'Collection/functions_global.php';
 /**
  * FunctionsGlobalTest class
  */
-class FunctionsGlobalTest extends TestCase
+final class FunctionsGlobalTest extends TestCase
 {
     /**
      * Tests that the collection() method is a shortcut for new Collection

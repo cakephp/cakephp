@@ -33,7 +33,7 @@ use stdClass;
 /**
  * Tests the integration between the ORM and the domain checker
  */
-class RulesCheckerIntegrationTest extends TestCase
+final class RulesCheckerIntegrationTest extends TestCase
 {
     /**
      * Fixtures to be loaded

@@ -24,7 +24,7 @@ use Cake\View\Widget\FileWidget;
 /**
  * File input test.
  */
-class FileWidgetTest extends TestCase
+final class FileWidgetTest extends TestCase
 {
     /**
      * @var \Cake\View\Form\NullContext

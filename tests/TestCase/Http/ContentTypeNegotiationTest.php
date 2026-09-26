@@ -7,7 +7,7 @@ use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
-class ContentTypeNegotiationTest extends TestCase
+final class ContentTypeNegotiationTest extends TestCase
 {
     public function testPreferredTypeNoAccept(): void
     {

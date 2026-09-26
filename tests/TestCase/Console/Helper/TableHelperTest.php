@@ -25,7 +25,7 @@ use UnexpectedValueException;
 /**
  * TableHelper test.
  */
-class TableHelperTest extends TestCase
+final class TableHelperTest extends TestCase
 {
     /**
      * @var \Cake\Console\TestSuite\StubConsoleOutput

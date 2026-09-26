@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests Query class
  */
-class QueryCompilerTest extends TestCase
+final class QueryCompilerTest extends TestCase
 {
     use QueryAssertsTrait;
 

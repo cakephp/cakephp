@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ArrayEngineTest class
  */
-class ArrayEngineTest extends TestCase
+final class ArrayEngineTest extends TestCase
 {
     use EngineEventsTrait;
 

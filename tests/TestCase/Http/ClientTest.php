@@ -33,7 +33,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * HTTP client test.
  */
-class ClientTest extends TestCase
+final class ClientTest extends TestCase
 {
     protected function tearDown(): void
     {

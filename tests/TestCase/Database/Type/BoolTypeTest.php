@@ -25,7 +25,7 @@ use PDO;
 /**
  * Test for the Boolean type.
  */
-class BoolTypeTest extends TestCase
+final class BoolTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\BoolType

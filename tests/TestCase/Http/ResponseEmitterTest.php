@@ -29,7 +29,7 @@ require_once __DIR__ . '/server_mocks.php';
 /**
  * Response emitter test.
  */
-class ResponseEmitterTest extends TestCase
+final class ResponseEmitterTest extends TestCase
 {
     /**
      * @var \Cake\Http\ResponseEmitter

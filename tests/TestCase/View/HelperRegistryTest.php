@@ -30,7 +30,7 @@ use TestPlugin\View\Helper\OtherHelperHelper;
 /**
  * HelperRegistryTest
  */
-class HelperRegistryTest extends TestCase
+final class HelperRegistryTest extends TestCase
 {
     /**
      * @var \Cake\View\HelperRegistry
@@ -209,7 +209,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testReset(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(
@@ -230,7 +230,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnload(): void
     {
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $instance = $this->Helpers->load('EventListenerTest');
         $this->assertSame(

@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
  * Tests the type-safe non-hydrated query path: Table::unhydratedFind() and
  * the UnhydratedSelectQuery class it returns.
  */
-class UnhydratedSelectQueryTest extends TestCase
+final class UnhydratedSelectQueryTest extends TestCase
 {
     /**
      * @var array<string>

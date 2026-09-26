@@ -30,7 +30,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class ErrorTrapTest extends TestCase
+final class ErrorTrapTest extends TestCase
 {
     protected function setUp(): void
     {

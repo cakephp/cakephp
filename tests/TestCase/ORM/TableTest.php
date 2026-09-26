@@ -80,7 +80,7 @@ use TestPlugin\Model\Table\CommentsTable;
  * Tests Table class
  */
 #[AllowMockObjectsWithoutExpectations]
-class TableTest extends TestCase
+final class TableTest extends TestCase
 {
     /**
      * @var string[]
@@ -127,7 +127,7 @@ class TableTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        static::setAppNamespace();
+        self::setAppNamespace();
 
         $this->usersTypeMap = new TypeMap([
             'Users.id' => 'integer',

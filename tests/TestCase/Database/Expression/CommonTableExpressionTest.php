@@ -22,7 +22,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
-class CommonTableExpressionTest extends TestCase
+final class CommonTableExpressionTest extends TestCase
 {
     /**
      * @var \Cake\Database\Connection

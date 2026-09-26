@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests StringExpression class
  */
-class StringExpressionTest extends TestCase
+final class StringExpressionTest extends TestCase
 {
     public function testCollation(): void
     {

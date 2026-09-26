@@ -12,7 +12,7 @@ use Cake\TestSuite\TestCase;
 /**
  * EventFired Test
  */
-class EventFiredTest extends TestCase
+final class EventFiredTest extends TestCase
 {
     /**
      * tests EventFired constraint
