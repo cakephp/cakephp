@@ -708,7 +708,7 @@ class Hash
         $stack = [];
         $path = '';
 
-        while (!empty($data)) {
+        while ($data !== []) {
             $key = array_key_first($data);
             $element = $data[$key];
             unset($data[$key]);
