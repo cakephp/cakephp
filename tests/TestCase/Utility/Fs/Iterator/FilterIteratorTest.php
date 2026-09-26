@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility\Fs\Iterator;
 
+use Cake\TestSuite\FsFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Fs\Enum\FinderMode;
 use Cake\Utility\Fs\Iterator\CallbackFilterIterator;
@@ -23,7 +24,6 @@ use Cake\Utility\Fs\Iterator\ExcludeDirectoryFilterIterator;
 use Cake\Utility\Fs\Iterator\FileTypeFilterIterator;
 use Cake\Utility\Fs\Iterator\HiddenFileFilterIterator;
 use FilesystemIterator;
-use org\bovigo\vfs\vfsStream;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -36,9 +36,9 @@ class FilterIteratorTest extends TestCase
     /**
      * Test virtual filesystem
      *
-     * @var \org\bovigo\vfs\vfsStreamDirectory
+     * @var string
      */
-    protected $root;
+    protected string $root;
 
     /**
      * Setup test
@@ -49,7 +49,7 @@ class FilterIteratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->root = vfsStream::setup('root', null, [
+        $this->root = FsFixture::setup('root', [
             'visible.txt' => 'content',
             '.hidden' => 'hidden content',
             'file.php' => '<?php',
@@ -68,10 +68,16 @@ class FilterIteratorTest extends TestCase
         ]);
     }
 
+    protected function tearDown(): void
+    {
+        FsFixture::tearDown();
+        parent::tearDown();
+    }
+
     public function testHiddenFileFilterIterator(): void
     {
         $directory = new RecursiveDirectoryIterator(
-            vfsStream::url('root'),
+            FsFixture::path('root'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -92,7 +98,7 @@ class FilterIteratorTest extends TestCase
     public function testFileTypeFilterIteratorFiles(): void
     {
         $directory = new FilesystemIterator(
-            vfsStream::url('root/src'),
+            FsFixture::path('root/src'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -111,7 +117,7 @@ class FilterIteratorTest extends TestCase
     public function testFileTypeFilterIteratorDirectories(): void
     {
         $directory = new FilesystemIterator(
-            vfsStream::url('root/src'),
+            FsFixture::path('root/src'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -131,7 +137,7 @@ class FilterIteratorTest extends TestCase
     public function testFileTypeFilterIteratorAll(): void
     {
         $directory = new FilesystemIterator(
-            vfsStream::url('root/src'),
+            FsFixture::path('root/src'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -150,7 +156,7 @@ class FilterIteratorTest extends TestCase
     public function testExcludeDirectoryFilterIterator(): void
     {
         $directory = new RecursiveDirectoryIterator(
-            vfsStream::url('root/src'),
+            FsFixture::path('root/src'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -170,7 +176,7 @@ class FilterIteratorTest extends TestCase
     public function testExcludeDirectoryFilterIteratorFilesPass(): void
     {
         $directory = new RecursiveDirectoryIterator(
-            vfsStream::url('root/src'),
+            FsFixture::path('root/src'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -190,7 +196,7 @@ class FilterIteratorTest extends TestCase
     public function testCombineFilters(): void
     {
         $directory = new RecursiveDirectoryIterator(
-            vfsStream::url('root'),
+            FsFixture::path('root'),
             FilesystemIterator::SKIP_DOTS,
         );
 
@@ -219,14 +225,14 @@ class FilterIteratorTest extends TestCase
     public function testCallbackFilterIterator(): void
     {
         $iterator = new RecursiveDirectoryIterator(
-            $this->root->url(),
+            $this->root,
             RecursiveDirectoryIterator::SKIP_DOTS,
         );
         $recursiveIterator = new RecursiveIteratorIterator($iterator);
         $filtered = new CallbackFilterIterator(
             $recursiveIterator,
             fn(SplFileInfo $file) => str_ends_with($file->getFilename(), '.php'),
-            $this->root->url(),
+            $this->root,
         );
 
         $files = [];
