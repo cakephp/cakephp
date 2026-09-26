@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -25,6 +26,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Closure;
 use InvalidArgumentException;
+use WeakMap;
 
 /**
  * Tests Query class
@@ -391,6 +393,7 @@ class QueryTest extends TestCase
         {
             public function visitExpression(ExpressionInterface $expression, Closure $callback): void
             {
+                $this->visitedExpressions = new WeakMap();
                 $this->_expressionsVisitor($expression, $callback);
             }
 
@@ -411,6 +414,21 @@ class QueryTest extends TestCase
         $this->assertSame(1, $visits[spl_object_id($root)]);
         $this->assertSame(1, $visits[spl_object_id($leaf)]);
         $this->assertSame([1], array_values(array_unique($visits)));
+    }
+
+    public function testExpressionsVisitorRequiresVisitedExpressions(): void
+    {
+        $query = new class ($this->connection) extends Query
+        {
+            public function visitExpression(ExpressionInterface $expression, Closure $callback): void
+            {
+                $this->_expressionsVisitor($expression, $callback);
+            }
+        };
+
+        $this->expectException(CakeException::class);
+        $query->visitExpression(new QueryExpression(['a' => 1]), function (): void {
+        });
     }
 
     public function testTraverseExpressionsCanBeNested(): void

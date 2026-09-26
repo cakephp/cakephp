@@ -1704,20 +1704,14 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param \Closure $callback The callback to be executed for each ExpressionInterface
      *   found inside this query.
      * @return void
+     * @throws \Cake\Core\Exception\CakeException When called outside of `traverseExpressions()`.
      */
     protected function _expressionsVisitor(mixed $expression, Closure $callback): void
     {
         if ($this->visitedExpressions === null) {
-            /** @var \WeakMap<\Cake\Database\ExpressionInterface, bool> $visited */
-            $visited = new WeakMap();
-            $this->visitedExpressions = $visited;
-            try {
-                $this->_expressionsVisitor($expression, $callback);
-            } finally {
-                $this->visitedExpressions = null;
-            }
-
-            return;
+            throw new CakeException(
+                'Expression traversal requires `visitedExpressions` to be set. Use `traverseExpressions()` instead.',
+            );
         }
 
         if (is_array($expression)) {
