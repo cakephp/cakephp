@@ -1,39 +1,39 @@
-ARG PHP_IMAGE_TAG=8.5-fpm-bookworm
+ARG PHP_IMAGE_TAG=8.5-fpm-alpine
 FROM php:${PHP_IMAGE_TAG}
 
 LABEL org.opencontainers.image.source="https://github.com/cakephp/cakephp"
 
-# The official php:*fpm-bookworm images are built from debian:bookworm-slim.
 RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        libfreetype6-dev \
-        libgmp-dev \
-        libicu-dev \
-        libjpeg62-turbo-dev \
+    apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        freetype-dev \
+        gettext-dev \
+        gmp-dev \
+        icu-dev \
+        libjpeg-turbo-dev \
+        linux-headers \
         libpng-dev \
-        libpq-dev \
         libwebp-dev \
         libxml2-dev \
-        libxslt1-dev \
-        libzip-dev; \
+        libxslt-dev \
+        libzip-dev \
+        postgresql-dev; \
+    apk add --no-cache \
+        freetype \
+        gmp \
+        icu-libs \
+        libintl \
+        libjpeg-turbo \
+        libpng \
+        libpq \
+        libwebp \
+        libxml2 \
+        libxslt \
+        libzip; \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp; \
     docker-php-ext-install -j "$(nproc)" \
-        bcmath \
-        exif \
-        gd \
-        gettext \
-        gmp \
-        intl \
-        mysqli \
-        pcntl \
-        pdo_mysql \
-        pdo_pgsql \
-        pgsql \
-        soap \
-        sockets \
-        xsl \
-        zip; \
-    rm -rf /var/lib/apt/lists/*; \
+        bcmath exif gd gettext gmp intl mysqli pcntl \
+        pdo_mysql pdo_pgsql pgsql soap sockets xsl zip; \
+    apk del .build-deps; \
     php -r 'foreach (["bcmath", "exif", "gd", "gettext", "gmp", "intl", "mysqli", "pcntl", "pdo_mysql", "pdo_pgsql", "pgsql", "soap", "sockets", "xsl", "zip"] as $extension) { if (!extension_loaded($extension)) { fwrite(STDERR, "Missing PHP extension: $extension\n"); exit(1); } }'; \
     php-fpm -t
