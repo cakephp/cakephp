@@ -273,6 +273,36 @@ class ResultSetFactoryTest extends TestCase
     }
 
     /**
+     * Test Table::projectAs() returns a concrete list of DTOs from a default query.
+     */
+    public function testTableProjectAs(): void
+    {
+        DtoMapper::clearCache();
+
+        $results = $this->table->projectAs(SimpleArticleDto::class);
+
+        $this->assertIsList($results);
+        $this->assertCount(3, $results);
+        $this->assertContainsOnlyInstancesOf(SimpleArticleDto::class, $results);
+        $this->assertSame(1, $results[0]->id);
+    }
+
+    /**
+     * Test Table::projectAs() with a pre-built query.
+     */
+    public function testTableProjectAsWithQuery(): void
+    {
+        DtoMapper::clearCache();
+
+        $query = $this->table->find()->where(['id' => 1]);
+        $results = $this->table->projectAs(SimpleArticleDto::class, $query);
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(SimpleArticleDto::class, $results[0]);
+        $this->assertSame('First Article', $results[0]->title);
+    }
+
+    /**
      * Test projectAs() with multiple results.
      */
     public function testProjectAsMultipleResults(): void
