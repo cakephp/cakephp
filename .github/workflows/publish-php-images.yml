@@ -125,6 +125,9 @@ jobs:
       matrix:
         php: ['8.2', '8.3', '8.4', '8.5']
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
       - name: Download architecture digests
         uses: actions/download-artifact@v8
         with:
@@ -145,16 +148,4 @@ jobs:
       - name: Assemble and verify multi-arch image
         env:
           PHP_VERSION: ${{ matrix.php }}
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          digests=("$RUNNER_TEMP"/digests/*)
-          [[ ${#digests[@]} -eq 2 ]]
-          sources=()
-          for file in "${digests[@]}"; do
-            digest="$(basename "$file")"
-            [[ "$digest" =~ ^[a-f0-9]{64}$ ]]
-            sources+=("$IMAGE_NAME@sha256:$digest")
-          done
-          docker buildx imagetools create -t "$IMAGE_NAME:$PHP_VERSION" "${sources[@]}"
-          docker buildx imagetools inspect "$IMAGE_NAME:$PHP_VERSION"
+        run: docker/php-fpm/assemble-image.sh "$IMAGE_NAME" "$PHP_VERSION" "$RUNNER_TEMP/digests"
