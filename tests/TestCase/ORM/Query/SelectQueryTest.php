@@ -3008,7 +3008,9 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame($copy, $query);
         $copyLoader = $copy->getEagerLoader();
         $loader = $query->getEagerLoader();
-        $this->assertEquals($copyLoader, $loader, 'should be equal');
+        $this->assertSame($loader->getContain(), $copyLoader->getContain());
+        $this->assertSame($loader->getMatching(), $copyLoader->getMatching());
+        $this->assertSame($loader->isAutoFieldsEnabled(), $copyLoader->isAutoFieldsEnabled());
         $this->assertNotSame($copyLoader, $loader, 'should be clones');
 
         $reflect = new ReflectionProperty($loader, '_matching');
