@@ -2,8 +2,6 @@
 declare(strict_types=1);
 
 /**
- * Abstract session save handler.
- *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
@@ -21,6 +19,9 @@ namespace Cake\Http\Session;
 use Cake\Core\Exception\CakeException;
 use SessionHandlerInterface;
 
+/**
+ * Abstract session save handler.
+ */
 abstract class AbstractSession implements SessionHandlerInterface
 {
     /**
