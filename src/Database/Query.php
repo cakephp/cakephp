@@ -1022,7 +1022,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * - `types` - Associative array of type names used to bind values to query
      * - `allowEmpty` - Allow empty array.
      *
-     * @param string $field Field. Fieldnames are not sanitized.
+     * @param string $field Field. Caution: fields are not sanitized before use.
      * @param array $values Array of values
      * @param array<string, mixed> $options Options
      * @return $this
