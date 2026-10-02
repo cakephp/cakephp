@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\JsonPathExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
@@ -364,5 +365,15 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('JSON_VALUE(field, :param0)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
+    }
+
+    /**
+     * Tests JSON_VALUE() uses the return type of the path expression
+     */
+    public function testJsonValueReturnType(): void
+    {
+        $path = (new JsonPathExpression('$'))->setReturnType('integer');
+        $function = $this->functions->jsonValue('field', $path);
+        $this->assertSame('integer', $function->getReturnType());
     }
 }
