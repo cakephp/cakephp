@@ -439,6 +439,9 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Add engine-specific optimizer hint.
      *
+     * `$hint` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
+     *
      * @param array<string>|string $hint Optimizer hint
      * @param bool $overwrite Whether to replace existing hints
      * @return $this
@@ -469,6 +472,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->select(['name', 'city'])->from('products')->modifier(['HIGH_PRIORITY', 'SQL_NO_CACHE']);
      * // It will produce the SQL: SELECT HIGH_PRIORITY SQL_NO_CACHE name, city FROM products
      * ```
+     * Modifier content is raw SQL and not suitable for use with user supplied data.
      *
      * @param \Cake\Database\ExpressionInterface|array|string $modifiers modifiers to be applied to the query
      * @param bool $overwrite whether to reset order with field list or not
@@ -510,6 +514,9 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->from(['products'], true); // Resets the list: FROM products
      * $query->from(['sub' => $countQuery]); // FROM (SELECT ...) sub
      * ```
+     *
+     * $tables is not suitable for use with user supplied data as they are
+     * not sanitized by the query builder.
      *
      * @param array|string $tables tables to be added to the list. This argument, can be
      *  passed as an array of strings, array of expression objects, or a single string. See
@@ -612,6 +619,9 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
+     * `$tables` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
+     *
      * @param array<int|string, mixed>|string $tables List of tables to be joined in the query.
      * @param array<string, string> $types Associative array of type names used to bind values to query.
      * @param bool $overwrite Whether to reset joins with passed list or not.
@@ -700,6 +710,8 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * See `join()` for further details on conditions and types.
      *
+     * Parameters to this method should never be include user supplied data.
+     *
      * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
@@ -725,6 +737,8 @@ abstract class Query implements ExpressionInterface, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
+     * Parameters to this method should never be include user supplied data.
+     *
      * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
@@ -749,6 +763,8 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that method's description for further details.
+     *
+     * Parameters to this method should never be include user supplied data.
      *
      * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
@@ -947,6 +963,9 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Convenience method that adds a NOT NULL condition to the query
      *
+     * The string form of `$fields` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
+     *
      * @param \Cake\Database\ExpressionInterface|array|string $fields A single field or expressions or a list of them
      *  that should be not null.
      * @return $this
@@ -968,6 +987,9 @@ abstract class Query implements ExpressionInterface, Stringable
 
     /**
      * Convenience method that adds a IS NULL condition to the query
+     *
+     * The string form of `$fields` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|array|string $fields A single field or expressions or a list of them
      *   that should be null.
@@ -993,15 +1015,14 @@ abstract class Query implements ExpressionInterface, Stringable
      * query.
      *
      * This method does allow empty inputs in contrast to where() if you set
-     * 'allowEmpty' to true.
-     * Be careful about using it without proper sanity checks.
+     * 'allowEmpty' to true. Be careful about using it without proper sanity checks.
      *
      * Options:
      *
      * - `types` - Associative array of type names used to bind values to query
      * - `allowEmpty` - Allow empty array.
      *
-     * @param string $field Field
+     * @param string $field Field. Caution: fields are not sanitized before use.
      * @param array $values Array of values
      * @param array<string, mixed> $options Options
      * @return $this
@@ -1028,7 +1049,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * 'allowEmpty' to true.
      * Be careful about using it without proper sanity checks.
      *
-     * @param string $field Field
+     * @param string $field Field. Fieldnames are not sanitized.
      * @param array $values Array of values
      * @param array<string, mixed> $options Options
      * @return $this
@@ -1056,7 +1077,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * 'allowEmpty' to true.
      * Be careful about using it without proper sanity checks.
      *
-     * @param string $field Field
+     * @param string $field Field. Fieldnames are not sanitized.
      * @param array $values Array of values
      * @param array<string, mixed> $options Options
      * @return $this
@@ -1129,6 +1150,9 @@ abstract class Query implements ExpressionInterface, Stringable
      * Generates the following conditions:
      *
      * `WHERE (title = 'Foo') AND (author_id = 1 OR author_id = 2)`
+     *
+     * The string form of `$conditions` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to add with AND.
      * @param array<string, string> $types Associative array of type names used to bind values to query
