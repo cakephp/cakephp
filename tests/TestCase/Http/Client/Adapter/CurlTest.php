@@ -414,4 +414,32 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $this->assertSame(CURL_HTTP_VERSION_2TLS, $result[CURLOPT_HTTP_VERSION]);
     }
+
+    /**
+     * Test converting HTTP/3 protocol version into curl options.
+     */
+    public function testBuildOptionsHttp3ProtocolVersion(): void
+    {
+        $this->skipIf(
+            !defined('CURL_HTTP_VERSION_3'),
+            'Requires PHP 8.4 and libcurl 7.66',
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->setConstructorArgs(['https://localhost/things', 'GET'])
+            ->onlyMethods(['getProtocolVersion'])
+            ->getMock();
+
+        $request
+            ->expects($this->once())
+            ->method('getProtocolVersion')
+            ->willReturn('3');
+
+        $result = $this->curl->buildOptions($request, []);
+
+        $this->assertSame(
+            CURL_HTTP_VERSION_3,
+            $result[CURLOPT_HTTP_VERSION],
+        );
+    }
 }
