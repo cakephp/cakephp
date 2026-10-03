@@ -328,17 +328,22 @@ class EagerLoaderTest extends TestCase
                 'orders' => [
                     'stuff' => ['fields' => ['a']],
                 ],
-                'queryBuilder' => $builder,
             ],
         ];
-        $this->assertEquals($expected, $loader->getContain());
+        $contain = $loader->getContain();
+        $this->assertSame($builder, $contain['clients']['queryBuilder']);
+        unset($contain['clients']['queryBuilder']);
+        $this->assertEquals($expected, $contain);
 
         $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => ['queryBuilder' => $builder],
         ]);
-        $this->assertEquals($expected, $loader->getContain());
+        $contain = $loader->getContain();
+        $this->assertSame($builder, $contain['clients']['queryBuilder']);
+        unset($contain['clients']['queryBuilder']);
+        $this->assertEquals($expected, $contain);
     }
 
     /**
@@ -356,7 +361,7 @@ class EagerLoaderTest extends TestCase
                 'queryBuilder' => $builder,
             ],
         ];
-        $this->assertEquals($expected, $loader->getContain());
+        $this->assertSame($expected, $loader->getContain());
     }
 
     /**
