@@ -674,12 +674,6 @@ count = 9
 
 [[issues]]
 file = "src/Database/Query.php"
-code = "no-unsafe-finally"
-message = "Unsafe control flow in finally block."
-count = 1
-
-[[issues]]
-file = "src/Database/Query.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
 count = 1

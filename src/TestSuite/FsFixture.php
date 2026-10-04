@@ -35,7 +35,7 @@ final class FsFixture
     {
         $path = self::baseDir() . DS . $rootDirName;
         self::remove($path);
-        mkdir($path, 0777, true);
+        mkdir($path, 0o777, true);
         self::create($structure, $path);
 
         return $path;
@@ -66,7 +66,7 @@ final class FsFixture
             $path = $parent . DS . $name;
             if (is_array($content)) {
                 if (!is_dir($path)) {
-                    mkdir($path, 0777, true);
+                    mkdir($path, 0o777, true);
                 }
                 self::create($content, $path);
             } else {

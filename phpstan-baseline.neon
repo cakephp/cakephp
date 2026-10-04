@@ -73,18 +73,6 @@ parameters:
 			path: src/Datasource/Paging/SortableFieldsBuilder.php
 
 		-
-			message: '#^Template type TKey of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
-			identifier: method.templateTypeNotInParameter
-			count: 1
-			path: src/Datasource/QueryInterface.php
-
-		-
-			message: '#^Template type TValue of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
-			identifier: method.templateTypeNotInParameter
-			count: 1
-			path: src/Datasource/QueryInterface.php
-
-		-
 			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
@@ -149,6 +137,12 @@ parameters:
 			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 4
 			path: src/I18n/Time.php
+
+		-
+			message: '#^Instanceof between object and Serializable will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 1
+			path: src/Log/Engine/BaseLog.php
 
 		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
@@ -223,7 +217,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<string\> given\.$#'
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
@@ -253,6 +247,12 @@ parameters:
 			path: src/Validation/Validation.php
 
 		-
+			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/CellTrait.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -263,12 +263,6 @@ parameters:
 			identifier: constructor.unusedParameter
 			count: 1
 			path: src/View/Form/NullContext.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/View/View.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'

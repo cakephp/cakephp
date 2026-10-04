@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use Psy\Shell;
 use function Cake\Core\triggerWarning;
 
 if (!function_exists('debug')) {
@@ -130,7 +131,7 @@ if (!function_exists('breakpoint')) {
     function breakpoint(): ?string
     {
         // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(\Psy\Shell::class)) {
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && class_exists(Shell::class)) {
             return 'extract(\Psy\Shell::debug(get_defined_vars(), isset($this) ? $this : null));';
         }
         triggerWarning(
