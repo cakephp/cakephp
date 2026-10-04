@@ -35,14 +35,12 @@ class ValidationSetTest extends TestCase
      */
     public function testGetRule(): void
     {
+        $callable = Closure::fromCallable(Validation::class . '::' . 'notBlank');
         $field = new ValidationSet();
-        $field->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank'), 'message' => 'Can not be empty']);
+        $field->add('notBlank', ['callable' => $callable, 'message' => 'Can not be empty']);
         $result = $field->rule('notBlank');
         $this->assertInstanceOf(ValidationRule::class, $result);
-        $this->assertEquals(
-            new ValidationRule(callable: Closure::fromCallable(Validation::class . '::' . 'notBlank'), name: 'notBlank', message: 'Can not be empty'),
-            $result,
-        );
+        $this->assertRule($result, $callable, 'notBlank', 'Can not be empty');
     }
 
     /**
@@ -63,31 +61,26 @@ class ValidationSetTest extends TestCase
      */
     public function testArrayAccessGet(): void
     {
+        $notBlank = Closure::fromCallable(Validation::class . '::' . 'notBlank');
+        $numeric = Closure::fromCallable(Validation::class . '::' . 'numeric');
+        $email = Closure::fromCallable(Validation::class . '::' . 'email');
+
         $set = new ValidationSet()
-            ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
-            ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
-            ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
+            ->add('notBlank', ['callable' => $notBlank])
+            ->add('numeric', ['callable' => $numeric])
+            ->add('other', ['callable' => $email]);
 
         $rule = $set['notBlank'];
         $this->assertInstanceOf(ValidationRule::class, $rule);
-        $this->assertEquals(
-            new ValidationRule(callable: Closure::fromCallable(Validation::class . '::' . 'notBlank'), name: 'notBlank'),
-            $rule,
-        );
+        $this->assertRule($rule, $notBlank, 'notBlank');
 
         $rule = $set['numeric'];
         $this->assertInstanceOf(ValidationRule::class, $rule);
-        $this->assertEquals(
-            new ValidationRule(callable: Closure::fromCallable(Validation::class . '::' . 'numeric'), name: 'numeric'),
-            $rule,
-        );
+        $this->assertRule($rule, $numeric, 'numeric');
 
         $rule = $set['other'];
         $this->assertInstanceOf(ValidationRule::class, $rule);
-        $this->assertEquals(
-            new ValidationRule(callable: Closure::fromCallable(Validation::class . '::' . 'email'), name: 'other'),
-            $rule,
-        );
+        $this->assertRule($rule, $email, 'other');
     }
 
     /**
@@ -115,13 +108,11 @@ class ValidationSetTest extends TestCase
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')]);
 
         $this->assertArrayNotHasKey('other', $set);
-        $set['other'] = ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')];
+        $callable = Closure::fromCallable(Validation::class . '::' . 'email');
+        $set['other'] = ['callable' => $callable];
         $rule = $set['other'];
         $this->assertInstanceOf(ValidationRule::class, $rule);
-        $this->assertEquals(
-            new ValidationRule(callable: Closure::fromCallable(Validation::class . '::' . 'email'), name: 'other'),
-            $rule,
-        );
+        $this->assertRule($rule, $callable, 'other');
     }
 
     /**
@@ -257,5 +248,27 @@ class ValidationSetTest extends TestCase
 
         $this->assertTrue($rules->has('myUniqueName'));
         $this->assertFalse($rules->has('myMadeUpName'));
+    }
+
+    /**
+     * Asserts that a rule matches the expected configuration.
+     *
+     * The callable is compared using assertSame() as PHPUnit cannot reliably
+     * compare closures for equality with assertEquals().
+     *
+     * @param \Cake\Validation\ValidationRule $rule The rule to check
+     * @param \Closure $callable The expected validation callable
+     * @param string|null $name The expected name of the rule
+     * @param string|null $message The expected validation message
+     * @return void
+     */
+    private function assertRule(ValidationRule $rule, Closure $callable, ?string $name = null, ?string $message = null): void
+    {
+        $this->assertSame($callable, $rule->callable);
+        $this->assertSame($name, $rule->name);
+        $this->assertSame($message, $rule->message);
+        $this->assertNull($rule->on);
+        $this->assertFalse($rule->last);
+        $this->assertSame([], $rule->pass);
     }
 }
