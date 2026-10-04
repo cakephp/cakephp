@@ -23,6 +23,7 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
 use SensitiveParameter;
+use Throwable;
 use function Cake\Core\env;
 
 /**
@@ -210,15 +211,21 @@ class SmtpTransport extends AbstractTransport
     {
         $this->checkRecipient($message);
 
-        if (!$this->connected()) {
-            $this->_connect();
-            $this->_auth();
-        } else {
-            $this->_smtpSend('RSET');
-        }
+        try {
+            if (!$this->connected()) {
+                $this->_connect();
+                $this->_auth();
+            } else {
+                $this->_smtpSend('RSET');
+            }
 
-        $this->_sendRcpt($message);
-        $this->_sendData($message);
+            $this->_sendRcpt($message);
+            $this->_sendData($message);
+        } catch (Throwable $e) {
+            $this->_abortConnection();
+
+            throw $e;
+        }
 
         if (!$this->_config['keepAlive']) {
             $this->_disconnect();
@@ -590,6 +597,23 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('QUIT', false);
         $this->_socket->disconnect();
+        $this->authType = null;
+    }
+
+    /**
+     * Close the socket after a failed exchange, without QUIT.
+     *
+     * The session is in an unknown state: the peer may be gone, or still reading
+     * the message body, which a QUIT would be appended to. Closing makes the next
+     * send open a fresh connection instead of issuing RSET on this one.
+     *
+     * @return void
+     */
+    protected function _abortConnection(): void
+    {
+        if (isset($this->_socket)) {
+            $this->_socket->disconnect();
+        }
         $this->authType = null;
     }
 
