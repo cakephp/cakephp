@@ -358,6 +358,34 @@ class MiddlewareQueueTest extends TestCase
     }
 
     /**
+     * Test insertBefore and insertAfter skip string middleware that does not match
+     */
+    public function testInsertBeforeAfterSkipsNonMatchingStrings(): void
+    {
+        $one = DumbMiddleware::class;
+        $two = new SampleMiddleware();
+        $three = function (): void {
+        };
+        $four = function (): void {
+        };
+        $queue = new MiddlewareQueue();
+        $queue
+            ->add($one)
+            ->add($two)
+            ->insertBefore(SampleMiddleware::class, $three)
+            ->insertAfter(SampleMiddleware::class, $four);
+
+        $this->assertCount(4, $queue);
+        $this->assertInstanceOf(DumbMiddleware::class, $queue->current());
+        $queue->next();
+        $this->assertSame($three, $queue->current()->getCallable());
+        $queue->next();
+        $this->assertSame($two, $queue->current());
+        $queue->next();
+        $this->assertSame($four, $queue->current()->getCallable());
+    }
+
+    /**
      * Test insertAfter an invalid classname
      */
     public function testInsertAfterInvalid(): void
