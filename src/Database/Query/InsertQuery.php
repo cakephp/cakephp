@@ -54,6 +54,8 @@ class InsertQuery extends Query
      * Note calling this method will reset any data previously set
      * with Query::values().
      *
+     * Parameters to this method should never be include user supplied data.
+     *
      * @param array $columns The columns to insert into.
      * @param array<int|string, string> $types A map between columns & their datatypes.
      * @return $this
@@ -79,6 +81,8 @@ class InsertQuery extends Query
 
     /**
      * Set the table name for insert queries.
+     *
+     * Parameters to this method should never be include user supplied data.
      *
      * @param string $table The table name to insert into.
      * @return $this

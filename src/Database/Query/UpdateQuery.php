@@ -58,6 +58,8 @@ class UpdateQuery extends Query
      *
      * Can be combined with set() and where() methods to create update queries.
      *
+     * Parameters to this method should never be include user supplied data.
+     *
      * @param \Cake\Database\ExpressionInterface|string $table The table you want to update.
      * @return $this
      */

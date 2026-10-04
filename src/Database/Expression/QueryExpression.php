@@ -57,6 +57,9 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
+     * The string form of `$conditions` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
+     *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions Tree like array structure
      * containing all the conditions to be added or nested inside this expression object.
      * @param \Cake\Database\TypeMap|array $types Associative array of types to be associated with the values
@@ -110,6 +113,9 @@ class QueryExpression implements ExpressionInterface, Countable
      * If the type passed for any of the fields is expressed "type[]" (note braces)
      * then it will cause the placeholder to be re-written dynamically so if the
      * value is an array, it will create as many placeholders as values are in it.
+     *
+     * The string form of `$conditions` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions single or multiple conditions to
      * be added. When using an array and the key is 'OR' or 'AND' a new expression

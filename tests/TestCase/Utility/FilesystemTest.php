@@ -16,31 +16,34 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\TestSuite\FsFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * Filesystem class
  */
 class FilesystemTest extends TestCase
 {
-    protected $vfs;
+    protected string $vfsPath = '';
 
-    protected $fs;
-
-    protected $vfsPath;
+    protected Filesystem $fs;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->vfs = vfsStream::setup('root');
-        $this->vfsPath = vfsStream::url('root');
+        $this->vfsPath = FsFixture::setup('root');
 
         $this->fs = new Filesystem();
 
         clearstatcache();
+    }
+
+    protected function tearDown(): void
+    {
+        FsFixture::tearDown();
+        parent::tearDown();
     }
 
     public function testMkdir(): void
@@ -82,7 +85,7 @@ class FilesystemTest extends TestCase
                 'badlocation.php' => 'some bad content',
             ],
         ];
-        vfsStream::create($structure);
+        FsFixture::create($structure, $this->vfsPath);
 
         $return = $this->fs->deleteDir($this->vfsPath . DS . 'Core');
 
@@ -121,7 +124,7 @@ class FilesystemTest extends TestCase
                 'file3.php' => 'content',
             ],
         ];
-        vfsStream::create($structure);
+        FsFixture::create($structure, $this->vfsPath);
 
         $iterator = $this->fs->findRecursive($this->vfsPath);
 
@@ -147,7 +150,7 @@ class FilesystemTest extends TestCase
                 'file3.php' => 'should not see this (non-recursive)',
             ],
         ];
-        vfsStream::create($structure);
+        FsFixture::create($structure, $this->vfsPath);
 
         $iterator = $this->fs->find($this->vfsPath);
 
@@ -171,7 +174,7 @@ class FilesystemTest extends TestCase
             'file3.php' => 'content',
             'subdir' => [],
         ];
-        vfsStream::create($structure);
+        FsFixture::create($structure, $this->vfsPath);
 
         $filter = fn($file) => $file->isFile() && $file->getExtension() === 'php';
         $iterator = $this->fs->find($this->vfsPath, $filter);

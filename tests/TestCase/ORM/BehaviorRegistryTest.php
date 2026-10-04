@@ -23,7 +23,9 @@ use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Closure;
 use LogicException;
+use ReflectionFunction;
 use TestApp\Model\Behavior\SluggableBehavior;
 use TestPlugin\Model\Behavior\PersisterOneBehavior;
 
@@ -119,7 +121,12 @@ class BehaviorRegistryTest extends TestCase
 
         $sluggable = $this->Behaviors->load('Sluggable');
         $result = $this->EventManager->listeners('Model.beforeFind');
-        $this->assertEquals([['callable' => $sluggable->beforeFind(...)]], $result);
+        $this->assertSame([0], array_keys($result));
+        $this->assertSame(['callable'], array_keys($result[0]));
+        $this->assertInstanceOf(Closure::class, $result[0]['callable']);
+        $callback = new ReflectionFunction($result[0]['callable']);
+        $this->assertSame($sluggable, $callback->getClosureThis());
+        $this->assertSame('beforeFind', $callback->getName());
     }
 
     /**
@@ -210,10 +217,13 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testGetFinder(): void
     {
-        $this->Behaviors->load('Sluggable');
+        $sluggable = $this->Behaviors->load('Sluggable');
 
         $return = $this->Behaviors->getFinder('noSlug');
-        $this->assertEquals($this->Behaviors->get('Sluggable')->findNoSlug(...), $return);
+        $this->assertInstanceOf(Closure::class, $return);
+        $callback = new ReflectionFunction($return);
+        $this->assertSame($sluggable, $callback->getClosureThis());
+        $this->assertSame('findNoSlug', $callback->getName());
     }
 
     /**
