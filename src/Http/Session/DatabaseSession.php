@@ -20,12 +20,11 @@ namespace Cake\Http\Session;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
-use SessionHandlerInterface;
 
 /**
  * DatabaseSession provides methods to be used with Session.
  */
-class DatabaseSession implements SessionHandlerInterface
+class DatabaseSession extends AbstractSession
 {
     use LocatorAwareTrait;
 
@@ -80,28 +79,6 @@ class DatabaseSession implements SessionHandlerInterface
         $this->_timeout = $timeout;
 
         return $this;
-    }
-
-    /**
-     * Method called on open of a database session.
-     *
-     * @param string $path The path where to store/retrieve the session.
-     * @param string $name The session name.
-     * @return bool Success
-     */
-    public function open(string $path, string $name): bool
-    {
-        return true;
-    }
-
-    /**
-     * Method called on close of a database session.
-     *
-     * @return bool Success
-     */
-    public function close(): bool
-    {
-        return true;
     }
 
     /**

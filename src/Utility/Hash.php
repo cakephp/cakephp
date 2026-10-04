@@ -17,10 +17,11 @@ namespace Cake\Utility;
 
 use ArrayAccess;
 use Cake\Core\Exception\CakeException;
+use Collator;
 use InvalidArgumentException;
+use Throwable;
 use const SORT_ASC;
 use const SORT_DESC;
-use const SORT_LOCALE_STRING;
 use const SORT_NATURAL;
 use const SORT_NUMERIC;
 use const SORT_REGULAR;
@@ -1057,21 +1058,60 @@ class Hash
         }
         $type = strtolower($type);
 
-        if ($type === 'numeric') {
-            $type = SORT_NUMERIC;
-        } elseif ($type === 'string') {
-            $type = SORT_STRING;
-        } elseif ($type === 'natural') {
-            $type = SORT_NATURAL;
-        } elseif ($type === 'locale') {
-            $type = SORT_LOCALE_STRING;
-        } else {
-            $type = SORT_REGULAR;
-        }
         if ($ignoreCase) {
             $values = array_map('mb_strtolower', $values);
         }
-        array_multisort($values, $dir, $type, $keys, $dir, $type);
+
+        if ($type === 'locale') {
+            // SORT_LOCALE_STRING was deprecated in PHP 8.6, use Collator instead.
+            $locale = setlocale(LC_COLLATE, '0') ?: '';
+            $locale = preg_replace('/[.@].*$/', '', $locale) ?: '';
+            if ($locale === 'C' || $locale === 'POSIX') {
+                $locale = '';
+            }
+            try {
+                $collator = new Collator($locale);
+            } catch (Throwable) {
+                $collator = new Collator('');
+            }
+            $pairs = array_map(
+                static fn(mixed $value, string|int $key): array => [$value, $key],
+                $values,
+                $keys,
+            );
+            usort(
+                $pairs,
+                static function (array $a, array $b) use ($collator): int {
+                    $result = $collator->compare((string)$a[0], (string)$b[0]);
+                    if ($result === false) {
+                        $result = 0;
+                    }
+                    if ($result !== 0) {
+                        return $result;
+                    }
+
+                    $result = $collator->compare((string)$a[1], (string)$b[1]);
+
+                    return $result === false ? 0 : $result;
+                },
+            );
+            if ($dir === SORT_DESC) {
+                $pairs = array_reverse($pairs);
+            }
+            $values = array_column($pairs, 0);
+            $keys = array_column($pairs, 1);
+        } else {
+            if ($type === 'numeric') {
+                $type = SORT_NUMERIC;
+            } elseif ($type === 'string') {
+                $type = SORT_STRING;
+            } elseif ($type === 'natural') {
+                $type = SORT_NATURAL;
+            } else {
+                $type = SORT_REGULAR;
+            }
+            array_multisort($values, $dir, $type, $keys, $dir, $type);
+        }
         $sorted = [];
         $keys = array_unique($keys);
 

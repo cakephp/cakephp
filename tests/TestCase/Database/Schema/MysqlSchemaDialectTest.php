@@ -1386,6 +1386,12 @@ SQL;
                 ['type' => 'float', 'length' => 11, 'precision' => 3],
                 '`value` FLOAT(11,3)',
             ],
+            // Double
+            [
+                'value',
+                ['type' => 'double'],
+                '`value` DOUBLE',
+            ],
             // Boolean
             [
                 'checked',
@@ -1570,6 +1576,19 @@ SQL;
 
         $data['name'] = $name;
         $this->assertEquals($expected, $dialect->columnDefinitionSql($data));
+    }
+
+    /**
+     * Test that unmapped types keep the unsigned attribute.
+     */
+    public function testColumnDefinitionSqlUnmappedTypeUnsigned(): void
+    {
+        $dialect = new MysqlSchemaDialect($this->_getMockedDriver());
+
+        $this->assertSame(
+            '`value` DOUBLE UNSIGNED NOT NULL',
+            $dialect->columnDefinitionSql(['name' => 'value', 'type' => 'double', 'unsigned' => true, 'null' => false]),
+        );
     }
 
     /**

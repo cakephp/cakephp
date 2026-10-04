@@ -800,9 +800,18 @@ SQL;
             TableSchemaInterface::TYPE_BINARY,
             TableSchemaInterface::TYPE_BIT,
         ];
+        $hasUnsigned = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+            TableSchemaInterface::TYPE_FLOAT,
+            TableSchemaInterface::TYPE_DECIMAL,
+        ];
         if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
             $out .= ' ' . strtoupper($column['type']);
             $hasLength[] = $column['type'];
+            $hasUnsigned[] = $column['type'];
         }
         if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
             $out .= '(' . $column['length'] . ')';
@@ -828,14 +837,6 @@ SQL;
             $out .= '(' . (int)$column['precision'] . ')';
         }
 
-        $hasUnsigned = [
-            TableSchemaInterface::TYPE_TINYINTEGER,
-            TableSchemaInterface::TYPE_SMALLINTEGER,
-            TableSchemaInterface::TYPE_INTEGER,
-            TableSchemaInterface::TYPE_BIGINTEGER,
-            TableSchemaInterface::TYPE_FLOAT,
-            TableSchemaInterface::TYPE_DECIMAL,
-        ];
         if (
             in_array($column['type'], $hasUnsigned, true) &&
             isset($column['unsigned']) &&

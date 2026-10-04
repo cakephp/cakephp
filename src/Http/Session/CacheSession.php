@@ -20,14 +20,13 @@ namespace Cake\Http\Session;
 
 use Cake\Cache\Cache;
 use InvalidArgumentException;
-use SessionHandlerInterface;
 
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with Session
  *
  * @see \Cake\Http\Session for configuration information.
  */
-class CacheSession implements SessionHandlerInterface
+class CacheSession extends AbstractSession
 {
     /**
      * Options for this session engine
@@ -50,28 +49,6 @@ class CacheSession implements SessionHandlerInterface
             throw new InvalidArgumentException('The cache configuration name to use is required');
         }
         $this->_options = $config;
-    }
-
-    /**
-     * Method called on open of a database session.
-     *
-     * @param string $path The path where to store/retrieve the session.
-     * @param string $name The session name.
-     * @return bool Success
-     */
-    public function open(string $path, string $name): bool
-    {
-        return true;
-    }
-
-    /**
-     * Method called on close of a database session.
-     *
-     * @return bool Success
-     */
-    public function close(): bool
-    {
-        return true;
     }
 
     /**
