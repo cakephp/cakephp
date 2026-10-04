@@ -339,10 +339,19 @@ class Mysql extends Driver
      */
     public function isMariadb(): bool
     {
-        deprecationWarning('5.5.0', 'MySQL and Mariadb now have separate drivers. Use `instanceof Mariadb` instead');
         $this->version();
 
-        return $this->serverType === static::SERVER_TYPE_MARIADB;
+        $isMaria = $this->serverType === static::SERVER_TYPE_MARIADB;
+        if ($isMaria) {
+            deprecationWarning(
+                '5.5.0',
+                'MySQL and Mariadb now have separate drivers.' .
+                'Use `instanceof Mariadb` instead for runtime checks, ' .
+                'and set `"driver" => Mariadb::class` in your connection configuration.'
+            );
+        }
+
+        return $isMaria;
     }
 
     /**

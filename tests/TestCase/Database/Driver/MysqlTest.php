@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Driver;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Query\SelectQuery;
@@ -34,13 +35,32 @@ use ReflectionClass;
 class MysqlTest extends TestCase
 {
     /**
+     * The driver class name being tested.
+     */
+    protected $driverClass = Mysql::class;
+
+    /**
+     * The driver name
+     */
+    protected $driverName = 'Mysql';
+
+    /**
      * setup
      */
     protected function setup(): void
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], 'Mysql'), 'Not using Mysql for test config');
+        $this->skipIf(!str_contains($config['driver'], $this->driverName), "Not using {$this->driverName} for test config");
+    }
+
+    protected function getDriver(): Driver
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $this->skipIf(!($driver instanceof $this->driverClass), "Requires {$this->driverClass} driver");
+
+        return $driver;
     }
 
     /**
@@ -48,7 +68,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct();
@@ -105,7 +125,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct($config);
@@ -146,28 +166,26 @@ class MysqlTest extends TestCase
      */
     public function testIsConnected(): void
     {
-        $connection = ConnectionManager::get('test');
-        $connection->getDriver()->disconnect();
-        $this->assertFalse($connection->getDriver()->isConnected(), 'Not connected now.');
+        $driver = $this->getDriver();
+        $driver->disconnect();
+        $this->assertFalse($driver->isConnected(), 'Not connected now.');
 
-        $connection->getDriver()->connect();
-        $this->assertTrue($connection->getDriver()->isConnected(), 'Should be connected.');
+        $driver->connect();
+        $this->assertTrue($driver->isConnected(), 'Should be connected.');
     }
 
     public function testRollbackTransactionAutoConnect(): void
     {
-        $connection = ConnectionManager::get('test');
-        $connection->getDriver()->disconnect();
+        $driver = $this->getDriver();
+        $driver->disconnect();
 
-        $driver = $connection->getDriver();
         $this->assertFalse($driver->rollbackTransaction());
         $this->assertTrue($driver->isConnected());
     }
 
     public function testCommitTransactionAutoConnect(): void
     {
-        $connection = ConnectionManager::get('test');
-        $driver = $connection->getDriver();
+        $driver = $this->getDriver();
 
         $this->assertFalse($driver->commitTransaction());
         $this->assertTrue($driver->isConnected());
@@ -186,7 +204,7 @@ class MysqlTest extends TestCase
             ->once()
             ->andReturn($dbVersion);
 
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct();
@@ -214,10 +232,9 @@ class MysqlTest extends TestCase
      */
     public function testSupports(): void
     {
-        $driver = ConnectionManager::get('test')->getDriver();
-        $this->skipIf(!$driver instanceof Mysql);
-
+        $driver = $this->getDriver();
         $serverType = $driver->isMariadb() ? 'mariadb' : 'mysql';
+
         $featureVersions = [
             'mysql' => [
                 'json' => '5.7.0',
@@ -259,7 +276,7 @@ class MysqlTest extends TestCase
      */
     public function testStringAggTranslationForMysql(): void
     {
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct([]);
@@ -285,7 +302,7 @@ class MysqlTest extends TestCase
      */
     public function testStringAggTranslationForMariadb(): void
     {
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct([]);
@@ -314,7 +331,7 @@ class MysqlTest extends TestCase
      */
     public function testQuoteIdentifier(): void
     {
-        $driver = new Mysql();
+        $driver = new $this->driverClass();
 
         $result = $driver->quoteIdentifier('name');
         $expected = '`name`';
@@ -418,8 +435,7 @@ class MysqlTest extends TestCase
      */
     public function testQuote(): void
     {
-        $driver = ConnectionManager::get('test')->getDriver();
-        $this->skipIf(!$driver instanceof Mysql);
+        $driver = $this->getDriver();
 
         $result = $driver->quote('name');
         $expected = "'name'";

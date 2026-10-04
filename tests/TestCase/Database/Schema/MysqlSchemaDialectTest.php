@@ -36,10 +36,16 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
+ *
+ * Used as a base class for Mariadb tests as well.
  */
 class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
+
+    protected $schemaDialectClass = MysqlSchemaDialect::class;
+
+    protected $driverClass = Mysql::class;
 
     /**
      * Helper method for skipping tests that need a real connection.
@@ -301,7 +307,7 @@ class MysqlSchemaDialectTest extends TestCase
             'comment' => 'Comment section',
         ];
         $driver = $this->createStub(Mysql::class);
-        $dialect = new MysqlSchemaDialect($driver);
+        $dialect = new $this->schemaDialectClass($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -323,7 +329,7 @@ class MysqlSchemaDialectTest extends TestCase
             'Comment' => 'Comment section',
         ];
         $driver = $this->createStub(Mysql::class);
-        $dialect = new MysqlSchemaDialect($driver);
+        $dialect = new $this->schemaDialectClass($driver);
 
         $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field);
@@ -552,23 +558,8 @@ SQL;
         ];
 
         $driver = ConnectionManager::get('test')->getDriver();
-        if ($driver->isMariaDb()) {
-            $expected['created_with_precision']['default'] = 'current_timestamp(3)';
-            $expected['created_with_precision']['comment'] = '';
-
-            // MariaDb aliases JSON to LONGTEXT
-            // https://mariadb.com/kb/en/json/
-            $expected['config']['type'] = 'text';
-            $expected['config']['length'] = 4294967295;
-            $expected['config']['comment'] = '';
-            $expected['config']['charset'] = null;
-            $expected['config']['collate'] = 'utf8mb4_bin';
-        }
-        // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
-        if (
-            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>=')) ||
-            (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
-        ) {
+        // MySQL 8.0.30+ use utf8mb3 alias instead of utf8
+        if (version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
         }
@@ -641,7 +632,7 @@ SQL;
         $driver = $connection->getDriver();
 
         // MySQL 8.0.1 adds srid support while 8.0.13 adds default support
-        $hasGeometry = !$driver->isMariaDb() && version_compare($driver->version(), '8.0.13', '>=');
+        $hasGeometry = version_compare($driver->version(), '8.0.13', '>=');
         $this->skipIf(!$hasGeometry, 'This test requires geometry type with srid support.');
 
         $table = <<<SQL
@@ -713,7 +704,7 @@ SQL;
     }
 
     /**
-     * MariaDB does not support setting SRID on geometry types.
+     * Test columns with no explicit SRID
      */
     public function testDescribeTableGeometryNoSrid(): void
     {
@@ -846,11 +837,7 @@ SQL;
         $this->assertEquals($expected['length_idx']['columns'], $key->getColumns());
         $this->assertEquals(['title' => 4], $key->getLength());
 
-        if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
-            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
-        } else {
-            $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
-        }
+        $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
         $key = $result->constraint('unique_id_idx');
         $this->assertEquals('unique_id_idx', $key->getName());
@@ -896,12 +883,8 @@ SQL;
         $prefixed = $dialect->describeForeignKeys("{$database}.schema_articles");
         $this->assertEquals($keys, $prefixed, 'prefixed tables should work');
 
-        $isMariaDb = ConnectionManager::get('test')->getDriver()->isMariaDb();
         foreach ($keys as $foreignKey) {
             $name = $foreignKey['name'];
-            if ($name === 'author_idx' && $isMariaDb) {
-                $name = 'schema_articles_ibfk_1';
-            }
             $this->assertArrayHasKey($name, $expected);
             $expectedItem = $expected[$name];
             $expectedFields = array_intersect_key($expectedItem, $foreignKey);
@@ -1569,7 +1552,7 @@ SQL;
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $dialect = new MysqlSchemaDialect($driver);
+        $dialect = new $this->schemaDialectClass($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $dialect->columnSql($table, $name));
@@ -1663,7 +1646,7 @@ SQL;
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchemaDialect($driver);
+        $schema = new $this->schemaDialectClass($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -1703,7 +1686,7 @@ SQL;
     public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchemaDialect($driver);
+        $schema = new $this->schemaDialectClass($driver);
 
         $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
@@ -1815,7 +1798,7 @@ SQL;
     public function testColumnSqlPrimaryKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchemaDialect($driver);
+        $schema = new $this->schemaDialectClass($driver);
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
@@ -2063,7 +2046,7 @@ SQL;
     {
         $driver = Mockery::mock(Driver::class)->shouldIgnoreMissing();
         $driver->shouldReceive('connect')->once();
-        new MysqlSchemaDialect($driver);
+        new $this->schemaDialectClass($driver);
     }
 
     /**
@@ -2074,7 +2057,6 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
         $this->skipIf(!$connection->getDriver()->supports(DriverFeatureEnum::JSON), 'Does not support native json');
-        $this->skipIf($connection->getDriver()->isMariadb(), 'MariaDb internally uses TEXT for JSON columns');
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
@@ -2107,7 +2089,7 @@ SQL;
                 return "'{$value}'";
             });
 
-        $driver = Mockery::mock(Mysql::class)
+        $driver = Mockery::mock($this->driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct();
