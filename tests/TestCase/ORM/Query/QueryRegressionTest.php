@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
@@ -2010,7 +2011,7 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(1, $subqueries, implode("\n", $logger->read()));
 
         $sql = array_pop($subqueries);
-        if ($driver instanceof Mysql && $driver->isMariadb()) {
+        if ($driver instanceof Mariadb) {
             $this->assertStringContainsString('INNER JOIN (SELECT DISTINCT', $sql);
             $this->assertStringNotContainsString('GROUP BY', $sql);
             $this->assertMatchesRegularExpression('/SELECT DISTINCT .+name.+ FROM/', $sql);
@@ -2059,7 +2060,7 @@ class QueryRegressionTest extends TestCase
         }
 
         $logs = $logger->read();
-        if ($driver instanceof Mysql && $driver->isMariadb()) {
+        if ($driver instanceof Mariadb) {
             // Mariadb requires a specific query optimization that replaces GROUP BY with DISTINCT
             $distinct = array_filter(
                 $logs,
