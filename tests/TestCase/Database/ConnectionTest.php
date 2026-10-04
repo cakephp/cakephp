@@ -54,7 +54,7 @@ use function Cake\Core\namespaceSplit;
 /**
  * Tests Connection class
  */
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     /**
      * @var array<string>
@@ -95,7 +95,7 @@ class ConnectionTest extends TestCase
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
 
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     protected function tearDown(): void

@@ -55,7 +55,7 @@ use function Cake\Core\env;
 /**
  * ViewTest class
  */
-class ViewTest extends TestCase
+final class ViewTest extends TestCase
 {
     /**
      * Fixtures used in this test.

@@ -37,7 +37,7 @@ use function Cake\Core\triggerWarning;
 /**
  * Test cases for functions in Core\functions.php
  */
-class FunctionsTest extends TestCase
+final class FunctionsTest extends TestCase
 {
     public function testPathCombine(): void
     {

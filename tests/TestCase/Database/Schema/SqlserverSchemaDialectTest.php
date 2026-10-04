@@ -33,7 +33,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * SQL Server schema test case.
  */
-class SqlserverSchemaDialectTest extends TestCase
+final class SqlserverSchemaDialectTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.

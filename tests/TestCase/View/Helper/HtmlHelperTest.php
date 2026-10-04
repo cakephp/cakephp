@@ -33,7 +33,7 @@ use function Cake\Core\h;
 /**
  * HtmlHelperTest class
  */
-class HtmlHelperTest extends TestCase
+final class HtmlHelperTest extends TestCase
 {
     /**
      * Regexp for CDATA start block
@@ -81,7 +81,7 @@ class HtmlHelperTest extends TestCase
         $this->Html = new HtmlHelper($this->View);
 
         $this->loadPlugins(['TestTheme']);
-        static::setAppNamespace();
+        self::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
         $builder = Router::createRouteBuilder('/');

@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * SlidingWindowRateLimiter test case
  */
-class SlidingWindowRateLimiterTest extends TestCase
+final class SlidingWindowRateLimiterTest extends TestCase
 {
     /**
      * @var \Cake\Http\RateLimit\SlidingWindowRateLimiter

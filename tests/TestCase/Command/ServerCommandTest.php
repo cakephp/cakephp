@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * ServerShell test.
  */
-class ServerCommandTest extends TestCase
+final class ServerCommandTest extends TestCase
 {
     /**
      * @var \Cake\Command\ServerCommand

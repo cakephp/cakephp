@@ -32,7 +32,7 @@ use TestPlugin\Command\SampleCommand as PluginSampleCommand;
 /**
  * Test case for the CommandCollection
  */
-class CommandCollectionTest extends TestCase
+final class CommandCollectionTest extends TestCase
 {
     protected function setUp(): void
     {

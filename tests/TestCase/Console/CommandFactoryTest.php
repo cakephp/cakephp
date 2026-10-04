@@ -22,7 +22,7 @@ use stdClass;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
 
-class CommandFactoryTest extends TestCase
+final class CommandFactoryTest extends TestCase
 {
     public function testCreateCommand(): void
     {

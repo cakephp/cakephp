@@ -20,7 +20,7 @@ use Cake\Database\Driver\Postgres;
 use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 
-class CaseExpressionQueryTest extends TestCase
+final class CaseExpressionQueryTest extends TestCase
 {
     protected array $fixtures = [
         'core.Products',

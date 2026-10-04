@@ -36,7 +36,7 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use RuntimeException;
 use Throwable;
 
-class ExceptionTrapTest extends TestCase
+final class ExceptionTrapTest extends TestCase
 {
     private string $memoryLimit;
 

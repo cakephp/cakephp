@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for the stream factory.
  */
-class StreamFactoryTest extends TestCase
+final class StreamFactoryTest extends TestCase
 {
     protected StreamFactory $factory;
 

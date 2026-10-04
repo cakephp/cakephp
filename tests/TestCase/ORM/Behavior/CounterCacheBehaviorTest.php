@@ -29,7 +29,7 @@ use TestApp\Model\Table\PublishedPostsTable;
 /**
  * CounterCacheBehavior test case
  */
-class CounterCacheBehaviorTest extends TestCase
+final class CounterCacheBehaviorTest extends TestCase
 {
     /**
      * @var \TestApp\Model\Table\PublishedPostsTable

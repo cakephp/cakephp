@@ -34,7 +34,7 @@ use TestApp\Controller\ComponentTestController;
 /**
  * ComponentTest class
  */
-class ComponentTest extends TestCase
+final class ComponentTest extends TestCase
 {
     /**
      * setUp method
@@ -42,7 +42,7 @@ class ComponentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

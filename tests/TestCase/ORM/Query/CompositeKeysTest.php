@@ -32,7 +32,7 @@ use TestApp\Model\Entity\OpenArticleEntity;
 /**
  * Integration tests for table operations involving composite keys
  */
-class CompositeKeysTest extends TestCase
+final class CompositeKeysTest extends TestCase
 {
     /**
      * Fixture to be used

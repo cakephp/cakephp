@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * FlashMessageTest class
  */
-class FlashMessageTest extends TestCase
+final class FlashMessageTest extends TestCase
 {
     /**
      * @var \Cake\Http\FlashMessage
@@ -41,7 +41,7 @@ class FlashMessageTest extends TestCase
     {
         parent::setUp();
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->Session = new Session();
         $this->Flash = new FlashMessage($this->Session);
     }

@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * PluginListCommandTest class.
  */
-class PluginListCommandTest extends TestCase
+final class PluginListCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
     use PluginConfigFileTrait;

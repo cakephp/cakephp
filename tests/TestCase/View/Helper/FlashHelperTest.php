@@ -27,7 +27,7 @@ use Cake\View\View;
  *
  * @property \Cake\View\Helper\FlashHelper $Flash
  */
-class FlashHelperTest extends TestCase
+final class FlashHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\View

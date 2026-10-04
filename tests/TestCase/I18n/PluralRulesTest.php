@@ -24,7 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * PluralRules tests
  */
-class PluralRulesTest extends TestCase
+final class PluralRulesTest extends TestCase
 {
     /**
      * tearDown method

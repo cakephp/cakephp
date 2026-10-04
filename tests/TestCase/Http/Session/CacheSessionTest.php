@@ -26,7 +26,7 @@ use InvalidArgumentException;
 /**
  * CacheSessionTest
  */
-class CacheSessionTest extends TestCase
+final class CacheSessionTest extends TestCase
 {
     protected static $_sessionBackup;
 

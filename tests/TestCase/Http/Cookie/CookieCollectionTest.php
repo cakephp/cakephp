@@ -27,7 +27,7 @@ use InvalidArgumentException;
 /**
  * Cookie collection test.
  */
-class CookieCollectionTest extends TestCase
+final class CookieCollectionTest extends TestCase
 {
     /**
      * Test constructor

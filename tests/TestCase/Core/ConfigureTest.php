@@ -26,7 +26,7 @@ use Exception;
 /**
  * ConfigureTest
  */
-class ConfigureTest extends TestCase
+final class ConfigureTest extends TestCase
 {
     /**
      * setUp method

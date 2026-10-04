@@ -26,7 +26,7 @@ use PDO;
 /**
  * Test for the Binary uuid type.
  */
-class BinaryUuidTypeTest extends TestCase
+final class BinaryUuidTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\BinaryUuidType

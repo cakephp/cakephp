@@ -23,7 +23,7 @@ use Cake\Utility\Filesystem;
 /**
  * Filesystem class
  */
-class FilesystemTest extends TestCase
+final class FilesystemTest extends TestCase
 {
     protected string $vfsPath = '';
 

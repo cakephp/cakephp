@@ -46,7 +46,7 @@ use function Cake\I18n\__;
 /**
  * Tests HasMany class
  */
-class HasManyTest extends TestCase
+final class HasManyTest extends TestCase
 {
     /**
      * Fixtures

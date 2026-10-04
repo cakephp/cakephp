@@ -23,7 +23,7 @@ use Laminas\Diactoros\Stream;
 /**
  * Test case for the uploaded file factory.
  */
-class UploadedFileFactoryTest extends TestCase
+final class UploadedFileFactoryTest extends TestCase
 {
     protected UploadedFileFactory $factory;
 

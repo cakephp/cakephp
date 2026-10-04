@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * SecurityTest class
  */
-class SecurityTest extends TestCase
+final class SecurityTest extends TestCase
 {
     /**
      * Test engine

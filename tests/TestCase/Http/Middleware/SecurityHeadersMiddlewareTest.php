@@ -26,7 +26,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for SecurityMiddleware
  */
-class SecurityHeadersMiddlewareTest extends TestCase
+final class SecurityHeadersMiddlewareTest extends TestCase
 {
     /**
      * Test adding the security headers

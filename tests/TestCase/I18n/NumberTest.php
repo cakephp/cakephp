@@ -26,7 +26,7 @@ use NumberFormatter;
 /**
  * NumberTest class
  */
-class NumberTest extends TestCase
+final class NumberTest extends TestCase
 {
     /**
      * @var \Cake\I18n\Number

@@ -45,7 +45,7 @@ use function Cake\Collection\collection;
 /**
  * Tests BelongsToMany class
  */
-class BelongsToManyTest extends TestCase
+final class BelongsToManyTest extends TestCase
 {
     /**
      * Fixtures

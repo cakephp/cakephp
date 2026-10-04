@@ -26,7 +26,7 @@ use function Cake\Error\stackTrace;
 /**
  * FunctionsTest class
  */
-class FunctionsTest extends TestCase
+final class FunctionsTest extends TestCase
 {
     /**
      * test debug()

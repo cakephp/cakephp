@@ -29,7 +29,7 @@ use Mockery;
 /**
  * Tests EagerLoader
  */
-class EagerLoaderTest extends TestCase
+final class EagerLoaderTest extends TestCase
 {
     /**
      * @var \Cake\Datasource\ConnectionInterface

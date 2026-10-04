@@ -30,7 +30,7 @@ use function Cake\Core\h;
 /**
  * UrlHelperTest class
  */
-class UrlHelperTest extends TestCase
+final class UrlHelperTest extends TestCase
 {
     /**
      * @var \Cake\View\Helper\UrlHelper
@@ -61,7 +61,7 @@ class UrlHelperTest extends TestCase
         $this->View = new View($request);
         $this->Helper = new UrlHelper($this->View);
 
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->loadPlugins(['TestTheme']);
         $this->builder = Router::createRouteBuilder('/');
         $this->builder->fallbacks(DashedRoute::class);

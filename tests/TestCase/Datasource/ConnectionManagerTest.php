@@ -30,7 +30,7 @@ use TestPlugin\Datasource\TestSource;
 /**
  * ConnectionManager Test
  */
-class ConnectionManagerTest extends TestCase
+final class ConnectionManagerTest extends TestCase
 {
     /**
      * tearDown method

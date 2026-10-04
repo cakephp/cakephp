@@ -26,7 +26,7 @@ use SplFileInfo;
 /**
  * FinderTest class
  */
-class FinderTest extends TestCase
+final class FinderTest extends TestCase
 {
     /**
      * Test virtual filesystem

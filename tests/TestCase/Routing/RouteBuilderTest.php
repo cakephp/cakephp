@@ -35,7 +35,7 @@ use TestApp\Routing\Route\DashedRoute;
 /**
  * RouteBuilder test case
  */
-class RouteBuilderTest extends TestCase
+final class RouteBuilderTest extends TestCase
 {
     /**
      * @var \Cake\Routing\RouteCollection

@@ -41,7 +41,7 @@ require_once __DIR__ . '/server_mocks.php';
 /**
  * Server test case
  */
-class ServerTest extends TestCase
+final class ServerTest extends TestCase
 {
     /**
      * @var string

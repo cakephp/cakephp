@@ -22,7 +22,7 @@ use Laminas\Diactoros\UploadedFile;
 /**
  * Test case for FormData.
  */
-class FormDataTest extends TestCase
+final class FormDataTest extends TestCase
 {
     /**
      * Test getting the boundary.

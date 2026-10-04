@@ -8,7 +8,7 @@ use Cake\Container\ServiceProvider\BootableServiceProviderInterface;
 use Cake\Container\ServiceProvider\ServiceProviderInterface;
 use PHPUnit\Framework\TestCase;
 
-class ServiceProviderTest extends TestCase
+final class ServiceProviderTest extends TestCase
 {
     protected function getServiceProvider(): ServiceProviderInterface
     {

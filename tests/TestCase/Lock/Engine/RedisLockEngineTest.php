@@ -26,7 +26,7 @@ use function Cake\Core\env;
 /**
  * RedisLockEngineTest class
  */
-class RedisLockEngineTest extends TestCase
+final class RedisLockEngineTest extends TestCase
 {
     /**
      * @var \Cake\Lock\Engine\RedisLockEngine|null

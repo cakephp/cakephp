@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * MessagesFileLoaderTest class
  */
-class MessagesFileLoaderTest extends TestCase
+final class MessagesFileLoaderTest extends TestCase
 {
     protected function setUp(): void
     {
