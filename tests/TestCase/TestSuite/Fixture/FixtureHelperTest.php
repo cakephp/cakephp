@@ -374,7 +374,7 @@ class FixtureHelperTest extends TestCase
 
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('Unable to delete rows from table `articles`.');
-        (new FixtureHelper())->delete([$fixture]);
+        new FixtureHelper()->delete([$fixture]);
     }
 
     /**
@@ -404,7 +404,7 @@ class FixtureHelperTest extends TestCase
         };
 
         try {
-            (new FixtureHelper())->delete([$fixture]);
+            new FixtureHelper()->delete([$fixture]);
             $this->fail('Expected an exception for a connection without delete support.');
         } catch (CakeException $e) {
             $this->assertSame(
@@ -448,7 +448,7 @@ class FixtureHelperTest extends TestCase
             $this->assertNotEmpty($this->readTable($connection, $table), "Table `{$table}` has no rows.");
         }
 
-        (new FixtureHelper())->delete([$articles, $orders]);
+        new FixtureHelper()->delete([$articles, $orders]);
         foreach (['articles', 'orders'] as $table) {
             $this->assertEmpty($this->readTable($connection, $table), "Table `{$table}` was not emptied.");
         }
