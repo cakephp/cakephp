@@ -1651,7 +1651,7 @@ SQL;
      */
     public function testColumnDefinitionSqlUnmappedTypeUnsigned(): void
     {
-        $dialect = new MysqlSchemaDialect($this->_getMockedDriver());
+        $dialect = new MysqlSchemaDialect($this->getMockedDriver());
 
         $this->assertSame(
             '`value` DOUBLE UNSIGNED NOT NULL',
