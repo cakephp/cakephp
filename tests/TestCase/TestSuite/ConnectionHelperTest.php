@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver;
-use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Enum\DriverFeature;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Log\Engine\ArrayLog;
@@ -121,7 +121,7 @@ class ConnectionHelperTest extends TestCase
         $driver = $connection->getWriteDriver();
 
         $this->skipIf(
-            $driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            $driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
             'This driver supports disabling constraints without a transaction.',
         );
 
@@ -153,7 +153,7 @@ class ConnectionHelperTest extends TestCase
         $driver = $connection->getWriteDriver();
 
         $this->skipIf(
-            !$driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
+            !$driver->supports(DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION),
             'This driver requires a transaction to disable constraints.',
         );
 

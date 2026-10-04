@@ -367,7 +367,7 @@ class FixtureHelperTest extends TestCase
                 return 'failing';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
         };
@@ -393,15 +393,13 @@ class FixtureHelperTest extends TestCase
                 return 'fake';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
 
-            public function truncate(ConnectionInterface $connection): bool
+            public function truncate(ConnectionInterface $connection): void
             {
                 $this->truncated = true;
-
-                return true;
             }
         };
 
