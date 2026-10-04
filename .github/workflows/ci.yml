@@ -34,6 +34,10 @@ jobs:
             dependencies: highest
 
           - php-version: '8.2'
+            db-type: 'mariadb-compat'
+            dependencies: highest
+
+          - php-version: '8.2'
             db-type: 'mysql'
             dependencies: 'lowest'
 
@@ -97,7 +101,7 @@ jobs:
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8
-      if: matrix.db-type == 'mariadb'
+      if: matrix.db-type == 'mariadb' or matrix.db-type == 'mariadb-mysql'
       run: |
         docker run -d --name=mariadb \
           -e MARIADB_ROOT_PASSWORD=root \
@@ -154,7 +158,8 @@ jobs:
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mariadb://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb-mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
