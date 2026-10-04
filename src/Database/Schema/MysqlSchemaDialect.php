@@ -188,6 +188,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
                 SQL;
         } else {
+            // TODO remove this entire method in 6.x when mysql dialect drops support for mariadb
             return [];
         }
 
@@ -238,6 +239,7 @@ class MysqlSchemaDialect extends SchemaDialect
             $this->_driver->isMariaDb() &&
             $default === 'current_timestamp()'
         ) {
+            // TODO remove in 6.x when mysql driver drops support for mariadb
             return 'CURRENT_TIMESTAMP';
         }
 
