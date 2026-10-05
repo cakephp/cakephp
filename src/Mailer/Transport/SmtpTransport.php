@@ -222,7 +222,7 @@ class SmtpTransport extends AbstractTransport
             $this->_sendRcpt($message);
             $this->_sendData($message);
         } catch (Throwable $e) {
-            $this->_abortConnection();
+            $this->abortConnection();
 
             throw $e;
         }
@@ -609,7 +609,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    protected function _abortConnection(): void
+    protected function abortConnection(): void
     {
         if (isset($this->_socket)) {
             $this->_socket->disconnect();
