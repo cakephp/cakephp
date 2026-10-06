@@ -76,6 +76,7 @@ class DebuggerTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        Log::drop('test');
         if ($this->restoreError) {
             restore_error_handler();
         }

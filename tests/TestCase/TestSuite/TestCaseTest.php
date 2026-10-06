@@ -49,6 +49,12 @@ use function Cake\Core\deprecationWarning;
 #[AllowMockObjectsWithoutExpectations]
 class TestCaseTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::dropAlias('secondary');
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
