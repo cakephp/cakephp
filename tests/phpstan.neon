@@ -8,6 +8,7 @@ parameters:
         - bootstrap.php
         - ../src/Collection/functions_global.php
         - ../src/Core/functions_global.php
+        - ../src/I18n/functions_global.php
         - ../src/Routing/functions_global.php
     paths:
         - TestCase/
