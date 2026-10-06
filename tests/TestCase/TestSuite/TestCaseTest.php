@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
@@ -27,6 +28,7 @@ use Cake\ORM\Table;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\FixturizedTestCase;
+use Cake\Test\Fixture\StateChangingTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
@@ -121,6 +123,21 @@ class TestCaseTest extends TestCase
         $event = new Event('my.event');
         $manager->dispatch($event);
         $this->assertEventFired('my.event', $manager);
+    }
+
+    /**
+     * Test that plugins loaded during a test are unloaded after it.
+     */
+    #[WithoutErrorHandler]
+    public function testPluginsAreRestoredAfterTest(): void
+    {
+        $before = Plugin::loaded();
+
+        $test = new StateChangingTestCase('testLoadPluginAndLogger');
+        $test->run();
+
+        $this->assertTrue($test->status()->isSuccess(), $test->status()->message());
+        $this->assertSame($before, Plugin::loaded());
     }
 
     /**
