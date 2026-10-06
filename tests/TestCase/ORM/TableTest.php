@@ -92,6 +92,7 @@ class TableTest extends TestCase
         'core.Authors',
         'core.Categories',
         'core.Comments',
+        'core.CounterCacheUsers',
         'core.Sections',
         'core.SectionsMembers',
         'core.Members',

@@ -215,6 +215,7 @@ class LogTestTraitTest extends TestCase
 
     public function testAbsentLogWithoutSetup(): void
     {
+        Log::drop('debug');
         Log::setConfig([
             'debug' => [
                 'className' => TestAppLog::class,
