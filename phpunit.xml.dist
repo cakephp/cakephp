@@ -38,6 +38,9 @@
         <include>
             <directory suffix=".php">src/</directory>
         </include>
+        <exclude>
+            <directory>src/*/tests/</directory>
+        </exclude>
     </source>
 
     <php>
