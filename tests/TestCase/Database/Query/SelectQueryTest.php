@@ -4138,7 +4138,6 @@ class SelectQueryTest extends TestCase
      */
     public function testAllNoDuplicateTypeCasting(): void
     {
-        $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
         $query = new SelectQuery($this->connection);
         $query
             ->select('1.5 AS a')

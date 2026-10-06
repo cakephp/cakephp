@@ -368,6 +368,26 @@ class MysqlTest extends TestCase
         $expected = 'Function(`Something`.`foo`) AS `x`';
         $this->assertEquals($expected, $result);
 
+        $result = $driver->quoteIdentifier('COUNT(DISTINCT Something.foo)');
+        $expected = 'COUNT(DISTINCT `Something`.`foo`)';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('count(distinct foo) AS x');
+        $expected = 'count(DISTINCT `foo`) AS `x`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('1.5');
+        $expected = '1.5';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('1.5 AS x');
+        $expected = '1.5 AS `x`';
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quoteIdentifier('1.5 AS `x`');
+        $expected = '1.5 AS `x`';
+        $this->assertEquals($expected, $result);
+
         $result = $driver->quoteIdentifier('name-with-minus');
         $expected = '`name-with-minus`';
         $this->assertEquals($expected, $result);
