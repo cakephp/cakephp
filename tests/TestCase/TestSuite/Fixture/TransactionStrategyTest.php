@@ -24,6 +24,14 @@ class TransactionStrategyTest extends TestCase
 {
     protected array $fixtures = ['core.Articles'];
 
+    protected bool $savePoints = false;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->savePoints = ConnectionManager::get('test')->isSavePointsEnabled();
+    }
+
     /**
      * Tests truncation strategy.
      */
@@ -48,5 +56,14 @@ class TransactionStrategyTest extends TestCase
         $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
+    }
+
+    /**
+     * Restores the save point setting the strategy enables on the shared connection.
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::get('test')->enableSavePoints($this->savePoints);
     }
 }
