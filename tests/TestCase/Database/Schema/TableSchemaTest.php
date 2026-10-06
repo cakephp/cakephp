@@ -642,10 +642,6 @@ class TableSchemaTest extends TestCase
         $this->getTableLocator()->clear();
         $table = $this->getTableLocator()->get('Orders');
         $connection = $table->getConnection();
-        $this->skipIf(
-            $connection->getDriver() instanceof Postgres,
-            'Constraints get dropped in postgres for some reason',
-        );
 
         $name = 'product_category_fk';
         $compositeConstraint = $table->getSchema()->getConstraint($name);
@@ -661,7 +657,8 @@ class TableSchemaTest extends TestCase
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'deferrable' => null,
+            // Postgres creates foreign keys as deferrable by default
+            'deferrable' => $connection->getDriver() instanceof Postgres ? ForeignKey::IMMEDIATE : null,
         ];
         $this->assertEquals($expected, $compositeConstraint);
 

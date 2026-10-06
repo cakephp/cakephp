@@ -229,8 +229,6 @@ class SchemaDialectTest extends TestCase
     {
         // TODO this could be resolved if we use the key reflection logic from phinx/migrations
         // that logic parses the SQL of the key to extract and preserve the name.
-        $driver = ConnectionManager::get('test')->getDriver();
-        $this->skipIf($driver instanceof Mysql, 'mysql tests fail when this runs');
 
         // Name is wrong
         $this->assertFalse($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_index'));
