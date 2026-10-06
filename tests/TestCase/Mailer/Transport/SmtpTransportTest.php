@@ -616,6 +616,7 @@ class SmtpTransportTest extends TestCase
 
         $message->setHeaders([
             'X-inject' => "line one\r\nline two",
+            'Date' => $date,
         ]);
         $message->setBody(['text' => 'oh no']);
 
