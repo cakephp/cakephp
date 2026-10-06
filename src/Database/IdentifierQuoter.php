@@ -55,7 +55,7 @@ class IdentifierQuoter
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*' || $identifier === '' || is_numeric($identifier)) {
+        if ($identifier === '*' || $identifier === '') {
             return $identifier;
         }
 

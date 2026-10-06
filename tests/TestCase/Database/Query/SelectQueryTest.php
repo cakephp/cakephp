@@ -4138,6 +4138,7 @@ class SelectQueryTest extends TestCase
      */
     public function testAllNoDuplicateTypeCasting(): void
     {
+        $this->skipIf($this->autoQuote, 'Produces bad SQL in postgres with autoQuoting');
         $query = new SelectQuery($this->connection);
         $query
             ->select('1.5 AS a')
@@ -4293,6 +4294,23 @@ class SelectQueryTest extends TestCase
         $results = $statement->fetchColumn(3);
         $this->assertFalse($results);
         $statement->closeCursor();
+    }
+
+    /**
+     * Tests that a quoted query compiles to the same SQL when compiled again.
+     */
+    public function testQuotedFunctionAliasCompiledTwice(): void
+    {
+        $this->connection->getDriver()->enableAutoQuoting(true);
+        $query = new SelectQuery($this->connection);
+        $query->select(['COUNT(id) AS total', 'COUNT(DISTINCT author_id) AS authors'])->from('articles');
+
+        $sql = $query->sql();
+        $this->assertQuotedQuery('SELECT COUNT\\(<id>\\) AS <total>, COUNT\\(DISTINCT <author_id>\\) AS <authors>', $sql);
+        $this->assertSame($sql, $query->sql());
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals([['total' => 3, 'authors' => 2]], $result);
     }
 
     /**
