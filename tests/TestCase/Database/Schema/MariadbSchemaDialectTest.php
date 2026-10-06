@@ -272,6 +272,73 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     }
 
     /**
+     * Test that schema reflection works for geosptial columns.
+     */
+    public function testDescribeTableGeometry(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id INTEGER,
+    geo_line LINESTRING,
+    geo_geometry GEOMETRY,
+    geo_point POINT
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'unsigned' => false,
+                'comment' => '',
+                'autoIncrement' => null,
+                'generated' => null,
+            ],
+            'geo_line' => [
+                'type' => 'linestring',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_point' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => "",
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    /**
      * Test describing a table with indexes in Mariadb
      *
      * Overrides a test in MysqlSchemaDialectTest
@@ -411,7 +478,7 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
-    protected function _getMockedDriver($version = '8.0.7'): Driver
+    protected function _getMockedDriver($version = '10.2.7'): Driver
     {
         $this->_needsConnection();
 
@@ -437,10 +504,3 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
         return $driver;
     }
 }
-
-// phpcs:disable
-class PDOMocked extends PDO
-{
-    public function quoteIdentifier(): void {}
-}
-// phpcs:enable
