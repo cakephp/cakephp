@@ -13,6 +13,30 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:decrement\(\) should return int\|false but returns int\|Redis\|RedisCluster\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:increment\(\) should return int\|false but returns int\|Redis\|RedisCluster\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:set\(\) should return bool but returns bool\|Redis\|RedisCluster\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:set\(\) should return bool but returns bool\|Redis\|RedisCluster\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -49,6 +73,30 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
+			message: '#^Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Access to constant ATTR_SSL_CERT on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Database/Driver/Mysql.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 9
@@ -65,18 +113,6 @@ parameters:
 			identifier: new.static
 			count: 2
 			path: src/Datasource/Paging/SortableFieldsBuilder.php
-
-		-
-			message: '#^Template type TKey of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
-			identifier: method.templateTypeNotInParameter
-			count: 1
-			path: src/Datasource/QueryInterface.php
-
-		-
-			message: '#^Template type TValue of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
-			identifier: method.templateTypeNotInParameter
-			count: 1
-			path: src/Datasource/QueryInterface.php
 
 		-
 			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
@@ -151,6 +187,12 @@ parameters:
 			path: src/ORM/Association/DependentDeleteHelper.php
 
 		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
@@ -199,7 +241,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\?\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/TestSuite/TestCase.php
@@ -218,7 +260,7 @@ parameters:
 			reportUnmatched: false
 
 		-
-			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
@@ -249,6 +291,12 @@ parameters:
 			path: src/Validation/Validation.php
 
 		-
+			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/CellTrait.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -267,12 +315,6 @@ parameters:
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/View/View.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -283,9 +325,3 @@ parameters:
 			identifier: classConstant.nonObject
 			count: 1
 			path: src/View/ViewBuilder.php
-
-		-
-			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: src/ORM/EagerLoader.php
