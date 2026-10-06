@@ -45,6 +45,7 @@ class DateTest extends TestCase
         parent::setUp();
         $this->jsonEncodeFormat = (new ReflectionProperty(Date::class, '_jsonEncodeFormat'))->getValue();
 
+        I18n::clear();
         Cache::clear('_cake_translations_');
         I18n::setTranslator('cake', function () {
             $package = new Package();
@@ -62,6 +63,7 @@ class DateTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        I18n::setLocale(I18n::getDefaultLocale());
         (new ReflectionProperty(Date::class, '_jsonEncodeFormat'))->setValue(null, $this->jsonEncodeFormat);
         DateTime::setDefaultLocale();
         date_default_timezone_set('UTC');
