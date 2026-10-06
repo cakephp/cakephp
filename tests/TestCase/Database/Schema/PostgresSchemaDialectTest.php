@@ -2079,6 +2079,7 @@ SQL;
         $this->_needsConnection();
 
         $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
         $dialect = new PostgresSchemaDialect($connection->getDriver());
         $this->assertTrue($dialect->hasIndex('schema_authors', [], 'schema_authors_pkey'));
     }
