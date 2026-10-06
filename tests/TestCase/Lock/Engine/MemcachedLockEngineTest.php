@@ -60,6 +60,18 @@ class MemcachedLockEngineTest extends TestCase
     }
 
     /**
+     * Test that configured servers replace the default instead of being merged into it.
+     */
+    public function testInitReplacesDefaultServers(): void
+    {
+        $servers = [[env('MEMCACHED_HOST', '127.0.0.1'), (int)env('MEMCACHED_PORT', 11211)]];
+
+        $engine = new MemcachedLockEngine();
+        $this->assertTrue($engine->init(['servers' => $servers]));
+        $this->assertSame($servers, $engine->getConfig('servers'));
+    }
+
+    /**
      * tearDown method
      */
     protected function tearDown(): void
