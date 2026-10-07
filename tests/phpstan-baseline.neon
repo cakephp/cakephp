@@ -1,0 +1,61 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Function __ not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __d not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __dn not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __dx not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __dxn not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __n not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __x not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function __xn not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function toDate not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: TestCase/I18n/FunctionsGlobalTest.php
+
+		-
+			message: '#^Function toDateTime not found\.$#'
+			identifier: function.notFound
+			count: 2
+			path: TestCase/I18n/FunctionsGlobalTest.php
