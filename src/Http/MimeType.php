@@ -228,6 +228,7 @@ class MimeType
         'jpg' => ['image/jpeg'],
         'jpeg' => ['image/jpeg'],
         'jpe' => ['image/jpeg'],
+        'jxl' => ['image/jxl'],
         'pbm' => ['image/x-portable-bitmap'],
         'pgm' => ['image/x-portable-graymap'],
         'png' => ['image/png'],

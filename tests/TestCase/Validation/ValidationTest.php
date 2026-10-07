@@ -2379,6 +2379,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::extension('extension.png'));
         $this->assertTrue(Validation::extension('extension.jpg'));
         $this->assertTrue(Validation::extension('extension.JPG'));
+        $this->assertTrue(Validation::extension('extension.jxl'));
+        $this->assertTrue(Validation::extension('extension.webp'));
         $this->assertFalse(Validation::extension('noextension'));
         $this->assertTrue(Validation::extension('extension.pdf', ['PDF']));
         $this->assertFalse(Validation::extension('extension.jpg', ['GIF']));
