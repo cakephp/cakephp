@@ -33,10 +33,6 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
     ])
 
-    ->withConfiguredRule(\Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::class, [
-        \Rector\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector::ONLY_DIRECT_ASSIGN => true,
-    ])
-
     ->withSkip([
         __DIR__ . '/tests/test_app/templates',
         __DIR__ . '/tests/test_app/Plugin/TestPlugin/templates',
@@ -44,15 +40,10 @@ return RectorConfig::configure()
         \Rector\CodeQuality\Rector\ClassMethod\ExplicitReturnNullRector::class,
         \Rector\CodeQuality\Rector\ClassMethod\OptionalParametersAfterRequiredRector::class,
         \Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
-        \Rector\CodeQuality\Rector\Concat\JoinStringConcatRector::class,
         \Rector\CodeQuality\Rector\Foreach_\ForeachToInArrayRector::class,
-        \Rector\CodeQuality\Rector\Foreach_\UnusedForeachValueToArrayKeysRector::class,
         \Rector\CodeQuality\Rector\FuncCall\CompactToVariablesRector::class,
-        \Rector\CodeQuality\Rector\FuncCall\SimplifyRegexPatternRector::class,
         \Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         \Rector\CodeQuality\Rector\If_\ConsecutiveNullCompareReturnsToNullCoalesceQueueRector::class,
-        \Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector::class,
-        \Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector::class,
         \Rector\CodeQuality\Rector\If_\SimplifyIfReturnBoolRector::class,
         \Rector\CodeQuality\Rector\Include_\AbsolutizeRequireAndIncludePathRector::class,
         \Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector::class,
@@ -60,11 +51,9 @@ return RectorConfig::configure()
         \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector::class,
         \Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector::class,
         \Rector\CodingStyle\Rector\ClassMethod\NewlineBeforeNewAssignSetRector::class,
-        \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\FuncCall\StrictArraySearchRector::class,
         \Rector\CodingStyle\Rector\FuncCall\VersionCompareFuncCallToConstantRector::class,
         \Rector\CodingStyle\Rector\FuncCall\FunctionFirstClassCallableRector::class,
-        \Rector\CodingStyle\Rector\If_\NullableCompareToNullRector::class,
         \Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector::class,
         \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
         \Rector\DeadCode\Rector\Assign\RemoveDoubleAssignRector::class,
@@ -88,8 +77,6 @@ return RectorConfig::configure()
         ],
         \Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector::class,
         \Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector::class,
-        \Rector\EarlyReturn\Rector\If_\ChangeOrIfContinueToMultiContinueRector::class,
-        \Rector\EarlyReturn\Rector\Return_\ReturnBinaryOrToEarlyReturnRector::class,
         \Rector\Php56\Rector\FuncCall\PowToExpRector::class,
         \Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector::class,
         \Rector\Php73\Rector\FuncCall\SetCookieRector::class,
@@ -98,7 +85,6 @@ return RectorConfig::configure()
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
         \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class,
         \Rector\Php81\Rector\Property\ReadOnlyPropertyRector::class,
-        \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
         \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         \Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector::class,
         \Rector\CodingStyle\Rector\ClassLike\NewlineBetweenClassLikeStmtsRector::class,
@@ -113,7 +99,6 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnUnionTypeRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\StrictArrayParamDimFetchRector::class,
-        \Rector\TypeDeclaration\Rector\ClassMethod\StrictStringParamConcatRector::class,
         \Rector\TypeDeclaration\Rector\Class_\TypedPropertyFromCreateMockAssignRector::class,
         \Rector\TypeDeclaration\Rector\Closure\AddClosureNeverReturnTypeRector::class,
         \Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector::class,
@@ -130,7 +115,6 @@ return RectorConfig::configure()
         \Rector\Php55\Rector\String_\StringClassNameToClassConstantRector::class,
         \Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector::class,
         \Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
-        \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
 
         // Newly aggressive in rector 2.4 - keep the bump behavior-neutral:
         // adds declare(strict_types=1) to test fixtures/config (out of scope here),
@@ -156,4 +140,12 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeFromAssertInstanceOfRector::class,
         \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeForArrayMapRector::class,
         \Rector\TypeDeclaration\Rector\FunctionLike\AddClosureParamTypeFromVariableCallRector::class,
+        // New in rector 2.7 - skipped to keep the version bump behavior-neutral.
+        \Rector\CodeQuality\Rector\Concat\DirnameDirConcatStringToDirectStringPathRector::class,
+        \Rector\CodeQuality\Rector\If_\ArrayExplicitBoolCompareRector::class,
+        \Rector\CodeQuality\Rector\If_\CompleteMissingIfElseBracketRector::class,
+        \Rector\CodeQuality\Rector\If_\ObjectExplicitBoolCompareRector::class,
+        \Rector\Php73\Rector\FuncCall\ArrayKeysToArrayKeyFirstLastRector::class,
+        \Rector\Php74\Rector\If_\IfToNullCoalescingAssignRector::class,
+        \Rector\Php80\Rector\Ternary\TernaryToNullsafeCoalesceRector::class,
     ]);

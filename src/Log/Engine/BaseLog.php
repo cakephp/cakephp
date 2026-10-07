@@ -160,19 +160,14 @@ abstract class BaseLog extends AbstractLogger
                 continue;
             }
 
+            if ($value instanceof Stringable) {
+                $replacements['{' . $key . '}'] = (string)$value;
+                continue;
+            }
+
             if (is_object($value)) {
                 if (method_exists($value, 'toArray')) {
                     $replacements['{' . $key . '}'] = json_encode($value->toArray(), $jsonFlags);
-                    continue;
-                }
-
-                if ($value instanceof Serializable) {
-                    $replacements['{' . $key . '}'] = serialize($value);
-                    continue;
-                }
-
-                if ($value instanceof Stringable) {
-                    $replacements['{' . $key . '}'] = (string)$value;
                     continue;
                 }
 

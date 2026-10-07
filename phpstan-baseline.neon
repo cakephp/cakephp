@@ -13,6 +13,30 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:decrement\(\) should return int\|false but returns int\|Redis\|RedisCluster\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:increment\(\) should return int\|false but returns int\|Redis\|RedisCluster\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:set\(\) should return bool but returns bool\|Redis\|RedisCluster\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Method Cake\\Cache\\Engine\\RedisEngine\:\:set\(\) should return bool but returns bool\|Redis\|RedisCluster\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -139,12 +163,6 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: '#^Instanceof between object and Serializable will always evaluate to false\.$#'
-			identifier: instanceof.alwaysFalse
-			count: 1
-			path: src/Log/Engine/BaseLog.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
@@ -205,7 +223,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\?\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/TestSuite/TestCase.php

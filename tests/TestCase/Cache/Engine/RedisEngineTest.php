@@ -62,7 +62,12 @@ class RedisEngineTest extends TestCase
             }
         }
 
-        $this->skipIf($this->skipTest, 'Redis is not running.');
+        if ($this->skipTest) {
+            if (env('REDIS_PORT')) {
+                $this->fail('REDIS_PORT is set, but Redis is not reachable.');
+            }
+            $this->markTestSkipped('Redis is not running.');
+        }
 
         Cache::enable();
         $this->configCache();

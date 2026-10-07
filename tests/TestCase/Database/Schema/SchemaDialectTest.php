@@ -192,7 +192,6 @@ class SchemaDialectTest extends TestCase
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
         $this->skipIf($driver instanceof Sqlite, 'sqlite does not support schemas');
-        $this->skipIf($driver instanceof MySql, 'mysql fails because db is missing.');
 
         $schema = $connection->config()['schema'] ?? null;
         $this->assertTrue($this->dialect->hasTable('users'), 'Should exist in implicit schema');
@@ -226,11 +225,6 @@ class SchemaDialectTest extends TestCase
 
     public function testHasForeignKeyNamed(): void
     {
-        // TODO this could be resolved if we use the key reflection logic from phinx/migrations
-        // that logic parses the SQL of the key to extract and preserve the name.
-        $driver = ConnectionManager::get('test')->getDriver();
-        $this->skipIf($driver instanceof Mysql, 'mysql tests fail when this runs');
-
         // Name is wrong
         $this->assertFalse($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_index'));
 

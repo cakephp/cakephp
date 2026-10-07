@@ -37,10 +37,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     protected function listTablesSql(array $config): array
     {
-        return [
-            'SHOW FULL TABLES FROM ' . $this->driver->quoteIdentifier($config['database'])
-            . " WHERE TABLE_TYPE IN ('BASE TABLE', 'VIEW')"
-            , []];
+        $sql = 'SELECT TABLE_NAME FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = ? AND TABLE_TYPE IN (\'BASE TABLE\', \'VIEW\') ORDER BY TABLE_NAME';
+
+        return [$sql, [$config['database']]];
     }
 
     /**
@@ -52,10 +52,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     protected function listTablesWithoutViewsSql(array $config): array
     {
-        return [
-            'SHOW FULL TABLES FROM ' . $this->driver->quoteIdentifier($config['database'])
-            . ' WHERE TABLE_TYPE = "BASE TABLE"'
-        , []];
+        $sql = 'SELECT TABLE_NAME FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_NAME';
+
+        return [$sql, [$config['database']]];
     }
 
     /**

@@ -71,6 +71,10 @@ class MemcachedLockEngine extends LockEngine
 
         parent::init($config);
 
+        if (isset($config['servers'])) {
+            $this->setConfig('servers', $config['servers'], false);
+        }
+
         return $this->connect();
     }
 

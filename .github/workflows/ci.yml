@@ -203,7 +203,7 @@ jobs:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, zend.assertions = 1, extension = php_fileinfo.dll
-        coverage: none
+        coverage: pcov
 
     - name: Setup SQLServer
       run: |
@@ -220,7 +220,7 @@ jobs:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           set CAKE_DISABLE_GLOBAL_FUNCS=1
-          vendor/bin/phpunit --display-incomplete
+          vendor/bin/phpunit --display-incomplete --coverage-clover=coverage-sqlserver.xml
 
     - name: Run PHPUnit (autoquote enabled)
       env:
@@ -228,6 +228,12 @@ jobs:
       run: |
           set CAKE_TEST_AUTOQUOTE=1
           vendor/bin/phpunit --display-incomplete --testsuite=database
+
+    - name: Submit code coverage
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      with:
+        files: coverage-sqlserver.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   cs-stan:
     name: Coding Standard & Static Analysis

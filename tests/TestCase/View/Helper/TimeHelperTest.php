@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Chronos\Chronos;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
@@ -30,6 +31,11 @@ use IntlDateFormatter;
  */
 class TimeHelperTest extends TestCase
 {
+    /**
+     * The test time frozen by the test bootstrap, restored after each test.
+     */
+    protected ?Chronos $testNow = null;
+
     /**
      * @var \Cake\View\Helper\TimeHelper
      */
@@ -46,6 +52,7 @@ class TimeHelperTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->testNow = DateTime::getTestNow();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
     }
@@ -56,7 +63,7 @@ class TimeHelperTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setTestNow();
+        DateTime::setTestNow($this->testNow);
         DateTime::setDefaultLocale();
         I18n::setLocale(I18n::getDefaultLocale());
     }
