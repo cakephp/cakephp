@@ -5,6 +5,7 @@ namespace TestApp\Http\Client\Adapter;
 
 use ArrayAccess;
 use Exception;
+use Uri\WhatWg\Url;
 
 class CakeStreamWrapper implements ArrayAccess
 {
@@ -26,7 +27,7 @@ class CakeStreamWrapper implements ArrayAccess
             throw new Exception();
         }
 
-        $query = parse_url($path, PHP_URL_QUERY);
+        $query = Url::parse($path)?->getQuery();
         if ($query) {
             parse_str($query, $this->query);
         }

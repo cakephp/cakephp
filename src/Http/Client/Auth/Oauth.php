@@ -20,6 +20,7 @@ use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
+use Uri\WhatWg\Url;
 
 /**
  * Oauth 1 authentication strategy for Cake\Http\Client
@@ -288,7 +289,7 @@ class Oauth
      */
     protected function normalizedParams(Request $request, array $oauthValues): string
     {
-        $query = parse_url((string)$request->getUri(), PHP_URL_QUERY);
+        $query = new Url((string)$request->getUri())->getQuery();
         parse_str((string)$query, $queryArgs);
 
         $post = [];

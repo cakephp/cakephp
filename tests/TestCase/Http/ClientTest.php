@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Uri\WhatWg\InvalidUrlException;
 
 /**
  * HTTP client test.
@@ -1023,7 +1024,7 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('String `htps://` did not parse.');
+        $this->expectExceptionMessage('The URL does not contain a host');
         Client::createFromUrl('htps://');
     }
 
@@ -1039,20 +1040,20 @@ class ClientTest extends TestCase
     /**
      * Test exception is throw when no scheme is provided.
      */
-    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoSchemeProvided(): void
+    public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoSchemeProvided(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
+        $this->expectException(InvalidUrlException::class);
+        $this->expectExceptionMessage('The specified URI is malformed');
         Client::createFromUrl('example.co');
     }
 
     /**
      * Test exception is thrown if passed URL has no domain
      */
-    public function testCreateFromUrlThrowsInvalidArgumentExceptionWhenNoDomainProvided(): void
+    public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoDomainProvided(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The URL was parsed but did not contain a scheme or host');
+        $this->expectException(InvalidUrlException::class);
+        $this->expectExceptionMessage('The specified URI is malformed');
         Client::createFromUrl('/api/v1');
     }
 
@@ -1062,13 +1063,13 @@ class ClientTest extends TestCase
      */
     public function testCreateFromUrlOnlySetSchemePortHostBasePath(): void
     {
-        $client = Client::createFromUrl('http://example.co:80/some/uri/?foo=bar');
+        $client = Client::createFromUrl('http://example.co:8080/some/uri/?foo=bar');
         $config = $client->getConfig();
         $expected = [
             'auth' => null,
             'adapter' => null,
             'host' => 'example.co',
-            'port' => 80,
+            'port' => 8080,
             'scheme' => 'http',
             'basePath' => '/some/uri/',
             'timeout' => 30,
