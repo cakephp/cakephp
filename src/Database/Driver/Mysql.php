@@ -27,7 +27,6 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\StatementInterface;
 use PDO;
 use Pdo\Mysql as PdoMysql;
-
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -347,7 +346,7 @@ class Mysql extends Driver
                 '5.5.0',
                 'MySQL and Mariadb now have separate drivers.' .
                 'Use `instanceof Mariadb` instead for runtime checks, ' .
-                'and set `"driver" => Mariadb::class` in your connection configuration.'
+                'and set `"driver" => Mariadb::class` in your connection configuration.',
             );
         }
 

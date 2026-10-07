@@ -16,22 +16,16 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mariadb;
 use Cake\Database\DriverFeatureEnum;
-use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MariadbSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
-use Exception;
 use Mockery;
-use PDO;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Mariadb Schema Dialect.
@@ -326,7 +320,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => "",
+                'default' => '',
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
