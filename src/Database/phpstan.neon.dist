@@ -20,3 +20,19 @@ parameters:
 			identifier: catch.neverThrown
 			path: Type/DateTimeType.php
 			reportUnmatched: false
+		-
+			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			reportUnmatched: false
+		-
+			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			reportUnmatched: false
+		-
+			message: '#^Access to constant ATTR_SSL_CERT on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			reportUnmatched: false
+		-
+			message: '#^Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			reportUnmatched: false

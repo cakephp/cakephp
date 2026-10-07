@@ -15,6 +15,8 @@
             <exclude>tests/TestCase/ORM/</exclude>
             <exclude>tests/TestCase/Collection/FunctionsGlobalTest.php</exclude>
             <exclude>tests/TestCase/Core/FunctionsGlobalTest.php</exclude>
+            <exclude>tests/TestCase/Error/FunctionsGlobalTest.php</exclude>
+            <exclude>tests/TestCase/I18n/FunctionsGlobalTest.php</exclude>
             <exclude>tests/TestCase/Routing/FunctionsGlobalTest.php</exclude>
         </testsuite>
         <testsuite name="database">
@@ -27,6 +29,8 @@
         <testsuite name="globalfunctions">
             <file>tests/TestCase/Collection/FunctionsGlobalTest.php</file>
             <file>tests/TestCase/Core/FunctionsGlobalTest.php</file>
+            <file>tests/TestCase/Error/FunctionsGlobalTest.php</file>
+            <file>tests/TestCase/I18n/FunctionsGlobalTest.php</file>
             <file>tests/TestCase/Routing/FunctionsGlobalTest.php</file>
         </testsuite>
     </testsuites>
@@ -38,6 +42,9 @@
         <include>
             <directory suffix=".php">src/</directory>
         </include>
+        <exclude>
+            <directory>src/*/tests/</directory>
+        </exclude>
     </source>
 
     <php>

@@ -54,7 +54,12 @@ class RedisClusterEngineTest extends TestCase
                 }
             }
         }
-        $this->skipIf($this->skipTest !== false, $this->skipTest === false ? 'Not skipping' : $this->skipTest);
+        if ($this->skipTest !== false) {
+            if (env('REDIS_CLUSTER_NODES')) {
+                $this->fail('REDIS_CLUSTER_NODES is set, but the Redis cluster is not reachable.');
+            }
+            $this->markTestSkipped($this->skipTest);
+        }
 
         Cache::enable();
         $this->configCache();
