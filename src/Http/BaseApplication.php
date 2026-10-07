@@ -216,7 +216,8 @@ abstract class BaseApplication implements
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
-            $return = require $this->configDir . 'routes.php';
+            // phpcs:ignore
+            $return = @include $this->configDir . 'routes.php';
             if ($return instanceof Closure) {
                 $return($routes);
             }
