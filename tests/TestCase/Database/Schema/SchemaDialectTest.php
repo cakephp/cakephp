@@ -193,7 +193,6 @@ class SchemaDialectTest extends TestCase
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
         $this->skipIf($driver instanceof Sqlite, 'sqlite does not support schemas');
-        $this->skipIf($driver instanceof MySql, 'mysql fails because db is missing.');
 
         $schema = $connection->config()['schema'] ?? null;
         $this->assertTrue($this->dialect->hasTable('users'), 'Should exist in implicit schema');
