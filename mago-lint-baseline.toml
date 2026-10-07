@@ -2107,12 +2107,6 @@ message = "Avoid boolean flag parameters."
 count = 3
 
 [[issues]]
-file = "src/View/Helper/HtmlHelper.php"
-code = "no-insecure-comparison"
-message = "Insecure comparison of sensitive data."
-count = 1
-
-[[issues]]
 file = "src/View/Helper/PaginatorHelper.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
