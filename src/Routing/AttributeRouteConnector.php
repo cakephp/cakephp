@@ -405,6 +405,7 @@ class AttributeRouteConnector
                 continue;
             }
             $infos = $classAttributes[$hierarchyClass];
+            $attributeOccurrences = [];
             foreach ($infos as $info) {
                 if ($info->target->type !== AttributeTargetType::METHOD) {
                     continue;
@@ -428,6 +429,9 @@ class AttributeRouteConnector
                     . ':' . $methodName
                     . ':' . $info->attributeName
                     . ':' . $info->lineNumber;
+                $occurrence = $attributeOccurrences[$attributeKey] ?? 0;
+                $attributeOccurrences[$attributeKey] = $occurrence + 1;
+                $attributeKey .= ':' . $occurrence;
                 if (isset($seenAttributes[$attributeKey])) {
                     continue;
                 }

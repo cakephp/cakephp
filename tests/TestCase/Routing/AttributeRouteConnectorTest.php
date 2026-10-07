@@ -36,6 +36,7 @@ use Cake\Routing\Attribute\RouteClass;
 use Cake\Routing\Attribute\Scope;
 use Cake\Routing\AttributeRouteConnector;
 use Cake\Routing\Route\InflectedRoute;
+use Cake\Routing\Route\Route as RoutingRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
@@ -108,6 +109,81 @@ class AttributeRouteConnectorTest extends TestCase
 
         $this->assertSame('AttributeRouting', $result['controller']);
         $this->assertSame('parentRoute', $result['action']);
+    }
+
+    /**
+     * Repeated GET attributes on one action connect distinct named routes.
+     *
+     * @return void
+     */
+    public function testConnectRepeatedRouteAttributes(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+        $helper->connect();
+
+        foreach (['repeated', 'repeated-alias'] as $path) {
+            $result = $this->collection->parseRequest(new ServerRequest([
+                'url' => '/base/attr/' . $path,
+                'environment' => ['REQUEST_METHOD' => 'GET'],
+            ]));
+
+            $this->assertSame('AttributeRouting', $result['controller']);
+            $this->assertSame('repeated', $result['action']);
+            $this->assertSame('/base/attr/' . $path, $this->collection->match([
+                '_name' => 'base:attr:' . $path,
+            ], []));
+        }
+    }
+
+    /**
+     * Repeated inherited route attributes are each connected exactly once.
+     *
+     * @return void
+     */
+    public function testConnectRepeatedInheritedRouteAttributes(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+        $helper->connect();
+
+        foreach (['parent', 'parent-alias'] as $path) {
+            $url = '/base/attr/' . $path;
+            $result = $this->collection->parseRequest(new ServerRequest([
+                'url' => $url,
+                'environment' => ['REQUEST_METHOD' => 'GET'],
+            ]));
+
+            $this->assertSame('AttributeRouting', $result['controller']);
+            $this->assertSame('parentRoute', $result['action']);
+            $this->assertSame($url, $this->collection->match([
+                '_name' => 'base:attr:' . $path,
+            ], []));
+            $matches = array_filter(
+                $this->collection->routes(),
+                static fn(RoutingRoute $route): bool => $route->template === $url,
+            );
+            $this->assertCount(1, $matches);
+        }
+    }
+
+    /**
+     * Repeated middleware attributes retain their declaration order.
+     *
+     * @return void
+     */
+    public function testConnectRepeatedMiddlewareAttributes(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+        $helper->connect();
+
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/base/attr/repeated',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+
+        $this->assertSame(['auth', 'csrf', 'first', 'second'], $result['_middleware']);
     }
 
     /**
