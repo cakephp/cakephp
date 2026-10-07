@@ -52,6 +52,9 @@ class MemcachedLockEngineTest extends TestCase
         ]);
 
         if (!$result) {
+            if (env('MEMCACHED_PORT')) {
+                $this->fail('MEMCACHED_PORT is set, but Memcached is not reachable.');
+            }
             $this->markTestSkipped('Could not connect to Memcached server.');
         }
 
