@@ -232,6 +232,8 @@ class LogTestTraitTest extends TestCase
 
     public function testAbsentLogWithoutSetup(): void
     {
+        // The bootstrap `debug` logger is still configured; cleanupLog() restores it afterwards
+        Log::drop('debug');
         Log::setConfig([
             'debug' => [
                 'className' => TestAppLog::class,
