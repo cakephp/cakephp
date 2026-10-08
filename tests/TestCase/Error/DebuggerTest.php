@@ -51,6 +51,11 @@ use TestApp\Utility\ThrowsDebugInfo;
 class DebuggerTest extends TestCase
 {
     /**
+     * The export formatter before the test, restored after it.
+     */
+    protected ?string $exportFormatter = null;
+
+    /**
      * @var bool
      */
     protected $restoreError = false;
@@ -64,6 +69,7 @@ class DebuggerTest extends TestCase
         Configure::write('debug', true);
         Log::drop('stderr');
         Log::drop('stdout');
+        $this->exportFormatter = Debugger::getInstance()->getConfig('exportFormatter');
         Debugger::configInstance('exportFormatter', TextFormatter::class);
         // The instances need to be initialized for the tests to pass
         Debugger::getInstance(TestDebugger::class);
@@ -77,6 +83,7 @@ class DebuggerTest extends TestCase
     {
         parent::tearDown();
         Log::drop('test');
+        Debugger::getInstance()->setConfig('exportFormatter', $this->exportFormatter, false);
         if ($this->restoreError) {
             restore_error_handler();
         }
