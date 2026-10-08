@@ -3043,7 +3043,7 @@ class TableTest extends TestCase
      */
     public function testSaveManyResultSet(): void
     {
-        $table = $this->getTableLocator()->get('authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->Articles->setSort('Articles.id');
 
         $entities = $table->find()
@@ -3264,7 +3264,7 @@ class TableTest extends TestCase
      */
     public function testDeleteDependent(): void
     {
-        $table = $this->getTableLocator()->get('authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->Articles->setDependent(true);
 
         $entity = $table->get(1);
@@ -3280,7 +3280,7 @@ class TableTest extends TestCase
      */
     public function testDeleteDependentHasMany(): void
     {
-        $table = $this->getTableLocator()->get('authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->Articles
             ->setDependent(true)
             ->setCascadeCallbacks(true);
@@ -3518,7 +3518,7 @@ class TableTest extends TestCase
      */
     public function testAfterDeleteCommitTriggeredOnlyForPrimaryTable(): void
     {
-        $table = $this->getTableLocator()->get('authors');
+        $table = $this->getTableLocator()->get('Authors');
         $table->Articles->setDependent(true);
 
         $called = false;
