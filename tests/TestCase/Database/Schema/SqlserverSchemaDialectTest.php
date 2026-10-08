@@ -363,6 +363,37 @@ SQL;
         $this->assertSame($expected, $actual);
     }
 
+    public static function currentDateTimeDefaultProvider(): array
+    {
+        return [
+            ['date', '(CONVERT([date],getdate()))', 'CURRENT_DATE'],
+            ['time', '(CONVERT([time],getdate()))', 'CURRENT_TIME'],
+            ['date', "('2026-01-01')", '2026-01-01'],
+        ];
+    }
+
+    /**
+     * Test that reflected CONVERT(..., GETDATE()) defaults map back to CURRENT_DATE / CURRENT_TIME.
+     */
+    #[DataProvider('currentDateTimeDefaultProvider')]
+    public function testConvertColumnCurrentDateTimeDefault(string $type, string $default, string $expected): void
+    {
+        $dialect = new SqlserverSchemaDialect($this->createStub(Sqlserver::class));
+        $table = new TableSchema('table');
+        $dialect->convertColumnDescription($table, [
+            'name' => 'field',
+            'type' => $type,
+            'null' => '0',
+            'default' => $default,
+            'char_length' => null,
+            'precision' => null,
+            'scale' => null,
+            'collation_name' => null,
+        ]);
+
+        $this->assertSame($expected, $table->getColumn('field')['default']);
+    }
+
     /**
      * Test listing tables with Sqlserver
      */
@@ -1017,6 +1048,16 @@ SQL;
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '[p] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'],
+                '[start_date] DATE NOT NULL DEFAULT CONVERT(DATE, GETDATE())',
+            ],
+            [
+                'start_time',
+                ['type' => 'time', 'null' => false, 'default' => 'current_time'],
+                '[start_time] TIME NOT NULL DEFAULT CONVERT(TIME, GETDATE())',
             ],
         ];
     }
