@@ -99,6 +99,15 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.description=PHP ${{ matrix.php }} FPM on Alpine with common extensions
 
+      # Report-only: a CVE with no upstream fix should not block publishing.
+      - name: Scan image for vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          scanners: vuln
+          ignore-unfixed: true
+          exit-code: '0'
+
       - name: Export image digest
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
