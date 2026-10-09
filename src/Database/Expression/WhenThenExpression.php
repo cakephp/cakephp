@@ -162,7 +162,7 @@ class WhenThenExpression implements ExpressionInterface
                 $type === null &&
                 !($when instanceof ExpressionInterface)
             ) {
-                $type = $this->inferType($when);
+                $type = $this->inferType($when, $this->_typeMap);
             }
         }
 
@@ -197,7 +197,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $this->then = $result;
 
-        $this->thenType = $type ?? $this->inferType($result);
+        $this->thenType = $type ?? $this->inferType($result, $this->_typeMap);
 
         $this->hasThenBeenDefined = true;
 
