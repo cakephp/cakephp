@@ -297,7 +297,7 @@ class Router
      * });
      * ```
      *
-     * @param \Closure $function The function to add
+     * @param \Closure(array<string, mixed>, \Cake\Http\ServerRequest|null): array<string, mixed> $function The function to add
      * @return void
      */
     public static function addUrlFilter(Closure $function): void
