@@ -49,7 +49,7 @@ class RedisEngine extends CacheEngine
     /**
      * Redis wrapper.
      *
-     * @var \Redis
+     * @var \Redis|\RedisCluster
      */
     protected Redis|RedisCluster $_Redis;
 
