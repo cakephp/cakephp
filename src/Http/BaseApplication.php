@@ -172,10 +172,11 @@ abstract class BaseApplication implements
     {
         require_once $this->configDir . 'bootstrap.php';
 
-        // phpcs:ignore
-        $plugins = @include $this->configDir . 'plugins.php';
-        if (is_array($plugins)) {
-            $this->plugins->addFromConfig($plugins);
+        if (file_exists($this->configDir . 'plugins.php')) {
+            $plugins = include $this->configDir . 'plugins.php';
+            if (is_array($plugins)) {
+                $this->plugins->addFromConfig($plugins);
+            }
         }
 
         $this->registerEvents();
@@ -215,8 +216,12 @@ abstract class BaseApplication implements
     public function routes(RouteBuilder $routes): void
     {
         // Only load routes if the router is empty
-        if (!Router::routes()) {
-            $return = require $this->configDir . 'routes.php';
+        if (Router::routes()) {
+            return;
+        }
+
+        if (file_exists($this->configDir . 'routes.php')) {
+            $return = include $this->configDir . 'routes.php';
             if ($return instanceof Closure) {
                 $return($routes);
             }
