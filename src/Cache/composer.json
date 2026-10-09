@@ -22,7 +22,7 @@
         "source": "https://github.com/cakephp/cache"
     },
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "cakephp/core": "6.0.*@dev",
         "cakephp/event": "6.0.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"

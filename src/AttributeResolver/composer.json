@@ -24,7 +24,7 @@
         "source": "https://github.com/cakephp/attribute-resolver"
     },
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "brick/varexporter": "^0.7.0",
         "cakephp/core": "6.0.*@dev",
         "cakephp/cache": "6.0.*@dev",

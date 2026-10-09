@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
-use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 use Rector\Set\ValueObject\SetList;
 
 $cacheDir = getenv('RECTOR_CACHE_DIR') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'rector';
@@ -107,6 +106,7 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector::class,
         \Rector\TypeDeclaration\Rector\While_\WhileNullableToInstanceofRector::class,
         \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class,
+        \Rector\Php85\Rector\Property\AddOverrideAttributeToOverriddenPropertiesRector::class,
         \Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector::class,
 
         // Manual - only appliable for part of the code
