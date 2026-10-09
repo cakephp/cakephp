@@ -1136,7 +1136,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -1208,7 +1208,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to join with
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -1256,7 +1256,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * will select no fields from the association.
      *
      * @param string $assoc The association to join with
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      * @see \Cake\ORM\Query\SelectQuery::matching()
@@ -1321,7 +1321,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
