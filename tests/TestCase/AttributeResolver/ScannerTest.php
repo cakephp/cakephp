@@ -450,7 +450,7 @@ class ScannerTest extends TestCase
         iterator_to_array($scanner->scanAll());
         $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
         $basePaths = new ReflectionMethod($scanner, 'resolveBasePaths')->invoke($scanner);
-        $this->assertCount(2, $basePaths);
+        $this->assertCount(2, $basePaths, var_export($basePaths, true));
     }
 
     /**
@@ -655,7 +655,7 @@ class ScannerTest extends TestCase
      */
     private function fixturePath(string $path): string
     {
-        $resolved = realpath($this->scanRoot . '/' . $path);
+        $resolved = realpath(FsFixture::path('attribute-scanner/' . $path));
         assert($resolved !== false);
 
         return $resolved;

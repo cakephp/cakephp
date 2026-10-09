@@ -131,7 +131,12 @@ class Scanner
 
         $unique = [];
         foreach ($basePaths as $baseInfo) {
-            $path = Path::normalize(realpath($baseInfo['path']) ?: $baseInfo['path'], true);
+            $path = realpath($baseInfo['path']) ?: $baseInfo['path'];
+            if (DIRECTORY_SEPARATOR === '\\') {
+                // Windows can retain short directory names in an absolute symlink target.
+                $path = realpath($path) ?: $path;
+            }
+            $path = Path::normalize($path, true);
             if (!isset($unique[$path]) || $unique[$path]['plugin'] === null) {
                 $unique[$path] = ['path' => $path, 'plugin' => $baseInfo['plugin']];
             }
