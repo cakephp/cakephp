@@ -123,7 +123,7 @@ class Hash
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
-        if (!$path) {
+        if ($path === '') {
             return $data;
         }
 
