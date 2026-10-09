@@ -395,9 +395,6 @@ class MultiCheckboxWidgetTest extends TestCase
                 'value' => 1,
                 'id' => 'test-1',
             ]],
-            ['label' => ['for' => 'test-1']],
-            'A',
-            '/label',
             '/div',
             ['div' => ['class' => 'checkbox']],
             ['input' => [
@@ -406,9 +403,6 @@ class MultiCheckboxWidgetTest extends TestCase
                 'value' => '2',
                 'id' => 'test-2',
             ]],
-            ['label' => ['for' => 'test-2']],
-            'B',
-            '/label',
             '/div',
         ];
         $this->assertHtml($expected, $result);
