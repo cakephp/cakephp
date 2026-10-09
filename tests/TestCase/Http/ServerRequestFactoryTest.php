@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
@@ -998,6 +999,132 @@ class ServerRequestFactoryTest extends TestCase
         );
         $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
         $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+    }
+
+    /**
+     * Test that method overrides are normalized to upper case.
+     */
+    public function testMethodOverrideNormalizesCase(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(
+            ['REQUEST_METHOD' => 'POST'],
+            [],
+            ['_method' => 'patch', 'title' => 'foo'],
+        );
+        $this->assertSame('PATCH', $request->getMethod());
+        $this->assertSame(['title' => 'foo'], $request->getParsedBody());
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'POST',
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => 'delete',
+        ]);
+        $this->assertSame('DELETE', $request->getMethod());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function validMethodOverrideProvider(): array
+    {
+        return [
+            // RFC 9110
+            'GET' => ['GET'],
+            'HEAD' => ['HEAD'],
+            'POST' => ['POST'],
+            'PUT' => ['PUT'],
+            'DELETE' => ['DELETE'],
+            'CONNECT' => ['CONNECT'],
+            'OPTIONS' => ['OPTIONS'],
+            'TRACE' => ['TRACE'],
+            // RFC 5789
+            'PATCH' => ['PATCH'],
+            // WebDAV (RFC 4918, RFC 3253)
+            'PROPFIND' => ['PROPFIND'],
+            'PROPPATCH' => ['PROPPATCH'],
+            'MKCOL' => ['MKCOL'],
+            'COPY' => ['COPY'],
+            'MOVE' => ['MOVE'],
+            'LOCK' => ['LOCK'],
+            'UNLOCK' => ['UNLOCK'],
+            'VERSION-CONTROL' => ['VERSION-CONTROL'],
+            'BASELINE-CONTROL' => ['BASELINE-CONTROL'],
+            // Custom
+            'PURGE' => ['PURGE'],
+        ];
+    }
+
+    /**
+     * Test that valid `_method` values are accepted and upper-cased.
+     */
+    #[DataProvider('validMethodOverrideProvider')]
+    public function testMethodOverrideValidBodyValue(string $method): void
+    {
+        foreach ([$method, strtolower($method)] as $value) {
+            $request = ServerRequestFactory::fromGlobals(['REQUEST_METHOD' => 'POST'], [], ['_method' => $value]);
+            $this->assertSame($method, $request->getMethod());
+            $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+        }
+    }
+
+    /**
+     * Test that valid `X-Http-Method-Override` header values are accepted and upper-cased.
+     */
+    #[DataProvider('validMethodOverrideProvider')]
+    public function testMethodOverrideValidHeaderValue(string $method): void
+    {
+        foreach ([$method, strtolower($method)] as $value) {
+            $request = ServerRequestFactory::fromGlobals([
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_X_HTTP_METHOD_OVERRIDE' => $value,
+            ]);
+            $this->assertSame($method, $request->getMethod());
+            $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+        }
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidMethodOverrideProvider(): array
+    {
+        return [
+            'sql injection' => ["DELETE' OR '1'='1"],
+            'digits' => ['GET1'],
+            'whitespace' => ['PUT '],
+            'trailing newline' => ["PUT\n"],
+            'sql comment' => ['DELETE--'],
+            'double hyphen' => ['VERSION--CONTROL'],
+            'leading hyphen' => ['-PUT'],
+            'trailing hyphen' => ['PUT-'],
+            'empty string' => [''],
+            'array' => [['PUT']],
+        ];
+    }
+
+    /**
+     * Test that invalid `_method` values are rejected.
+     */
+    #[DataProvider('invalidMethodOverrideProvider')]
+    public function testMethodOverrideInvalidBodyValue(mixed $method): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Invalid HTTP method override.');
+
+        ServerRequestFactory::fromGlobals(['REQUEST_METHOD' => 'POST'], [], ['_method' => $method]);
+    }
+
+    /**
+     * Test that invalid `X-Http-Method-Override` header values are rejected.
+     */
+    public function testMethodOverrideInvalidHeaderValue(): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Invalid HTTP method override.');
+
+        ServerRequestFactory::fromGlobals([
+            'REQUEST_METHOD' => 'POST',
+            'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET;SELECT SLEEP(5)',
+        ]);
     }
 
     /**
