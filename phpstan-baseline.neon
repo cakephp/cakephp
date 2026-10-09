@@ -121,12 +121,6 @@ parameters:
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
-			message: '#^Method Cake\\Event\\EventManager\:\:dispatch\(\) should return Cake\\Event\\EventInterface\<TSubject of object\> but returns Cake\\Event\\Event\<object\>\|Cake\\Event\\EventInterface\<TSubject of object\>\.$#'
-			identifier: return.type
-			count: 2
-			path: src/Event/EventManager.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -277,12 +271,6 @@ parameters:
 			identifier: deadCode.unreachable
 			count: 1
 			path: src/TestSuite/TestCase.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to static method Cake\\Utility\\Hash\:\:insert\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: src/Utility/Hash.php
 
 		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'
