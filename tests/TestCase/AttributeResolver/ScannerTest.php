@@ -436,7 +436,7 @@ class ScannerTest extends TestCase
         $alias = $this->createPluginSymlink();
         $parser = Mockery::mock(Parser::class);
         $parser->shouldReceive('parseFile')->once()->with(
-            Mockery::on(fn(SplFileInfo $file): bool => $file->getRealPath() === $this->scanRoot . '/plugin/src/Plugin.php'),
+            Mockery::on(fn(SplFileInfo $file): bool => $file->getRealPath() === $this->fixturePath('plugin/src/Plugin.php')),
             'Example',
         )->andReturnUsing(static function (): Generator {
             yield from [];
@@ -448,7 +448,7 @@ class ScannerTest extends TestCase
         ], parser: $parser);
 
         iterator_to_array($scanner->scanAll());
-        $this->assertSame([$this->scanRoot . '/plugin/src/Plugin.php'], $scanner->getScannedFiles());
+        $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
         $basePaths = new ReflectionMethod($scanner, 'resolveBasePaths')->invoke($scanner);
         $this->assertCount(2, $basePaths);
     }
@@ -471,7 +471,7 @@ class ScannerTest extends TestCase
         );
 
         iterator_to_array($scanner->scanAll());
-        $this->assertSame([$this->scanRoot . '/plugin/src/Plugin.php'], $scanner->getScannedFiles());
+        $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
     }
 
     /**
@@ -512,7 +512,7 @@ class ScannerTest extends TestCase
         );
 
         iterator_to_array($scanner->scanAll());
-        $this->assertSame([$this->scanRoot . '/plugin-extra/src/Other.php'], $scanner->getScannedFiles());
+        $this->assertSame([$this->fixturePath('plugin-extra/src/Other.php')], $scanner->getScannedFiles());
     }
 
     /**
@@ -535,7 +535,7 @@ class ScannerTest extends TestCase
         );
 
         iterator_to_array($scanner->scanAll());
-        $this->assertSame([$this->scanRoot . '/plugin/src/Controller/Example.php'], $scanner->getScannedFiles());
+        $this->assertSame([$this->fixturePath('plugin/src/Controller/Example.php')], $scanner->getScannedFiles());
     }
 
     /**
@@ -553,8 +553,8 @@ class ScannerTest extends TestCase
             iterator_to_array($scanner->scanAll());
 
             $this->assertCount(3, $scanner->getScannedFiles());
-            $this->assertContains($this->scanRoot . '/plugin/src/Plugin.php', $scanner->getScannedFiles());
-            $this->assertContains($this->scanRoot . '/plugin/src/Controller/Example.php', $scanner->getScannedFiles());
+            $this->assertContains($this->fixturePath('plugin/src/Plugin.php'), $scanner->getScannedFiles());
+            $this->assertContains($this->fixturePath('plugin/src/Controller/Example.php'), $scanner->getScannedFiles());
         } finally {
             chmod($vendor, 0o755);
         }
@@ -566,6 +566,7 @@ class ScannerTest extends TestCase
     public function testScanAllPrunesExcludedDirectories(): void
     {
         $vendor = $this->scanRoot . '/plugin/vendor';
+        $dependency = $this->fixturePath('plugin/vendor/package/Dependency.php');
         chmod($vendor, 0o000);
         try {
             if (is_readable($vendor)) {
@@ -575,7 +576,7 @@ class ScannerTest extends TestCase
             iterator_to_array($scanner->scanAll());
 
             $this->assertCount(4, $scanner->getScannedFiles());
-            $this->assertNotContains($vendor . '/package/Dependency.php', $scanner->getScannedFiles());
+            $this->assertNotContains($dependency, $scanner->getScannedFiles());
         } finally {
             chmod($vendor, 0o755);
         }
@@ -596,7 +597,7 @@ class ScannerTest extends TestCase
         iterator_to_array($scanner->scanAll());
 
         $this->assertCount(3, $scanner->getScannedFiles());
-        $this->assertNotContains($file, $scanner->getScannedFiles());
+        $this->assertNotContains($this->fixturePath('plugin/src/Large.php'), $scanner->getScannedFiles());
     }
 
     /**
@@ -612,7 +613,7 @@ class ScannerTest extends TestCase
         $scanner = $this->createScanner($paths, excludePaths: $excludePaths, basePath: $this->scanRoot . '/missing');
         iterator_to_array($scanner->scanAll());
 
-        $expected = array_map(fn(string $file): string => $this->scanRoot . '/plugin/' . $file, $expectedFiles);
+        $expected = array_map(fn(string $file): string => $this->fixturePath('plugin/' . $file), $expectedFiles);
         $actual = $scanner->getScannedFiles();
         sort($expected);
         sort($actual);
@@ -644,6 +645,20 @@ class ScannerTest extends TestCase
             'excluded file' => [['src/*.php', 'src/**/*.php'], ['Plugin.php'], ['src/Controller/Example.php']],
             'excluded path regex' => [['src/*.php', 'src/**/*.php'], ['#Controller/.*\.php$#'], ['src/Plugin.php']],
         ];
+    }
+
+    /**
+     * Resolve fixture filenames with native separators and expanded directory aliases.
+     *
+     * @param string $path Fixture-relative filename
+     * @return string Canonical fixture filename
+     */
+    private function fixturePath(string $path): string
+    {
+        $resolved = realpath($this->scanRoot . '/' . $path);
+        assert($resolved !== false);
+
+        return $resolved;
     }
 
     /**
