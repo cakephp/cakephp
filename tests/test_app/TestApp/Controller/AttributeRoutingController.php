@@ -30,6 +30,19 @@ class AttributeRoutingController extends AttributeRoutingBaseController
     }
 
     /**
+     * Action fixture used to verify repeated route and middleware attributes.
+     *
+     * @return void
+     */
+    #[Get('/repeated', 'repeated')]
+    #[Get('/repeated-alias', 'repeated-alias')]
+    #[Middleware('first')]
+    #[Middleware('second')]
+    public function repeated(): void
+    {
+    }
+
+    /**
      * Action fixture used to verify placeholder patterns and pass parameters.
      *
      * @param int $id Route parameter value.
