@@ -255,10 +255,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * [1, 2, 3, 4]
      * ```
      *
-     * @param callable|string $path A dot separated path of column to follow
+     * @template TExtracted
+     * @param (callable(mixed): TExtracted)|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.
-     * @return \Cake\Collection\CollectionInterface<TKey, mixed>
+     * @return ($path is string ? \Cake\Collection\CollectionInterface<TKey, mixed> : \Cake\Collection\CollectionInterface<TKey, TExtracted>)
      */
     public function extract(callable|string $path): CollectionInterface;
 
@@ -283,7 +284,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $sort The sort type, one of SORT_STRING, SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
-     * @return mixed The value of the top element in the collection
+     * @return TValue|null The value of the top element in the collection
      */
     public function max(callable|string $path, int $sort = SORT_NUMERIC): mixed;
 
@@ -308,7 +309,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param callable|string $path The column name to use for sorting or callback that returns the value.
      * @param int $sort The sort type, one of SORT_STRING, SORT_NUMERIC or SORT_NATURAL
      * @see \Cake\Collection\CollectionInterface::sortBy()
-     * @return mixed The value of the bottom element in the collection
+     * @return TValue|null The value of the bottom element in the collection
      */
     public function min(callable|string $path, int $sort = SORT_NUMERIC): mixed;
 
@@ -454,7 +455,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for grouping or callback that returns the value.
      * or a function returning the grouping key out of the provided element
-     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
+     * @return \Cake\Collection\CollectionInterface<array-key, array<TValue>>
      */
     public function groupBy(callable|string $path): CollectionInterface;
 
@@ -493,7 +494,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for indexing or callback that returns the value.
      * or a function returning the indexing key out of the provided element
-     * @return \Cake\Collection\CollectionInterface<mixed, TValue>
+     * @return \Cake\Collection\CollectionInterface<array-key, TValue>
      */
     public function indexBy(callable|string $path): CollectionInterface;
 
@@ -531,7 +532,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for indexing or callback that returns the value.
      * or a function returning the indexing key out of the provided element
-     * @return \Cake\Collection\CollectionInterface<mixed, int>
+     * @return \Cake\Collection\CollectionInterface<array-key, int>
      */
     public function countBy(callable|string $path): CollectionInterface;
 
