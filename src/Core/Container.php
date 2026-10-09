@@ -25,4 +25,13 @@ use League\Container\Container as LeagueContainer;
  */
 class Container extends LeagueContainer implements ContainerInterface
 {
+    /**
+     * @template T of object
+     * @param class-string<T>|string $id Identifier of the entry to look for.
+     * @return ($id is class-string<T> ? T : mixed)
+     */
+    public function get(string $id)
+    {
+        return parent::get($id);
+    }
 }

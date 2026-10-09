@@ -31,6 +31,17 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 interface ContainerInterface extends DefinitionContainerInterface
 {
     /**
+     * Finds an entry of the container by its identifier and returns it.
+     *
+     * @template T of object
+     * @param class-string<T>|string $id Identifier of the entry to look for.
+     * @return ($id is class-string<T> ? T : mixed)
+     * @throws \Psr\Container\NotFoundExceptionInterface No entry was found for **this** identifier.
+     * @throws \Psr\Container\ContainerExceptionInterface Error while retrieving the entry.
+     */
+    public function get(string $id);
+
+    /**
      * @param \Psr\Container\ContainerInterface $container The container instance to use as delegation
      * @return \Psr\Container\ContainerInterface
      */
