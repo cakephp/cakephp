@@ -1050,6 +1050,8 @@ class ServerRequestFactoryTest extends TestCase
             'BASELINE-CONTROL' => ['BASELINE-CONTROL'],
             // Custom
             'PURGE' => ['PURGE'],
+            'underscore' => ['CUSTOM_METHOD'],
+            'hyphen and underscore' => ['CUSTOM_METHOD-NAME'],
         ];
     }
 
@@ -1096,6 +1098,10 @@ class ServerRequestFactoryTest extends TestCase
             'double hyphen' => ['VERSION--CONTROL'],
             'leading hyphen' => ['-PUT'],
             'trailing hyphen' => ['PUT-'],
+            'double underscore' => ['CUSTOM__METHOD'],
+            'leading underscore' => ['_PUT'],
+            'trailing underscore' => ['PUT_'],
+            'adjacent hyphen and underscore' => ['CUSTOM-_METHOD'],
             'empty string' => [''],
             'array' => [['PUT']],
         ];

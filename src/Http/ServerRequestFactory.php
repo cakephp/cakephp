@@ -91,7 +91,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * want the read the non-simulated HTTP method the client used.
      *
      * Override values are upper-cased and may only contain the letters A-Z, optionally
-     * separated by single hyphens (e.g. `VERSION-CONTROL`).
+     * separated by single hyphens or underscores (e.g. `VERSION-CONTROL`).
      *
      * Request body of content type "application/x-www-form-urlencoded" is parsed
      * into array for PUT/PATCH/DELETE requests.
@@ -137,7 +137,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * Normalize and validate a method override value.
      *
-     * Only letters, optionally separated by single hyphens, are accepted to prevent
+     * Only letters, optionally separated by single hyphens or underscores, are accepted to prevent
      * arbitrary client supplied strings from ending up in `REQUEST_METHOD`, while
      * still allowing custom methods like the WebDAV `VERSION-CONTROL`.
      *
@@ -149,7 +149,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     {
         if (is_string($method)) {
             $method = strtoupper($method);
-            if (preg_match('/^[A-Z]+(?:-[A-Z]+)*$/D', $method)) {
+            if (preg_match('/^[A-Z]+(?:[-_][A-Z]+)*$/D', $method)) {
                 return $method;
             }
         }
