@@ -40,6 +40,7 @@ use SplObjectStorage;
  *
  * @template T of \Cake\ORM\Table
  * @mixin T
+ * @method T getTarget() Gets the table instance for the target side of the association.
  */
 class BelongsToMany extends Association
 {
