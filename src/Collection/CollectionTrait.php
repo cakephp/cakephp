@@ -817,7 +817,6 @@ trait CollectionTrait
         /** @var \Cake\Collection\CollectionInterface<TKey, \ArrayIterator<int|string, mixed>|\ArrayObject<int|string, mixed>> $nested */
         $nested = $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
 
-        // phpcs:ignore
         /** @var \Cake\Collection\CollectionInterface<TKey, TValue> */
         return $nested->map(fn($value) => $isObject ? $value : $value->getArrayCopy());
     }
