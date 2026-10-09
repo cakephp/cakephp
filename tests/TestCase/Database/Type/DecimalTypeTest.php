@@ -28,7 +28,7 @@ use PDO;
 /**
  * Test for the Decimal type.
  */
-class DecimalTypeTest extends TestCase
+final class DecimalTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\DecimalType

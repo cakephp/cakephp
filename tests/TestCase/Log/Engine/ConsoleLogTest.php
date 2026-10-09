@@ -24,7 +24,7 @@ use Mockery;
 /**
  * ConsoleLogTest class
  */
-class ConsoleLogTest extends TestCase
+final class ConsoleLogTest extends TestCase
 {
     /**
      * Test writing to ConsoleOutput

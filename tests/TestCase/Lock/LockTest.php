@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
 /**
  * LockTest class
  */
-class LockTest extends TestCase
+final class LockTest extends TestCase
 {
     /**
      * setUp method

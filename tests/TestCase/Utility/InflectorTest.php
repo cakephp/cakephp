@@ -23,7 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Short description for class.
  */
-class InflectorTest extends TestCase
+final class InflectorTest extends TestCase
 {
     /**
      * A list of chars to test transliteration.

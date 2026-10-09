@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for DashedRoute
  */
-class DashedRouteTest extends TestCase
+final class DashedRouteTest extends TestCase
 {
     /**
      * test that routes match their pattern.

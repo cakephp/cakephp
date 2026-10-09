@@ -14,7 +14,7 @@ use Cake\Test\TestCase\Container\Asset\ProFoo;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class ReflectionContainerTest extends TestCase
+final class ReflectionContainerTest extends TestCase
 {
     private function getContainer(array $items = []): Container
     {

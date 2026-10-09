@@ -25,7 +25,7 @@ use PDO;
 /**
  * Test for the Binary type.
  */
-class BinaryTypeTest extends TestCase
+final class BinaryTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\BinaryType

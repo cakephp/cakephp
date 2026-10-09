@@ -24,7 +24,7 @@ use DateInterval;
 /**
  * ApcuEngineTest class
  */
-class ApcuEngineTest extends TestCase
+final class ApcuEngineTest extends TestCase
 {
     use EngineEventsTrait;
 
@@ -44,7 +44,7 @@ class ApcuEngineTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        static::$useRequestTime = ini_get('apc.use_request_time');
+        self::$useRequestTime = ini_get('apc.use_request_time');
         ini_set('apc.use_request_time', '0');
     }
 
@@ -53,7 +53,7 @@ class ApcuEngineTest extends TestCase
      */
     public static function teardownAfterClass(): void
     {
-        ini_set('apc.use_request_time', static::$useRequestTime ? '1' : '0');
+        ini_set('apc.use_request_time', self::$useRequestTime ? '1' : '0');
     }
 
     /**

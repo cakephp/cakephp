@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\MimeType;
 use Cake\TestSuite\TestCase;
 
-class MimeTypeTest extends TestCase
+final class MimeTypeTest extends TestCase
 {
     public function testGetMimeTypes(): void
     {

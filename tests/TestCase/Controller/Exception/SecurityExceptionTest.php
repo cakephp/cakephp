@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  *
  * @deprecated
  */
-class SecurityExceptionTest extends TestCase
+final class SecurityExceptionTest extends TestCase
 {
     /**
      * @var \Cake\Controller\Exception\SecurityException

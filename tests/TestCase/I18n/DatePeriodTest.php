@@ -23,7 +23,7 @@ use DateInterval;
 use DatePeriod as PhpDatePeriod;
 use DateTimeImmutable;
 
-class DatePeriodTest extends TestCase
+final class DatePeriodTest extends TestCase
 {
     public function testDatePeriod(): void
     {

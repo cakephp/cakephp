@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
  * ConsoleOutputTest
  */
 #[AllowMockObjectsWithoutExpectations]
-class ConsoleOutputTest extends TestCase
+final class ConsoleOutputTest extends TestCase
 {
     /**
      * @var \Cake\Console\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject

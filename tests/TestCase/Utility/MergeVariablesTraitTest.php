@@ -23,7 +23,7 @@ use TestApp\Utility\Grandchild;
 /**
  * MergeVariablesTrait test case
  */
-class MergeVariablesTraitTest extends TestCase
+final class MergeVariablesTraitTest extends TestCase
 {
     /**
      * Test merging vars as a list.

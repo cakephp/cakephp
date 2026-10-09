@@ -53,7 +53,7 @@ use TestApp\Command\SampleCommand;
  * Test case for the CommandCollection
  */
 #[AllowMockObjectsWithoutExpectations]
-class CommandRunnerTest extends TestCase
+final class CommandRunnerTest extends TestCase
 {
     /**
      * @var string

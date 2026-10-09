@@ -35,7 +35,7 @@ use TestPlugin\Model\Behavior\PersisterOneBehavior;
 /**
  * Test case for BehaviorRegistry.
  */
-class BehaviorRegistryTest extends TestCase
+final class BehaviorRegistryTest extends TestCase
 {
     /**
      * @var \Cake\ORM\BehaviorRegistry
@@ -61,7 +61,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Table = new Table(['table' => 'articles']);
         $this->EventManager = $this->Table->getEventManager();
         $this->Behaviors = new BehaviorRegistry($this->Table);
-        static::setAppNamespace();
+        self::setAppNamespace();
     }
 
     /**

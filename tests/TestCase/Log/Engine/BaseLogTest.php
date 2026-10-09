@@ -25,7 +25,7 @@ use Psr\Log\LogLevel;
 use TestApp\Log\Engine\TestBaseLog;
 use TestApp\Log\Formatter\ValidFormatter;
 
-class BaseLogTest extends TestCase
+final class BaseLogTest extends TestCase
 {
     private $testData = ['ä', 'ö', 'ü'];
 

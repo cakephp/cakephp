@@ -28,7 +28,7 @@ use TestPlugin\Console\Helper\ExampleHelper;
 /**
  * HelperRegistryTest
  */
-class HelperRegistryTest extends TestCase
+final class HelperRegistryTest extends TestCase
 {
     /**
      * @var \Cake\Console\HelperRegistry
@@ -41,7 +41,7 @@ class HelperRegistryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $io = new ConsoleIo(
             new StubConsoleOutput(),
             new StubConsoleOutput(),

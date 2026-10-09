@@ -32,7 +32,7 @@ use Mockery;
 /**
  * Tests HasOne class
  */
-class HasOneTest extends TestCase
+final class HasOneTest extends TestCase
 {
     /**
      * Fixtures to load

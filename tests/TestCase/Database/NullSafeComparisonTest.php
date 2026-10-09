@@ -16,7 +16,7 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class NullSafeComparisonTest extends TestCase
+final class NullSafeComparisonTest extends TestCase
 {
     public static function dialectProvider(): array
     {

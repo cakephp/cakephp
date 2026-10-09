@@ -29,7 +29,7 @@ use PDO;
 /**
  * Tests Postgres driver
  */
-class PostgresTest extends TestCase
+final class PostgresTest extends TestCase
 {
     /**
      * Test connecting to Postgres with default configuration

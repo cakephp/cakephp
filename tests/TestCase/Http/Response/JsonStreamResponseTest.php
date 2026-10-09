@@ -23,7 +23,7 @@ use InvalidArgumentException;
 use JsonException;
 use Throwable;
 
-class JsonStreamResponseTest extends TestCase
+final class JsonStreamResponseTest extends TestCase
 {
     /**
      * @var bool|null

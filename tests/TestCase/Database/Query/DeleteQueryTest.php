@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests DeleteQuery class
  */
-class DeleteQueryTest extends TestCase
+final class DeleteQueryTest extends TestCase
 {
     use QueryAssertsTrait;
 

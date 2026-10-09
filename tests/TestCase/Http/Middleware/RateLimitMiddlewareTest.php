@@ -29,7 +29,7 @@ use stdClass;
 /**
  * RateLimitMiddleware test case
  */
-class RateLimitMiddlewareTest extends TestCase
+final class RateLimitMiddlewareTest extends TestCase
 {
     /**
      * @var \Psr\Http\Server\RequestHandlerInterface

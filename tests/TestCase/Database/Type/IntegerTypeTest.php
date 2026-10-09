@@ -26,7 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test for the Integer type.
  */
-class IntegerTypeTest extends TestCase
+final class IntegerTypeTest extends TestCase
 {
     /**
      * @var \Cake\Database\Type\IntegerType

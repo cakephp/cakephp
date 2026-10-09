@@ -18,7 +18,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableEventsTrait;
 use Cake\TestSuite\TestCase;
 
-class TableImplementedEventsTest extends TestCase
+final class TableImplementedEventsTest extends TestCase
 {
     /**
      * Check that defining methods inside table classes will result in event listeners

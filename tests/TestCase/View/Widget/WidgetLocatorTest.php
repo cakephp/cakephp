@@ -30,7 +30,7 @@ use TestApp\View\Widget\TestUsingViewWidget;
 /**
  * WidgetLocator test case
  */
-class WidgetLocatorTest extends TestCase
+final class WidgetLocatorTest extends TestCase
 {
     /**
      * @var \Cake\View\StringTemplate

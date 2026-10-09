@@ -27,7 +27,7 @@ use TestApp\Database\Schema\CompatDialect;
  * Test case for SchemaDialect methods
  * that can pass tests across all drivers
  */
-class SchemaDialectTest extends TestCase
+final class SchemaDialectTest extends TestCase
 {
     /**
      * @var array<string>

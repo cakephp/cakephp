@@ -30,7 +30,7 @@ use TestApp\Model\Entity\VirtualUser;
 /**
  * Entity test case.
  */
-class EntityTest extends TestCase
+final class EntityTest extends TestCase
 {
     /**
      * Tests setting a single property in an entity without custom setters

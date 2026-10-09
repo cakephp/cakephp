@@ -37,7 +37,7 @@ use Mockery;
 /**
  * Tests UpdateQuery class
  */
-class UpdateQueryTest extends TestCase
+final class UpdateQueryTest extends TestCase
 {
     use QueryAssertsTrait;
 

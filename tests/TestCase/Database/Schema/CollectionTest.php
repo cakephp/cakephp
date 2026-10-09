@@ -27,7 +27,7 @@ use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 /**
  * Test case for Collection
  */
-class CollectionTest extends TestCase
+final class CollectionTest extends TestCase
 {
     /**
      * @var \Cake\Database\Connection

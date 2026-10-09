@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * EventDispatcherTrait test case
  */
-class EventDispatcherTraitTest extends TestCase
+final class EventDispatcherTraitTest extends TestCase
 {
     /**
      * @var \Cake\Event\EventDispatcherTrait

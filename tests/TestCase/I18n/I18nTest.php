@@ -36,7 +36,7 @@ use function Cake\I18n\__xn;
 /**
  * I18nTest class
  */
-class I18nTest extends TestCase
+final class I18nTest extends TestCase
 {
     /**
      * Set Up

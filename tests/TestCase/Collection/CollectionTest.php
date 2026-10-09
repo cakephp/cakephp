@@ -45,7 +45,7 @@ use function Cake\Collection\collection;
 /**
  * Collection Test
  */
-class CollectionTest extends TestCase
+final class CollectionTest extends TestCase
 {
     /**
      * Tests that it is possible to convert an array into a collection

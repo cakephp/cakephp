@@ -27,7 +27,7 @@ use TestApp\Http\TestRequestHandler;
 /**
  * Test for BodyParser
  */
-class BodyParserMiddlewareTest extends TestCase
+final class BodyParserMiddlewareTest extends TestCase
 {
     /**
      * Data provider for HTTP method tests.

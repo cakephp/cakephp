@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
 use Closure;
 use TestApp\Database\Driver\TestDriver;
 
-class ConnectionHelperTest extends TestCase
+final class ConnectionHelperTest extends TestCase
 {
     protected function tearDown(): void
     {

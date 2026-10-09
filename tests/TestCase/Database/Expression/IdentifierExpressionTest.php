@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Tests IdentifierExpression class
  */
-class IdentifierExpressionTest extends TestCase
+final class IdentifierExpressionTest extends TestCase
 {
     /**
      * Tests getting and setting the field

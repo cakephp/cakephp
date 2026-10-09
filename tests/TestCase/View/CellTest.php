@@ -35,7 +35,7 @@ use TestApp\View\CustomJsonView;
  *
  * For testing both View\Cell & Utility\CellTrait
  */
-class CellTest extends TestCase
+final class CellTest extends TestCase
 {
     /**
      * @var \Cake\View\View
@@ -48,7 +48,7 @@ class CellTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        static::setAppNamespace();
+        self::setAppNamespace();
         $this->clearPlugins();
         $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = new ServerRequest();

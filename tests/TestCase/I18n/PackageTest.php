@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
 /**
  * PackageTest class
  */
-class PackageTest extends TestCase
+final class PackageTest extends TestCase
 {
     /**
      * Test adding messages.

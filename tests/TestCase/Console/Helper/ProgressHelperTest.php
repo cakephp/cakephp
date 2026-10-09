@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * ProgressHelper test.
  */
-class ProgressHelperTest extends TestCase
+final class ProgressHelperTest extends TestCase
 {
     /**
      * @var \Cake\Console\Helper\ProgressHelper

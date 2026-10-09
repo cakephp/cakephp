@@ -28,7 +28,7 @@ use Throwable;
  * Tests for {@see \Cake\Http\Response\AbstractStreamResponse} that exercise
  * the shared streaming lifecycle independently of any concrete wire format.
  */
-class AbstractStreamResponseTest extends TestCase
+final class AbstractStreamResponseTest extends TestCase
 {
     protected function setUp(): void
     {
