@@ -32,6 +32,9 @@ use ReflectionProperty;
 use SplFileInfo;
 use Throwable;
 
+/**
+ * Discover PHP attributes using tokenized declarations and reflection.
+ */
 class Parser
 {
     /**
@@ -156,6 +159,14 @@ class Parser
 
             // Detect class/interface/trait/enum declaration
             if (in_array($token->id, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
+                if (
+                    $token->id === T_CLASS &&
+                    ($this->previousSignificantTokenId($tokens, $i) === T_DOUBLE_COLON ||
+                    $this->nextSignificantTokenId($tokens, $i) === ord(':'))
+                ) {
+                    continue;
+                }
+
                 // Skip anonymous classes
                 if ($token->id === T_CLASS && $this->isAnonymousClass($tokens, $i)) {
                     continue;
@@ -187,19 +198,44 @@ class Parser
      */
     protected function isAnonymousClass(array $tokens, int $currentIndex): bool
     {
-        // Look backward for 'new' keyword (skip whitespace/comments)
-        for ($i = $currentIndex - 1; $i >= 0; $i--) {
-            $token = $tokens[$i];
+        return $this->previousSignificantTokenId($tokens, $currentIndex) === T_NEW;
+    }
 
-            if ($token->id === T_NEW) {
-                return true;
-            }
-            if (!in_array($token->id, [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
-                return false;
+    /**
+     * Find the previous token ID, skipping whitespace and comments.
+     *
+     * @param array<\PhpToken> $tokens Tokens to inspect
+     * @param int $index Current token index
+     * @return int|null Significant token ID, or null at the start of the stream
+     */
+    protected function previousSignificantTokenId(array $tokens, int $index): ?int
+    {
+        for ($i = $index - 1; $i >= 0; $i--) {
+            if (!$tokens[$i]->isIgnorable()) {
+                return $tokens[$i]->id;
             }
         }
 
-        return false;
+        return null;
+    }
+
+    /**
+     * Find the next token ID, skipping whitespace and comments.
+     *
+     * @param array<\PhpToken> $tokens Tokens to inspect
+     * @param int $index Current token index
+     * @return int|null Significant token ID, or null at the end of the stream
+     */
+    protected function nextSignificantTokenId(array $tokens, int $index): ?int
+    {
+        $count = count($tokens);
+        for ($i = $index + 1; $i < $count; $i++) {
+            if (!$tokens[$i]->isIgnorable()) {
+                return $tokens[$i]->id;
+            }
+        }
+
+        return null;
     }
 
     /**
