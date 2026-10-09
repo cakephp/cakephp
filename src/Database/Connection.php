@@ -705,8 +705,11 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      * });
      * ```
      *
+     * @template TResult
      * @param \Closure $callback The callback to execute within a transaction.
+     * @phpstan-param \Closure(\Cake\Database\Connection): TResult $callback
      * @return mixed The return value of the callback.
+     * @phpstan-return TResult
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
@@ -724,7 +727,7 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
         if ($result === false) {
             $this->rollback(false);
 
-            return false;
+            return $result;
         }
 
         try {
@@ -760,8 +763,11 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      * });
      * ```
      *
+     * @template TResult
      * @param \Closure $callback Callback to run with constraints disabled
+     * @phpstan-param \Closure(\Cake\Database\Connection): TResult $callback
      * @return mixed The return value of the callback.
+     * @phpstan-return TResult
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
