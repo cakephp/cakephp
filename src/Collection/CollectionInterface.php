@@ -1021,9 +1021,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback A callable function that will receive
+     * @template TResultKey
+     * @template TResultValue
+     * @param callable(\Cake\Collection\CollectionInterface<TKey, TValue>): iterable<TResultKey, TResultValue> $callback A callable function that will receive
      * this collection as first argument.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<TResultKey, TResultValue>
      */
     public function through(callable $callback): CollectionInterface;
 

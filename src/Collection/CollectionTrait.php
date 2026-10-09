@@ -981,7 +981,10 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @template TResultKey
+     * @template TResultValue
+     * @param callable(\Cake\Collection\CollectionInterface<TKey, TValue>): iterable<TResultKey, TResultValue> $callback
+     * @return \Cake\Collection\CollectionInterface<TResultKey, TResultValue>
      */
     public function through(callable $callback): CollectionInterface
     {
