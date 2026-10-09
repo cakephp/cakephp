@@ -196,9 +196,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback A callback receiving `($value, $key, $iterator)` that
+     * @template TMapped
+     * @param callable(TValue, TKey, \Iterator<TKey, TValue>): TMapped $callback A callback receiving `($value, $key, $iterator)` that
      *   returns the transformed value for each element.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<TKey, TMapped>
      */
     public function map(callable $callback): CollectionInterface;
 

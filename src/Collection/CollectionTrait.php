@@ -183,7 +183,9 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @template TMapped
+     * @param callable(TValue, TKey, \Iterator<TKey, TValue>): TMapped $callback
+     * @return \Cake\Collection\CollectionInterface<TKey, TMapped>
      */
     public function map(callable $callback): CollectionInterface
     {
@@ -812,11 +814,12 @@ trait CollectionTrait
             $parents[$key][$nestingKey] = $children;
         };
 
-        return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(function ($value) use ($isObject) {
-                /** @var \ArrayIterator<int|string, mixed>|\ArrayObject<int|string, mixed> $value */
-                return $isObject ? $value : $value->getArrayCopy();
-            });
+        /** @var \Cake\Collection\CollectionInterface<TKey, \ArrayIterator<int|string, mixed>|\ArrayObject<int|string, mixed>> $nested */
+        $nested = $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
+
+        // phpcs:ignore
+        /** @var \Cake\Collection\CollectionInterface<TKey, TValue> */
+        return $nested->map(fn($value) => $isObject ? $value : $value->getArrayCopy());
     }
 
     /**
