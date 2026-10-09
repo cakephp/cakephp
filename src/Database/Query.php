@@ -940,8 +940,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * If $category is `null` - it will actually convert that into `category_id IS NULL` - if it's `4` it will convert it into `category_id = 4`
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to filter on.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string|null $conditions
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string|null $conditions The conditions to filter on.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\TypeFactory
@@ -1155,8 +1154,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * The string form of `$conditions` is not suitable for use with user supplied data as it is
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to add with AND.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string $conditions
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string $conditions The conditions to add with AND.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\TypeFactory
@@ -1324,8 +1322,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      * @deprecated 5.0.0 Use orderByAsc() instead now that CollectionInterface methods are no longer proxied.
@@ -1346,8 +1343,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */
@@ -1382,8 +1378,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      * @deprecated 5.0.0 Use orderByDesc() instead now that CollectionInterface methods are no longer proxied.
@@ -1404,8 +1399,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * Order fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|string $field The field to order on.
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|string))|string $field The field to order on.
      * @param bool $overwrite Whether to reset the order clauses.
      * @return $this
      */

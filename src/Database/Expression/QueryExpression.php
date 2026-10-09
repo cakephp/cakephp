@@ -505,8 +505,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions
+     * @param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions to be joined with AND
      * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return static
@@ -524,8 +523,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
-     * @phpstan-param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions
+     * @param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions to be joined with OR
      * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return static

@@ -60,10 +60,8 @@ class CommandRetry
      * The number of retries to perform in case of failure
      *
      * @template TResult
-     * @param \Closure $action Callback to run for each attempt
-     * @phpstan-param \Closure(): TResult $action
-     * @return mixed The return value of the passed action callable
-     * @phpstan-return TResult
+     * @param \Closure(): TResult $action Callback to run for each attempt
+     * @return TResult The return value of the passed action callable
      * @throws \Exception Throws exception from last failure
      */
     public function run(Closure $action): mixed

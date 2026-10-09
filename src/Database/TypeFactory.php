@@ -145,8 +145,7 @@ class TypeFactory
      * Use getMap() without arguments to get the full map, or getMapped($type) to get a specific type mapping.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
-     * @phpstan-return ($type is null ? array<string, class-string<\Cake\Database\TypeInterface>> : class-string<\Cake\Database\TypeInterface>|null)
+     * @return ($type is null ? array<string, class-string<\Cake\Database\TypeInterface>> : class-string<\Cake\Database\TypeInterface>|null) Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null): array|string|null
     {
