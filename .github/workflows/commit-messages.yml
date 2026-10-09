@@ -34,7 +34,26 @@ jobs:
                 or ((.commit.author.email // "") | test(env.AUTHOR))
                 or ((.author.login // "") | test(env.LOGIN))
               )
-            | .sha[0:10] + " " + (.commit.message | split("\n")[0])')
+            | .sha + " " + (.commit.message | split("\n")[0])')
+
+          # Merge-up PRs carry commits that already landed on a release branch; only judge new ones.
+          branches=$(gh api "repos/$REPO/branches?protected=true" --paginate --jq '.[].name')
+          merged() {
+            for b in $branches; do
+              s=$(gh api "repos/$REPO/compare/$b...$1" --jq .status 2>/dev/null) || continue
+              if [ "$s" = behind ] || [ "$s" = identical ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+          new=""
+          while read -r sha subject; do
+            [ -z "$sha" ] && continue
+            merged "$sha" || new+="${sha:0:10} $subject"$'\n'
+          done <<< "$bad"
+          bad="${new%$'\n'}"
+
           if [ -z "$bad" ]; then
             echo "No AI tool attribution found."
             exit 0
