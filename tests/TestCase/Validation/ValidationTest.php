@@ -3130,6 +3130,66 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Verifies that SVG dimensions are compared only when their units are pixels.
+     *
+     * @param string $width SVG width attribute.
+     * @param string $height SVG height attribute.
+     * @param bool $validWidth Whether the width can be compared in pixels.
+     * @param bool $validHeight Whether the height can be compared in pixels.
+     */
+    #[DataProvider('svgImageDimensionProvider')]
+    public function testImageSizeSvgUnits(
+        string $width,
+        string $height,
+        bool $validWidth,
+        bool $validHeight,
+    ): void {
+        if (!extension_loaded('libxml')) {
+            $this->markTestSkipped('SVG image dimensions require the libxml extension.');
+        }
+
+        $file = tempnam(TMP, 'validation-svg-');
+        $this->assertNotFalse($file);
+
+        try {
+            file_put_contents($file, sprintf(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s"></svg>',
+                $width,
+                $height,
+            ));
+            $upload = new UploadedFile($file, null, UPLOAD_ERR_OK, 'test.svg', 'image/svg+xml');
+
+            $this->assertSame($validWidth, Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 10));
+            $this->assertSame($validHeight, Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 20));
+            $this->assertSame($validWidth && $validHeight, Validation::imageSize($upload, [
+                'width' => [Validation::COMPARE_EQUAL, 10],
+                'height' => [Validation::COMPARE_EQUAL, 20],
+            ]));
+        } finally {
+            unlink($file);
+        }
+    }
+
+    /**
+     * Provides SVG dimensions with pixel, physical, relative, and mixed units.
+     *
+     * @return array<string, array{string, string, bool, bool}>
+     */
+    public static function svgImageDimensionProvider(): array
+    {
+        return [
+            'unitless' => ['10', '20', true, true],
+            'pixels' => ['10px', '20px', true, true],
+            'centimeters' => ['10cm', '20cm', false, false],
+            'points' => ['10pt', '20pt', false, false],
+            'percentages' => ['10%', '20%', false, false],
+            'relative' => ['10em', '20em', false, false],
+            'pixel width' => ['10px', '20cm', true, false],
+            'pixel height' => ['10cm', '20px', false, true],
+        ];
+    }
+
+    /**
      * Test imageHeight
      */
     public function testImageHeight(): void

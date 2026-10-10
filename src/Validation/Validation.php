@@ -1619,7 +1619,9 @@ class Validation
     }
 
     /**
-     * Validates the size of an uploaded image.
+     * Validates the size of an uploaded image in pixels.
+     *
+     * Dimensions expressed in other units fail validation when checked.
      *
      * @param mixed $file The uploaded file data from PHP.
      * @param array<string, mixed> $options Options to validate width and height.
@@ -1640,8 +1642,16 @@ class Validation
         }
         $width = null;
         $height = null;
+        /** @var array{0: int, 1: int, width_unit?: string, height_unit?: string}|false $imageSize */
         $imageSize = getimagesize($file);
         if ($imageSize) {
+            if (
+                (isset($options['width']) && ($imageSize['width_unit'] ?? 'px') !== 'px')
+                || (isset($options['height']) && ($imageSize['height_unit'] ?? 'px') !== 'px')
+            ) {
+                return false;
+            }
+
             [$width, $height] = $imageSize;
         }
         $validWidth = null;
@@ -1667,7 +1677,7 @@ class Validation
     }
 
     /**
-     * Validates the image width.
+     * Validates the image width in pixels.
      *
      * @param mixed $file The uploaded file data from PHP.
      * @param string $operator Comparison operator.
@@ -1685,7 +1695,7 @@ class Validation
     }
 
     /**
-     * Validates the image height.
+     * Validates the image height in pixels.
      *
      * @param mixed $file The uploaded file data from PHP.
      * @param string $operator Comparison operator.
