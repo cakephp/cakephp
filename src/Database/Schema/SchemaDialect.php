@@ -375,6 +375,29 @@ abstract class SchemaDialect
     }
 
     /**
+     * Get the keyword when a date or time column defaults to `CURRENT_DATE` or `CURRENT_TIME`.
+     *
+     * Matching is case-insensitive and accepts an empty `()` suffix.
+     *
+     * @param array<string, mixed> $column The column metadata.
+     * @return string|null `CURRENT_DATE`, `CURRENT_TIME`, or null when the default is not one of them.
+     */
+    protected function currentDateTimeDefault(array $column): ?string
+    {
+        $keyword = match ($column['type'] ?? null) {
+            TableSchemaInterface::TYPE_DATE => 'CURRENT_DATE',
+            TableSchemaInterface::TYPE_TIME => 'CURRENT_TIME',
+            default => null,
+        };
+        if ($keyword === null || !is_string($column['default'] ?? null)) {
+            return null;
+        }
+        $default = strtoupper($column['default']);
+
+        return $default === $keyword || $default === $keyword . '()' ? $keyword : null;
+    }
+
+    /**
      * Get the list of tables, excluding any views, available in the current connection.
      *
      * @return array<string> The list of tables in the connected database/schema.

@@ -892,6 +892,13 @@ SQL;
             unset($column['default']);
         }
 
+        $currentDefault = $this->currentDateTimeDefault($column);
+        if ($currentDefault !== null) {
+            // MySQL only accepts these as expression defaults, which need parentheses.
+            $out .= ' DEFAULT (' . $currentDefault . ')';
+            unset($column['default']);
+        }
+
         $dateTimeTypes = [
             TableSchemaInterface::TYPE_DATETIME,
             TableSchemaInterface::TYPE_DATETIME_FRACTIONAL,
@@ -925,6 +932,20 @@ SQL;
         }
 
         return $out;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function currentDateTimeDefault(array $column): ?string
+    {
+        // Reflection reports these defaults as curdate() and curtime().
+        $aliases = ['curdate()' => 'CURRENT_DATE', 'curtime()' => 'CURRENT_TIME'];
+        if (is_string($column['default'] ?? null)) {
+            $column['default'] = $aliases[strtolower($column['default'])] ?? $column['default'];
+        }
+
+        return parent::currentDateTimeDefault($column);
     }
 
     /**
