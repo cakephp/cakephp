@@ -24,7 +24,7 @@
         "source": "https://github.com/cakephp/database"
     },
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "cakephp/core": "6.0.*@dev",
         "cakephp/chronos": "^3.3",
         "cakephp/datasource": "6.0.*@dev",

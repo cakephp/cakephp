@@ -26,25 +26,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.4', '8.5', '8.6']
+        php-version: ['8.5', '8.6']
         db-type: [sqlite, pgsql]
         dependencies: ['highest']
         include:
-          - php-version: '8.4'
+          - php-version: '8.5'
             db-type: 'mariadb'
-            dependencies: highest
-
-          - php-version: '8.4'
-            db-type: 'mysql'
-            dependencies: lowest
-
-          - php-version: '8.4'
-            db-type: 'mysql'
             dependencies: highest
 
           - php-version: '8.5'
             db-type: 'mysql'
-            dependencies: highest
+            dependencies: lowest
 
           - php-version: '8.6'
             db-type: 'mysql'
@@ -72,7 +64,7 @@ jobs:
 
     steps:
     - name: Setup MySQL 8.4
-      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest' && matrix.php-version != '8.3'
+      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest' && matrix.php-version == '8.6'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:8.4
 
     - name: Setup MySQL 5.7
@@ -130,7 +122,7 @@ jobs:
         composer-options: "${{ matrix.php-version == '8.6' && '--ignore-platform-req=php' || matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
-      if: matrix.php-version == '8.4' && matrix.db-type == 'mysql' && matrix.dependencies != 'lowest'
+      if: matrix.php-version == '8.5' && matrix.db-type == 'mysql' && matrix.dependencies != 'lowest'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Run PHPUnit
@@ -144,13 +136,13 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.4' && ${{ matrix.dependencies }} == 'highest' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.5' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
-        elif [[ ${{ matrix.php-version }} == '8.4' && ${{ matrix.dependencies }} == 'lowest' ]]; then
+        elif [[ ${{ matrix.php-version }} == '8.5' && ${{ matrix.dependencies }} == 'lowest' ]]; then
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         else
@@ -159,7 +151,7 @@ jobs:
         fi
 
     - name: Submit code coverage
-      if: matrix.php-version == '8.4'
+      if: matrix.php-version == '8.5'
       uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
       with:
         files: coverage.xml,coverage-database.xml,coverage-functions.xml
@@ -167,11 +159,11 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2022
-    name: Windows - PHP 8.4 & SQL Server
+    name: Windows - PHP 8.5 & SQL Server
 
     env:
       EXTENSIONS: mbstring, intl, apcu, redis, pdo_sqlsrv
-      PHP_VERSION: '8.4'
+      PHP_VERSION: '8.5'
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -251,7 +243,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          php-version: '8.4'
+          php-version: '8.5'
           extensions: mbstring, intl, pcntl
           coverage: none
           tools: phive, cs2pr
@@ -356,7 +348,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          php-version: '8.4'
+          php-version: '8.5'
           extensions: mbstring, intl
           coverage: none
           tools: phive

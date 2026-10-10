@@ -49,7 +49,7 @@ class ParserTest extends TestCase
         $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $classAttrs);
 
-        $classAttr = array_values($classAttrs)[0];
+        $classAttr = array_first($classAttrs);
         $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $classAttr->attributeName);
         $this->assertSame(['path' => '/test'], $classAttr->arguments);
     }
@@ -223,7 +223,7 @@ class ParserTest extends TestCase
         );
         $this->assertCount(1, $methodWithObject);
 
-        $attr = array_values($methodWithObject)[0];
+        $attr = array_first($methodWithObject);
         $this->assertSame('TestApp\\Attribute\\Resolver\\TestComplexArgument', $attr->attributeName);
         $this->assertArrayHasKey('value', $attr->arguments);
         $this->assertArrayHasKey('object', $attr->arguments);
@@ -248,7 +248,7 @@ class ParserTest extends TestCase
         );
         $this->assertCount(1, $withEnum);
 
-        $attr = array_values($withEnum)[0];
+        $attr = array_first($withEnum);
         $this->assertArrayHasKey('enum', $attr->arguments);
         $this->assertInstanceOf(TestPriority::class, $attr->arguments['enum']);
         $this->assertSame(TestPriority::HIGH, $attr->arguments['enum']);
@@ -266,7 +266,7 @@ class ParserTest extends TestCase
         );
         $this->assertCount(1, $withConstant);
 
-        $attr = array_values($withConstant)[0];
+        $attr = array_first($withConstant);
         $this->assertArrayHasKey('constant', $attr->arguments);
         $this->assertSame(30, $attr->arguments['constant']); // DEFAULT_TIMEOUT value
     }
@@ -283,7 +283,7 @@ class ParserTest extends TestCase
         );
         $this->assertCount(1, $nestedObjects);
 
-        $attr = array_values($nestedObjects)[0];
+        $attr = array_first($nestedObjects);
         $this->assertArrayHasKey('object', $attr->arguments);
         $this->assertInstanceOf(TestConfig::class, $attr->arguments['object']);
 
@@ -335,7 +335,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $interfaceAttrs);
         $this->assertSame(
             DeclaringClassType::INTERFACE,
-            array_values($interfaceAttrs)[0]->target->declaringClassType,
+            array_first($interfaceAttrs)->target->declaringClassType,
         );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
@@ -354,7 +354,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $traitAttrs);
         $this->assertSame(
             DeclaringClassType::TRAIT,
-            array_values($traitAttrs)[0]->target->declaringClassType,
+            array_first($traitAttrs)->target->declaringClassType,
         );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
@@ -373,7 +373,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $enumAttrs);
         $this->assertSame(
             DeclaringClassType::ENUM,
-            array_values($enumAttrs)[0]->target->declaringClassType,
+            array_first($enumAttrs)->target->declaringClassType,
         );
 
         // Enum cases are treated as class constants

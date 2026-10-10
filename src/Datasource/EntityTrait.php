@@ -548,7 +548,7 @@ trait EntityTrait
         $originals = $this->original;
         foreach ($this->initializedFieldNames() as $key) {
             if (
-                !array_key_exists($key, $originals) &&
+                !array_key_exists((string)$key, $originals) &&
                 $this->isOriginalField($key)
             ) {
                 $originals[$key] = $this->getRawValue($key);

@@ -165,7 +165,7 @@ class JsonView extends SerializedView
                 if (is_numeric($alias)) {
                     $alias = $key;
                 }
-                if (array_key_exists($key, $this->viewVars)) {
+                if (array_key_exists((string)$key, $this->viewVars)) {
                     $data[$alias] = $this->viewVars[$key];
                 }
             }

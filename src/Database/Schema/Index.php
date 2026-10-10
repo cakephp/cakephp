@@ -74,26 +74,42 @@ class Index
     }
 
     /**
-     * Re-initializes nullable properties that may be absent when unserializing
-     * index data produced by an older CakePHP version.
+     * Serializes column data.
      *
-     * Nullable index attributes were added incrementally (e.g. `include` in 5.3,
-     * `accessMethod` in 5.4). A serialized payload created before a given property
-     * existed does not contain it, and PHP does not apply the promoted default on
-     * the unserialize path. Reading such a property would otherwise fail with
-     * "Typed property ...::$accessMethod must not be accessed before
-     * initialization". This most commonly surfaces via the Migrations plugin's
-     * `schema-dump-*.lock` files during `migrations diff`.
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return get_object_vars($this);
+    }
+
+    /**
+     * Unserializes index data.
      *
+     * @param array $data The data to unserialize
      * @return void
      */
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
+        // Re-initializes nullable properties that may be absent when unserializing
+        // index data produced by an older CakePHP version.
+        //
+        // Nullable index attributes were added incrementally (e.g. `include` in 5.3,
+        // `accessMethod` in 5.4). A serialized payload created before a given property
+        // existed does not contain it, and PHP does not apply the promoted default on
+        // the unserialize path. Reading such a property would otherwise fail with
+        // "Typed property ...::$accessMethod must not be accessed before
+        // initialization". This most commonly surfaces via the Migrations plugin's
+        // `schema-dump-*.lock` files during `migrations diff`.
         $this->length ??= null;
         $this->order ??= null;
         $this->include ??= null;
         $this->where ??= null;
         $this->accessMethod ??= null;
+
+        foreach ($data as $property => $value) {
+            $this->{$property} = $value;
+        }
     }
 
     /**

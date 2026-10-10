@@ -22,7 +22,7 @@
         "source": "https://github.com/cakephp/core"
     },
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "cakephp/container": "6.0.*@dev",
         "cakephp/utility": "6.0.*@dev",
         "psr/container": "^1.1 || ^2.0"

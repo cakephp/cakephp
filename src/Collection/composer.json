@@ -23,7 +23,7 @@
         "source": "https://github.com/cakephp/collection"
     },
     "require": {
-        "php": ">=8.4"
+        "php": ">=8.5"
     },
     "autoload": {
         "psr-4": {
