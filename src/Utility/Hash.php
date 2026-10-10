@@ -754,7 +754,7 @@ class Hash
                 continue;
             }
 
-            $valueKey = end($keys);
+            $valueKey = array_last($keys);
             $keys = array_slice($keys, 0, -1);
 
             $keyHash = &$hash;

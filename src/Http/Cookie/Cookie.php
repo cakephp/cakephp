@@ -374,10 +374,8 @@ class Cookie implements CookieInterface
     public function withName(string $name): static
     {
         $this->validateName($name);
-        $new = clone $this;
-        $new->name = $name;
 
-        return $new;
+        return clone($this, ['name' => $name]);
     }
 
     /**

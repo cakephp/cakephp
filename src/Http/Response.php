@@ -1090,10 +1090,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withCookieCollection(CookieCollection $cookieCollection): static
     {
-        $new = clone $this;
-        $new->cookies = $cookieCollection;
-
-        return $new;
+        return clone($this, ['cookies' => $cookieCollection]);
     }
 
     /**
@@ -1155,10 +1152,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withLinkProvider(EvolvableLinkProviderInterface $links): static
     {
-        $new = clone $this;
-        $new->links = $links;
-
-        return $new;
+        return clone($this, ['links' => $links]);
     }
 
     /**

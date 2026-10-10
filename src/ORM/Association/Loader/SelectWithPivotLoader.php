@@ -162,7 +162,7 @@ class SelectWithPivotLoader extends SelectLoader
         }
 
         if (count($links) === 1) {
-            return array_pop($links);
+            return array_last($links);
         }
 
         return $links;
