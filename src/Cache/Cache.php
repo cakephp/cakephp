@@ -297,7 +297,7 @@ class Cache
      * Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'], 'long_term');
      * ```
      *
-     * @param iterable $data An array or Traversable of data to be stored in the cache
+     * @param iterable<string, mixed> $data An array or Traversable of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True on success, false on failure
      * @throws \Cake\Cache\Exception\InvalidArgumentException
@@ -353,7 +353,7 @@ class Cache
      *
      * @param iterable<string> $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return iterable An array containing, for each of the given $keys,
+     * @return iterable<string, mixed> An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
@@ -505,7 +505,7 @@ class Cache
      * Calling this method will load all the configured engines.
      *
      * @param string|null $group Group name or null to retrieve all group mappings
-     * @return array<string, array> Map of group and all configuration that has the same group
+     * @return array<string, array<string>> Map of group and all configuration that has the same group
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function groupConfigs(?string $group = null): array

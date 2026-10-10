@@ -382,8 +382,8 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param \Closure|array $options Options to use when generating REST routes, or a callback.
-     * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|array $options Options to use when generating REST routes, or a callback.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
      */
@@ -864,9 +864,9 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param \Closure|array $params An array of routing defaults to add to each connected route.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|array $params An array of routing defaults to add to each connected route.
      *   If you have no parameters, this argument can be a Closure.
-     * @param \Closure|null $callback The callback to invoke that builds the prefixed routes.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|null $callback The callback to invoke that builds the prefixed routes.
      * @return $this
      * @throws \InvalidArgumentException If a valid callback is not passed
      */
@@ -910,8 +910,8 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param \Closure|array $options Either the options to use, or a callback to build routes.
-     * @param \Closure|null $callback The callback to invoke that builds the plugin routes
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|array $options Either the options to use, or a callback to build routes.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return $this
      */
@@ -943,8 +943,8 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param \Closure|array $params Either the parameters to add to routes, or a callback.
-     * @param \Closure|null $callback The callback to invoke that builds the plugin routes.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|array $params Either the parameters to add to routes, or a callback.
+     * @param (\Closure(\Cake\Routing\RouteBuilder): mixed)|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $params is defined.
      * @return $this
      * @throws \InvalidArgumentException when there is no callable parameter.

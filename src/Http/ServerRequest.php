@@ -1143,8 +1143,8 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
-     *   provided type.
+     * @return ($type is non-falsy-string ? bool : array<string>) Either an array of all the types the client
+     *   accepts or a boolean if they accept the provided type.
      */
     public function accepts(?string $type = null): array|bool
     {
@@ -1173,7 +1173,8 @@ class ServerRequest implements ServerRequestInterface
      * ```$request->acceptLanguage('es-es');```
      *
      * @param string|null $language The language to test.
-     * @return array|bool If a $language is provided, a boolean. Otherwise, the array of accepted languages.
+     * @return ($language is null ? array<string> : bool) If a $language is provided, a boolean.
+     *   Otherwise, the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null): array|bool
     {
@@ -1199,7 +1200,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return mixed Query data.
+     * @return ($name is null ? array : mixed) Query data.
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery(?string $name = null, mixed $default = null): mixed
@@ -1411,7 +1412,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $key The key you want to read from.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist.
-     * @return string|null Either the environment value, or null if the value doesn't exist.
+     * @return ($default is string ? string : string|null) Either the environment value, or null if the value doesn't exist.
      */
     public function getEnv(string $key, ?string $default = null): ?string
     {
@@ -1605,7 +1606,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
-     * @return mixed
+     * @return ($name is 'params' ? array : ($name is 'webroot'|'base'|'here' ? string : ($name is 'session' ? \Cake\Http\Session : mixed)))
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
