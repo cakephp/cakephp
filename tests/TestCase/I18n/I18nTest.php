@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\Cache\Cache;
 use Cake\I18n\I18n;
+use Cake\I18n\MessagesFileLoader;
 use Cake\I18n\Package;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
@@ -842,6 +843,27 @@ class I18nTest extends TestCase
         $translator = I18n::getTranslator('custom', 'fr_FR');
         $this->assertSame('Le moo', $translator->translate('Cow'));
         $this->assertSame('Le bark', $translator->translate('Dog'));
+    }
+
+    /**
+     * Tests that a loader without a translations file falls back to the default domain
+     */
+    public function testFallbackTranslatorWithMissingMessagesFile(): void
+    {
+        I18n::setTranslator('default', function (): Package {
+            $package = new Package('default');
+            $package->setMessages([
+                'Dog' => 'Le bark',
+            ]);
+
+            return $package;
+        }, 'fr_FR');
+
+        I18n::setTranslator('no_such_domain', new MessagesFileLoader('no_such_domain', 'fr_FR'), 'fr_FR');
+
+        $translator = I18n::getTranslator('no_such_domain', 'fr_FR');
+        $this->assertSame('Le bark', $translator->translate('Dog'));
+        $this->assertSame('Cow', $translator->translate('Cow'));
     }
 
     /**

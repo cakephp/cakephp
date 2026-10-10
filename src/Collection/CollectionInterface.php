@@ -26,7 +26,7 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  *
- * @method \Cake\Collection\CollectionInterface<int, TValue> keys() Returns a new collection containing only the keys of the elements.
+ * @method \Cake\Collection\CollectionInterface<int, TKey> keys() Returns a new collection containing only the keys of the elements.
  * @method \Cake\Collection\CollectionInterface<int, TValue> values() Returns a new collection containing only the values, re-indexed with consecutive integers.
  * @method string implode(string $glue, callable|string|null $path = null) Concatenates all elements into a string using the provided glue.
  * @method \Cake\Collection\CollectionInterface<TKey, TValue> when(mixed $condition, callable $callback) Applies callback if condition is truthy.
@@ -686,9 +686,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Append a single item creating a new collection.
      *
-     * @param mixed $item The item to append.
+     * @template TNewValue
+     * @param TNewValue $item The item to append.
      * @param mixed $key The key to append the item with. If null a key will be generated.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<mixed, TValue|TNewValue>
      */
     public function appendItem(mixed $item, mixed $key = null): CollectionInterface;
 
@@ -703,9 +704,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Prepend a single item creating a new collection.
      *
-     * @param mixed $item The item to prepend.
+     * @template TNewValue
+     * @param TNewValue $item The item to prepend.
      * @param mixed $key The key to prepend the item with. If null a key will be generated.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<mixed, TValue|TNewValue>
      */
     public function prependItem(mixed $item, mixed $key = null): CollectionInterface;
 
@@ -869,7 +871,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return ($keepKeys is true ? \Cake\Collection\CollectionInterface<TKey, TValue> : \Cake\Collection\CollectionInterface<int, TValue>)
      */
     public function compile(bool $keepKeys = true): CollectionInterface;
 

@@ -123,7 +123,7 @@ class Hash
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
-        if (!$path) {
+        if ($path === '') {
             return $data;
         }
 
@@ -293,11 +293,10 @@ class Hash
      * Insert $values into an array with the given $path. You can use
      * `{n}` and `{s}` elements to insert $data multiple times.
      *
-     * @template T of \ArrayAccess<array-key, mixed>|array
-     * @param T $data The data to insert into.
+     * @param \ArrayAccess<array-key, mixed>|array $data The data to insert into.
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
-     * @return (T is array ? array : \ArrayAccess<array-key, mixed>) The data with $values inserted.
+     * @return ($data is array ? array : \ArrayAccess<array-key, mixed>) The data with $values inserted.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-insert
      * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
      *   false positives where taint from one caller (e.g. ServerRequest::withData) bleeds into
@@ -404,10 +403,9 @@ class Hash
      * You can use `{n}` and `{s}` to remove multiple elements
      * from $data.
      *
-     * @template T of \ArrayAccess<array-key, mixed>|array
-     * @param T $data The data to operate on
+     * @param \ArrayAccess<array-key, mixed>|array $data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return (T is array ? array : \ArrayAccess<array-key, mixed>) The modified array.
+     * @return ($data is array ? array : \ArrayAccess<array-key, mixed>) The modified array.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-remove
      * @psalm-taint-specialize Psalm tracks taint per call site instead of globally, preventing
      *   false positives where taint from one caller (e.g. ServerRequest::withoutData) bleeds into
