@@ -21,15 +21,48 @@ use Cake\AttributeResolver\Scanner;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
+use Cake\TestSuite\FsFixture;
 use Cake\TestSuite\TestCase;
 use Generator;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
+use SplFileInfo;
 
+/**
+ * Verify attribute scanning across application and plugin paths.
+ */
 class ScannerTest extends TestCase
 {
+    private string $scanRoot;
+
+    /**
+     * Create application and plugin trees for scanner regression tests.
+     */
     protected function setUp(): void
     {
         parent::setUp();
+        $this->scanRoot = FsFixture::setup('attribute-scanner', [
+            'app' => ['src' => ['App.php' => '<?php']],
+            'plugin' => [
+                'src' => [
+                    'Plugin.php' => '<?php',
+                    'Controller' => ['Example.php' => '<?php'],
+                ],
+                'config' => ['routes.php' => '<?php'],
+                'vendor' => ['package' => ['Dependency.php' => '<?php']],
+            ],
+            'plugin-extra' => ['src' => ['Other.php' => '<?php']],
+        ]);
+    }
+
+    /**
+     * Remove temporary scanner fixtures.
+     */
+    protected function tearDown(): void
+    {
+        FsFixture::tearDown();
+        parent::tearDown();
     }
 
     public function testConstructorAcceptsConfiguration(): void
@@ -358,5 +391,316 @@ class ScannerTest extends TestCase
         $plugins2 = $method->invoke($scanner);
 
         $this->assertSame($plugins1, $plugins2, 'getLoadedPlugins should return consistent results');
+    }
+
+    /**
+     * Overlapping application and plugin roots must parse each file once.
+     */
+    public function testScanAllDeduplicatesOverlappingRoots(): void
+    {
+        $scanner = $this->createScanner(['**/*.php'], basePath: $this->scanRoot);
+        iterator_to_array($scanner->scanAll());
+
+        $files = $scanner->getScannedFiles();
+        $this->assertCount(6, $files);
+        $this->assertSame(array_values(array_unique($files)), $files);
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertSame($files, $scanner->getScannedFiles());
+    }
+
+    /**
+     * File deduplication must retain all attributes while eliminating copies from overlapping roots.
+     */
+    public function testScanAllYieldsAttributesOnceForOverlappingRoots(): void
+    {
+        $scanner = $this->createScanner(
+            ['Attribute/Resolver/Fixture/TestController.php', 'TestController.php'],
+            plugins: [['path' => APP . 'Attribute/Resolver/Fixture', 'plugin' => 'Example']],
+            basePath: APP,
+        );
+        $attributes = iterator_to_array($scanner->scanAll(), false);
+
+        $this->assertCount(5, $attributes);
+        $this->assertCount(1, $scanner->getScannedFiles());
+        foreach ($attributes as $attribute) {
+            $this->assertSame('Example', $attribute->pluginName);
+        }
+    }
+
+    /**
+     * Symlink aliases must share a traversal root and retain plugin metadata.
+     */
+    public function testScanAllDeduplicatesSymlinkRoots(): void
+    {
+        $alias = $this->createPluginSymlink();
+        $parser = Mockery::mock(Parser::class);
+        $parser->shouldReceive('parseFile')->once()->with(
+            Mockery::on(fn(SplFileInfo $file): bool => $file->getRealPath() === $this->fixturePath('plugin/src/Plugin.php')),
+            'Example',
+        )->andReturnUsing(static function (): Generator {
+            yield from [];
+        });
+
+        $scanner = $this->createScanner(['src/Plugin.php'], plugins: [
+            ['path' => $alias, 'plugin' => 'Example'],
+            ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
+        ], parser: $parser);
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
+        $basePaths = new ReflectionMethod($scanner, 'resolveBasePaths')->invoke($scanner);
+        $this->assertCount(2, $basePaths, var_export($basePaths, true));
+    }
+
+    /**
+     * A plugin installed only through a symlink must still be identified by name.
+     */
+    public function testScanAllIdentifiesSymlinkPlugin(): void
+    {
+        $alias = $this->createPluginSymlink();
+        $parser = Mockery::mock(Parser::class);
+        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Example')
+            ->andReturnUsing(static function (): Generator {
+                yield from [];
+            });
+        $scanner = $this->createScanner(
+            ['src/Plugin.php'],
+            plugins: [['path' => $alias, 'plugin' => 'Example']],
+            parser: $parser,
+        );
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
+    }
+
+    /**
+     * Plugin metadata must survive a plugin sharing the custom application root.
+     */
+    public function testScanAllPreservesPluginForSharedBasePath(): void
+    {
+        $parser = Mockery::mock(Parser::class);
+        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Example')
+            ->andReturnUsing(static function (): Generator {
+                yield from [];
+            });
+        $scanner = $this->createScanner(
+            ['src/Plugin.php'],
+            parser: $parser,
+            basePath: $this->scanRoot . '/plugin',
+        );
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertCount(1, $scanner->getScannedFiles());
+        $this->assertCount(1, new ReflectionMethod($scanner, 'resolveBasePaths')->invoke($scanner));
+    }
+
+    /**
+     * A sibling directory sharing a plugin path prefix must remain an application path.
+     */
+    public function testScanAllRequiresPluginDirectoryBoundary(): void
+    {
+        $parser = Mockery::mock(Parser::class);
+        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), null)
+            ->andReturnUsing(static function (): Generator {
+                yield from [];
+            });
+        $scanner = $this->createScanner(
+            ['plugin-extra/src/Other.php'],
+            parser: $parser,
+            basePath: $this->scanRoot,
+        );
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertSame([$this->fixturePath('plugin-extra/src/Other.php')], $scanner->getScannedFiles());
+    }
+
+    /**
+     * Nested plugins must use the most specific matching plugin root.
+     */
+    public function testScanAllIdentifiesNestedPlugin(): void
+    {
+        $parser = Mockery::mock(Parser::class);
+        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Nested')
+            ->andReturnUsing(static function (): Generator {
+                yield from [];
+            });
+        $scanner = $this->createScanner(
+            ['src/Controller/Example.php'],
+            plugins: [
+                ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
+                ['path' => $this->scanRoot . '/plugin/src', 'plugin' => 'Nested'],
+            ],
+            parser: $parser,
+        );
+
+        iterator_to_array($scanner->scanAll());
+        $this->assertSame([$this->fixturePath('plugin/src/Controller/Example.php')], $scanner->getScannedFiles());
+    }
+
+    /**
+     * Source-only scans must not enter unrelated plugin directories.
+     */
+    public function testScanAllScopesSourceTraversal(): void
+    {
+        $vendor = $this->scanRoot . '/plugin/vendor';
+        chmod($vendor, 0o000);
+        try {
+            if (is_readable($vendor)) {
+                $this->markTestSkipped('Directory permissions cannot prevent traversal on this platform.');
+            }
+            $scanner = $this->createScanner(['src/*.php', 'src/**/*.php']);
+            iterator_to_array($scanner->scanAll());
+
+            $this->assertCount(3, $scanner->getScannedFiles());
+            $this->assertContains($this->fixturePath('plugin/src/Plugin.php'), $scanner->getScannedFiles());
+            $this->assertContains($this->fixturePath('plugin/src/Controller/Example.php'), $scanner->getScannedFiles());
+        } finally {
+            chmod($vendor, 0o755);
+        }
+    }
+
+    /**
+     * Excluded directories must be pruned before recursive traversal.
+     */
+    public function testScanAllPrunesExcludedDirectories(): void
+    {
+        $vendor = $this->scanRoot . '/plugin/vendor';
+        $dependency = $this->fixturePath('plugin/vendor/package/Dependency.php');
+        chmod($vendor, 0o000);
+        try {
+            if (is_readable($vendor)) {
+                $this->markTestSkipped('Directory permissions cannot prevent traversal on this platform.');
+            }
+            $scanner = $this->createScanner(['**/*.php'], excludePaths: ['vendor']);
+            iterator_to_array($scanner->scanAll());
+
+            $this->assertCount(4, $scanner->getScannedFiles());
+            $this->assertNotContains($dependency, $scanner->getScannedFiles());
+        } finally {
+            chmod($vendor, 0o755);
+        }
+    }
+
+    /**
+     * Traversal optimization must retain the maximum file size filter.
+     */
+    public function testScanAllSkipsOversizedFiles(): void
+    {
+        $file = $this->scanRoot . '/plugin/src/Large.php';
+        $handle = fopen($file, 'w');
+        $this->assertNotFalse($handle);
+        ftruncate($handle, 10 * 1024 * 1024 + 1);
+        fclose($handle);
+
+        $scanner = $this->createScanner(['src/*.php', 'src/**/*.php']);
+        iterator_to_array($scanner->scanAll());
+
+        $this->assertCount(3, $scanner->getScannedFiles());
+        $this->assertNotContains($this->fixturePath('plugin/src/Large.php'), $scanner->getScannedFiles());
+    }
+
+    /**
+     * Scoping must preserve root-relative globs, explicit paths, and exclusions.
+     *
+     * @param array<string> $paths Glob patterns to scan
+     * @param array<string> $excludePaths Paths to exclude
+     * @param array<string> $expectedFiles Expected plugin-relative files
+     */
+    #[DataProvider('scanPatternProvider')]
+    public function testScanAllPreservesPatterns(array $paths, array $excludePaths, array $expectedFiles): void
+    {
+        $scanner = $this->createScanner($paths, excludePaths: $excludePaths, basePath: $this->scanRoot . '/missing');
+        iterator_to_array($scanner->scanAll());
+
+        $expected = array_map(fn(string $file): string => $this->fixturePath('plugin/' . $file), $expectedFiles);
+        $actual = $scanner->getScannedFiles();
+        sort($expected);
+        sort($actual);
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Provide scanner patterns whose meaning must survive traversal optimization.
+     *
+     * @return array<string, array{array<string>, array<string>, array<string>}>
+     */
+    public static function scanPatternProvider(): array
+    {
+        return [
+            'recursive source glob' => [['src/**/*.php'], [], ['src/Controller/Example.php']],
+            'direct source file' => [['src/Plugin.php'], [], ['src/Plugin.php']],
+            'backslash separators' => [['src\\*.php', 'src\\**\\*.php'], [], [
+                'src/Plugin.php', 'src/Controller/Example.php',
+            ]],
+            'custom plugin directory' => [['config/*.php'], [], ['config/routes.php']],
+            'source and config' => [['src/*.php', 'src/**/*.php', 'config/*.php'], [], [
+                'src/Plugin.php', 'src/Controller/Example.php', 'config/routes.php',
+            ]],
+            'broad glob' => [['**/*.php'], [], [
+                'src/Plugin.php', 'src/Controller/Example.php', 'config/routes.php', 'vendor/package/Dependency.php',
+            ]],
+            'excluded source root' => [['src/*.php', 'src/**/*.php'], ['src'], []],
+            'excluded source subdirectory' => [['src/*.php', 'src/**/*.php'], ['Controller'], ['src/Plugin.php']],
+            'excluded file' => [['src/*.php', 'src/**/*.php'], ['Plugin.php'], ['src/Controller/Example.php']],
+            'excluded path regex' => [['src/*.php', 'src/**/*.php'], ['#Controller/.*\.php$#'], ['src/Plugin.php']],
+        ];
+    }
+
+    /**
+     * Resolve fixture filenames with native separators and expanded directory aliases.
+     *
+     * @param string $path Fixture-relative filename
+     * @return string Canonical fixture filename
+     */
+    private function fixturePath(string $path): string
+    {
+        $resolved = realpath(FsFixture::path('attribute-scanner/' . $path));
+        assert($resolved !== false);
+
+        return $resolved;
+    }
+
+    /**
+     * Create a scanner with a controlled set of installed plugins.
+     *
+     * @param array<string> $paths Glob patterns to scan
+     * @param array<array{path: string, plugin: string}>|null $plugins Installed plugin paths
+     * @param array<string> $excludePaths Paths to exclude
+     * @param \Cake\AttributeResolver\Parser|null $parser Parser to use
+     * @param string|null $basePath Application base path
+     * @return \Cake\AttributeResolver\Scanner
+     */
+    private function createScanner(
+        array $paths,
+        ?array $plugins = null,
+        array $excludePaths = [],
+        ?Parser $parser = null,
+        ?string $basePath = null,
+    ): Scanner {
+        $scanner = Mockery::mock(Scanner::class, [
+            $parser ?? new Parser(), $paths, $excludePaths, $basePath ?? $this->scanRoot . '/app',
+        ])->makePartial()->shouldAllowMockingProtectedMethods();
+        $scanner->shouldReceive('getLoadedPlugins')->andReturn($plugins ?? [
+            ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
+        ]);
+
+        return $scanner;
+    }
+
+    /**
+     * Create a plugin alias when symbolic links are supported.
+     *
+     * @return string Alias path
+     */
+    private function createPluginSymlink(): string
+    {
+        $alias = $this->scanRoot . '/alias';
+        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- Skip platforms without symlink permissions.
+        if (!@symlink($this->scanRoot . '/plugin', $alias)) {
+            $this->markTestSkipped('Symbolic links are unavailable on this platform.');
+        }
+
+        return $alias;
     }
 }

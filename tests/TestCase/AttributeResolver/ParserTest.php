@@ -22,10 +22,17 @@ use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SplFileInfo;
 use TestApp\Attribute\Resolver\Enum\TestPriority;
+use TestApp\Attribute\Resolver\TestClassReference;
+use TestApp\Attribute\Resolver\TestRoute;
+use TestApp\Attribute\Resolver\TestStatus;
 use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
+/**
+ * Verify attribute discovery and reflection metadata for PHP declarations.
+ */
 class ParserTest extends TestCase
 {
     private Parser $parser;
@@ -423,5 +430,49 @@ PHP;
         $this->assertEquals(['test'], array_values($results[0]->arguments));
 
         unlink($filePath);
+    }
+
+    /**
+     * Class references and named arguments must not hide the declaring class.
+     *
+     * @param string $fixture Fixture class name
+     * @param array<string, mixed> $arguments Expected constructor arguments
+     */
+    #[DataProvider('classReferenceProvider')]
+    public function testParseClassReferences(string $fixture, array $arguments): void
+    {
+        $results = iterator_to_array(
+            $this->parser->parseFile(new SplFileInfo($this->testDataPath . $fixture . '.php')),
+            false,
+        );
+
+        $this->assertCount(1, $results);
+        $this->assertSame('TestApp\\Attribute\\Resolver\\Fixture\\' . $fixture, $results[0]->className);
+        $this->assertSame(TestClassReference::class, $results[0]->attributeName);
+        $this->assertSame($arguments, $results[0]->arguments);
+    }
+
+    /**
+     * Provide class references in positional and named attribute arguments.
+     *
+     * @return array<string, array{string, array<string, mixed>}>
+     */
+    public static function classReferenceProvider(): array
+    {
+        return [
+            'array of references' => ['TestClassReferences', [
+                'actions' => [TestRoute::class, TestStatus::class],
+            ]],
+            'reference followed by named argument' => ['TestClassReferenceWithFollowup', [
+                'actions' => ['index'],
+                'routeClass' => TestRoute::class,
+                'name' => 'list',
+            ]],
+            'class named argument with comments' => ['TestNamedClassArgument', [
+                'actions' => ['index'],
+                'name' => 'list',
+                'class' => TestRoute::class,
+            ]],
+        ];
     }
 }

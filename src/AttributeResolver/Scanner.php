@@ -16,15 +16,23 @@ declare(strict_types=1);
  */
 namespace Cake\AttributeResolver;
 
+use AppendIterator;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Core\PluginConfig;
 use Cake\Utility\Fs\Finder;
+use Cake\Utility\Fs\Iterator\CallbackFilterIterator;
+use Cake\Utility\Fs\Iterator\GlobFilterIterator;
+use Cake\Utility\Fs\Path;
 use EmptyIterator;
 use Generator;
 use Iterator;
+use SplFileInfo;
 use Throwable;
 
+/**
+ * Scan configured application and plugin paths for PHP attributes.
+ */
 class Scanner
 {
     /**
@@ -40,16 +48,18 @@ class Scanner
     private ?array $basePaths = null;
 
     /**
-     * List of files that were scanned.
+     * Files that were scanned, keyed by their canonical paths.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     private array $scannedFiles = [];
 
     /**
+     * Configure attribute parsing and source paths.
+     *
      * @param \Cake\AttributeResolver\Parser $parser Attribute parser
      * @param array<string> $paths Relative glob patterns to scan (e.g., ['src/**\/*.php'])
-     * @param array<string> $excludePaths Relative patterns to exclude (e.g., ['vendor/**', 'tests/**'])
+     * @param array<string> $excludePaths Directory names or path filters to exclude
      * @param string|null $basePath Base directory path (defaults to ROOT + all plugins)
      */
     public function __construct(
@@ -74,7 +84,10 @@ class Scanner
 
         foreach ($finder as $file) {
             $filePath = $file->getRealPath();
-            $this->scannedFiles[] = $filePath;
+            if ($filePath === false || isset($this->scannedFiles[$filePath])) {
+                continue;
+            }
+            $this->scannedFiles[$filePath] = $filePath;
 
             try {
                 $pluginName = $this->identifyPluginName($filePath);
@@ -93,11 +106,11 @@ class Scanner
      */
     public function getScannedFiles(): array
     {
-        return $this->scannedFiles;
+        return array_values($this->scannedFiles);
     }
 
     /**
-     * Resolve base paths with plugin information.
+     * Resolve canonical base paths, merging aliases while preserving plugin information.
      *
      * @return array<array{path: string, plugin: string|null}>
      */
@@ -116,9 +129,22 @@ class Scanner
             $basePaths[] = $pluginInfo;
         }
 
-        $this->basePaths = $basePaths;
+        $unique = [];
+        foreach ($basePaths as $baseInfo) {
+            $path = realpath($baseInfo['path']) ?: $baseInfo['path'];
+            if (DIRECTORY_SEPARATOR === '\\') {
+                // Windows can retain short directory names in an absolute symlink target.
+                $path = realpath($path) ?: $path;
+            }
+            $path = Path::normalize($path, true);
+            if (!isset($unique[$path]) || $unique[$path]['plugin'] === null) {
+                $unique[$path] = ['path' => $path, 'plugin' => $baseInfo['plugin']];
+            }
+        }
 
-        return $basePaths;
+        $this->basePaths = array_values($unique);
+
+        return $this->basePaths;
     }
 
     /**
@@ -176,9 +202,9 @@ class Scanner
     }
 
     /**
-     * Build a Finder instance for scanning files.
+     * Build file iterators, narrowing source-only scans while retaining root-relative globs.
      *
-     * @return \Iterator
+     * @return \Iterator<\SplFileInfo>
      */
     protected function buildFinder(): Iterator
     {
@@ -186,34 +212,36 @@ class Scanner
             return new EmptyIterator();
         }
 
-        $basePaths = $this->resolveBasePaths();
-        $directories = array_map(fn(array $info): string => $info['path'], $basePaths);
+        $sourceOnly = array_all(
+            $this->paths,
+            static fn(string $path): bool => str_starts_with(Path::normalize($path), 'src/'),
+        );
+        if ($sourceOnly && in_array('src', $this->excludePaths, true)) {
+            return new EmptyIterator();
+        }
 
-        $finder = new Finder();
-
-        // Add all base directories
-        foreach ($directories as $dir) {
-            if (is_dir($dir)) {
-                $finder->in($dir);
+        $append = new AppendIterator();
+        foreach ($this->resolveBasePaths() as $baseInfo) {
+            $directory = $sourceOnly ? Path::join($baseInfo['path'], 'src') : $baseInfo['path'];
+            if (!is_dir($directory)) {
+                continue;
             }
+
+            $finder = new Finder()->in($directory);
+            foreach ($this->excludePaths as $excludePattern) {
+                $finder->exclude($excludePattern);
+                $finder->notPath($excludePattern);
+            }
+
+            $files = new GlobFilterIterator($finder->files(), $this->paths, $baseInfo['path']);
+            $append->append(new CallbackFilterIterator(
+                $files,
+                static fn(SplFileInfo $file): bool => $file->getSize() <= self::MAX_FILE_SIZE,
+                $baseInfo['path'],
+            ));
         }
 
-        // Apply relative path patterns
-        foreach ($this->paths as $pattern) {
-            $finder->pattern($pattern);
-        }
-
-        // Apply exclusions
-        foreach ($this->excludePaths as $excludePattern) {
-            $finder->notPath($excludePattern);
-        }
-
-        // Filter out files larger than 10MB
-        $finder->filter(function ($file) {
-            return $file->getSize() <= self::MAX_FILE_SIZE;
-        });
-
-        return $finder->files();
+        return $append;
     }
 
     /**
@@ -224,12 +252,21 @@ class Scanner
      */
     private function identifyPluginName(string $filePath): ?string
     {
+        $filePath = str_replace('\\', '/', $filePath);
+        $pluginName = null;
+        $matchedLength = 0;
         foreach ($this->resolveBasePaths() as $baseInfo) {
-            if ($baseInfo['plugin'] !== null && str_starts_with($filePath, $baseInfo['path'])) {
-                return $baseInfo['plugin'];
+            if ($baseInfo['plugin'] === null) {
+                continue;
             }
+            $length = strlen($baseInfo['path']);
+            if ($length <= $matchedLength || !str_starts_with($filePath, $baseInfo['path'])) {
+                continue;
+            }
+            $pluginName = $baseInfo['plugin'];
+            $matchedLength = $length;
         }
 
-        return null;
+        return $pluginName;
     }
 }

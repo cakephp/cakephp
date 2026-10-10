@@ -43,30 +43,6 @@ message = "This closure does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
-file = "src/AttributeResolver/Scanner.php"
-code = "prefer-arrow-function"
-message = "This closure can be simplified to a more concise arrow function."
-count = 1
-
-[[issues]]
-file = "src/AttributeResolver/Scanner.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/AttributeResolver/Scanner.php"
-code = "prefer-static-closure"
-message = "This arrow function does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "src/AttributeResolver/Scanner.php"
-code = "prefer-static-closure"
-message = "This closure does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
 file = "src/Cache/CacheEngine.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
