@@ -523,7 +523,7 @@ trait CollectionTrait
     {
         $iterator = $this->optimizeUnwrap();
         if (is_array($iterator)) {
-            return array_pop($iterator);
+            return array_last($iterator);
         }
 
         if ($iterator instanceof Countable) {

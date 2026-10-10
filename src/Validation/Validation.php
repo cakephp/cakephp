@@ -553,7 +553,7 @@ class Validation
             return false;
         }
         if (is_array($dateFormat) && count($dateFormat) === 1) {
-            $dateFormat = reset($dateFormat);
+            $dateFormat = array_first($dateFormat);
         }
         if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;
@@ -574,7 +574,7 @@ class Validation
             if ($dateFormat === static::DATETIME_ISO8601) {
                 $dateFormat = 'ymd';
                 $time = preg_split("/[TZ\-\+\.]/", $time) ?: [];
-                $time = array_shift($time);
+                $time = array_first($time);
             }
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }
@@ -892,8 +892,7 @@ class Validation
             throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
         }
 
-        $firstKey = array_key_first($cases);
-        $firstValue = $cases[$firstKey];
+        $firstValue = array_first($cases);
         $enumClassName = $firstValue::class;
 
         $options = ['only' => $cases];
@@ -915,8 +914,7 @@ class Validation
             throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
         }
 
-        $firstKey = array_key_first($cases);
-        $firstValue = $cases[$firstKey];
+        $firstValue = array_first($cases);
         $enumClassName = $firstValue::class;
 
         $options = ['except' => $cases];
@@ -1054,7 +1052,7 @@ class Validation
         } elseif (is_array($check) && isset($check['name'])) {
             $check = $check['name'];
         } elseif (is_array($check)) {
-            return static::extension(array_shift($check), $extensions);
+            return static::extension(array_first($check), $extensions);
         }
 
         if (!$check) {

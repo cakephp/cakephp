@@ -157,12 +157,6 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: '#^Function array_first not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: src/I18n/Translator.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1

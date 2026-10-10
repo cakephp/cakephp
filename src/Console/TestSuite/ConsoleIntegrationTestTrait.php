@@ -101,7 +101,7 @@ trait ConsoleIntegrationTestTrait
         } catch (MissingConsoleInputException $e) {
             $messages = $this->out->messages();
             if ($messages !== []) {
-                $e->setQuestion($messages[count($messages) - 1]);
+                $e->setQuestion(array_last($messages));
             }
             throw $e;
         } catch (StopException $exception) {

@@ -662,7 +662,7 @@ class SmtpTransport extends AbstractTransport
                 throw new SocketException($response ?: 'SMTP timeout.');
             }
             $responseLines = explode("\r\n", rtrim($response, "\r\n"));
-            $response = end($responseLines);
+            $response = array_last($responseLines);
 
             $this->bufferResponseLines($responseLines);
 

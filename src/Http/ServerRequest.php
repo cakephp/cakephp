@@ -1021,10 +1021,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withQueryParams(array $query): static
     {
-        $new = clone $this;
-        $new->query = $query;
-
-        return $new;
+        return clone($this, ['query' => $query]);
     }
 
     /**
@@ -1311,10 +1308,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withCookieParams(array $cookies): static
     {
-        $new = clone $this;
-        $new->cookies = $cookies;
-
-        return $new;
+        return clone($this, ['cookies' => $cookies]);
     }
 
     /**
@@ -1385,10 +1379,8 @@ class ServerRequest implements ServerRequestInterface
         if (!preg_match('/^(1\.[01]|[23])\z/', $version)) {
             throw new InvalidArgumentException(sprintf('Unsupported protocol version `%s` provided.', $version));
         }
-        $new = clone $this;
-        $new->protocol = $version;
 
-        return $new;
+        return clone($this, ['protocol' => $version]);
     }
 
     /**
@@ -1659,10 +1651,8 @@ class ServerRequest implements ServerRequestInterface
     public function withUploadedFiles(array $uploadedFiles): static
     {
         $this->validateUploadedFiles($uploadedFiles, '');
-        $new = clone $this;
-        $new->uploadedFiles = $uploadedFiles;
 
-        return $new;
+        return clone($this, ['uploadedFiles' => $uploadedFiles]);
     }
 
     /**
@@ -1705,10 +1695,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withBody(StreamInterface $body): static
     {
-        $new = clone $this;
-        $new->stream = $body;
-
-        return $new;
+        return clone($this, ['stream' => $body]);
     }
 
     /**
@@ -1734,8 +1721,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
-        $new = clone $this;
-        $new->uri = $uri;
+        $new = clone($this, ['uri' => $uri]);
 
         if ($preserveHost && $this->hasHeader('Host')) {
             return $new;
@@ -1768,10 +1754,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withRequestTarget(string $requestTarget): static
     {
-        $new = clone $this;
-        $new->requestTarget = $requestTarget;
-
-        return $new;
+        return clone($this, ['requestTarget' => $requestTarget]);
     }
 
     /**

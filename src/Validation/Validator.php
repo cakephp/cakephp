@@ -524,7 +524,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $callable = [$provider, $method];
         } elseif (is_array($method) && !is_callable($method)) {
             $rule['pass'] = array_slice($method, 1);
-            $method = array_shift($method);
+            $method = array_first($method);
             $callable = [$provider, $method];
         } else {
             $callable = $method;

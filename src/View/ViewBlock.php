@@ -113,8 +113,8 @@ class ViewBlock
             return;
         }
 
-        $mode = end($this->active);
-        $active = key($this->active);
+        $mode = array_last($this->active);
+        $active = array_key_last($this->active);
         $content = (string)ob_get_clean();
         if ($mode === self::OVERRIDE) {
             $this->blocks[$active] = $content;

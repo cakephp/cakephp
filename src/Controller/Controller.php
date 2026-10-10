@@ -332,7 +332,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         triggerWarning(
             sprintf(
                 'Undefined property `%s::$%s` in `%s` on line %s',
-                array_pop($parts),
+                array_last($parts),
                 $name,
                 $trace[0]['file'] ?? 'unknown',
                 $trace[0]['line'] ?? 'unknown',
@@ -812,7 +812,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             // so the default HTML view is used instead of a lower-priority match
             // (e.g. application/xml at q=0.9 when text/html at q=1.0 was skipped).
             $parsed = $contentType->parseAccept($request);
-            $topGroup = reset($parsed) ?: [];
+            $topGroup = array_first($parsed) ?: [];
             if (
                 !in_array($preferredType, $topGroup, true) &&
                 array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
