@@ -20,6 +20,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\MariadbSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
 use PDO;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Mariadb Driver
@@ -108,5 +109,19 @@ class Mariadb extends Mysql
         }
 
         return $this->_version;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isMariadb(): bool
+    {
+        deprecationWarning(
+            '5.5.0',
+            'The isMariadb() method is deprecated.' .
+            'Use `instanceof Mariadb` instead for runtime checks.',
+        );
+
+        return true;
     }
 }
