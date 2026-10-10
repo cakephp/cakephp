@@ -7807,6 +7807,30 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Tests modern image extensions produce image submit inputs for local paths.
+     */
+    public function testSubmitModernImageFormats(): void
+    {
+        foreach (['jxl', 'webp', 'avif', 'avifs'] as $extension) {
+            $result = $this->Form->submit('submit.' . $extension);
+            $expected = [
+                'div' => ['class' => 'submit'],
+                'input' => ['type' => 'image', 'src' => 'img/submit.' . $extension],
+                '/div',
+            ];
+            $this->assertHtml($expected, $result);
+
+            $result = $this->Form->submit('/images/submit.' . $extension);
+            $expected = [
+                'div' => ['class' => 'submit'],
+                'input' => ['type' => 'image', 'src' => 'images/submit.' . $extension],
+                '/div',
+            ];
+            $this->assertHtml($expected, $result);
+        }
+    }
+
+    /**
      * testSubmitUnlockedByDefault method
      *
      * Submit buttons should be unlocked by default as there could be multiples, and only one will
