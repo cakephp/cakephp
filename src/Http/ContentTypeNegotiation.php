@@ -75,7 +75,7 @@ class ContentTypeNegotiation
             return null;
         }
         if (!$choices) {
-            $preferred = array_shift($parsed);
+            $preferred = array_first($parsed);
 
             return $preferred[0];
         }
@@ -83,7 +83,7 @@ class ContentTypeNegotiation
         foreach ($parsed as $acceptTypes) {
             $common = array_intersect($acceptTypes, $choices);
             if ($common) {
-                return array_shift($common);
+                return array_first($common);
             }
         }
 

@@ -469,10 +469,7 @@ class Cookie implements CookieInterface
      */
     public function withPath(string $path): static
     {
-        $new = clone $this;
-        $new->path = $path;
-
-        return $new;
+        return clone($this, ['path' => $path]);
     }
 
     /**
@@ -488,10 +485,7 @@ class Cookie implements CookieInterface
      */
     public function withDomain(string $domain): static
     {
-        $new = clone $this;
-        $new->domain = $domain;
-
-        return $new;
+        return clone($this, ['domain' => $domain]);
     }
 
     /**
@@ -515,10 +509,7 @@ class Cookie implements CookieInterface
      */
     public function withSecure(bool $secure): static
     {
-        $new = clone $this;
-        $new->secure = $secure;
-
-        return $new;
+        return clone($this, ['secure' => $secure]);
     }
 
     /**
@@ -526,10 +517,7 @@ class Cookie implements CookieInterface
      */
     public function withHttpOnly(bool $httpOnly): static
     {
-        $new = clone $this;
-        $new->httpOnly = $httpOnly;
-
-        return $new;
+        return clone($this, ['httpOnly' => $httpOnly]);
     }
 
     /**

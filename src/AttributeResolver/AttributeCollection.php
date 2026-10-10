@@ -211,7 +211,7 @@ class AttributeCollection implements IteratorAggregate, Countable
             return null;
         }
 
-        return $this->hydrate(reset($ids));
+        return $this->hydrate(array_first($ids));
     }
 
     /**

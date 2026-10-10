@@ -2807,10 +2807,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $args = $unNamedArgs + array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
-            $lastParam = end($params);
-            reset($params);
+            $lastParam = array_last($params);
 
-            if ($lastParam === false || !$lastParam->isVariadic()) {
+            if ($lastParam === null || !$lastParam->isVariadic()) {
                 $paramNames = [];
                 foreach ($params as $param) {
                     $paramNames[] = $param->getName();

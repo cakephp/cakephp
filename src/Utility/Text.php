@@ -1006,13 +1006,13 @@ class Text
 
         foreach ($array as $utf8) {
             if ($utf8 < 128) {
-                $ascii .= chr($utf8);
+                $ascii .= chr($utf8 & 0xff);
             } elseif ($utf8 < 2048) {
-                $ascii .= chr(192 + (int)(($utf8 - ($utf8 % 64)) / 64));
+                $ascii .= chr(192 + (int)(($utf8 - ($utf8 % 64)) / 64) & 0xff);
                 $ascii .= chr(128 + ($utf8 % 64));
             } else {
-                $ascii .= chr(224 + (int)(($utf8 - ($utf8 % 4096)) / 4096));
-                $ascii .= chr(128 + (int)((($utf8 % 4096) - ($utf8 % 64)) / 64));
+                $ascii .= chr(224 + (int)(($utf8 - ($utf8 % 4096)) / 4096) & 0xff);
+                $ascii .= chr(128 + (int)((($utf8 % 4096) - ($utf8 % 64)) / 64) & 0xff);
                 $ascii .= chr(128 + ($utf8 % 64));
             }
         }

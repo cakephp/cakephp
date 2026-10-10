@@ -4,7 +4,7 @@ includes:
 parameters:
 	level: 8
 	phpVersion:
-		min: 80400
+		min: 80500
 		max: 80599
 	treatPhpDocTypesAsCertain: false
 	featureToggles:
