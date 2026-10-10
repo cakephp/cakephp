@@ -400,7 +400,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->table === null) {
             $table = namespaceSplit(static::class);
-            $table = substr((string)end($table), 0, -5) ?: $this->alias;
+            $table = substr((string)array_last($table), 0, -5) ?: $this->alias;
             if (!$table) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.',
@@ -434,7 +434,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if ($this->alias === null) {
             $alias = namespaceSplit(static::class);
-            $alias = substr((string)end($alias), 0, -5) ?: $this->table;
+            $alias = substr((string)array_last($alias), 0, -5) ?: $this->table;
             if (!$alias) {
                 throw new CakeException(
                     'You must specify either the `alias` or the `table` option for the constructor.',
@@ -2807,10 +2807,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $args = $unNamedArgs + array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
-            $lastParam = end($params);
-            reset($params);
+            $lastParam = array_last($params);
 
-            if ($lastParam === false || !$lastParam->isVariadic()) {
+            if ($lastParam === null || !$lastParam->isVariadic()) {
                 $paramNames = [];
                 foreach ($params as $param) {
                     $paramNames[] = $param->getName();

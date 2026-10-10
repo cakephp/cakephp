@@ -70,9 +70,6 @@
     <NoValue>
       <code><![CDATA[return $this->capturedError;]]></code>
     </NoValue>
-    <UndefinedVariable>
-      <code><![CDATA[$previousHandler]]></code>
-    </UndefinedVariable>
   </file>
   <file src="src/Validation/Validator.php">
     <TaintedCallable>

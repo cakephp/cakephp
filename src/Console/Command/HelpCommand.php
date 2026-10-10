@@ -481,7 +481,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return strlen($a) - strlen($b);
         });
 
-        return array_shift($names);
+        return array_first($names);
     }
 
     /**

@@ -148,7 +148,7 @@ class FormContext implements ContextInterface
         $parts = explode('.', $field);
 
         $validator = $this->form->getValidator($this->validator);
-        $fieldName = array_pop($parts);
+        $fieldName = array_last($parts);
         if (!$validator->hasField($fieldName)) {
             return null;
         }

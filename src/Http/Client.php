@@ -601,7 +601,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         }
 
         /** @var \Cake\Http\Client\Response */
-        return array_pop($responses);
+        return array_last($responses);
     }
 
     /**

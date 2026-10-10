@@ -163,7 +163,7 @@ class AttributesInspectCommand extends Command
     {
         $parts = explode('\\', $className);
 
-        return end($parts);
+        return array_last($parts);
     }
 
     /**

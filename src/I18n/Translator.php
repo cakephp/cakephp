@@ -120,7 +120,7 @@ class Translator
         if (is_array($message)) {
             $count = $tokensValues['_count'] ?? 0;
             $form = PluralRules::calculate($this->locale, (int)$count);
-            $message = $message[$form] ?? (string)end($message);
+            $message = $message[$form] ?? (string)array_last($message);
         }
 
         if ($message === '') {

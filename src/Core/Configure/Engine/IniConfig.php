@@ -106,7 +106,7 @@ class IniConfig implements ConfigEngineInterface
                     $values[$section] = $this->parseNestedValues($attribs);
                 } else {
                     $parse = $this->parseNestedValues([$attribs]);
-                    $values[$section] = array_shift($parse);
+                    $values[$section] = array_first($parse);
                 }
             }
         }

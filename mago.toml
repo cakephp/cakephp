@@ -5,7 +5,7 @@
 extends = "vendor/cakephp/mago-rules/cakephp.mago.toml"
 
 version = "1"
-php-version = "8.4.0"
+php-version = "8.5.0"
 
 [source]
 workspace = "."

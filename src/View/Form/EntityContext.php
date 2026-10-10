@@ -183,7 +183,7 @@ class EntityContext implements ContextInterface
         }
         $primaryKey = (array)$table->getPrimaryKey();
 
-        return in_array(array_pop($parts), $primaryKey, true);
+        return in_array(array_last($parts), $primaryKey, true);
     }
 
     /**
@@ -240,12 +240,12 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
         $entity = $this->entity($parts);
 
-        if ($entity && end($parts) === '_ids') {
+        if ($entity && array_last($parts) === '_ids') {
             return $this->extractMultiple($entity, $parts);
         }
 
         if ($entity instanceof EntityInterface) {
-            $part = end($parts);
+            $part = array_last($parts);
 
             if ($entity instanceof InvalidPropertyInterface) {
                 $val = $entity->getInvalidField($part);
@@ -269,7 +269,7 @@ class EntityContext implements ContextInterface
             return $this->schemaDefault($parts);
         }
         if (is_array($entity) || $entity instanceof ArrayAccess) {
-            $key = array_pop($parts);
+            $key = array_last($parts);
 
             return $entity[$key] ?? $options['default'];
         }
@@ -289,9 +289,9 @@ class EntityContext implements ContextInterface
         if ($table === null) {
             return null;
         }
-        $field = end($parts);
+        $field = array_last($parts);
         $defaults = $table->getSchema()->defaultValues();
-        if ($field === false || !array_key_exists($field, $defaults)) {
+        if ($field === null || !array_key_exists($field, $defaults)) {
             return null;
         }
 
@@ -488,7 +488,7 @@ class EntityContext implements ContextInterface
         }
 
         $validator = $this->getValidator($parts);
-        $fieldName = array_pop($parts);
+        $fieldName = array_last($parts);
 
         if (!$validator->hasField($fieldName)) {
             return null;
@@ -514,7 +514,7 @@ class EntityContext implements ContextInterface
         $parts = explode('.', $field);
 
         $validator = $this->getValidator($parts);
-        $fieldName = array_pop($parts);
+        $fieldName = array_last($parts);
         if (!$validator->hasField($fieldName)) {
             return null;
         }
@@ -537,7 +537,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
         $validator = $this->getValidator($parts);
-        $fieldName = array_pop($parts);
+        $fieldName = array_last($parts);
 
         if ($validator->hasField($fieldName)) {
             foreach ($validator->field($fieldName)->rules() as $rule) {
@@ -681,7 +681,7 @@ class EntityContext implements ContextInterface
     {
         $parts = explode('.', $field);
 
-        return $this->getTable($parts)?->getSchema()->baseColumnType(array_pop($parts));
+        return $this->getTable($parts)?->getSchema()->baseColumnType(array_last($parts));
     }
 
     /**
@@ -699,7 +699,7 @@ class EntityContext implements ContextInterface
         }
 
         return array_intersect_key(
-            (array)$table->getSchema()->getColumn(array_pop($parts)),
+            (array)$table->getSchema()->getColumn(array_last($parts)),
             array_flip(static::VALID_ATTRIBUTES),
         );
     }
@@ -743,7 +743,7 @@ class EntityContext implements ContextInterface
                 return $error;
             }
 
-            return $entity->getError(array_pop($parts));
+            return $entity->getError(array_last($parts));
         }
 
         return [];
