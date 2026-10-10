@@ -273,7 +273,22 @@ jobs:
 
       - name: Run mago linter
         if: always()
-        run: vendor/bin/mago lint --fail-on-out-of-sync-baseline
+        run: |
+          status=0
+          vendor/bin/mago lint --fail-on-out-of-sync-baseline || status=$?
+          if [ "$status" -ne 0 ]; then
+            report="$RUNNER_TEMP/mago-baseline-report.json"
+            vendor/bin/mago lint --verify-baseline --reporting-format json > "$report" 2>/dev/null || true
+            jq -r '
+              .removed_issues
+              | select(length > 0)
+              | "Outdated Mago baseline entries (remove or reduce these occurrences):",
+                (group_by([.file, .code, .start_line, .end_line])[]
+                  | "\(.[0].file)\(if .[0].start_line > 0 then ":\(.[0].start_line)" else "" end): \(.[0].code) (\(length) obsolete occurrence(s))"),
+                "Run `vendor/bin/mago lint --remove-outdated-baseline-entries` to update the baseline."
+            ' "$report" || true
+          fi
+          exit "$status"
 
       - name: Run phpstan
         if: always()
