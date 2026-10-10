@@ -4318,8 +4318,7 @@ class SelectQueryTest extends TestCase
      */
     public function testOrderBySubquery(): void
     {
-        $this->autoQuote = true;
-        $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
+        $this->connection->getDriver()->enableAutoQuoting(true);
 
         $connection = $this->connection;
 
@@ -4597,7 +4596,7 @@ class SelectQueryTest extends TestCase
             ->where(['CONCAT(first_name, " ", last_name) in' => ['foo bar', 'baz 42']]);
 
         $this->assertSame(
-            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
+            'SELECT id FROM profiles WHERE CONCAT(first_name, " ", last_name) IN (:c0,:c1)',
             $query->sql(),
         );
 
@@ -4607,7 +4606,7 @@ class SelectQueryTest extends TestCase
             ->where(['CONCAT(first_name, " ", last_name) IN' => ['foo bar', 'baz 42']]);
 
         $this->assertSame(
-            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
+            'SELECT id FROM profiles WHERE CONCAT(first_name, " ", last_name) IN (:c0,:c1)',
             $query->sql(),
         );
 
@@ -4617,7 +4616,7 @@ class SelectQueryTest extends TestCase
             ->where(['CONCAT(first_name, " ", last_name) not in' => ['foo bar', 'baz 42']]);
 
         $this->assertSame(
-            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
+            'SELECT id FROM profiles WHERE CONCAT(first_name, " ", last_name) NOT IN (:c0,:c1)',
             $query->sql(),
         );
 
@@ -4627,7 +4626,7 @@ class SelectQueryTest extends TestCase
             ->where(['CONCAT(first_name, " ", last_name) NOT IN' => ['foo bar', 'baz 42']]);
 
         $this->assertSame(
-            'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
+            'SELECT id FROM profiles WHERE CONCAT(first_name, " ", last_name) NOT IN (:c0,:c1)',
             $query->sql(),
         );
     }
