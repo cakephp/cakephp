@@ -22,6 +22,7 @@ use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Response;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
+use Uri\WhatWg\Url;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -126,7 +127,7 @@ class Stream implements AdapterInterface
         $this->buildOptions($request, $options);
 
         $url = $request->getUri();
-        $scheme = parse_url((string)$url, PHP_URL_SCHEME);
+        $scheme = new Url((string)$url)->getScheme();
         if ($scheme === 'https') {
             $this->buildSslContext($request, $options);
         }
@@ -220,7 +221,7 @@ class Stream implements AdapterInterface
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
-            $host = parse_url((string)$url, PHP_URL_HOST);
+            $host = new Url((string)$url)->getUnicodeHost();
             $this->sslContextOptions['peer_name'] = $host;
         }
         foreach ($sslOptions as $key) {

@@ -19,6 +19,7 @@ namespace Cake\Routing;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use Uri\Rfc3986\Uri;
 use function Cake\Core\pluginSplit;
 
 /**
@@ -215,8 +216,8 @@ class Asset
      */
     protected static function encodeUrl(string $url): string
     {
-        $path = parse_url($url, PHP_URL_PATH);
-        if ($path === false || $path === null) {
+        $path = Uri::parse($url)?->getRawPath();
+        if ($path === null || $path === '') {
             $path = $url;
         }
 

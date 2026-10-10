@@ -26,6 +26,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use ReflectionFunction;
 use Throwable;
+use Uri\WhatWg\Url;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -575,11 +576,11 @@ class Router
             static::$fullBaseUrl = $base;
         }
 
-        $parts = parse_url(static::$fullBaseUrl);
+        $uri = new Url(static::$fullBaseUrl);
         static::$requestContext = [
-            '_scheme' => $parts['scheme'] ?? null,
-            '_host' => $parts['host'] ?? null,
-            '_port' => $parts['port'] ?? null,
+            '_scheme' => $uri->getScheme(),
+            '_host' => $uri->getUnicodeHost(),
+            '_port' => $uri->getPort(),
         ] + static::$requestContext;
 
         return static::$fullBaseUrl;

@@ -35,6 +35,7 @@ use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Uri\WhatWg\Url;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -228,25 +229,19 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function createFromUrl(string $url): static
     {
-        $parts = parse_url($url);
+        $uri = new Url($url);
+        $host = $uri->getUnicodeHost();
 
-        if ($parts === false) {
-            throw new InvalidArgumentException(sprintf(
-                'String `%s` did not parse.',
-                $url,
-            ));
+        if ($host === '') {
+            throw new InvalidArgumentException('The URL does not contain a host');
         }
 
-        $config = array_intersect_key($parts, ['scheme' => '', 'port' => '', 'host' => '', 'path' => '']);
-
-        if (empty($config['scheme']) || empty($config['host'])) {
-            throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
-        }
-
-        if (isset($config['path'])) {
-            $config['basePath'] = $config['path'];
-            unset($config['path']);
-        }
+        $config = [
+            'scheme' => $uri->getScheme(),
+            'host' => $host,
+            'port' => $uri->getPort(),
+            'basePath' => $uri->getPath(),
+        ];
 
         return new static($config);
     }
