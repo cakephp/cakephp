@@ -28,7 +28,7 @@ class ValueBinder
      * object. Each array entry is another array structure containing the actual
      * bound value, its type and the placeholder it is bound to.
      *
-     * @var array
+     * @var array<string|int, array{value: mixed, type: string|int|null, placeholder: string|int}>
      */
     protected array $bindings = [];
 
@@ -103,7 +103,7 @@ class ValueBinder
      * Returns all values bound to this expression object at this nesting level.
      * Subexpression bound values will not be returned with this function.
      *
-     * @return array
+     * @return array<string|int, array{value: mixed, type: string|int|null, placeholder: string|int}>
      */
     public function bindings(): array
     {

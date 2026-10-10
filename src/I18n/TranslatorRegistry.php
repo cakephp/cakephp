@@ -454,8 +454,11 @@ class TranslatorRegistry
         }
 
         return function () use ($loader, $fallbackDomain) {
-            /** @var \Cake\I18n\Package $package */
+            /** @var \Cake\I18n\Package|false $package */
             $package = $loader();
+            if (!$package) {
+                $package = new Package();
+            }
             if (!$package->getFallback()) {
                 $package->setFallback($fallbackDomain);
             }

@@ -1033,11 +1033,12 @@ abstract class TestCase extends BaseTestCase
     /**
      * Mock a model with PHPUnit mocks, maintain fixtures and table association
      *
-     * @param string $alias The model to get a mock for.
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T>|string $alias The model to get a mock for.
      * @param array<string> $methods The list of methods to mock
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return \Cake\ORM\Table&\PHPUnit\Framework\MockObject\MockObject
+     * @return ($alias is class-string<T> ? T&\PHPUnit\Framework\MockObject\MockObject : \Cake\ORM\Table&\PHPUnit\Framework\MockObject\MockObject)
      */
     public function getMockForModel(string $alias, array $methods = [], array $options = []): Table&MockObject
     {
@@ -1083,7 +1084,7 @@ abstract class TestCase extends BaseTestCase
      * @template T of \Cake\ORM\Table
      * @param class-string<T>|string $alias The alias or the FQCN of the model to get a mock for.
      * @param array<string, mixed> $options The config data for the mock's constructor.
-     * @return (T|\Cake\ORM\Table)&\Mockery\LegacyMockInterface
+     * @return ($alias is class-string<T> ? T&\Mockery\LegacyMockInterface : \Cake\ORM\Table&\Mockery\LegacyMockInterface)
      */
     public function mockModel(string $alias, array $options = []): Table&LegacyMockInterface
     {

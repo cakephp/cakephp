@@ -157,7 +157,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Patchable configuration for this entity.
      *
-     * @return array<bool>
+     * @return array<string, bool>
      */
     public function getPatchable(): array;
 
@@ -278,7 +278,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets all original values of the entity.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOriginalValues(): array;
 

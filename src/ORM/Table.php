@@ -1678,14 +1678,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Handles the logic executing of a worker inside a transaction.
      *
-     * @param \Closure $worker The worker that will run inside the transaction.
+     * @param \Closure():mixed $worker The worker that will run inside the transaction.
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
      */
     protected function executeTransaction(Closure $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
-            return $this->getConnection()->transactional($worker(...));
+            return $this->getConnection()->transactional($worker);
         }
 
         return $worker();
@@ -2392,7 +2392,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TSavedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TSavedEntity> $entities Entities to save.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TSavedEntity>|false False on failure, entities list on success.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>)|false False on failure, entities list on success.
      * @throws \Exception
      */
     public function saveMany(
@@ -2416,7 +2416,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TSavedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TSavedEntity> $entities Entities to save.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TSavedEntity> Entities list.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>) Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
@@ -2431,7 +2431,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
-     * @return iterable<TSavedEntity> Entities list.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>) Entities list.
      */
     protected function doSaveMany(
         iterable $entities,
@@ -2578,7 +2578,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TDeletedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TDeletedEntity> $entities Entities to delete.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TDeletedEntity>|false Entities list
+     * @return ($entities is array ? array<TDeletedEntity> : iterable<TDeletedEntity>)|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -3345,7 +3345,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param TEntity|array<TEntity> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query\SelectQuery::contain()
-     * @return TEntity|array<TEntity>
+     * @return ($entities is array ? array<TEntity> : TEntity)
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {
