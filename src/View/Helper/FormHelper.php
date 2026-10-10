@@ -1339,7 +1339,7 @@ class FormHelper extends Helper
         if ($internalType !== null && isset($map[$internalType])) {
             $type = $map[$internalType];
         }
-        $fieldName = array_slice(explode('.', $fieldName), -1)[0];
+        $fieldName = array_last(explode('.', $fieldName));
 
         return match (true) {
             isset($options['checked']) => 'checkbox',
@@ -1388,7 +1388,7 @@ class FormHelper extends Helper
         } elseif (str_ends_with($fieldName, '_id')) {
             $fieldName = substr($fieldName, 0, -3);
         }
-        $fieldName = array_slice(explode('.', $fieldName), -1)[0];
+        $fieldName = array_last(explode('.', $fieldName));
 
         $varName = Inflector::variable(
             $pluralize ? Inflector::pluralize($fieldName) : $fieldName,

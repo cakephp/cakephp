@@ -400,6 +400,24 @@ XML;
     }
 
     /**
+     * Test updating the status preserves the original response and its other contents.
+     */
+    public function testWithStatus(): void
+    {
+        $response = new Response(['HTTP/1.0 200 OK', 'Content-Type: text/plain'], 'response body');
+
+        $updated = $response->withStatus(202, 'Accepted');
+
+        $this->assertNotSame($response, $updated);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('OK', $response->getReasonPhrase());
+        $this->assertSame(202, $updated->getStatusCode());
+        $this->assertSame('Accepted', $updated->getReasonPhrase());
+        $this->assertSame($response->getHeaders(), $updated->getHeaders());
+        $this->assertSame($response->getBody(), $updated->getBody());
+    }
+
+    /**
      * Test reading the encoding out.
      */
     public function testGetEncoding(): void

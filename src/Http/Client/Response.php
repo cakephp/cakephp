@@ -260,11 +260,7 @@ class Response extends Message implements ResponseInterface
      */
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
-        $new = clone $this;
-        $new->code = $code;
-        $new->reasonPhrase = $reasonPhrase;
-
-        return $new;
+        return clone($this, ['code' => $code, 'reasonPhrase' => $reasonPhrase]);
     }
 
     /**

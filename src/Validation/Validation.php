@@ -892,8 +892,7 @@ class Validation
             throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
         }
 
-        $firstKey = array_key_first($cases);
-        $firstValue = $cases[$firstKey];
+        $firstValue = array_first($cases);
         $enumClassName = $firstValue::class;
 
         $options = ['only' => $cases];
@@ -915,8 +914,7 @@ class Validation
             throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
         }
 
-        $firstKey = array_key_first($cases);
-        $firstValue = $cases[$firstKey];
+        $firstValue = array_first($cases);
         $enumClassName = $firstValue::class;
 
         $options = ['except' => $cases];
