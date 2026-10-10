@@ -277,11 +277,16 @@ jobs:
           status=0
           vendor/bin/mago lint --fail-on-out-of-sync-baseline || status=$?
           if [ "$status" -ne 0 ]; then
-            baseline="$RUNNER_TEMP/mago-lint-baseline.toml"
-            cp mago-lint-baseline.toml "$baseline"
-            vendor/bin/mago lint --baseline "$baseline" --remove-outdated-baseline-entries || true
-            diff -u --label a/mago-lint-baseline.toml --label b/mago-lint-baseline.toml \
-              mago-lint-baseline.toml "$baseline" || true
+            report="$RUNNER_TEMP/mago-baseline-report.json"
+            vendor/bin/mago lint --verify-baseline --reporting-format json > "$report" 2>/dev/null || true
+            jq -r '
+              .removed_issues
+              | select(length > 0)
+              | "Outdated Mago baseline entries (remove or reduce these occurrences):",
+                (group_by([.file, .code, .start_line, .end_line])[]
+                  | "\(.[0].file)\(if .[0].start_line > 0 then ":\(.[0].start_line)" else "" end): \(.[0].code) (\(length) obsolete occurrence(s))"),
+                "Run `vendor/bin/mago lint --remove-outdated-baseline-entries` to update the baseline."
+            ' "$report" || true
           fi
           exit "$status"
 
