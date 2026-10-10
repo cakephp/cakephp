@@ -29,9 +29,9 @@ use PDO;
  */
 class MariadbTest extends MysqlTest
 {
-    protected $driverClass = Mariadb::class;
+    protected string $driverClass = Mariadb::class;
 
-    protected $driverName = 'Mariadb';
+    protected string $driverName = 'Mariadb';
 
     public static function versionStringProvider(): array
     {

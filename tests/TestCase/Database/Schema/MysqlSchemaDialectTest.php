@@ -43,9 +43,9 @@ class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
 
-    protected $schemaDialectClass = MysqlSchemaDialect::class;
+    protected string $schemaDialectClass = MysqlSchemaDialect::class;
 
-    protected $driverClass = Mysql::class;
+    protected string $driverClass = Mysql::class;
 
     /**
      * Helper method for skipping tests that need a real connection.
@@ -427,6 +427,7 @@ SQL;
      */
     public function testDescribeTable(): void
     {
+        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 

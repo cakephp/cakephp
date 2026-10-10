@@ -37,12 +37,12 @@ class MysqlTest extends TestCase
     /**
      * The driver class name being tested.
      */
-    protected $driverClass = Mysql::class;
+    protected string $driverClass = Mysql::class;
 
     /**
      * The driver name
      */
-    protected $driverName = 'Mysql';
+    protected string $driverName = 'Mysql';
 
     /**
      * setup

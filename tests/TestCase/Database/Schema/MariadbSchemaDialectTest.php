@@ -32,9 +32,9 @@ use Mockery;
  */
 class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
 {
-    protected $schemaDialectClass = MariadbSchemaDialect::class;
+    protected string $schemaDialectClass = MariadbSchemaDialect::class;
 
-    protected $driverClass = Mariadb::class;
+    protected string $driverClass = Mariadb::class;
 
     /**
      * Helper method for skipping tests that need a real connection.
