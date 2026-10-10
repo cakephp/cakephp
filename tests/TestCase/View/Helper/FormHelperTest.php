@@ -7804,13 +7804,7 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
-    }
 
-    /**
-     * Tests modern image extensions produce image submit inputs for local paths.
-     */
-    public function testSubmitModernImageFormats(): void
-    {
         foreach (['jxl', 'webp', 'avif', 'avifs'] as $extension) {
             $result = $this->Form->submit('submit.' . $extension);
             $expected = [
