@@ -54,7 +54,7 @@ class EventFiredWith extends Constraint
                 ->toArray();
         }
 
-        if (!array_key_exists($other, $eventGroup)) {
+        if (!array_key_exists((string)$other, $eventGroup)) {
             return false;
         }
 

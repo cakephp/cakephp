@@ -605,7 +605,7 @@ class Route
     protected function persistParams(array $url, array $params): array
     {
         foreach ($this->options['persist'] as $persistKey) {
-            if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
+            if (array_key_exists((string)$persistKey, $params) && !isset($url[$persistKey])) {
                 $url[$persistKey] = $params[$persistKey];
             }
         }
@@ -810,7 +810,7 @@ class Route
         $search = [];
         $replace = [];
         foreach ($this->keys as $key) {
-            if (!array_key_exists($key, $params)) {
+            if (!array_key_exists((string)$key, $params)) {
                 throw new InvalidArgumentException(sprintf(
                     'Missing required route key `%s`.',
                     $key,

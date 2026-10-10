@@ -82,7 +82,6 @@ return RectorConfig::configure()
         \Rector\Php73\Rector\FuncCall\StringifyStrNeedlesRector::class,
         \Rector\Php73\Rector\String_\SensitiveHereNowDocRector::class,
         \Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector::class,
-        \Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector::class,
         \Rector\Php81\Rector\Property\ReadOnlyPropertyRector::class,
         \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         \Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector::class,
@@ -105,7 +104,6 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector::class,
         \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector::class,
         \Rector\TypeDeclaration\Rector\While_\WhileNullableToInstanceofRector::class,
-        \Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class,
         \Rector\Php85\Rector\Property\AddOverrideAttributeToOverriddenPropertiesRector::class,
         \Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector::class,
 

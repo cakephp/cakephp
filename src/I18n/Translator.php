@@ -105,7 +105,7 @@ class Translator
         if (!$tokensValues) {
             // Fallback for plurals that were using the singular key
             if (is_array($message)) {
-                return array_values($message + [''])[0];
+                return array_first($message + ['']);
             }
 
             return $message;

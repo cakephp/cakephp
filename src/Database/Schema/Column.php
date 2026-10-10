@@ -75,21 +75,33 @@ class Column
     }
 
     /**
-     * Re-initializes nullable properties that may be absent when unserializing
-     * column data produced by an older CakePHP version.
+     * Serializes column data.
      *
-     * Nullable column attributes were added incrementally (e.g. `geometryType`
-     * and `fixed` after `Column` first shipped). A serialized payload created
-     * before a given promoted property existed does not contain it, and PHP does
-     * not apply the promoted default on the unserialize path. Reading such a
-     * property would otherwise fail with "Typed property ...::$fixed must not be
-     * accessed before initialization". This surfaces via the schema metadata
-     * cache and the Migrations plugin's `schema-dump-*.lock` files.
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return get_object_vars($this);
+    }
+
+    /**
+     * Unserializes column data.
      *
+     * @param array $data The data to unserialize
      * @return void
      */
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
+        // Re-initializes nullable properties that may be absent when unserializing
+        // column data produced by an older CakePHP version.
+        //
+        // Nullable column attributes were added incrementally (e.g. `geometryType`
+        // and `fixed` after `Column` first shipped). A serialized payload created
+        // before a given promoted property existed does not contain it, and PHP does
+        // not apply the promoted default on the unserialize path. Reading such a
+        // property would otherwise fail with "Typed property ...::$fixed must not be
+        // accessed before initialization". This surfaces via the schema metadata
+        // cache and the Migrations plugin's `schema-dump-*.lock` files.
         $this->null ??= null;
         $this->length ??= null;
         $this->generated ??= null;
@@ -105,6 +117,10 @@ class Column
         $this->baseType ??= null;
         $this->fixed ??= null;
         $this->charset ??= null;
+
+        foreach ($data as $property => $value) {
+            $this->{$property} = $value;
+        }
     }
 
     /**
