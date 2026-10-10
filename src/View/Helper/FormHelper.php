@@ -811,7 +811,7 @@ class FormHelper extends Helper
                     'content' => implode('', $errorText),
                 ]);
             } else {
-                $error = array_pop($error);
+                $error = array_last($error);
             }
         }
 

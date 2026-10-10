@@ -1276,7 +1276,7 @@ trait EntityTrait
             }
         }
         if (count($path) <= 1) {
-            return $this->readError($entity, array_pop($path));
+            return $this->readError($entity, array_last($path));
         }
 
         return [];

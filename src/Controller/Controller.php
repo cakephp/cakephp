@@ -332,7 +332,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         triggerWarning(
             sprintf(
                 'Undefined property `%s::$%s` in `%s` on line %s',
-                array_pop($parts),
+                array_last($parts),
                 $name,
                 $trace[0]['file'] ?? 'unknown',
                 $trace[0]['line'] ?? 'unknown',

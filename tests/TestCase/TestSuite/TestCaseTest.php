@@ -205,10 +205,37 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * Tests forwarding unrelated errors and restoring the previous handler.
+     */
+    #[WithoutErrorHandler]
+    public function testDeprecatedWithPreviousErrorHandler(): void
+    {
+        $errors = [];
+        $handler = function (int $code, string $message) use (&$errors): bool {
+            $errors[] = [$code, $message];
+
+            return true;
+        };
+        set_error_handler($handler);
+        try {
+            $this->deprecated(function (): void {
+                trigger_error('warning message', E_USER_WARNING);
+                trigger_error('deprecation message', E_USER_DEPRECATED);
+            });
+
+            $this->assertSame([[E_USER_WARNING, 'warning message']], $errors);
+            $this->assertSame($handler, get_error_handler());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    /**
      * test deprecated with assert after trigger warning
      */
     public function testDeprecatedWithAssertAfterTriggerWarning(): void
     {
+        $previousHandler = get_error_handler();
         try {
             $this->deprecated(function (): void {
                 trigger_error('deprecation message', E_USER_DEPRECATED);
@@ -218,6 +245,8 @@ class TestCaseTest extends TestCase
             $this->fail();
         } catch (Exception $e) {
             $this->assertStringContainsString('A random message', $e->getMessage());
+        } finally {
+            $this->assertSame($previousHandler, get_error_handler());
         }
     }
 

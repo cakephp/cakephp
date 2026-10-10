@@ -58,7 +58,7 @@ class LazyEagerLoader
         $entities = $this->injectResults($entities, $query, $associations, $source);
 
         /** @var \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> */
-        return $returnSingle ? array_shift($entities) : $entities;
+        return $returnSingle ? array_first($entities) : $entities;
     }
 
     /**

@@ -179,7 +179,8 @@ abstract class TestCase extends BaseTestCase
         /** @var bool $deprecation Expand type for psalm */
         $deprecation = false;
 
-        $previousHandler = set_error_handler(
+        $previousHandler = get_error_handler();
+        set_error_handler(
             function (
                 $code,
                 $message,
@@ -187,7 +188,7 @@ abstract class TestCase extends BaseTestCase
                 $line,
                 $context = null,
             ) use (
-                &$previousHandler,
+                $previousHandler,
                 &$deprecation,
                 $type,
             ): bool {
