@@ -429,9 +429,11 @@ SQL;
     {
         $this->_needsConnection();
         $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
         $this->_createTables($connection);
+        $this->skipIf($driver->isMariadb(), 'Mariadb reflection is covered by MariadbSchemaDialectTest');
 
-        $dialect = $connection->getDriver()->schemaDialect();
+        $dialect = $driver->schemaDialect();
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
@@ -634,7 +636,10 @@ SQL;
 
         // MySQL 8.0.1 adds srid support while 8.0.13 adds default support
         $hasGeometry = version_compare($driver->version(), '8.0.13', '>=');
-        $this->skipIf(!$hasGeometry, 'This test requires geometry type with srid support.');
+        $this->skipIf(
+            $driver->isMariadb() || !$hasGeometry,
+            'This test requires geometry type with srid support.'
+        );
 
         $table = <<<SQL
 CREATE TABLE schema_geometry (
@@ -787,9 +792,11 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
+        $driver = $connection->getDriver();
+        $this->skipIf($driver->isMariadb(), 'Mariadb reflection is covered by MariadbSchemaDialectTest');
 
-        $database = $connection->getDriver()->config()['database'];
-        $dialect = $connection->getDriver()->schemaDialect();
+        $database = $driver->config()['database'];
+        $dialect = $driver->schemaDialect();
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
@@ -2057,7 +2064,11 @@ SQL;
     {
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
-        $this->skipIf(!$connection->getDriver()->supports(DriverFeatureEnum::JSON), 'Does not support native json');
+        $driver = $connection->getDriver();
+        $this->skipIf(
+            $driver->isMariadb() || !$driver->supports(DriverFeatureEnum::JSON),
+            'Mysql version does not support reflecting json columns',
+        );
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');

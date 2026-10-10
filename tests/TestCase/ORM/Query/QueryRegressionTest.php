@@ -2010,7 +2010,7 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(1, $subqueries, implode("\n", $logger->read()));
 
         $sql = array_pop($subqueries);
-        if ($driver instanceof Mariadb) {
+        if ($driver instanceof Mariadb || $driver->isMariadb()) {
             $this->assertStringContainsString('INNER JOIN (SELECT DISTINCT', $sql);
             $this->assertStringNotContainsString('GROUP BY', $sql);
             $this->assertMatchesRegularExpression('/SELECT DISTINCT .+name.+ FROM/', $sql);
@@ -2059,7 +2059,7 @@ class QueryRegressionTest extends TestCase
         }
 
         $logs = $logger->read();
-        if ($driver instanceof Mariadb) {
+        if ($driver instanceof Mariadb || $driver->isMariadb()) {
             // Mariadb requires a specific query optimization that replaces GROUP BY with DISTINCT
             $distinct = array_filter(
                 $logs,
