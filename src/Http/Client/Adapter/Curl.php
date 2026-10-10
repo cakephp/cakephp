@@ -181,7 +181,9 @@ class Curl implements AdapterInterface
                 ),
             '3', '3.0' => defined('CURL_HTTP_VERSION_3')
                 ? CURL_HTTP_VERSION_3
-                : throw new HttpException('PHP 8.4 or greater with libcurl 7.66 or greater is required for HTTP/3 support'),
+                : throw new HttpException(
+                    'PHP 8.4 or greater with libcurl 7.66 or greater is required for HTTP/3 support',
+                ),
             default => CURL_HTTP_VERSION_NONE,
         };
     }
