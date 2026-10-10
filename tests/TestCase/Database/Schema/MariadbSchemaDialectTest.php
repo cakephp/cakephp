@@ -272,7 +272,6 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     {
         $this->_needsConnection();
         $connection = ConnectionManager::get('test');
-        $driver = $connection->getDriver();
 
         $table = <<<SQL
 CREATE TABLE schema_geometry (

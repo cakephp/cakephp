@@ -638,7 +638,7 @@ SQL;
         $hasGeometry = version_compare($driver->version(), '8.0.13', '>=');
         $this->skipIf(
             $driver->isMariadb() || !$hasGeometry,
-            'This test requires geometry type with srid support.'
+            'This test requires geometry type with srid support.',
         );
 
         $table = <<<SQL
