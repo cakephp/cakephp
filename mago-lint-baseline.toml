@@ -1063,12 +1063,6 @@ message = "This closure does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
-file = "src/Http/BaseApplication.php"
-code = "no-error-control-operator"
-message = "Unsafe use of error control operator `@`."
-count = 1
-
-[[issues]]
 file = "src/Http/Client/Adapter/Curl.php"
 code = "no-nested-ternary"
 message = "Nested ternary expressions are confusing due to PHP's operator associativity rules."
