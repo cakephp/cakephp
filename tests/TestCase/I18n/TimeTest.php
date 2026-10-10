@@ -21,12 +21,19 @@ use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Closure;
 use DateTimeImmutable;
 use IntlDateFormatter;
 use InvalidArgumentException;
+use ReflectionProperty;
 
 class TimeTest extends TestCase
 {
+    /**
+     * The JSON encode format before the test, restored after it.
+     */
+    protected Closure|string|int $jsonEncodeFormat;
+
     /**
      * @var \Cake\Chronos\Chronos|null
      */
@@ -38,6 +45,7 @@ class TimeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->jsonEncodeFormat = (new ReflectionProperty(Time::class, '_jsonEncodeFormat'))->getValue();
         $this->now = DateTime::getTestNow();
     }
 
@@ -47,6 +55,7 @@ class TimeTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        (new ReflectionProperty(Time::class, '_jsonEncodeFormat'))->setValue(null, $this->jsonEncodeFormat);
         DateTime::setTestNow($this->now);
         DateTime::setDefaultLocale();
         Time::resetToStringFormat();

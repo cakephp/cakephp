@@ -345,6 +345,27 @@ class OauthTest extends TestCase
     }
 
     /**
+     * Test that OpenSSL errors left by earlier unrelated calls do not fail signing.
+     */
+    public function testRsaSigningIgnoresEarlierOpenSslErrors(): void
+    {
+        $request = new Request('http://photos.example.net/photos', 'GET');
+        openssl_pkey_get_private('not a key');
+        $this->assertNotFalse(openssl_error_string(), 'Precondition: an error is queued');
+        openssl_pkey_get_private('not a key');
+
+        $auth = new Oauth();
+        $request = $auth->authentication($request, [
+            'method' => 'RSA-SHA1',
+            'consumerKey' => 'dpf43f3p2l4k3l03',
+            'nonce' => '13917289812797014437',
+            'timestamp' => '1196666512',
+            'privateKey' => $this->privateKeyString,
+        ]);
+        $this->assertSignatureFormat($request->getHeaderLine('Authorization'));
+    }
+
+    /**
      * Test RSA-SHA1 signing with a private key string
      *
      * Hash result + parameters taken from
