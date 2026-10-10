@@ -39,6 +39,7 @@ class ErrorLoggerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        Log::drop('test_error');
         $this->logger = new ErrorLogger();
     }
 

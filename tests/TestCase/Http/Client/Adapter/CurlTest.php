@@ -88,6 +88,7 @@ class CurlTest extends TestCase
         /** @var \Cake\Http\Response $response */
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
+        $this->skipIf($response->getStatusCode() >= 500, 'api.cakephp.org is unavailable, skipping');
         $this->assertTrue($response->hasHeader('Date'));
         $this->assertTrue($response->hasHeader('Content-type'));
         $this->assertStringContainsString('<html', $response->getBody()->getContents());
