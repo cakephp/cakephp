@@ -272,8 +272,18 @@ jobs:
       #   run: vendor/bin/mago format --dry-run && vendor/bin/mago format --check
 
       - name: Run mago linter
+        id: mago
         if: always()
         run: vendor/bin/mago lint --fail-on-out-of-sync-baseline
+
+      - name: Show outdated mago baseline entries
+        if: ${{ failure() && steps.mago.outcome == 'failure' }}
+        run: |
+          baseline="$RUNNER_TEMP/mago-lint-baseline.toml"
+          cp mago-lint-baseline.toml "$baseline"
+          vendor/bin/mago lint --baseline "$baseline" --remove-outdated-baseline-entries || true
+          diff -u --label a/mago-lint-baseline.toml --label b/mago-lint-baseline.toml \
+            mago-lint-baseline.toml "$baseline" || true
 
       - name: Run phpstan
         if: always()
