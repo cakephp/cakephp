@@ -1428,6 +1428,58 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests the terminal list() repository method returns the combined array directly.
+     */
+    public function testList(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'nate',
+            3 => 'larry',
+            4 => 'garrett',
+        ];
+        $this->assertSame($expected, $table->list($table->find()->orderBy('id')));
+    }
+
+    /**
+     * Tests list() builds a default query when none is passed and honors field options.
+     */
+    public function testListDefaultQueryAndOptions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+
+        $result = $table->list();
+        ksort($result);
+        $expected = [
+            1 => 'mariano',
+            2 => 'nate',
+            3 => 'larry',
+            4 => 'garrett',
+        ];
+        ksort($expected);
+        $this->assertSame($expected, $result);
+
+        $grouped = $table->list(
+            $table->find()
+                ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
+                ->orderBy('id'),
+            groupField: 'odd',
+        );
+        $this->assertSame(['mariano', 'larry'], array_values($grouped[1]));
+        $this->assertSame(['nate', 'garrett'], array_values($grouped[0]));
+    }
+
+    /**
      * Tests find('threaded')
      */
     public function testFindThreadedNoHydration(): void

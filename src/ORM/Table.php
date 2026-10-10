@@ -1566,6 +1566,89 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Project query results into DTO instances and return them as a list.
+     *
+     * Terminal repository counterpart to the fluent
+     * {@see \Cake\ORM\Query\SelectQuery::projectAs()}. The honest return type
+     * (`list<T>`) lives here on the repository instead of being a generic that
+     * the chainable query cannot truthfully carry. Stack finders on `$query`
+     * first when needed, then hand it here to execute the projection.
+     *
+     * Rows are mapped from the raw selected columns (the same projection path
+     * as the fluent `SelectQuery::projectAs()`), so entity visibility and
+     * accessors do not affect the DTO data.
+     *
+     * ```
+     * $dtos = $articles->projectAs(ArticleDto::class);
+     *
+     * $dtos = $articles->projectAs(
+     *     ArticleDto::class,
+     *     $articles->find()->where(['published' => true])->contain('Authors'),
+     * );
+     * ```
+     *
+     * @template T of object
+     * @param class-string<T> $class The DTO class to map each row into.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @return list<T>
+     * @since 5.4.0
+     */
+    public function projectAs(string $class, ?SelectQuery $query = null): array
+    {
+        $query ??= $this->find();
+
+        $results = [];
+        foreach ($query->projectAs($class)->all() as $dto) {
+            if ($dto instanceof $class) {
+                $results[] = $dto;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Execute a key/value list query and return the resulting array.
+     *
+     * Terminal repository counterpart to the `list` finder
+     * ({@see \Cake\ORM\Table::findList()}). Returns the combined array directly
+     * instead of a query whose static type still claims to be a collection of
+     * entities. Build and stack finders on `$query` first when needed.
+     *
+     * ```
+     * $options = $articles->list();
+     *
+     * $options = $articles->list(
+     *     $articles->find()->where(['published' => true]),
+     *     valueField: 'title',
+     * );
+     * ```
+     *
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @param \Closure|array<string>|string|null $keyField The path to the key field, defaults to the primary key.
+     * @param \Closure|array<string>|string|null $valueField The path to the value field, defaults to the display field.
+     * @param \Closure|array<string>|string|null $groupField The path to the field to group on.
+     * @param string $valueSeparator The separator used to join composite value fields.
+     * @return array<array-key, mixed>
+     * @since 5.4.0
+     */
+    public function list(
+        ?SelectQuery $query = null,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string|null $valueField = null,
+        Closure|array|string|null $groupField = null,
+        string $valueSeparator = ' ',
+    ): array {
+        $query ??= $this->find();
+
+        return $this->findList($query, $keyField, $valueField, $groupField, $valueSeparator)
+            ->all()
+            ->toArray();
+    }
+
+    /**
      * Out of an options array, check if the keys described in `$keys` are arrays
      * and change the values for closures that will concatenate the each of the
      * properties in the value array when passed a row.
