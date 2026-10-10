@@ -34,7 +34,7 @@ jobs:
             dependencies: highest
 
           - php-version: '8.2'
-            db-type: 'mariadb-compat'
+            db-type: 'mariadb-mysql'
             dependencies: highest
 
           - php-version: '8.2'
@@ -101,7 +101,7 @@ jobs:
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8
-      if: matrix.db-type == 'mariadb' or matrix.db-type == 'mariadb-mysql'
+      if: matrix.db-type == 'mariadb' || matrix.db-type == 'mariadb-mysql'
       run: |
         docker run -d --name=mariadb \
           -e MARIADB_ROOT_PASSWORD=root \
