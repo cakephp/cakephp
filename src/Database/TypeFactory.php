@@ -65,7 +65,7 @@ class TypeFactory
     /**
      * Contains a map of type object instances to be reused if needed.
      *
-     * @var array<\Cake\Database\TypeInterface>
+     * @var array<string, \Cake\Database\TypeInterface>
      */
     protected static array $_builtTypes = [];
 
@@ -90,7 +90,7 @@ class TypeFactory
     /**
      * Returns an arrays with all the mapped type objects, indexed by name.
      *
-     * @return array<\Cake\Database\TypeInterface>
+     * @return array<string, \Cake\Database\TypeInterface>
      */
     public static function buildAll(): array
     {
@@ -145,7 +145,7 @@ class TypeFactory
      * Use getMap() without arguments to get the full map, or getMapped($type) to get a specific type mapping.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
+     * @return ($type is null ? array<string, class-string<\Cake\Database\TypeInterface>> : class-string<\Cake\Database\TypeInterface>|null) Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null): array|string|null
     {
