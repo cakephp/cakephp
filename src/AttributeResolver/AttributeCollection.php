@@ -160,10 +160,7 @@ class AttributeCollection implements IteratorAggregate, Countable
      */
     protected function withActiveIds(array $ids): static
     {
-        $clone = clone $this;
-        $clone->activeIds = $ids;
-
-        return $clone;
+        return clone($this, ['activeIds' => $ids]);
     }
 
     /**
