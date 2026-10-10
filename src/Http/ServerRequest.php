@@ -1337,7 +1337,10 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withParsedBody($data): static
     {
-        return clone($this, ['data' => $data]);
+        $new = clone $this;
+        $new->data = $data;
+
+        return $new;
     }
 
     /**
