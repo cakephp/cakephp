@@ -563,8 +563,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withCharset(string $charset): static
     {
-        $new = clone $this;
-        $new->charset = $charset;
+        $new = clone($this, ['charset' => $charset]);
         $new->setContentType($this->getType());
 
         return $new;

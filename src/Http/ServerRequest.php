@@ -1721,8 +1721,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
-        $new = clone $this;
-        $new->uri = $uri;
+        $new = clone($this, ['uri' => $uri]);
 
         if ($preserveHost && $this->hasHeader('Host')) {
             return $new;
