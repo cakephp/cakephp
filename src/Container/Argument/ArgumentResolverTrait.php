@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cake\Container\Argument;
 
 use Cake\Container\Attribute\AttributeInterface;
+use Cake\Container\Attribute\ContextualAttributeInterface;
 use Cake\Container\ContainerAwareInterface;
 use Cake\Container\ContainerInterface;
 use Cake\Container\Exception\ContainerException;
@@ -13,6 +14,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionAttribute;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
+use ReflectionParameter;
 
 trait ArgumentResolverTrait
 {
@@ -89,7 +91,7 @@ trait ArgumentResolverTrait
 
             // next we see if we have an attribute that can resolve the argument
             foreach ($param->getAttributes() as $attribute) {
-                $argument = $this->resolveArgumentFromAttribute($attribute);
+                $argument = $this->resolveArgumentFromAttribute($attribute, $param);
                 if ($argument !== false) {
                     $arguments[] = $argument;
                     continue 2;
@@ -129,12 +131,41 @@ trait ArgumentResolverTrait
     /**
      * Attempt to resolve a parameter's value from one of its PHP attributes.
      *
+     * Contextual attributes ({@see ContextualAttributeInterface}) are checked
+     * first so they can resolve by parameter name/type via the container;
+     * plain attributes ({@see AttributeInterface}) fall back to `resolve()`.
+     *
      * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
+     * @param \ReflectionParameter|null $parameter The parameter being resolved, null when unknown.
      * @return \Cake\Container\Argument\LiteralArgumentInterface|false
      */
-    protected function resolveArgumentFromAttribute(ReflectionAttribute $attribute): LiteralArgumentInterface|false
-    {
+    protected function resolveArgumentFromAttribute(
+        ReflectionAttribute $attribute,
+        ?ReflectionParameter $parameter = null,
+    ): LiteralArgumentInterface|false {
         $attrClass = $attribute->getName();
+
+        if (is_subclass_of($attrClass, ContextualAttributeInterface::class)) {
+            if ($parameter === null) {
+                return false;
+            }
+
+            $instance = $attribute->newInstance();
+            if ($instance instanceof ContainerAwareInterface) {
+                $instance->setContainer($this->getContainer());
+            }
+
+            try {
+                $container = $this->getContainer();
+            } catch (ContainerException) {
+                $container = $this instanceof PsrContainerInterface ? $this : throw new ContainerException(
+                    'No container implementation has been set.',
+                );
+            }
+
+            /** @var \Cake\Container\Attribute\ContextualAttributeInterface $instance */
+            return new LiteralArgument($instance->resolve($parameter, $container));
+        }
 
         if (!is_subclass_of($attrClass, AttributeInterface::class)) {
             return false;
