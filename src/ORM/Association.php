@@ -778,9 +778,7 @@ abstract class Association
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->name);
             $query->andWhere(function ($exp) use ($primaryKey) {
-                /** @var callable $callable */
-                $callable = [$exp, 'isNull'];
-                array_map($callable, $primaryKey);
+                array_map($exp->isNull(...), $primaryKey);
 
                 return $exp;
             });

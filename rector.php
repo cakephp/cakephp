@@ -73,6 +73,7 @@ return RectorConfig::configure()
         \Rector\DeadCode\Rector\If_\UnwrapFutureCompatibleIfPhpVersionRector::class,
         \Rector\DeadCode\Rector\MethodCall\RemoveNullArgOnNullDefaultParamRector::class => [
             __DIR__ . '/tests/TestCase/Database/Expression/QueryExpressionTest.php',
+            __DIR__ . '/tests/TestCase/ORM/Query/QueryRegressionTest.php',
         ],
         \Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector::class,
         \Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector::class,
