@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
+use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Response;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -58,6 +58,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
             'x-download-options' => ['noopen'],
             'x-content-type-options' => ['nosniff'],
             'permissions-policy' => ['camera=(), geolocation=(), microphone=()'],
+            'Content-Type' => ['text/html; charset=UTF-8'],
         ];
 
         $result = $middleware->process($request, $handler);

@@ -17,15 +17,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Middleware;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Response;
+use Cake\Http\Response\RedirectResponse;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Response as DiactorosResponse;
-use Laminas\Diactoros\Response\RedirectResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -191,7 +191,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
-        $this->assertStringContainsString('csrfToken=', $response->getHeaderLine('Set-Cookie'));
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertNotEmpty($response->getCookie('csrfToken'));
     }
 
     /**
@@ -213,15 +214,15 @@ class CsrfProtectionMiddlewareTest extends TestCase
     }
 
     /**
-     * Test that the CSRF tokens are set for diactoros responses
+     * Test that the CSRF tokens are set for non CakePHP responses
      */
-    public function testDiactorosResponseCookies(): void
+    public function testPsrResponseCookies(): void
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $handler = new TestRequestHandler(function () {
-            return new DiactorosResponse();
+            return new ClientResponse(['HTTP/1.1 200 OK']);
         });
 
         $middleware = new CsrfProtectionMiddleware();

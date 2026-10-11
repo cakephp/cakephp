@@ -22,7 +22,6 @@ namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
-use Laminas\Diactoros\RelativeStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Link\LinkInterface;
 use function Cake\Core\triggerWarning;
@@ -119,19 +118,18 @@ class ResponseEmitter
             return;
         }
 
-        $body = new RelativeStream($body, $first);
-        $body->rewind();
+        $body->seek($first);
         $pos = 0;
         /** @var int $length */
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
-            if ($pos + $this->maxBufferLength > $length) {
-                echo $body->read($length - $pos);
+            $chunk = $body->read(min($this->maxBufferLength, $length - $pos));
+            if ($chunk === '') {
                 break;
             }
 
-            echo $body->read($this->maxBufferLength);
-            $pos = $body->tell();
+            echo $chunk;
+            $pos += strlen($chunk);
         }
     }
 
