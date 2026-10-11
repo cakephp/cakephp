@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\RequestFactory;
+use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Uri;
 
 /**
  * Test case for the request factory.

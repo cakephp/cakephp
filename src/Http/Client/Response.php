@@ -17,8 +17,8 @@ namespace Cake\Http\Client;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
+use Cake\Http\MessageTrait;
+use Cake\Http\Stream;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
