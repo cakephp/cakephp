@@ -24,8 +24,6 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use Closure;
 use InvalidArgumentException;
-use Laminas\Diactoros\Stream;
-use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -1625,7 +1623,7 @@ class ServerRequest implements ServerRequestInterface
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
         $file = Hash::get($this->uploadedFiles, $path);
-        if (!$file instanceof UploadedFile) {
+        if (!$file instanceof UploadedFileInterface) {
             return null;
         }
 

@@ -27,12 +27,12 @@ use Cake\Http\Link\Link;
 use Cake\Http\Link\LinkProvider;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Http\Stream;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
-use Laminas\Diactoros\Stream;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\StreamInterface;
 
