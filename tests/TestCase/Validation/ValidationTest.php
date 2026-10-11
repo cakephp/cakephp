@@ -28,8 +28,8 @@ use Cake\Validation\Validation;
 use DateTime;
 use DateTimeImmutable;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
 use Locale;
+use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
@@ -3157,7 +3157,7 @@ class ValidationTest extends TestCase
                 $width,
                 $height,
             ));
-            $upload = new UploadedFile($file, null, UPLOAD_ERR_OK, 'test.svg', 'image/svg+xml');
+            $upload = new UploadedFile($file, (int)filesize($file), UPLOAD_ERR_OK, 'test.svg', 'image/svg+xml');
 
             $this->assertSame($validWidth, Validation::imageWidth($upload, Validation::COMPARE_EQUAL, 10));
             $this->assertSame($validHeight, Validation::imageHeight($upload, Validation::COMPARE_EQUAL, 20));

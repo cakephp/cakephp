@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\FormData;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\UploadedFile;
+use Nyholm\Psr7\UploadedFile;
 
 /**
  * Test case for FormData.

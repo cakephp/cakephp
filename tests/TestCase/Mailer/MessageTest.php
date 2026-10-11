@@ -21,7 +21,7 @@ use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
+use Nyholm\Psr7\UploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use TestApp\Mailer\TestMessage;

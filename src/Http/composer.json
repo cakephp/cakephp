@@ -38,8 +38,7 @@
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
         "psr/link": "^2.0",
-        "laminas/laminas-diactoros": "^3.8",
-        "laminas/laminas-httphandlerrunner": "^2.6"
+        "nyholm/psr7": "^1.8"
     },
     "require-dev": {
         "cakephp/cache": "6.0.*@dev",

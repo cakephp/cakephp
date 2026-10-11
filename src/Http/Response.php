@@ -26,8 +26,7 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Link\EvolvableLinkProviderInterface;
@@ -251,7 +250,15 @@ class Response implements ResponseInterface, Stringable
      */
     protected function createStream(): void
     {
-        $this->stream = new Stream($this->streamTarget, $this->streamMode);
+        $resource = $this->streamTarget;
+        if (is_string($resource)) {
+            $target = $resource;
+            $resource = fopen($target, $this->streamMode);
+            if ($resource === false) {
+                throw new InvalidArgumentException(sprintf('Cannot open stream target `%s`.', $target));
+            }
+        }
+        $this->stream = new Stream($resource);
     }
 
     /**
@@ -1222,7 +1229,11 @@ class Response implements ResponseInterface, Stringable
             $new = $new->withHeader('Content-Length', (string)$fileSize);
         }
         $new->file = $file;
-        $new->stream = new Stream($file->getPathname(), 'rb');
+        $resource = fopen($file->getPathname(), 'rb');
+        if ($resource === false) {
+            throw new NotFoundException(__d('cake', 'The requested file was not found'));
+        }
+        $new->stream = new Stream($resource);
 
         return $new;
     }

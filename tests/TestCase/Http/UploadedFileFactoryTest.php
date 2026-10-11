@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\UploadedFileFactory;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Stream;
+use Nyholm\Psr7\Stream;
 
 /**
  * Test case for the uploaded file factory.
@@ -48,7 +48,7 @@ class UploadedFileFactoryTest extends TestCase
     public function testCreateStreamResource(): void
     {
         file_put_contents($this->filename, 'it works');
-        $stream = new Stream($this->filename);
+        $stream = Stream::create(fopen($this->filename, 'r'));
 
         $uploadedFile = $this->factory->createUploadedFile($stream, null, UPLOAD_ERR_OK, 'my-name');
         $this->assertSame('my-name', $uploadedFile->getClientFilename());

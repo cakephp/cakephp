@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Laminas\Diactoros\Stream;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
@@ -62,7 +62,12 @@ class StreamFactory implements StreamFactoryInterface
             throw new RuntimeException(sprintf('Cannot read file `%s`', $filename));
         }
 
-        return new Stream($filename, $mode);
+        $resource = fopen($filename, $mode);
+        if ($resource === false) {
+            throw new RuntimeException(sprintf('Cannot open file `%s` with mode `%s`', $filename, $mode));
+        }
+
+        return new Stream($resource);
     }
 
     /**

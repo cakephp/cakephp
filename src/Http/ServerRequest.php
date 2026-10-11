@@ -24,8 +24,7 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use Closure;
 use InvalidArgumentException;
-use Laminas\Diactoros\Stream;
-use Laminas\Diactoros\UploadedFile;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -288,11 +287,11 @@ class ServerRequest implements ServerRequestInterface
         $this->webroot = $config['webroot'];
 
         if (isset($config['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($config['input']);
-            $stream->rewind();
+            $stream = Stream::create($config['input']);
         } else {
-            $stream = new Stream('php://input');
+            $resource = fopen('php://input', 'r');
+            assert($resource !== false, 'Unable to open php://input');
+            $stream = new Stream($resource);
         }
         $this->stream = $stream;
 
@@ -1624,7 +1623,7 @@ class ServerRequest implements ServerRequestInterface
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
         $file = Hash::get($this->uploadedFiles, $path);
-        if (!$file instanceof UploadedFile) {
+        if (!$file instanceof UploadedFileInterface) {
             return null;
         }
 

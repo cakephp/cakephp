@@ -18,8 +18,8 @@ namespace Cake\Http\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response\RedirectResponse;
 use Cake\Http\ServerRequest;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

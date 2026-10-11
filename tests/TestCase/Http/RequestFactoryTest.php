@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\RequestFactory;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Uri;
+use Nyholm\Psr7\Uri;
 
 /**
  * Test case for the request factory.

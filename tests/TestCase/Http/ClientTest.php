@@ -26,7 +26,6 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Request as LaminasRequest;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -839,7 +838,7 @@ class ClientTest extends TestCase
         $mock->shouldReceive('send')
             ->once()
             ->withArgs(function ($request) use ($headers) {
-                $this->assertInstanceOf(LaminasRequest::class, $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertSame($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -850,10 +849,9 @@ class ClientTest extends TestCase
             ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock]);
-        $request = new LaminasRequest(
+        $request = new Request(
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
-            'php://temp',
             $headers,
         );
         $result = $http->sendRequest($request);

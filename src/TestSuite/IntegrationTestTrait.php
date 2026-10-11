@@ -65,7 +65,7 @@ use Cake\Utility\CookieCryptTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Exception;
-use Laminas\Diactoros\Uri;
+use Nyholm\Psr7\Uri;
 use PHPUnit\Exception as PHPUnitException;
 use PHPUnit\Framework\Attributes\After;
 use Psr\Http\Message\ResponseInterface;

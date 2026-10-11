@@ -22,7 +22,7 @@ use Cake\Http\MimeType;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\Utility\Inflector;
-use Laminas\Diactoros\Stream;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

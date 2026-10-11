@@ -15,9 +15,11 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client;
 
+use Cake\Http\MessageTrait;
 use Cake\Utility\Xml;
-use Laminas\Diactoros\RequestTrait;
-use Laminas\Diactoros\Stream;
+use InvalidArgumentException;
+use Nyholm\Psr7\Stream;
+use Nyholm\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -29,7 +31,28 @@ use Psr\Http\Message\UriInterface;
  */
 class Request extends Message implements RequestInterface
 {
-    use RequestTrait;
+    use MessageTrait;
+
+    /**
+     * The HTTP method.
+     *
+     * @var string
+     */
+    protected string $method = self::METHOD_GET;
+
+    /**
+     * The request target, if it has been explicitly set.
+     *
+     * @var string|null
+     */
+    protected ?string $requestTarget = null;
+
+    /**
+     * The request URI.
+     *
+     * @var \Psr\Http\Message\UriInterface
+     */
+    protected UriInterface $uri;
 
     /**
      * Constructor
@@ -48,14 +71,14 @@ class Request extends Message implements RequestInterface
         array|string|null $data = null,
     ) {
         $this->setMethod($method);
-        $this->uri = $this->createUri($url);
+        $this->uri = is_string($url) ? new Uri($url) : $url;
         $headers += [
             'Connection' => 'close',
             'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
         ];
         $this->addHeaders($headers);
         if (in_array($data, [null, '', []], true)) {
-            $this->stream = new Stream('php://memory', 'rw');
+            $this->stream = Stream::create();
         } else {
             $this->setContent($data);
         }
@@ -106,10 +129,100 @@ class Request extends Message implements RequestInterface
             }
         }
 
-        $stream = new Stream('php://memory', 'rw');
-        $stream->write($content);
-        $this->stream = $stream;
+        $this->stream = Stream::create($content);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRequestTarget(): string
+    {
+        if ($this->requestTarget !== null) {
+            return $this->requestTarget;
+        }
+
+        $target = $this->uri->getPath();
+        if ($this->uri->getQuery() !== '') {
+            $target .= '?' . $this->uri->getQuery();
+        }
+
+        return $target === '' ? '/' : $target;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withRequestTarget(string $requestTarget): static
+    {
+        if (preg_match('#\s#', $requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace.');
+        }
+
+        return clone($this, ['requestTarget' => $requestTarget]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withMethod(string $method): static
+    {
+        $new = clone $this;
+        $new->setMethod($method);
+
+        return $new;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUri(): UriInterface
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withUri(UriInterface $uri, bool $preserveHost = false): static
+    {
+        $new = clone($this, ['uri' => $uri]);
+        if (($preserveHost && $this->hasHeader('Host')) || $uri->getHost() === '') {
+            return $new;
+        }
+
+        $host = $uri->getHost();
+        if ($uri->getPort() !== null) {
+            $host .= ':' . $uri->getPort();
+        }
+        $new->removeHeader('Host');
+        $new->headerNames['host'] = 'Host';
+        $new->headers['Host'] = [$host];
+
+        return $new;
+    }
+
+    /**
+     * Set and validate the HTTP method.
+     *
+     * @param string $method The HTTP method.
+     * @return void
+     * @throws \InvalidArgumentException When the method is not a valid token.
+     */
+    protected function setMethod(string $method): void
+    {
+        if (!preg_match('/^[!#$%&\'*+.^_`|~0-9a-z-]+$/iD', $method)) {
+            throw new InvalidArgumentException(sprintf('Unsupported HTTP method `%s` provided.', $method));
+        }
+        $this->method = $method;
     }
 }

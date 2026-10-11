@@ -32,7 +32,7 @@ use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
-use Laminas\Diactoros\Stream;
+use Nyholm\Psr7\Stream;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\StreamInterface;
 
@@ -1390,7 +1390,7 @@ class ResponseTest extends TestCase
         $result = $body->getContents();
         $this->assertSame('', $result);
 
-        $stream = new Stream('php://memory', 'wb+');
+        $stream = Stream::create();
         $stream->write('test1');
 
         $response2 = $response->withBody($stream);

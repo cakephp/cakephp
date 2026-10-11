@@ -17,8 +17,8 @@ namespace Cake\Http\Client;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
+use Cake\Http\MessageTrait;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 
@@ -131,10 +131,7 @@ class Response extends Message implements ResponseInterface
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
             $body = $this->decodeGzipBody($body);
         }
-        $stream = new Stream('php://memory', 'wb+');
-        $stream->write($body);
-        $stream->rewind();
-        $this->stream = $stream;
+        $this->stream = Stream::create($body);
     }
 
     /**

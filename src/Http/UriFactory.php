@@ -13,15 +13,18 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         5.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ *
+ * Parts of this file are derived from laminas-diactoros
+ * @copyright Copyright (c) 2020 Laminas Project a Series of LF Projects, LLC. (https://getlaminas.org/)
+ * @license   https://github.com/laminas/laminas-diactoros/blob/3.9.x/LICENSE.md New BSD License
  */
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Laminas\Diactoros\Uri;
-use Laminas\Diactoros\UriFactory as DiactorosUriFactory;
+use InvalidArgumentException;
+use Nyholm\Psr7\Uri;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
-use function Laminas\Diactoros\marshalHeadersFromSapi;
 
 /**
  * Factory class for creating uri instances.
@@ -49,9 +52,7 @@ class UriFactory implements UriFactoryInterface
     public static function marshalUriAndBaseFromSapi(?array $server = null): array
     {
         $server ??= $_SERVER;
-        $headers = marshalHeadersFromSapi($server);
-
-        $uri = DiactorosUriFactory::createFromSapi($server, $headers);
+        $uri = static::createFromSapi($server);
         ['base' => $base, 'webroot' => $webroot] = static::getBase($uri, $server);
 
         $uri = static::updatePath($base, $uri);
@@ -61,6 +62,122 @@ class UriFactory implements UriFactoryInterface
         }
 
         return ['uri' => $uri, 'base' => $base, 'webroot' => $webroot];
+    }
+
+    /**
+     * Create a Uri instance from SAPI parameters.
+     *
+     * @param array $server The SERVER data to use.
+     * @return \Psr\Http\Message\UriInterface
+     */
+    protected static function createFromSapi(array $server): UriInterface
+    {
+        $https = $server['HTTPS'] ?? $server['https'] ?? false;
+        if (!is_bool($https) && !is_string($https)) {
+            throw new InvalidArgumentException(sprintf(
+                'SAPI HTTPS value must be a string or boolean; received `%s`.',
+                get_debug_type($https),
+            ));
+        }
+        $isHttps = is_bool($https) ? $https : strtolower($https) === 'on';
+        $uri = new Uri()->withScheme($isHttps ? 'https' : 'http');
+
+        [$host, $port] = static::marshalHostAndPort($server);
+        if ($host !== '') {
+            $uri = $uri->withHost($host);
+            if ($port !== null) {
+                $uri = $uri->withPort($port);
+            }
+        }
+
+        $path = explode('?', static::marshalRequestPath($server), 2)[0];
+        $fragment = '';
+        if (str_contains($path, '#')) {
+            [$path, $fragment] = explode('#', $path, 2);
+        }
+
+        $query = '';
+        if (isset($server['QUERY_STRING']) && is_scalar($server['QUERY_STRING'])) {
+            $query = ltrim((string)$server['QUERY_STRING'], '?');
+        }
+
+        return $uri
+            ->withPath($path)
+            ->withFragment($fragment)
+            ->withQuery($query);
+    }
+
+    /**
+     * Get the host and port from the Host header or SERVER_NAME/SERVER_PORT.
+     *
+     * @param array $server The SERVER data to use.
+     * @return array{0: string, 1: int|null}
+     */
+    protected static function marshalHostAndPort(array $server): array
+    {
+        // Apache prefixes variables added by rewrite rules with `REDIRECT_`.
+        $host = $server['HTTP_HOST'] ?? $server['REDIRECT_HTTP_HOST'] ?? null;
+        // Ignore malformed host headers. Whitespace is invalid in hostnames and a comma
+        // indicates multiple Host headers were sent, which is not legal.
+        if (is_string($host) && $host !== '' && !preg_match('/[\t ,]/', $host)) {
+            $port = null;
+            if (preg_match('/:(\d+)$/', $host, $matches)) {
+                $host = substr($host, 0, -(strlen($matches[1]) + 1));
+                $port = (int)$matches[1];
+            }
+
+            return [$host, $port];
+        }
+
+        if (!isset($server['SERVER_NAME'])) {
+            return ['', null];
+        }
+
+        $host = (string)$server['SERVER_NAME'];
+        $port = isset($server['SERVER_PORT']) ? (int)$server['SERVER_PORT'] : null;
+        if (!isset($server['SERVER_ADDR']) || !preg_match('/^\[[0-9a-fA-F:]+\]$/', $host)) {
+            return [$host, $port];
+        }
+
+        // Some clients send an IPv6 address in SERVER_NAME where the last
+        // segment could be misinterpreted as the port.
+        $host = '[' . $server['SERVER_ADDR'] . ']';
+        $port ??= 80;
+        $separator = strrpos($host, ':');
+        if ($separator !== false && $port . ']' === substr($host, $separator + 1)) {
+            $port = null;
+        }
+
+        return [$host, $port];
+    }
+
+    /**
+     * Detect the request path from the SAPI parameters.
+     *
+     * Uses the IIS7 UrlRewrite environment, `REQUEST_URI` or `ORIG_PATH_INFO`.
+     *
+     * @param array $server The SERVER data to use.
+     * @return string
+     */
+    protected static function marshalRequestPath(array $server): string
+    {
+        // IIS7 with URL Rewrite: use the unencoded url to avoid the double slash problem.
+        $unencodedUrl = $server['UNENCODED_URL'] ?? '';
+        if (($server['IIS_WasUrlRewritten'] ?? null) === '1' && is_string($unencodedUrl) && $unencodedUrl !== '') {
+            return $unencodedUrl;
+        }
+
+        $requestUri = $server['REQUEST_URI'] ?? null;
+        if (is_string($requestUri)) {
+            return (string)preg_replace('#^[^/:]+://[^/]+#', '', $requestUri);
+        }
+
+        $origPathInfo = $server['ORIG_PATH_INFO'] ?? '';
+        if (!is_string($origPathInfo) || $origPathInfo === '') {
+            return '/';
+        }
+
+        return $origPathInfo;
     }
 
     /**
