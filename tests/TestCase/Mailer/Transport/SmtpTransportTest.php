@@ -602,9 +602,9 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
-     * test send strips crlf from headers
+     * test send strips newlines from headers
      */
-    public function testSendHeadersStripCrlf(): void
+    public function testSendHeadersStripNewlines(): void
     {
         $eol = "\r\n";
         $date = date(DATE_RFC2822);
@@ -616,14 +616,18 @@ class SmtpTransportTest extends TestCase
         $message->setMessageId('<abc0123@example.com>');
 
         $message->setHeaders([
-            'X-inject' => "line one\r\nline two",
+            'X-crlf' => "line one\r\nline two",
+            'X-lf' => "line one\nline two",
+            'X-cr' => "line one\rline two",
             'Date' => $date,
         ]);
         $message->setBody(['text' => 'oh no']);
 
         $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
         $data .= 'To: CakePHP <cake@cakephp.org>' . $eol;
-        $data .= 'X-inject: line oneline two' . $eol;
+        $data .= 'X-crlf: line oneline two' . $eol;
+        $data .= 'X-lf: line oneline two' . $eol;
+        $data .= 'X-cr: line oneline two' . $eol;
         $data .= 'Date: ' . $date . $eol;
         $data .= 'Message-ID: <abc0123@example.com>' . $eol;
         $data .= 'Subject: injected headers' . $eol;
