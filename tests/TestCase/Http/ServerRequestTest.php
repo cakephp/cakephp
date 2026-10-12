@@ -592,14 +592,33 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withProtocolVersion()
+     *
+     * @param string $version Protocol version.
      */
-    public function testWithProtocolVersion(): void
+    #[DataProvider('protocolVersionProvider')]
+    public function testWithProtocolVersion(string $version): void
     {
         $request = new ServerRequest();
-        $new = $request->withProtocolVersion('1.0');
+        $new = $request->withProtocolVersion($version);
+
         $this->assertNotSame($new, $request);
         $this->assertSame('1.1', $request->getProtocolVersion());
-        $this->assertSame('1.0', $new->getProtocolVersion());
+        $this->assertSame($version, $new->getProtocolVersion());
+    }
+
+    /**
+     * Data provider for testWithProtocolVersion().
+     *
+     * @return array<string, array{string}>
+     */
+    public static function protocolVersionProvider(): array
+    {
+        return [
+            'HTTP 1.0' => ['1.0'],
+            'HTTP 1.1' => ['1.1'],
+            'HTTP 2' => ['2'],
+            'HTTP 3' => ['3'],
+        ];
     }
 
     /**

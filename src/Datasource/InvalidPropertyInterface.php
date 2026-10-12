@@ -25,7 +25,7 @@ interface InvalidPropertyInterface
     /**
      * Get a list of invalid fields and their data for errors upon validation/patching
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getInvalid(): array;
 

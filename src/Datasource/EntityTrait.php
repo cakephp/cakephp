@@ -481,7 +481,7 @@ trait EntityTrait
     /**
      * Gets all original values of the entity.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOriginalValues(): array
     {
@@ -1404,7 +1404,7 @@ trait EntityTrait
      * Returns the raw accessible configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
-     * @return array<bool>
+     * @return array<string, bool>
      */
     public function getAccessible(): array
     {

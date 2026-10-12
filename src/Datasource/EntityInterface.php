@@ -160,7 +160,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Accessible configuration for this entity.
      *
-     * @return array<bool>
+     * @return array<string, bool>
      */
     public function getAccessible(): array;
 
@@ -255,7 +255,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets all original values of the entity.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOriginalValues(): array;
 

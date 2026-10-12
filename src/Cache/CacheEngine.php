@@ -155,7 +155,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
      *
-     * @param iterable $values A list of key => value pairs for a multiple-set operation.
+     * @param iterable<string, mixed> $values A list of key => value pairs for a multiple-set operation.
      * @param \DateInterval|int|null $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
@@ -195,7 +195,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
      * create an error it will be ignored, and all items will
      * be attempted.
      *
-     * @param iterable $keys A list of string-based keys to be deleted.
+     * @param iterable<string> $keys A list of string-based keys to be deleted.
      * @return bool True if the items were successfully removed. False if there was an error.
      * @throws \Cake\Cache\Exception\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.

@@ -1,0 +1,66 @@
+name: Commit messages
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  no-ai-attribution:
+    name: No AI tool attribution
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Reject AI co-author trailers and AI-authored commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          # Tool identities only, so human co-authors (e.g. someone named Claude) still pass.
+          TRAILER: '(?im)^(co-authored-by:.*(noreply@anthropic\.com|claude (opus|sonnet|haiku|fable|code)\b|copilot@users\.noreply\.github\.com|cursoragent@cursor\.com)|claude-session:)'
+          AUTHOR: '(?i)(noreply@anthropic\.com|copilot@users\.noreply\.github\.com|cursoragent@cursor\.com)'
+          LOGIN: '(?i)^(claude|copilot|copilot-swe-agent|cursor)(\[bot\])?$'
+        run: |
+          bad=$(gh api "repos/$REPO/pulls/$PR/commits" --paginate --jq '
+            .[]
+            | select(
+                (.commit.message | test(env.TRAILER))
+                or ((.commit.author.email // "") | test(env.AUTHOR))
+                or ((.author.login // "") | test(env.LOGIN))
+              )
+            | .sha + " " + (.commit.message | split("\n")[0])')
+
+          # Merge-up PRs carry commits that already landed on a release branch; only judge new ones.
+          branches=$(gh api "repos/$REPO/branches?protected=true" --paginate --jq '.[].name')
+          merged() {
+            for b in $branches; do
+              s=$(gh api "repos/$REPO/compare/$b...$1" --jq .status 2>/dev/null) || continue
+              if [ "$s" = behind ] || [ "$s" = identical ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+          new=""
+          while read -r sha subject; do
+            [ -z "$sha" ] && continue
+            merged "$sha" || new+="${sha:0:10} $subject"$'\n'
+          done <<< "$bad"
+          bad="${new%$'\n'}"
+
+          if [ -z "$bad" ]; then
+            echo "No AI tool attribution found."
+            exit 0
+          fi
+          echo "::error::Commits must not list AI tools as author or co-author."
+          echo "$bad"
+          echo
+          echo "Remove the Co-Authored-By / Claude-Session trailer lines (git commit --amend or git rebase -i),"
+          echo "make sure you are the commit author, then force-push the branch."
+          exit 1

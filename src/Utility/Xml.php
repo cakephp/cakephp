@@ -104,6 +104,8 @@ class Xml
      * @param object|array|string $input XML string, a path to a file, a URL or an array
      * @param array<string, mixed> $options The options to use
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
+     * @psalm-return \SimpleXMLElement|\DOMDocument
+     * @phpstan-return ($options is array{return: 'simplexml'|'simplexmlelement'} ? \SimpleXMLElement : ($options is array{return: 'domdocument'} ? \DOMDocument : ($options is array{return: mixed} ? \SimpleXMLElement|\DOMDocument : \SimpleXMLElement)))
      * @throws \Cake\Utility\Exception\XmlException
      */
     public static function build(object|array|string $input, array $options = []): SimpleXMLElement|DOMDocument

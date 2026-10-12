@@ -105,7 +105,7 @@ interface EventManagerInterface
      *
      * @template TSubject of object
      * @param \Cake\Event\EventInterface<TSubject>|string $event The event key name or instance of EventInterface.
-     * @return \Cake\Event\EventInterface<TSubject>
+     * @return ($event is string ? \Cake\Event\EventInterface<object> : \Cake\Event\EventInterface<TSubject>)
      * @triggers $event
      */
     public function dispatch(EventInterface|string $event): EventInterface;

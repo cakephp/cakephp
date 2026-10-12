@@ -4297,6 +4297,23 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that a quoted query compiles to the same SQL when compiled again.
+     */
+    public function testQuotedFunctionAliasCompiledTwice(): void
+    {
+        $this->connection->getDriver()->enableAutoQuoting(true);
+        $query = new SelectQuery($this->connection);
+        $query->select(['COUNT(id) AS total', 'COUNT(DISTINCT author_id) AS authors'])->from('articles');
+
+        $sql = $query->sql();
+        $this->assertQuotedQuery('SELECT COUNT\\(<id>\\) AS <total>, COUNT\\(DISTINCT <author_id>\\) AS <authors>', $sql);
+        $this->assertSame($sql, $query->sql());
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertEquals([['total' => 3, 'authors' => 2]], $result);
+    }
+
+    /**
      * Tests that query expressions can be used for ordering.
      */
     public function testOrderBySubquery(): void

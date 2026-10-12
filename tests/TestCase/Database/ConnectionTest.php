@@ -992,12 +992,15 @@ class ConnectionTest extends TestCase
                 return true;
             }
         };
-        $connection->transactional(function ($conn) use ($connection): void {
-            $this->assertSame($connection, $conn);
-            throw new InvalidArgumentException();
-        });
-        $this->assertTrue($connection->beginIsCalled);
-        $this->assertTrue($connection->rollbackIsCalled);
+        try {
+            $connection->transactional(function ($conn) use ($connection): void {
+                $this->assertSame($connection, $conn);
+                throw new InvalidArgumentException();
+            });
+        } finally {
+            $this->assertTrue($connection->beginIsCalled);
+            $this->assertTrue($connection->rollbackIsCalled);
+        }
     }
 
     /**

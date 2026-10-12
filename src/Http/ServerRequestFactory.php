@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -89,6 +90,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
      * want the read the non-simulated HTTP method the client used.
      *
+     * Override values are upper-cased and may only contain the letters A-Z, optionally
+     * separated by single hyphens or underscores (e.g. `VERSION-CONTROL`).
+     *
      * Request body of content type "application/x-www-form-urlencoded" is parsed
      * into array for PUT/PATCH/DELETE requests.
      *
@@ -115,7 +119,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
 
         $request = $request->withEnv('ORIGINAL_REQUEST_METHOD', $method);
         if (isset($parsedBody['_method'])) {
-            $request = $request->withEnv('REQUEST_METHOD', $parsedBody['_method']);
+            $request = $request->withEnv('REQUEST_METHOD', static::normalizeOverrideMethod($parsedBody['_method']));
             unset($parsedBody['_method']);
             $override = true;
         }
@@ -128,6 +132,29 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         return $request->withParsedBody($parsedBody);
+    }
+
+    /**
+     * Normalize and validate a method override value.
+     *
+     * Only letters, optionally separated by single hyphens or underscores, are accepted to prevent
+     * arbitrary client supplied strings from ending up in `REQUEST_METHOD`, while
+     * still allowing custom methods like the WebDAV `VERSION-CONTROL`.
+     *
+     * @param mixed $method The method from the `_method` field or `X-Http-Method-Override` header.
+     * @return string
+     * @throws \Cake\Http\Exception\BadRequestException When the method is not a valid override value.
+     */
+    protected static function normalizeOverrideMethod(mixed $method): string
+    {
+        if (is_string($method)) {
+            $method = strtoupper($method);
+            if (preg_match('/^[A-Z]+(?:[-_][A-Z]+)*$/D', $method)) {
+                return $method;
+            }
+        }
+
+        throw new BadRequestException('Invalid HTTP method override.');
     }
 
     /**

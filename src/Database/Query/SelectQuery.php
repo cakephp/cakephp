@@ -317,7 +317,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The having conditions.
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string|null $conditions The having conditions.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @see \Cake\Database\Query::where()
@@ -345,7 +345,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Having fields are not suitable for use with user supplied data as they are
      * not sanitized by the query builder.
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The AND conditions for HAVING.
+     * @param \Cake\Database\ExpressionInterface|(\Closure(\Cake\Database\Expression\QueryExpression, static): (\Cake\Database\ExpressionInterface|array<mixed>|string))|array<mixed>|string $conditions The AND conditions for HAVING.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @see \Cake\Database\Query::andWhere()
      * @return $this
