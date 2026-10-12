@@ -75,6 +75,8 @@ class RedisClusterEngineTest extends TestCase
         Log::drop('default');
         parent::tearDown();
         Cache::drop('redis');
+        Cache::drop('redis2');
+        Cache::drop('redis_clear_blocking');
         Cache::drop('redis_groups');
         Cache::drop('redis_helper');
     }

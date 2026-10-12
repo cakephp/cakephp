@@ -23,6 +23,7 @@ use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use ReflectionProperty;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -34,6 +35,25 @@ use Traversable;
  */
 class ValidatorTest extends TestCase
 {
+    /**
+     * Default providers registered before the test, restored after it.
+     *
+     * @var array<string, object|string>
+     */
+    protected array $defaultProviders = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->defaultProviders = (new ReflectionProperty(Validator::class, '_defaultProviders'))->getValue();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        (new ReflectionProperty(Validator::class, '_defaultProviders'))->setValue(null, $this->defaultProviders);
+    }
+
     /**
      * tests getRequiredMessage
      */

@@ -46,9 +46,22 @@ class ValidationTest extends TestCase
     /**
      * tearDown method
      */
+    /**
+     * ICU default locale before the test, restored after it.
+     */
+    protected string $locale;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->locale = Locale::getDefault();
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
+        // Restore ICU first, I18n derives its default locale from it on first use
+        Locale::setDefault($this->locale);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 
