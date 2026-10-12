@@ -362,7 +362,7 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
+     * @param \Closure(\Cake\Routing\RouteBuilder): mixed|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @param array<string, mixed> $options Options to use when generating REST routes.
      * @return $this
@@ -877,7 +877,7 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param \Closure $callback The callback to invoke that builds the prefixed routes.
+     * @param \Closure(\Cake\Routing\RouteBuilder): mixed $callback The callback to invoke that builds the prefixed routes.
      * @param array<string, mixed> $params An array of routing defaults to add to each connected route.
      * @return $this
      */
@@ -917,7 +917,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param \Closure $callback The callback to invoke that builds the plugin routes.
+     * @param \Closure(\Cake\Routing\RouteBuilder): mixed $callback The callback to invoke that builds the plugin routes.
      * @param array<string, mixed> $params The params to use.
      * @return $this
      */
@@ -944,7 +944,7 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param \Closure $callback The callback to invoke that builds the plugin routes.
+     * @param \Closure(\Cake\Routing\RouteBuilder): mixed $callback The callback to invoke that builds the plugin routes.
      * @param array<string, mixed> $params The parameters to add to routes.
      * @return $this
      */

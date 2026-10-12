@@ -287,7 +287,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @param string|null $field The field name or null to get data array with
      *   all fields.
-     * @return mixed
+     * @return ($field is null ? array : mixed)
      */
     public function getData(?string $field = null): mixed
     {

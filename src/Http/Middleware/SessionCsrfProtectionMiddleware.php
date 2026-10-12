@@ -141,7 +141,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      * The callback will receive request instance as argument and must return
      * `true` if you want to skip token check for the current request.
      *
-     * @param \Closure $callback A closure.
+     * @param \Closure(\Psr\Http\Message\ServerRequestInterface): bool $callback A closure.
      * @return $this
      */
     public function skipCheckCallback(Closure $callback): static
