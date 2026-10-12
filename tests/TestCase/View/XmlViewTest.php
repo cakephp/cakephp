@@ -283,6 +283,8 @@ class XmlViewTest extends TestCase
             ['0', '<testing>0</testing>'],
             [false, '<testing>0</testing>'],
             ['', '<testing/>'],
+            [[], '<testing/>'],
+            [null, '<testing/>'],
         ];
     }
 
