@@ -236,6 +236,12 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                     continue;
                 }
 
+                // Fall back to auto-wiring for required class dependencies
+                if ($this->canAutoWire($typeName)) {
+                    $resolved[] = $this->container->get($typeName);
+                    continue;
+                }
+
                 throw new InvalidParameterException([
                     'template' => 'missing_dependency',
                     'parameter' => $parameter->getName(),
@@ -328,6 +334,21 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
 
         return array_replace($mapped, $passedParams);
+    }
+
+    /**
+     * Check whether a type can be auto-wired by the container.
+     *
+     * @param string $typeName The type name to check.
+     * @return bool
+     */
+    protected function canAutoWire(string $typeName): bool
+    {
+        if (!$this->container->has($typeName) || !class_exists($typeName)) {
+            return false;
+        }
+
+        return new ReflectionClass($typeName)->isInstantiable();
     }
 
     /**
