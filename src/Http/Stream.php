@@ -106,7 +106,9 @@ class Stream implements StreamInterface, Stringable
         }
 
         $this->resource = $resource;
-        $this->readable = $this->writable = $this->seekable = null;
+        $this->readable = null;
+        $this->writable = null;
+        $this->seekable = null;
     }
 
     /**
