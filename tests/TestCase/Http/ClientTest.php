@@ -867,7 +867,8 @@ class ClientTest extends TestCase
             'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
             'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
             'space' => ['next page', 'https://example.com/a/next%20page'],
-            'unicode' => ['https://bücher.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
+            'unicode' => ['https://bücher.example/ä', 'https://bücher.example/%C3%A4'],
+            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://bücher.example/%C3%A4'],
         ];
     }
 
@@ -1145,12 +1146,21 @@ class ClientTest extends TestCase
         $this->assertSame('https://example.com/next', $client->buildUrl('next', [], $client->getConfig()));
     }
 
-    public function testCreateFromUrlNormalizesUnicode(): void
+    #[DataProvider('unicodeUrls')]
+    public function testCreateFromUrlNormalizesUnicode(string $url): void
     {
-        $client = Client::createFromUrl('https://bücher.example/ä b');
+        $client = Client::createFromUrl($url);
 
-        $this->assertSame('xn--bcher-kva.example', $client->getConfig('host'));
+        $this->assertSame('bücher.example', $client->getConfig('host'));
         $this->assertSame('/%C3%A4%20b', $client->getConfig('basePath'));
+    }
+
+    public static function unicodeUrls(): array
+    {
+        return [
+            ['https://bücher.example/ä b'],
+            ['https://xn--bcher-kva.example/ä b'],
+        ];
     }
 
     #[DataProvider('unsupportedUrls')]
