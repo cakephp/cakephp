@@ -25,7 +25,6 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -210,7 +209,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * Normalize a `$_FILES` structure into a tree of UploadedFileInterface instances.
      *
      * @param array $files The files data to normalize.
-     * @return array<string|int, \Psr\Http\Message\UploadedFileInterface|array>
+     * @return array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>>
      * @throws \InvalidArgumentException For invalid file values.
      */
     protected static function normalizeUploadedFiles(array $files): array
@@ -248,7 +247,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param mixed $error The `error` value or tree.
      * @param mixed $name The `name` value or tree.
      * @param mixed $type The `type` value or tree.
-     * @return \Psr\Http\Message\UploadedFileInterface|array
+     * @return \Psr\Http\Message\UploadedFileInterface|array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>>
      * @throws \InvalidArgumentException When the specification is incomplete.
      */
     protected static function createUploadedFiles(
@@ -300,10 +299,10 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      *     instance based on it.
      * @param array $serverParams Array of SAPI parameters with which to seed
      *     the generated request instance.
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return \Cake\Http\ServerRequest
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
+    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequest
     {
         $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];

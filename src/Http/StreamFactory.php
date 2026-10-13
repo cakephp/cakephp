@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 /**
@@ -32,7 +31,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @param string $content String content with which to populate the stream.
      */
-    public function createStream(string $content = ''): StreamInterface
+    public function createStream(string $content = ''): Stream
     {
         $resource = fopen('php://temp', 'r+');
         assert($resource !== false, 'Unable to create resource');
@@ -55,7 +54,7 @@ class StreamFactory implements StreamFactoryInterface
      * @throws \RuntimeException If the file cannot be opened.
      * @throws \InvalidArgumentException If the mode is invalid.
      */
-    public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
+    public function createStreamFromFile(string $filename, string $mode = 'r'): Stream
     {
         if (!is_readable($filename)) {
             throw new RuntimeException(sprintf('Cannot read file `%s`', $filename));
@@ -71,7 +70,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @param resource $resource The PHP resource to use as the basis for the stream.
      */
-    public function createStreamFromResource($resource): StreamInterface
+    public function createStreamFromResource($resource): Stream
     {
         return new Stream($resource);
     }

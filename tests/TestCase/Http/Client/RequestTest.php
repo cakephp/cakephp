@@ -33,6 +33,26 @@ use Psr\Http\Message\UriInterface;
  */
 class RequestTest extends TestCase
 {
+    public function testConstructorNormalizesHeaderValues(): void
+    {
+        $request = new Request('/', headers: ['X-Tag' => [' first ', 'second'], 'X-Empty' => '']);
+
+        $this->assertSame(['first', 'second'], $request->getHeader('X-Tag'));
+        $this->assertSame([''], $request->getHeader('X-Empty'));
+    }
+
+    public function testConstructorRejectsHeaderInjection(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Request('/', headers: ['X-Tag' => "value\r\nInjected: value"]);
+    }
+
+    public function testConstructorRejectsInvalidHeaderName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Request('/', headers: ['Invalid Name' => 'value']);
+    }
+
     /**
      * test string ata, header and constructor
      */

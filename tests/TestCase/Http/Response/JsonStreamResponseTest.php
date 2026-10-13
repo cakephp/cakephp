@@ -21,10 +21,42 @@ use Cake\Http\Response\JsonStreamResponse;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use JsonException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Throwable;
 
 class JsonStreamResponseTest extends TestCase
 {
+    /**
+     * @param array<string, mixed> $options Invalid streaming options.
+     */
+    #[DataProvider('invalidTypedStreamOptionsProvider')]
+    public function testInvalidTypedStreamOptions(array $options): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new JsonStreamResponse([], $options);
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function invalidTypedStreamOptionsProvider(): array
+    {
+        return [
+            'invalid root' => [['root' => []]],
+            'invalid data key' => [['dataKey' => 42]],
+            'invalid envelope' => [['envelope' => 'metadata']],
+            'invalid transform' => [['transform' => 'missing_function']],
+            'invalid flags' => [['flags' => '0']],
+        ];
+    }
+
+    public function testWithStreamOptionsValidatesTransform(): void
+    {
+        $response = new JsonStreamResponse([1]);
+        $this->expectException(InvalidArgumentException::class);
+        $response->withStreamOptions(['transform' => false]);
+    }
+
     /**
      * @var bool|null
      */

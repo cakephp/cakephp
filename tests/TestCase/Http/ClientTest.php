@@ -18,8 +18,10 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\MissingResponseException;
+use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
@@ -29,12 +31,79 @@ use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Uri\WhatWg\InvalidUrlException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * HTTP client test.
  */
 class ClientTest extends TestCase
 {
+    public function testCustomAdapterOptionsArePreserved(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            /**
+             * @var array<string, mixed>
+             */
+            public array $options = [];
+
+            public function send(RequestInterface $request, array $options): array
+            {
+                $this->options = $options;
+
+                return [new Response(['HTTP/1.1 200 OK'])];
+            }
+        };
+        $client = new Client(['adapter' => $adapter, 'timeout' => 0.5, 'custom' => ['enabled' => true]]);
+        $client->get('http://example.com', options: ['readTimeout' => 0]);
+
+        $this->assertSame(['enabled' => true], $adapter->options['custom']);
+        $this->assertSame(0.5, $adapter->options['timeout']);
+        $this->assertSame(0, $adapter->options['readTimeout']);
+    }
+
+    public function testEmptyAdapterResponseIsRejected(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            public function send(RequestInterface $request, array $options): array
+            {
+                return [];
+            }
+        };
+        $client = new Client(['adapter' => $adapter]);
+        $this->expectException(RequestException::class);
+        $client->get('http://example.com');
+    }
+
+    public function testSendRequestPreservesPsrExceptionContract(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            public function send(RequestInterface $request, array $options): array
+            {
+                return [new Response(['Invalid Header Name: value'])];
+            }
+        };
+        $client = new Client(['adapter' => $adapter]);
+        $this->expectException(ClientExceptionInterface::class);
+        $client->sendRequest(new Request('http://example.com'));
+    }
+
+    public function testAuthenticationRequiresInterface(): void
+    {
+        $client = new Client();
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('must implement');
+        $client->get('http://example.com', options: ['auth' => ['type' => '\\stdClass']]);
+    }
+
+    public function testProxyAuthenticationRequiresCapability(): void
+    {
+        $client = new Client();
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('does not support proxy authentication');
+        $client->get('http://example.com', options: ['proxy' => ['type' => 'Digest']]);
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
