@@ -86,15 +86,30 @@ class ResponseEmitter
         }
         $body = $response->getBody();
 
-        if (!$body->isSeekable()) {
+        if (!$body->isReadable()) {
             echo $body;
 
             return;
         }
 
-        $body->rewind();
-        while (!$body->eof()) {
-            echo $body->read($this->maxBufferLength);
+        $live = !$body->isSeekable();
+        if (!$live) {
+            $body->rewind();
+        }
+        try {
+            while (!$body->eof()) {
+                echo $body->read($this->maxBufferLength);
+                if ($live && ob_get_level() <= 1) {
+                    if (ob_get_level() === 1) {
+                        ob_flush();
+                    }
+                    flush();
+                }
+            }
+        } finally {
+            if ($live) {
+                $body->close();
+            }
         }
     }
 

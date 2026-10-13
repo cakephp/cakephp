@@ -23,6 +23,8 @@ use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -73,6 +75,46 @@ class ResponseEmitterTest extends TestCase
     {
         parent::tearDown();
         unset($GLOBALS['mockedHeadersSent']);
+    }
+
+    /**
+     * Readable non-seekable bodies are emitted in chunks, never cast or rewound.
+     */
+    public function testEmitLiveBody(): void
+    {
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('isReadable')->once()->andReturn(true);
+        $body->shouldReceive('isSeekable')->once()->andReturn(false);
+        $body->shouldReceive('eof')->times(3)->andReturn(false, false, true);
+        $body->shouldReceive('read')->with(8192)->twice()->andReturn('first ', 'second');
+        $body->shouldReceive('close')->once();
+        $response = new Response()->withBody($body);
+
+        ob_start();
+        ob_start();
+        try {
+            $this->emitter->emit($response);
+            $this->assertSame('first second', ob_get_contents());
+        } finally {
+            ob_end_clean();
+            ob_end_clean();
+        }
+    }
+
+    /**
+     * A failed read also closes the live connection.
+     */
+    public function testEmitLiveBodyReadFailure(): void
+    {
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('isReadable')->once()->andReturn(true);
+        $body->shouldReceive('isSeekable')->once()->andReturn(false);
+        $body->shouldReceive('eof')->once()->andReturn(false);
+        $body->shouldReceive('read')->with(8192)->once()->andThrow(RuntimeException::class);
+        $body->shouldReceive('close')->once();
+
+        $this->expectException(RuntimeException::class);
+        $this->emitter->emit(new Response()->withBody($body));
     }
 
     /**
