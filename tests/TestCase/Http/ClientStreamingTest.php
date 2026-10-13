@@ -94,7 +94,7 @@ class ClientStreamingTest extends TestCase
         $body = null;
         try {
             $client = new Client(['adapter' => Stream::class, 'timeout' => 2]);
-            $upstream = $client->get($url, [], ['stream' => true, 'readTimeout' => 0]);
+            $upstream = $client->get($url, [], ['stream' => true, 'readTimeout' => 2]);
             $body = $upstream->getBody();
             $response = new Response()
                 ->withType('text/event-stream')
@@ -113,7 +113,10 @@ class ClientStreamingTest extends TestCase
                 return '';
             }, 1);
             try {
-                new ResponseEmitter()->emit($response);
+                // The peer waits until the first 13-byte event is emitted. Read
+                // one byte at a time so the handshake does not depend on an
+                // oversized socket read returning early on every platform.
+                new ResponseEmitter(1)->emit($response);
             } finally {
                 ob_end_clean();
             }
@@ -197,8 +200,18 @@ class ClientStreamingTest extends TestCase
             $pipes,
         );
         $this->assertIsResource($process);
-        stream_set_timeout($pipes[1], 5);
-        $address = fgets($pipes[1]);
+        // Pipe timeouts are not supported on every platform. Poll a non-blocking
+        // pipe instead, with a deadline independent of the child process.
+        stream_set_blocking($pipes[1], false);
+        $deadline = microtime(true) + 5;
+        $address = false;
+        do {
+            $address = fgets($pipes[1]);
+            if ($address !== false || !proc_get_status($process)['running']) {
+                break;
+            }
+            usleep(10000);
+        } while (microtime(true) < $deadline);
         if ($address === false) {
             $this->stopServer($process, $pipes);
             $this->fail('Local HTTP server did not start.');

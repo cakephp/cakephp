@@ -69,7 +69,7 @@ class CurlTest extends TestCase
             'Cookie' => 'testing=value',
         ]);
         try {
-            $responses = $this->curl->send($request, []);
+            $responses = $this->curl->send($request, ['timeout' => 5]);
         } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
@@ -90,7 +90,7 @@ class CurlTest extends TestCase
             'User-Agent' => 'CakePHP TestSuite',
         ]);
         try {
-            $responses = $this->curl->send($request, []);
+            $responses = $this->curl->send($request, ['timeout' => 5]);
         } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }
