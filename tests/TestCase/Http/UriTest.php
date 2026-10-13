@@ -573,6 +573,10 @@ class UriTest extends TestCase
             'array-key-only' => ['key[]', 'key%5B%5D'],
             'array-key-value' => ['key[]=valu`', 'key%5B%5D=valu%60'],
             'complex' => ['k^ey&key[]=valu`&f<>=`bar', 'k%5Eey&key%5B%5D=valu%60&f%3C%3E=%60bar'],
+            'empty-pairs' => ['&key=&=value&&key=a=b&', '&key=&=value&&key=a=b&'],
+            'encoded-delimiters' => ['key=a%26b%3Dc&other=%25', 'key=a%26b%3Dc&other=%25'],
+            'invalid-escapes' => ['key=%&other=%2&last=%GG', 'key=%25&other=%252&last=%25GG'],
+            'mixed-utf8' => ["key=ουτοπία&other=\xFF=value", 'key=ουτοπία&other=%FF=value'],
         ];
     }
 

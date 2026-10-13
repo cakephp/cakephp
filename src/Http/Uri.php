@@ -366,6 +366,9 @@ class Uri implements UriInterface, Stringable
         if ($parts === false) {
             throw new InvalidArgumentException(sprintf('Unable to parse URI `%s`.', $uri));
         }
+        if ($sanitized === $uri) {
+            return $parts;
+        }
 
         $offset = 0;
         foreach (['scheme', 'user', 'pass', 'host', 'path', 'query', 'fragment'] as $key) {
@@ -427,7 +430,7 @@ class Uri implements UriInterface, Stringable
     }
 
     /**
-     * Percent-encode each key and value of a query string.
+     * Percent-encode a query string, preserving its delimiters.
      *
      * @param string $query The query string to filter.
      * @return string
@@ -438,13 +441,9 @@ class Uri implements UriInterface, Stringable
             $query = substr($query, 1);
         }
 
-        $parts = explode('&', $query);
-        foreach ($parts as $i => $part) {
-            $pair = explode('=', $part, 2);
-            $parts[$i] = implode('=', array_map($this->filterQueryOrFragment(...), $pair));
-        }
-
-        return implode('&', $parts);
+        // Both `&` and `=` are allowed by the query/fragment filter, so keys
+        // and values can be encoded together without splitting the query.
+        return $this->filterQueryOrFragment($query);
     }
 
     /**
@@ -487,6 +486,10 @@ class Uri implements UriInterface, Stringable
      */
     protected function encode(string $value, string $pattern): string
     {
+        if ($value === '') {
+            return '';
+        }
+
         if (!preg_match('//u', $value)) {
             $value = $this->encodeInvalidUtf8($value);
         }
