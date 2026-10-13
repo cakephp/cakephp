@@ -28,7 +28,6 @@ use Psr\Http\Message\RequestInterface;
  * This adapter is not intended for production use. Instead
  * it is the backend used by `Client::addMockResponse()`
  *
- * @phpstan-type MockOptions array{match?: \Closure(\Psr\Http\Message\RequestInterface, array<string, mixed>): bool}
  * @internal
  */
 class Mock implements AdapterInterface
@@ -36,7 +35,7 @@ class Mock implements AdapterInterface
     /**
      * List of mocked responses.
      *
-     * @var array<int, array{request: \Psr\Http\Message\RequestInterface, response: \Cake\Http\Client\Response, options: MockOptions}>
+     * @var array<int, array{request: \Psr\Http\Message\RequestInterface, response: \Cake\Http\Client\Response, options: array<string, mixed>}>
      */
     protected array $responses = [];
 
@@ -49,7 +48,7 @@ class Mock implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request A partial request to use for matching.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param MockOptions $options See above.
+     * @param array{match?: \Closure(\Psr\Http\Message\RequestInterface, array<string, mixed>): bool} $options See above.
      * @return void
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void

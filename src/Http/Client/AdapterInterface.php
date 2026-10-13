@@ -19,8 +19,6 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Http client adapter interface.
- *
- * @phpstan-import-type ClientOptions from \Cake\Http\Client
  */
 interface AdapterInterface
 {
@@ -28,7 +26,7 @@ interface AdapterInterface
      * Send a request and get a response back.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object to send.
-     * @param ClientOptions $options Array of options for the stream.
+     * @param array<string, mixed> $options Array of options for the stream.
      * @return non-empty-list<\Cake\Http\Client\Response> Array of populated Response objects
      */
     public function send(RequestInterface $request, array $options): array;

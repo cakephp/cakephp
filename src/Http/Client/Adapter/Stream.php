@@ -32,8 +32,6 @@ use Uri\WhatWg\Url;
  * via php's stream API.
  *
  * This approach and implementation is partly inspired by Aura.Http
- *
- * @phpstan-import-type ClientOptions from \Cake\Http\Client
  */
 class Stream implements AdapterInterface
 {
@@ -129,7 +127,7 @@ class Stream implements AdapterInterface
      * Build the stream context out of the request object.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
-     * @param ClientOptions $options Additional request options.
+     * @param array<string, mixed> $options Additional request options.
      * @return void
      */
     protected function buildContext(RequestInterface $request, array $options): void
@@ -155,7 +153,7 @@ class Stream implements AdapterInterface
      * Creates cookies & headers.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param ClientOptions $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function buildHeaders(RequestInterface $request, array $options): void
@@ -174,7 +172,7 @@ class Stream implements AdapterInterface
      * Array data will be processed with {@link \Cake\Http\Client\FormData}
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param ClientOptions $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function buildContent(RequestInterface $request, array $options): void
@@ -188,7 +186,7 @@ class Stream implements AdapterInterface
      * Build miscellaneous options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param ClientOptions $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function buildOptions(RequestInterface $request, array $options): void
@@ -213,7 +211,7 @@ class Stream implements AdapterInterface
      * Build SSL options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param ClientOptions $options Array of options to use.
+     * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
     protected function buildSslContext(RequestInterface $request, array $options): void
@@ -299,7 +297,7 @@ class Stream implements AdapterInterface
      * Return after headers arrive, transferring ownership of the connection to the body.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object.
-     * @param ClientOptions $options Request options.
+     * @param array<string, mixed> $options Request options.
      * @return non-empty-list<\Cake\Http\Client\Response>
      */
     protected function processStreamingRequest(RequestInterface $request, array $options): array
