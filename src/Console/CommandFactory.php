@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Container\ContainerInterface;
+use ReflectionClass;
+use ReflectionNamedType;
 
 /**
  * This is a factory for creating Command instances.
@@ -44,7 +46,41 @@ class CommandFactory implements CommandFactoryInterface
             return $this->container->get($className);
         }
 
+        if ($this->container && $this->hasConstructorDependencies($className)) {
+            if (!$this->container->hasDefinition(CommandFactoryInterface::class)) {
+                $this->container->add(CommandFactoryInterface::class, $this);
+            }
+
+            /** @var \Cake\Console\CommandInterface */
+            return $this->container->getNew($className);
+        }
+
         /** @var \Cake\Console\CommandInterface */
         return new $className($this);
+    }
+
+    /**
+     * Check whether a command needs other constructor dependencies than this factory.
+     *
+     * Those commands are auto-wired by the container.
+     *
+     * @param class-string<\Cake\Console\CommandInterface> $className Command class name.
+     * @return bool
+     */
+    protected function hasConstructorDependencies(string $className): bool
+    {
+        $constructor = new ReflectionClass($className)->getConstructor();
+        if ($constructor === null) {
+            return false;
+        }
+
+        foreach ($constructor->getParameters() as $parameter) {
+            $type = $parameter->getType();
+            if (!$type instanceof ReflectionNamedType || !is_a($this, $type->getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

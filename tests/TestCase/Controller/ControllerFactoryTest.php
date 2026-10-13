@@ -686,6 +686,7 @@ class ControllerFactoryTest extends TestCase
      */
     public function testInvokeInjectParametersRequiredNotDefined(): void
     {
+        $this->container->disableAutoWiring();
         $request = new ServerRequest([
             'url' => 'test_plugin_three/dependencies/index',
             'params' => [
@@ -701,6 +702,49 @@ class ControllerFactoryTest extends TestCase
             'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action `Dependencies::requiredDep()`',
         );
         $this->factory->invoke($controller);
+    }
+
+    /**
+     * Test that required class dependencies are auto-wired if they are not explicitly defined.
+     */
+    public function testInvokeInjectParametersRequiredAutoWired(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'dependencies/reflectionDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'reflectionDep',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertInstanceOf(stdClass::class, $data->dep);
+    }
+
+    /**
+     * Test that passed params take precedence over auto-wiring.
+     */
+    public function testInvokeInjectParametersRequiredAutoWiredPassedParam(): void
+    {
+        $passed = json_decode('{"key":"passed"}');
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredDep',
+                'pass' => [$passed],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertSame('passed', $data->dep->key);
     }
 
     public function testInvokeRequestToDtoAttribute(): void

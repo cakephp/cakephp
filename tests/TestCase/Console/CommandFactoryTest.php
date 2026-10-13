@@ -23,8 +23,10 @@ use Cake\Container\Container;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use stdClass;
+use TestApp\Command\AutoWiredCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
+use TestApp\ReflectionDependency;
 
 class CommandFactoryTest extends TestCase
 {
@@ -48,6 +50,35 @@ class CommandFactoryTest extends TestCase
         $command = $factory->create(DependencyCommand::class);
         $this->assertInstanceOf(DependencyCommand::class, $command);
         $this->assertInstanceOf(stdClass::class, $command->inject);
+    }
+
+    public function testCreateCommandAutoWiredDependencies(): void
+    {
+        $factory = new CommandFactory(new Container());
+
+        $command = $factory->create(DependencyCommand::class);
+        $this->assertInstanceOf(DependencyCommand::class, $command);
+        $this->assertInstanceOf(stdClass::class, $command->inject);
+    }
+
+    public function testCreateCommandAutoWiredDependenciesPassesFactory(): void
+    {
+        $factory = new CommandFactory(new Container());
+
+        $command = $factory->create(AutoWiredCommand::class);
+        $this->assertInstanceOf(AutoWiredCommand::class, $command);
+        $this->assertInstanceOf(ReflectionDependency::class, $command->dependency);
+        $this->assertSame($factory, $command->getFactory());
+    }
+
+    public function testCreateCommandWithoutAutoWiring(): void
+    {
+        $container = new Container();
+        $container->disableAutoWiring();
+        $factory = new CommandFactory($container);
+
+        $command = $factory->create(DemoCommand::class);
+        $this->assertInstanceOf(DemoCommand::class, $command);
     }
 
     protected function getMockIo(StubConsoleOutput $output): ConsoleIoInterface
