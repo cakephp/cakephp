@@ -266,20 +266,20 @@ class Client implements EventDispatcherInterface, ClientInterface
     public static function createFromUrl(string $url): static
     {
         $uri = Url::parse($url);
-        if ($uri === null || $uri->getAsciiHost() === '') {
+        if ($uri === null || $uri->getUnicodeHost() === '') {
             throw new InvalidArgumentException(sprintf(
                 'String `%s` did not parse.',
                 $url,
             ));
         }
 
-        if (!in_array($uri->getScheme(), ['http', 'https'], true) || !$uri->getAsciiHost()) {
+        if (!in_array($uri->getScheme(), ['http', 'https'], true) || !$uri->getUnicodeHost()) {
             throw new InvalidArgumentException('The URL must use http or https and contain a host');
         }
 
         $config = [
             'scheme' => $uri->getScheme(),
-            'host' => $uri->getAsciiHost(),
+            'host' => $uri->getUnicodeHost(),
             'basePath' => $uri->getPath(),
         ];
         if ($uri->getPort() !== null) {
@@ -567,10 +567,10 @@ class Client implements EventDispatcherInterface, ClientInterface
                 } catch (InvalidUrlException $error) {
                     throw new InvalidArgumentException($error->getMessage(), 0, $error);
                 }
-                if (!in_array($locationUrl->getScheme(), ['http', 'https'], true) || !$locationUrl->getAsciiHost()) {
+                if (!in_array($locationUrl->getScheme(), ['http', 'https'], true) || !$locationUrl->getUnicodeHost()) {
                     throw new InvalidArgumentException('The redirect URL must use http or https and contain a host');
                 }
-                $request = $request->withUri(new Uri($locationUrl->toAsciiString()));
+                $request = $request->withUri(new Uri($locationUrl->toUnicodeString()));
                 $request = $this->cookies->addToRequest($request, []);
             }
         } while ($handleRedirect);
