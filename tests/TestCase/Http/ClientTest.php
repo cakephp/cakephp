@@ -823,6 +823,51 @@ class ClientTest extends TestCase
     /**
      * test redirects
      */
+    #[DataProvider('relativeRedirects')]
+    public function testRedirectsResolveAgainstRequestUri(string $location, string $expected): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: ' . $location]),
+        ]);
+        $adapter->shouldReceive('send')->once()->ordered()
+            ->withArgs(function (RequestInterface $request, array $options) use ($expected): bool {
+                $this->assertSame($expected, (string)$request->getUri());
+
+                return true;
+            })
+            ->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+
+        $client = new Client(['adapter' => $adapter, 'basePath' => '/scoped']);
+        $client->send(new Request('https://example.com/a/b?original=1'), ['redirect' => 1]);
+    }
+
+    public function testRedirectRejectsInvalidUri(): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: http://[invalid]/']),
+        ]);
+        $client = new Client(['adapter' => $adapter]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $client->send(new Request('https://example.com/a/b'), ['redirect' => 1]);
+    }
+
+    public static function relativeRedirects(): array
+    {
+        return [
+            'sibling' => ['next', 'https://example.com/a/next'],
+            'parent' => ['../next', 'https://example.com/next'],
+            'query' => ['?page=2', 'https://example.com/a/b?page=2'],
+            'fragment' => ['#section', 'https://example.com/a/b?original=1#section'],
+            'root' => ['/next', 'https://example.com/next'],
+            'authority' => ['//other.example/next', 'https://other.example/next'],
+            'absolute' => ['http://other.example/next', 'http://other.example/next'],
+            'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
+        ];
+    }
+
     public function testRedirects(): void
     {
         $url = 'http://cakephp.org';
@@ -1231,6 +1276,22 @@ class ClientTest extends TestCase
     /**
      * basePath is set when passed to client in string
      */
+    public function testCreateFromUrlPreservesRawComponents(): void
+    {
+        $client = Client::createFromUrl('HTTP://Example.com:80/a%2Fb/../c');
+
+        $this->assertSame('HTTP', $client->getConfig('scheme'));
+        $this->assertSame('Example.com', $client->getConfig('host'));
+        $this->assertSame(80, $client->getConfig('port'));
+        $this->assertSame('/a%2Fb/../c', $client->getConfig('basePath'));
+    }
+
+    public function testCreateFromUrlRejectsInvalidUri(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl('https://[invalid]/');
+    }
+
     public function testCreateFromUrlSetsBasePath(): void
     {
         $client = Client::createFromUrl('https://example.co/api/v1');

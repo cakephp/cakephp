@@ -37,8 +37,8 @@ use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Uri\WhatWg\Url;
+use Uri\InvalidUriException;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -265,19 +265,26 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function createFromUrl(string $url): static
     {
-        $uri = new Url($url);
-        $host = $uri->getUnicodeHost();
+        $uri = Rfc3986Uri::parse($url);
+        if ($uri === null || $uri->getRawHost() === '') {
+            throw new InvalidArgumentException(sprintf(
+                'String `%s` did not parse.',
+                $url,
+            ));
+        }
 
-        if ($host === '') {
-            throw new InvalidArgumentException('The URL does not contain a host');
+        if (!$uri->getRawScheme() || !$uri->getRawHost()) {
+            throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
         }
 
         $config = [
-            'scheme' => $uri->getScheme(),
-            'host' => $host,
-            'port' => $uri->getPort(),
-            'basePath' => $uri->getPath(),
+            'scheme' => $uri->getRawScheme(),
+            'host' => $uri->getRawHost(),
+            'basePath' => $uri->getRawPath(),
         ];
+        if ($uri->getPort() !== null) {
+            $config['port'] = $uri->getPort();
+        }
 
         return new static($config);
     }
@@ -555,12 +562,11 @@ class Client implements EventDispatcherInterface, ClientInterface
                 $url = $request->getUri();
 
                 $location = $response->getHeaderLine('Location');
-                $locationUrl = $this->buildUrl($location, [], [
-                    'host' => $url->getHost(),
-                    'port' => $url->getPort(),
-                    'scheme' => $url->getScheme(),
-                    'protocolRelative' => true,
-                ]);
+                try {
+                    $locationUrl = new Rfc3986Uri((string)$url)->resolve($location)->toRawString();
+                } catch (InvalidUriException $error) {
+                    throw new InvalidArgumentException($error->getMessage(), 0, $error);
+                }
 
                 $locationUri = new Uri($locationUrl);
                 if (

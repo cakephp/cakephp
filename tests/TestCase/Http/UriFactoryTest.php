@@ -402,6 +402,39 @@ class UriFactoryTest extends TestCase
         $this->assertSame('foo', $uri->getFragment());
     }
 
+    public function testMarshalAbsoluteRequestUriWithoutPath(): void
+    {
+        $uri = UriFactory::marshalUriAndBaseFromSapi([
+            'HTTP_HOST' => 'example.com',
+            'REQUEST_URI' => 'http://example.com?ignored=/other/path',
+            'QUERY_STRING' => 'actual=1',
+        ])['uri'];
+
+        $this->assertSame('/', $uri->getPath());
+        $this->assertSame('actual=1', $uri->getQuery());
+    }
+
+    public function testMarshalAbsoluteRequestUriPreservesRawPath(): void
+    {
+        $uri = UriFactory::marshalUriAndBaseFromSapi([
+            'HTTP_HOST' => 'example.com',
+            'REQUEST_URI' => 'http://example.com/a%2Fb/../c#section',
+        ])['uri'];
+
+        $this->assertSame('/a%2Fb/../c', $uri->getPath());
+        $this->assertSame('section', $uri->getFragment());
+    }
+
+    public function testMarshalAbsoluteRequestUriWithUnencodedPath(): void
+    {
+        $uri = UriFactory::marshalUriAndBaseFromSapi([
+            'HTTP_HOST' => 'example.com',
+            'REQUEST_URI' => 'http://example.com/a b/ουτοπία',
+        ])['uri'];
+
+        $this->assertSame('/a%20b/ουτοπία', $uri->getPath());
+    }
+
     public function testMarshalRequestUriIgnoresXOriginalUrl(): void
     {
         $server = [

@@ -25,7 +25,7 @@ use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Throwable;
-use Uri\WhatWg\Url;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -136,9 +136,7 @@ class Stream implements AdapterInterface
         $this->buildHeaders($request, $options);
         $this->buildOptions($request, $options);
 
-        $url = $request->getUri();
-        $scheme = new Url((string)$url)->getScheme();
-        if ($scheme === 'https') {
+        if ($request->getUri()->getScheme() === 'https') {
             $this->buildSslContext($request, $options);
         }
         $this->context = stream_context_create([
@@ -194,6 +192,7 @@ class Stream implements AdapterInterface
         $this->contextOptions['method'] = $request->getMethod();
         $this->contextOptions['protocol_version'] = $request->getProtocolVersion();
         $this->contextOptions['ignore_errors'] = true;
+        $this->contextOptions['uri_parser_class'] = Rfc3986Uri::class;
 
         if (isset($options['timeout'])) {
             $this->contextOptions['timeout'] = $options['timeout'];
@@ -230,9 +229,7 @@ class Stream implements AdapterInterface
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
-            $url = $request->getUri();
-            $host = new Url((string)$url)->getUnicodeHost();
-            $this->sslContextOptions['peer_name'] = $host;
+            $this->sslContextOptions['peer_name'] = $request->getUri()->getHost();
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
