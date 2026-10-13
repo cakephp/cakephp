@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Factory class for creating response instances.
@@ -32,7 +31,7 @@ class ResponseFactory implements ResponseFactoryInterface
      *   in the generated response. If none is provided, implementations MAY use
      *   the defaults as suggested in the HTTP specification.
      */
-    public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+    public function createResponse(int $code = 200, string $reasonPhrase = ''): Response
     {
         return new Response()->withStatus($code, $reasonPhrase);
     }

@@ -32,6 +32,8 @@ use Uri\WhatWg\Url;
  * via php's stream API.
  *
  * This approach and implementation is partly inspired by Aura.Http
+ *
+ * @phpstan-import-type ClientOptions from \Cake\Http\Client
  */
 class Stream implements AdapterInterface
 {
@@ -66,7 +68,7 @@ class Stream implements AdapterInterface
     /**
      * Connection error list.
      *
-     * @var array
+     * @var list<string>
      */
     protected array $connectionErrors = [];
 
@@ -98,7 +100,7 @@ class Stream implements AdapterInterface
      *
      * @param list<string> $headers The list of headers from the request(s)
      * @param \Psr\Http\Message\StreamInterface|string $content The response content.
-     * @return array<\Cake\Http\Client\Response> The list of responses from the request(s)
+     * @return non-empty-list<\Cake\Http\Client\Response> The list of responses from the request(s)
      */
     public function createResponses(array $headers, string|StreamInterface $content): array
     {
@@ -108,6 +110,9 @@ class Stream implements AdapterInterface
             if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;
             }
+        }
+        if ($indexes === []) {
+            throw new ClientException('No HTTP response headers received.');
         }
         $last = count($indexes) - 1;
         foreach ($indexes as $i => $start) {
@@ -124,7 +129,7 @@ class Stream implements AdapterInterface
      * Build the stream context out of the request object.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
-     * @param array<string, mixed> $options Additional request options.
+     * @param ClientOptions $options Additional request options.
      * @return void
      */
     protected function buildContext(RequestInterface $request, array $options): void
@@ -150,7 +155,7 @@ class Stream implements AdapterInterface
      * Creates cookies & headers.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array<string, mixed> $options Array of options to use.
+     * @param ClientOptions $options Array of options to use.
      * @return void
      */
     protected function buildHeaders(RequestInterface $request, array $options): void
@@ -169,7 +174,7 @@ class Stream implements AdapterInterface
      * Array data will be processed with {@link \Cake\Http\Client\FormData}
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array<string, mixed> $options Array of options to use.
+     * @param ClientOptions $options Array of options to use.
      * @return void
      */
     protected function buildContent(RequestInterface $request, array $options): void
@@ -183,7 +188,7 @@ class Stream implements AdapterInterface
      * Build miscellaneous options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array<string, mixed> $options Array of options to use.
+     * @param ClientOptions $options Array of options to use.
      * @return void
      */
     protected function buildOptions(RequestInterface $request, array $options): void
@@ -208,7 +213,7 @@ class Stream implements AdapterInterface
      * Build SSL options for the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request being sent.
-     * @param array<string, mixed> $options Array of options to use.
+     * @param ClientOptions $options Array of options to use.
      * @return void
      */
     protected function buildSslContext(RequestInterface $request, array $options): void
@@ -243,7 +248,7 @@ class Stream implements AdapterInterface
      * Open the stream and send the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object.
-     * @return array Array of populated Response objects
+     * @return non-empty-list<\Cake\Http\Client\Response> Array of populated Response objects
      * @throws \Psr\Http\Client\NetworkExceptionInterface
      */
     protected function processRequest(RequestInterface $request): array
@@ -294,8 +299,8 @@ class Stream implements AdapterInterface
      * Return after headers arrive, transferring ownership of the connection to the body.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object.
-     * @param array<string, mixed> $options Request options.
-     * @return array<\Cake\Http\Client\Response>
+     * @param ClientOptions $options Request options.
+     * @return non-empty-list<\Cake\Http\Client\Response>
      */
     protected function processStreamingRequest(RequestInterface $request, array $options): array
     {
@@ -311,9 +316,6 @@ class Stream implements AdapterInterface
             }
             $responses = $this->createResponses($headers, $body);
             $last = array_key_last($responses);
-            if ($last === null) {
-                throw new RequestException('No HTTP response headers received.', $request);
-            }
             $response = $responses[$last];
             if (strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip') {
                 $body->decodeGzip();
@@ -336,7 +338,7 @@ class Stream implements AdapterInterface
     /**
      * Build a response object
      *
-     * @param array<string> $headers Unparsed headers.
+     * @param list<string> $headers Unparsed headers.
      * @param \Psr\Http\Message\StreamInterface|string $body The response body.
      * @return \Cake\Http\Client\Response
      */
@@ -359,7 +361,7 @@ class Stream implements AdapterInterface
             throw new ClientException('The PHP directive `allow_url_fopen` must be enabled.');
         }
 
-        set_error_handler(function ($code, $message): bool {
+        set_error_handler(function (int $code, string $message): bool {
             $this->connectionErrors[] = $message;
 
             return true;

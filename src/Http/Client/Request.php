@@ -61,7 +61,7 @@ class Request extends Message implements RequestInterface
      *
      * @param \Psr\Http\Message\UriInterface|string $url The request URL
      * @param string $method The HTTP method to use.
-     * @param array<non-empty-string, non-empty-string> $headers The HTTP headers to set.
+     * @param array<non-empty-string, string|array<string>> $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      */
     public function __construct(
@@ -87,15 +87,14 @@ class Request extends Message implements RequestInterface
     /**
      * Add an array of headers to the request.
      *
-     * @param array<non-empty-string, non-empty-string> $headers The headers to add.
+     * @param array<non-empty-string, string|array<string>> $headers The headers to add.
      * @return void
      */
     protected function addHeaders(array $headers): void
     {
         foreach ($headers as $key => $val) {
-            $normalized = strtolower($key);
-            $this->headers[$key] = (array)$val;
-            $this->headerNames[$normalized] = $key;
+            $this->assertHeaderName($key);
+            $this->replaceHeader($key, $this->filterHeaderValue($val));
         }
     }
 
@@ -122,7 +121,7 @@ class Request extends Message implements RequestInterface
                 $formData = new FormData();
                 $formData->addMany($content);
 
-                /** @var array<non-empty-string, non-empty-string> $headers */
+                /** @var array<non-empty-string, string|array<string>> $headers */
                 $headers = ['Content-Type' => $formData->contentType()];
                 $this->addHeaders($headers);
                 $content = (string)$formData;

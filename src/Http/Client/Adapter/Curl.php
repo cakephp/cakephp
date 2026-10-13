@@ -33,6 +33,8 @@ use Psr\Http\Message\RequestInterface;
  * this adapter supports all available curl options. Additional curl options
  * can be set via the `curl` option key when making requests or configuring
  * a client.
+ *
+ * @phpstan-import-type ClientOptions from \Cake\Http\Client
  */
 class Curl implements AdapterInterface
 {
@@ -84,7 +86,7 @@ class Curl implements AdapterInterface
      * Convert client options into curl options.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request.
-     * @param array<string, mixed> $options The client options
+     * @param ClientOptions $options The client options
      * @return array
      */
     public function buildOptions(RequestInterface $request, array $options): array
@@ -199,7 +201,7 @@ class Curl implements AdapterInterface
      *
      * @param \CurlHandle $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return array<\Cake\Http\Client\Response>
+     * @return non-empty-list<\Cake\Http\Client\Response>
      */
     protected function createResponse(CurlHandle $handle, string $responseData): array
     {

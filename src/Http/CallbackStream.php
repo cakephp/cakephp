@@ -39,14 +39,14 @@ class CallbackStream implements StreamInterface, Stringable
     /**
      * The callback generating the stream contents.
      *
-     * @var \Closure|null
+     * @var (\Closure(): mixed)|null
      */
     protected ?Closure $callback = null;
 
     /**
      * Constructor
      *
-     * @param callable $callback The callback generating the stream contents.
+     * @param callable(): mixed $callback The callback generating the stream contents.
      */
     public function __construct(callable $callback)
     {
@@ -56,7 +56,7 @@ class CallbackStream implements StreamInterface, Stringable
     /**
      * Attach a new callback to the instance.
      *
-     * @param callable $callback The callback generating the stream contents.
+     * @param callable(): mixed $callback The callback generating the stream contents.
      * @return void
      */
     public function attach(callable $callback): void
@@ -81,7 +81,7 @@ class CallbackStream implements StreamInterface, Stringable
     }
 
     /**
-     * @inheritDoc
+     * @return (\Closure(): mixed)|null
      */
     public function detach(): ?Closure
     {

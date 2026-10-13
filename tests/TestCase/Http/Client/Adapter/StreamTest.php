@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -30,6 +31,12 @@ use TestApp\Http\Client\Adapter\CakeStreamWrapper;
  */
 class StreamTest extends TestCase
 {
+    public function testCreateResponsesRejectsMissingStatusLine(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->stream->createResponses(['Content-Type: text/plain'], 'body');
+    }
+
     /**
      * @var \Cake\Http\Client\Adapter\Stream
      */

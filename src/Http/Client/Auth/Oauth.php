@@ -32,7 +32,7 @@ use Uri\WhatWg\Url;
  * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'oauth'
  */
-class Oauth
+class Oauth implements AuthenticationInterface
 {
     /**
      * Add headers for Oauth authorization.

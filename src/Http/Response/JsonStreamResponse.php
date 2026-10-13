@@ -69,6 +69,9 @@ use JsonException;
  * - 10,000 rows @ 1KB each: ~1KB memory (not ~10MB)
  * - 100,000 rows @ 1KB each: ~1KB memory (not ~100MB)
  * - Time to first byte: after first row (not after all rows)
+ *
+ * @template TItem
+ * @extends \Cake\Http\Response\AbstractStreamResponse<TItem>
  */
 class JsonStreamResponse extends AbstractStreamResponse
 {
@@ -77,28 +80,29 @@ class JsonStreamResponse extends AbstractStreamResponse
      *
      * @var int
      */
-    public const DEFAULT_JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
+    public const int DEFAULT_JSON_FLAGS =
+        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
 
     /**
      * JSON format constant.
      *
      * @var string
      */
-    public const FORMAT_JSON = 'json';
+    public const string FORMAT_JSON = 'json';
 
     /**
      * NDJSON (newline-delimited JSON) format constant.
      *
      * @var string
      */
-    public const FORMAT_NDJSON = 'ndjson';
+    public const string FORMAT_NDJSON = 'ndjson';
 
     /**
      * Supported formats.
      *
      * @var array<string>
      */
-    protected const SUPPORTED_FORMATS = [
+    protected const array SUPPORTED_FORMATS = [
         self::FORMAT_JSON,
         self::FORMAT_NDJSON,
     ];
@@ -117,6 +121,34 @@ class JsonStreamResponse extends AbstractStreamResponse
         'flags' => self::DEFAULT_JSON_FLAGS,
         'flushEvery' => 1,
     ];
+
+    /**
+     * @param iterable<mixed, TItem> $data The items to stream.
+     * @param array{
+     *   root?: string|null, envelope?: array<string, mixed>, dataKey?: string,
+     *   format?: 'json'|'ndjson', transform?: (callable(TItem): mixed)|null,
+     *   flags?: int, flushEvery?: positive-int, ...<string, mixed>
+     * } $options Streaming options.
+     */
+    public function __construct(iterable $data, array $options = [])
+    {
+        parent::__construct($data, $options);
+    }
+
+    /**
+     * Return a response with validated JSON streaming options.
+     *
+     * @param array{
+     *   root?: string|null, envelope?: array<string, mixed>, dataKey?: string,
+     *   format?: 'json'|'ndjson', transform?: (callable(TItem): mixed)|null,
+     *   flags?: int, flushEvery?: positive-int, ...<string, mixed>
+     * } $options Options to merge with the existing options.
+     * @return static
+     */
+    public function withStreamOptions(array $options): static
+    {
+        return parent::withStreamOptions($options);
+    }
 
     /**
      * @inheritDoc
@@ -225,7 +257,7 @@ class JsonStreamResponse extends AbstractStreamResponse
     /**
      * Encode one stream item and normalize error handling.
      *
-     * @param mixed $item Item to encode.
+     * @param TItem $item Item to encode.
      * @param int $flags JSON encode flags.
      * @param int $index Item index.
      * @return string
@@ -326,6 +358,23 @@ class JsonStreamResponse extends AbstractStreamResponse
      */
     protected function normalizeStreamOptions(array $options, array $originalOptions = []): array
     {
+        foreach (['root', 'dataKey'] as $key) {
+            if ($key === 'root' && $options[$key] === null) {
+                continue;
+            }
+            if (!is_string($options[$key])) {
+                throw new InvalidArgumentException(sprintf('`%s` must be a string.', $key));
+            }
+        }
+        if (!is_array($options['envelope'])) {
+            throw new InvalidArgumentException('`envelope` must be an array.');
+        }
+        if ($options['transform'] !== null && !is_callable($options['transform'])) {
+            throw new InvalidArgumentException('`transform` must be callable or null.');
+        }
+        if (!is_int($options['flags'])) {
+            throw new InvalidArgumentException('`flags` must be an integer.');
+        }
         $format = $options['format'];
         if (!in_array($format, self::SUPPORTED_FORMATS, true)) {
             throw new InvalidArgumentException(sprintf(

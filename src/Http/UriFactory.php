@@ -36,7 +36,7 @@ class UriFactory implements UriFactoryInterface
      * @param string $uri The URI to parse.
      * @throws \InvalidArgumentException If the given URI cannot be parsed.
      */
-    public function createUri(string $uri = ''): UriInterface
+    public function createUri(string $uri = ''): Uri
     {
         return new Uri($uri);
     }
@@ -67,9 +67,9 @@ class UriFactory implements UriFactoryInterface
      * Create a Uri instance from SAPI parameters.
      *
      * @param array $server The SERVER data to use.
-     * @return \Psr\Http\Message\UriInterface
+     * @return \Cake\Http\Uri
      */
-    protected static function createFromSapi(array $server): UriInterface
+    protected static function createFromSapi(array $server): Uri
     {
         $https = $server['HTTPS'] ?? $server['https'] ?? false;
         if (!is_bool($https) && !is_string($https)) {
