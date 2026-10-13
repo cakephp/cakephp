@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Stream;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -25,6 +26,26 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ResponseTest extends TestCase
 {
+    /**
+     * Stream bodies are preserved and non-seekable string reads consume only remaining bytes.
+     */
+    public function testLiveBody(): void
+    {
+        $pair = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $this->assertIsArray($pair);
+        fwrite($pair[0], 'first second');
+        fclose($pair[0]);
+        $body = new Stream($pair[1]);
+        $response = new Response(['HTTP/1.1 200 OK'], $body);
+
+        $this->assertSame($body, $response->getBody());
+        $this->assertFalse($body->isSeekable());
+        $this->assertSame('first ', $body->read(6));
+        $this->assertSame('second', $response->getStringBody());
+        $this->assertSame('', $response->getStringBody());
+        $body->close();
+    }
+
     /**
      * A response built without a status line still has a usable reason phrase.
      *

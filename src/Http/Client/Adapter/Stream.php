@@ -20,8 +20,11 @@ use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Response;
+use Cake\Http\Client\ResponseStream;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Throwable;
 use Uri\WhatWg\Url;
 
 /**
@@ -80,6 +83,10 @@ class Stream implements AdapterInterface
 
         $this->buildContext($request, $options);
 
+        if (!empty($options['stream'])) {
+            return $this->processStreamingRequest($request, $options);
+        }
+
         return $this->processRequest($request);
     }
 
@@ -90,10 +97,10 @@ class Stream implements AdapterInterface
      * of redirects that occurred.
      *
      * @param list<string> $headers The list of headers from the request(s)
-     * @param string $content The response content.
+     * @param \Psr\Http\Message\StreamInterface|string $content The response content.
      * @return array<\Cake\Http\Client\Response> The list of responses from the request(s)
      */
-    public function createResponses(array $headers, string $content): array
+    public function createResponses(array $headers, string|StreamInterface $content): array
     {
         $indexes = [];
         $responses = [];
@@ -284,13 +291,56 @@ class Stream implements AdapterInterface
     }
 
     /**
+     * Return after headers arrive, transferring ownership of the connection to the body.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The request object.
+     * @param array<string, mixed> $options Request options.
+     * @return array<\Cake\Http\Client\Response>
+     */
+    protected function processStreamingRequest(RequestInterface $request, array $options): array
+    {
+        $this->open((string)$request->getUri(), $request);
+        assert($this->stream !== null, 'HTTP stream failed to open');
+        $body = new ResponseStream($this->stream, $request);
+        $this->stream = null;
+
+        try {
+            $headers = $body->getMetadata('wrapper_data');
+            if (isset($headers['headers']) && is_array($headers['headers'])) {
+                $headers = $headers['headers'];
+            }
+            $responses = $this->createResponses($headers, $body);
+            $last = array_key_last($responses);
+            if ($last === null) {
+                throw new RequestException('No HTTP response headers received.', $request);
+            }
+            $response = $responses[$last];
+            if (strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip') {
+                $body->decodeGzip();
+                $responses[$last] = $response
+                    ->withoutHeader('Content-Encoding')
+                    ->withoutHeader('Content-Length');
+            }
+            if (isset($options['readTimeout'])) {
+                $body->setReadTimeout((float)$options['readTimeout']);
+            }
+
+            return $responses;
+        } catch (Throwable $error) {
+            $body->close();
+
+            throw $error;
+        }
+    }
+
+    /**
      * Build a response object
      *
      * @param array<string> $headers Unparsed headers.
-     * @param string $body The response body.
+     * @param \Psr\Http\Message\StreamInterface|string $body The response body.
      * @return \Cake\Http\Client\Response
      */
-    protected function buildResponse(array $headers, string $body): Response
+    protected function buildResponse(array $headers, string|StreamInterface $body): Response
     {
         return new Response($headers, $body);
     }

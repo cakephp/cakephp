@@ -1071,6 +1071,7 @@ class ClientTest extends TestCase
             'scheme' => 'http',
             'basePath' => '/some/uri/',
             'timeout' => 30,
+            'stream' => false,
             'ssl_verify_peer' => true,
             'ssl_verify_peer_name' => true,
             'ssl_verify_depth' => 5,

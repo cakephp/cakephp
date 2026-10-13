@@ -97,6 +97,32 @@ use Uri\WhatWg\Url;
  * - Digest
  * - Oauth
  *
+ * ### Reading a live response
+ *
+ * ```
+ * $client = new Client(['adapter' => \Cake\Http\Client\Adapter\Stream::class]);
+ * $response = $client->post($url, $json, [
+ *     'stream' => true,
+ *     'readTimeout' => 60,
+ *     'headers' => ['Content-Type' => 'application/json'],
+ * ]);
+ * $body = $response->getBody();
+ * try {
+ *     while (!$body->eof()) {
+ *         $chunk = $body->read(8192);
+ *         // Process bytes incrementally. Chunks need not contain complete SSE events.
+ *     }
+ * } finally {
+ *     $body->close();
+ * }
+ * ```
+ *
+ * To relay bytes to a browser, attach the body to a server response using
+ * `withBody()`. Set the appropriate Content-Type (e.g. text/event-stream),
+ * Cache-Control and X-Accel-Buffering headers. The emitter reads and flushes
+ * non-seekable bodies incrementally and closes them after emission. Server and
+ * proxy buffering must also be configured to allow streaming.
+ *
  * ### Using proxies
  *
  * By using the `proxy` key you can set authentication credentials for
@@ -122,6 +148,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         'scheme' => 'http',
         'basePath' => '',
         'timeout' => 30,
+        'stream' => false,
         'ssl_verify_peer' => true,
         'ssl_verify_peer_name' => true,
         'ssl_verify_depth' => 5,
@@ -174,6 +201,12 @@ class Client implements EventDispatcherInterface, ClientInterface
      *   Defaults to 5.
      * - ssl_verify_host - Verify that the certificate and hostname match.
      *   Defaults to true.
+     * - stream - Return a live body after headers arrive. Defaults to false.
+     *   Requires the Stream adapter. Read the body incrementally and close it when done.
+     *   HttpClient.afterSend runs before the live body is consumed; listeners must
+     *   not read the body for logging or monitoring.
+     * - readTimeout - Timeout in seconds for each live body read. Defaults to timeout.
+     *   A value of 0 disables the read timeout. Read failures occur during body consumption.
      * - redirect - Number of redirects to follow. Defaults to false.
      * - adapter - The adapter class name or instance. Defaults to
      *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
@@ -508,6 +541,9 @@ class Client implements EventDispatcherInterface, ClientInterface
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {
+                if (!$response->getBody()->isSeekable()) {
+                    $response->getBody()->close();
+                }
                 $url = $request->getUri();
 
                 $location = $response->getHeaderLine('Location');
