@@ -40,8 +40,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Uri\WhatWg\Url;
 
-// Local type aliases are not class names.
-// phpcs:disable SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation
 /**
  * The end user interface for doing HTTP requests.
  *
@@ -135,23 +133,7 @@ use Uri\WhatWg\Url;
  * a proxy if you need to use one. The type sub option can be used to
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
- *
- * @phpstan-type AuthenticationOptions array{type?: string|null, username?: string, password?: string, proxy?: string, ...<string, mixed>}
- * @phpstan-type ClientOptions array{
- *   adapter?: class-string<\Cake\Http\Client\AdapterInterface>|\Cake\Http\Client\AdapterInterface|null,
- *   cookieJar?: \Cake\Http\Cookie\CookieCollection|null,
- *   host?: string|null, port?: int<1, 65535>|null, scheme?: string, basePath?: string,
- *   timeout?: int|float|null, readTimeout?: int|float|null, stream?: bool,
- *   redirect?: non-negative-int|false, protocolVersion?: string,
- *   headers?: array<non-empty-string, string|array<string>>, type?: string,
- *   cookies?: array<string, mixed>, auth?: AuthenticationOptions|null, proxy?: AuthenticationOptions|null,
- *   ssl_verify_peer?: bool, ssl_verify_peer_name?: bool, ssl_verify_host?: bool,
- *   ssl_verify_depth?: non-negative-int, ssl_cafile?: string, ssl_local_cert?: string, ssl_passphrase?: string,
- *   curl?: array<int, mixed>, ...<string, mixed>
- * }
- * @phpstan-import-type MockOptions from \Cake\Http\Client\Adapter\Mock
  */
-// phpcs:enable SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation
 class Client implements EventDispatcherInterface, ClientInterface
 {
     use EventDispatcherTrait;
@@ -160,7 +142,7 @@ class Client implements EventDispatcherInterface, ClientInterface
     /**
      * Default configuration for the client.
      *
-     * @var ClientOptions
+     * @var array<string, mixed>
      */
     protected array $defaultConfig = [
         'auth' => null,
@@ -239,7 +221,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *   You can use the `type` key to define the authentication adapter classname
      *   to use. Short class names are resolved to the `Http\Client\Auth` namespace.
      *
-     * @param ClientOptions $config Config options for scoped clients.
+     * @param array<string, mixed> $config Config options for scoped clients.
      */
     public function __construct(array $config = [])
     {
@@ -337,7 +319,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string $data The query data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function get(string $url, array|string $data = [], array $options = []): Response
@@ -363,7 +345,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The post data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function post(string $url, array|string|null $data = [], array $options = []): Response
@@ -379,7 +361,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The request data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function put(string $url, array|string|null $data = [], array $options = []): Response
@@ -395,7 +377,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The request data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function patch(string $url, array|string|null $data = [], array $options = []): Response
@@ -411,7 +393,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The request data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function options(string $url, array|string|null $data = [], array $options = []): Response
@@ -427,7 +409,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The request data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function trace(string $url, array|string|null $data = [], array $options = []): Response
@@ -443,7 +425,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array|string|null $data The request data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function delete(string $url, array|string|null $data = [], array $options = []): Response
@@ -459,7 +441,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url The url or path you want to request.
      * @param array $data The query string data you want to send.
-     * @param ClientOptions $options Additional options for the request.
+     * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
     public function head(string $url, array $data = [], array $options = []): Response
@@ -476,7 +458,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param string $method HTTP method.
      * @param string $url URL to request.
      * @param array|string|null $data The request body.
-     * @param ClientOptions $options The options to use. Contains auth, proxy, etc.
+     * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Response
      */
     protected function doRequest(string $method, string $url, array|string|null $data, array $options): Response
@@ -494,8 +476,8 @@ class Client implements EventDispatcherInterface, ClientInterface
     /**
      * Does a recursive merge of the parameter with the scope config.
      *
-     * @param ClientOptions $options Options to merge.
-     * @return ClientOptions Options merged with set config.
+     * @param array<string, mixed> $options Options to merge.
+     * @return array<string, mixed> Options merged with set config.
      */
     protected function mergeOptions(array $options): array
     {
@@ -525,7 +507,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * handcrafted Request objects.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to send.
-     * @param ClientOptions $options Additional options to use.
+     * @param array<string, mixed> $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
     public function send(RequestInterface $request, array $options = []): Response
@@ -635,7 +617,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param string $method The HTTP method being mocked.
      * @param string $url The URL being matched. See above for examples.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param MockOptions $options See above.
+     * @param array{match?: \Closure(\Psr\Http\Message\RequestInterface, array<string, mixed>): bool} $options See above.
      * @return void
      */
     public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
@@ -651,7 +633,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Send a request without redirection.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to send.
-     * @param ClientOptions $options Additional options to use.
+     * @param array<string, mixed> $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
     protected function processRequest(RequestInterface $request, array $options): Response
@@ -679,7 +661,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url Either a full URL or just the path.
      * @param array|string $query The query data for the URL.
-     * @param array{host?: string|null, port?: int|null, scheme?: string, basePath?: string, protocolRelative?: bool, ...<string, mixed>} $options The URL options.
+     * @param array<string, mixed> $options The URL options.
      * @return string A complete url with scheme, port, host, and path.
      */
     public function buildUrl(string $url, array|string $query = [], array $options = []): string
@@ -731,7 +713,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param string $method HTTP method name.
      * @param string $url The url including query string.
      * @param array|string|null $data The request body.
-     * @param ClientOptions $options The options to use. Contains auth, proxy, etc.
+     * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Request
      */
     protected function createRequest(string $method, string $url, array|string|null $data, array $options): Request
@@ -800,7 +782,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * and use its methods to add headers.
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
-     * @param ClientOptions $options Array of options containing the 'auth' key.
+     * @param array<string, mixed> $options Array of options containing the 'auth' key.
      * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function addAuthentication(Request $request, array $options): Request
@@ -818,7 +800,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * and use its methods to add headers.
      *
      * @param \Cake\Http\Client\Request $request The request to modify.
-     * @param ClientOptions $options Array of options containing the 'proxy' key.
+     * @param array<string, mixed> $options Array of options containing the 'proxy' key.
      * @return \Cake\Http\Client\Request The updated request object.
      */
     protected function addProxy(Request $request, array $options): Request
@@ -838,7 +820,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Use the configuration options to create the correct
      * authentication strategy handler.
      *
-     * @param AuthenticationOptions $auth The authentication options to use.
+     * @param array<string, mixed> $auth The authentication options to use.
      * @return \Cake\Http\Client\Auth\AuthenticationInterface Authentication strategy instance.
      * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */
