@@ -22,6 +22,7 @@ use Cake\I18n\I18n;
 use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use NumberFormatter;
+use ReflectionProperty;
 
 /**
  * NumberTest class
@@ -52,6 +53,9 @@ class NumberTest extends TestCase
         I18n::setLocale(I18n::getDefaultLocale());
         Number::setDefaultCurrency();
         Number::setDefaultCurrencyFormat();
+        Number::setUseIecUnits(false);
+        // Number::config() replaces cached formatters
+        (new ReflectionProperty(Number::class, '_formatters'))->setValue(null, []);
     }
 
     /**

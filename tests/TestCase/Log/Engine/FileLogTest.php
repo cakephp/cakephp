@@ -72,6 +72,10 @@ class FileLogTest extends TestCase
     public function testRotation(): void
     {
         $path = TMP . 'tests' . DS;
+        // FileLog creates the directory, but the seed file is written before it exists
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
         $this->_deleteLogs($path);
 
         file_put_contents($path . 'error.log', "this text is under 35 bytes\n");
