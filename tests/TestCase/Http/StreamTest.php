@@ -603,6 +603,45 @@ class StreamTest extends TestCase
         $this->assertSame('r', $this->stream->getMetadata('mode'));
     }
 
+    public function testAttachUpdatesCapabilities(): void
+    {
+        $this->assertTrue($this->stream->isReadable());
+        $this->assertTrue($this->stream->isWritable());
+        $this->assertTrue($this->stream->isSeekable());
+
+        $this->stream->attach($this->createTempFile(), 'w');
+        $this->assertFalse($this->stream->isReadable());
+        $this->assertTrue($this->stream->isWritable());
+        $this->assertTrue($this->stream->isSeekable());
+
+        $this->stream->attach('php://output', 'w');
+        $this->assertFalse($this->stream->isReadable());
+        $this->assertTrue($this->stream->isWritable());
+        $this->assertFalse($this->stream->isSeekable());
+
+        $this->stream->attach($this->createTempFile(), 'r');
+        $this->assertTrue($this->stream->isReadable());
+        $this->assertFalse($this->stream->isWritable());
+        $this->assertTrue($this->stream->isSeekable());
+    }
+
+    public function testDetachAndReattachUpdatesCapabilities(): void
+    {
+        $this->assertTrue($this->stream->isReadable());
+        $this->assertTrue($this->stream->isWritable());
+        $this->assertTrue($this->stream->isSeekable());
+
+        $this->stream->detach();
+        $this->assertFalse($this->stream->isReadable());
+        $this->assertFalse($this->stream->isWritable());
+        $this->assertFalse($this->stream->isSeekable());
+
+        $this->stream->attach($this->createTempFile(), 'r');
+        $this->assertTrue($this->stream->isReadable());
+        $this->assertFalse($this->stream->isWritable());
+        $this->assertTrue($this->stream->isSeekable());
+    }
+
     public function testGetContentsShouldGetFullStreamContents(): void
     {
         $resource = fopen($this->createTempFile(null), 'r+');

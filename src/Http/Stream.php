@@ -39,6 +39,23 @@ class Stream implements StreamInterface, Stringable
     protected $resource;
 
     /**
+     * Cached capabilities of the attached resource.
+     *
+     * @var bool|null
+     */
+    protected ?bool $readable = null;
+
+    /**
+     * @var bool|null
+     */
+    protected ?bool $writable = null;
+
+    /**
+     * @var bool|null
+     */
+    protected ?bool $seekable = null;
+
+    /**
      * Constructor
      *
      * @param resource|string $stream A stream resource or a filename/stream URI to open.
@@ -89,6 +106,7 @@ class Stream implements StreamInterface, Stringable
         }
 
         $this->resource = $resource;
+        $this->readable = $this->writable = $this->seekable = null;
     }
 
     /**
@@ -177,7 +195,7 @@ class Stream implements StreamInterface, Stringable
             return false;
         }
 
-        return (bool)stream_get_meta_data($this->resource)['seekable'];
+        return $this->seekable ??= (bool)stream_get_meta_data($this->resource)['seekable'];
     }
 
     /**
@@ -211,9 +229,7 @@ class Stream implements StreamInterface, Stringable
             return false;
         }
 
-        $mode = stream_get_meta_data($this->resource)['mode'];
-
-        return strpbrk($mode, 'xwca+') !== false;
+        return $this->writable ??= strpbrk(stream_get_meta_data($this->resource)['mode'], 'xwca+') !== false;
     }
 
     /**
@@ -243,9 +259,7 @@ class Stream implements StreamInterface, Stringable
             return false;
         }
 
-        $mode = stream_get_meta_data($this->resource)['mode'];
-
-        return strpbrk($mode, 'r+') !== false;
+        return $this->readable ??= strpbrk(stream_get_meta_data($this->resource)['mode'], 'r+') !== false;
     }
 
     /**
