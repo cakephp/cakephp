@@ -865,6 +865,9 @@ class ClientTest extends TestCase
             'authority' => ['//other.example/next', 'https://other.example/next'],
             'absolute' => ['http://other.example/next', 'http://other.example/next'],
             'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
+            'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
+            'space' => ['next page', 'https://example.com/a/next%20page'],
+            'unicode' => ['https://bücher.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
         ];
     }
 
@@ -1081,7 +1084,7 @@ class ClientTest extends TestCase
 
         $adapter->shouldReceive('send')
             ->withArgs(function ($request) {
-                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                $this->assertSame('http://backstage.example.org/', (string)$request->getUri());
                 $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
                 return true;
@@ -1124,14 +1127,59 @@ class ClientTest extends TestCase
     /**
      * basePath is set when passed to client in string
      */
-    public function testCreateFromUrlPreservesRawComponents(): void
+    public function testCreateFromUrlNormalizesComponents(): void
     {
         $client = Client::createFromUrl('HTTP://Example.com:80/a%2Fb/../c');
 
-        $this->assertSame('HTTP', $client->getConfig('scheme'));
-        $this->assertSame('Example.com', $client->getConfig('host'));
-        $this->assertSame(80, $client->getConfig('port'));
-        $this->assertSame('/a%2Fb/../c', $client->getConfig('basePath'));
+        $this->assertSame('http', $client->getConfig('scheme'));
+        $this->assertSame('example.com', $client->getConfig('host'));
+        $this->assertNull($client->getConfig('port'));
+        $this->assertSame('/c', $client->getConfig('basePath'));
+    }
+
+    public function testCreateFromUrlBuildsPathsAtRoot(): void
+    {
+        $client = Client::createFromUrl('https://example.com');
+
+        $this->assertSame('/', $client->getConfig('basePath'));
+        $this->assertSame('https://example.com/next', $client->buildUrl('next', [], $client->getConfig()));
+    }
+
+    public function testCreateFromUrlNormalizesUnicode(): void
+    {
+        $client = Client::createFromUrl('https://bücher.example/ä b');
+
+        $this->assertSame('xn--bcher-kva.example', $client->getConfig('host'));
+        $this->assertSame('/%C3%A4%20b', $client->getConfig('basePath'));
+    }
+
+    #[DataProvider('unsupportedUrls')]
+    public function testCreateFromUrlRejectsUnsupportedScheme(string $url): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl($url);
+    }
+
+    #[DataProvider('unsupportedUrls')]
+    public function testRedirectRejectsUnsupportedScheme(string $url): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: ' . $url]),
+        ]);
+        $client = new Client(['adapter' => $adapter]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $client->send(new Request('https://example.com/'), ['redirect' => 1]);
+    }
+
+    public static function unsupportedUrls(): array
+    {
+        return [
+            ['ftp://example.com/file'],
+            ['file:///tmp/file'],
+            ['mailto:user@example.com'],
+        ];
     }
 
     public function testCreateFromUrlRejectsInvalidUri(): void
@@ -1170,8 +1218,8 @@ class ClientTest extends TestCase
      */
     public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoSchemeProvided(): void
     {
-        $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('The specified URI is malformed');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `example.co` did not parse.');
         Client::createFromUrl('example.co');
     }
 
@@ -1180,8 +1228,8 @@ class ClientTest extends TestCase
      */
     public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoDomainProvided(): void
     {
-        $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('The specified URI is malformed');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `/api/v1` did not parse.');
         Client::createFromUrl('/api/v1');
     }
 
@@ -1197,7 +1245,7 @@ class ClientTest extends TestCase
             'auth' => null,
             'adapter' => null,
             'host' => 'example.co',
-            'port' => 8080,
+            'port' => null,
             'scheme' => 'http',
             'basePath' => '/some/uri/',
             'timeout' => 30,

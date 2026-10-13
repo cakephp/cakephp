@@ -25,7 +25,7 @@ use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Throwable;
-use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -192,7 +192,7 @@ class Stream implements AdapterInterface
         $this->contextOptions['method'] = $request->getMethod();
         $this->contextOptions['protocol_version'] = $request->getProtocolVersion();
         $this->contextOptions['ignore_errors'] = true;
-        $this->contextOptions['uri_parser_class'] = Rfc3986Uri::class;
+        $this->contextOptions['uri_parser_class'] = Url::class;
 
         if (isset($options['timeout'])) {
             $this->contextOptions['timeout'] = $options['timeout'];

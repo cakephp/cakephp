@@ -37,8 +37,8 @@ use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Uri\InvalidUriException;
-use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\InvalidUrlException;
+use Uri\WhatWg\Url;
 
 /**
  * The end user interface for doing HTTP requests.
@@ -265,22 +265,22 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function createFromUrl(string $url): static
     {
-        $uri = Rfc3986Uri::parse($url);
-        if ($uri === null || $uri->getRawHost() === '') {
+        $uri = Url::parse($url);
+        if ($uri === null || $uri->getAsciiHost() === '') {
             throw new InvalidArgumentException(sprintf(
                 'String `%s` did not parse.',
                 $url,
             ));
         }
 
-        if (!$uri->getRawScheme() || !$uri->getRawHost()) {
-            throw new InvalidArgumentException('The URL was parsed but did not contain a scheme or host');
+        if (!in_array($uri->getScheme(), ['http', 'https'], true) || !$uri->getAsciiHost()) {
+            throw new InvalidArgumentException('The URL must use http or https and contain a host');
         }
 
         $config = [
-            'scheme' => $uri->getRawScheme(),
-            'host' => $uri->getRawHost(),
-            'basePath' => $uri->getRawPath(),
+            'scheme' => $uri->getScheme(),
+            'host' => $uri->getAsciiHost(),
+            'basePath' => $uri->getPath(),
         ];
         if ($uri->getPort() !== null) {
             $config['port'] = $uri->getPort();
@@ -563,11 +563,14 @@ class Client implements EventDispatcherInterface, ClientInterface
 
                 $location = $response->getHeaderLine('Location');
                 try {
-                    $locationUrl = new Rfc3986Uri((string)$url)->resolve($location)->toRawString();
-                } catch (InvalidUriException $error) {
+                    $locationUrl = new Url((string)$url)->resolve($location);
+                } catch (InvalidUrlException $error) {
                     throw new InvalidArgumentException($error->getMessage(), 0, $error);
                 }
-                $request = $request->withUri(new Uri($locationUrl));
+                if (!in_array($locationUrl->getScheme(), ['http', 'https'], true) || !$locationUrl->getAsciiHost()) {
+                    throw new InvalidArgumentException('The redirect URL must use http or https and contain a host');
+                }
+                $request = $request->withUri(new Uri($locationUrl->toAsciiString()));
                 $request = $this->cookies->addToRequest($request, []);
             }
         } while ($handleRedirect);
@@ -695,7 +698,10 @@ class Client implements EventDispatcherInterface, ClientInterface
             $out .= ':' . $options['port'];
         }
         if (!empty($options['basePath'])) {
-            $out .= '/' . trim($options['basePath'], '/');
+            $basePath = trim($options['basePath'], '/');
+            if ($basePath !== '') {
+                $out .= '/' . $basePath;
+            }
         }
         $out .= '/' . ltrim($url, '/');
 
