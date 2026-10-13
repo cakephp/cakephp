@@ -22,6 +22,7 @@ use Cake\Http\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
+use UnexpectedValueException;
 
 /**
  * Implements methods for HTTP responses.
@@ -116,14 +117,21 @@ class Response extends Message implements ResponseInterface
     /**
      * Cached decoded JSON data.
      *
-     * @var mixed
+     * @var array|null
      */
-    protected mixed $json = null;
+    protected ?array $json = null;
+
+    /**
+     * Whether the response JSON has been decoded, including null and empty arrays.
+     *
+     * @var bool
+     */
+    protected bool $jsonDecoded = false;
 
     /**
      * Constructor
      *
-     * @param array<string> $headers Unparsed headers.
+     * @param list<string> $headers Unparsed headers.
      * @param \Psr\Http\Message\StreamInterface|string $body The response body. Stream bodies are used as-is.
      */
     public function __construct(array $headers = [], string|StreamInterface $body = '')
@@ -177,7 +185,7 @@ class Response extends Message implements ResponseInterface
      * - Decodes the status code and reason phrase.
      * - Parses and normalizes header names and values.
      *
-     * @param array<string> $headers Headers to parse.
+     * @param list<string> $headers Headers to parse.
      * @return void
      */
     protected function parseHeaders(array $headers): void
@@ -194,17 +202,10 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @var non-empty-string $name */
             $name = trim($name);
-
-            $normalized = strtolower($name);
-
-            if (isset($this->headers[$name])) {
-                $this->headers[$name][] = $value;
-            } else {
-                $this->headers[$name] = (array)$value;
-                $this->headerNames[$normalized] = $name;
-            }
+            $this->assertHeaderName($name);
+            $values = array_merge($this->getHeader($name), $this->filterHeaderValue($value));
+            $this->replaceHeader($name, $values);
         }
     }
 
@@ -392,15 +393,51 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * JSON objects and arrays are returned as arrays. JSON null is returned as null.
+     *
+     * @return array|null
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
      */
-    public function getJson(): mixed
+    public function getJson(): ?array
     {
-        if ($this->json) {
+        if ($this->jsonDecoded) {
             return $this->json;
         }
 
-        return $this->json = json_decode($this->getStringBody(), true);
+        $json = json_decode($this->getStringBody(), true, flags: JSON_THROW_ON_ERROR);
+        if ($json !== null && !is_array($json)) {
+            throw new UnexpectedValueException('JSON response body must decode to an array or null.');
+        }
+        $this->json = $json;
+        $this->jsonDecoded = true;
+
+        return $this->json;
+    }
+
+    /**
+     * Decode JSON into an application type using a validating decoder.
+     *
+     * @template T
+     * @param callable(array|null): T $decoder Decoder responsible for validating the JSON value.
+     * @return T
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
+     */
+    public function getJsonAs(callable $decoder): mixed
+    {
+        return $decoder($this->getJson());
+    }
+
+    /**
+     * Replace the body and discard decoded values from the previous body.
+     *
+     * @param \Psr\Http\Message\StreamInterface $body The new body.
+     * @return static
+     */
+    public function withBody(StreamInterface $body): static
+    {
+        return clone($this, ['stream' => $body, 'json' => null, 'jsonDecoded' => false, 'xml' => null]);
     }
 
     /**

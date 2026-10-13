@@ -123,9 +123,9 @@ class Stream implements StreamInterface, Stringable
     }
 
     /**
-     * @inheritDoc
+     * @return resource|null
      */
-    public function detach()
+    public function detach(): mixed
     {
         $resource = $this->resource;
         $this->resource = null;

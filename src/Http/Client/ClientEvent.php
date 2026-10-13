@@ -25,6 +25,7 @@ use Psr\Http\Message\RequestInterface;
  * Class Client Event
  *
  * @extends \Cake\Event\Event<\Cake\Http\Client>
+ * @phpstan-import-type ClientOptions from \Cake\Http\Client
  */
 class ClientEvent extends Event
 {
@@ -99,6 +100,7 @@ class ClientEvent extends Event
     /**
      * Set the adapter options.
      *
+     * @param ClientOptions $options Options for the adapter.
      * @return $this
      */
     public function setAdapterOptions(array $options = []): static
@@ -111,7 +113,7 @@ class ClientEvent extends Event
     /**
      * Get the adapter options.
      *
-     * @return array
+     * @return ClientOptions
      */
     public function getAdapterOptions(): array
     {

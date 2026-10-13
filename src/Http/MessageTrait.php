@@ -31,7 +31,7 @@ trait MessageTrait
     /**
      * List of all registered headers, as original name => list of values.
      *
-     * @var array<non-empty-string, list<string>>
+     * @var array<non-empty-string, non-empty-list<string>>
      */
     protected array $headers = [];
 
@@ -86,7 +86,7 @@ trait MessageTrait
     /**
      * Retrieves all message headers.
      *
-     * @return array<non-empty-string, list<string>> Header names mapped to their list of values.
+     * @return array<non-empty-string, non-empty-list<string>> Header names mapped to their list of values.
      */
     public function getHeaders(): array
     {
@@ -217,7 +217,7 @@ trait MessageTrait
      * Replace a header on the current instance.
      *
      * @param non-empty-string $name The header name.
-     * @param list<string> $value The filtered header values.
+     * @param non-empty-list<string> $value The filtered header values.
      * @return void
      */
     protected function replaceHeader(string $name, array $value): void
@@ -262,7 +262,7 @@ trait MessageTrait
      * Validate and normalize header values.
      *
      * @param mixed $values A header value or list of header values.
-     * @return list<string>
+     * @return non-empty-list<string>
      * @throws \InvalidArgumentException When a value is invalid.
      */
     protected function filterHeaderValue(mixed $values): array

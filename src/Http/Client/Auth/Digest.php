@@ -28,7 +28,7 @@ use SensitiveParameter;
  * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'digest'
  */
-class Digest
+class Digest implements AuthenticationInterface
 {
     /**
      * Algorithms
