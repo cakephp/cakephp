@@ -12,14 +12,22 @@ $connection = stream_socket_accept($server, 5);
 if ($connection === false) {
     exit(2);
 }
+stream_set_timeout($connection, 5);
 $headers = '';
 while (($line = fgets($connection)) !== false && $line !== "\r\n") {
     $headers .= $line;
 }
+if ($line !== "\r\n") {
+    exit(4);
+}
 if (preg_match('/Content-Length: (\d+)/i', $headers, $matches)) {
     $remaining = (int)$matches[1];
     while ($remaining > 0) {
-        $remaining -= strlen(fread($connection, $remaining));
+        $data = fread($connection, $remaining);
+        if ($data === false || $data === '') {
+            exit(5);
+        }
+        $remaining -= strlen($data);
     }
 }
 $isGzip = str_contains($headers, '/gzip');
@@ -35,7 +43,11 @@ if ($isRedirect) {
     if ($connection === false) {
         exit(3);
     }
+    stream_set_timeout($connection, 5);
     while (($line = fgets($connection)) !== false && $line !== "\r\n") {
+    }
+    if ($line !== "\r\n") {
+        exit(6);
     }
 }
 fwrite($connection, "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nTransfer-Encoding: chunked\r\n");
@@ -50,7 +62,21 @@ if (!$isTimeout) {
     fwrite($connection, dechex(strlen($bytes)) . "\r\n" . $bytes . "\r\n");
 }
 // The test releases the rest of the body after checking the first chunk.
-fgets(STDIN);
+// PHP does not reliably apply stream_set_timeout() to pipes. Poll stdin with
+// a deadline so the child also exits if the parent never releases the body.
+stream_set_blocking(STDIN, false);
+$deadline = microtime(true) + 5;
+$release = false;
+do {
+    $release = fgets(STDIN);
+    if ($release !== false || feof(STDIN)) {
+        break;
+    }
+    usleep(10000);
+} while (microtime(true) < $deadline);
+if ($release === false) {
+    exit(7);
+}
 $last = "data: second\n\n";
 $bytes = $isGzip ? deflate_add($deflate, $last, ZLIB_FINISH) : $last;
 fwrite($connection, dechex(strlen($bytes)) . "\r\n" . $bytes . "\r\n0\r\n\r\n");
