@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 use Exception;
 use Mockery;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * HTTP stream adapter test.
@@ -150,6 +151,7 @@ class StreamTest extends TestCase
         $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertSame(0, $result['max_redirects']);
         $this->assertTrue($result['ignore_errors']);
+        $this->assertSame(Rfc3986Uri::class, $result['uri_parser_class']);
     }
 
     /**

@@ -24,6 +24,7 @@ use Cake\Core\Configure;
 use InvalidArgumentException;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Factory class for creating uri instances.
@@ -168,6 +169,20 @@ class UriFactory implements UriFactoryInterface
 
         $requestUri = $server['REQUEST_URI'] ?? null;
         if (is_string($requestUri)) {
+            $uri = Rfc3986Uri::parse($requestUri);
+            if ($uri?->getScheme() !== null && $uri->getRawHost() !== null) {
+                $path = $uri->getRawPath();
+                if ($uri->getRawQuery() !== null) {
+                    $path .= '?' . $uri->getRawQuery();
+                }
+                if ($uri->getRawFragment() !== null) {
+                    $path .= '#' . $uri->getRawFragment();
+                }
+
+                return $path;
+            }
+
+            // Preserve support for unencoded request paths that are not valid RFC 3986 URIs.
             return (string)preg_replace('#^[^/:]+://[^/]+#', '', $requestUri);
         }
 

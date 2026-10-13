@@ -289,8 +289,7 @@ class Oauth implements AuthenticationInterface
      */
     protected function normalizedParams(Request $request, array $oauthValues): string
     {
-        $query = new Url((string)$request->getUri())->getQuery();
-        parse_str((string)$query, $queryArgs);
+        parse_str($request->getUri()->getQuery(), $queryArgs);
 
         $post = [];
         $contentType = $request->getHeaderLine('Content-Type');
