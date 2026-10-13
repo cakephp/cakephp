@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -46,6 +47,16 @@ class CurlTest extends TestCase
         // Mirror the adapter default: an explicit `curl.cainfo` (php.ini) wins,
         // otherwise the bundled CA file is used.
         $this->caFile = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
+    }
+
+    /**
+     * Streaming must not silently fall back to buffering.
+     */
+    public function testStreamingUnsupported(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Live response streaming requires');
+        $this->curl->send(new Request('http://localhost'), ['stream' => true]);
     }
 
     /**

@@ -21,6 +21,7 @@ use Cake\Http\MessageTrait;
 use Cake\Http\Stream;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
 
 /**
@@ -124,11 +125,16 @@ class Response extends Message implements ResponseInterface
      * Constructor
      *
      * @param array<string> $headers Unparsed headers.
-     * @param string $body The response body.
+     * @param \Psr\Http\Message\StreamInterface|string $body The response body. Stream bodies are used as-is.
      */
-    public function __construct(array $headers = [], string $body = '')
+    public function __construct(array $headers = [], string|StreamInterface $body = '')
     {
         $this->parseHeaders($headers);
+        if ($body instanceof StreamInterface) {
+            $this->stream = $body;
+
+            return;
+        }
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
             $body = $this->decodeGzipBody($body);
         }
@@ -371,11 +377,16 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as string.
      *
+     * Non-seekable bodies are consumed from their current position. For live
+     * responses this waits until EOF and should not be used by monitoring.
+     *
      * @return string
      */
     public function getStringBody(): string
     {
-        $this->stream->rewind();
+        if ($this->stream->isSeekable()) {
+            $this->stream->rewind();
+        }
 
         return $this->stream->getContents();
     }
