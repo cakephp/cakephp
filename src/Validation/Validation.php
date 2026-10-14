@@ -1003,11 +1003,14 @@ class Validation
      * and arrays with a `name` key.
      *
      * @param mixed $check Value to check
-     * @param array<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param array<string> $extensions File extensions to allow. Defaults to
+     *   'gif', 'jpeg', 'png', 'jpg', 'jxl', 'webp', 'avif', 'avifs'.
      * @return bool Success
      */
-    public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
-    {
+    public static function extension(
+        mixed $check,
+        array $extensions = ['gif', 'jpeg', 'png', 'jpg', 'jxl', 'webp', 'avif', 'avifs'],
+    ): bool {
         if (interface_exists(UploadedFileInterface::class) && $check instanceof UploadedFileInterface) {
             $check = $check->getClientFilename();
         } elseif (is_array($check) && isset($check['name'])) {
