@@ -45,7 +45,7 @@ class ResponseTest extends TestCase
         try {
             $response = new Response([], $body);
             $this->assertSame($expected, $response->getJson());
-            $this->assertSame($expected, $response->getJson());
+            $this->assertSame($expected, $response->getJsonArray());
         } finally {
             $body->close();
         }
@@ -229,7 +229,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response([], $json);
         $this->expectException(JsonException::class);
-        $response->getJson();
+        $response->getJsonArray();
     }
 
     /**
@@ -254,7 +254,7 @@ class ResponseTest extends TestCase
         $response = new Response([], $json);
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('JSON response body must decode to an array or null.');
-        $response->getJson();
+        $response->getJsonArray();
     }
 
     /**
@@ -281,6 +281,52 @@ class ResponseTest extends TestCase
         };
         $this->expectException(JsonException::class);
         $response->getJsonAs($decoder);
+    }
+
+    #[DataProvider('scalarJsonProvider')]
+    public function testGetJsonAcceptsScalars(string $json): void
+    {
+        $response = new Response([], $json);
+        $this->assertSame(json_decode($json, true), $response->getJson());
+        $this->assertSame(json_decode($json, true), $response->getJson());
+    }
+
+    #[DataProvider('invalidJsonProvider')]
+    public function testGetJsonReturnsNullForInvalidJson(string $json): void
+    {
+        $response = new Response([], $json);
+        $this->assertNull($response->getJson());
+        $this->assertNull($response->getJson());
+        $this->expectException(JsonException::class);
+        $response->getJsonArray();
+    }
+
+    #[DataProvider('scalarJsonProvider')]
+    public function testGetJsonArrayRejectsCachedScalars(string $json): void
+    {
+        $response = new Response([], $json);
+        $response->getJson();
+        $this->expectException(UnexpectedValueException::class);
+        $response->getJsonArray();
+    }
+
+    public function testWithBodyDiscardsJsonError(): void
+    {
+        $response = new Response([], 'invalid');
+        $this->assertNull($response->getJson());
+        $replacement = $response->withBody(new Stream('data://text/plain,{"id":2}'));
+        $this->assertSame(['id' => 2], $replacement->getJsonArray());
+        $this->expectException(JsonException::class);
+        $response->getJsonArray();
+    }
+
+    #[DataProvider('cachedJsonProvider')]
+    public function testGetJsonArraySharesDecodedData(string $json, ?array $expected): void
+    {
+        $response = new Response([], $json);
+        $this->assertSame($expected, $response->getJsonArray());
+        $this->assertSame($expected, $response->getJson());
+        $this->assertSame($expected, $response->getJsonArray());
     }
 
     /**

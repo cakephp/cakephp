@@ -43,7 +43,7 @@ class Curl implements AdapterInterface
     {
         if (!empty($options['stream'])) {
             throw new ClientException(
-                'Live response streaming requires Cake\\Http\\Client\\Adapter\\Stream.',
+                'Live response streaming requires ' . Stream::class . '.',
             );
         }
 

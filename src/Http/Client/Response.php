@@ -19,6 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\MessageTrait;
 use Cake\Http\Stream;
+use JsonException;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -118,9 +119,9 @@ class Response extends Message implements ResponseInterface
     /**
      * Cached decoded JSON data.
      *
-     * @var array|null
+     * @var mixed
      */
-    protected ?array $json = null;
+    protected mixed $json = null;
 
     /**
      * Whether the response JSON has been decoded, including null and empty arrays.
@@ -128,6 +129,13 @@ class Response extends Message implements ResponseInterface
      * @var bool
      */
     protected bool $jsonDecoded = false;
+
+    /**
+     * Cached JSON decoding error for strict access after permissive access.
+     *
+     * @var \JsonException|null
+     */
+    protected ?JsonException $jsonError = null;
 
     /**
      * Constructor
@@ -395,24 +403,39 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
+     * @return mixed Decoded JSON, or null when the body is not valid JSON.
+     */
+    public function getJson(): mixed
+    {
+        if (!$this->jsonDecoded) {
+            $this->json = json_decode($this->getStringBody(), true);
+            $this->jsonDecoded = true;
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->jsonError = new JsonException(json_last_error_msg(), json_last_error());
+            }
+        }
+
+        return $this->json;
+    }
+
+    /**
+     * Get the response body as a JSON decoded array.
+     *
      * JSON objects and arrays are returned as arrays. JSON null is returned as null.
      *
      * @return array|null
      * @throws \JsonException When the body is not valid JSON.
      * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
      */
-    public function getJson(): ?array
+    public function getJsonArray(): ?array
     {
-        if ($this->jsonDecoded) {
-            return $this->json;
+        $this->getJson();
+        if ($this->jsonError !== null) {
+            throw $this->jsonError;
         }
-
-        $json = json_decode($this->getStringBody(), true, flags: JSON_THROW_ON_ERROR);
-        if ($json !== null && !is_array($json)) {
+        if ($this->json !== null && !is_array($this->json)) {
             throw new UnexpectedValueException('JSON response body must decode to an array or null.');
         }
-        $this->json = $json;
-        $this->jsonDecoded = true;
 
         return $this->json;
     }
@@ -428,7 +451,7 @@ class Response extends Message implements ResponseInterface
      */
     public function getJsonAs(callable $decoder): mixed
     {
-        return $decoder($this->getJson());
+        return $decoder($this->getJsonArray());
     }
 
     /**
@@ -439,7 +462,13 @@ class Response extends Message implements ResponseInterface
      */
     public function withBody(StreamInterface $body): static
     {
-        return clone($this, ['stream' => $body, 'json' => null, 'jsonDecoded' => false, 'xml' => null]);
+        return clone($this, [
+            'stream' => $body,
+            'json' => null,
+            'jsonDecoded' => false,
+            'jsonError' => null,
+            'xml' => null,
+        ]);
     }
 
     /**

@@ -20,7 +20,6 @@ use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
-use Uri\WhatWg\Url;
 
 /**
  * Oauth 1 authentication strategy for Cake\Http\Client

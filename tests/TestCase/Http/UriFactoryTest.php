@@ -22,12 +22,20 @@ use Cake\Http\UriFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the uri factory.
  */
 class UriFactoryTest extends TestCase
 {
+    public function testCreateUriAcceptsNativeUri(): void
+    {
+        $uri = new UriFactory()->createUri(new Rfc3986Uri('https://example.com/a%2fb?x=%7e'));
+        $this->assertInstanceOf(Uri::class, $uri);
+        $this->assertSame('https://example.com/a%2fb?x=%7e', (string)$uri);
+    }
+
     public function testCreateUri(): void
     {
         $factory = new UriFactory();
@@ -432,7 +440,7 @@ class UriFactoryTest extends TestCase
             'REQUEST_URI' => 'http://example.com/a b/ουτοπία',
         ])['uri'];
 
-        $this->assertSame('/a%20b/ουτοπία', $uri->getPath());
+        $this->assertSame('/a%20b/' . rawurlencode('ουτοπία'), $uri->getPath());
     }
 
     public function testMarshalRequestUriIgnoresXOriginalUrl(): void
