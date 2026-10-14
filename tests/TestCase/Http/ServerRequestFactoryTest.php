@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Psr\Http\Message\UploadedFileInterface;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the server factory.
@@ -37,6 +38,12 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test fromGlobals reads super globals
      */
+    public function testCreateServerRequestWithNativeUri(): void
+    {
+        $request = new ServerRequestFactory()->createServerRequest('GET', new Rfc3986Uri('https://example.com/a%2fb'));
+        $this->assertSame('https://example.com/a%2fb', (string)$request->getUri());
+    }
+
     public function testFromGlobalsSuperGlobals(): void
     {
         $post = [

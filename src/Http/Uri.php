@@ -24,20 +24,23 @@ use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
 use Stringable;
+use Uri\InvalidUriException;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
- * Immutable value object representing a URI as defined by RFC 3986.
+ * Immutable PSR-7 URI using PHP's RFC 3986 parser.
+ *
+ * Components preserve percent-encoded sequences and dot segments. Non-ASCII
+ * input is percent-encoded before parsing.
  */
 class Uri implements UriInterface, Stringable
 {
     /**
      * Unreserved characters as defined in RFC 3986 section 2.3.
      *
-     * Unicode letters are included so that IRIs are kept readable.
-     *
      * @var string
      */
-    protected const string CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~\pL';
+    protected const string CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
     /**
      * Sub-delimiter characters as defined in RFC 3986 section 2.2.
@@ -57,64 +60,50 @@ class Uri implements UriInterface, Stringable
     ];
 
     /**
-     * @var string
+     * Native URI containing the authority, scheme, query and fragment.
+     *
+     * An empty host allows PSR-7 user info and port mutations in any order.
+     *
+     * @var \Uri\Rfc3986\Uri
      */
-    protected string $scheme = '';
+    protected Rfc3986Uri $uri;
 
     /**
-     * @var string
-     */
-    protected string $userInfo = '';
-
-    /**
-     * @var string
-     */
-    protected string $host = '';
-
-    /**
-     * @var int|null
-     */
-    protected ?int $port = null;
-
-    /**
+     * PSR-7 permits a relative path even when an authority is present.
+     *
      * @var string
      */
     protected string $path = '';
 
     /**
-     * @var string
-     */
-    protected string $query = '';
-
-    /**
-     * @var string
-     */
-    protected string $fragment = '';
-
-    /**
      * Constructor
      *
-     * @param string $uri The URI to parse.
+     * @param \Uri\Rfc3986\Uri|string $uri The URI to parse or adapt to PSR-7.
      * @throws \InvalidArgumentException When the URI cannot be parsed.
      */
-    public function __construct(string $uri = '')
+    public function __construct(string|Rfc3986Uri $uri = '')
     {
-        if ($uri === '') {
-            return;
+        if (is_string($uri)) {
+            try {
+                // Encode characters outside RFC 3986 before parsing, preserving delimiters
+                // and existing percent-encoded sequences.
+                $uri = new Rfc3986Uri($this->encode(
+                    $uri,
+                    '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS
+                        . ':\/\[\]@?#%]+|%(?![A-Fa-f0-9]{2}))/',
+                ));
+            } catch (InvalidUriException $e) {
+                throw new InvalidArgumentException('Unable to parse URI.', previous: $e);
+            }
         }
 
-        $parts = $this->parse($uri);
-
-        $this->scheme = isset($parts['scheme']) ? $this->filterScheme($parts['scheme']) : '';
-        $this->userInfo = isset($parts['user']) ? $this->filterUserInfoPart($parts['user']) : '';
-        if (isset($parts['pass'])) {
-            $this->userInfo .= ':' . $this->filterUserInfoPart($parts['pass']);
-        }
-        $this->host = strtolower($parts['host'] ?? '');
-        $this->port = $parts['port'] ?? null;
-        $this->path = $this->filterPath($parts['path'] ?? '');
-        $this->query = $this->filterQuery($parts['query'] ?? '');
-        $this->fragment = $this->filterFragment($parts['fragment'] ?? '');
+        $this->path = $this->filterPath($uri->getRawPath());
+        $query = $this->filterQuery($uri->getRawQuery() ?? '');
+        $fragment = $this->filterFragment($uri->getRawFragment() ?? '');
+        $this->uri = $uri->withPath('')
+            ->withHost(strtolower($uri->getRawHost() ?? ''))
+            ->withQuery($query === '' ? null : $query)
+            ->withFragment($fragment === '' ? null : $fragment);
     }
 
     /**
@@ -123,8 +112,8 @@ class Uri implements UriInterface, Stringable
     public function __toString(): string
     {
         $uri = '';
-        if ($this->scheme !== '') {
-            $uri .= $this->scheme . ':';
+        if ($this->getScheme() !== '') {
+            $uri .= $this->getScheme() . ':';
         }
 
         $authority = $this->getAuthority();
@@ -138,11 +127,11 @@ class Uri implements UriInterface, Stringable
         }
         $uri .= $path;
 
-        if ($this->query !== '') {
-            $uri .= '?' . $this->query;
+        if ($this->getQuery() !== '') {
+            $uri .= '?' . $this->getQuery();
         }
-        if ($this->fragment !== '') {
-            $uri .= '#' . $this->fragment;
+        if ($this->getFragment() !== '') {
+            $uri .= '#' . $this->getFragment();
         }
 
         return $uri;
@@ -153,7 +142,7 @@ class Uri implements UriInterface, Stringable
      */
     public function getScheme(): string
     {
-        return $this->scheme;
+        return strtolower($this->uri->getRawScheme() ?? '');
     }
 
     /**
@@ -161,13 +150,13 @@ class Uri implements UriInterface, Stringable
      */
     public function getAuthority(): string
     {
-        if ($this->host === '') {
+        if ($this->getHost() === '') {
             return '';
         }
 
-        $authority = $this->host;
-        if ($this->userInfo !== '') {
-            $authority = $this->userInfo . '@' . $authority;
+        $authority = $this->getHost();
+        if ($this->getUserInfo() !== '') {
+            $authority = $this->getUserInfo() . '@' . $authority;
         }
 
         $port = $this->getPort();
@@ -183,7 +172,7 @@ class Uri implements UriInterface, Stringable
      */
     public function getUserInfo(): string
     {
-        return $this->userInfo;
+        return $this->uri->getRawUserInfo() ?? '';
     }
 
     /**
@@ -191,7 +180,7 @@ class Uri implements UriInterface, Stringable
      */
     public function getHost(): string
     {
-        return $this->host;
+        return $this->uri->getRawHost() ?? '';
     }
 
     /**
@@ -199,14 +188,15 @@ class Uri implements UriInterface, Stringable
      */
     public function getPort(): ?int
     {
-        if ($this->port === null) {
+        $port = $this->uri->getPort();
+        if ($port === null) {
             return null;
         }
-        if (isset(static::DEFAULT_PORTS[$this->scheme]) && static::DEFAULT_PORTS[$this->scheme] === $this->port) {
+        if (isset(static::DEFAULT_PORTS[$this->getScheme()]) && static::DEFAULT_PORTS[$this->getScheme()] === $port) {
             return null;
         }
 
-        return $this->port;
+        return $port;
     }
 
     /**
@@ -227,7 +217,7 @@ class Uri implements UriInterface, Stringable
      */
     public function getQuery(): string
     {
-        return $this->query;
+        return $this->uri->getRawQuery() ?? '';
     }
 
     /**
@@ -235,7 +225,7 @@ class Uri implements UriInterface, Stringable
      */
     public function getFragment(): string
     {
-        return $this->fragment;
+        return $this->uri->getRawFragment() ?? '';
     }
 
     /**
@@ -243,12 +233,14 @@ class Uri implements UriInterface, Stringable
      */
     public function withScheme(string $scheme): static
     {
-        $scheme = $this->filterScheme($scheme);
-        if ($scheme === $this->scheme) {
+        $scheme = strtolower((string)preg_replace('#:(//)?$#', '', $scheme));
+        if ($scheme === $this->getScheme()) {
             return $this;
         }
 
-        return clone($this, ['scheme' => $scheme]);
+        return $this->withNativeUri(
+            static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withScheme($scheme === '' ? null : $scheme),
+        );
     }
 
     /**
@@ -260,11 +252,13 @@ class Uri implements UriInterface, Stringable
         if ($info !== '' && $password !== null && $password !== '') {
             $info .= ':' . $this->filterUserInfoPart($password);
         }
-        if ($info === $this->userInfo) {
+        if ($info === $this->getUserInfo()) {
             return $this;
         }
 
-        return clone($this, ['userInfo' => $info]);
+        return $this->withNativeUri(
+            static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withUserInfo($info === '' ? null : $info),
+        );
     }
 
     /**
@@ -273,11 +267,11 @@ class Uri implements UriInterface, Stringable
     public function withHost(string $host): static
     {
         $host = strtolower($host);
-        if ($host === $this->host) {
+        if ($host === $this->getHost()) {
             return $this;
         }
 
-        return clone($this, ['host' => $host]);
+        return $this->withNativeUri(static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withHost($host));
     }
 
     /**
@@ -290,11 +284,11 @@ class Uri implements UriInterface, Stringable
                 sprintf('Invalid port `%d` specified; must be a valid TCP/UDP port.', $port),
             );
         }
-        if ($port === $this->port) {
+        if ($port === $this->uri->getPort()) {
             return $this;
         }
 
-        return clone($this, ['port' => $port]);
+        return $this->withNativeUri(static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withPort($port));
     }
 
     /**
@@ -327,11 +321,13 @@ class Uri implements UriInterface, Stringable
         }
 
         $query = $this->filterQuery($query);
-        if ($query === $this->query) {
+        if ($query === $this->getQuery()) {
             return $this;
         }
 
-        return clone($this, ['query' => $query]);
+        return $this->withNativeUri(
+            static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withQuery($query === '' ? null : $query),
+        );
     }
 
     /**
@@ -340,68 +336,31 @@ class Uri implements UriInterface, Stringable
     public function withFragment(string $fragment): static
     {
         $fragment = $this->filterFragment($fragment);
-        if ($fragment === $this->fragment) {
+        if ($fragment === $this->getFragment()) {
             return $this;
         }
 
-        return clone($this, ['fragment' => $fragment]);
+        return $this->withNativeUri(
+            static fn(Rfc3986Uri $uri): Rfc3986Uri => $uri->withFragment($fragment === '' ? null : $fragment),
+        );
     }
 
     /**
-     * Split a URI into its components.
+     * Apply a native mutation using PSR-7 exception semantics.
      *
-     * `parse_url()` replaces control characters, and depending on the locale also
-     * bytes in the range 0x80-0x9F, with `_`. To keep those bytes intact a sanitized
-     * copy of the same length is parsed and the components are mapped back onto
-     * the original string.
-     *
-     * @param string $uri The URI to parse.
-     * @return array{scheme?: string, host?: string, port?: int, user?: string, pass?: string, path?: string, query?: string, fragment?: string}
-     * @throws \InvalidArgumentException When the URI cannot be parsed.
+     * @param callable(\Uri\Rfc3986\Uri): \Uri\Rfc3986\Uri $mutator The native mutation.
+     * @return static
+     * @throws \InvalidArgumentException When a component is invalid.
      */
-    protected function parse(string $uri): array
+    protected function withNativeUri(callable $mutator): static
     {
-        $sanitized = (string)preg_replace('/[\x00-\x1F\x7F-\xFF]/', 'x', $uri);
-        $parts = parse_url($sanitized);
-        if ($parts === false) {
-            throw new InvalidArgumentException(sprintf('Unable to parse URI `%s`.', $uri));
-        }
-        if ($sanitized === $uri) {
-            return $parts;
+        try {
+            $uri = $mutator($this->uri);
+        } catch (InvalidUriException $e) {
+            throw new InvalidArgumentException($e->getMessage(), previous: $e);
         }
 
-        $offset = 0;
-        foreach (['scheme', 'user', 'pass', 'host', 'path', 'query', 'fragment'] as $key) {
-            if (!isset($parts[$key])) {
-                continue;
-            }
-            $length = strlen($parts[$key]);
-            $position = strpos($sanitized, $parts[$key], $offset);
-            if ($position === false) {
-                throw new InvalidArgumentException(sprintf('Unable to parse URI `%s`.', $uri));
-            }
-            $parts[$key] = substr($uri, $position, $length);
-            $offset = $position + $length;
-        }
-
-        return $parts;
-    }
-
-    /**
-     * Normalize and validate a scheme.
-     *
-     * @param string $scheme The scheme to filter.
-     * @return string
-     * @throws \InvalidArgumentException When the scheme contains invalid characters.
-     */
-    protected function filterScheme(string $scheme): string
-    {
-        $scheme = strtolower((string)preg_replace('#:(//)?$#', '', $scheme));
-        if ($scheme !== '' && !preg_match('/^[a-z][a-z0-9+.\-]*$/D', $scheme)) {
-            throw new InvalidArgumentException(sprintf('Invalid scheme `%s` provided.', $scheme));
-        }
-
-        return $scheme;
+        return clone($this, ['uri' => $uri]);
     }
 
     /**
@@ -414,7 +373,7 @@ class Uri implements UriInterface, Stringable
     {
         return $this->encode(
             $part,
-            '/(?:[^%' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . ']+|%(?![A-Fa-f0-9]{2}))/u',
+            '/(?:[^%' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . ']+|%(?![A-Fa-f0-9]{2}))/',
         );
     }
 
@@ -426,7 +385,7 @@ class Uri implements UriInterface, Stringable
      */
     protected function filterPath(string $path): string
     {
-        return $this->encode($path, '/(?:[^' . static::CHAR_UNRESERVED . ')(:@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/u');
+        return $this->encode($path, '/(?:[^' . static::CHAR_UNRESERVED . ')(:@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/');
     }
 
     /**
@@ -471,14 +430,14 @@ class Uri implements UriInterface, Stringable
     {
         return $this->encode(
             $value,
-            '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/u',
+            '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/',
         );
     }
 
     /**
      * Percent-encode all characters matching a pattern.
      *
-     * Bytes that are not valid UTF-8 are always encoded.
+     * Non-ASCII bytes are always encoded.
      *
      * @param string $value The value to encode.
      * @param string $pattern The pattern matching the characters to encode.
@@ -490,35 +449,9 @@ class Uri implements UriInterface, Stringable
             return '';
         }
 
-        if (!preg_match('//u', $value)) {
-            $value = $this->encodeInvalidUtf8($value);
-        }
-
         return (string)preg_replace_callback(
             $pattern,
             static fn(array $matches): string => rawurlencode($matches[0]),
-            $value,
-        );
-    }
-
-    /**
-     * Percent-encode byte sequences that are not valid UTF-8.
-     *
-     * @param string $value The value to encode.
-     * @return string
-     */
-    protected function encodeInvalidUtf8(string $value): string
-    {
-        // Valid multibyte sequences are matched first and kept, any other
-        // non-ASCII byte is captured in group 1 and encoded.
-        $pattern = '/[\xC2-\xDF][\x80-\xBF]'
-            . '|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]'
-            . '|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}'
-            . '|([\x80-\xFF])/';
-
-        return (string)preg_replace_callback(
-            $pattern,
-            static fn(array $matches): string => isset($matches[1]) ? rawurlencode($matches[1]) : $matches[0],
             $value,
         );
     }

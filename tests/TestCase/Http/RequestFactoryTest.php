@@ -19,12 +19,19 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\RequestFactory;
 use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the request factory.
  */
 class RequestFactoryTest extends TestCase
 {
+    public function testCreateRequestWithNativeUri(): void
+    {
+        $request = new RequestFactory()->createRequest('GET', new Rfc3986Uri('https://example.com/a%2fb'));
+        $this->assertSame('https://example.com/a%2fb', (string)$request->getUri());
+    }
+
     public function testCreateRequest(): void
     {
         $factory = new RequestFactory();
