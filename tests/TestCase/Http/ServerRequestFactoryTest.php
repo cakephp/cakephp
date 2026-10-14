@@ -75,14 +75,14 @@ class ServerRequestFactoryTest extends TestCase
             'PHP_SELF' => '/index.php',
             'REQUEST_URI' => '/posts/add',
             'HTTP_X_FORWARDED_PROTO' => 'https',
+            'REMOTE_ADDR' => '8.8.8.8',
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
         $this->assertSame('http', $request->scheme());
         $this->assertSame('http', $request->getUri()->getScheme());
 
-        $request->setTrustedProxies([]);
-        // Yeah even setting an empty list of proxies does the trick.
+        $request->setTrustedProxies(['8.8.8.8']);
         $this->assertSame('https', $request->scheme());
         $this->assertSame('https', $request->getUri()->getScheme());
     }
