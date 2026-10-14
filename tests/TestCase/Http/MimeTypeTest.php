@@ -19,8 +19,32 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Http\MimeType;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Tests MIME type lookup and extension mapping.
+ */
 class MimeTypeTest extends TestCase
 {
+    /**
+     * Tests modern image MIME types and their preferred file extensions.
+     */
+    public function testModernImageMimeTypes(): void
+    {
+        $mimeTypes = [
+            'jxl' => 'image/jxl',
+            'webp' => 'image/webp',
+            'avif' => 'image/avif',
+            'avifs' => 'image/avif',
+        ];
+        foreach ($mimeTypes as $extension => $mimeType) {
+            $this->assertSame([$mimeType], MimeType::getMimeTypes($extension));
+            $this->assertSame($mimeType, MimeType::getMimeType($extension));
+        }
+
+        $this->assertSame('jxl', MimeType::getExtension('image/jxl'));
+        $this->assertSame('webp', MimeType::getExtension('image/webp'));
+        $this->assertSame('avif', MimeType::getExtension('image/avif'));
+    }
+
     public function testGetMimeTypes(): void
     {
         $this->assertSame(['text/html', '*/*'], MimeType::getMimeTypes('html'));

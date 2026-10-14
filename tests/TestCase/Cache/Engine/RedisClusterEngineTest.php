@@ -10,6 +10,7 @@ use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use function Cake\Core\env;
 
 /**
  * RedisClusterEngineTest class
