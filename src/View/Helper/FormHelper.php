@@ -34,6 +34,7 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use Uri\WhatWg\Url;
 use function Cake\Core\h;
 use function Cake\I18n\__;
 use function Cake\I18n\__d;
@@ -541,10 +542,11 @@ class FormHelper extends Helper
     protected function lastAction(array|string|null $url = null): void
     {
         $action = Router::url($url, true);
-        $query = parse_url($action, PHP_URL_QUERY);
+        $uri = new Url($action);
+        $query = $uri->getQuery();
         $query = $query ? '?' . $query : '';
 
-        $path = parse_url($action, PHP_URL_PATH) ?: '';
+        $path = $uri->getPath() ?: '';
         $this->lastAction = $path . $query;
     }
 

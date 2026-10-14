@@ -941,6 +941,28 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test that lastAction captures the form action URL for actions
+     */
+    public function testCreateLastActionParsesActionUrl(): void
+    {
+        $reflect = new ReflectionProperty($this->Form, 'lastAction');
+
+        $this->Form->create(null, ['url' => '/files/view/report[1].html']);
+        $this->assertSame(
+            '/files/view/report[1].html',
+            $reflect->getValue($this->Form),
+            'Action URLs rejected by strict RFC3986 parsing should still be captured.',
+        );
+
+        $this->Form->create(null, ['url' => '/articles/hello world']);
+        $this->assertSame(
+            '/articles/hello%20world',
+            $reflect->getValue($this->Form),
+            'Unencoded spaces should be percent-encoded to match the URL the browser submits.',
+        );
+    }
+
+    /**
      * test that create() doesn't cause errors by multiple id's being in the primary key
      * as could happen with multiple select or checkboxes.
      */
