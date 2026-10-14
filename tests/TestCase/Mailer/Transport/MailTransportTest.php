@@ -113,9 +113,9 @@ class MailTransportTest extends TestCase
     }
 
     /**
-     * test send strips crlf from headers
+     * test send strips newlines from headers
      */
-    public function testSendHeadersStripCrlf(): void
+    public function testSendHeadersStripNewlines(): void
     {
         $eol = version_compare(PHP_VERSION, '8.0', '>=') ? "\r\n" : "\n";
         $date = date(DATE_RFC2822);
@@ -127,12 +127,17 @@ class MailTransportTest extends TestCase
         $message->setMessageId('<abc0123@example.com>');
 
         $message->setHeaders([
-            'X-inject' => "line one\r\nline two",
+            'X-crlf' => "line one\r\nline two",
+            'X-lf' => "line one\nline two",
+            'X-cr' => "line one\rline two",
+            'Date' => $date,
         ]);
         $message->setBody(['text' => "First Line\nSecond Line"]);
 
         $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
-        $data .= 'X-inject: line oneline two' . $eol;
+        $data .= 'X-crlf: line oneline two' . $eol;
+        $data .= 'X-lf: line oneline two' . $eol;
+        $data .= 'X-cr: line oneline two' . $eol;
         $data .= 'Date: ' . $date . $eol;
         $data .= 'Message-ID: <abc0123@example.com>' . $eol;
         $data .= "MIME-Version: 1.0{$eol}";
