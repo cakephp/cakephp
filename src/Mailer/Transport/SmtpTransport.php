@@ -571,7 +571,7 @@ class SmtpTransport extends AbstractTransport
             ],
             "\r\n",
             function (string $val): string {
-                return str_replace("\r\n", '', $val);
+                return str_replace(["\r", "\n"], '', $val);
             },
         );
         $message = $this->_prepareMessage($message);
