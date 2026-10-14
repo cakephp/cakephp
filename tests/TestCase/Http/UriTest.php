@@ -609,6 +609,26 @@ class UriTest extends TestCase
     }
 
     #[DataProvider('queryStringsForEncoding')]
+    public function testConstructorEncodesQueryBeforeParsing(string $query, string $expected): void
+    {
+        $uri = new Uri('http://[::1]/path?' . $query . '#fragment');
+
+        $this->assertSame('[::1]', $uri->getHost());
+        $this->assertSame('/path', $uri->getPath());
+        $this->assertSame($expected, $uri->getQuery());
+        $this->assertSame('fragment', $uri->getFragment());
+        $this->assertSame('http://[::1]/path?' . $expected . '#fragment', (string)$uri);
+    }
+
+    public function testConstructorEncodesFragmentBeforeParsing(): void
+    {
+        $uri = new Uri('/path?ids[]=1&ids[]=2#section[0]#details?name=value');
+
+        $this->assertSame('ids%5B%5D=1&ids%5B%5D=2', $uri->getQuery());
+        $this->assertSame('section%5B0%5D%23details?name=value', $uri->getFragment());
+    }
+
+    #[DataProvider('queryStringsForEncoding')]
     public function testQueryIsProperlyEncoded(string $query, string $expected): void
     {
         $uri = new Uri()->withQuery($query);

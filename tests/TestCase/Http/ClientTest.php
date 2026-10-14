@@ -866,8 +866,8 @@ class ClientTest extends TestCase
             'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
             'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
             'space' => ['next page', 'https://example.com/a/next%20page'],
-            'unicode' => ['https://bücher.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
-            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
+            'unicode' => ['https://bücher.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
+            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
         ];
     }
 

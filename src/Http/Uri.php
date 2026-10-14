@@ -85,13 +85,22 @@ class Uri implements UriInterface, Stringable
     {
         if (is_string($uri)) {
             try {
-                // Encode characters outside RFC 3986 before parsing, preserving delimiters
-                // and existing percent-encoded sequences.
-                $uri = new Rfc3986Uri($this->encode(
-                    $uri,
+                // Encode query and fragment components before parsing. Brackets are
+                // valid in IPv6 authorities, but must be encoded in these components.
+                $fragmentParts = explode('#', $uri, 2);
+                $queryParts = explode('?', $fragmentParts[0], 2);
+                $encoded = $this->encode(
+                    $queryParts[0],
                     '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS
-                        . ':\/\[\]@?#%]+|%(?![A-Fa-f0-9]{2}))/',
-                ));
+                        . ':\/\[\]@%]+|%(?![A-Fa-f0-9]{2}))/',
+                );
+                if (isset($queryParts[1])) {
+                    $encoded .= '?' . $this->filterQuery($queryParts[1]);
+                }
+                if (isset($fragmentParts[1])) {
+                    $encoded .= '#' . $this->filterFragment($fragmentParts[1]);
+                }
+                $uri = new Rfc3986Uri($encoded);
             } catch (InvalidUriException $e) {
                 throw new InvalidArgumentException('Unable to parse URI.', previous: $e);
             }
