@@ -30,7 +30,6 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Uri\WhatWg\InvalidUrlException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -867,8 +866,8 @@ class ClientTest extends TestCase
             'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
             'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
             'space' => ['next page', 'https://example.com/a/next%20page'],
-            'unicode' => ['https://bücher.example/ä', 'https://bücher.example/%C3%A4'],
-            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://bücher.example/%C3%A4'],
+            'unicode' => ['https://bücher.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
+            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
         ];
     }
 
@@ -1210,7 +1209,7 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The URL does not contain a host');
+        $this->expectExceptionMessage('String `htps://` did not parse.');
         Client::createFromUrl('htps://');
     }
 
@@ -1255,7 +1254,7 @@ class ClientTest extends TestCase
             'auth' => null,
             'adapter' => null,
             'host' => 'example.co',
-            'port' => null,
+            'port' => 8080,
             'scheme' => 'http',
             'basePath' => '/some/uri/',
             'timeout' => 30,

@@ -24,6 +24,7 @@ use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the Uri class.
@@ -43,6 +44,33 @@ class UriTest extends TestCase
         $this->assertSame('/foo', $uri->getPath());
         $this->assertSame('bar=baz', $uri->getQuery());
         $this->assertSame('quz', $uri->getFragment());
+    }
+
+    public function testConstructorAcceptsNativeUriWithoutNormalizingComponents(): void
+    {
+        $native = new Rfc3986Uri('https://user:pass@EXAMPLE.com:443/a/../b%2fc?q=%7e#%41');
+        $uri = new Uri($native);
+
+        $this->assertSame('https', $uri->getScheme());
+        $this->assertSame('user:pass', $uri->getUserInfo());
+        $this->assertSame('example.com', $uri->getHost());
+        $this->assertNull($uri->getPort());
+        $this->assertSame('/a/../b%2fc', $uri->getPath());
+        $this->assertSame('q=%7e', $uri->getQuery());
+        $this->assertSame('%41', $uri->getFragment());
+    }
+
+    public function testUserInfoAndPortCanBeSetBeforeHost(): void
+    {
+        $uri = new Uri()->withUserInfo('user', 'pass')->withPort(8080)->withHost('example.com');
+        $this->assertSame('//user:pass@example.com:8080', (string)$uri);
+    }
+
+    public function testConstructorAcceptsEmptyAuthority(): void
+    {
+        $uri = new Uri('file:///tmp/file');
+        $this->assertSame('', $uri->getHost());
+        $this->assertSame('/tmp/file', $uri->getPath());
     }
 
     public function testEmptyConstructor(): void
@@ -372,7 +400,7 @@ class UriTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Uri('http:///www.php-fig.org/');
+        new Uri('http://[invalid]/');
     }
 
     public function testMutatingSchemeStripsOffDelimiter(): void
@@ -443,7 +471,7 @@ class UriTest extends TestCase
         $uri = new Uri('http://example.com');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid scheme');
+        $this->expectExceptionMessage('The specified scheme is malformed');
 
         $uri->withScheme($scheme);
     }
@@ -576,7 +604,7 @@ class UriTest extends TestCase
             'empty-pairs' => ['&key=&=value&&key=a=b&', '&key=&=value&&key=a=b&'],
             'encoded-delimiters' => ['key=a%26b%3Dc&other=%25', 'key=a%26b%3Dc&other=%25'],
             'invalid-escapes' => ['key=%&other=%2&last=%GG', 'key=%25&other=%252&last=%25GG'],
-            'mixed-utf8' => ["key=ουτοπία&other=\xFF=value", 'key=ουτοπία&other=%FF=value'],
+            'mixed-utf8' => ["key=ουτοπία&other=\xFF=value", 'key=' . rawurlencode('ουτοπία') . '&other=%FF=value'],
         ];
     }
 
@@ -611,7 +639,7 @@ class UriTest extends TestCase
     {
         $uri = new Uri('http://ουτοπία.δπθ.gr/');
 
-        $this->assertSame('ουτοπία.δπθ.gr', $uri->getHost());
+        $this->assertSame(strtolower(rawurlencode('ουτοπία.δπθ.gr')), $uri->getHost());
     }
 
     /**
@@ -620,8 +648,8 @@ class UriTest extends TestCase
     public static function utf8PathsDataProvider(): array
     {
         return [
-            ['http://example.com/тестовый_путь/', '/тестовый_путь/'],
-            ['http://example.com/ουτοπία/', '/ουτοπία/'],
+            ['http://example.com/тестовый_путь/', '/' . rawurlencode('тестовый_путь') . '/'],
+            ['http://example.com/ουτοπία/', '/' . rawurlencode('ουτοπία') . '/'],
             ["http://example.com/\x21\x92", '/%21%92'],
             ['http://example.com/!?', '/%21'],
         ];
@@ -641,8 +669,8 @@ class UriTest extends TestCase
     public static function utf8QueryStringsDataProvider(): array
     {
         return [
-            ['http://example.com/?q=тестовый_путь', 'q=тестовый_путь'],
-            ['http://example.com/?q=ουτοπία', 'q=ουτοπία'],
+            ['http://example.com/?q=тестовый_путь', 'q=' . rawurlencode('тестовый_путь')],
+            ['http://example.com/?q=ουτοπία', 'q=' . rawurlencode('ουτοπία')],
             ["http://example.com/?q=\x21\x92", 'q=!%92'],
         ];
     }

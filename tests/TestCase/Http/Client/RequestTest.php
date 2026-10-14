@@ -27,12 +27,21 @@ use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * HTTP request test.
  */
 class RequestTest extends TestCase
 {
+    public function testConstructorAcceptsNativeUri(): void
+    {
+        $request = new Request(new Rfc3986Uri('https://example.com/a%2fb?x=%7e'));
+
+        $this->assertInstanceOf(UriInterface::class, $request->getUri());
+        $this->assertSame('https://example.com/a%2fb?x=%7e', (string)$request->getUri());
+    }
+
     public function testConstructorNormalizesHeaderValues(): void
     {
         $request = new Request('/', headers: ['X-Tag' => [' first ', 'second'], 'X-Empty' => '']);

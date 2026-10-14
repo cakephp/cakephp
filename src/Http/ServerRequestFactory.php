@@ -26,6 +26,7 @@ use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Factory for making ServerRequest instances.
@@ -294,7 +295,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * determine the HTTP method or URI, which must be provided explicitly.
      *
      * @param string $method The HTTP method associated with the request.
-     * @param \Psr\Http\Message\UriInterface|string $uri The URI associated with the request. If
+     * @param \Psr\Http\Message\UriInterface|\Uri\Rfc3986\Uri|string $uri The URI associated with the request. If
      *     the value is a string, the factory MUST create a UriInterface
      *     instance based on it.
      * @param array $serverParams Array of SAPI parameters with which to seed
@@ -307,7 +308,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];
 
-        if (is_string($uri)) {
+        if (!$uri instanceof UriInterface) {
             $uri = new UriFactory()->createUri($uri);
         }
         $options['uri'] = $uri;
