@@ -238,6 +238,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
             'PHP_SELF' => '/index.php',
             'REQUEST_URI' => '/posts/add',
             'HTTP_X_FORWARDED_PROTO' => 'https',
+            'REMOTE_ADDR' => '8.8.8.8',
         ];
         $request = ServerRequestFactory::fromGlobals($server);
 
@@ -248,9 +249,16 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $middleware = new HttpsEnforcerMiddleware();
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals('https://localhost/posts/add', $result->getHeaderLine('Location'));
 
-        $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => []]);
+        $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => ['10.1.0.1']]);
+        $result = $middleware->process($request, $handler);
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals('https://localhost/posts/add', $result->getHeaderLine('Location'));
+
+        $middleware = new HttpsEnforcerMiddleware(['trustedProxies' => ['8.8.8.8']]);
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
     }
 }
