@@ -2210,7 +2210,6 @@ class FormHelper extends Helper
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);
-            $attributes['nestedInput'] = $this->getConfig('nestedCheckboxAndRadio');
 
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
@@ -2273,6 +2272,8 @@ class FormHelper extends Helper
      */
     public function multiCheckbox(string $fieldName, iterable $options, array $attributes = []): string
     {
+        $attributes['nestedInput'] ??= $this->getConfig('nestedCheckboxAndRadio');
+
         $attributes += [
             'disabled' => null,
             'escape' => true,

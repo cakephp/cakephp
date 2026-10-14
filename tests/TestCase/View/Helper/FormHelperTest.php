@@ -6056,8 +6056,19 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        // multiCheckbox() does not read the "nestedCheckboxAndRadio" config,
-        // it falls back to nesting the inputs inside the labels.
+        $result = $this->Form->multiCheckbox(
+            'category',
+            new Collection(['1', '2']),
+            ['name' => 'fish'],
+        );
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->multiCheckbox('category', ['1', '2'], [
+            'name' => 'fish',
+        ]);
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('nestedCheckboxAndRadio', true);
         $expectedNested = [
             'input' => ['type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
@@ -6078,11 +6089,6 @@ class FormHelperTest extends TestCase
             new Collection(['1', '2']),
             ['name' => 'fish'],
         );
-        $this->assertHtml($expectedNested, $result);
-
-        $result = $this->Form->multiCheckbox('category', ['1', '2'], [
-            'name' => 'fish',
-        ]);
         $this->assertHtml($expectedNested, $result);
     }
 
@@ -6114,8 +6120,14 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        // multiCheckbox() does not read the "nestedCheckboxAndRadio" config,
-        // it falls back to nesting the inputs inside the labels.
+        $result = $this->Form->multiCheckbox(
+            'category',
+            ['1', '2'],
+            ['id' => 'cat'],
+        );
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('nestedCheckboxAndRadio', true);
         $expectedNested = [
             'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'cat'],
             ['div' => ['class' => 'checkbox']],
@@ -6157,6 +6169,33 @@ class FormHelperTest extends TestCase
             '/label',
             'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'category'],
             ['div' => ['class' => 'checkbox']],
+                ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
+                ['label' => ['for' => 'category-0']],
+                    '1',
+                '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+                ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '1', 'id' => 'category-1']],
+                ['label' => ['for' => 'category-1']],
+                    '2',
+                '/label',
+            '/div',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('nestedCheckboxAndRadio', true);
+        $result = $this->Form->control('category', [
+            'type' => 'multicheckbox',
+            'options' => ['1', '2'],
+        ]);
+        $expectedNested = [
+            ['div' => ['class' => 'input']],
+            '<label',
+            'Category',
+            '/label',
+            'input' => ['type' => 'hidden', 'name' => 'category', 'value' => '', 'id' => 'category'],
+            ['div' => ['class' => 'checkbox']],
                 ['label' => ['for' => 'category-0']],
                     ['input' => ['type' => 'checkbox', 'name' => 'category[]', 'value' => '0', 'id' => 'category-0']],
                     '1',
@@ -6170,7 +6209,7 @@ class FormHelperTest extends TestCase
             '/div',
             '/div',
         ];
-        $this->assertHtml($expected, $result);
+        $this->assertHtml($expectedNested, $result);
     }
 
     /**
