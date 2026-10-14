@@ -214,6 +214,8 @@ class MultiCheckboxWidget extends BasicWidget
         ) {
             $label = $input;
             $input = '';
+        } elseif ($checkbox['label'] === false) {
+            $label = '';
         } else {
             $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];
             $labelAttrs += [

@@ -152,7 +152,7 @@ class FormHelper extends Helper
             // Radio input element,
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Wrapping container for radio input/label,
-            'radioWrapper' => '{{input}}{{label}}',
+            'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>',
             // Textarea input element,
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
@@ -178,7 +178,7 @@ class FormHelper extends Helper
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
         // Whether checkboxes and radios should be wrapped in a label element
-        'nestedCheckboxAndRadio' => true,
+        'nestedCheckboxAndRadio' => false,
     ];
 
     /**
@@ -1515,7 +1515,10 @@ class FormHelper extends Helper
 
         $label = $options['label'] ?? null;
 
-        if ($label === false && $options['type'] === 'checkbox') {
+        $nestedInput = $options['nestedInput'] ?? false;
+        if ($label === false && $options['type'] === 'checkbox' && $nestedInput) {
+            // Without a label the group template only renders the label slot,
+            // so the input has to be placed there.
             return $options['input'];
         }
         if ($label === false) {
@@ -2209,7 +2212,6 @@ class FormHelper extends Helper
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);
-            $attributes['nestedInput'] = $this->getConfig('nestedCheckboxAndRadio');
 
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
@@ -2272,6 +2274,8 @@ class FormHelper extends Helper
      */
     public function multiCheckbox(string $fieldName, iterable $options, array $attributes = []): string
     {
+        $attributes['nestedInput'] ??= $this->getConfig('nestedCheckboxAndRadio');
+
         $attributes += [
             'disabled' => null,
             'escape' => true,
