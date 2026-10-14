@@ -1023,13 +1023,13 @@ class Text
     /**
      * Converts filesize from human-readable string to bytes
      *
-     * @template TDefault
+     * @template TDefault of int|string
      * @param string $size Size in human-readable string like '5MB', '5M', '500B', '50kb' etc.
-     * @param TDefault $default Value to be returned when invalid size was used.
+     * @param TDefault|null $default Value to be returned when invalid size was used.
      *   If set to false (default), an exception will be thrown instead.
-     * @return ($default is false ? int : int|TDefault) Number of bytes as integer on success, or $default value on failure
+     * @return ($default is null ? int : TDefault) Number of bytes as integer on success, or $default value on failure
      *   (if $default is not false).
-     * @throws \InvalidArgumentException On invalid unit type when $default is false.
+     * @throws \InvalidArgumentException On invalid unit type when $default is null.
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#text-parsefilesize
      */
     public static function parseFileSize(string $size, int|string|null $default = null): int|string

@@ -71,12 +71,4 @@
       <code><![CDATA[return $this->capturedError;]]></code>
     </NoValue>
   </file>
-  <file src="src/Validation/Validator.php">
-    <TaintedCallable>
-      <code><![CDATA[$callable]]></code>
-      <code><![CDATA[$callable]]></code>
-      <code><![CDATA[$callable]]></code>
-      <code><![CDATA[$callable]]></code>
-    </TaintedCallable>
-  </file>
 </files>
