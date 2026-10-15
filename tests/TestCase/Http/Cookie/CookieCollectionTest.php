@@ -209,6 +209,9 @@ class CookieCollectionTest extends TestCase
         $collection = new CookieCollection();
         $request = new ServerRequest([
             'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -356,6 +359,44 @@ class CookieCollectionTest extends TestCase
         $new = $collection->addFromResponse($response, $request);
         $this->assertTrue($new->has('key'));
         $this->assertSame('new value', $new->get('key')->getValue());
+    }
+
+    /**
+     * Test adding cookies from a response requires domain matches
+     */
+    public function testAddFromResponseDomainMatch(): void
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'foo.example.com',
+            ],
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=example.com')
+            ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=evil.com');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertNotSame($new, $collection, 'Should clone collection');
+
+        $this->assertTrue($new->has('match'), 'should contain matching domain');
+        $this->assertFalse($new->has('nope'), 'should not contain cookie from evil.com');
+
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+            ],
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=foo.example.com')
+            ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=badexample.com');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertNotSame($new, $collection, 'Should clone collection');
+
+        $this->assertTrue($new->has('match'), 'should contain matching domain');
+        $this->assertFalse($new->has('nope'), 'should not contain cookie from badexample.com');
     }
 
     /**

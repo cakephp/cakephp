@@ -62,6 +62,9 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
+     * Only cookies with matching domains will be retained.
+     * Protection for public suffixes is not implemented.
+     *
      * @param array<string> $header The array of set-cookie header values.
      * @param array<string, mixed> $defaults The defaults attributes.
      * @return static
@@ -69,9 +72,22 @@ class CookieCollection implements IteratorAggregate, Countable
     public static function createFromHeader(array $header, array $defaults = []): static
     {
         $cookies = [];
+        $sourceDomain = $defaults['domain'] ?? null;
         foreach ($header as $value) {
             try {
-                $cookies[] = Cookie::createFromHeaderString($value, $defaults);
+                $cookie = Cookie::createFromHeaderString($value, $defaults);
+                $domainMatch = true;
+                if ($sourceDomain) {
+                    $cookieDomain = $cookie->getDomain();
+                    $domainMatch = (
+                        $cookieDomain === $sourceDomain ||
+                        str_ends_with($sourceDomain, ".{$cookieDomain}") ||
+                        str_ends_with($cookieDomain, ".{$sourceDomain}")
+                    );
+                }
+                if ($domainMatch) {
+                    $cookies[] = $cookie;
+                }
             } catch (Exception | TypeError) {
                 // Don't blow up on invalid cookies
             }
