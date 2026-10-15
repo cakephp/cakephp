@@ -25,7 +25,7 @@ require_once CAKE . 'I18n/functions_global.php';
 /**
  * Test cases for functions in I18n\functions_global.php
  */
-class FunctionsGlobalTest extends TestCase
+final class FunctionsGlobalTest extends TestCase
 {
     /**
      * Tests that the translation functions select plural forms and format their arguments

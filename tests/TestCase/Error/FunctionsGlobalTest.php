@@ -26,7 +26,7 @@ require_once CAKE . 'Error/functions_global.php';
 /**
  * Test cases for functions in Error\functions_global.php
  */
-class FunctionsGlobalTest extends TestCase
+final class FunctionsGlobalTest extends TestCase
 {
     /**
      * Tests that debug() prints the variable with the caller's location and returns it
