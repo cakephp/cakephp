@@ -302,22 +302,20 @@ class CookieCollection implements IteratorAggregate, Countable
             if (!str_starts_with($path, $cookie->getPath())) {
                 continue;
             }
-            $domain = $cookie->getDomain();
-            $leadingDot = str_starts_with($domain, '.');
-            if ($leadingDot) {
-                $domain = ltrim($domain, '.');
-            }
-
             if ($cookie->isExpired($now)) {
                 continue;
             }
-
-            $pattern = '/' . preg_quote($domain, '/') . '$/';
-            if (!preg_match($pattern, $host)) {
-                continue;
+            $domain = $cookie->getDomain();
+            // Trim leading dot from cookie domain value.
+            if (str_starts_with($domain, '.')) {
+                $domain = ltrim($domain, '.');
             }
 
-            $out[$cookie->getName()] = $cookie->getValue();
+            // Cookie domains with a leading `.` match all subdomains.
+            // And cookies on domains match all subdomains.
+            if ($host === $domain || str_ends_with($host, ".{$domain}")) {
+                $out[$cookie->getName()] = $cookie->getValue();
+            }
         }
 
         return $out;

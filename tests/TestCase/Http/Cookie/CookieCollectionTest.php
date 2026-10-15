@@ -391,6 +391,28 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from the collection to request.
+     */
+    public function testAddToRequestSubdomain(): void
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('bad', '1', null, '/', 'example.com'))
+            ->add(new Cookie('include', 'A', null, '/', 'notexample.com'));
+        $request = new ClientRequest('http://notexample.com/api');
+        $request = $collection->addToRequest($request);
+        $this->assertSame('include=A', $request->getHeaderLine('Cookie'));
+
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('bad', '1', null, '/', 'notapi.example.com'))
+            ->add(new Cookie('include', 'A', null, '/', 'api.example.com'));
+        $request = new ClientRequest('http://api.example.com/api');
+        $request = $collection->addToRequest($request);
+        $this->assertSame('include=A', $request->getHeaderLine('Cookie'));
+    }
+
+    /**
      * Test adding no cookies
      */
     public function testAddToRequestNoCookies(): void
