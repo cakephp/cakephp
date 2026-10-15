@@ -575,12 +575,13 @@ class Cache
      * });
      * ```
      *
+     * @template T
      * @param string $key The cache key to read/store data at.
-     * @param \Closure $default The callback that provides data in the case when
+     * @param \Closure(): T $default The callback that provides data in the case when
      *   the cache key is empty.
      * @param string $config The cache configuration to use for this operation.
      *   Defaults to default.
-     * @return mixed If the key is found: the cached data.
+     * @return T If the key is found: the cached data.
      *   If the key is not found the value returned by the default callback.
      */
     public static function remember(string $key, Closure $default, string $config = 'default'): mixed
