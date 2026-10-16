@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -49,6 +50,16 @@ class CurlTest extends TestCase
     }
 
     /**
+     * Streaming must not silently fall back to buffering.
+     */
+    public function testStreamingUnsupported(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Live response streaming requires');
+        $this->curl->send(new Request('http://localhost'), ['stream' => true]);
+    }
+
+    /**
      * Test the send method
      */
     public function testSendLive(): void
@@ -58,7 +69,7 @@ class CurlTest extends TestCase
             'Cookie' => 'testing=value',
         ]);
         try {
-            $responses = $this->curl->send($request, []);
+            $responses = $this->curl->send($request, ['timeout' => 5]);
         } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
@@ -79,7 +90,7 @@ class CurlTest extends TestCase
             'User-Agent' => 'CakePHP TestSuite',
         ]);
         try {
-            $responses = $this->curl->send($request, []);
+            $responses = $this->curl->send($request, ['timeout' => 5]);
         } catch (NetworkException) {
             $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
         }

@@ -99,6 +99,7 @@ class ClientEvent extends Event
     /**
      * Set the adapter options.
      *
+     * @param array<string, mixed> $options Options for the adapter.
      * @return $this
      */
     public function setAdapterOptions(array $options = []): static
@@ -111,7 +112,7 @@ class ClientEvent extends Event
     /**
      * Get the adapter options.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAdapterOptions(): array
     {

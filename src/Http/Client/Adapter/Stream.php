@@ -20,8 +20,11 @@ use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Response;
+use Cake\Http\Client\ResponseStream;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Throwable;
 use Uri\WhatWg\Url;
 
 /**
@@ -63,7 +66,7 @@ class Stream implements AdapterInterface
     /**
      * Connection error list.
      *
-     * @var array
+     * @var list<string>
      */
     protected array $connectionErrors = [];
 
@@ -80,6 +83,10 @@ class Stream implements AdapterInterface
 
         $this->buildContext($request, $options);
 
+        if (!empty($options['stream'])) {
+            return $this->processStreamingRequest($request, $options);
+        }
+
         return $this->processRequest($request);
     }
 
@@ -90,10 +97,10 @@ class Stream implements AdapterInterface
      * of redirects that occurred.
      *
      * @param list<string> $headers The list of headers from the request(s)
-     * @param string $content The response content.
-     * @return array<\Cake\Http\Client\Response> The list of responses from the request(s)
+     * @param \Psr\Http\Message\StreamInterface|string $content The response content.
+     * @return non-empty-list<\Cake\Http\Client\Response> The list of responses from the request(s)
      */
-    public function createResponses(array $headers, string $content): array
+    public function createResponses(array $headers, string|StreamInterface $content): array
     {
         $indexes = [];
         $responses = [];
@@ -101,6 +108,9 @@ class Stream implements AdapterInterface
             if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;
             }
+        }
+        if ($indexes === []) {
+            throw new ClientException('No HTTP response headers received.');
         }
         $last = count($indexes) - 1;
         foreach ($indexes as $i => $start) {
@@ -126,9 +136,7 @@ class Stream implements AdapterInterface
         $this->buildHeaders($request, $options);
         $this->buildOptions($request, $options);
 
-        $url = $request->getUri();
-        $scheme = new Url((string)$url)->getScheme();
-        if ($scheme === 'https') {
+        if ($request->getUri()->getScheme() === 'https') {
             $this->buildSslContext($request, $options);
         }
         $this->context = stream_context_create([
@@ -184,6 +192,7 @@ class Stream implements AdapterInterface
         $this->contextOptions['method'] = $request->getMethod();
         $this->contextOptions['protocol_version'] = $request->getProtocolVersion();
         $this->contextOptions['ignore_errors'] = true;
+        $this->contextOptions['uri_parser_class'] = Url::class;
 
         if (isset($options['timeout'])) {
             $this->contextOptions['timeout'] = $options['timeout'];
@@ -220,9 +229,7 @@ class Stream implements AdapterInterface
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
-            $url = $request->getUri();
-            $host = new Url((string)$url)->getUnicodeHost();
-            $this->sslContextOptions['peer_name'] = $host;
+            $this->sslContextOptions['peer_name'] = $request->getUri()->getHost();
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
@@ -236,7 +243,7 @@ class Stream implements AdapterInterface
      * Open the stream and send the request.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object.
-     * @return array Array of populated Response objects
+     * @return non-empty-list<\Cake\Http\Client\Response> Array of populated Response objects
      * @throws \Psr\Http\Client\NetworkExceptionInterface
      */
     protected function processRequest(RequestInterface $request): array
@@ -284,13 +291,53 @@ class Stream implements AdapterInterface
     }
 
     /**
+     * Return after headers arrive, transferring ownership of the connection to the body.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request The request object.
+     * @param array<string, mixed> $options Request options.
+     * @return non-empty-list<\Cake\Http\Client\Response>
+     */
+    protected function processStreamingRequest(RequestInterface $request, array $options): array
+    {
+        $this->open((string)$request->getUri(), $request);
+        assert($this->stream !== null, 'HTTP stream failed to open');
+        $body = new ResponseStream($this->stream, $request);
+        $this->stream = null;
+
+        try {
+            $headers = $body->getMetadata('wrapper_data');
+            if (isset($headers['headers']) && is_array($headers['headers'])) {
+                $headers = $headers['headers'];
+            }
+            $responses = $this->createResponses($headers, $body);
+            $last = array_key_last($responses);
+            $response = $responses[$last];
+            if (strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip') {
+                $body->decodeGzip();
+                $responses[$last] = $response
+                    ->withoutHeader('Content-Encoding')
+                    ->withoutHeader('Content-Length');
+            }
+            if (isset($options['readTimeout'])) {
+                $body->setReadTimeout((float)$options['readTimeout']);
+            }
+
+            return $responses;
+        } catch (Throwable $error) {
+            $body->close();
+
+            throw $error;
+        }
+    }
+
+    /**
      * Build a response object
      *
-     * @param array<string> $headers Unparsed headers.
-     * @param string $body The response body.
+     * @param list<string> $headers Unparsed headers.
+     * @param \Psr\Http\Message\StreamInterface|string $body The response body.
      * @return \Cake\Http\Client\Response
      */
-    protected function buildResponse(array $headers, string $body): Response
+    protected function buildResponse(array $headers, string|StreamInterface $body): Response
     {
         return new Response($headers, $body);
     }
@@ -309,7 +356,7 @@ class Stream implements AdapterInterface
             throw new ClientException('The PHP directive `allow_url_fopen` must be enabled.');
         }
 
-        set_error_handler(function ($code, $message): bool {
+        set_error_handler(function (int $code, string $message): bool {
             $this->connectionErrors[] = $message;
 
             return true;
