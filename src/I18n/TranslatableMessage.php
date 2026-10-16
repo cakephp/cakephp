@@ -28,7 +28,7 @@ use Cake\I18n\Exception\I18nException;
  *
  * @since 6.0.0
  */
-final readonly class TranslatableMessage
+readonly class TranslatableMessage
 {
     /**
      * Store a source message, formatting arguments, translation domain, and context.

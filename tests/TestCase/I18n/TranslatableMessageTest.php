@@ -22,6 +22,7 @@ use Cake\I18n\Package;
 use Cake\I18n\TranslatableMessage;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use TestApp\I18n\FormLabel;
 
 /**
  * Tests deferred message translation and locale-independent configuration reuse.
@@ -69,6 +70,21 @@ class TranslatableMessageTest extends TestCase
         I18n::setLocale('en_US');
         $this->assertSame('Title for <Ada>', $message->translate());
         $this->assertSame('Title for {name}', $message->message);
+    }
+
+    /**
+     * Applications can specialize message construction while inheriting deferred translation.
+     */
+    public function testSubclassCanSupplyApplicationMetadata(): void
+    {
+        $message = new FormLabel('Title {0}', ['Ada']);
+        $this->assertSame('Title Ada', $message->translate());
+        I18n::setLocale('fr_FR');
+        $this->assertSame('Titre Ada', $message->translate());
+        $this->assertSame('Title {0}', $message->message);
+        $this->assertSame(['Ada'], $message->arguments);
+        $this->assertSame('forms', $message->domain);
+        $this->assertSame('heading', $message->context);
     }
 
     /**
