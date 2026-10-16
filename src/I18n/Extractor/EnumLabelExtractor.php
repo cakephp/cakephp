@@ -16,19 +16,32 @@ declare(strict_types=1);
  */
 namespace Cake\I18n\Extractor;
 
-use Cake\Database\Type\Attribute\Label;
+use Closure;
 use ReflectionClass;
 use Throwable;
 
 /**
  * Extracts enum case labels using the existing attribute reflection behavior.
  *
+ * @template T of object
  * @internal
  */
 class EnumLabelExtractor implements ExtractorInterface
 {
     /**
-     * Extract Label attribute strings from a PHP file using reflection.
+     * Configure the label attribute and its conversion to common message metadata.
+     *
+     * @param class-string<T> $attributeClass Enum case attribute to extract.
+     * @param \Closure(T): \Cake\I18n\Extractor\ExtractedMessage $extractMessage Convert an attribute to a message.
+     */
+    public function __construct(
+        protected readonly string $attributeClass,
+        protected readonly Closure $extractMessage,
+    ) {
+    }
+
+    /**
+     * Extract configured enum case labels from a PHP file using reflection.
      *
      * @param string $file Absolute path to the file being processed.
      * @param string $code File contents.
@@ -61,14 +74,12 @@ class EnumLabelExtractor implements ExtractorInterface
                 continue;
             }
 
-            $labelAttributes = $constant->getAttributes(Label::class);
+            $labelAttributes = $constant->getAttributes($this->attributeClass);
             if (!$labelAttributes) {
                 continue;
             }
 
-            /** @var \Cake\Database\Type\Attribute\Label $label */
-            $label = $labelAttributes[0]->newInstance();
-            yield new ExtractedMessage($label->label, $label->domain, $label->context);
+            yield ($this->extractMessage)($labelAttributes[0]->newInstance());
         }
     }
 

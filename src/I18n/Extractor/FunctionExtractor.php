@@ -49,12 +49,12 @@ class FunctionExtractor implements ExtractorInterface
         }
         $tokens = array_values(array_filter(
             PhpToken::tokenize($code),
-            static fn(PhpToken $token): bool => !$token->isIgnorable() && $token->id !== T_INLINE_HTML,
+            static fn(PhpToken $lexeme): bool => !$lexeme->isIgnorable() && $lexeme->id !== T_INLINE_HTML,
         ));
-        foreach ($tokens as $index => $token) {
-            $name = ltrim($token->text, '\\');
+        foreach ($tokens as $index => $lexeme) {
+            $name = ltrim($lexeme->text, '\\');
             if (
-                !in_array($token->id, [T_STRING, T_NAME_FULLY_QUALIFIED], true)
+                !in_array($lexeme->id, [T_STRING, T_NAME_FULLY_QUALIFIED], true)
                 || !isset($functions[$name])
                 || ($tokens[$index + 1]->text ?? '') !== '('
                 || in_array(
@@ -73,7 +73,7 @@ class FunctionExtractor implements ExtractorInterface
                     yield new ExtractionDiagnostic(sprintf(
                         "Invalid marker content in %s:%d\n* %s",
                         $file,
-                        $token->line,
+                        $lexeme->line,
                         $this->readMarker($tokens, $index),
                     ), invalidMarker: true);
                     continue 2;
@@ -85,7 +85,7 @@ class FunctionExtractor implements ExtractorInterface
                 $values['domain'] ?? 'default',
                 $values['context'] ?? '',
                 $values['plural'] ?? null,
-                $token->line,
+                $lexeme->line,
             );
         }
     }
@@ -102,20 +102,20 @@ class FunctionExtractor implements ExtractorInterface
         $value = '';
         $expectString = true;
         while (isset($tokens[$position])) {
-            $token = $tokens[$position++];
+            $lexeme = $tokens[$position++];
             if ($expectString) {
-                if ($token->id === T_CONSTANT_ENCAPSED_STRING) {
-                    $value .= PhpStringLiteral::decode($token->text);
-                } elseif ($token->id === T_LNUMBER) {
-                    $value .= $token->text;
+                if ($lexeme->id === T_CONSTANT_ENCAPSED_STRING) {
+                    $value .= PhpStringLiteral::decode($lexeme->text);
+                } elseif ($lexeme->id === T_LNUMBER) {
+                    $value .= $lexeme->text;
                 } else {
                     return null;
                 }
             } else {
-                if ($token->text === ',' || $token->text === ')') {
+                if ($lexeme->text === ',' || $lexeme->text === ')') {
                     return $value;
                 }
-                if ($token->text !== '.') {
+                if ($lexeme->text !== '.') {
                     return null;
                 }
             }
@@ -137,11 +137,11 @@ class FunctionExtractor implements ExtractorInterface
         $marker = $tokens[$position++]->text;
         $depth = 0;
         do {
-            $token = $tokens[$position++]->text;
-            $marker .= $token;
-            if ($token === '(') {
+            $lexeme = $tokens[$position++]->text;
+            $marker .= $lexeme;
+            if ($lexeme === '(') {
                 $depth++;
-            } elseif ($token === ')') {
+            } elseif ($lexeme === ')') {
                 $depth--;
             }
         } while ($depth > 0 && isset($tokens[$position]));

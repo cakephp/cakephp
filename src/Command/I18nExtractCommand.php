@@ -22,7 +22,9 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Database\Type\Attribute\Label;
 use Cake\I18n\Extractor\EnumLabelExtractor;
+use Cake\I18n\Extractor\ExtractedMessage;
 use Cake\I18n\Extractor\ExtractionDiagnostic;
 use Cake\I18n\Extractor\FunctionExtractor;
 use Cake\I18n\Extractor\TranslatableMessageExtractor;
@@ -413,7 +415,18 @@ class I18nExtractCommand extends Command
         assert($progress instanceof ProgressHelper);
         $progress->init(['total' => count($this->files)]);
         $isVerbose = $this->args->getOption('verbose');
-        $extractors = [new FunctionExtractor(), new EnumLabelExtractor(), new TranslatableMessageExtractor()];
+        $extractors = [
+            new FunctionExtractor(),
+            new EnumLabelExtractor(
+                Label::class,
+                static fn(Label $label): ExtractedMessage => new ExtractedMessage(
+                    $label->label,
+                    $label->domain,
+                    $label->context,
+                ),
+            ),
+            new TranslatableMessageExtractor(),
+        ];
 
         foreach ($this->files as $file) {
             if ($isVerbose) {

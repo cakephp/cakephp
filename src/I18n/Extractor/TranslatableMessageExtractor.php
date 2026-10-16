@@ -41,7 +41,7 @@ class TranslatableMessageExtractor implements ExtractorInterface
     {
         $tokens = array_values(array_filter(
             PhpToken::tokenize($code),
-            static fn(PhpToken $token): bool => !$token->isIgnorable() && $token->id !== T_INLINE_HTML,
+            static fn(PhpToken $lexeme): bool => !$lexeme->isIgnorable() && $lexeme->id !== T_INLINE_HTML,
         ));
         $namespace = '';
         $imports = [];
@@ -49,8 +49,8 @@ class TranslatableMessageExtractor implements ExtractorInterface
         $namespaceDepth = 0;
         $count = count($tokens);
         for ($i = 0; $i < $count; $i++) {
-            $token = $tokens[$i];
-            if ($token->id === T_NAMESPACE) {
+            $lexeme = $tokens[$i];
+            if ($lexeme->id === T_NAMESPACE) {
                 $namespace = '';
                 while (isset($tokens[++$i]) && !in_array($tokens[$i]->text, [';', '{'], true)) {
                     $namespace .= $tokens[$i]->text;
@@ -59,9 +59,9 @@ class TranslatableMessageExtractor implements ExtractorInterface
                 $namespaceDepth = ($tokens[$i]->text ?? '') === '{' ? ++$depth : $depth;
                 continue;
             }
-            if ($token->text === '{') {
+            if ($lexeme->text === '{') {
                 $depth++;
-            } elseif ($token->text === '}') {
+            } elseif ($lexeme->text === '}') {
                 $depth--;
                 if ($depth < $namespaceDepth) {
                     $namespace = '';
@@ -69,11 +69,11 @@ class TranslatableMessageExtractor implements ExtractorInterface
                     $namespaceDepth = $depth;
                 }
             }
-            if ($token->id === T_USE && $depth === $namespaceDepth && ($tokens[$i + 1]->text ?? '') !== '(') {
+            if ($lexeme->id === T_USE && $depth === $namespaceDepth && ($tokens[$i + 1]->text ?? '') !== '(') {
                 $imports = $this->readImports($tokens, $i) + $imports;
                 continue;
             }
-            if ($token->id !== T_NEW || !isset($tokens[$i + 1], $tokens[$i + 2])) {
+            if ($lexeme->id !== T_NEW || !isset($tokens[$i + 1], $tokens[$i + 2])) {
                 continue;
             }
             $class = $this->resolveClass($tokens[$i + 1]->text, $namespace, $imports);
@@ -87,7 +87,7 @@ class TranslatableMessageExtractor implements ExtractorInterface
                     'Could not extract TranslatableMessage in %s on line %d: ' .
                     'use literal message, domain, and context strings.',
                     $file,
-                    $token->line,
+                    $lexeme->line,
                 ));
                 continue;
             }
@@ -96,7 +96,7 @@ class TranslatableMessageExtractor implements ExtractorInterface
                     $metadata['message'],
                     $metadata['domain'],
                     $metadata['context'],
-                    line: $token->line,
+                    line: $lexeme->line,
                 );
             }
         }
@@ -181,23 +181,23 @@ class TranslatableMessageExtractor implements ExtractorInterface
         $argument = [];
         $depth = 0;
         while (isset($tokens[++$position])) {
-            $token = $tokens[$position];
-            if ($depth === 0 && ($token->text === ',' || $token->text === ')')) {
+            $lexeme = $tokens[$position];
+            if ($depth === 0 && ($lexeme->text === ',' || $lexeme->text === ')')) {
                 if ($argument) {
                     $arguments[] = $argument;
                 }
                 $argument = [];
-                if ($token->text === ')') {
+                if ($lexeme->text === ')') {
                     break;
                 }
                 continue;
             }
-            if (in_array($token->text, ['(', '[', '{', '#['], true)) {
+            if (in_array($lexeme->text, ['(', '[', '{', '#['], true)) {
                 $depth++;
-            } elseif (in_array($token->text, [')', ']', '}'], true)) {
+            } elseif (in_array($lexeme->text, [')', ']', '}'], true)) {
                 $depth--;
             }
-            $argument[] = $token;
+            $argument[] = $lexeme;
         }
 
         return $arguments;
@@ -240,13 +240,13 @@ class TranslatableMessageExtractor implements ExtractorInterface
     {
         $value = '';
         $expectString = true;
-        foreach ($tokens as $token) {
+        foreach ($tokens as $lexeme) {
             if ($expectString) {
-                if ($token->id !== T_CONSTANT_ENCAPSED_STRING) {
+                if ($lexeme->id !== T_CONSTANT_ENCAPSED_STRING) {
                     return null;
                 }
-                $value .= PhpStringLiteral::decode($token->text);
-            } elseif ($token->text !== '.') {
+                $value .= PhpStringLiteral::decode($lexeme->text);
+            } elseif ($lexeme->text !== '.') {
                 return null;
             }
             $expectString = !$expectString;
