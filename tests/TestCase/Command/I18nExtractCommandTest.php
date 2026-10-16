@@ -451,4 +451,31 @@ class I18nExtractCommandTest extends TestCase
         $expected = '#: ./tests/test_app/templates/Pages/extract.php:';
         $this->assertStringContainsString($expected, $result);
     }
+
+    /**
+     * All extraction strategies contribute to catalogs through the same command path.
+     */
+    public function testExtractTranslatableMessagesAlongsideFunctionsAndEnumLabels(): void
+    {
+        $this->exec(
+            'i18n extract --merge=no --extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates/TranslatableMessages,' . TEST_APP . 'TestApp/Model/Enum ' .
+            '--output=' . $this->path . DS,
+        );
+        $this->assertExitSuccess();
+        $default = file_get_contents($this->path . DS . 'default.pot');
+        $forms = file_get_contents($this->path . DS . 'forms.pot');
+        $this->assertSame(1, substr_count($default, 'msgid "Shared message"'));
+        $this->assertStringContainsString('messages.php:4', $default);
+        $this->assertStringContainsString('messages.php:5', $default);
+        $this->assertStringContainsString('msgid "Hello {name}"', $default);
+        $this->assertStringContainsString('msgid "0"', $default);
+        $this->assertStringContainsString("msgctxt \"heading\"\nmsgid \"Article title\"", $forms);
+        $this->assertStringContainsString('msgid "A \\"quoted\\" title\\nNext line"', $forms);
+        $this->assertStringContainsString('msgid "Attribute label"', $forms);
+        $this->assertStringNotContainsString('Unresolved domain', $default);
+        $this->assertErrorContains('use literal message, domain, and context strings.');
+        $this->assertStringContainsString('msgid "Published"', $default);
+        $this->assertStringContainsString('msgctxt "article_status"', $default);
+    }
 }

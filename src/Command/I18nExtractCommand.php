@@ -22,12 +22,13 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
-use Cake\Database\Type\Attribute\Label;
+use Cake\I18n\Extractor\EnumLabelExtractor;
+use Cake\I18n\Extractor\ExtractionDiagnostic;
+use Cake\I18n\Extractor\FunctionExtractor;
+use Cake\I18n\Extractor\TranslatableMessageExtractor;
 use Cake\Utility\Filesystem;
 use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
-use ReflectionClass;
-use Throwable;
 
 /**
  * Language string extractor
@@ -56,25 +57,11 @@ class I18nExtractCommand extends Command
     protected bool $merge = false;
 
     /**
-     * Current file being processed
-     *
-     * @var string
-     */
-    protected string $file = '';
-
-    /**
      * Contains all content waiting to be written
      *
      * @var array<string, mixed>
      */
     protected array $storage = [];
-
-    /**
-     * Extracted tokens
-     *
-     * @var array
-     */
-    protected array $tokens = [];
 
     /**
      * Extracted strings indexed by domain.
@@ -300,6 +287,14 @@ class I18nExtractCommand extends Command
      */
     protected function addTranslation(string $domain, string $msgid, array $details = []): void
     {
+        $escape = static fn(string $text): string => addcslashes(str_replace("\r\n", "\n", $text), "\0..\37\\\"");
+        $msgid = $escape($msgid);
+        foreach (['msgctxt', 'msgid_plural'] as $key) {
+            if (isset($details[$key])) {
+                $details[$key] = $escape($details[$key]);
+            }
+        }
+
         $context = $details['msgctxt'] ?? '';
 
         if (empty($this->translations[$domain][$msgid][$context])) {
@@ -342,7 +337,6 @@ class I18nExtractCommand extends Command
         $this->files = [];
         $this->storage = [];
         $this->translations = [];
-        $this->tokens = [];
         $this->io->out();
         if ($this->countMarkerError) {
             $this->io->error("{$this->countMarkerError} marker error(s) detected.");
@@ -363,7 +357,8 @@ class I18nExtractCommand extends Command
         $parser->setDescription([
             static::getDescription(),
             'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
+            'provided to the <info>__</info> family of functions, enum labels, and ' .
+            '<info>TranslatableMessage</info> constructors are extracted.',
         ])->addOption('app', [
             'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
@@ -408,7 +403,7 @@ class I18nExtractCommand extends Command
     }
 
     /**
-     * Extract tokens out of all files to be processed
+     * Orchestrate extraction, diagnostics, and catalog collection for each file.
      *
      * @return void
      */
@@ -418,45 +413,27 @@ class I18nExtractCommand extends Command
         assert($progress instanceof ProgressHelper);
         $progress->init(['total' => count($this->files)]);
         $isVerbose = $this->args->getOption('verbose');
-
-        $functions = [
-            '__' => ['singular'],
-            '__n' => ['singular', 'plural'],
-            '__d' => ['domain', 'singular'],
-            '__dn' => ['domain', 'singular', 'plural'],
-            '__x' => ['context', 'singular'],
-            '__xn' => ['context', 'singular', 'plural'],
-            '__dx' => ['domain', 'context', 'singular'],
-            '__dxn' => ['domain', 'context', 'singular', 'plural'],
-        ];
-        $pattern = '/(' . implode('|', array_keys($functions)) . ')\s*\(/';
+        $extractors = [new FunctionExtractor(), new EnumLabelExtractor(), new TranslatableMessageExtractor()];
 
         foreach ($this->files as $file) {
-            $this->file = $file;
             if ($isVerbose) {
                 $this->io->verbose(sprintf('Processing %s...', $file));
             }
-
             $code = (string)file_get_contents($file);
-
-            if (preg_match($pattern, $code) === 1) {
-                $allTokens = token_get_all($code);
-
-                $this->tokens = [];
-                foreach ($allTokens as $token) {
-                    if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
-                        $this->tokens[] = $token;
+            foreach ($extractors as $extractor) {
+                foreach ($extractor->extract($file, $code) as $result) {
+                    if ($result instanceof ExtractionDiagnostic) {
+                        $this->reportDiagnostic($file, $result);
+                        continue;
                     }
-                }
-                unset($allTokens);
-
-                foreach ($functions as $functionName => $map) {
-                    $this->parse($functionName, $map);
+                    $this->addTranslation($result->domain, $result->message, [
+                        'file' => '.' . str_replace(ROOT, '', $file),
+                        'line' => $result->line,
+                        'msgctxt' => $result->context,
+                        'msgid_plural' => $result->plural,
+                    ]);
                 }
             }
-
-            $this->extractFileReflection($file, $code);
-
             if (!$isVerbose) {
                 $progress->increment(1);
                 $progress->draw();
@@ -465,64 +442,24 @@ class I18nExtractCommand extends Command
     }
 
     /**
-     * Parse tokens
+     * Report extractor diagnostics while respecting the marker-error option.
      *
-     * @param string $functionName Function name that indicates translatable string (e.g: '__')
-     * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
+     * @param string $file Source filename.
+     * @param \Cake\I18n\Extractor\ExtractionDiagnostic $diagnostic Problem reported by an extractor.
      * @return void
      */
-    protected function parse(string $functionName, array $map): void
+    protected function reportDiagnostic(string $file, ExtractionDiagnostic $diagnostic): void
     {
-        $count = 0;
-        $tokenCount = count($this->tokens);
+        if (!$diagnostic->invalidMarker) {
+            $this->io->warning($diagnostic->message);
 
-        while ($tokenCount - $count > 1) {
-            $countToken = $this->tokens[$count];
-            $firstParenthesis = $this->tokens[$count + 1];
-            if (!is_array($countToken)) {
-                $count++;
-                continue;
-            }
-
-            [$type, $string, $line] = $countToken;
-            if (($type === T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
-                $position = $count;
-                $depth = 0;
-
-                while (!$depth) {
-                    if ($this->tokens[$position] === '(') {
-                        $depth++;
-                    } elseif ($this->tokens[$position] === ')') {
-                        $depth--;
-                    }
-                    $position++;
-                }
-
-                $mapCount = count($map);
-                $strings = $this->getStrings($position, $mapCount);
-
-                if ($mapCount === count($strings)) {
-                    $singular = '';
-                    $vars = array_combine($map, $strings);
-                    extract($vars);
-                    $domain ??= 'default';
-                    $details = [
-                        'file' => $this->file,
-                        'line' => $line,
-                    ];
-                    $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
-                    if (isset($plural)) {
-                        $details['msgid_plural'] = $plural;
-                    }
-                    if (isset($context)) {
-                        $details['msgctxt'] = $context;
-                    }
-                    $this->addTranslation($domain, $singular, $details);
-                } else {
-                    $this->markerError($this->file, $line, $functionName, $count);
-                }
-            }
-            $count++;
+            return;
+        }
+        if (!str_contains($file, CAKE_CORE_INCLUDE_PATH)) {
+            $this->countMarkerError++;
+        }
+        if ($this->markerError) {
+            $this->io->error($diagnostic->message);
         }
     }
 
@@ -708,223 +645,6 @@ class I18nExtractCommand extends Command
         $newChecksum = sha1(substr($newFileContent, $headerLength));
 
         return $oldChecksum === $newChecksum;
-    }
-
-    /**
-     * Get the strings from the position forward
-     *
-     * @param int $position Actual position on tokens array
-     * @param int $target Number of strings to extract
-     * @return array Strings extracted
-     */
-    protected function getStrings(int &$position, int $target): array
-    {
-        $strings = [];
-        $count = 0;
-        while (
-            $count < $target
-            && ($this->tokens[$position] === ','
-                || $this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
-                || $this->tokens[$position][0] === T_LNUMBER
-            )
-        ) {
-            $count = count($strings);
-            if ($this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING && $this->tokens[$position + 1] === '.') {
-                $string = '';
-                while (
-                    $this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
-                    || $this->tokens[$position] === '.'
-                ) {
-                    if ($this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
-                        $string .= $this->formatString($this->tokens[$position][1]);
-                    }
-                    $position++;
-                }
-                $strings[] = $string;
-            } elseif ($this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
-                $strings[] = $this->formatString($this->tokens[$position][1]);
-            } elseif ($this->tokens[$position][0] === T_LNUMBER) {
-                $strings[] = $this->tokens[$position][1];
-            }
-            $position++;
-        }
-
-        return $strings;
-    }
-
-    /**
-     * Format a string to be added as a translatable string
-     *
-     * @param string $string String to format
-     * @return string Formatted string
-     */
-    protected function formatString(string $string): string
-    {
-        $quote = substr($string, 0, 1);
-        $string = substr($string, 1, -1);
-        if ($quote === '"') {
-            $string = stripcslashes($string);
-        } else {
-            $string = strtr($string, ["\\'" => "'", '\\\\' => '\\']);
-        }
-        $string = str_replace("\r\n", "\n", $string);
-
-        return addcslashes($string, "\0..\37\\\"");
-    }
-
-    /**
-     * Indicate an invalid marker on a processed file
-     *
-     * @param string $file File where invalid marker resides
-     * @param int $line Line number
-     * @param string $marker Marker found
-     * @param int $count Count
-     * @return void
-     */
-    protected function markerError(string $file, int $line, string $marker, int $count): void
-    {
-        if (!str_contains($this->file, CAKE_CORE_INCLUDE_PATH)) {
-            $this->countMarkerError++;
-        }
-
-        if (!$this->markerError) {
-            return;
-        }
-
-        $this->io->error(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
-        $count += 2;
-        $tokenCount = count($this->tokens);
-        $parenthesis = 1;
-
-        while (($tokenCount - $count > 0) && $parenthesis) {
-            if (is_array($this->tokens[$count])) {
-                $this->io->err($this->tokens[$count][1], 0);
-            } else {
-                $this->io->err($this->tokens[$count], 0);
-                if ($this->tokens[$count] === '(') {
-                    $parenthesis++;
-                }
-
-                if ($this->tokens[$count] === ')') {
-                    $parenthesis--;
-                }
-            }
-            $count++;
-        }
-        $this->io->err("\n");
-    }
-
-    /**
-     * Extract Label attribute strings from a PHP file using reflection.
-     *
-     * @param string $file Absolute path to the file being processed.
-     * @param string $code File contents.
-     * @return void
-     */
-    protected function extractFileReflection(string $file, string $code): void
-    {
-        $fqn = $this->parseClassName($code);
-        if ($fqn === null) {
-            return;
-        }
-
-        try {
-            // @phpstan-ignore argument.type
-            $reflection = new ReflectionClass($fqn);
-        } catch (Throwable $e) {
-            $this->io->warning(
-                sprintf('Could not reflect class/enum %s in file %s: %s', $fqn, $file, $e->getMessage()),
-            );
-
-            return;
-        }
-
-        if (!$reflection->isEnum()) {
-            return;
-        }
-
-        $relativeFile = '.' . str_replace(ROOT, '', $file);
-
-        foreach ($reflection->getReflectionConstants() as $constant) {
-            if (!$constant->isEnumCase()) {
-                continue;
-            }
-
-            $labelAttributes = $constant->getAttributes(Label::class);
-            if (!$labelAttributes) {
-                continue;
-            }
-
-            /** @var \Cake\Database\Type\Attribute\Label $label */
-            $label = $labelAttributes[0]->newInstance();
-            $details = [
-                'file' => $relativeFile,
-                'line' => 0,
-                'msgctxt' => $label->context,
-            ];
-
-            $this->addTranslation($label->domain, $label->label, $details);
-        }
-    }
-
-    /**
-     * Parse the fully qualified class/enum name from PHP source code.
-     *
-     * Uses token_get_all() to read the namespace declaration and the first
-     * class or enum name without executing the file.
-     *
-     * @param string $code PHP source code.
-     * @return string|null Fully qualified name, or null if none found.
-     */
-    protected function parseClassName(string $code): ?string
-    {
-        $tokens = token_get_all($code);
-        $namespace = '';
-        $waitingForNamespace = false;
-        $waitingForName = false;
-        $previous = null;
-
-        foreach ($tokens as $token) {
-            if (!is_array($token)) {
-                continue;
-            }
-
-            [$type, $value] = $token;
-
-            if ($type === T_WHITESPACE) {
-                continue;
-            }
-
-            if ($type === T_NAMESPACE) {
-                $waitingForNamespace = true;
-                continue;
-            }
-
-            if ($waitingForNamespace) {
-                if ($type === T_STRING || $type === T_NAME_QUALIFIED) {
-                    $namespace = $value;
-                }
-                $waitingForNamespace = false;
-                continue;
-            }
-
-            if (($type === T_ENUM || $type === T_CLASS) && $previous !== T_DOUBLE_COLON) {
-                $waitingForName = true;
-                continue;
-            }
-
-            if ($waitingForName && $type === T_STRING) {
-                return $namespace === '' ? $value : $namespace . '\\' . $value;
-            }
-
-            if ($waitingForName) {
-                $waitingForName = false;
-            }
-
-            $previous = $type;
-        }
-
-        return null;
     }
 
     /**
