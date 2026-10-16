@@ -28,7 +28,7 @@ class RequestFactory implements RequestFactoryInterface
      * Create a new request.
      *
      * @param string $method The HTTP method associated with the request.
-     * @param \Psr\Http\Message\UriInterface|\Uri\Rfc3986\Uri|string $uri The URI associated with the request.
+     * @param \Psr\Http\Message\UriInterface|string $uri The URI associated with the request.
      * @return \Cake\Http\Client\Request
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */

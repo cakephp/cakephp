@@ -34,9 +34,9 @@ use Uri\Rfc3986\Uri as Rfc3986Uri;
  */
 class RequestTest extends TestCase
 {
-    public function testConstructorAcceptsNativeUri(): void
+    public function testConstructorAcceptsAdaptedNativeUri(): void
     {
-        $request = new Request(new Rfc3986Uri('https://example.com/a%2fb?x=%7e'));
+        $request = new Request(new Uri(new Rfc3986Uri('https://example.com/a%2fb?x=%7e')));
 
         $this->assertInstanceOf(UriInterface::class, $request->getUri());
         $this->assertSame('https://example.com/a%2fb?x=%7e', (string)$request->getUri());

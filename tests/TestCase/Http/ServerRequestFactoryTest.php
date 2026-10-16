@@ -22,6 +22,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
 use Cake\Http\UploadedFile;
+use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -35,15 +36,15 @@ use Uri\Rfc3986\Uri as Rfc3986Uri;
  */
 class ServerRequestFactoryTest extends TestCase
 {
-    /**
-     * Test fromGlobals reads super globals
-     */
-    public function testCreateServerRequestWithNativeUri(): void
+    public function testCreateServerRequestWithAdaptedNativeUri(): void
     {
-        $request = new ServerRequestFactory()->createServerRequest('GET', new Rfc3986Uri('https://example.com/a%2fb'));
+        $request = new ServerRequestFactory()->createServerRequest('GET', new Uri(new Rfc3986Uri('https://example.com/a%2fb')));
         $this->assertSame('https://example.com/a%2fb', (string)$request->getUri());
     }
 
+    /**
+     * Test fromGlobals reads super globals
+     */
     public function testFromGlobalsSuperGlobals(): void
     {
         $post = [

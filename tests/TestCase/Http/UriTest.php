@@ -25,6 +25,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url;
 
 /**
  * Test case for the Uri class.
@@ -58,6 +59,21 @@ class UriTest extends TestCase
         $this->assertSame('/a/../b%2fc', $uri->getPath());
         $this->assertSame('q=%7e', $uri->getQuery());
         $this->assertSame('%41', $uri->getFragment());
+    }
+
+    public function testConstructorAcceptsNativeUrl(): void
+    {
+        $native = new Url('https://user:pass@EXAMPLE.com:443/a/../b%2fc?q=%7e#%41');
+        $uri = new Uri($native);
+
+        $this->assertSame('https', $uri->getScheme());
+        $this->assertSame('user:pass', $uri->getUserInfo());
+        $this->assertSame('example.com', $uri->getHost());
+        $this->assertNull($uri->getPort());
+        $this->assertSame('/b%2fc', $uri->getPath());
+        $this->assertSame('q=%7e', $uri->getQuery());
+        $this->assertSame('%41', $uri->getFragment());
+        $this->assertSame($native->toAsciiString(), (string)$uri);
     }
 
     public function testUserInfoAndPortCanBeSetBeforeHost(): void

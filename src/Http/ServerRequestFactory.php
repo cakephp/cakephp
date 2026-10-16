@@ -295,7 +295,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * determine the HTTP method or URI, which must be provided explicitly.
      *
      * @param string $method The HTTP method associated with the request.
-     * @param \Psr\Http\Message\UriInterface|\Uri\Rfc3986\Uri|string $uri The URI associated with the request. If
+     * @param \Psr\Http\Message\UriInterface|string $uri The URI associated with the request. If
      *     the value is a string, the factory MUST create a UriInterface
      *     instance based on it.
      * @param array $serverParams Array of SAPI parameters with which to seed
