@@ -22,7 +22,6 @@ use Cake\Utility\Xml;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Implements methods for HTTP requests.
@@ -60,13 +59,13 @@ class Request extends Message implements RequestInterface
      *
      * Provides backwards compatible defaults for some properties.
      *
-     * @param \Psr\Http\Message\UriInterface|\Uri\Rfc3986\Uri|string $url The request URL
+     * @param \Psr\Http\Message\UriInterface|string $url The request URL
      * @param string $method The HTTP method to use.
      * @param array<non-empty-string, string|array<string>> $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      */
     public function __construct(
-        UriInterface|Rfc3986Uri|string $url = '',
+        UriInterface|string $url = '',
         string $method = self::METHOD_GET,
         array $headers = [],
         array|string|null $data = null,

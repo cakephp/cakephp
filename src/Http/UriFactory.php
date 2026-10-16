@@ -34,10 +34,10 @@ class UriFactory implements UriFactoryInterface
     /**
      * Create a new URI.
      *
-     * @param \Uri\Rfc3986\Uri|string $uri The URI to parse or adapt to PSR-7.
+     * @param string $uri The URI to parse.
      * @throws \InvalidArgumentException If the given URI cannot be parsed.
      */
-    public function createUri(string|Rfc3986Uri $uri = ''): Uri
+    public function createUri(string $uri = ''): Uri
     {
         return new Uri($uri);
     }
