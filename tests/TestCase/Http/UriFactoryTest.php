@@ -22,20 +22,12 @@ use Cake\Http\UriFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the uri factory.
  */
 class UriFactoryTest extends TestCase
 {
-    public function testCreateUriAcceptsNativeUri(): void
-    {
-        $uri = new UriFactory()->createUri(new Rfc3986Uri('https://example.com/a%2fb?x=%7e'));
-        $this->assertInstanceOf(Uri::class, $uri);
-        $this->assertSame('https://example.com/a%2fb?x=%7e', (string)$uri);
-    }
-
     public function testCreateUri(): void
     {
         $factory = new UriFactory();

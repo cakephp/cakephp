@@ -26,6 +26,7 @@ use SensitiveParameter;
 use Stringable;
 use Uri\InvalidUriException;
 use Uri\Rfc3986\Uri as Rfc3986Uri;
+use Uri\WhatWg\Url;
 
 /**
  * Immutable PSR-7 URI using PHP's RFC 3986 parser.
@@ -78,11 +79,15 @@ class Uri implements UriInterface, Stringable
     /**
      * Constructor
      *
-     * @param \Uri\Rfc3986\Uri|string $uri The URI to parse or adapt to PSR-7.
+     * @param \Uri\Rfc3986\Uri|\Uri\WhatWg\Url|string $uri The URI to parse or adapt to PSR-7.
      * @throws \InvalidArgumentException When the URI cannot be parsed.
      */
-    public function __construct(string|Rfc3986Uri $uri = '')
+    public function __construct(string|Rfc3986Uri|Url $uri = '')
     {
+        if ($uri instanceof Url) {
+            $uri = $uri->toAsciiString();
+        }
+
         if (is_string($uri)) {
             try {
                 // Encode query and fragment components before parsing. Brackets are
