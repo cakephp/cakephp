@@ -692,7 +692,8 @@ class Route
         if (!$this->matchMethod($url)) {
             return null;
         }
-        unset($url['_method'], $url['[method]'], $defaults['_method']);
+        // `_argsByName` is only used when dispatching parsed requests.
+        unset($url['_method'], $url['[method]'], $defaults['_method'], $defaults['_argsByName']);
 
         // Defaults with different values are a fail.
         // Check each default value against the URL, but skip null plugin/prefix

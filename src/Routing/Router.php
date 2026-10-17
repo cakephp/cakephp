@@ -616,6 +616,7 @@ class Router
             $params['pass'],
             $params['_matchedRoute'],
             $params['_name'],
+            $params['_argsByName'],
         );
         if (!$route && $template) {
             // Locate the route that was used to match this route
