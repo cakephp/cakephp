@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\JsonPathExpression;
 use Cake\Database\Expression\StringAggExpression;
 use InvalidArgumentException;
 
@@ -400,18 +401,22 @@ class FunctionsBuilder
      *  - **Sqlite**: json_extract
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
-     * @param string $jsonPath A valid JSON PATH Query
-     * @param array $types list of types to bind to the arguments
+     * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path
+     * @param array $types List of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function jsonValue(
         ExpressionInterface|string $expression,
-        string $jsonPath,
+        JsonPathExpression|string $jsonPath,
         array $types = [],
     ): FunctionExpression {
+        if (is_string($jsonPath)) {
+            $jsonPath = new JsonPathExpression($jsonPath);
+        }
+
         $params = $this->toLiteralParam($expression) + [$jsonPath];
 
-        return new FunctionExpression('JSON_VALUE', $params, $types);
+        return new FunctionExpression('JSON_VALUE', $params, $types, $jsonPath->getReturnType());
     }
 
     /**
