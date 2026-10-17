@@ -2900,6 +2900,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __call(string $method, array $args): mixed
     {
+        if ($this->behaviors->hasMethod($method)) {
+            return $this->behaviors->call($method, $args);
+        }
         if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
             return $this->dynamicFinder($method, $args);
         }
@@ -3360,6 +3363,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $result = new LazyEagerLoader()->loadInto($entities, $contain, $this);
 
         return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function validationMethodExists(string $name): bool
+    {
+        return method_exists($this, $name) || $this->behaviors->hasMethod($name);
     }
 
     /**

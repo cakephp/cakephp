@@ -56,7 +56,13 @@ class BehaviorTest extends TestCase
         $table = Mockery::mock(Table::class);
         $behavior = new Test3Behavior($table);
         $expected = [
-            'foo' => 'findFoo',
+            'finders' => [
+                'foo' => 'findFoo',
+            ],
+            'methods' => [
+                'doSomething' => 'doSomething',
+                'testReflectionCache' => 'testReflectionCache',
+            ],
         ];
         $this->assertEquals($expected, $behavior->testReflectionCache());
     }
@@ -113,6 +119,108 @@ class BehaviorTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $behavior->implementedEvents());
+    }
+
+    /**
+     * testImplementedMethods
+     */
+    public function testImplementedMethods(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table);
+        $expected = [
+            'doSomething' => 'doSomething',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * testImplementedMethodsAliased
+     */
+    public function testImplementedMethodsAliased(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table, [
+            'implementedMethods' => [
+                'aliased' => 'doSomething',
+            ],
+        ]);
+        $expected = [
+            'aliased' => 'doSomething',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * testImplementedMethodsDisabled
+     */
+    public function testImplementedMethodsDisabled(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table, [
+            'implementedMethods' => [],
+        ]);
+        $expected = [];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * Methods are not proxied unless the `implementedMethods` config is set.
+     */
+    public function testImplementedMethodsNotEnabledByDefault(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test3Behavior($table);
+        $this->assertEquals([], $behavior->implementedMethods());
+    }
+
+    /**
+     * When `implementedMethods` config is `true` the methods are derived using reflection.
+     */
+    public function testImplementedMethodsResolvedWithReflection(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test3Behavior($table, [
+            'implementedMethods' => true,
+        ]);
+        $expected = [
+            'doSomething' => 'doSomething',
+            'testReflectionCache' => 'testReflectionCache',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * Numerically indexed lists of method names are normalized to a map
+     * where each value is also used as its key.
+     */
+    public function testImplementedMethodsNumericList(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test3Behavior($table, [
+            'implementedMethods' => ['doSomething', 'aliased' => 'doSomething'],
+        ]);
+        $expected = [
+            'doSomething' => 'doSomething',
+            'aliased' => 'doSomething',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * Numerically indexed lists work for behaviors that also have a default
+     * method map, with the list entries taking precedence.
+     */
+    public function testImplementedMethodsNumericListWithDefaultMap(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table, [
+            'implementedMethods' => ['doSomething'],
+        ]);
+        $expected = [
+            'doSomething' => 'doSomething',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
     }
 
     /**
@@ -219,5 +327,35 @@ class BehaviorTest extends TestCase
         ]);
         $behavior->verifyConfig();
         $this->assertTrue(true, 'No exception thrown');
+    }
+
+    /**
+     * `implementedMethods` set to `true` resolves the methods using reflection,
+     * so there is nothing to verify.
+     */
+    public function testVerifyConfigImplementedMethodsReflection(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table, [
+            'implementedMethods' => true,
+        ]);
+        $behavior->verifyConfig();
+        $this->assertTrue(true, 'No exception thrown');
+    }
+
+    /**
+     * testVerifyImplementedMethodsInvalid
+     */
+    public function testVerifyImplementedMethodsInvalid(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('The method `iDoNotExist` is not callable on class `' . Test2Behavior::class . '`');
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test2Behavior($table, [
+            'implementedMethods' => [
+                'aliased' => 'iDoNotExist',
+            ],
+        ]);
+        $behavior->verifyConfig();
     }
 }
