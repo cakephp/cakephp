@@ -19,7 +19,6 @@ namespace Cake\Validation;
 use ArrayAccess;
 use ArrayIterator;
 use BackedEnum;
-use Cake\ORM\Table;
 use Closure;
 use Countable;
 use InvalidArgumentException;
@@ -521,23 +520,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         $provider = $this->providers[$rule['provider']];
         $method = $rule['rule'];
-        if (
-            is_string($method)
-            && $provider instanceof Table
-            && !method_exists($provider, $method)
-            && $provider->behaviors()->hasMethod($method)
-        ) {
-            // Use the behavior providing the method as the rule's callable
-            // provider, so that the method's signature can be correctly
-            // reflected for passing the validation context.
-            foreach ($provider->behaviors() as $behavior) {
-                if (!in_array($method, $behavior->implementedMethods(), true)) {
-                    continue;
-                }
-
-                $provider = $behavior;
-                break;
-            }
+        if (is_string($method) && $provider instanceof RuleProviderResolverInterface) {
+            // Use the resolved provider as the rule's callable provider, so
+            // that the method's signature can be correctly reflected for
+            // passing the validation context.
+            $provider = $provider->resolveRuleProvider($method) ?? $provider;
         }
         if (is_string($method)) {
             $callable = [$provider, $method];

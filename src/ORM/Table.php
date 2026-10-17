@@ -52,6 +52,7 @@ use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\RuleProviderResolverInterface;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use Closure;
@@ -158,7 +159,12 @@ use function Cake\Core\namespaceSplit;
  * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
  */
-class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
+class Table implements
+    EventDispatcherInterface,
+    EventListenerInterface,
+    RepositoryInterface,
+    RuleProviderResolverInterface,
+    ValidatorAwareInterface
 {
     use EventDispatcherTrait;
     use RulesAwareTrait;
@@ -3371,6 +3377,31 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function validationMethodExists(string $name): bool
     {
         return method_exists($this, $name) || $this->behaviors->hasMethod($name);
+    }
+
+    /**
+     * Get the object that should be used to invoke a validation rule method.
+     *
+     * Resolves rule methods provided by behaviors, when the behavior's
+     * `implementedMethods` config is set.
+     *
+     * @param string $method The name of the rule method.
+     * @return object|null Object providing the method, or null to invoke the
+     *   method on the table itself.
+     */
+    public function resolveRuleProvider(string $method): ?object
+    {
+        if (method_exists($this, $method) || !$this->behaviors->hasMethod($method)) {
+            return null;
+        }
+
+        foreach ($this->behaviors as $behavior) {
+            if (in_array($method, $behavior->implementedMethods(), true)) {
+                return $behavior;
+            }
+        }
+
+        return null;
     }
 
     /**
