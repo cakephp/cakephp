@@ -70,6 +70,7 @@ class SelectQueryTest extends TestCase
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
+        'core.Users',
     ];
 
     /**
@@ -2009,6 +2010,27 @@ class SelectQueryTest extends TestCase
 
         $query->contain(['Comments', 'Authors'], true);
         $this->assertEquals(['Comments', 'Authors'], array_keys($query->getContain()));
+    }
+
+    /**
+     * Test that joined associations whose name differs from the target table alias
+     * are typed using the association name, which is what the select fields are aliased with.
+     */
+    public function testContainBelongsToWithDifferentTargetAliasCastsFields(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->belongsTo('Commenters', [
+            'targetTable' => $this->getTableLocator()->get('Users'),
+            'foreignKey' => 'user_id',
+        ]);
+
+        $query = $comments->find()
+            ->contain('Commenters')
+            ->where(['Comments.id' => 1]);
+        $comment = $query->firstOrFail();
+
+        $this->assertNotNull($query->getTypeMap()->type('Commenters.created'));
+        $this->assertInstanceOf(DateTime::class, $comment->commenter->created);
     }
 
     /**
