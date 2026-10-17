@@ -13,7 +13,10 @@ use ReflectionParameter;
 /**
  * Proves the container injected into the attribute is the parent
  * container (which holds explicit definitions), not the autowiring
- * delegate itself.
+ * delegate itself. The attribute additionally implements
+ * ContainerAwareInterface to prove resolution works through the
+ * resolve() argument alone, including with a standalone
+ * ReflectionContainer.
  */
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class ContextualContainerAwareAttribute implements ContextualAttributeInterface, ContainerAwareInterface
@@ -22,6 +25,6 @@ class ContextualContainerAwareAttribute implements ContextualAttributeInterface,
 
     public function resolve(ReflectionParameter $parameter, ContainerInterface $container): mixed
     {
-        return $this->getContainer()->get(Bar::class);
+        return $container->get(Bar::class);
     }
 }

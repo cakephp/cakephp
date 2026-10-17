@@ -91,7 +91,10 @@ trait ArgumentResolverTrait
 
             // next we see if we have an attribute that can resolve the argument
             foreach ($param->getAttributes() as $attribute) {
-                $argument = $this->resolveArgumentFromAttribute($attribute, $param);
+                $argument = $this->resolveContextualArgumentFromAttribute($attribute, $param);
+                if ($argument === false) {
+                    $argument = $this->resolveArgumentFromAttribute($attribute);
+                }
                 if ($argument !== false) {
                     $arguments[] = $argument;
                     continue 2;
@@ -129,43 +132,53 @@ trait ArgumentResolverTrait
     }
 
     /**
-     * Attempt to resolve a parameter's value from one of its PHP attributes.
+     * Attempt to resolve a parameter's value from a contextual PHP attribute.
      *
-     * Contextual attributes ({@see ContextualAttributeInterface}) are checked
-     * first so they can resolve by parameter name/type via the container;
-     * plain attributes ({@see AttributeInterface}) fall back to `resolve()`.
+     * Contextual attributes receive the parameter being resolved alongside
+     * the container, enabling resolution by parameter name/type. Attributes
+     * not implementing {@see ContextualAttributeInterface} return false here
+     * and fall through to {@see resolveArgumentFromAttribute()}.
+     *
+     * The container is deliberately passed as an argument instead of using
+     * {@see ContainerAwareInterface}: with a standalone ReflectionContainer
+     * there is no parent container to inject, while the resolving instance
+     * itself always satisfies the PSR interface expected here.
      *
      * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
-     * @param \ReflectionParameter|null $parameter The parameter being resolved, null when unknown.
+     * @param \ReflectionParameter $parameter The parameter being resolved.
      * @return \Cake\Container\Argument\LiteralArgumentInterface|false
      */
-    protected function resolveArgumentFromAttribute(
+    protected function resolveContextualArgumentFromAttribute(
         ReflectionAttribute $attribute,
-        ?ReflectionParameter $parameter = null,
+        ReflectionParameter $parameter,
     ): LiteralArgumentInterface|false {
-        $attrClass = $attribute->getName();
-
-        if (is_subclass_of($attrClass, ContextualAttributeInterface::class)) {
-            if ($parameter === null) {
-                return false;
-            }
-
-            $instance = $attribute->newInstance();
-            if ($instance instanceof ContainerAwareInterface) {
-                $instance->setContainer($this->getContainer());
-            }
-
-            try {
-                $container = $this->getContainer();
-            } catch (ContainerException) {
-                $container = $this instanceof PsrContainerInterface ? $this : throw new ContainerException(
-                    'No container implementation has been set.',
-                );
-            }
-
-            /** @var \Cake\Container\Attribute\ContextualAttributeInterface $instance */
-            return new LiteralArgument($instance->resolve($parameter, $container));
+        if (!is_subclass_of($attribute->getName(), ContextualAttributeInterface::class)) {
+            return false;
         }
+
+        try {
+            $container = $this->getContainer();
+        } catch (ContainerException) {
+            $container = $this instanceof PsrContainerInterface ? $this : throw new ContainerException(
+                'No container implementation has been set.',
+            );
+        }
+
+        /** @var \Cake\Container\Attribute\ContextualAttributeInterface $instance */
+        $instance = $attribute->newInstance();
+
+        return new LiteralArgument($instance->resolve($parameter, $container));
+    }
+
+    /**
+     * Attempt to resolve a parameter's value from one of its PHP attributes.
+     *
+     * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
+     * @return \Cake\Container\Argument\LiteralArgumentInterface|false
+     */
+    protected function resolveArgumentFromAttribute(ReflectionAttribute $attribute): LiteralArgumentInterface|false
+    {
+        $attrClass = $attribute->getName();
 
         if (!is_subclass_of($attrClass, AttributeInterface::class)) {
             return false;
