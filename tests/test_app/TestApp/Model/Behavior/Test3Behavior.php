@@ -56,13 +56,6 @@ class Test3Behavior extends Behavior
     }
 
     /**
-     * implementedMethods
-     */
-    public function implementedMethods(): array
-    {
-    }
-
-    /**
      * Expose protected method for testing
      *
      * Since this is public - it'll show up as callable which is a side-effect
