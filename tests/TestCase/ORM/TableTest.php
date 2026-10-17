@@ -3673,6 +3673,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests rule method resolution to behaviors providing them.
+     */
+    public function testResolveRuleProvider(): void
+    {
+        $table = new Table(['table' => 'articles']);
+        $table->addBehavior('Validation', ['implementedMethods' => true]);
+
+        $behavior = $table->getBehavior('Validation');
+        $this->assertSame($behavior, $table->resolveRuleProvider('customValidationRule'));
+
+        // Methods declared on the table itself are not resolved.
+        $this->assertNull($table->resolveRuleProvider('getEventManager'));
+
+        // Unknown methods are not resolved.
+        $this->assertNull($table->resolveRuleProvider('nope'));
+
+        // Behaviors which have not opted in to method proxying are not resolved.
+        $table2 = new Table(['table' => 'articles']);
+        $table2->addBehavior('Validation');
+        $this->assertNull($table2->resolveRuleProvider('customValidationRule'));
+    }
+
+    /**
      * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
