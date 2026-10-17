@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Database\Schema\CompatDialect;
@@ -249,5 +250,44 @@ class SchemaDialectTest extends TestCase
             $this->assertNotEmpty($table->indexes());
             $this->assertNotEmpty($table->constraints());
         });
+    }
+
+    /**
+     * Test that CURRENT_DATE / CURRENT_TIME defaults work, and survive reflection and re-creation.
+     */
+    public function testCurrentDateTimeDefaultRoundTrip(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $this->skipIf(
+            $driver instanceof Mysql && !$driver->isMariaDb() && version_compare($driver->version(), '8.0.13', '<'),
+            'Expression defaults need MySQL 8.0.13 or newer.',
+        );
+
+        $schema = (new TableSchema('current_defaults'))
+            ->addColumn('id', ['type' => 'integer', 'null' => false])
+            ->addColumn('start_date', ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'])
+            ->addColumn('start_time', ['type' => 'time', 'null' => false, 'default' => 'CURRENT_TIME']);
+        $execute = function (array $statements) use ($connection): void {
+            foreach ($statements as $sql) {
+                $connection->execute($sql);
+            }
+        };
+
+        $execute($schema->createSql($connection));
+        try {
+            $reflected = $this->dialect->describe('current_defaults');
+            $execute($schema->dropSql($connection));
+            $execute($reflected->createSql($connection));
+
+            $connection->insert('current_defaults', ['id' => 1]);
+            $row = $connection->selectQuery(['start_date', 'start_time'], 'current_defaults')
+                ->execute()
+                ->fetch('assoc');
+            $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}/', (string)$row['start_date']);
+            $this->assertMatchesRegularExpression('/^\d{2}:\d{2}:\d{2}/', (string)$row['start_time']);
+        } finally {
+            $execute($schema->dropSql($connection));
+        }
     }
 }
