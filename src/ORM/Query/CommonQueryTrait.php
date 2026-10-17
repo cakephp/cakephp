@@ -42,11 +42,13 @@ trait CommonQueryTrait
      * This method returns the same query object for chaining.
      *
      * @param \Cake\ORM\Table $table The table to pull types from
+     * @param string|null $alias The alias to register the types under. Defaults to the table alias.
+     *   Associations pass their own name, as that is what their fields are aliased with.
      * @return $this
      */
-    public function addDefaultTypes(Table $table): static
+    public function addDefaultTypes(Table $table, ?string $alias = null): static
     {
-        $alias = $table->getAlias();
+        $alias ??= $table->getAlias();
         $map = $table->getSchema()->typeMap();
         $fields = [];
         foreach ($map as $f => $type) {
