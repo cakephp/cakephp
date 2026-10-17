@@ -377,19 +377,17 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
+            if (count($this->trustedProxies) > 0) {
+                // Skip trusted proxies and use the right-most IP that isn't
+                // from a trusted proxy.
+                $untrusted = array_diff($addresses, $this->trustedProxies);
 
-            if ($trusted) {
-                $trusted = array_diff($addresses, $this->trustedProxies);
-                $trusted = (count($trusted) === 1);
+                return $untrusted[count($untrusted) - 1];
             }
-
-            if ($trusted) {
-                return $addresses[0];
+            if ($n > 0) {
+                return $addresses[$n - 1];
             }
-
-            return $addresses[$n - 1];
         }
 
         if ($this->trustProxy && $this->getEnv('HTTP_X_REAL_IP')) {
@@ -404,15 +402,21 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * register trusted proxies
+     * Set the IP addresses of trusted proxies
      *
-     * @param array<string> $proxies ips list of trusted proxies
+     * If the request's REMOTE_ADDR is from a trusted proxy,
+     * then `trustProxy` will be set to true as well.
+     *
+     * @param array<string> $proxies List of trusted proxy IPs
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
     {
         $this->trustedProxies = $proxies;
-        $this->trustProxy = true;
+        $remoteAddr = $this->getEnv('REMOTE_ADDR');
+        if (in_array($remoteAddr, $proxies, true)) {
+            $this->trustProxy = true;
+        }
         $this->uri = $this->uri->withScheme($this->scheme());
     }
 
