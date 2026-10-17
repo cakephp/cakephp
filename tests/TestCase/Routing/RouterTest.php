@@ -2812,6 +2812,34 @@ class RouterTest extends TestCase
         $this->assertSame('/articles/first-post', $result);
     }
 
+    /**
+     * Test that reverse() works for requests parsed by attribute routes with named arguments.
+     */
+    public function testReverseRouteWithArgsByName(): void
+    {
+        Router::reload();
+        $routes = Router::createRouteBuilder('/');
+        $routes->connect(
+            '/articles/{slug}',
+            ['controller' => 'Articles', 'action' => 'view', '_argsByName' => ['slug' => 0]],
+            ['pass' => ['slug']],
+        );
+
+        $request = new ServerRequest([
+            'url' => '/articles/first-post',
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'view',
+                'pass' => ['first-post'],
+                'slug' => 'first-post',
+                '_argsByName' => ['slug' => 0],
+                '_matchedRoute' => '/articles/{slug}',
+            ],
+        ]);
+        $this->assertSame('/articles/first-post', Router::reverse($request));
+        $this->assertSame('/articles/second-post', Router::url(['controller' => 'Articles', 'action' => 'view', 'second-post']));
+    }
+
     public function testReverseRouteKeyAndPassDuplicateValues(): void
     {
         Router::reload();

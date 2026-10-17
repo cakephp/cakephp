@@ -443,6 +443,16 @@ class AttributeRouteConnectorTest extends TestCase
         $this->assertSame('AttributeRouting', $result['controller']);
         $this->assertSame('reorder', $result['action']);
         $this->assertSame(['10', 'first-post'], $result['pass']);
+
+        $url = ['controller' => 'AttributeRouting', 'action' => 'reorder', '_method' => 'GET'];
+        $this->assertSame(
+            'base/attr/inferred/10/first-post',
+            $this->collection->match($url + ['id' => 10, 'slug' => 'first-post'], []),
+        );
+        $this->assertSame(
+            'base/attr/inferred/10/first-post',
+            $this->collection->match($url + [10, 'first-post'], []),
+        );
     }
 
     /**
