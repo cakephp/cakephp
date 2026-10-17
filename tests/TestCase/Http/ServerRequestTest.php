@@ -390,7 +390,7 @@ class ServerRequestTest extends TestCase
             'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
             'HTTP_X_REAL_IP' => '192.168.1.1',
             'HTTP_CLIENT_IP' => '192.168.1.2',
-            'REMOTE_ADDR' => '192.168.1.4',
+            'REMOTE_ADDR' => '192.168.1.2',
         ]]);
 
         $request->setTrustedProxies([
@@ -398,21 +398,52 @@ class ServerRequestTest extends TestCase
             '192.168.1.1',
             '192.168.1.2',
             '192.168.1.3',
+            '192.168.1.4',
         ]);
-
         $this->assertSame('real.ip', $request->clientIp());
 
         $request = $request->withEnv(
             'HTTP_X_FORWARDED_FOR',
-            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
+            'spoof.ip, client.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
         );
-        $this->assertSame('192.168.1.3', $request->clientIp());
+        // Trusted proxies are skipped and the right most untrusted IP is the client IP
+        $this->assertSame('client.ip', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
-        $this->assertSame('192.168.1.1', $request->clientIp());
+        $this->assertSame('192.168.1.1', $request->clientIp(), 'Uses x-real-ip');
 
         $request->trustProxy = false;
-        $this->assertSame('192.168.1.4', $request->clientIp());
+        $this->assertSame('192.168.1.2', $request->clientIp(), 'Uses remote_addr when proxy is not trusted');
+    }
+
+    /**
+     * test clientIp method with trusted proxies but an untrusted remote_addr
+     */
+    public function testClientIpWithTrustedProxiesUntrustedRemoteAddr(): void
+    {
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => '8.8.8.8, 192.168.1.0, 192.168.1.1',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.10',
+        ]]);
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+        ]);
+        $this->assertSame('192.168.1.10', $request->clientIp(), 'No proxy trusted as remote_addr was not trusted');
+
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => '8.8.8.8, 192.168.1.0, 192.168.1.1',
+            'HTTP_X_REAL_IP' => '192.168.1.2',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.1',
+        ]]);
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+        ]);
+        $this->assertSame('8.8.8.8', $request->clientIp(), 'remote_addr is from a trusted proxy');
     }
 
     /**
