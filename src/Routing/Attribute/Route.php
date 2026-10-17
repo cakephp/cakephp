@@ -27,7 +27,7 @@ readonly class Route
     /**
      * Initializes a route attribute definition.
      *
-     * @param string $path Route path.
+     * @param string $path Route path appended to the controller scope. Defaults to the scope root.
      * @param string|null $name Route name.
      * @param array<string> $methods HTTP methods.
      * @param array<string, string> $patterns Route parameter patterns.
@@ -38,7 +38,7 @@ readonly class Route
      * @param string|null $routeClass Route class.
      */
     public function __construct(
-        public string $path,
+        public string $path = '',
         public ?string $name = null,
         public array $methods = [],
         public array $patterns = [],

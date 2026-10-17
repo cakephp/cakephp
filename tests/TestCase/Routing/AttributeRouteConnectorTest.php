@@ -27,9 +27,16 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Attribute\Delete;
 use Cake\Routing\Attribute\Extensions;
+use Cake\Routing\Attribute\Get;
+use Cake\Routing\Attribute\Head;
 use Cake\Routing\Attribute\Middleware;
+use Cake\Routing\Attribute\Options;
+use Cake\Routing\Attribute\Patch;
+use Cake\Routing\Attribute\Post;
 use Cake\Routing\Attribute\Prefix;
+use Cake\Routing\Attribute\Put;
 use Cake\Routing\Attribute\Resource;
 use Cake\Routing\Attribute\Route;
 use Cake\Routing\Attribute\RouteClass;
@@ -41,6 +48,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -88,6 +96,109 @@ class AttributeRouteConnectorTest extends TestCase
         $reflection->setValue(null, []);
         Cache::clear('_cake_attributes_');
         parent::tearDown();
+    }
+
+    /**
+     * Provides routing attributes with and without a controller scope.
+     *
+     * @return array<string, array{class-string<\Cake\Routing\Attribute\Route>, string, string}>
+     */
+    public static function optionalPathProvider(): array
+    {
+        $data = [];
+        $attributes = [
+            Route::class => 'GET',
+            Get::class => 'GET',
+            Post::class => 'POST',
+            Put::class => 'PUT',
+            Patch::class => 'PATCH',
+            Delete::class => 'DELETE',
+            Head::class => 'HEAD',
+            Options::class => 'OPTIONS',
+        ];
+        foreach ($attributes as $attribute => $method) {
+            foreach (['', '/scope'] as $scope) {
+                $data[$attribute . $scope] = [$attribute, $method, $scope];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Omitted paths match and generate the controller scope root, or the application root.
+     *
+     * @param class-string<\Cake\Routing\Attribute\Route> $attribute Routing attribute class.
+     * @param string $method Expected HTTP method.
+     * @param string $scope Controller scope path.
+     * @return void
+     */
+    #[DataProvider('optionalPathProvider')]
+    public function testConnectWithOmittedPath(string $attribute, string $method, string $scope): void
+    {
+        $className = 'TestApp\\Controller\\AttributeRoutingController';
+        $attributes = [
+            new AttributeInfo(
+                className: $className,
+                attributeName: Scope::class,
+                arguments: [$scope],
+                filePath: __FILE__,
+                lineNumber: 1,
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
+            ),
+            new AttributeInfo(
+                className: $className,
+                attributeName: $attribute,
+                arguments: [],
+                filePath: __FILE__,
+                lineNumber: 2,
+                target: new AttributeTarget(AttributeTargetType::METHOD, 'index', $className),
+            ),
+        ];
+        $this->injectResolverCollection('optionalPath', new AttributeCollection($attributes));
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connectAttributes('optionalPath');
+
+        $path = $scope ?: '/';
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => $path,
+            'environment' => ['REQUEST_METHOD' => $method],
+        ]));
+        $this->assertSame('AttributeRouting', $result['controller']);
+        $this->assertSame('index', $result['action']);
+        $route = $this->collection->routes()[0];
+        $this->assertSame($path, $route->match([
+            'controller' => 'AttributeRouting', 'action' => 'index', '_method' => $method,
+        ], []));
+
+        if ($attribute === Route::class) {
+            $this->assertNotNull($route->parse($path, 'POST'));
+        } else {
+            $this->assertNull($route->parse($path, $method === 'GET' ? 'POST' : 'GET'));
+        }
+
+        $named = new $attribute(name: 'root', defaults: ['lang' => 'en']);
+        $this->assertSame('', $named->path);
+        $this->assertSame('root', $named->name);
+        $this->assertSame(['lang' => 'en'], $named->defaults);
+    }
+
+    /**
+     * Bare routing attributes are discovered from controller source files.
+     *
+     * @return void
+     */
+    public function testDiscoverBareGetAttribute(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connectAttributes();
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/base/attr',
+            'environment' => ['REQUEST_METHOD' => 'GET'],
+        ]));
+
+        $this->assertSame('AttributeRouting', $result['controller']);
+        $this->assertSame('root', $result['action']);
     }
 
     /**

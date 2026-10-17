@@ -27,7 +27,7 @@ readonly class Patch extends Route
     /**
      * Initializes a PATCH route attribute definition.
      *
-     * @param string $path Route path.
+     * @param string $path Route path appended to the controller scope. Defaults to the scope root.
      * @param string|null $name Route name.
      * @param array<string, string> $patterns Route parameter patterns.
      * @param array<string, mixed> $defaults Route defaults.
@@ -37,7 +37,7 @@ readonly class Patch extends Route
      * @param string|null $routeClass Route class.
      */
     public function __construct(
-        string $path,
+        string $path = '',
         ?string $name = null,
         array $patterns = [],
         array $defaults = [],

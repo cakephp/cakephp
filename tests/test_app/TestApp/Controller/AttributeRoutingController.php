@@ -19,6 +19,16 @@ use Cake\Routing\Attribute\Scope;
 class AttributeRoutingController extends AttributeRoutingBaseController
 {
     /**
+     * Action fixture for a bare GET attribute at the inherited scope root.
+     *
+     * @return void
+     */
+    #[Get]
+    public function root(): void
+    {
+    }
+
+    /**
      * Action fixture used to verify GET and POST attribute shortcuts.
      *
      * @return void
