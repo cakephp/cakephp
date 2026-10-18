@@ -9099,9 +9099,11 @@ class FormHelperTest extends TestCase
     }
 
     /**
-     * Tests to make sure `labelOptions` is rendered correctly by MultiCheckboxWidget and RadioWidget
+     * Tests to make sure `labelOptions` is rendered correctly by RadioWidget
      *
-     * This test makes sure `false` excludes the label from the render
+     * This test makes sure `false` excludes the label from the render.
+     * For multicheckbox inputs `false` cannot exclude the option labels,
+     * it only skips any extra label attributes.
      */
     public function testControlLabelManipulationDisableLabels(): void
     {
@@ -9144,9 +9146,15 @@ class FormHelperTest extends TestCase
             'input' => ['type' => 'hidden', 'name' => 'checkbox1', 'value' => '', 'id' => 'checkbox1'],
             ['div' => ['class' => 'checkbox']],
             ['input' => ['type' => 'checkbox', 'name' => 'checkbox1[]', 'value' => '1', 'id' => 'checkbox1-1']],
+            ['label' => ['for' => 'checkbox1-1']],
+            'First Checkbox',
+            '/label',
             '/div',
             ['div' => ['class' => 'checkbox']],
             ['input' => ['type' => 'checkbox', 'name' => 'checkbox1[]', 'value' => '2', 'id' => 'checkbox1-2']],
+            ['label' => ['for' => 'checkbox1-2']],
+            'Second Checkbox',
+            '/label',
             '/div',
             '/div',
         ];
