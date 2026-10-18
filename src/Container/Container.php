@@ -116,9 +116,9 @@ class Container implements ContainerInterface
 
     /**
      * @param bool $shared
-     * @return \Psr\Container\ContainerInterface
+     * @return $this
      */
-    public function defaultToShared(bool $shared = true): PsrContainerInterface
+    public function defaultToShared(bool $shared = true): static
     {
         $this->defaultToShared = $shared;
 
@@ -253,19 +253,23 @@ class Container implements ContainerInterface
 
     /**
      * @param bool $cache
-     * @return void
+     * @return $this
      */
-    public function enableAutoWiring(bool $cache = true): void
+    public function enableAutoWiring(bool $cache = true): static
     {
         $this->delegate(new ReflectionContainer($cache));
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      */
-    public function disableAutoWiring(): void
+    public function disableAutoWiring(): static
     {
         $this->delegates = [];
+
+        return $this;
     }
 
     /**
