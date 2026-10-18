@@ -145,7 +145,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
                 $type === null &&
                 !($value instanceof ExpressionInterface)
             ) {
-                $type = $this->inferType($value);
+                $type = $this->inferType($value, $this->_typeMap);
             }
             $this->valueType = $type;
 
@@ -420,7 +420,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             ));
         }
 
-        $type ??= $this->inferType($result);
+        $type ??= $this->inferType($result, $this->_typeMap);
 
         $this->else = $result;
         $this->elseType = $type;
