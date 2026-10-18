@@ -110,6 +110,35 @@ class ContainerTest extends TestCase
         self::assertSame($fooOne, $fooTwo);
     }
 
+    public function testContainerConfigurationIsFluent(): void
+    {
+        $container = new Container();
+
+        self::assertSame($container, $container->defaultToShared()->disableAutoWiring());
+        self::assertFalse($container->has(Foo::class));
+
+        $container->add(Foo::class);
+        self::assertSame($container->get(Foo::class), $container->get(Foo::class));
+
+        $container->defaultToShared(false)->add(Bar::class);
+        self::assertNotSame($container->get(Bar::class), $container->get(Bar::class));
+    }
+
+    public function testContainerCanEnableAutoWiringFluently(): void
+    {
+        $container = new Container();
+
+        self::assertSame($container, $container->disableAutoWiring()->enableAutoWiring());
+        $foo = $container->get(Foo::class);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertSame($foo, $container->get(Foo::class));
+
+        $container->disableAutoWiring()->enableAutoWiring(false);
+        $foo = $container->get(Foo::class);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertNotSame($foo, $container->get(Foo::class));
+    }
+
     public function testContainerAddsAndGetsFromTag(): void
     {
         $container = new Container();
