@@ -1066,6 +1066,47 @@ HTML;
     }
 
     /**
+     * Ensure that attachment header values do not contain newlines
+     * should they end up there by misfortune.
+     */
+    public function testGetBodyInlineAttachment(): void
+    {
+        $eol = "\r\n";
+        $message = new Message();
+
+        $filePath = CORE_PATH . 'VERSION.txt';
+        $file = new UploadedFile(
+            $filePath,
+            (int)filesize($filePath),
+            0,
+            'blob.txt',
+            "text/plain\rInject: badstuff",
+        );
+        $lines = $message
+            ->addAttachment($file)
+            ->addAttachment($filePath, contentId: "abcd\r\nhas crlf", mimetype: "text\nhas newline")
+            ->setBodyText('Attached an uploaded file')
+            ->getBody();
+
+        $result = implode($eol, $lines);
+        $this->assertStringContainsString('Attached an uploaded file' . $eol, $result);
+
+        $expected = [
+            'Content-Disposition: attachment; filename="blob.txt"',
+            'Content-Type: text/plainInject: badstuff',
+        ];
+        $this->assertStringContainsString(implode($eol, $expected), $result);
+
+        $expected = [
+            'Content-Disposition: inline; filename="VERSION.txt"',
+            'Content-Type: texthas newline',
+            'Content-Transfer-Encoding: base64',
+            'Content-ID: <abcdhas crlf>',
+        ];
+        $this->assertStringContainsString(implode($eol, $expected), $result);
+    }
+
+    /**
      * Tests that the body is encoded using the configured charset (Japanese standard encoding)
      */
     public function testBodyEncodingIso2022Jp(): void

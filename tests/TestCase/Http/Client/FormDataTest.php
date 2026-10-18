@@ -94,6 +94,7 @@ class FormDataTest extends TestCase
 
         $part = $data->newPart('test', 'value');
         $part->contentId('abc123');
+        $part->contentId('abc123');
         $data->add($part);
 
         $this->assertTrue($data->isMultipart());
@@ -105,6 +106,36 @@ class FormDataTest extends TestCase
             'Content-ID: <abc123>',
             '',
             'value',
+            '--' . $boundary . '--',
+            '',
+        ];
+        $this->assertSame(implode("\r\n", $expected), (string)$data);
+    }
+
+    /**
+     * Ensure that newlines from part objects don't allow header injection.
+     */
+    public function testAddPartObjectRemoveNewlines(): void
+    {
+        $data = new FormData();
+        $boundary = $data->boundary();
+
+        $part = $data->newPart('test', 'body');
+        $part->contentId("test\nvalue");
+        $part->disposition("test\rvalue");
+        $part->type("text/plain\rvalue");
+        $data->add($part);
+
+        $this->assertTrue($data->isMultipart());
+        $this->assertFalse($data->hasFile());
+        $this->assertCount(1, $data, 'Should have 1 part');
+        $expected = [
+            '--' . $boundary,
+            'Content-Disposition: testvalue; name="test"',
+            'Content-Type: text/plainvalue',
+            'Content-ID: <testvalue>',
+            '',
+            'body',
             '--' . $boundary . '--',
             '',
         ];
@@ -227,6 +258,38 @@ class FormDataTest extends TestCase
             '--' . $boundary,
             'Content-Disposition: form-data; name="uploadSEND TO:foo@example.com"; filename="VERSION.txtRCPT TO:test@example.com"',
             'Content-Type: text/plain',
+            '',
+            (string)$file->getStream(),
+            '--' . $boundary . '--',
+            '',
+        ];
+        $this->assertSame(implode("\r\n", $expected), $result);
+    }
+
+    /**
+     * Ensure that content-types from uploaded files have newlines removed.
+     *
+     * @return void
+     */
+    public function testAddFileUploadedFileContentType(): void
+    {
+        $file = new UploadedFile(
+            CORE_PATH . 'VERSION.txt',
+            filesize(CORE_PATH . 'VERSION.txt'),
+            0,
+            'VERSION.txt',
+            "text/plain\r\nInject: badstuff",
+        );
+
+        $data = new FormData();
+        $data->add('version.txt', $file);
+        $boundary = $data->boundary();
+        $result = (string)$data;
+
+        $expected = [
+            '--' . $boundary,
+            'Content-Disposition: form-data; name="version.txt"; filename="VERSION.txt"',
+            'Content-Type: text/plainInject: badstuff',
             '',
             (string)$file->getStream(),
             '--' . $boundary . '--',
