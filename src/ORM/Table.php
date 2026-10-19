@@ -1397,7 +1397,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new CakeException(sprintf(
                 'The `%s` finder must return the query it was given when called via unhydratedFind(); '
                 . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
-                . 'non-hydrating contract — use find() for those.',
+                . 'non-hydrating contract - use find() for those.',
                 $type,
                 get_debug_type($result),
             ));
