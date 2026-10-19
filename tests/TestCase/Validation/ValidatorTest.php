@@ -23,7 +23,6 @@ use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
-use ReflectionProperty;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -45,13 +44,21 @@ class ValidatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->defaultProviders = (new ReflectionProperty(Validator::class, '_defaultProviders'))->getValue();
+        $this->defaultProviders = [];
+        foreach (Validator::getDefaultProviders() as $name) {
+            $this->defaultProviders[$name] = Validator::getDefaultProvider($name);
+        }
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
-        (new ReflectionProperty(Validator::class, '_defaultProviders'))->setValue(null, $this->defaultProviders);
+        foreach (Validator::getDefaultProviders() as $name) {
+            Validator::removeDefaultProvider($name);
+        }
+        foreach ($this->defaultProviders as $name => $provider) {
+            Validator::addDefaultProvider($name, $provider);
+        }
     }
 
     /**
@@ -3064,6 +3071,23 @@ class ValidatorTest extends TestCase
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+    }
+
+    /**
+     * Tests removing a default provider
+     */
+    public function testRemoveDefaultProvider(): void
+    {
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $existing = new Validator();
+
+        Validator::removeDefaultProvider('test-provider');
+        $this->assertNull(Validator::getDefaultProvider('test-provider'));
+        $this->assertNotContains('test-provider', Validator::getDefaultProviders());
+        $this->assertNull((new Validator())->getProvider('test-provider'));
+        $this->assertSame('MyNameSpace\Validation\MyProvider', $existing->getProvider('test-provider'));
+
+        Validator::removeDefaultProvider('invalid-provider');
     }
 
     /**

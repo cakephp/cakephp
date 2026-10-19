@@ -2061,7 +2061,7 @@ class FormHelper extends Helper
      * - Other attributes will be assigned to the input element.
      *
      * @param string|null $caption The label appearing on the button OR if string contains :// or the
-     *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
+     *  extension .jpg, .jpe, .jpeg, .jxl, .gif, .png, .webp, .ico, .avif, .avifs use an image if the extension
      *  exists, AND the first character is /, image is relative to webroot,
      *  OR if the first character is not /, image is relative to webroot/img.
      * @param array<string, mixed> $options Array of options. See above.
@@ -2086,7 +2086,7 @@ class FormHelper extends Helper
         unset($options['secure']);
 
         $isUrl = str_contains($caption, '://');
-        $isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
+        $isImage = preg_match('/\.(jpg|jpe|jpeg|jxl|gif|png|ico|webp|avif|avifs)$/', $caption);
 
         $type = $options['type'];
         unset($options['type']);

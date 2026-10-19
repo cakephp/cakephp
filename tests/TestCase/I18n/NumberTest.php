@@ -22,7 +22,6 @@ use Cake\I18n\I18n;
 use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use NumberFormatter;
-use ReflectionProperty;
 
 /**
  * NumberTest class
@@ -54,8 +53,7 @@ class NumberTest extends TestCase
         Number::setDefaultCurrency();
         Number::setDefaultCurrencyFormat();
         Number::setUseIecUnits(false);
-        // Number::config() replaces cached formatters
-        (new ReflectionProperty(Number::class, '_formatters'))->setValue(null, []);
+        Number::resetFormatters();
     }
 
     /**
@@ -675,6 +673,20 @@ class NumberTest extends TestCase
 
         $result = $this->Number->currency(150000, 'USD', ['locale' => 'en_US']);
         $this->assertSame('$ 1,50,000', $result);
+    }
+
+    /**
+     * Test that resetFormatters() removes formatters set with config()
+     */
+    public function testResetFormatters(): void
+    {
+        Number::config('en_US', NumberFormatter::CURRENCY, [
+            'pattern' => '¤ #,##,##0',
+        ]);
+        $this->assertSame('$ 1,50,000', $this->Number->currency(150000, 'USD', ['locale' => 'en_US']));
+
+        Number::resetFormatters();
+        $this->assertSame('$150,000.00', $this->Number->currency(150000, 'USD', ['locale' => 'en_US']));
     }
 
     /**
