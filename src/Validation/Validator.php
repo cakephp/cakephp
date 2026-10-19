@@ -357,6 +357,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Removes the default provider stored under that name.
+     *
+     * Validators that were already created keep the provider.
+     *
+     * @param string $name The name of the provider to remove.
+     * @return void
+     */
+    public static function removeDefaultProvider(string $name): void
+    {
+        unset(self::$_defaultProviders[$name]);
+    }
+
+    /**
      * Get the list of default providers.
      *
      * @return array<string>

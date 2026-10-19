@@ -417,6 +417,18 @@ class Number
     }
 
     /**
+     * Remove all cached and configured formatters.
+     *
+     * Formatters set with Number::config() are removed as well.
+     *
+     * @return void
+     */
+    public static function resetFormatters(): void
+    {
+        static::$_formatters = [];
+    }
+
+    /**
      * Set formatter attributes
      *
      * @param \NumberFormatter $formatter Number formatter instance.
