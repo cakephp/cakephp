@@ -421,6 +421,7 @@ class Number
      *
      * Formatters set with Number::config() are removed as well.
      *
+     * @since 5.4.4
      * @return void
      */
     public static function resetFormatters(): void

@@ -361,6 +361,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * Validators that were already created keep the provider.
      *
+     * @since 5.4.4
      * @param string $name The name of the provider to remove.
      * @return void
      */
