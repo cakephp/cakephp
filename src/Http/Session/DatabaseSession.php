@@ -92,10 +92,9 @@ class DatabaseSession extends AbstractSession
         $pkField = $this->_table->getPrimaryKey();
         assert(is_string($pkField));
         $result = $this->_table
-            ->find('all')
+            ->unhydratedFind()
             ->select(['data'])
             ->where([$pkField => $id])
-            ->disableHydration()
             ->first();
 
         if (!$result) {
