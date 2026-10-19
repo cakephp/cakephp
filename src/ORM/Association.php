@@ -979,7 +979,7 @@ abstract class Association
         }
 
         $query->select($query->aliasFields($fields, $this->name));
-        $query->addDefaultTypes($this->getTarget());
+        $query->addDefaultTypes($this->getTarget(), $this->name);
     }
 
     /**
