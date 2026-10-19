@@ -1990,11 +1990,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
-            $this->find('all')
+            $this->unhydratedFind()
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
-            ->disableHydration()
             ->toArray(),
         );
     }
@@ -2795,9 +2794,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
-     * @uses findAll()
-     * @uses findList()
-     * @uses findThreaded()
+     * @uses \Cake\ORM\Table::findAll()
+     * @uses \Cake\ORM\Table::findList()
+     * @uses \Cake\ORM\Table::findThreaded()
      */
     public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
