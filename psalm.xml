@@ -7,6 +7,7 @@
     autoloader="tests/bootstrap.php"
     findUnusedPsalmSuppress="true"
     findUnusedCode="false"
+    runTaintAnalysis="false"
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>

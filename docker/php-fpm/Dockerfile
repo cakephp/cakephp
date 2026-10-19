@@ -4,6 +4,7 @@ FROM php:${PHP_IMAGE_TAG}
 LABEL org.opencontainers.image.source="https://github.com/cakephp/cakephp"
 
 RUN set -eux; \
+    apk upgrade --no-cache; \
     apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
         freetype-dev \
@@ -36,5 +37,6 @@ RUN set -eux; \
         pdo_mysql pdo_pgsql pgsql soap sockets xsl zip; \
     apk del .build-deps; \
     php -r 'foreach (["bcmath", "exif", "gd", "gettext", "gmp", "intl", "mysqli", "pcntl", "pdo_mysql", "pdo_pgsql", "pdo_sqlite", "pgsql", "soap", "sockets", "sqlite3", "xsl", "zip"] as $extension) { if (!extension_loaded($extension)) { fwrite(STDERR, "Missing PHP extension: $extension\n"); exit(1); } }'; \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer; \
     php-fpm -t
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer

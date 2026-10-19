@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use ArrayObject;
 use Cake\Core\Exception\CakeException;
 use Cake\Error\Debugger;
 use Cake\Mailer\Message;
@@ -601,9 +602,9 @@ class SmtpTransportTest extends TestCase
     }
 
     /**
-     * test send strips crlf from headers
+     * test send strips newlines from headers
      */
-    public function testSendHeadersStripCrlf(): void
+    public function testSendHeadersStripNewlines(): void
     {
         $eol = "\r\n";
         $date = date(DATE_RFC2822);
@@ -615,14 +616,18 @@ class SmtpTransportTest extends TestCase
         $message->setMessageId('<abc0123@example.com>');
 
         $message->setHeaders([
-            'X-inject' => "line one\r\nline two",
+            'X-crlf' => "line one\r\nline two",
+            'X-lf' => "line one\nline two",
+            'X-cr' => "line one\rline two",
             'Date' => $date,
         ]);
         $message->setBody(['text' => 'oh no']);
 
         $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
         $data .= 'To: CakePHP <cake@cakephp.org>' . $eol;
-        $data .= 'X-inject: line oneline two' . $eol;
+        $data .= 'X-crlf: line oneline two' . $eol;
+        $data .= 'X-lf: line oneline two' . $eol;
+        $data .= 'X-cr: line oneline two' . $eol;
         $data .= 'Date: ' . $date . $eol;
         $data .= 'Message-ID: <abc0123@example.com>' . $eol;
         $data .= 'Subject: injected headers' . $eol;
@@ -994,5 +999,169 @@ class SmtpTransportTest extends TestCase
         $result = unserialize(serialize($smtpTransport));
         $this->assertStringContainsString('[protected] _socket => [uninitialized]', Debugger::exportVar($result));
         $this->assertFalse($result->connected());
+    }
+
+    /**
+     * A send that fails mid-DATA must close the socket without QUIT, which the server would read as message body.
+     */
+    public function testSendClosesConnectionWhenDataTimesOut(): void
+    {
+        $writes = $this->scriptConnectedSocket([
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "354 OK\r\n",
+        ]);
+
+        try {
+            $this->SmtpTransport->send($this->failoverMessage());
+            $this->fail('An unanswered DATA must surface as a failed send.');
+        } catch (SocketException $e) {
+            $this->assertSame('SMTP timeout.', $e->getMessage());
+        }
+
+        $this->assertFalse($this->SmtpTransport->connected());
+        $this->assertNotContains("QUIT\r\n", $writes->getArrayCopy());
+    }
+
+    /**
+     * A connection whose STARTTLS was never answered must not be left open as if it were usable.
+     */
+    public function testSendClosesConnectionWhenStartTlsTimesOut(): void
+    {
+        $this->SmtpTransport->setConfig(['tls' => true]);
+        $this->scriptConnectedSocket([
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+        ]);
+
+        try {
+            $this->SmtpTransport->send($this->failoverMessage());
+            $this->fail('An unanswered STARTTLS must surface as a failed send.');
+        } catch (SocketException) {
+        }
+
+        $this->assertFalse($this->SmtpTransport->connected());
+    }
+
+    /**
+     * A send after a failed one opens a new connection instead of issuing RSET on the broken one.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/18968
+     */
+    public function testSendAfterFailedSendReconnects(): void
+    {
+        $writes = $this->scriptConnectedSocket([
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "354 OK\r\n",
+            null,
+            // Second email, on a new connection
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "354 OK\r\n",
+            "250 OK\r\n",
+        ]);
+        $message = $this->failoverMessage();
+
+        try {
+            $this->SmtpTransport->send($message);
+            $this->fail('An unanswered DATA must surface as a failed send.');
+        } catch (SocketException) {
+        }
+        $this->SmtpTransport->send($message);
+
+        $this->assertNotContains("RSET\r\n", $writes->getArrayCopy());
+        $this->assertSame(2, array_count_values($writes->getArrayCopy())["EHLO localhost\r\n"]);
+    }
+
+    /**
+     * With keepAlive, a reused connection the server dropped fails on RSET; the next send must reconnect.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/18968
+     */
+    public function testKeepAliveSendAfterFailedResetReconnects(): void
+    {
+        $this->SmtpTransport->setConfig(['keepAlive' => true]);
+        $writes = $this->scriptConnectedSocket([
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "354 OK\r\n",
+            "250 OK\r\n",
+            // Second email: the server has gone away, RSET is never answered
+            null,
+            // Third email, on a new connection
+            "220 Welcome message\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "250 OK\r\n",
+            "354 OK\r\n",
+            "250 OK\r\n",
+        ]);
+        $message = $this->failoverMessage();
+
+        $this->SmtpTransport->send($message);
+        try {
+            $this->SmtpTransport->send($message);
+            $this->fail('An unanswered RSET must surface as a failed send.');
+        } catch (SocketException) {
+        }
+        $this->SmtpTransport->send($message);
+
+        $this->assertSame(1, array_count_values($writes->getArrayCopy())["RSET\r\n"]);
+        $this->assertSame(2, array_count_values($writes->getArrayCopy())["EHLO localhost\r\n"]);
+    }
+
+    /**
+     * Script the mocked socket: it stays connected until disconnect() is called, like a stream whose peer went away.
+     *
+     * @param array<string|null> $reads Responses in order; null, or running out, is a read that times out.
+     * @return \ArrayObject<int, string> The data written to the socket.
+     */
+    protected function scriptConnectedSocket(array $reads): ArrayObject
+    {
+        $connected = false;
+        $writes = new ArrayObject();
+
+        $this->socket->shouldReceive('connect')->andReturnUsing(function () use (&$connected): bool {
+            $connected = true;
+
+            return true;
+        });
+        $this->socket->shouldReceive('disconnect')->andReturnUsing(function () use (&$connected): bool {
+            $connected = false;
+
+            return true;
+        });
+        $this->socket->shouldReceive('isConnected')->andReturnUsing(function () use (&$connected): bool {
+            return $connected;
+        });
+        $this->socket->shouldReceive('write')->andReturnUsing(function (string $data) use ($writes): int {
+            $writes[] = $data;
+
+            return strlen($data);
+        });
+        $this->socket->shouldReceive('read')->andReturnUsing(function () use (&$reads): ?string {
+            return array_shift($reads);
+        });
+
+        return $writes;
+    }
+
+    protected function failoverMessage(): Message
+    {
+        $message = Mockery::mock(Message::class)->makePartial();
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->shouldReceive('getBody')->andReturn(['First Line']);
+
+        return $message;
     }
 }
