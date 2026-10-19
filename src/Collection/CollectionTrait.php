@@ -990,6 +990,8 @@ trait CollectionTrait
     {
         $result = $callback($this);
 
+        // phpcs:ignore
+        /** @var \Cake\Collection\CollectionInterface<TResultKey, TResultValue> */
         return $result instanceof CollectionInterface ? $result : $this->newCollection($result);
     }
 
