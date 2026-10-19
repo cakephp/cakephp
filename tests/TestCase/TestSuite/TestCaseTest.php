@@ -141,6 +141,23 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * Test that plugins loaded before a test stay loaded when the test loads others.
+     */
+    #[WithoutErrorHandler]
+    public function testPluginsLoadedBeforeTestAreKept(): void
+    {
+        $this->loadPlugins(['TestPluginTwo']);
+        $plugin = Plugin::getCollection()->get('TestPluginTwo');
+
+        $test = new StateChangingTestCase('testLoadPluginAndLogger');
+        $test->run();
+
+        $this->assertTrue($test->status()->isSuccess(), $test->status()->message());
+        $this->assertSame(['TestPluginTwo'], Plugin::loaded());
+        $this->assertSame($plugin, Plugin::getCollection()->get('TestPluginTwo'));
+    }
+
+    /**
      * testSkipIf
      */
     #[WithoutErrorHandler]
