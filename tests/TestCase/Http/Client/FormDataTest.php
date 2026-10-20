@@ -94,7 +94,6 @@ class FormDataTest extends TestCase
 
         $part = $data->newPart('test', 'value');
         $part->contentId('abc123');
-        $part->contentId('abc123');
         $data->add($part);
 
         $this->assertTrue($data->isMultipart());
