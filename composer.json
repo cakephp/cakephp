@@ -27,7 +27,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "cakephp/chronos": "^3.3",
-        "composer/ca-bundle": "^1.5",
+        "composer/ca-bundle": "^1.6",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
         "league/container": "^5.1",
