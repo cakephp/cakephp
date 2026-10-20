@@ -209,6 +209,9 @@ class CookieCollectionTest extends TestCase
         $collection = new CookieCollection();
         $request = new ServerRequest([
             'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+            ],
         ]);
         $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
@@ -359,6 +362,44 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response requires domain matches
+     */
+    public function testAddFromResponseDomainMatch(): void
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'foo.example.com',
+            ],
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=example.com')
+            ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=evil.com');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertNotSame($new, $collection, 'Should clone collection');
+
+        $this->assertTrue($new->has('match'), 'should contain matching domain');
+        $this->assertFalse($new->has('nope'), 'should not contain cookie from evil.com');
+
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app',
+            'environment' => [
+                'HTTP_HOST' => 'example.com',
+            ],
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=foo.example.com')
+            ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=badexample.com');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertNotSame($new, $collection, 'Should clone collection');
+
+        $this->assertTrue($new->has('match'), 'should contain matching domain');
+        $this->assertFalse($new->has('nope'), 'should not contain cookie from badexample.com');
+    }
+
+    /**
      * Test adding cookies from the collection to request.
      */
     public function testAddToRequest(): void
@@ -388,6 +429,28 @@ class CookieCollectionTest extends TestCase
         $request = new ClientRequest('http://foo.blog.example.com/blog');
         $request = $collection->addToRequest($request);
         $this->assertSame('default=1; blog=b', $request->getHeaderLine('Cookie'));
+    }
+
+    /**
+     * Test adding cookies from the collection to request.
+     */
+    public function testAddToRequestSubdomain(): void
+    {
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('bad', '1', null, '/', 'example.com'))
+            ->add(new Cookie('include', 'A', null, '/', 'notexample.com'));
+        $request = new ClientRequest('http://notexample.com/api');
+        $request = $collection->addToRequest($request);
+        $this->assertSame('include=A', $request->getHeaderLine('Cookie'));
+
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('bad', '1', null, '/', 'notapi.example.com'))
+            ->add(new Cookie('include', 'A', null, '/', 'api.example.com'));
+        $request = new ClientRequest('http://api.example.com/api');
+        $request = $collection->addToRequest($request);
+        $this->assertSame('include=A', $request->getHeaderLine('Cookie'));
     }
 
     /**

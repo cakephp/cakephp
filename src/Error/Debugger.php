@@ -69,7 +69,6 @@ class Debugger
             'host' => '********',
             'database' => '********',
             'port' => '********',
-            'prefix' => '********',
             'schema' => '********',
         ],
         'exportFormatter' => null,
@@ -665,7 +664,6 @@ class Debugger
      * - host
      * - database
      * - port
-     * - prefix
      * - schema
      *
      * @param array $var The array to export.

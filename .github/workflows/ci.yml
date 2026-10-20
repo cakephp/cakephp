@@ -71,8 +71,12 @@ jobs:
       if: matrix.db-type == 'mysql' && matrix.dependencies == 'lowest'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-    - name: Setup PostgreSQL with PostGIS
-      if: matrix.db-type == 'pgsql'
+    - name: Setup PostgreSQL 16 with PostGIS # Test before PostgreSQL 17 introduced standard json path functions
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '8.5'
+      run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:16-3.5
+
+    - name: Setup PostgreSQL 18 with PostGIS
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '8.5'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8
@@ -103,7 +107,7 @@ jobs:
         persist-credentials: false
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, intl, apcu, memcached, redis, pdo_${{ matrix.db-type }}
@@ -190,7 +194,7 @@ jobs:
         restore-keys: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
@@ -241,7 +245,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.5'
           extensions: mbstring, intl, pcntl
@@ -346,7 +350,7 @@ jobs:
 
       - name: Run StructArmed
         if: always()
-        run: vendor/bin/structarmed analyze src
+        run: vendor/bin/structarmed analyze
 
   split-packages-stan:
     name: Static Analysis for Split Packages
@@ -361,7 +365,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.5'
           extensions: mbstring, intl

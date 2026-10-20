@@ -60,7 +60,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "boundwize/structarmed": "^0.14",
+        "boundwize/structarmed": "^0.19",
         "cakephp/cakephp-codesniffer": "6.x-dev",
         "cakephp/mago-rules": "dev-main",
         "http-interop/http-factory-tests": "^2.0",

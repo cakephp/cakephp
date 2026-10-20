@@ -1386,7 +1386,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new CakeException(sprintf(
                 'The `%s` finder must return the query it was given when called via unhydratedFind(); '
                 . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
-                . 'non-hydrating contract — use find() for those.',
+                . 'non-hydrating contract - use find() for those.',
                 $type,
                 get_debug_type($result),
             ));
@@ -2755,9 +2755,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
-     * @uses findAll()
-     * @uses findList()
-     * @uses findThreaded()
+     * @uses \Cake\ORM\Table::findAll()
+     * @uses \Cake\ORM\Table::findList()
+     * @uses \Cake\ORM\Table::findThreaded()
      */
     public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
