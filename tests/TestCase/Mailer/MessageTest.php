@@ -1084,7 +1084,7 @@ HTML;
         );
         $lines = $message
             ->addAttachment($file)
-            ->addAttachment($filePath, contentId: "abcd\r\nhas crlf", mimetype: "text\nhas newline")
+            ->addAttachment($filePath, mimetype: "text\nhas newline", contentId: "abcd\r\nhas crlf")
             ->setBodyText('Attached an uploaded file')
             ->getBody();
 
