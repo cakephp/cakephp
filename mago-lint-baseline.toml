@@ -26,12 +26,6 @@ count = 4
 
 [[issues]]
 file = "src/AttributeResolver/AttributeCollection.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
-
-[[issues]]
-file = "src/AttributeResolver/AttributeCollection.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 4
@@ -41,18 +35,6 @@ file = "src/AttributeResolver/Parser.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 1
-
-[[issues]]
-file = "src/Cache/CacheEngine.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Cache/Engine/ApcuEngine.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Cache/Engine/FileEngine.php"
@@ -73,22 +55,10 @@ message = "This closure does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
-file = "src/Cache/Engine/MemcachedEngine.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
 file = "src/Cache/Engine/PhpEngine.php"
 code = "no-error-control-operator"
 message = "Unsafe use of error control operator `@`."
 count = 4
-
-[[issues]]
-file = "src/Cache/Engine/RedisEngine.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
 
 [[issues]]
 file = "src/Collection/CollectionInterface.php"
@@ -157,12 +127,6 @@ message = "This closure does not use `$this` and should be declared static."
 count = 2
 
 [[issues]]
-file = "src/Collection/Iterator/FilterIterator.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Collection/Iterator/TreeIterator.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
@@ -172,12 +136,6 @@ count = 1
 file = "src/Command/I18nExtractCommand.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
-count = 1
-
-[[issues]]
-file = "src/Command/I18nExtractCommand.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -205,12 +163,6 @@ message = "Unsafe use of error control operator `@`."
 count = 1
 
 [[issues]]
-file = "src/Command/PluginLoadCommand.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
-
-[[issues]]
 file = "src/Command/PluginUnloadCommand.php"
 code = "no-error-control-operator"
 message = "Unsafe use of error control operator `@`."
@@ -220,12 +172,6 @@ count = 1
 file = "src/Command/RoutesCommand.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
-count = 1
-
-[[issues]]
-file = "src/Command/RoutesCommand.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -248,20 +194,8 @@ count = 1
 
 [[issues]]
 file = "src/Console/Command/HelpCommand.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Console/Command/HelpCommand.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "src/Console/CommandRunner.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -298,24 +232,6 @@ count = 2
 file = "src/Console/ConsoleOptionParser.php"
 code = "no-insecure-comparison"
 message = "Insecure comparison of sensitive data."
-count = 1
-
-[[issues]]
-file = "src/Console/ConsoleOptionParser.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Console/ConsoleOutput.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Console/Exception/MissingOptionException.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -356,12 +272,6 @@ count = 1
 
 [[issues]]
 file = "src/Container/Container.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Container/Container.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
 count = 1
@@ -373,21 +283,9 @@ message = "Call to `in_array` must enforce strict comparison."
 count = 1
 
 [[issues]]
-file = "src/Container/Definition/DefinitionAggregate.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
-
-[[issues]]
 file = "src/Container/Definition/DefinitionInterface.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Controller/Component.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -401,12 +299,6 @@ file = "src/Controller/ControllerFactory.php"
 code = "tagged-todo"
 message = "TODO should be tagged with (@username) or (#issue)."
 count = 1
-
-[[issues]]
-file = "src/Core/BasePlugin.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Core/Configure.php"
@@ -433,21 +325,9 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/Core/PluginCollection.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Core/PluginConfig.php"
 code = "no-error-control-operator"
 message = "Unsafe use of error control operator `@`."
-count = 1
-
-[[issues]]
-file = "src/Core/PluginConfig.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -472,12 +352,6 @@ count = 1
 file = "src/Database/Connection.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Database/Driver.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -553,27 +427,9 @@ message = "This closure does not use `$this` and should be declared static."
 count = 8
 
 [[issues]]
-file = "src/Database/Expression/BetweenExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/Database/Expression/CommonTableExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Database/Expression/CommonTableExpression.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "src/Database/Expression/ComparisonExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -587,12 +443,6 @@ file = "src/Database/Expression/FunctionExpression.php"
 code = "no-sprintf-concat"
 message = "String concatenation with `sprintf` can be simplified."
 count = 1
-
-[[issues]]
-file = "src/Database/Expression/QueryExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Database/Expression/QueryExpression.php"
@@ -613,40 +463,10 @@ message = "String concatenation with `sprintf` can be simplified."
 count = 3
 
 [[issues]]
-file = "src/Database/Expression/ValuesExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Database/Expression/WindowExpression.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Database/IdentifierQuoter.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Database/Log/LoggedQuery.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Database/Query.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 9
-
-[[issues]]
-file = "src/Database/Query.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
 
 [[issues]]
 file = "src/Database/Query.php"
@@ -698,12 +518,6 @@ count = 1
 
 [[issues]]
 file = "src/Database/Schema/MysqlSchemaDialect.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/Database/Schema/MysqlSchemaDialect.php"
 code = "strict-behavior"
 message = "Call to `array_search` must enforce strict comparison."
 count = 2
@@ -725,12 +539,6 @@ file = "src/Database/Schema/PostgresSchemaDialect.php"
 code = "no-sprintf-concat"
 message = "String concatenation with `sprintf` can be simplified."
 count = 1
-
-[[issues]]
-file = "src/Database/Schema/PostgresSchemaDialect.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Database/Schema/PostgresSchemaDialect.php"
@@ -758,12 +566,6 @@ count = 1
 
 [[issues]]
 file = "src/Database/Schema/SqliteSchemaDialect.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Database/Schema/SqliteSchemaDialect.php"
 code = "tagged-todo"
 message = "TODO should be tagged with (@username) or (#issue)."
 count = 1
@@ -776,21 +578,9 @@ count = 1
 
 [[issues]]
 file = "src/Database/Schema/SqlserverSchemaDialect.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Database/Schema/SqlserverSchemaDialect.php"
 code = "strict-behavior"
 message = "Call to `in_array` must enforce strict comparison."
 count = 1
-
-[[issues]]
-file = "src/Database/Schema/TableSchema.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 4
 
 [[issues]]
 file = "src/Database/Schema/TableSchema.php"
@@ -884,12 +674,6 @@ count = 2
 
 [[issues]]
 file = "src/Datasource/EntityTrait.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/Datasource/EntityTrait.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
 count = 1
@@ -916,12 +700,6 @@ count = 1
 file = "src/Datasource/Paging/SortField.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Datasource/Paging/SortableFieldsBuilder.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -952,12 +730,6 @@ count = 2
 file = "src/Error/ErrorRendererInterface.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/Error/ExceptionTrap.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -1003,12 +775,6 @@ message = "This arrow function does not use `$this` and should be declared stati
 count = 1
 
 [[issues]]
-file = "src/Event/EventManager.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Form/FormProtector.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
@@ -1033,18 +799,6 @@ message = "Nested ternary expressions are confusing due to PHP's operator associ
 count = 1
 
 [[issues]]
-file = "src/Http/Client/Adapter/Curl.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Http/Client/Adapter/Stream.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
 file = "src/Http/Client/Auth/Digest.php"
 code = "strict-behavior"
 message = "Call to `in_array` must enforce strict comparison."
@@ -1054,12 +808,6 @@ count = 1
 file = "src/Http/Client/Auth/Oauth.php"
 code = "no-assign-in-condition"
 message = "Avoid assignments in conditions."
-count = 1
-
-[[issues]]
-file = "src/Http/Cookie/CookieCollection.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -1087,12 +835,6 @@ message = "Parameters that may contain sensitive information should be marked wi
 count = 4
 
 [[issues]]
-file = "src/Http/Middleware/EncryptedCookieMiddleware.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
 file = "src/Http/Middleware/SecurityHeadersMiddleware.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
@@ -1109,12 +851,6 @@ file = "src/Http/Middleware/SessionCsrfProtectionMiddleware.php"
 code = "strict-behavior"
 message = "Call to `base64_decode` must enforce strict comparison."
 count = 1
-
-[[issues]]
-file = "src/Http/MiddlewareQueue.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Http/Response.php"
@@ -1159,12 +895,6 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/Http/Session.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/I18n/Date.php"
 code = "inline-variable-return"
 message = "Variable assignment can be inlined into the return statement."
@@ -1186,12 +916,6 @@ count = 1
 file = "src/I18n/DateTime.php"
 code = "no-multi-assignments"
 message = "Avoid multiple assignments in a single statement."
-count = 1
-
-[[issues]]
-file = "src/I18n/DateTime.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -1249,28 +973,10 @@ message = "Insecure comparison of sensitive data."
 count = 2
 
 [[issues]]
-file = "src/Lock/Engine/RedisLockEngine.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Mailer/Mailer.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
 file = "src/Mailer/Message.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 1
-
-[[issues]]
-file = "src/Mailer/Message.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Mailer/Message.php"
@@ -1304,12 +1010,6 @@ count = 1
 
 [[issues]]
 file = "src/Mailer/Transport/SmtpTransport.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
-
-[[issues]]
-file = "src/Mailer/Transport/SmtpTransport.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 1
@@ -1318,12 +1018,6 @@ count = 1
 file = "src/Mailer/Transport/SmtpTransport.php"
 code = "strict-behavior"
 message = "Call to `in_array` must enforce strict comparison."
-count = 1
-
-[[issues]]
-file = "src/ORM/Association.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -1349,12 +1043,6 @@ file = "src/ORM/Association/BelongsToMany.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 4
-
-[[issues]]
-file = "src/ORM/Association/BelongsToMany.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
 
 [[issues]]
 file = "src/ORM/Association/BelongsToMany.php"
@@ -1394,12 +1082,6 @@ count = 1
 
 [[issues]]
 file = "src/ORM/Association/Loader/SelectLoader.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/ORM/Association/Loader/SelectLoader.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 3
@@ -1424,12 +1106,6 @@ count = 1
 
 [[issues]]
 file = "src/ORM/Behavior/CounterCacheBehavior.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/ORM/Behavior/CounterCacheBehavior.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 1
@@ -1441,12 +1117,6 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/ORM/Behavior/TimestampBehavior.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/ORM/Behavior/Translate/EavStrategy.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
@@ -1454,21 +1124,9 @@ count = 1
 
 [[issues]]
 file = "src/ORM/Behavior/Translate/ShadowTableStrategy.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/ORM/Behavior/Translate/ShadowTableStrategy.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 4
-
-[[issues]]
-file = "src/ORM/Behavior/Translate/TranslateStrategyTrait.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
 
 [[issues]]
 file = "src/ORM/Behavior/TranslateBehavior.php"
@@ -1496,12 +1154,6 @@ count = 1
 
 [[issues]]
 file = "src/ORM/EagerLoader.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/ORM/EagerLoader.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
 count = 2
@@ -1523,12 +1175,6 @@ file = "src/ORM/Marshaller.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 2
-
-[[issues]]
-file = "src/ORM/Marshaller.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 5
 
 [[issues]]
 file = "src/ORM/Marshaller.php"
@@ -1549,28 +1195,10 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/ORM/Query/SelectQuery.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/ORM/ResultSetFactory.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 3
-
-[[issues]]
-file = "src/ORM/ResultSetFactory.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/ORM/Rule/ExistsIn.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/ORM/Rule/ExistsIn.php"
@@ -1598,12 +1226,6 @@ count = 2
 
 [[issues]]
 file = "src/ORM/Table.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 5
-
-[[issues]]
-file = "src/ORM/Table.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
 count = 2
@@ -1627,24 +1249,6 @@ message = "This closure does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
-file = "src/Routing/Route/DashedRoute.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Routing/Route/EntityRoute.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/Routing/Route/RedirectTrait.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Routing/Route/Route.php"
 code = "no-redundant-math"
 message = "Redundant multiplication by `-1`: multiplication by -1 is equivalent to negation."
@@ -1655,12 +1259,6 @@ file = "src/Routing/Route/Route.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 1
-
-[[issues]]
-file = "src/Routing/Route/Route.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
 
 [[issues]]
 file = "src/Routing/Route/Route.php"
@@ -1675,33 +1273,15 @@ message = "This closure does not use `$this` and should be declared static."
 count = 2
 
 [[issues]]
-file = "src/Routing/RouteBuilder.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
 file = "src/Routing/RouteCollection.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/Routing/RouteCollection.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/Routing/Router.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 2
-
-[[issues]]
-file = "src/Routing/Router.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 2
 
 [[issues]]
@@ -1814,12 +1394,6 @@ count = 6
 
 [[issues]]
 file = "src/TestSuite/TestCase.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/TestSuite/TestCase.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
 count = 1
@@ -1829,12 +1403,6 @@ file = "src/Utility/Filesystem.php"
 code = "no-error-control-operator"
 message = "Unsafe use of error control operator `@`."
 count = 7
-
-[[issues]]
-file = "src/Utility/Fs/Iterator/ContainsPathFilterIterator.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 2
 
 [[issues]]
 file = "src/Utility/Fs/Iterator/ExcludeDirectoryFilterIterator.php"
@@ -1880,12 +1448,6 @@ count = 2
 
 [[issues]]
 file = "src/Utility/Hash.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 6
-
-[[issues]]
-file = "src/Utility/Hash.php"
 code = "sensitive-parameter"
 message = "Parameters that may contain sensitive information should be marked with the `#[SensitiveParameter]` attribute."
 count = 2
@@ -1901,12 +1463,6 @@ file = "src/Utility/Inflector.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 1
-
-[[issues]]
-file = "src/Utility/Inflector.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 3
 
 [[issues]]
 file = "src/Utility/MergeVariablesTrait.php"
@@ -1925,12 +1481,6 @@ file = "src/Utility/Text.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 3
-
-[[issues]]
-file = "src/Utility/Text.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
 
 [[issues]]
 file = "src/Utility/Text.php"
@@ -1993,12 +1543,6 @@ message = "This closure does not use `$this` and should be declared static."
 count = 3
 
 [[issues]]
-file = "src/View/Cell.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/View/Form/ContextFactory.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
@@ -2029,21 +1573,9 @@ message = "This closure does not use `$this` and should be declared static."
 count = 2
 
 [[issues]]
-file = "src/View/Helper.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/View/Helper/FormHelper.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/View/Helper/FormHelper.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -2083,22 +1615,10 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/View/StringTemplate.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
 file = "src/View/View.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 2
-
-[[issues]]
-file = "src/View/View.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
 
 [[issues]]
 file = "src/View/View.php"
@@ -2122,12 +1642,6 @@ count = 1
 file = "src/View/ViewBuilder.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "src/View/ViewVarsTrait.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
