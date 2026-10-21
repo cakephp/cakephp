@@ -101,7 +101,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonValue(
                     $this->quoteString(json_encode(['a' => 'x'])),
-                    (new JsonPathExpression('$.a ? (@ == $v)'))->passing(['v' => 'x']),
+                    new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'x']),
                 ),
             ])
             ->execute()->fetchAll('assoc');
@@ -112,7 +112,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonValue(
                     $this->quoteString(json_encode(['a' => 'x'])),
-                    (new JsonPathExpression('$.a ? (@ == $v)'))->passing(['v' => 'y']),
+                    new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'y']),
                 ),
             ])
             ->execute()->fetchAll('assoc');
@@ -132,7 +132,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonValue(
                     $this->quoteString(json_encode(['a' => 1])),
-                    (new JsonPathExpression('$.a'))->returning('float'),
+                    new JsonPathExpression('$.a')->returning('float'),
                 ),
             ])
             ->setSelectTypeMap(['value' => 'float'])
@@ -153,7 +153,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonValue(
                     $this->quoteString(json_encode(['a' => 1])),
-                    (new JsonPathExpression('$.b'))->onEmpty('DEFAULT', 5),
+                    new JsonPathExpression('$.b')->onEmpty('DEFAULT', 5),
                 ),
             ])
             ->execute()->fetchAll('assoc');
@@ -176,7 +176,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonValue(
                     $this->quoteString(json_encode(['a' => 'abc'])),
-                    (new JsonPathExpression('$.a'))->returning($returning)->onError('DEFAULT', 7),
+                    new JsonPathExpression('$.a')->returning($returning)->onError('DEFAULT', 7),
                 ),
             ])
             ->setSelectTypeMap(['value' => 'integer'])

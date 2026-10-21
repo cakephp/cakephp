@@ -373,7 +373,7 @@ class FunctionsBuilderTest extends TestCase
      */
     public function testJsonValueReturnType(): void
     {
-        $path = (new JsonPathExpression('$'))->setReturnType('integer');
+        $path = new JsonPathExpression('$')->setReturnType('integer');
         $function = $this->functions->jsonValue('field', $path);
         $this->assertSame('integer', $function->getReturnType());
     }

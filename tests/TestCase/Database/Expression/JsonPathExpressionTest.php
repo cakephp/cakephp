@@ -58,7 +58,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testPassing(): void
     {
-        $expr = (new JsonPathExpression('$.id'))
+        $expr = new JsonPathExpression('$.id')
             ->passing(['val' => 123, 'name' => 'literal_name'], ['val' => 'integer', 'name' => 'string']);
 
         $binder = new ValueBinder();
@@ -69,7 +69,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testPassingExpression(): void
     {
-        $expr = (new JsonPathExpression('$.id'))
+        $expr = new JsonPathExpression('$.id')
             ->passing(['now' => new FunctionExpression('NOW'), 'val' => 5]);
 
         $binder = new ValueBinder();
@@ -80,7 +80,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testReturning(): void
     {
-        $expr = (new JsonPathExpression('$.id'))
+        $expr = new JsonPathExpression('$.id')
             ->returning('int');
 
         $binder = new ValueBinder();
@@ -89,7 +89,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testReturningDoesNotChangeReturnType(): void
     {
-        $expr = (new JsonPathExpression('$.id'))->setReturnType('int')->returning('float');
+        $expr = new JsonPathExpression('$.id')->setReturnType('int')->returning('float');
 
         $this->assertSame('int', $expr->getReturnType());
     }

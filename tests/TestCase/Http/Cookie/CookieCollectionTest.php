@@ -373,7 +373,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'foo.example.com',
             ],
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'match=yes; Domain=example.com')
             ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=evil.com');
         $new = $collection->addFromResponse($response, $request);
@@ -389,7 +389,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'match=yes; Domain=foo.example.com')
             ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=badexample.com');
         $new = $collection->addFromResponse($response, $request);
