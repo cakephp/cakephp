@@ -1048,8 +1048,16 @@ HTML;
             "text/plain\rInject: badstuff",
         );
         $lines = $message
-            ->addAttachment($file)
-            ->addAttachment($filePath, mimetype: "text\nhas newline", contentId: "abcd\r\nhas crlf")
+            ->setAttachments([
+                'blob.txt' => [
+                    'file' => $file,
+                ],
+                'VERSION.txt' => [
+                    'data' => file_get_contents($filePath),
+                    'mimetype' => "text\nhas newline",
+                    'contentId' => "abcd\r\nhas crlf",
+                ],
+            ])
             ->setBodyText('Attached an uploaded file')
             ->getBody();
 
