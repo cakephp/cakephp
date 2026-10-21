@@ -212,9 +212,12 @@ class FormDataPart
      */
     public function __toString(): string
     {
+        $removeNewlines = function (string $in): string {
+            return str_replace(["\r", "\n"], '', $in);
+        };
         $out = '';
         if ($this->_disposition) {
-            $out .= 'Content-Disposition: ' . $this->_disposition;
+            $out .= 'Content-Disposition: ' . $removeNewlines($this->_disposition);
             if ($this->_name) {
                 $out .= '; ' . $this->_headerParameterToString('name', $this->_name);
             }
@@ -224,13 +227,13 @@ class FormDataPart
             $out .= "\r\n";
         }
         if ($this->_type) {
-            $out .= 'Content-Type: ' . $this->_type . "\r\n";
+            $out .= 'Content-Type: ' . $removeNewlines($this->_type) . "\r\n";
         }
         if ($this->_transferEncoding) {
-            $out .= 'Content-Transfer-Encoding: ' . $this->_transferEncoding . "\r\n";
+            $out .= 'Content-Transfer-Encoding: ' . $removeNewlines($this->_transferEncoding) . "\r\n";
         }
         if ($this->_contentId) {
-            $out .= 'Content-ID: <' . $this->_contentId . ">\r\n";
+            $out .= 'Content-ID: <' . $removeNewlines($this->_contentId) . ">\r\n";
         }
         $out .= "\r\n";
         $out .= $this->_value;
