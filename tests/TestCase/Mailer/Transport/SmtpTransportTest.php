@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 
 use ArrayObject;
 use Cake\Core\Exception\CakeException;
-use Cake\Error\Debugger;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\SmtpTransport;
 use Cake\Network\Exception\SocketException;
