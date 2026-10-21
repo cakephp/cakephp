@@ -873,7 +873,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withHeader(string $name, $value): static
     {
         $new = clone $this;
@@ -895,7 +895,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withAddedHeader(string $name, $value): static
     {
         $new = clone $this;
@@ -917,7 +917,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withoutHeader(string $name): static
     {
         $new = clone $this;
@@ -953,7 +953,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated method.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withMethod(string $method): static
     {
         $new = clone $this;
@@ -1028,7 +1028,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated query string data.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withQueryParams(array $query): static
     {
         return clone($this, ['query' => $query]);
@@ -1289,7 +1289,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withCookieCollection(CookieCollection $cookies): static
     {
         $new = clone $this;
@@ -1318,7 +1318,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies The new cookie data to use.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withCookieParams(array $cookies): static
     {
         return clone($this, ['cookies' => $cookies]);
@@ -1348,7 +1348,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withParsedBody($data): static
     {
         $new = clone $this;
@@ -1388,7 +1388,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $version HTTP protocol version
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withProtocolVersion(string $version): static
     {
         if (!preg_match('/^(1\.[01]|[23])\z/', $version)) {
@@ -1435,7 +1435,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $value Value to set
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withEnv(string $key, string $value): static
     {
         $new = clone $this;
@@ -1488,7 +1488,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the request data.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withData(string $name, mixed $value): static
     {
         $copy = clone $this;
@@ -1509,7 +1509,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The dot separated path to remove.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withoutData(string $name): static
     {
         $copy = clone $this;
@@ -1531,7 +1531,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the the request parameters.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withParam(string $name, mixed $value): static
     {
         $copy = clone $this;
@@ -1559,7 +1559,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value of the attribute.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withAttribute(string $name, mixed $value): static
     {
         $new = clone $this;
@@ -1579,7 +1579,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withoutAttribute(string $name): static
     {
         $new = clone $this;
@@ -1669,7 +1669,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException when $files contains an invalid object.
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withUploadedFiles(array $uploadedFiles): static
     {
         $this->validateUploadedFiles($uploadedFiles, '');
@@ -1715,7 +1715,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\StreamInterface $body The new request body
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withBody(StreamInterface $body): static
     {
         return clone($this, ['stream' => $body]);
@@ -1742,7 +1742,7 @@ class ServerRequest implements ServerRequestInterface
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $new = clone($this, ['uri' => $uri]);
@@ -1776,7 +1776,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $requestTarget The request target.
      * @return static
      */
-    #[NoDiscard('HTTP requests are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withRequestTarget(string $requestTarget): static
     {
         return clone($this, ['requestTarget' => $requestTarget]);

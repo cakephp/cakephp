@@ -103,7 +103,7 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    #[NoDiscard('HTTP links are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP links are immutable. You must consume the returned instance.')]
     public function withRel(string $rel): static
     {
         $new = clone $this;
@@ -117,7 +117,7 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    #[NoDiscard('HTTP links are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP links are immutable. You must consume the returned instance.')]
     public function withoutRel(string $rel): static
     {
         $new = clone $this;
@@ -132,7 +132,7 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    #[NoDiscard('HTTP links are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP links are immutable. You must consume the returned instance.')]
     public function withAttribute(string $attribute, string|Stringable|int|float|bool|array $value): static
     {
         $new = clone $this;
@@ -144,7 +144,7 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    #[NoDiscard('HTTP links are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP links are immutable. You must consume the returned instance.')]
     public function withoutAttribute(string $attribute): static
     {
         $new = clone $this;

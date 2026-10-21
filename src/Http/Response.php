@@ -303,7 +303,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $url The location to redirect to.
      * @return static A new response with the Location header set.
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withLocation(string $url): static
     {
         $new = $this->withHeader('Location', $url);
@@ -386,7 +386,7 @@ class Response implements ResponseInterface, Stringable
      * @return static
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $new = clone $this;
@@ -482,7 +482,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $contentType Either a file extension which will be mapped to a mime-type or a concrete mime-type.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withType(string $contentType): static
     {
         $mappedType = $this->resolveType($contentType);
@@ -565,7 +565,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $charset Character set string.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withCharset(string $charset): static
     {
         $new = clone($this, ['charset' => $charset]);
@@ -579,7 +579,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
@@ -594,7 +594,7 @@ class Response implements ResponseInterface, Stringable
      * @param string|int $time a valid time for cache expiry
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withCache(string|int $since, string|int $time = '+1 day'): static
     {
         if (!is_int($time)) {
@@ -621,7 +621,7 @@ class Response implements ResponseInterface, Stringable
      * @param int|null $time time in seconds after which the response should no longer be considered fresh.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withSharable(bool $public, ?int $time = null): static
     {
         $new = clone $this;
@@ -647,7 +647,7 @@ class Response implements ResponseInterface, Stringable
      * @param int $seconds The number of seconds for shared max-age
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withSharedMaxAge(int $seconds): static
     {
         $new = clone $this;
@@ -666,7 +666,7 @@ class Response implements ResponseInterface, Stringable
      * @param int $seconds The seconds a cached response can be considered valid
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withMaxAge(int $seconds): static
     {
         $new = clone $this;
@@ -687,7 +687,7 @@ class Response implements ResponseInterface, Stringable
      * @param bool $enable If boolean sets or unsets the directive.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withMustRevalidate(bool $enable): static
     {
         $new = clone $this;
@@ -737,7 +737,7 @@ class Response implements ResponseInterface, Stringable
      * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTime instance.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withExpires(DateTimeInterface|string|int|null $time): static
     {
         return $this->withHeader('Expires', $this->getRfc7231($time));
@@ -762,7 +762,7 @@ class Response implements ResponseInterface, Stringable
      * @param \DateTimeInterface|string|int $time Valid time string or \DateTime instance.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withModified(DateTimeInterface|string|int $time): static
     {
         return $this->withHeader('Last-Modified', $this->getRfc7231($time));
@@ -777,7 +777,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withNotModified(): static
     {
         $new = $this->withStatus(304);
@@ -809,7 +809,7 @@ class Response implements ResponseInterface, Stringable
      *   containing the list for variances.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withVary(array|string $cacheVariances): static
     {
         return $this->withHeader('Vary', (array)$cacheVariances);
@@ -836,7 +836,7 @@ class Response implements ResponseInterface, Stringable
      *   other with the same hash or not. Defaults to false
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withEtag(string $hash, bool $weak = false): static
     {
         $hash = sprintf('%s"%s"', $weak ? 'W/' : '', $hash);
@@ -908,7 +908,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $filename The name of the file as the browser will download the response
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withDownload(string $filename): static
     {
         return $this->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
@@ -920,7 +920,7 @@ class Response implements ResponseInterface, Stringable
      * @param string|int $bytes Number of bytes
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withLength(string|int $bytes): static
     {
         return $this->withHeader('Content-Length', (string)$bytes);
@@ -948,7 +948,7 @@ class Response implements ResponseInterface, Stringable
      * @return static
      * @since 3.6.0
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withAddedLink(string $url, array $options = []): static
     {
         $params = [];
@@ -1024,7 +1024,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Cake\Http\Cookie\CookieInterface $cookie cookie object
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withCookie(CookieInterface $cookie): static
     {
         $new = clone $this;
@@ -1046,7 +1046,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Cake\Http\Cookie\CookieInterface $cookie cookie object
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withExpiredCookie(CookieInterface $cookie): static
     {
         $cookie = $cookie->withExpired();
@@ -1108,7 +1108,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Cake\Http\Cookie\CookieCollection $cookieCollection Cookie collection to set.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withCookieCollection(CookieCollection $cookieCollection): static
     {
         return clone($this, ['cookies' => $cookieCollection]);
@@ -1133,7 +1133,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Psr\Link\LinkInterface $link The link to add.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withLink(LinkInterface $link): static
     {
         $new = clone $this;
@@ -1148,7 +1148,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Psr\Link\LinkInterface $link The link to remove.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withoutLink(LinkInterface $link): static
     {
         $new = clone $this;
@@ -1173,7 +1173,7 @@ class Response implements ResponseInterface, Stringable
      * @param \Psr\Link\EvolvableLinkProviderInterface $links Link provider to set.
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withLinkProvider(EvolvableLinkProviderInterface $links): static
     {
         return clone($this, ['links' => $links]);
@@ -1213,7 +1213,7 @@ class Response implements ResponseInterface, Stringable
      * @return static
      * @throws \Cake\Http\Exception\NotFoundException
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withFile(string $path, array $options = []): static
     {
         $file = $this->validateFile($path);
@@ -1259,7 +1259,7 @@ class Response implements ResponseInterface, Stringable
      * @param string|null $string The string to be sent
      * @return static
      */
-    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withStringBody(?string $string): static
     {
         $new = clone $this;
