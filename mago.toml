@@ -38,3 +38,4 @@ function-name = { enabled = false } # This rule expects function names in snake_
 assert-description = { enabled = false }
 no-negated-ternary = { enabled = true }
 no-parameter-shadowing = { enabled = true }
+no-literal-password = { enabled = false } # This complains even when you mask a password value like `'password' => '********'` in `__debugInfo()`
