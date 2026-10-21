@@ -475,12 +475,6 @@ message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "src/Database/Connection.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 1
-
-[[issues]]
 file = "src/Database/Driver.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
@@ -938,12 +932,6 @@ count = 3
 
 [[issues]]
 file = "src/Error/Debugger.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 1
-
-[[issues]]
-file = "src/Error/Debugger.php"
 code = "strict-behavior"
 message = "Call to `in_array` must enforce strict comparison."
 count = 1
@@ -1102,12 +1090,6 @@ count = 4
 file = "src/Http/Middleware/EncryptedCookieMiddleware.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
-count = 2
-
-[[issues]]
-file = "src/Http/Middleware/RateLimitMiddleware.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
 count = 2
 
 [[issues]]

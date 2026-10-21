@@ -374,10 +374,8 @@ trait CollectionTrait
             $group[$pathValue][] = $value;
         }
 
-        /** @var \Cake\Collection\CollectionInterface<array-key, array<TValue>> $result */
-        $result = $this->newCollection($group);
-
-        return $result;
+        /** @var \Cake\Collection\CollectionInterface<array-key, array<TValue>> */
+        return $this->newCollection($group);
     }
 
     /**
