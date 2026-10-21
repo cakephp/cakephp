@@ -27,6 +27,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\StatementInterface;
 use PDO;
 use Pdo\Mysql as PdoMysql;
+use function Cake\Core\deprecationWarning;
 
 /**
  * MySQL Driver
@@ -62,7 +63,7 @@ class Mysql extends Driver
     }
 
     /**
-     * Translates portable string aggregation to MySQL/MariaDB specific syntax.
+     * Translates portable string aggregation to MySQL specific syntax.
      *
      * @param \Cake\Database\Expression\StringAggExpression $expression The expression to translate.
      * @return void
@@ -90,6 +91,7 @@ class Mysql extends Driver
     /**
      * Server type MySQL
      *
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      * @var string
      */
     protected const SERVER_TYPE_MYSQL = 'mysql';
@@ -97,6 +99,7 @@ class Mysql extends Driver
     /**
      * Server type MariaDB
      *
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      * @var string
      */
     protected const SERVER_TYPE_MARIADB = 'mariadb';
@@ -140,6 +143,7 @@ class Mysql extends Driver
      * after `version()` method is called.
      *
      * @var string
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      */
     protected string $serverType = self::SERVER_TYPE_MYSQL;
 
@@ -147,6 +151,7 @@ class Mysql extends Driver
      * Mapping of feature to db server version for feature availability checks.
      *
      * @var array<string, array<string, string>>
+     * @todo Simplify this in 6.x when MySQL and Maria separation is completed.
      */
     protected array $featureVersions = [
         'mysql' => [
@@ -335,7 +340,17 @@ class Mysql extends Driver
     {
         $this->version();
 
-        return $this->serverType === static::SERVER_TYPE_MARIADB;
+        $isMaria = $this->serverType === static::SERVER_TYPE_MARIADB;
+        if ($isMaria) {
+            deprecationWarning(
+                '5.5.0',
+                'MySQL and Mariadb now have separate drivers.' .
+                'Use `instanceof Mariadb` instead for runtime checks, ' .
+                'and set `"driver" => Mariadb::class` in your connection configuration.',
+            );
+        }
+
+        return $isMaria;
     }
 
     /**
@@ -349,6 +364,7 @@ class Mysql extends Driver
             $this->_version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
             if (preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->_version, $matches)) {
+                // TODO remove this in 6.x when mysql and mariadb separation is complete.
                 $this->serverType = static::SERVER_TYPE_MARIADB;
                 $this->_version = $matches[1];
             }
