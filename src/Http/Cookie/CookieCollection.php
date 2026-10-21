@@ -287,13 +287,14 @@ class CookieCollection implements IteratorAggregate, Countable
             }
             $domain = $cookie->getDomain();
             // Trim leading dot from cookie domain value.
-            if (str_starts_with($domain, '.')) {
+            if (strpos($domain, '.') === 0) {
                 $domain = ltrim($domain, '.');
             }
 
             // Cookie domains with a leading `.` match all subdomains.
             // And cookies on domains match all subdomains.
-            if ($host === $domain || str_ends_with($host, ".{$domain}")) {
+            $dotDomain = ".{$domain}";
+            if ($host === $domain || strpos($host, $dotDomain) === strlen($host) - strlen($dotDomain)) {
                 $out[$cookie->getName()] = $cookie->getValue();
             }
         }
