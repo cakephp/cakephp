@@ -22,6 +22,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
+use NoDiscard;
 use ValueError;
 
 /**
@@ -371,6 +372,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withName(string $name): static
     {
         $this->validateName($name);
@@ -442,6 +444,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withValue(array|string|float|int|bool $value): static
     {
         $new = clone $this;
@@ -465,6 +468,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withPath(string $path): static
     {
         return clone($this, ['path' => $path]);
@@ -481,6 +485,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withDomain(string $domain): static
     {
         return clone($this, ['domain' => $domain]);
@@ -505,6 +510,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withSecure(bool $secure): static
     {
         return clone($this, ['secure' => $secure]);
@@ -513,6 +519,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withHttpOnly(bool $httpOnly): static
     {
         return clone($this, ['httpOnly' => $httpOnly]);
@@ -529,6 +536,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withExpiry(DateTimeInterface $dateTime): static
     {
         if ($dateTime instanceof DateTime) {
@@ -593,6 +601,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withNeverExpire(): static
     {
         $new = clone $this;
@@ -604,6 +613,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withExpired(): static
     {
         $new = clone $this;
@@ -623,6 +633,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withSameSite(SameSite|string|null $sameSite): static
     {
         $new = clone $this;
@@ -674,6 +685,7 @@ class Cookie implements CookieInterface
      * @param mixed $value Value to write
      * @return static
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withAddedValue(string $path, mixed $value): static
     {
         $new = clone $this;
@@ -694,6 +706,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to remove
      * @return static
      */
+    #[NoDiscard('HTTP cookies are immutable. You must consume the returned instance.')]
     public function withoutAddedValue(string $path): static
     {
         $new = clone $this;

@@ -19,6 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
 use Laminas\Diactoros\MessageTrait;
 use Laminas\Diactoros\Stream;
+use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
 use SimpleXMLElement;
 
@@ -258,6 +259,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The status reason phrase.
      * @return static A copy of the current object with an updated status code.
      */
+    #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         return clone($this, ['code' => $code, 'reasonPhrase' => $reasonPhrase]);
