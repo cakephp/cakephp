@@ -259,7 +259,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The status reason phrase.
      * @return static A copy of the current object with an updated status code.
      */
-    #[NoDiscard("HTTP responses are immutable. You must capture the returned instance.")]
+    #[NoDiscard('HTTP responses are immutable. You must capture the returned instance.')]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         return clone($this, ['code' => $code, 'reasonPhrase' => $reasonPhrase]);
