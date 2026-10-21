@@ -25,6 +25,7 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use ReflectionProperty;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
@@ -997,7 +998,8 @@ class SmtpTransportTest extends TestCase
         $smtpTransport->connect();
 
         $result = unserialize(serialize($smtpTransport));
-        $this->assertStringContainsString('[protected] socket => [uninitialized]', Debugger::exportVar($result));
+        $property = new ReflectionProperty($result, 'socket');
+        $this->assertFalse($property->isInitialized($result));
         $this->assertFalse($result->connected());
     }
 
@@ -1117,6 +1119,16 @@ class SmtpTransportTest extends TestCase
 
         $this->assertSame(1, array_count_values($writes->getArrayCopy())["RSET\r\n"]);
         $this->assertSame(2, array_count_values($writes->getArrayCopy())["EHLO localhost\r\n"]);
+    }
+
+    /**
+     * Ensure that debugInfo obfuscates passwords.
+     */
+    public function testDebugInfo(): void
+    {
+        $this->SmtpTransport->setConfig(['password' => 'super-secret']);
+        $result = $this->SmtpTransport->__debugInfo();
+        $this->assertSame('*****', $result['config']['password']);
     }
 
     /**

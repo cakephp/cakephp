@@ -1116,4 +1116,11 @@ class RedisEngineTest extends TestCase
         $result = Cache::add('test_add_key', 'test data 2', 'redis');
         $this->assertFalse($result);
     }
+
+    public function testDebugInfo(): void
+    {
+        $engine = Cache::pool('redis');
+        $result = $engine->__debugInfo();
+        $this->assertEquals('*****', $result['config']['password']);
+    }
 }
