@@ -763,6 +763,25 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        $secrets = [
+            'password' => '*****',
+        ];
+        $config = array_intersect_key($secrets, $this->config) + $this->config;
+
+        return [
+            'config' => $config,
+            'redis' => $this->Redis,
+        ];
+    }
+
+    /**
      * Disconnects from the redis server
      */
     public function __destruct()

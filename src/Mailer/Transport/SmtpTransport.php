@@ -678,4 +678,24 @@ class SmtpTransport extends AbstractTransport
 
         return null;
     }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array<string, mixed>
+     */
+    public function __debugInfo(): array
+    {
+        $secrets = [
+            'password' => '*****',
+        ];
+        $config = array_intersect_key($secrets, $this->config) + $this->config;
+
+        return [
+            'config' => $config,
+            'content' => $this->content,
+            'lastResponse' => $this->lastResponse,
+        ];
+    }
 }
