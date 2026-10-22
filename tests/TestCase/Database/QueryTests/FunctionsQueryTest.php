@@ -185,6 +185,59 @@ class FunctionsQueryTest extends TestCase
         $this->assertSame(7, $result[0]['value']);
     }
 
+    public function testJsonExists(): void
+    {
+        $this->requireVersion([
+            'mariadb' => '10.2',
+            Mysql::class => '5.7',
+            Postgres::class => '17',
+            Sqlserver::class => '16',
+        ]);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    new JsonPathExpression('$.a'),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(true, $result[0]['value']);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    new JsonPathExpression('$.b'),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(false, $result[0]['value']);
+    }
+
+    public function testJsonExistsOnError(): void
+    {
+        $this->requireVersion([
+            Postgres::class => '17',
+        ]);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    (new JsonPathExpression('strict $.b'))->onError(JsonPathExpression::BEHAVIOR_TRUE),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(true, $result[0]['value']);
+    }
+
     private function quoteString(string $value): string
     {
         return sprintf("'%s'", $value);

@@ -394,11 +394,35 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing the Json Value
+     * Returns a FunctionExpression representing JSON_EXISTS().
      *
      * Driver transformations:
-     *  - **Postgres**: jsonb_path_query
-     *  - **Sqlite**: json_extract
+     *  - **Mysql**: json_contains_path(expression, 'one', jsonPath) (MariaDB uses JSON_EXISTS natively)
+     *  - **Sqlserver**: json_path_exists(expression, jsonPath)
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
+     * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonExists(
+        ExpressionInterface|string $expression,
+        JsonPathExpression|string $jsonPath,
+    ): FunctionExpression {
+        if (is_string($jsonPath)) {
+            $jsonPath = new JsonPathExpression($jsonPath);
+        }
+
+        $params = $this->toLiteralParam($expression) + [$jsonPath];
+
+        return new FunctionExpression('JSON_EXISTS', $params, [], 'boolean');
+    }
+
+    /**
+     * Returns a FunctionExpression representing JSON_VALUE().
+     *
+     * Driver transformations:
+     *  - **Postgres**: jsonb_path_query (< 17)
+     *  - **Sqlite**: json_extract(expression, jsonPath)
      *
      * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
      * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path
