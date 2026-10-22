@@ -44,6 +44,8 @@ class I18nTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        I18n::clear();
+        Cache::clear('_cake_translations_');
     }
 
     /**
