@@ -6018,6 +6018,62 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests that a custom validation provider registered through the
+     * `Model.buildValidator` event can be referenced from validation methods.
+     *
+     * `ValidatorAwareTrait::createValidator()` needs to dispatch the `Model.buildValidator`
+     * event *before* calling the `validation{Name}` method (e.g. `validationDefault()`).
+     * so that $validator->add()` can build the callable using the custom provider.
+     */
+    public function testCustomProviderFromBuildValidatorIsAvailableInValidationDefault(): void
+    {
+        $provider = new class () {
+            public function customRule(mixed $value): bool
+            {
+                return $value !== 'bad';
+            }
+        };
+
+        $table = new class () extends Table {
+            public function __construct()
+            {
+                parent::__construct(['alias' => 'ValidatorArticles', 'table' => 'articles']);
+            }
+
+            public function validationDefault(Validator $validator): Validator
+            {
+                // `customProvider` is already registered by the time this runs,
+                // because Model.buildValidator is dispatched first.
+                return $validator->add('title', 'customRule', [
+                    'rule' => 'customRule',
+                    'provider' => 'customProvider',
+                ]);
+            }
+        };
+
+        // Behaviors register custom validation providers via this same event.
+        $table->getEventManager()->on(
+            'Model.buildValidator',
+            function (EventInterface $event, Validator $validator, string $name) use ($provider): void {
+                $validator->setProvider('customProvider', $provider);
+            },
+        );
+
+        // No error is raised - the provider from buildValidator resolves the rule.
+        $validator = $table->getValidator();
+
+        // The custom provider rule passes for a valid value.
+        $this->assertSame([], $validator->validate(['title' => 'good']));
+
+        // The custom provider rule fails for an invalid value.
+        $errors = $validator->validate(['title' => 'bad']);
+        $this->assertSame(
+            ['title' => ['customRule' => 'The provided value is invalid']],
+            $errors,
+        );
+    }
+
+    /**
      * Tests the validateUnique method with different combinations
      */
     public function testValidateUnique(): void
