@@ -46,12 +46,12 @@ final readonly class Html implements HtmlStringable, JsonSerializable
     }
 
     /**
-     * Escape ordinary text while preserving explicitly trusted HTML content.
+     * Render content by escaping ordinary text and preserving explicitly trusted HTML.
      *
      * @param \Cake\View\HtmlStringable|string $text Text or trusted markup to render.
      * @return string
      */
-    public static function text(string|HtmlStringable $text): string
+    public static function render(string|HtmlStringable $text): string
     {
         return $text instanceof HtmlStringable ? (string)$text : h($text);
     }
