@@ -19,7 +19,9 @@ namespace Cake\View\Helper;
 use Cake\Core\Configure;
 use Cake\Http\MimeType;
 use Cake\View\Helper;
+use Cake\View\HtmlStringable;
 use Cake\View\StringTemplateTrait;
+use InvalidArgumentException;
 use function Cake\Core\h;
 
 /**
@@ -243,7 +245,7 @@ class HtmlHelper extends Helper
      * - `escapeAttributes` Set to false to disable escaping of attributes.
      * - `confirm` JavaScript confirmation message.
      *
-     * @param array|string $content The content to be wrapped by `<a>` tags.
+     * @param \Cake\View\HtmlStringable|array|string $content The content to be wrapped by `<a>` tags.
      *   Can be an array if $url is null. If $url is null, $content will be used as both the URL and content.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
@@ -251,8 +253,15 @@ class HtmlHelper extends Helper
      * @return string An `<a>` element.
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
      */
-    public function link(array|string $content, array|string|null $url = null, array $options = []): string
-    {
+    public function link(
+        HtmlStringable|array|string $content,
+        array|string|null $url = null,
+        array $options = [],
+    ): string {
+        if ($content instanceof HtmlStringable && $url === null) {
+            throw new InvalidArgumentException('An explicit URL is required for trusted HTML link content.');
+        }
+
         $escape = true;
         if ($url !== null) {
             $url = $this->Url->build($url, $options);
@@ -269,7 +278,9 @@ class HtmlHelper extends Helper
             unset($options['escape']);
         }
 
-        if ($escape === true) {
+        if ($content instanceof HtmlStringable) {
+            $content = (string)$content;
+        } elseif ($escape === true) {
             $content = h($content);
         } elseif (is_string($escape)) {
             $content = htmlentities($content, ENT_QUOTES, $escape);
@@ -307,7 +318,7 @@ class HtmlHelper extends Helper
      *    over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string $content The content to be wrapped by `<a>` tags.
+     * @param \Cake\View\HtmlStringable|string $content The content to be wrapped by `<a>` tags.
      * @param string $path Cake-relative route path.
      * @param array $params An array specifying any additional parameters.
      *   Can be also any special parameters supported by `Router::url()`.
@@ -316,8 +327,12 @@ class HtmlHelper extends Helper
      * @see \Cake\Routing\Router::pathUrl()
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links-from-route-paths
      */
-    public function linkFromPath(string $content, string $path, array $params = [], array $options = []): string
-    {
+    public function linkFromPath(
+        HtmlStringable|string $content,
+        string $path,
+        array $params = [],
+        array $options = [],
+    ): string {
         return $this->link($content, ['_path' => $path] + $params, $options);
     }
 
@@ -915,15 +930,15 @@ class HtmlHelper extends Helper
      * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string $name Tag name.
-     * @param string|null $text String content that will appear inside the HTML element.
+     * @param \Cake\View\HtmlStringable|string|null $text String content that will appear inside the HTML element.
      *   If null, only a start tag will be printed
      * @param array<string, mixed> $options Additional HTML attributes of the HTML tag, see above.
      * @return string The formatted tag element
      */
-    public function tag(string $name, ?string $text = null, array $options = []): string
+    public function tag(string $name, HtmlStringable|string|null $text = null, array $options = []): string
     {
         if (isset($options['escape']) && $options['escape']) {
-            $text = h($text);
+            $text = $text instanceof HtmlStringable ? (string)$text : h($text);
             unset($options['escape']);
         }
         if ($text === null) {
@@ -947,12 +962,12 @@ class HtmlHelper extends Helper
      * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string|null $class CSS class name of the div element.
-     * @param string|null $text String content that will appear inside the div element.
+     * @param \Cake\View\HtmlStringable|string|null $text String content that will appear inside the div element.
      *   If null, only a start tag will be printed
      * @param array<string, mixed> $options Additional HTML attributes of the DIV tag
      * @return string The formatted DIV element
      */
-    public function div(?string $class = null, ?string $text = null, array $options = []): string
+    public function div(?string $class = null, HtmlStringable|string|null $text = null, array $options = []): string
     {
         if ($class) {
             $options['class'] = $class;
@@ -969,14 +984,14 @@ class HtmlHelper extends Helper
      * - `escape` Whether the contents should be html_entity escaped.
      *
      * @param string|null $class CSS class name of the p element.
-     * @param string|null $text String content that will appear inside the p element.
+     * @param \Cake\View\HtmlStringable|string|null $text String content that will appear inside the p element.
      * @param array<string, mixed> $options Additional HTML attributes of the P tag
      * @return string The formatted P element
      */
-    public function para(?string $class, ?string $text, array $options = []): string
+    public function para(?string $class, HtmlStringable|string|null $text, array $options = []): string
     {
         if (!empty($options['escape'])) {
-            $text = h($text);
+            $text = $text instanceof HtmlStringable ? (string)$text : h($text);
         }
         if ($class) {
             $options['class'] = $class;
