@@ -19,6 +19,7 @@ namespace Cake\Database\Driver;
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\DistinctComparisonExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
@@ -41,6 +42,7 @@ class Mysql extends Driver
         return [
             StringAggExpression::class => 'transformStringAggExpression',
             DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
+            FunctionExpression::class => 'transformFunctionExpression',
         ];
     }
 
@@ -80,6 +82,40 @@ class Mysql extends Driver
         $expression
             ->setName('GROUP_CONCAT')
             ->setSyntax(StringAggExpression::SYNTAX_GROUP_CONCAT);
+    }
+
+    /**
+     * Receives a FunctionExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert.
+     * @return void
+     */
+    protected function transformFunctionExpression(FunctionExpression $expression): void
+    {
+        switch ($expression->getName()) {
+            case 'JSON_EXISTS':
+                // MariaDB supports JSON_EXISTS natively
+                if ($this->isMariadb()) {
+                    break;
+                }
+
+                $path = null;
+                $expression->iterateParts(function ($p, $key) use (&$path) {
+                    if ($key === 1) {
+                        $path = $p;
+
+                        return null;
+                    }
+
+                    return $p;
+                });
+
+                $expression
+                    ->setName('JSON_CONTAINS_PATH')
+                    ->add(["'one'" => 'literal', $path]);
+                break;
+        }
     }
 
     /**

@@ -356,6 +356,14 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
+    public function testJsonExists(): void
+    {
+        $function = $this->functions->jsonExists('field', '$');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('JSON_EXISTS(field, :param0)', $function->sql(new ValueBinder()));
+        $this->assertSame('boolean', $function->getReturnType());
+    }
+
     /**
      * Tests generating a JSON_VALUE() function
      */
