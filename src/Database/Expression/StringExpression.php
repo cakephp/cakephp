@@ -42,7 +42,7 @@ class StringExpression implements ExpressionInterface
     public function __construct(string $string, string $collation)
     {
         $this->string = $string;
-        $this->collation = $collation;
+        $this->setCollation($collation);
     }
 
     /**
@@ -53,6 +53,7 @@ class StringExpression implements ExpressionInterface
      */
     public function setCollation(string $collation): void
     {
+        QueryExpression::ensureSimpleString('collation', $collation);
         $this->collation = $collation;
     }
 
