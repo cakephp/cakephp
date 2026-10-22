@@ -42,7 +42,7 @@ class HtmlTest extends TestCase
 
         $this->assertSame($value, $html->value);
         $this->assertSame($value, (string)$html);
-        $this->assertSame($value, Html::text($html));
+        $this->assertSame($value, Html::render($html));
         $this->assertSame(json_encode($value), json_encode($html));
         $this->assertEquals($html, unserialize(serialize($html)));
     }
@@ -65,14 +65,14 @@ class HtmlTest extends TestCase
     /**
      * Escape ordinary text, including existing entities and invalid UTF-8.
      */
-    public function testTextEscaping(): void
+    public function testRenderEscapesText(): void
     {
         $this->assertSame(
             '&lt;strong&gt;&quot;Save&quot; &amp; &#039;continue&#039;&lt;/strong&gt;',
-            Html::text('<strong>"Save" & \'continue\'</strong>'),
+            Html::render('<strong>"Save" & \'continue\'</strong>'),
         );
-        $this->assertSame('&amp;amp;', Html::text('&amp;'));
-        $this->assertSame("\u{FFFD}&lt;", Html::text("\xFF<"));
+        $this->assertSame('&amp;amp;', Html::render('&amp;'));
+        $this->assertSame("\u{FFFD}&lt;", Html::render("\xFF<"));
     }
 
     /**
@@ -80,12 +80,12 @@ class HtmlTest extends TestCase
      */
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function testTextUsesCurrentEncoding(): void
+    public function testRenderUsesCurrentEncoding(): void
     {
         $encoding = mb_internal_encoding();
         try {
             mb_internal_encoding('ISO-8859-1');
-            $this->assertSame("\xE9&lt;", Html::text("\xE9<"));
+            $this->assertSame("\xE9&lt;", Html::render("\xE9<"));
         } finally {
             mb_internal_encoding($encoding);
         }
@@ -99,7 +99,7 @@ class HtmlTest extends TestCase
         $html = Mockery::mock(HtmlStringable::class);
         $html->shouldReceive('__toString')->andReturn('<em>Custom</em>');
 
-        $this->assertSame('<em>Custom</em>', Html::text($html));
+        $this->assertSame('<em>Custom</em>', Html::render($html));
         $this->assertSame('&lt;em&gt;Custom&lt;/em&gt;', h($html));
     }
 }
