@@ -395,29 +395,57 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing the Json Value
+     * Returns a FunctionExpression representing JSON_EXISTS().
+     *
+     * SQL Injection Warning: json expressions is not sanitized before use.
      *
      * Driver transformations:
-     *  - **Postgres**: jsonb_path_query
-     *  - **Sqlite**: json_extract
+     *  - **Mysql**: json_contains_path(expression, 'one', path) (MariaDB uses JSON_EXISTS natively)
+     *  - **Sqlserver**: json_path_exists(expression, path)
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
-     * @param \Cake\Database\Expression\JsonPathExpression|string $jsonPath A valid JSON path
+     * @param \Cake\Database\ExpressionInterface|string $expression The json expression
+     * @param \Cake\Database\Expression\JsonPathExpression|string $path The json path
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonExists(
+        ExpressionInterface|string $expression,
+        JsonPathExpression|string $path,
+    ): FunctionExpression {
+        if (is_string($path)) {
+            $path = new JsonPathExpression($path);
+        }
+
+        $params = $this->toLiteralParam($expression) + [$path];
+
+        return new FunctionExpression('JSON_EXISTS', $params, [], 'boolean');
+    }
+
+    /**
+     * Returns a FunctionExpression representing JSON_VALUE().
+     *
+     * SQL Injection Warning: json expression is not sanitized before use.
+     *
+     * Driver transformations:
+     *  - **Postgres**: jsonb_path_query (version: <17)
+     *  - **Sqlite**: json_extract(expression, path)
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The json expression
+     * @param \Cake\Database\Expression\JsonPathExpression|string $path The json path
      * @param array $types List of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function jsonValue(
         ExpressionInterface|string $expression,
-        JsonPathExpression|string $jsonPath,
+        JsonPathExpression|string $path,
         array $types = [],
     ): FunctionExpression {
-        if (is_string($jsonPath)) {
-            $jsonPath = new JsonPathExpression($jsonPath);
+        if (is_string($path)) {
+            $path = new JsonPathExpression($path);
         }
 
-        $params = $this->toLiteralParam($expression) + [$jsonPath];
+        $params = $this->toLiteralParam($expression) + [$path];
 
-        return new FunctionExpression('JSON_VALUE', $params, $types, $jsonPath->getReturnType());
+        return new FunctionExpression('JSON_VALUE', $params, $types, $path->getReturnType());
     }
 
     /**
