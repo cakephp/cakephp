@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use Cake\View\Html;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use Stringable;
@@ -206,6 +207,18 @@ class FunctionsTest extends TestCase
             [new Response(), ''],
             [['clean', '"clean-me'], ['clean', '&quot;clean-me']],
         ];
+    }
+
+    /**
+     * Escape trusted HTML even when it appears inside nested arrays.
+     */
+    public function testHTrustedHtml(): void
+    {
+        $html = new Html('<strong title="Save">Save & continue</strong>');
+        $escaped = '&lt;strong title=&quot;Save&quot;&gt;Save &amp; continue&lt;/strong&gt;';
+        $this->assertSame($escaped, h($html));
+        $this->assertSame(['content' => [$escaped]], h(['content' => [$html]]));
+        $this->assertSame('&amp;', h(new Html('&amp;'), false));
     }
 
     public function testH2(): void
