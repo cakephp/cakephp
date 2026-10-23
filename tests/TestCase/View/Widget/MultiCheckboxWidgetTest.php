@@ -22,6 +22,7 @@ use Cake\View\StringTemplate;
 use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\MultiCheckboxWidget;
 use Cake\View\Widget\NestingLabelWidget;
+use InvalidArgumentException;
 
 /**
  * MultiCheckbox test case.
@@ -371,9 +372,9 @@ class MultiCheckboxWidgetTest extends TestCase
     }
 
     /**
-     * Test label = false with checkboxWrapper option.
+     * Test that the label option only accepts an array of attributes.
      */
-    public function testNoLabelWithCheckboxWrapperOption(): void
+    public function testLabelFalseThrowsException(): void
     {
         $data = [
             'label' => false,
@@ -386,57 +387,11 @@ class MultiCheckboxWidgetTest extends TestCase
 
         $label = new LabelWidget($this->templates);
         $input = new MultiCheckboxWidget($this->templates, $label);
-        $result = $input->render($data, $this->context);
-        $expected = [
-            ['div' => ['class' => 'checkbox']],
-            ['input' => [
-                'type' => 'checkbox',
-                'name' => 'test[]',
-                'value' => 1,
-                'id' => 'test-1',
-            ]],
-            ['label' => ['for' => 'test-1']],
-            'A',
-            '/label',
-            '/div',
-            ['div' => ['class' => 'checkbox']],
-            ['input' => [
-                'type' => 'checkbox',
-                'name' => 'test[]',
-                'value' => '2',
-                'id' => 'test-2',
-            ]],
-            ['label' => ['for' => 'test-2']],
-            'B',
-            '/label',
-            '/div',
-        ];
-        $this->assertHtml($expected, $result);
-
-        $templates = [
-            'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
-        ];
-        $this->templates->add($templates);
-        $result = $input->render($data, $this->context);
-        $expected = [
-            ['div' => ['class' => 'checkbox']],
-            ['input' => [
-                'type' => 'checkbox',
-                'name' => 'test[]',
-                'value' => 1,
-                'id' => 'test-1',
-            ]],
-            '/div',
-            ['div' => ['class' => 'checkbox']],
-            ['input' => [
-                'type' => 'checkbox',
-                'name' => 'test[]',
-                'value' => '2',
-                'id' => 'test-2',
-            ]],
-            '/div',
-        ];
-        $this->assertHtml($expected, $result);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The `label` option of `Cake\View\Widget\MultiCheckboxWidget` must be an array of label attributes, `bool` given.',
+        );
+        $input->render($data, $this->context);
     }
 
     /**

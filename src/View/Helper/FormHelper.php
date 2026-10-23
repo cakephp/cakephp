@@ -152,7 +152,7 @@ class FormHelper extends Helper
             // Radio input element,
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Wrapping container for radio input/label,
-            'radioWrapper' => '{{input}}{{label}}',
+            'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>',
             // Textarea input element,
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
@@ -178,7 +178,7 @@ class FormHelper extends Helper
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
         // Whether checkboxes and radios should be wrapped in a label element
-        'nestedCheckboxAndRadio' => true,
+        'nestedCheckboxAndRadio' => false,
     ];
 
     /**
@@ -1073,7 +1073,7 @@ class FormHelper extends Helper
      * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
-     * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
+     * - `labelOptions` - Either `false` to disable label around nested widgets e.g. radio or an array
      *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
      *   widget is checked
      *
@@ -1515,7 +1515,10 @@ class FormHelper extends Helper
 
         $label = $options['label'] ?? null;
 
-        if ($label === false && $options['type'] === 'checkbox') {
+        $nestedInput = $options['nestedInput'] ?? false;
+        if ($label === false && $options['type'] === 'checkbox' && $nestedInput) {
+            // Without a label the group template only renders the label slot,
+            // so the input has to be placed there.
             return $options['input'];
         }
         if ($label === false) {
@@ -2209,7 +2212,6 @@ class FormHelper extends Helper
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);
-            $attributes['nestedInput'] = $this->getConfig('nestedCheckboxAndRadio');
 
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }
@@ -2257,9 +2259,9 @@ class FormHelper extends Helper
      *   You can also set disabled to a list of values you want to disable when creating checkboxes.
      * - `hiddenField` - Set to false to remove the hidden field that ensures a value
      *   is always submitted.
-     * - `label` - Either `false` to disable label around the widget or an array of attributes for
-     *   the label tag. `selected` will be added to any classes e.g. `'class' => 'myclass'` where
-     *   widget is checked
+     * - `label` - An array of attributes for the label tags generated for each option.
+     *   `selected` will be added to any classes e.g. `'class' => 'myclass'` where
+     *   option is checked.
      *
      * Can be used in place of a select box with the multiple attribute.
      *
@@ -2272,6 +2274,11 @@ class FormHelper extends Helper
      */
     public function multiCheckbox(string $fieldName, iterable $options, array $attributes = []): string
     {
+        if (isset($attributes['label']) && !is_array($attributes['label'])) {
+            unset($attributes['label']);
+        }
+        $attributes['nestedInput'] ??= $this->getConfig('nestedCheckboxAndRadio');
+
         $attributes += [
             'disabled' => null,
             'escape' => true,

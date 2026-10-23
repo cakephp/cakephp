@@ -19,6 +19,7 @@ namespace Cake\View\Widget;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplate;
+use InvalidArgumentException;
 use function Cake\Core\h;
 
 /**
@@ -44,7 +45,7 @@ class MultiCheckboxWidget extends BasicWidget
         'val' => null,
         'idPrefix' => null,
         'templateVars' => [],
-        'label' => true,
+        'label' => [],
         'nestedInput' => true,
     ];
 
@@ -93,6 +94,8 @@ class MultiCheckboxWidget extends BasicWidget
      * - `escape` Set to false to disable HTML escaping.
      * - `options` An associative array of value=>labels to generate options for.
      * - `idPrefix` Prefix for generated ID attributes.
+     * - `label` An array of attributes for the label tags generated for
+     *   each option. Labels are always generated and cannot be disabled.
      *
      * ### Options format
      *
@@ -198,6 +201,14 @@ class MultiCheckboxWidget extends BasicWidget
         $nestedInput = $checkbox['nestedInput'];
         unset($checkbox['nestedInput']);
 
+        if (!is_array($checkbox['label'])) {
+            throw new InvalidArgumentException(sprintf(
+                'The `label` option of `%s` must be an array of label attributes, `%s` given.',
+                static::class,
+                get_debug_type($checkbox['label']),
+            ));
+        }
+
         $input = $this->templates->format('checkbox', [
             'name' => $checkbox['name'] . '[]',
             'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
@@ -208,37 +219,29 @@ class MultiCheckboxWidget extends BasicWidget
             ),
         ]);
 
-        if (
-            $checkbox['label'] === false
-            && ($nestedInput || !str_contains($this->templates->get('checkboxWrapper'), '{{input}}'))
-        ) {
-            $label = $input;
-            $input = '';
+        $labelAttrs = $checkbox['label'];
+        $labelAttrs += [
+            'for' => $checkbox['id'],
+            'escape' => $checkbox['escape'],
+            'text' => $checkbox['text'],
+            'templateVars' => $checkbox['templateVars'],
+        ];
+
+        if ($nestedInput) {
+            if (!isset($labelAttrs['input']) || $labelAttrs['input'] !== false) {
+                $labelAttrs['input'] = $input;
+                $input = '';
+            }
         } else {
-            $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];
-            $labelAttrs += [
-                'for' => $checkbox['id'],
-                'escape' => $checkbox['escape'],
-                'text' => $checkbox['text'],
-                'templateVars' => $checkbox['templateVars'],
-            ];
-
-            if ($nestedInput) {
-                if (!isset($labelAttrs['input']) || $labelAttrs['input'] !== false) {
-                    $labelAttrs['input'] = $input;
-                    $input = '';
-                }
-            } else {
-                $labelAttrs['input'] = '';
-            }
-
-            if ($checkbox['checked']) {
-                $selectedClass = $this->templates->format('selectedClass', []);
-                $labelAttrs = (array)$this->templates->addClass($labelAttrs, $selectedClass);
-            }
-
-            $label = $this->label->render($labelAttrs, $context);
+            $labelAttrs['input'] = '';
         }
+
+        if ($checkbox['checked']) {
+            $selectedClass = $this->templates->format('selectedClass', []);
+            $labelAttrs = (array)$this->templates->addClass($labelAttrs, $selectedClass);
+        }
+
+        $label = $this->label->render($labelAttrs, $context);
 
         return $this->templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
