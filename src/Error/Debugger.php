@@ -63,14 +63,6 @@ class Debugger
      * @var array<string, mixed>
      */
     protected array $defaultConfig = [
-        'outputMask' => [
-            'password' => '********',
-            'login' => '********',
-            'host' => '********',
-            'database' => '********',
-            'port' => '********',
-            'schema' => '********',
-        ],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
         'editorBasePath' => null,
@@ -150,32 +142,6 @@ class Debugger
         }
 
         return static::getInstance()->getConfig($key);
-    }
-
-    /**
-     * Reads the current output masking.
-     *
-     * @return array<string, string>
-     */
-    public static function outputMask(): array
-    {
-        return static::configInstance('outputMask');
-    }
-
-    /**
-     * Sets configurable masking of debugger output by property name and array key names.
-     *
-     * ### Example
-     *
-     * Debugger::setOutputMask(['password' => '[*************]']);
-     *
-     * @param array<string, string> $value An array where keys are replaced by their values in output.
-     * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
-     * @return void
-     */
-    public static function setOutputMask(array $value, bool $merge = true): void
-    {
-        static::configInstance('outputMask', $value, $merge);
     }
 
     /**
@@ -676,11 +642,8 @@ class Debugger
 
         $remaining = $context->remainingDepth();
         if ($remaining >= 0) {
-            $outputMask = static::outputMask();
             foreach ($var as $key => $val) {
-                if (array_key_exists($key, $outputMask)) {
-                    $node = new ScalarNode('string', $outputMask[$key]);
-                } elseif ($val !== $var) {
+                if ($val !== $var) {
                     // Dump all the items without increasing depth.
                     $node = static::export($val, $context);
                 } else {
@@ -732,12 +695,8 @@ class Debugger
                 }
             }
 
-            $outputMask = static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                if (array_key_exists($key, $outputMask)) {
-                    $value = $outputMask[$key];
-                }
                 $node->addProperty(
                     new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth())),
                 );
