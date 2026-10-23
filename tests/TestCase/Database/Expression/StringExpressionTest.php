@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests StringExpression class
