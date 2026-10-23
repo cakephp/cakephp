@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Core\Configure;
+use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -26,7 +27,6 @@ use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\TestCase;
 use Closure;
-use Laminas\Diactoros\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -471,7 +471,7 @@ class RoutingMiddlewareTest extends TestCase
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $handler = new TestRequestHandler(function ($request) {
-            return new Response('php://memory', 200);
+            return new Response(['status' => 200]);
         });
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
@@ -489,7 +489,7 @@ class RoutingMiddlewareTest extends TestCase
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $handler = new TestRequestHandler(function ($request) {
-            return new Response('php://memory', 200);
+            return new Response(['status' => 200]);
         });
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Http\UploadedFile;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
@@ -23,7 +24,6 @@ use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator;
 use Closure;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
 use Locale;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
