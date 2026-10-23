@@ -53,8 +53,6 @@ class IdentifierExpression implements ExpressionInterface
         $this->_identifier = $identifier;
         if ($collation !== null) {
             $this->setCollation($collation);
-        } else {
-            $this->collation = null;
         }
     }
 
