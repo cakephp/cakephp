@@ -58,6 +58,11 @@ class MemcachedEngineTest extends TestCase
         }
         fclose($socket);
 
+        // The server outlives the test and getAllKeys() can miss recent writes, so flush it
+        $memcached = new Memcached();
+        $memcached->addServer('127.0.0.1', (int)$this->port);
+        $memcached->flush();
+
         $this->_configCache();
     }
 
@@ -277,7 +282,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Memcached extension is not compiled with json support');
+        $this->expectExceptionMessage('Memcached extension is not compiled with `json` support');
         $Memcached->init($config);
     }
 
@@ -304,7 +309,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Memcached extension is not compiled with msgpack support');
+        $this->expectExceptionMessage('Memcached extension is not compiled with `msgpack` support');
         $Memcached->init($config);
     }
 
@@ -327,7 +332,7 @@ class MemcachedEngineTest extends TestCase
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Memcached extension is not compiled with igbinary support');
+        $this->expectExceptionMessage('Memcached extension is not compiled with `igbinary` support');
         $Memcached->init($config);
     }
 
