@@ -24,7 +24,7 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
-use function Cake\Database\Expression\is;
+use function Cake\Database\Expression\equals;
 
 /**
  * CounterCache behavior
@@ -276,7 +276,7 @@ class CounterCacheBehavior extends Behavior
 
                 foreach ($updateConditions as $f => $value) {
                     if ($value === null) {
-                        $updateConditions[$f] = is($value);
+                        $updateConditions[$f] = equals($value);
                     }
                 }
 
@@ -325,7 +325,7 @@ class CounterCacheBehavior extends Behavior
 
         foreach ($countConditions as $field => $value) {
             if ($value === null) {
-                $countConditions[$field] = is($value);
+                $countConditions[$field] = equals($value);
             }
         }
 

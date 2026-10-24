@@ -25,7 +25,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 
-use function Cake\Database\Expression\{in, is, notEq};
+use function Cake\Database\Expression\{equals, in, notEquals};
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -126,7 +126,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $name . '.field' => $field,
             ];
             if (!$this->config['allowEmptyTranslations']) {
-                $conditions[$name . '.content'] = notEq('');
+                $conditions[$name . '.content'] = notEquals('');
             }
 
             if ($this->table->associations()->has($name)) {
@@ -144,7 +144,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $conditions = ["{$targetAlias}.model" => $model];
         if (!$this->config['allowEmptyTranslations']) {
-            $conditions["{$targetAlias}.content"] = notEq('');
+            $conditions["{$targetAlias}.content"] = notEquals('');
         }
 
         if ($this->table->associations()->has($targetAlias)) {
@@ -488,7 +488,7 @@ class EavStrategy implements TranslateStrategyInterface
                 if (!$translation->isDirty($field)) {
                     continue;
                 }
-                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => is($key)];
+                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => equals($key)];
                 $contents[] = new $entityClass(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);

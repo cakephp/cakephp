@@ -28,7 +28,7 @@ use Stringable;
 use Throwable;
 use WeakMap;
 
-use function Cake\Database\Expression\{in, is, isNot, notIn};
+use function Cake\Database\Expression\{equals, in, notEquals, notIn};
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -600,7 +600,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->join(['a' => [
      *     'table' => 'articles',
      *     'conditions' => [
-     *         'a.posted' => gte(new DateTime('-3 days')),
+     *         'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *         'a.published' => true,
      *         'a.author_id = authors.id'
      *     ]
@@ -703,7 +703,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->leftJoin(['a' => 'articles'], [
-     *      'a.posted' => gte(new DateTime('-3 days')),
+     *      'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *      'a.published' => true,
      *      'a.author_id = authors.id'
      * ], ['a.posted' => 'datetime', 'a.published' => 'boolean']);
@@ -833,7 +833,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->where([
-     *     'posted' => gte(new DateTime('3 days ago')),
+     *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
      *     'title' => like('Hello W%'),
      *     'author_id' => 1,
      * ], ['posted' => 'datetime']);
@@ -850,8 +850,8 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->where([
-     *     'author_id' => notEq(1),
-     *     'OR' => ['published' => true, 'posted' => lt(new DateTime('now'))],
+     *     'author_id' => notEquals(1),
+     *     'OR' => ['published' => true, 'posted' => lessThan(new DateTime('now'))],
      *     'NOT' => ['title' => 'Hello']
      * ], ['published' => boolean, 'posted' => 'datetime']
      * ```
@@ -878,7 +878,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Using expressions objects:
      *
      * ```
-     * $exp = $query->expr()->add(['id' => notEq(100), 'author_id' != 1])->tieWith('OR');
+     * $exp = $query->expr()->add(['id' => notEquals(100), 'author_id' != 1])->tieWith('OR');
      * $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -897,10 +897,10 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query
-     *   ->where(['title' => notEq('Hello World')])
+     *   ->where(['title' => notEquals('Hello World')])
      *   ->where(function ($exp, $query) {
      *     $or = $exp->or(['id' => 1]);
-     *     $and = $exp->and([['id' => gt(2)], ['id' => lt(10)]]);
+     *     $and = $exp->and([['id' => greaterThan(2)], ['id' => lessThan(10)]]);
      *    return $or->add($and);
      *   });
      * ```
@@ -929,12 +929,12 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ### Using null-able values
      *
-     * When using values that can be null you can use the 'IS' keyword to let the ORM generate the correct SQL based on the value's type
+     * Use equals() with nullable values to choose between equality and IS NULL based on the value.
      *
      * ```
      * $query->where([
-     *     'posted' => gte(new DateTime('3 days ago')),
-     *     'category_id' => is($category),
+     *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
+     *     'category_id' => equals($category),
      * ]);
      * ```
      *
@@ -1062,7 +1062,7 @@ abstract class Query implements ExpressionInterface, Stringable
         ];
 
         if ($options['allowEmpty'] && !$values) {
-            return $this->where([$field => isNot(null)]);
+            return $this->where([$field => notEquals(null)]);
         }
 
         return $this->where([$field => notIn($values)], $options['types']);
@@ -1090,12 +1090,12 @@ abstract class Query implements ExpressionInterface, Stringable
         ];
 
         if ($options['allowEmpty'] && !$values) {
-            return $this->where([$field => isNot(null)]);
+            return $this->where([$field => notEquals(null)]);
         }
 
         return $this->where(
             [
-                'OR' => [[$field => notIn($values)], [$field => is(null)]],
+                'OR' => [[$field => notIn($values)], [$field => equals(null)]],
             ],
             $options['types'],
         );
@@ -1130,7 +1130,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ```
      * $query
      *   ->where(['OR' => ['published' => false, 'published is NULL']])
-     *   ->andWhere(['author_id' => 1, 'comments_count' => gt(10)])
+     *   ->andWhere(['author_id' => 1, 'comments_count' => greaterThan(10)])
      * ```
      *
      * Produces:

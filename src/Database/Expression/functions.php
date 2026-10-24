@@ -20,27 +20,27 @@ use Cake\Database\Enum\PredicateOperation;
 use Cake\Database\ExpressionInterface;
 
 /**
- * Creates a predicate for a field equal to the supplied value.
+ * Creates an equality predicate, using IS NULL when the value is null.
  *
  * @param mixed $value The value or expression to compare.
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function eq(mixed $value, ?string $type = null): Predicate
+function equals(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::EQ, [$value], $type);
+    return new Predicate(PredicateOperation::EQUALS, [$value], $type);
 }
 
 /**
- * Creates a predicate for a field not equal to the supplied value.
+ * Creates an inequality predicate, using IS NOT NULL when the value is null.
  *
  * @param mixed $value The value or expression to compare.
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function notEq(mixed $value, ?string $type = null): Predicate
+function notEquals(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::NOT_EQ, [$value], $type);
+    return new Predicate(PredicateOperation::NOT_EQUALS, [$value], $type);
 }
 
 /**
@@ -50,9 +50,9 @@ function notEq(mixed $value, ?string $type = null): Predicate
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function gt(mixed $value, ?string $type = null): Predicate
+function greaterThan(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::GT, [$value], $type);
+    return new Predicate(PredicateOperation::GREATER_THAN, [$value], $type);
 }
 
 /**
@@ -62,9 +62,9 @@ function gt(mixed $value, ?string $type = null): Predicate
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function gte(mixed $value, ?string $type = null): Predicate
+function greaterThanOrEquals(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::GTE, [$value], $type);
+    return new Predicate(PredicateOperation::GREATER_THAN_OR_EQUALS, [$value], $type);
 }
 
 /**
@@ -74,9 +74,9 @@ function gte(mixed $value, ?string $type = null): Predicate
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function lt(mixed $value, ?string $type = null): Predicate
+function lessThan(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::LT, [$value], $type);
+    return new Predicate(PredicateOperation::LESS_THAN, [$value], $type);
 }
 
 /**
@@ -86,9 +86,9 @@ function lt(mixed $value, ?string $type = null): Predicate
  * @param string|null $type The binding type, overriding the surrounding field type.
  * @return \Cake\Database\Expression\Predicate
  */
-function lte(mixed $value, ?string $type = null): Predicate
+function lessThanOrEquals(mixed $value, ?string $type = null): Predicate
 {
-    return new Predicate(PredicateOperation::LTE, [$value], $type);
+    return new Predicate(PredicateOperation::LESS_THAN_OR_EQUALS, [$value], $type);
 }
 
 /**
@@ -231,30 +231,6 @@ function isNull(): Predicate
 function isNotNull(): Predicate
 {
     return new Predicate(PredicateOperation::IS_NOT_NULL);
-}
-
-/**
- * Creates a null check for null, or an ordinary comparison for a non-null value.
- *
- * @param mixed $value The nullable value or expression to compare.
- * @param string|null $type The binding type, overriding the surrounding field type.
- * @return \Cake\Database\Expression\Predicate
- */
-function is(mixed $value, ?string $type = null): Predicate
-{
-    return new Predicate(PredicateOperation::IS, [$value], $type);
-}
-
-/**
- * Creates a null check for null, or an ordinary comparison for a non-null value.
- *
- * @param mixed $value The nullable value or expression to compare.
- * @param string|null $type The binding type, overriding the surrounding field type.
- * @return \Cake\Database\Expression\Predicate
- */
-function isNot(mixed $value, ?string $type = null): Predicate
-{
-    return new Predicate(PredicateOperation::IS_NOT, [$value], $type);
 }
 
 /**

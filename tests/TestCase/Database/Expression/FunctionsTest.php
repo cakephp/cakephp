@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{between, comparison, gt, in, is, isNot};
+use function Cake\Database\Expression\{between, comparison, equals, greaterThan, in, notEquals};
 
 /**
  * Verifies deferred predicates, field type inference, and independent expression trees.
@@ -33,22 +33,35 @@ class FunctionsTest extends TestCase
     /**
      * Provides every field-based helper and its equivalent fluent arguments.
      *
-     * @return array<string, array{string, array<mixed>}>
+     * @return array<string, array{string, string, array<mixed>}>
      */
     public static function helpersProvider(): array
     {
         $cases = [];
-        foreach (['eq', 'notEq', 'gt', 'gte', 'lt', 'lte', 'like', 'notLike', 'isDistinctFrom', 'isNotDistinctFrom'] as $method) {
-            $cases[$method] = [$method, [7]];
+        foreach (
+            [
+            'equals' => 'eq',
+            'notEquals' => 'notEq',
+            'greaterThan' => 'gt',
+            'greaterThanOrEquals' => 'gte',
+            'lessThan' => 'lt',
+            'lessThanOrEquals' => 'lte',
+            'like' => 'like',
+            'notLike' => 'notLike',
+            'isDistinctFrom' => 'isDistinctFrom',
+            'isNotDistinctFrom' => 'isNotDistinctFrom',
+            ] as $helper => $method
+        ) {
+            $cases[$helper] = [$helper, $method, [7]];
         }
         foreach (['in', 'notIn', 'inOrNull', 'notInOrNull'] as $method) {
-            $cases[$method] = [$method, [[1, 2]]];
+            $cases[$method] = [$method, $method, [[1, 2]]];
         }
         foreach (['between', 'notBetween'] as $method) {
-            $cases[$method] = [$method, [1, 10]];
+            $cases[$method] = [$method, $method, [1, 10]];
         }
         foreach (['isNull', 'isNotNull'] as $method) {
-            $cases[$method] = [$method, []];
+            $cases[$method] = [$method, $method, []];
         }
 
         return $cases;
@@ -57,13 +70,14 @@ class FunctionsTest extends TestCase
     /**
      * Checks SQL and bound types against the existing expression builder.
      *
-     * @param string $method The predicate and fluent method name.
+     * @param string $helper The namespaced predicate function.
+     * @param string $method The equivalent fluent method name.
      * @param array<mixed> $arguments The operands to compare.
      */
     #[DataProvider('helpersProvider')]
-    public function testFluentEquivalence(string $method, array $arguments): void
+    public function testFluentEquivalence(string $helper, string $method, array $arguments): void
     {
-        $function = 'Cake\\Database\\Expression\\' . $method;
+        $function = 'Cake\\Database\\Expression\\' . $helper;
         $predicate = $function(...$arguments);
         $actual = new QueryExpression(['Articles.id' => $predicate], ['Articles.id' => 'integer']);
         $expected = new QueryExpression([], ['Articles.id' => 'integer']);
@@ -96,7 +110,7 @@ class FunctionsTest extends TestCase
      */
     public function testArrayBindingTypes(): void
     {
-        foreach ([['eq', 'IN'], ['notEq', 'NOT IN']] as [$helper, $operator]) {
+        foreach ([['equals', 'IN'], ['notEquals', 'NOT IN']] as [$helper, $operator]) {
             $function = 'Cake\\Database\\Expression\\' . $helper;
             $expression = new QueryExpression(['id' => $function(7)], ['id' => 'integer[]']);
             $binder = new ValueBinder();
@@ -107,11 +121,11 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Checks nullable IS predicates choose their operator using the runtime value.
+     * Checks equality predicates choose null checks using the runtime value.
      */
     public function testNullableComparisons(): void
     {
-        foreach ([[is(null), '(id) IS NULL'], [isNot(null), '(id) IS NOT NULL'], [is(1), 'id = :c0'], [isNot(1), 'id != :c0']] as [$predicate, $sql]) {
+        foreach ([[equals(null), '(id) IS NULL'], [notEquals(null), '(id) IS NOT NULL'], [equals(1), 'id = :c0'], [notEquals(1), 'id != :c0']] as [$predicate, $sql]) {
             $expression = new QueryExpression(['id' => $predicate]);
             $this->assertSame($sql, $expression->sql(new ValueBinder()));
         }
@@ -165,8 +179,8 @@ class FunctionsTest extends TestCase
     public function testNestedConditionsAndFieldExpressions(): void
     {
         $expression = new QueryExpression([
-            'OR' => [['id' => gt(1)], ['id' => between(10, 20)]],
-            'NOT' => ['COUNT(Articles.id)' => gt(100)],
+            'OR' => [['id' => greaterThan(1)], ['id' => between(10, 20)]],
+            'NOT' => ['COUNT(Articles.id)' => greaterThan(100)],
         ]);
         $this->assertSame(
             '((id > :c0 OR id BETWEEN :c1 AND :c2) AND NOT (COUNT(Articles.id) > :c3))',
@@ -182,14 +196,14 @@ class FunctionsTest extends TestCase
     public static function invalidConditionsProvider(): array
     {
         return [
-            'standalone predicate' => [[gt(1)]],
-            'boolean predicate' => [['OR' => gt(1)]],
+            'standalone predicate' => [[greaterThan(1)]],
+            'boolean predicate' => [['OR' => greaterThan(1)]],
             'legacy greater than' => [['id >' => 1]],
             'legacy explicit equality' => [['id =' => 1]],
             'legacy null check' => [['id IS NOT' => null]],
             'legacy distinct' => [['id IS NOT DISTINCT FROM' => null]],
             'legacy custom operator' => [['data @>' => '{}']],
-            'conflicting predicate key' => [['id >' => gt(1)]],
+            'conflicting predicate key' => [['id >' => greaterThan(1)]],
         ];
     }
 

@@ -25,7 +25,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use function Cake\Database\Expression\gte;
+use function Cake\Database\Expression\greaterThanOrEquals;
 
 /**
  * Tests InsertQuery class
@@ -158,7 +158,7 @@ class InsertQueryTest extends TestCase
                 'published' => 'N',
             ],
         ];
-        $this->assertTable('articles', 1, $expected, ['id' => gte(4)]);
+        $this->assertTable('articles', 1, $expected, ['id' => greaterThanOrEquals(4)]);
     }
 
     /**
@@ -218,7 +218,7 @@ class InsertQueryTest extends TestCase
                 'published' => 'N',
             ],
         ];
-        $this->assertTable('articles', 1, $expected, ['id' => gte(4)]);
+        $this->assertTable('articles', 1, $expected, ['id' => greaterThanOrEquals(4)]);
     }
 
     /**
@@ -260,7 +260,7 @@ class InsertQueryTest extends TestCase
                 'published' => 'N',
             ],
         ];
-        $this->assertTable('articles', 2, $expected, ['id' => gte(4)]);
+        $this->assertTable('articles', 2, $expected, ['id' => greaterThanOrEquals(4)]);
     }
 
     /**

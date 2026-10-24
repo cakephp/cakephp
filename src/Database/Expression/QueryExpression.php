@@ -779,7 +779,7 @@ class QueryExpression implements ExpressionInterface, Countable
         if ($value === null && $this->conjunction !== ',') {
             throw new InvalidArgumentException(sprintf(
                 'Expression `%s` has invalid `null` value.'
-                . ' If `null` is a valid value, a null-aware predicate such as isNull() or is()'
+                . ' If `null` is a valid value, a null-aware predicate such as isNull() or equals()'
                 . ' is required.',
                 $expression,
             ));

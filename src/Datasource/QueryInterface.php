@@ -99,7 +99,7 @@ interface QueryInterface
      * $query->applyOptions([
      *   'fields' => ['id', 'name'],
      *   'conditions' => [
-     *     'created' => gte('2013-01-01')
+     *     'created' => greaterThanOrEquals('2013-01-01')
      *   ],
      *   'limit' => 10
      * ]);
@@ -110,7 +110,7 @@ interface QueryInterface
      * ```
      *  $query
      *  ->select(['id', 'name'])
-     *  ->where(['created' => gte('2013-01-01')])
+     *  ->where(['created' => greaterThanOrEquals('2013-01-01')])
      *  ->limit(10)
      * ```
      *
@@ -314,7 +314,7 @@ interface QueryInterface
      *
      * ```
      *  $query->where([
-     *      'posted' => gte(new DateTime('3 days ago')),
+     *      'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
      *      'title' => like('Hello W%'),
      *      'author_id' => 1,
      *  ], ['posted' => 'datetime']);
@@ -331,8 +331,8 @@ interface QueryInterface
      *
      * ```
      *  $query->where([
-     *      'author_id' => notEq(1),
-     *      'OR' => ['published' => true, 'posted' => lt(new DateTime('now'))],
+     *      'author_id' => notEquals(1),
+     *      'OR' => ['published' => true, 'posted' => lessThan(new DateTime('now'))],
      *      'NOT' => ['title' => 'Hello']
      *  ], ['published' => boolean, 'posted' => 'datetime']
      * ```
@@ -355,7 +355,7 @@ interface QueryInterface
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->expr()->add(['id' => notEq(100), 'author_id' != 1])->tieWith('OR');
+     *  $exp = $query->expr()->add(['id' => notEquals(100), 'author_id' != 1])->tieWith('OR');
      *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -374,10 +374,10 @@ interface QueryInterface
      *
      * ```
      *  $query
-     *  ->where(['title' => notEq('Hello World')])
+     *  ->where(['title' => notEquals('Hello World')])
      *  ->where(function ($exp, $query) {
      *      $or = $exp->or(['id' => 1]);
-     *      $and = $exp->and([['id' => gt(2)], ['id' => lt(10)]]);
+     *      $and = $exp->and([['id' => greaterThan(2)], ['id' => lessThan(10)]]);
      *  return $or->add($and);
      *  });
      * ```

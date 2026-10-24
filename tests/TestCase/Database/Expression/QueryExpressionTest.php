@@ -21,7 +21,8 @@ use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{comparison, eq, gte, isDistinctFrom, isNot, isNotDistinctFrom, lte, notEq};
+use function Cake\Database\Expression\{comparison, equals, greaterThanOrEquals, isDistinctFrom, isNotDistinctFrom};
+use function Cake\Database\Expression\{lessThanOrEquals, notEquals};
 
 /**
  * Tests QueryExpression class
@@ -50,7 +51,7 @@ class QueryExpressionTest extends TestCase
      */
     public function testMultiWordOperators(): void
     {
-        $expr = new QueryExpression(['FUNC(Users.first + Users.last)' => isNot('me')]);
+        $expr = new QueryExpression(['FUNC(Users.first + Users.last)' => notEquals('me')]);
         $this->assertSame('FUNC(Users.first + Users.last) != :c0', $expr->sql(new ValueBinder()));
 
         $expr = new QueryExpression(['FUNC(Users.name + Users.id)' => comparison('NOT SIMILAR TO', 'pattern')]);
@@ -64,19 +65,19 @@ class QueryExpressionTest extends TestCase
      */
     public function testSymbolOperators(): void
     {
-        $expr = new QueryExpression(['Users.name' => eq('pattern')]);
+        $expr = new QueryExpression(['Users.name' => equals('pattern')]);
         $this->assertSame('Users.name = :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name' => notEq('pattern')]);
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
         $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name' => notEq('pattern')]);
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
         $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name' => gte('pattern')]);
+        $expr = new QueryExpression(['Users.name' => greaterThanOrEquals('pattern')]);
         $this->assertSame('Users.name >= :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name' => lte('pattern')]);
+        $expr = new QueryExpression(['Users.name' => lessThanOrEquals('pattern')]);
         $this->assertSame('Users.name <= :c0', $expr->sql(new ValueBinder()));
 
         $expr = new QueryExpression(['Users.name' => comparison('!~', 'pattern')]);
