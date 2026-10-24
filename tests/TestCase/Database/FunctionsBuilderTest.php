@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
