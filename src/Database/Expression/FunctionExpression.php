@@ -68,6 +68,8 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
     {
+        QueryExpression::ensureSimpleString('name', $name);
+
         $this->_name = $name;
         $this->_returnType = $returnType;
         parent::__construct($params, $types, ',');
@@ -81,6 +83,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function setName(string $name)
     {
+        QueryExpression::ensureSimpleString('name', $name);
         $this->_name = $name;
 
         return $this;
