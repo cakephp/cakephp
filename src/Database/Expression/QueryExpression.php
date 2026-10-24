@@ -881,7 +881,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public static function ensureSimpleString(string $parameterName, string $value): void
     {
-        if (preg_match('/^(?:")?[a-zA-Z0-9_\.]+(?:")?$/', $value)) {
+        if (preg_match('/^(?:[\'"])?[a-zA-Z0-9_\.]+(?:[\'"])?$/', $value)) {
             return;
         }
         throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");

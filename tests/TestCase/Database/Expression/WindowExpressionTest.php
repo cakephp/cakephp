@@ -175,6 +175,12 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder()),
         );
 
+        $w = (new WindowExpression())->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
+        $this->assertRegExpSql(
+            "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
+            $w->sql(new ValueBinder()),
+        );
+
         $w = (new WindowExpression())->frame(
             WindowExpression::RANGE,
             2,
