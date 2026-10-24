@@ -83,7 +83,9 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function setName(string $name)
     {
-        QueryExpression::ensureSimpleString('name', $name);
+        if ($name !== '') {
+            QueryExpression::ensureSimpleString('name', $name);
+        }
         $this->_name = $name;
 
         return $this;
