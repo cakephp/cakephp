@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\StringExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests StringExpression class
@@ -32,5 +34,23 @@ class StringExpressionTest extends TestCase
         $this->assertSame(':c0 COLLATE utf8_general_ci', $expr->sql($binder));
         $this->assertSame('testString', $binder->bindings()[':c0']['value']);
         $this->assertSame('string', $binder->bindings()[':c0']['type']);
+    }
+
+    public static function invalidCollationProvider(): array
+    {
+        return [
+            ['spaces are not simple'],
+            ["\ttabs"],
+            ["\nnewline"],
+            ["\rcarriagereturn"],
+            ['dash-es'],
+        ];
+    }
+
+    #[DataProvider('invalidCollationProvider')]
+    public function testCollationRejectNonSimpleCollation(string $collate): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new StringExpression('testString', $collate);
     }
 }

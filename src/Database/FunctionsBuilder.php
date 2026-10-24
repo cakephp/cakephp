@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use InvalidArgumentException;
 
@@ -173,7 +174,7 @@ class FunctionsBuilder
      */
     public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
-        $this->ensureSimpleString('dataType', $dataType);
+        QueryExpression::ensureSimpleString('dataType', $dataType);
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
 
         return $expression->setConjunction(' AS')->add([$dataType => 'literal']);
@@ -228,7 +229,7 @@ class FunctionsBuilder
      */
     public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
-        $this->ensureSimpleString('part', $part);
+        QueryExpression::ensureSimpleString('part', $part);
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
 
         return $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
@@ -257,7 +258,7 @@ class FunctionsBuilder
         if (!is_numeric($value)) {
             $value = 0;
         }
-        $this->ensureSimpleString('unit', $unit);
+        QueryExpression::ensureSimpleString('unit', $unit);
         $interval = $value . ' ' . $unit;
         $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
 
@@ -463,20 +464,5 @@ class FunctionsBuilder
         }
 
         return [$expression];
-    }
-
-    /**
-     * Ensures that string values are simple ascii values with no whitespace
-     *
-     * @param string $parameterName The name of the parameter being checked.
-     * @param string $value The value to check
-     * @return void
-     */
-    protected function ensureSimpleString(string $parameterName, string $value): void
-    {
-        if (preg_match('/^[a-zA-Z0-9]+$/', $value)) {
-            return;
-        }
-        throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
     }
 }
