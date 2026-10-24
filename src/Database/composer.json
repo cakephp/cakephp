@@ -39,7 +39,10 @@
     "autoload": {
         "psr-4": {
             "Cake\\Database\\": "."
-        }
+        },
+        "files": [
+            "Expression/functions.php"
+        ]
     },
     "suggest": {
         "cakephp/i18n": "If you are using locale-aware datetime formats.",

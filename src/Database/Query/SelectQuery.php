@@ -295,7 +295,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * $query->join(['a' => [
      *     'table' => 'articles',
      *     'conditions' => [
-     *         'a.posted >=' => new DateTime('-3 days'),
+     *         'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *         'a.published' => true,
      *         'a.author_id = authors.id'
      *     ]
@@ -395,7 +395,7 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * ```
      * $query->leftJoin(['a' => 'articles'], [
-     *      'a.posted >=' => new DateTime('-3 days'),
+     *      'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *      'a.published' => true,
      *      'a.author_id = authors.id'
      * ], ['a.posted' => 'datetime', 'a.published' => 'boolean']);

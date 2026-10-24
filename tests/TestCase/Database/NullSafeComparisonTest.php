@@ -16,6 +16,8 @@ use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+use function Cake\Database\Expression\{isDistinctFrom, isNotDistinctFrom};
+
 class NullSafeComparisonTest extends TestCase
 {
     public static function dialectProvider(): array
@@ -52,7 +54,7 @@ class NullSafeComparisonTest extends TestCase
         $binder = new ValueBinder();
 
         // IS DISTINCT FROM
-        $expr = new QueryExpression(['col IS DISTINCT FROM' => 'val']);
+        $expr = new QueryExpression(['col' => isDistinctFrom('val')]);
         if ($driver instanceof Mysql) {
             $query = $connection->selectQuery();
             $query->where($expr);
@@ -64,7 +66,7 @@ class NullSafeComparisonTest extends TestCase
 
         $binder = new ValueBinder();
         // IS NOT DISTINCT FROM
-        $expr = new QueryExpression(['col IS NOT DISTINCT FROM' => 'val']);
+        $expr = new QueryExpression(['col' => isNotDistinctFrom('val')]);
         if ($driver instanceof Mysql) {
             $query = $connection->selectQuery();
             $query->where($expr);
