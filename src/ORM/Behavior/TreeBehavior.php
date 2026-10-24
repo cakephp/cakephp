@@ -30,7 +30,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Closure;
 
-use function Cake\Database\Expression\{gt, gte, is, lt, lte};
+use function Cake\Database\Expression\{equals, greaterThan, greaterThanOrEquals, lessThan, lessThanOrEquals};
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -395,8 +395,8 @@ class TreeBehavior extends Behavior
 
         return $this->scope($query)
             ->where([
-                "{$left}" => lte($node->get($config['left'])),
-                "{$right}" => gte($node->get($config['right'])),
+                "{$left}" => lessThanOrEquals($node->get($config['left'])),
+                "{$right}" => greaterThanOrEquals($node->get($config['right'])),
             ])
             ->orderBy([$left => 'ASC']);
     }
@@ -457,8 +457,8 @@ class TreeBehavior extends Behavior
 
         return $this->scope($query)
             ->where([
-                "{$right}" => lt($node->get($config['right'])),
-                "{$left}" => gt($node->get($config['left'])),
+                "{$right}" => lessThan($node->get($config['right'])),
+                "{$left}" => greaterThan($node->get($config['left'])),
             ]);
     }
 
@@ -627,7 +627,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => is($nodeParent)])
+                ->where(["{$parent}" => equals($nodeParent)])
                 ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
@@ -638,7 +638,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => is($nodeParent)])
+                ->where(["{$parent}" => equals($nodeParent)])
                 ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
@@ -716,7 +716,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => is($nodeParent)])
+                ->where(["{$parent}" => equals($nodeParent)])
                 ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
@@ -727,7 +727,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => is($nodeParent)])
+                ->where(["{$parent}" => equals($nodeParent)])
                 ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
@@ -818,7 +818,7 @@ class TreeBehavior extends Behavior
 
         $nodes = $this->scope($this->table->unhydratedSelectQuery())
             ->select($primaryKey)
-            ->where([$parent => is($parentId)])
+            ->where([$parent => equals($parentId)])
             ->orderBy($order)
             ->all();
 
@@ -982,8 +982,8 @@ class TreeBehavior extends Behavior
         }
 
         $query = $this->table->find('all')->where([
-            $config['left'] => lt($entity[$config['left']]),
-            $config['right'] => gt($entity[$config['right']]),
+            $config['left'] => lessThan($entity[$config['left']]),
+            $config['right'] => greaterThan($entity[$config['right']]),
         ]);
 
         return $this->scope($query)->count();

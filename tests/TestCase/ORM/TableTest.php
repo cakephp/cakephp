@@ -76,7 +76,7 @@ use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
 use TestPlugin\Model\Table\CommentsTable;
 
-use function Cake\Database\Expression\{gt, gte, in, lt};
+use function Cake\Database\Expression\{greaterThan, greaterThanOrEquals, in, lessThan};
 
 /**
  * Tests Table class
@@ -706,7 +706,7 @@ class TableTest extends TestCase
         ]);
         $query = $table->find('all')
             ->select(['id', 'username'])
-            ->where(['created' => gte(new DateTime('2010-01-22 00:00'))])
+            ->where(['created' => greaterThanOrEquals(new DateTime('2010-01-22 00:00'))])
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
@@ -719,7 +719,7 @@ class TableTest extends TestCase
             ->enableHydration(false)
             ->select(['id', 'username'])
             ->where(['OR' => [
-                'created' => gte(new DateTime('2010-01-22 00:00')),
+                'created' => greaterThanOrEquals(new DateTime('2010-01-22 00:00')),
                 'users.created' => new DateTime('2008-03-17 01:18:23'),
             ]])
             ->orderBy('id');
@@ -1141,7 +1141,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $fields = ['username' => 'mark'];
-        $result = $table->updateAll($fields, ['id' => lt(4)]);
+        $result = $table->updateAll($fields, ['id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')
@@ -1220,7 +1220,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $result = $table->deleteAll(['id' => lt(4)]);
+        $result = $table->deleteAll(['id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')->toArray();
@@ -1238,7 +1238,7 @@ class TableTest extends TestCase
             'alias' => 'Managers',
             'connection' => $this->connection,
         ]);
-        $result = $table->deleteAll(['Managers.id' => lt(4)]);
+        $result = $table->deleteAll(['Managers.id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')->toArray();
@@ -1286,7 +1286,7 @@ class TableTest extends TestCase
             ->method('execute')
             ->will($this->throwException(new DatabaseException('Not good')));
 
-        $table->deleteAll(['id' => gt(4)]);
+        $table->deleteAll(['id' => greaterThan(4)]);
     }
 
     /**

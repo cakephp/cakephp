@@ -41,7 +41,7 @@ use Closure;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use function Cake\Database\Expression\{gt, gte, in, notEq};
+use function Cake\Database\Expression\{greaterThan, greaterThanOrEquals, in, notEquals};
 use function Cake\I18n\__;
 
 /**
@@ -386,7 +386,7 @@ class HasManyTest extends TestCase
             ->andReturn($query);
 
         $association->eagerLoader([
-            'conditions' => ['Articles.id' => notEq(3)],
+            'conditions' => ['Articles.id' => notEquals(3)],
             'sort' => ['title' => 'DESC'],
             'fields' => ['id', 'title', 'author_id'],
             'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
@@ -403,7 +403,7 @@ class HasManyTest extends TestCase
         $expected = new QueryExpression(
             [
                 'Articles.published' => 'Y',
-                'Articles.id' => notEq(3),
+                'Articles.id' => notEquals(3),
                 'Articles.author_id' => in($keys),
             ],
             $query->getTypeMap(),
@@ -881,7 +881,7 @@ class HasManyTest extends TestCase
             ])
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['cnt' => gte(1)], ['cnt' => 'integer'])
+            ->having(['cnt' => greaterThanOrEquals(1)], ['cnt' => 'integer'])
             ->toArray();
 
         $this->assertNotEmpty($result);
@@ -910,7 +910,7 @@ class HasManyTest extends TestCase
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['name_length' => gt(4)], ['name_length' => 'integer'])
+            ->having(['name_length' => greaterThan(4)], ['name_length' => 'integer'])
             ->orderBy(['name_length' => 'DESC'])
             ->toArray();
 
@@ -936,7 +936,7 @@ class HasManyTest extends TestCase
             ->leftJoinWith('Articles')
             ->contain('Articles')
             ->groupBy(['Authors.id', 'Authors.name'])
-            ->having(['article_count' => gt(0)], ['article_count' => 'integer'])
+            ->having(['article_count' => greaterThan(0)], ['article_count' => 'integer'])
             ->toArray();
 
         $this->assertNotEmpty($result);
@@ -966,7 +966,7 @@ class HasManyTest extends TestCase
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['name_length' => gt(5)], ['name_length' => 'integer'])
+            ->having(['name_length' => greaterThan(5)], ['name_length' => 'integer'])
             ->toArray();
 
         $names = array_map(fn(EntityInterface $author): string => $author->name, $result);

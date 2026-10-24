@@ -51,26 +51,29 @@ final readonly class Predicate
         $values = array_map($this->cloneValue(...), $this->values);
         $type = $this->type ?? $type;
         $operation = $this->operation;
+        if ($operation === PredicateOperation::EQUALS && $values[0] === null) {
+            $operation = PredicateOperation::IS_NULL;
+        } elseif ($operation === PredicateOperation::NOT_EQUALS && $values[0] === null) {
+            $operation = PredicateOperation::IS_NOT_NULL;
+        }
         if (
             in_array($operation, [
-                PredicateOperation::EQ,
-                PredicateOperation::NOT_EQ,
-                PredicateOperation::GT,
-                PredicateOperation::GTE,
-                PredicateOperation::LT,
-                PredicateOperation::LTE,
+                PredicateOperation::GREATER_THAN,
+                PredicateOperation::GREATER_THAN_OR_EQUALS,
+                PredicateOperation::LESS_THAN,
+                PredicateOperation::LESS_THAN_OR_EQUALS,
                 PredicateOperation::LIKE,
                 PredicateOperation::NOT_LIKE,
             ], true)
             && $values[0] === null
         ) {
             throw new InvalidArgumentException(sprintf(
-                'Expression `%s` has invalid `null` value. Use a null-aware predicate such as isNull() or is().',
+                'Expression `%s` has invalid `null` value. Use a null-aware predicate such as isNull() or equals().',
                 $field,
             ));
         }
         if (
-            in_array($operation, [PredicateOperation::EQ, PredicateOperation::NOT_EQ], true)
+            in_array($operation, [PredicateOperation::EQUALS, PredicateOperation::NOT_EQUALS], true)
             && is_string($type)
             && str_contains($type, '[]')
         ) {
@@ -78,18 +81,18 @@ final readonly class Predicate
                 $field,
                 $values[0] instanceof ExpressionInterface ? $values[0] : (array)$values[0],
                 $type,
-                $operation === PredicateOperation::EQ ? 'IN' : 'NOT IN',
+                $operation === PredicateOperation::EQUALS ? 'IN' : 'NOT IN',
             );
         }
 
         $builder = new QueryExpression();
         $expression = match ($operation) {
-            PredicateOperation::EQ => $builder->eq($field, $values[0], $type),
-            PredicateOperation::NOT_EQ => $builder->notEq($field, $values[0], $type),
-            PredicateOperation::GT => $builder->gt($field, $values[0], $type),
-            PredicateOperation::GTE => $builder->gte($field, $values[0], $type),
-            PredicateOperation::LT => $builder->lt($field, $values[0], $type),
-            PredicateOperation::LTE => $builder->lte($field, $values[0], $type),
+            PredicateOperation::EQUALS => $builder->eq($field, $values[0], $type),
+            PredicateOperation::NOT_EQUALS => $builder->notEq($field, $values[0], $type),
+            PredicateOperation::GREATER_THAN => $builder->gt($field, $values[0], $type),
+            PredicateOperation::GREATER_THAN_OR_EQUALS => $builder->gte($field, $values[0], $type),
+            PredicateOperation::LESS_THAN => $builder->lt($field, $values[0], $type),
+            PredicateOperation::LESS_THAN_OR_EQUALS => $builder->lte($field, $values[0], $type),
             PredicateOperation::LIKE => $builder->like($field, $values[0], $type),
             PredicateOperation::NOT_LIKE => $builder->notLike($field, $values[0], $type),
             PredicateOperation::IN => $builder->in($field, $values[0], $type),
@@ -102,12 +105,6 @@ final readonly class Predicate
             PredicateOperation::IS_NOT_NULL => $builder->isNotNull($field),
             PredicateOperation::IS_DISTINCT_FROM => $builder->isDistinctFrom($field, $values[0], $type),
             PredicateOperation::IS_NOT_DISTINCT_FROM => $builder->isNotDistinctFrom($field, $values[0], $type),
-            PredicateOperation::IS => $values[0] === null
-                ? $builder->isNull($field)
-                : $builder->eq($field, $values[0], $type),
-            PredicateOperation::IS_NOT => $values[0] === null
-                ? $builder->isNotNull($field)
-                : $builder->notEq($field, $values[0], $type),
             PredicateOperation::COMPARISON => new ComparisonExpression($field, $values[1], $type, $values[0]),
         };
         if ($expression instanceof QueryExpression && count($expression) === 1) {

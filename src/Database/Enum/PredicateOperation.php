@@ -24,32 +24,32 @@ enum PredicateOperation
     /**
      * Equality comparison.
      */
-    case EQ;
+    case EQUALS;
 
     /**
      * Inequality comparison.
      */
-    case NOT_EQ;
+    case NOT_EQUALS;
 
     /**
      * Greater-than comparison.
      */
-    case GT;
+    case GREATER_THAN;
 
     /**
      * Greater-than-or-equal comparison.
      */
-    case GTE;
+    case GREATER_THAN_OR_EQUALS;
 
     /**
      * Less-than comparison.
      */
-    case LT;
+    case LESS_THAN;
 
     /**
      * Less-than-or-equal comparison.
      */
-    case LTE;
+    case LESS_THAN_OR_EQUALS;
 
     /**
      * SQL pattern matching.
@@ -110,16 +110,6 @@ enum PredicateOperation
      * Null-safe equality comparison.
      */
     case IS_NOT_DISTINCT_FROM;
-
-    /**
-     * Null check or equality, depending on the value.
-     */
-    case IS;
-
-    /**
-     * Non-null check or inequality, depending on the value.
-     */
-    case IS_NOT;
 
     /**
      * Comparison using an explicit trusted SQL operator.

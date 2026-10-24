@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 
-use function Cake\Database\Expression\{gt, in};
+use function Cake\Database\Expression\{greaterThan, in};
 
 /**
  * Integration tests for table operations involving composite keys
@@ -447,7 +447,7 @@ class CompositeKeysTest extends TestCase
             ->enableAutoFields()
             ->contain('SiteArticles')
             ->groupBy(['SiteAuthors.id', 'SiteAuthors.site_id'])
-            ->having(['name_length' => gt(3)], ['name_length' => 'integer'])
+            ->having(['name_length' => greaterThan(3)], ['name_length' => 'integer'])
             ->enableHydration(false)
             ->toArray();
 
@@ -493,7 +493,7 @@ class CompositeKeysTest extends TestCase
             ->enableAutoFields()
             ->contain('SiteTags')
             ->groupBy(['SiteArticles.id', 'SiteArticles.site_id'])
-            ->having(['title_length' => gt(0)], ['title_length' => 'integer'])
+            ->having(['title_length' => greaterThan(0)], ['title_length' => 'integer'])
             ->enableHydration(false)
             ->toArray();
 

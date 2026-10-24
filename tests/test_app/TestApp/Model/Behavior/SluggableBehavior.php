@@ -24,7 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Text;
-use function Cake\Database\Expression\is;
+use function Cake\Database\Expression\equals;
 
 class SluggableBehavior extends Behavior
 {
@@ -37,7 +37,7 @@ class SluggableBehavior extends Behavior
 
     public function findNoSlug(SelectQuery $query, array $options = []): SelectQuery
     {
-        $query->where(['slug' => is(null)]);
+        $query->where(['slug' => equals(null)]);
 
         return $query;
     }
