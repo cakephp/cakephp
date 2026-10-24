@@ -20,6 +20,7 @@ namespace Cake\Http\Session;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
+use function Cake\Database\Expression\lt;
 
 /**
  * DatabaseSession provides methods to be used with Session.
@@ -161,6 +162,6 @@ class DatabaseSession extends AbstractSession
      */
     public function gc(int $max_lifetime): int|false
     {
-        return $this->table->deleteAll(['expires <' => time()]);
+        return $this->table->deleteAll(['expires' => lt(time())]);
     }
 }

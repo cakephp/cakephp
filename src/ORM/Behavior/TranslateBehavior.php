@@ -29,6 +29,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use function Cake\Core\namespaceSplit;
+use function Cake\Database\Expression\in;
 
 /**
  * This behavior provides a way to translate dynamic data by keeping translations
@@ -340,7 +341,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         return $query
             ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $query->where(["{$targetAlias}.locale IN" => $locales]);
+                    $query->where(["{$targetAlias}.locale" => in($locales)]);
                 }
 
                 return $query;

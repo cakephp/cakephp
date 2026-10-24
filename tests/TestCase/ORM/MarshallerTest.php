@@ -30,6 +30,7 @@ use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
 use TestApp\Model\Table\GreedyCommentsTable;
+use function Cake\Database\Expression\gte;
 
 /**
  * Marshaller test case
@@ -1979,7 +1980,7 @@ class MarshallerTest extends TestCase
             ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
-                $query->where(['Tags.id >=' => 1]);
+                $query->where(['Tags.id' => gte(1)]);
             });
 
         $entity = new Entity([
