@@ -25,6 +25,8 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 
+use function Cake\Database\Expression\{is, isNot, notEq, notIn};
+
 /**
  * Tests DeleteQuery class
  */
@@ -95,7 +97,7 @@ class DeleteQueryTest extends TestCase
 
         $query->delete()
             ->from(['a ' => 'authors'])
-            ->where(['a.id !=' => 99]);
+            ->where(['a.id' => notEq(99)]);
 
         $result = $query->sql();
         $this->assertQuotedQuery('DELETE FROM <authors> WHERE <id> != :c0', $result, !$this->autoQuote);
@@ -159,10 +161,10 @@ class DeleteQueryTest extends TestCase
             ->where([
                 'OR' => [
                     'a.id' => 1,
-                    'a.name IS' => null,
-                    'a.email IS NOT' => null,
+                    'a.name' => is(null),
+                    'a.email' => isNot(null),
                     'AND' => [
-                        'b.name NOT IN' => ['foo', 'bar'],
+                        'b.name' => notIn(['foo', 'bar']),
                         'OR' => [
                             $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',

@@ -18,6 +18,7 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Utility\Hash;
+use function Cake\Database\Expression\is;
 
 /**
  * Checks that a list of fields from an entity are unique in the table
@@ -94,7 +95,7 @@ class IsUnique
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
-            $aliased["{$alias}.{$key} IS"] = $value;
+            $aliased["{$alias}.{$key}"] = is($value);
         }
 
         return $aliased;

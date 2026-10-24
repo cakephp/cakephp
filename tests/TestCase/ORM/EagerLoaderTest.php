@@ -25,6 +25,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use function Cake\Database\Expression\gt;
 
 /**
  * Tests EagerLoader
@@ -266,7 +267,7 @@ class EagerLoaderTest extends TestCase
         $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff',
-            'clients.companies.categories' => ['conditions' => ['a >' => 1]],
+            'clients.companies.categories' => ['conditions' => ['a' => gt(1)]],
         ]);
         $expected = [
             'clients' => [
@@ -275,7 +276,7 @@ class EagerLoaderTest extends TestCase
                 ],
                 'companies' => [
                     'categories' => [
-                        'conditions' => ['a >' => 1],
+                        'conditions' => ['a' => gt(1)],
                     ],
                 ],
             ],

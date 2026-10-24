@@ -99,7 +99,7 @@ interface QueryInterface
      * $query->applyOptions([
      *   'fields' => ['id', 'name'],
      *   'conditions' => [
-     *     'created >=' => '2013-01-01'
+     *     'created' => gte('2013-01-01')
      *   ],
      *   'limit' => 10
      * ]);
@@ -110,7 +110,7 @@ interface QueryInterface
      * ```
      *  $query
      *  ->select(['id', 'name'])
-     *  ->where(['created >=' => '2013-01-01'])
+     *  ->where(['created' => gte('2013-01-01')])
      *  ->limit(10)
      * ```
      *
@@ -298,9 +298,8 @@ interface QueryInterface
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this
-     * query. Conditions can be expressed as an array of fields as keys with
-     * comparison operators in it, the values for the array will be used for comparing
-     * the field to such literal. Finally, conditions can be expressed as a single
+     * query. Conditions use field keys with literal values for equality or namespaced
+     * predicate functions from Cake\Database\Expression for other comparisons. Finally, conditions can be expressed as a single
      * string or an array of strings.
      *
      * When using arrays, each entry will be joined to the rest of the conditions using
@@ -311,12 +310,12 @@ interface QueryInterface
      * Any conditions created with this method can be used with any SELECT, UPDATE
      * and DELETE type of queries.
      *
-     * ### Conditions using operators:
+     * ### Conditions using predicate functions:
      *
      * ```
      *  $query->where([
-     *      'posted >=' => new DateTime('3 days ago'),
-     *      'title LIKE' => 'Hello W%',
+     *      'posted' => gte(new DateTime('3 days ago')),
+     *      'title' => like('Hello W%'),
      *      'author_id' => 1,
      *  ], ['posted' => 'datetime']);
      * ```
@@ -332,8 +331,8 @@ interface QueryInterface
      *
      * ```
      *  $query->where([
-     *      'author_id !=' => 1,
-     *      'OR' => ['published' => true, 'posted <' => new DateTime('now')],
+     *      'author_id' => notEq(1),
+     *      'OR' => ['published' => true, 'posted' => lt(new DateTime('now'))],
      *      'NOT' => ['title' => 'Hello']
      *  ], ['published' => boolean, 'posted' => 'datetime']
      * ```
@@ -356,7 +355,7 @@ interface QueryInterface
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->expr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     *  $exp = $query->expr()->add(['id' => notEq(100), 'author_id' != 1])->tieWith('OR');
      *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -375,10 +374,10 @@ interface QueryInterface
      *
      * ```
      *  $query
-     *  ->where(['title !=' => 'Hello World'])
+     *  ->where(['title' => notEq('Hello World')])
      *  ->where(function ($exp, $query) {
      *      $or = $exp->or(['id' => 1]);
-     *      $and = $exp->and(['id >' => 2, 'id <' => 10]);
+     *      $and = $exp->and([['id' => gt(2)], ['id' => lt(10)]]);
      *  return $or->add($and);
      *  });
      * ```

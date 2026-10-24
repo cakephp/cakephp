@@ -41,6 +41,7 @@ use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\ArticlesTag;
 use function Cake\Collection\collection;
+use function Cake\Database\Expression\gt;
 
 /**
  * Tests BelongsToMany class
@@ -1671,7 +1672,7 @@ class BelongsToManyTest extends TestCase
         ]);
         $query = $table->find()
             ->matching('Articles', function ($q) {
-                return $q->where(['Articles.id >' => 0]);
+                return $q->where(['Articles.id' => gt(0)]);
             });
         $results = $query->all();
 
