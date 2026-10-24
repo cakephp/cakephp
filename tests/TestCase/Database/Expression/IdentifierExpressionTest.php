@@ -20,7 +20,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests IdentifierExpression class
@@ -67,7 +66,9 @@ class IdentifierExpressionTest extends TestCase
         ];
     }
 
-    #[DataProvider('invalidCollationProvider')]
+    /**
+     * @dataProvider invalidCollationProvider
+     */
     public function testCollationRejectNonSimpleCollation(string $collate): void
     {
         $this->expectException(InvalidArgumentException::class);

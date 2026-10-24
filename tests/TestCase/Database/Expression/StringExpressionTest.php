@@ -19,7 +19,6 @@ use Cake\Database\Expression\StringExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests StringExpression class
@@ -47,7 +46,9 @@ class StringExpressionTest extends TestCase
         ];
     }
 
-    #[DataProvider('invalidCollationProvider')]
+    /**
+     * @dataProvider invalidCollationProvider
+     */
     public function testCollationRejectNonSimpleCollation(string $collate): void
     {
         $this->expectException(InvalidArgumentException::class);
