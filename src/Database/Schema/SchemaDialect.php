@@ -41,6 +41,30 @@ use function Cake\Core\deprecationWarning;
 abstract class SchemaDialect
 {
     /**
+     * Default value for a date column that should be set to the current date.
+     *
+     * @var string
+     */
+    public const CURRENT_DATE = 'CURRENT_DATE';
+
+    /**
+     * Default value for a time column that should be set to the current time.
+     *
+     * @var string
+     */
+    public const CURRENT_TIME = 'CURRENT_TIME';
+
+    /**
+     * Column types that accept the `CURRENT_DATE` / `CURRENT_TIME` defaults, mapped to their keyword.
+     *
+     * @var array<string, string>
+     */
+    protected const CURRENT_DATE_TIME_DEFAULTS = [
+        TableSchemaInterface::TYPE_DATE => self::CURRENT_DATE,
+        TableSchemaInterface::TYPE_TIME => self::CURRENT_TIME,
+    ];
+
+    /**
      * The driver instance being used.
      *
      * @var \Cake\Database\Driver
@@ -380,15 +404,11 @@ abstract class SchemaDialect
      * Matching is case-insensitive and accepts an empty `()` suffix.
      *
      * @param array<string, mixed> $column The column metadata.
-     * @return string|null `CURRENT_DATE`, `CURRENT_TIME`, or null when the default is not one of them.
+     * @return string|null One of the `CURRENT_*` constants, or null when the default is not one of them.
      */
     protected function currentDateTimeDefault(array $column): ?string
     {
-        $keyword = match ($column['type'] ?? null) {
-            TableSchemaInterface::TYPE_DATE => 'CURRENT_DATE',
-            TableSchemaInterface::TYPE_TIME => 'CURRENT_TIME',
-            default => null,
-        };
+        $keyword = static::CURRENT_DATE_TIME_DEFAULTS[$column['type'] ?? ''] ?? null;
         if ($keyword === null || !is_string($column['default'] ?? null)) {
             return null;
         }

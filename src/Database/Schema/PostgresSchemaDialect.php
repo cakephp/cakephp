@@ -899,7 +899,10 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
-        $currentDefault = $this->currentDateTimeDefault($column);
+        $currentDefault = null;
+        if (isset(static::CURRENT_DATE_TIME_DEFAULTS[$column['type']])) {
+            $currentDefault = $this->currentDateTimeDefault($column);
+        }
         if (
             isset($column['default']) &&
             in_array($column['type'], $datetimeTypes) &&
