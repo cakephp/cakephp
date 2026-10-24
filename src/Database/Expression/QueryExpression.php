@@ -750,14 +750,11 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
         $expression = trim($condition);
-        if (
-            preg_match(
-                '/\\s+(?:[!<>=~@#%^&|?+*\\\\\\/-]+'
-                . '|IS(?: NOT)?(?: DISTINCT FROM)?'
-                . '|(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS))$/i',
-                $expression,
-            )
-        ) {
+        $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
+        $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
+        $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
+        $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
+        if (preg_match($operatorPattern, $expression)) {
             throw new InvalidArgumentException(sprintf(
                 'Operator-bearing condition key `%s` is no longer supported. '
                 . 'Use a Cake\\Database\\Expression predicate function, or run the CakePHP 6 upgrade rules.',
