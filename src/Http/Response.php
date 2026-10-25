@@ -960,17 +960,24 @@ class Response implements ResponseInterface, Stringable
      */
     public function isNotModified(ServerRequest $request): bool
     {
-        $etags = preg_split('/\s*,\s*/', $request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY) ?: [];
+        $etags = preg_split('/\s*,\s*/', trim($request->getHeaderLine('If-None-Match')), 0, PREG_SPLIT_NO_EMPTY) ?: [];
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
-        if ($responseTag) {
-            $etagMatches = in_array('*', $etags, true) || in_array($responseTag, $etags, true);
+        if ($responseTag && $etags) {
+            // If-None-Match uses the weak comparison, which ignores the W/ prefix.
+            $opaqueTags = array_map(fn(string $etag): string => (string)preg_replace('#^W/#', '', $etag), $etags);
+            $etagMatches = in_array('*', $etags, true) ||
+                in_array(preg_replace('#^W/#', '', $responseTag), $opaqueTags, true);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
         $timeMatches = null;
         if ($modifiedSince && $this->hasHeader('Last-Modified')) {
-            $timeMatches = strtotime($this->getHeaderLine('Last-Modified')) === strtotime($modifiedSince);
+            $since = strtotime($modifiedSince);
+            if ($since !== false) {
+                // Not modified unless Last-Modified is later than If-Modified-Since.
+                $timeMatches = strtotime($this->getHeaderLine('Last-Modified')) <= $since;
+            }
         }
         if ($etagMatches === null && $timeMatches === null) {
             return false;
