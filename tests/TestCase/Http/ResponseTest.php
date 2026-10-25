@@ -1173,6 +1173,16 @@ class ResponseTest extends TestCase
             [
                 'bytes = 10 - 20', 11, 'bytes 10-20/38',
             ],
+
+            // suffix-byte-range longer than the file
+            [
+                'bytes=-50', 38, 'bytes 0-37/38',
+            ],
+
+            // last-pos past the end of the file
+            [
+                'bytes=30-100', 8, 'bytes 30-37/38',
+            ],
         ];
     }
 

@@ -1308,10 +1308,12 @@ class Response implements ResponseInterface, Stringable
         }
 
         if ($start === '') {
-            $start = $fileSize - (int)$end;
+            // A suffix longer than the file selects all of it.
+            $start = max(0, $fileSize - (int)$end);
             $end = $lastByte;
         }
-        if ($end === '') {
+        if ($end === '' || $end > $lastByte) {
+            // A last position past the end of the file selects the rest of it.
             $end = $lastByte;
         }
 
