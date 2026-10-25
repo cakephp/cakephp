@@ -86,8 +86,7 @@ class ServerTest extends TestCase
     public function testAppGetSet(): void
     {
         $eventManager = new EventManager();
-        $app = new class ($this->config, $eventManager) extends BaseApplication
-        {
+        $app = new class($this->config, $eventManager) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -243,8 +242,7 @@ class ServerTest extends TestCase
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
         $response = $server->run();
-        $final = $response
-            ->withHeader('X-First', 'first')
+        $final = $response->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
         $emitter = Mockery::mock(ResponseEmitter::class);
@@ -283,7 +281,10 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called): void {
+        $server->getEventManager()->on('Server.buildMiddleware', function (
+            EventInterface $event,
+            MiddlewareQueue $middlewareQueue,
+        ) use (&$called): void {
             $middlewareQueue->add(function ($request, $handler) use (&$called) {
                 $called = true;
 
@@ -294,7 +295,11 @@ class ServerTest extends TestCase
         $server->run();
         $this->assertTrue($called, 'Middleware added in the event was not triggered.');
         $this->middlewareQueue->seek(3);
-        $this->assertInstanceOf('Closure', $this->middlewareQueue->current()->getCallable(), '2nd last middleware is a closure');
+        $this->assertInstanceOf(
+            'Closure',
+            $this->middlewareQueue->current()->getCallable(),
+            '2nd last middleware is a closure',
+        );
     }
 
     /**
@@ -302,8 +307,7 @@ class ServerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = new class ($this->config) extends BaseApplication
-        {
+        $app = new class($this->config) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;

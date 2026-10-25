@@ -162,7 +162,10 @@ class QueryCompilerTest extends TestCase
         $result = $this->compiler->compile($query, $this->binder);
 
         if ($this->connection->getDriver() instanceof Sqlserver) {
-            $this->assertSame('/* This is a test */ INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
+            $this->assertSame(
+                '/* This is a test */ INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)',
+                $result,
+            );
         } else {
             $this->assertSame('/* This is a test */ INSERT INTO articles (title) VALUES (:c0)', $result);
         }
@@ -183,7 +186,10 @@ class QueryCompilerTest extends TestCase
         $result = $this->compiler->compile($query, $this->binder);
 
         if ($query->getDriver()->supports(DriverFeature::OPTIMIZER_HINT_COMMENT)) {
-            $this->assertSame('INSERT /*+ TEST_HINT1(param) TEST_HINT2(param) */ INTO articles (title) VALUES (:c0)', $result);
+            $this->assertSame(
+                'INSERT /*+ TEST_HINT1(param) TEST_HINT2(param) */ INTO articles (title) VALUES (:c0)',
+                $result,
+            );
         } elseif ($query->getDriver() instanceof Sqlserver) {
             $this->assertSame('INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
         } else {
@@ -237,7 +243,10 @@ class QueryCompilerTest extends TestCase
         $result = $this->compiler->compile($query, $this->binder);
 
         if ($query->getDriver()->supports(DriverFeature::OPTIMIZER_HINT_COMMENT)) {
-            $this->assertSame('UPDATE /*+ TEST_HINT1(param) TEST_HINT2(param) */ articles SET title = :c0 WHERE id = :c1', $result);
+            $this->assertSame(
+                'UPDATE /*+ TEST_HINT1(param) TEST_HINT2(param) */ articles SET title = :c0 WHERE id = :c1',
+                $result,
+            );
         } else {
             $this->assertSame('UPDATE articles SET title = :c0 WHERE id = :c1', $result);
         }
@@ -289,7 +298,10 @@ class QueryCompilerTest extends TestCase
         $result = $this->compiler->compile($query, $this->binder);
 
         if ($query->getDriver()->supports(DriverFeature::OPTIMIZER_HINT_COMMENT)) {
-            $this->assertSame('DELETE /*+ TEST_HINT1(param) TEST_HINT2(param) */ FROM articles WHERE id != :c0', $result);
+            $this->assertSame(
+                'DELETE /*+ TEST_HINT1(param) TEST_HINT2(param) */ FROM articles WHERE id != :c0',
+                $result,
+            );
         } else {
             $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
         }

@@ -83,15 +83,15 @@ class PluginListCommandTest extends TestCase
     public function testList(): void
     {
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/'
-    ]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/'
+                ]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
@@ -106,10 +106,10 @@ PHP;
     public function testListEmpty(): void
     {
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [];
+            PHP;
         $this->writePhpFile($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
@@ -123,25 +123,25 @@ PHP;
     public function testListEnabled(): void
     {
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/'
-    ]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/'
+                ]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'TestPlugin',
-    'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => true, 'optional' => true]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'TestPlugin',
+                'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => true, 'optional' => true]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $this->exec('plugin list');
@@ -157,24 +157,24 @@ PHP;
     public function testListUnknown(): void
     {
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/'
-    ]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/'
+                ]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'Unknown'
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'Unknown'
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $this->expectException(MissingPluginException::class);
@@ -207,25 +207,25 @@ PHP;
         );
 
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'plugins' => [
-        'Chronos' => TMP . 'plugin-list-command-test' . DS . 'chronos',
-        'CodeSniffer' => TMP . 'plugin-list-command-test' . DS . 'cakephp-codesniffer'
-    ]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'plugins' => [
+                    'Chronos' => TMP . 'plugin-list-command-test' . DS . 'chronos',
+                    'CodeSniffer' => TMP . 'plugin-list-command-test' . DS . 'cakephp-codesniffer'
+                ]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'Chronos' => ['optional' => true],
-    'CodeSniffer' => ['optional' => true]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'Chronos' => ['optional' => true],
+                'CodeSniffer' => ['optional' => true]
+            ];
+            PHP;
         $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $path = ROOT . DS . 'tests' . DS . 'composer.lock';

@@ -70,7 +70,8 @@ class CommonTableExpressionQueryTest extends TestCase
      */
     public function testWithCte(): void
     {
-        $query = $this->connection->selectQuery()
+        $query = $this->connection
+            ->selectQuery()
             ->with(new CommonTableExpression('cte', function () {
                 return $this->connection->selectQuery(fields: ['col' => 1]);
             }))
@@ -99,7 +100,8 @@ class CommonTableExpressionQueryTest extends TestCase
      */
     public function testWithCteOverwrite(): void
     {
-        $query = $this->connection->selectQuery()
+        $query = $this->connection
+            ->selectQuery()
             ->with(new CommonTableExpression('cte', function () {
                 return $this->connection->selectQuery(['col' => '1']);
             }))
@@ -111,8 +113,7 @@ class CommonTableExpressionQueryTest extends TestCase
             $query->sql(new ValueBinder()),
         );
 
-        $query
-            ->with(new CommonTableExpression('cte2', $this->connection->selectQuery()), true)
+        $query->with(new CommonTableExpression('cte2', $this->connection->selectQuery()), true)
             ->from('cte2', true);
         $this->assertEqualsSql(
             'WITH cte2 AS () SELECT col FROM cte2',
@@ -125,7 +126,8 @@ class CommonTableExpressionQueryTest extends TestCase
      */
     public function testWithRecursiveCte(): void
     {
-        $query = $this->connection->selectQuery()
+        $query = $this->connection
+            ->selectQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 $anchorQuery = $query->select(1);
 
@@ -137,8 +139,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
                 $cteQuery = $anchorQuery->unionAll($recursiveQuery);
 
-                return $cte
-                    ->name('cte')
+                return $cte->name('cte')
                     ->field(['col'])
                     ->query($cteQuery)
                     ->recursive();
@@ -148,19 +149,19 @@ class CommonTableExpressionQueryTest extends TestCase
 
         if ($this->connection->getDriver() instanceof Sqlserver) {
             $expectedSql =
-                'WITH cte(col) AS ' .
-                    "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) " .
-                        'SELECT col FROM cte';
+                'WITH cte(col) AS '
+                . "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) "
+                . 'SELECT col FROM cte';
         } elseif ($this->connection->getDriver() instanceof Sqlite) {
             $expectedSql =
-                'WITH RECURSIVE cte(col) AS ' .
-                    "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) " .
-                        'SELECT col FROM cte';
+                'WITH RECURSIVE cte(col) AS '
+                . "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) "
+                . 'SELECT col FROM cte';
         } else {
             $expectedSql =
-                'WITH RECURSIVE cte(col) AS ' .
-                    "((SELECT 1)\nUNION ALL (SELECT (col + 1) FROM cte WHERE col != :c0)) " .
-                        'SELECT col FROM cte';
+                'WITH RECURSIVE cte(col) AS '
+                . "((SELECT 1)\nUNION ALL (SELECT (col + 1) FROM cte WHERE col != :c0)) "
+                . 'SELECT col FROM cte';
         }
         $this->assertEqualsSql(
             $expectedSql,
@@ -190,12 +191,13 @@ class CommonTableExpressionQueryTest extends TestCase
     public function testWithInsertQuery(): void
     {
         $this->skipIf(
-            ($this->connection->getDriver() instanceof Mysql),
+            $this->connection->getDriver() instanceof Mysql,
             '`WITH ... INSERT INTO` syntax is not supported in MySQL.',
         );
 
         // test initial state
-        $result = $this->connection->selectQuery(fields: '*', table: 'articles')
+        $result = $this->connection
+            ->selectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertFalse($result->fetch('assoc'));
@@ -204,8 +206,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $query = $this->connection
             ->insertQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
-                return $cte
-                    ->name('cte')
+                return $cte->name('cte')
                     ->field(['title', 'body'])
                     ->query($query->expr("SELECT 'Fourth Article', 'Fourth Article Body'"));
             })
@@ -217,8 +218,8 @@ class CommonTableExpressionQueryTest extends TestCase
             );
 
         $this->assertRegExpSql(
-            "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) " .
-                'INSERT INTO <articles> \(<title>, <body>\)',
+            "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) "
+                . 'INSERT INTO <articles> \(<title>, <body>\)',
             $query->sql(new ValueBinder()),
             !$this->autoQuote,
         );
@@ -235,7 +236,8 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->selectQuery('*', 'articles')
+        $result = $this->connection
+            ->selectQuery('*', 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
@@ -248,17 +250,18 @@ class CommonTableExpressionQueryTest extends TestCase
     public function testWithInInsertWithValuesQuery(): void
     {
         $this->skipIf(
-            ($this->connection->getDriver() instanceof Sqlserver),
+            $this->connection->getDriver() instanceof Sqlserver,
             '`INSERT INTO ... WITH` syntax is not supported in SQL Server.',
         );
 
-        $query = $this->connection->insertQuery(table: 'articles')
+        $query = $this->connection
+            ->insertQuery(table: 'articles')
             ->insert(['title', 'body'])
             ->values(
-                $this->connection->selectQuery()
+                $this->connection
+                    ->selectQuery()
                     ->with(function (CommonTableExpression $cte, SelectQuery $query) {
-                        return $cte
-                            ->name('cte')
+                        return $cte->name('cte')
                             ->field(['title', 'body'])
                             ->query($query->expr("SELECT 'Fourth Article', 'Fourth Article Body'"));
                     })
@@ -267,8 +270,8 @@ class CommonTableExpressionQueryTest extends TestCase
             );
 
         $this->assertRegExpSql(
-            'INSERT INTO <articles> \(<title>, <body>\) ' .
-                "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
+            'INSERT INTO <articles> \(<title>, <body>\) '
+                . "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
             $query->sql(new ValueBinder()),
             !$this->autoQuote,
         );
@@ -285,7 +288,8 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->selectQuery(fields: '*', table: 'articles')
+        $result = $this->connection
+            ->selectQuery(fields: '*', table: 'articles')
             ->where(['id' => 4])
             ->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
@@ -303,21 +307,21 @@ class CommonTableExpressionQueryTest extends TestCase
         );
 
         // test initial state
-        $result = $this->connection->selectQuery(fields: ['count' => 'COUNT(*)'], table: 'articles')
+        $result = $this->connection
+            ->selectQuery(fields: ['count' => 'COUNT(*)'], table: 'articles')
             ->where(['published' => 'Y'])
             ->execute();
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $query = $this->connection->updateQuery()
+        $query = $this->connection
+            ->updateQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
-                $cteQuery = $query
-                    ->select('articles.id')
+                $cteQuery = $query->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
 
-                return $cte
-                    ->name('cte')
+                return $cte->name('cte')
                     ->query($cteQuery);
             })
             ->update('articles')
@@ -325,15 +329,14 @@ class CommonTableExpressionQueryTest extends TestCase
             ->where(function (QueryExpression $exp, Query $query) {
                 return $exp->in(
                     'articles.id',
-                    $query
-                        ->getConnection()
+                    $query->getConnection()
                         ->selectQuery('cte.id', 'cte'),
                 );
             });
 
         $this->assertEqualsSql(
-            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
-                'UPDATE articles SET published = :c1 WHERE id IN (SELECT cte.id FROM cte)',
+            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) '
+                . 'UPDATE articles SET published = :c1 WHERE id IN (SELECT cte.id FROM cte)',
             $query->sql(new ValueBinder()),
         );
 
@@ -341,7 +344,8 @@ class CommonTableExpressionQueryTest extends TestCase
         $query->execute()->closeCursor();
 
         // test updated state
-        $result = $this->connection->selectQuery(['count' => 'COUNT(*)'], 'articles')
+        $result = $this->connection
+            ->selectQuery(['count' => 'COUNT(*)'], 'articles')
             ->where(['published' => 'Y'])
             ->execute();
         $this->assertEquals(['count' => '1'], $result->fetch('assoc'));
@@ -365,29 +369,28 @@ class CommonTableExpressionQueryTest extends TestCase
         $this->assertEquals(['count' => '3'], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $query = $this->connection->deleteQuery()
+        $query = $this->connection
+            ->deleteQuery()
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 $query->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
 
-                return $cte
-                    ->name('cte')
+                return $cte->name('cte')
                     ->query($query);
             })
             ->from(['a' => 'articles'])
             ->where(function (QueryExpression $exp, Query $query) {
                 return $exp->in(
                     'a.id',
-                    $query
-                        ->getConnection()
+                    $query->getConnection()
                         ->selectQuery('cte.id', 'cte'),
                 );
             });
 
         $this->assertEqualsSql(
-            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
-                'DELETE FROM articles WHERE id IN (SELECT cte.id FROM cte)',
+            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) '
+                . 'DELETE FROM articles WHERE id IN (SELECT cte.id FROM cte)',
             $query->sql(new ValueBinder()),
         );
 
@@ -403,8 +406,7 @@ class CommonTableExpressionQueryTest extends TestCase
         ];
 
         // test updated state
-        $result = $this->connection->selectQuery('*', 'articles')
-            ->execute();
+        $result = $this->connection->selectQuery('*', 'articles')->execute();
         $this->assertEquals($expected, $result->fetch('assoc'));
         $result->closeCursor();
     }

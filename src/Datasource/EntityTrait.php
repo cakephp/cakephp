@@ -361,9 +361,12 @@ trait EntityTrait
             }
 
             if (
-                $this->isOriginalField($name) &&
-                !array_key_exists($name, $this->original) &&
-                ($isDynamic || isset($this->assignedProps[$name]))
+                $this->isOriginalField($name)
+                && !array_key_exists($name, $this->original)
+                && (
+                    $isDynamic
+                    || isset($this->assignedProps[$name])
+                )
             ) {
                 /** @phpstan-ignore-next-line method.nonObject */
                 $existing = $isDynamic ? $this->dynamicFields[$name] : $ref->getRawValue($this);
@@ -423,7 +426,7 @@ trait EntityTrait
         if (
             is_object($value)
             && is_object($existing)
-            && !($value instanceof EntityInterface)
+            && !$value instanceof EntityInterface
             && $existing == $value
         ) {
             return false;
@@ -548,8 +551,8 @@ trait EntityTrait
         $originals = $this->original;
         foreach ($this->initializedFieldNames() as $key) {
             if (
-                !array_key_exists((string)$key, $originals) &&
-                $this->isOriginalField($key)
+                !array_key_exists((string)$key, $originals)
+                && $this->isOriginalField($key)
             ) {
                 $originals[$key] = $this->getRawValue($key);
             }
@@ -587,9 +590,11 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         return array_all((array)$field, function ($prop) {
-            return array_key_exists($prop, $this->dynamicFields)
-                || isset($this->assignedProps[$prop])
-                || static::accessor($prop, 'get');
+            return (
+                array_key_exists($prop, $this->dynamicFields)
+                    || isset($this->assignedProps[$prop])
+                    || static::accessor($prop, 'get')
+            );
         });
     }
 
@@ -1119,16 +1124,17 @@ trait EntityTrait
 
         $this->hasBeenVisited = true;
         try {
-            $errors = $this->errors + new Collection($values)
-                ->filter(function ($value) {
+            $errors =
+                $this->errors
+                + new Collection($values)->filter(function ($value) {
                     return is_array($value) || $value instanceof EntityInterface;
                 })
-                ->map(function ($value) {
-                    // @mago-expect lint:prefer-first-class-callable
-                    return $this->readError($value);
-                })
-                ->filter()
-                ->toArray();
+                    ->map(function ($value) {
+                        // @mago-expect lint:prefer-first-class-callable
+                        return $this->readError($value);
+                    })
+                    ->filter()
+                    ->toArray();
         } finally {
             $this->hasBeenVisited = false;
         }
@@ -1266,8 +1272,8 @@ trait EntityTrait
             }
 
             if (
-                is_iterable($val) ||
-                $val instanceof EntityInterface
+                is_iterable($val)
+                || $val instanceof EntityInterface
             ) {
                 $entity = $val;
             } else {
@@ -1321,11 +1327,14 @@ trait EntityTrait
             return $object->getErrors();
         }
 
-        $array = array_map(function ($val) {
-            if ($val instanceof EntityInterface) {
-                return $val->getErrors();
-            }
-        }, (array)$object);
+        $array = array_map(
+            function ($val) {
+                if ($val instanceof EntityInterface) {
+                    return $val->getErrors();
+                }
+            },
+            (array)$object,
+        );
 
         return array_filter($array);
     }
@@ -1631,17 +1640,18 @@ trait EntityTrait
             $fields[$field] = $this->{$field};
         }
 
-        return $fields + [
-            '[new]' => $this->isNew(),
-            '[patchable]' => $this->patchable,
-            '[dirty]' => $this->dirty,
-            '[original]' => $this->original,
-            '[originalFields]' => array_values($this->originalFields),
-            '[virtual]' => $this->virtual,
-            '[hasErrors]' => $this->hasErrors(),
-            '[errors]' => $this->errors,
-            '[invalid]' => $this->invalid,
-            '[repository]' => $this->registryAlias,
-        ];
+        return $fields
+            + [
+                '[new]' => $this->isNew(),
+                '[patchable]' => $this->patchable,
+                '[dirty]' => $this->dirty,
+                '[original]' => $this->original,
+                '[originalFields]' => array_values($this->originalFields),
+                '[virtual]' => $this->virtual,
+                '[hasErrors]' => $this->hasErrors(),
+                '[errors]' => $this->errors,
+                '[invalid]' => $this->invalid,
+                '[repository]' => $this->registryAlias,
+            ];
     }
 }

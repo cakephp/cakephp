@@ -111,15 +111,13 @@ class BelongsToTest extends TestCase
     public function testDisableForeignKey(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $assoc = $table
-            ->belongsTo('Authors')
+        $assoc = $table->belongsTo('Authors')
             ->setForeignKey('author_id');
 
         $article = $table->find()->contain(['Authors'])->orderByAsc('Articles.id')->first();
         $this->assertSame('mariano', $article->author->name);
 
-        $assoc
-            ->setForeignKey(false)
+        $assoc->setForeignKey(false)
             ->setConditions([
                 'Authors.name' => 'larry',
             ]);
@@ -271,7 +269,9 @@ class BelongsToTest extends TestCase
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for `Companies`, got `(company_id)` but expected foreign key for `(id, tenant_id)`');
+        $this->expectExceptionMessage(
+            'Cannot match provided foreignKey for `Companies`, got `(company_id)` but expected foreign key for `(id, tenant_id)`',
+        );
         $this->company->setPrimaryKey(['id', 'tenant_id']);
         $query = $this->client->selectQuery();
         $config = [
@@ -357,7 +357,9 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (
+            &$called,
+        ): void {
             $this->assertInstanceOf(Event::class, $event);
             $this->assertInstanceOf(SelectQuery::class, $query);
             $this->assertInstanceOf(ArrayObject::class, $options);
@@ -378,7 +380,9 @@ class BelongsToTest extends TestCase
             'targetTable' => $this->company,
         ];
         $called = false;
-        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (&$called): void {
+        $this->company->getEventManager()->on('Model.beforeFind', function ($event, $query, $options) use (
+            &$called,
+        ): void {
             $this->assertSame('more', $options['something']);
             $called = true;
         });
@@ -444,8 +448,7 @@ class BelongsToTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->associations()->get('Authors')
-            ->setFinder('formatted');
+        $articles->associations()->get('Authors')->setFinder('formatted');
 
         $query = $articles->find()
             ->where(['Articles.id' => 1])

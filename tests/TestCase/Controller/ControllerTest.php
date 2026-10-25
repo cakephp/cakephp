@@ -352,7 +352,11 @@ class ControllerTest extends TestCase
         $controller = new ContentTypesController($request);
         $controller->matchAll();
         $response = $controller->render();
-        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'), 'Default response type');
+        $this->assertSame(
+            'text/html; charset=UTF-8',
+            $response->getHeaderLine('Content-Type'),
+            'Default response type',
+        );
         $this->assertEmpty($response->getBody() . '', 'Body should be empty');
         $this->assertSame(406, $response->getStatusCode(), 'status code is wrong');
     }
@@ -525,7 +529,11 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (
+            EventInterface $event,
+            $url,
+            Response $response,
+        ): void {
             $controller = $event->getSubject();
             $controller->setResponse($response->withLocation('https://book.cakephp.org'));
         });
@@ -542,7 +550,11 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (
+            EventInterface $event,
+            $url,
+            Response $response,
+        ): void {
             $controller = $event->getSubject();
             $controller->setResponse($response->withStatus(302));
         });
@@ -558,7 +570,11 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (
+            EventInterface $event,
+            $url,
+            Response $response,
+        ) use ($newResponse): void {
             $event->setResult($newResponse);
         });
 
@@ -635,14 +651,12 @@ class ControllerTest extends TestCase
         $controller = new Controller(new ServerRequest(), null, $eventManager);
         $controller->startupProcess();
 
-        $eventManager
-            ->shouldHaveReceived('dispatch')
+        $eventManager->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.initialize';
             });
 
-        $eventManager
-            ->shouldHaveReceived('dispatch')
+        $eventManager->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.startup';
             });
@@ -672,12 +686,13 @@ class ControllerTest extends TestCase
         $request = new ServerRequest(['url' => 'controller_posts/index']);
 
         $Controller = new Controller($request);
-        $Controller->setRequest($Controller->getRequest()->withQueryParams([
-            'posts' => [
-                'page' => 2,
-                'limit' => 2,
-            ],
-        ]));
+        $Controller->setRequest($Controller->getRequest()
+            ->withQueryParams([
+                'posts' => [
+                    'page' => 2,
+                    'limit' => 2,
+                ],
+            ]));
 
         $this->assertNotContains('Paginator', $Controller->viewBuilder()->getHelpers());
         $this->assertArrayNotHasKey('Paginator', $Controller->viewBuilder()->getHelpers());
@@ -791,7 +806,9 @@ class ControllerTest extends TestCase
     public function testGetActionProtected(): void
     {
         $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action `TestController::protected_m()` could not be found, or is not accessible.');
+        $this->expectExceptionMessage(
+            'Action `TestController::protected_m()` could not be found, or is not accessible.',
+        );
         $url = new ServerRequest([
             'url' => 'test/protected_m/',
             'params' => ['controller' => 'Test', 'action' => 'protected_m'],
@@ -1014,8 +1031,8 @@ class ControllerTest extends TestCase
         $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
             return new FlashComponent($registry, $config);
         })
-        ->addArgument(ComponentRegistry::class)
-        ->addArgument(['key' => 'customFlash']);
+            ->addArgument(ComponentRegistry::class)
+            ->addArgument(['key' => 'customFlash']);
 
         $request = new ServerRequest(['url' => '/']);
 
@@ -1093,7 +1110,8 @@ class ControllerTest extends TestCase
                 $event->getSubject()->viewBuilder()->getLayout(),
             );
 
-            $event->getSubject()->viewBuilder()
+            $event->getSubject()
+                ->viewBuilder()
                 ->setTemplatePath('Posts')
                 ->setTemplate('index');
         });

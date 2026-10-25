@@ -69,7 +69,11 @@ class ConnectionManagerTest extends TestCase
     #[DataProvider('configProvider')]
     public function testConfigVariants($settings): void
     {
-        $this->assertNotContains('test_variant', ConnectionManager::configured(), 'test_variant config should not exist.');
+        $this->assertNotContains(
+            'test_variant',
+            ConnectionManager::configured(),
+            'test_variant config should not exist.',
+        );
         ConnectionManager::setConfig('test_variant', $settings);
 
         $ds = ConnectionManager::get('test_variant');

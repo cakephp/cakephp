@@ -71,15 +71,13 @@ class Mysql extends Driver
     protected function transformStringAggExpression(StringAggExpression $expression): void
     {
         if ($this->supports(DriverFeature::STRING_AGG)) {
-            $expression
-                ->setName('STRING_AGG')
+            $expression->setName('STRING_AGG')
                 ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
 
             return;
         }
 
-        $expression
-            ->setName('GROUP_CONCAT')
+        $expression->setName('GROUP_CONCAT')
             ->setSyntax(StringAggExpression::SYNTAX_GROUP_CONCAT);
     }
 
@@ -309,14 +307,9 @@ class Mysql extends Driver
         };
 
         return match ($feature) {
-            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
-            DriverFeature::SAVEPOINT => true,
-
+            DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION, DriverFeature::SAVEPOINT => true,
             DriverFeature::TRUNCATE_WITH_CONSTRAINTS => false,
-
-            DriverFeature::CTE,
-            DriverFeature::JSON,
-            DriverFeature::WINDOW => $versionCompare(),
+            DriverFeature::CTE, DriverFeature::JSON, DriverFeature::WINDOW => $versionCompare(),
             DriverFeature::STRING_AGG => $versionCompare(),
             DriverFeature::GROUP_CONCAT => true,
             DriverFeature::INTERSECT => $versionCompare(),

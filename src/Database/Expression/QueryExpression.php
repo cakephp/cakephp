@@ -242,7 +242,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function isNull(ExpressionInterface|string $field): static
     {
-        if (!($field instanceof ExpressionInterface)) {
+        if (!$field instanceof ExpressionInterface) {
             $field = new IdentifierExpression($field);
         }
 
@@ -258,7 +258,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function isNotNull(ExpressionInterface|string $field): static
     {
-        if (!($field instanceof ExpressionInterface)) {
+        if (!$field instanceof ExpressionInterface) {
             $field = new IdentifierExpression($field);
         }
 
@@ -416,8 +416,7 @@ class QueryExpression implements ExpressionInterface, Countable
         ?string $type = null,
     ): static {
         $or = new static([], $this->getTypeMap(), 'OR');
-        $or
-            ->in($field, $values, $type)
+        $or->in($field, $values, $type)
             ->isNull($field);
 
         return $this->add($or);
@@ -438,8 +437,7 @@ class QueryExpression implements ExpressionInterface, Countable
         ?string $type = null,
     ): static {
         $or = new static([], $this->getTypeMap(), 'OR');
-        $or
-            ->notIn($field, $values, $type)
+        $or->notIn($field, $values, $type)
             ->isNull($field);
 
         return $this->add($or);
@@ -779,7 +777,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $operator = strtoupper(trim($operator));
 
         $type = $this->getTypeMap()->type($expression);
-        $typeMultiple = (is_string($type) && str_contains($type, '[]'));
+        $typeMultiple = is_string($type) && str_contains($type, '[]');
         if (in_array($operator, ['IN', 'NOT IN'], true) || $typeMultiple) {
             $type = $type ?: 'string';
             if (!$typeMultiple) {
@@ -825,8 +823,8 @@ class QueryExpression implements ExpressionInterface, Countable
         if ($value === null && $this->conjunction !== ',') {
             throw new InvalidArgumentException(sprintf(
                 'Expression `%s` has invalid `null` value.'
-                . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
-                . ' is missing.',
+                    . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
+                    . ' is missing.',
                 $expression,
             ));
         }

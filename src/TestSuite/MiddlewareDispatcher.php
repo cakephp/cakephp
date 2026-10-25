@@ -67,8 +67,7 @@ class MiddlewareDispatcher
             $spec['files'],
         );
 
-        return $request
-            ->withAttribute('session', $spec['session'])
+        return $request->withAttribute('session', $spec['session'])
             ->withAttribute('flash', new FlashMessage($spec['session']));
     }
 

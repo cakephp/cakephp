@@ -217,7 +217,12 @@ class TestFixtureTest extends TestCase
             ->once();
 
         $query->shouldReceive('insert')
-            ->with(['author_id', 'title', 'body', 'published'], ['author_id' => 'integer', 'title' => 'string', 'body' => 'text', 'published' => 'string'])
+            ->with(['author_id', 'title', 'body', 'published'], [
+                'author_id' => 'integer',
+                'title' => 'string',
+                'body' => 'text',
+                'published' => 'string',
+            ])
             ->andReturnSelf()
             ->once();
 

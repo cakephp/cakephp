@@ -225,8 +225,17 @@ class View implements EventDispatcherInterface
      * @var array<string>
      */
     protected array $passedVars = [
-        'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin', 'configMergeStrategy',
+        'viewVars',
+        'autoLayout',
+        'helpers',
+        'template',
+        'layout',
+        'name',
+        'theme',
+        'layoutPath',
+        'templatePath',
+        'plugin',
+        'configMergeStrategy',
     ];
 
     /**
@@ -797,8 +806,8 @@ class View implements EventDispatcherInterface
         if ($this->autoLayout) {
             if (!$this->layout) {
                 throw new CakeException(
-                    'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
+                    'View::$layout must be a non-empty string.'
+                        . 'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
 
@@ -1470,8 +1479,8 @@ class View implements EventDispatcherInterface
         if ($name === null) {
             if (!$this->layout) {
                 throw new CakeException(
-                    'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
+                    'View::$layout must be a non-empty string.'
+                        . 'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
             $name = $this->layout;
@@ -1602,7 +1611,8 @@ class View implements EventDispatcherInterface
         $themePaths = [];
         if ($plugin) {
             foreach ($templatePaths as $templatePath) {
-                $pluginPaths[] = $templatePath
+                $pluginPaths[] =
+                    $templatePath
                     . static::PLUGIN_TEMPLATE_FOLDER
                     . DIRECTORY_SEPARATOR
                     . $plugin
@@ -1615,7 +1625,8 @@ class View implements EventDispatcherInterface
             $themePath = Plugin::templatePath(Inflector::camelize($this->theme));
 
             if ($plugin) {
-                $themePaths[] = $themePath
+                $themePaths[] =
+                    $themePath
                     . static::PLUGIN_TEMPLATE_FOLDER
                     . DIRECTORY_SEPARATOR
                     . $plugin

@@ -108,8 +108,14 @@ class PluginCollection implements Iterator, Countable
             $optional = $options['optional'] ?? false;
 
             if (
-                ($onlyDebug && $notDebug)
-                || ($onlyCli && $notCli)
+                (
+                    $onlyDebug
+                    && $notDebug
+                )
+                || (
+                    $onlyCli
+                    && $notCli
+                )
             ) {
                 continue;
             }

@@ -55,7 +55,7 @@ trait RulesAwareTrait
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();
         $options = is_array($options) ? new ArrayObject($options) : $options;
-        $hasEvents = ($this instanceof EventDispatcherInterface);
+        $hasEvents = $this instanceof EventDispatcherInterface;
 
         if ($hasEvents) {
             $event = $this->dispatchEvent(

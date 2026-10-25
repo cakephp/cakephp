@@ -59,7 +59,7 @@ class AppTest extends TestCase
             if ($i++ === 0) {
                 return $existsInBase;
             }
-            $checkCake = (!$existsInBase || strpos('.', $class));
+            $checkCake = !$existsInBase || strpos('.', $class);
             if ($checkCake) {
                 return (bool)$expected;
             }
@@ -226,7 +226,12 @@ class AppTest extends TestCase
             ['Cake\Exists\In\Subfolder\AlsoCake', 'Exists/In/Subfolder', 'Cake', 'Also'],
             ['Cake\Suffix\No', 'Suffix', '', 'No'],
 
-            ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
+            [
+                'Muffin\Webservice\Webservice\EndpointWebservice',
+                'Webservice',
+                'Webservice',
+                'Muffin/Webservice.Endpoint',
+            ],
 
             // Real examples returning class names
             [App::class, 'Core', '', 'App'],

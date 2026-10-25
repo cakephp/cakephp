@@ -52,7 +52,10 @@ class DependenciesController extends Controller
 
     public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
     {
-        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+        return $this->response->withStringBody(json_encode(
+            compact('one', 'two', 'three'),
+            JSON_PRESERVE_ZERO_FRACTION,
+        ));
     }
 
     public function unsupportedTyped(iterable $one)

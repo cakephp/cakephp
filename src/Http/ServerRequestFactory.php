@@ -57,7 +57,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $server = normalizeServer($server ?? $_SERVER);
         ['uri' => $uri, 'base' => $base, 'webroot' => $webroot] = UriFactory::marshalUriAndBaseFromSapi($server);
 
-        $sessionConfig = (array)Configure::read('Session') + [
+        $sessionConfig = (array)Configure::read('Session')
+        + [
             'defaults' => 'php',
             'cookiePath' => $webroot,
         ];
@@ -106,8 +107,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $override = false;
 
         if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true)
+            && str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
         ) {
             $data = (string)$request->getBody();
             parse_str($data, $parsedBody);
@@ -125,8 +126,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         if (
-            $override &&
-            !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+            $override
+            && !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
         ) {
             $parsedBody = [];
         }

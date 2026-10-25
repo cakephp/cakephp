@@ -57,53 +57,53 @@ class SqlserverSchemaDialectTest extends TestCase
         $connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
 
         $table = <<<SQL
-CREATE TABLE schema_authors (
-id int IDENTITY(1,1) PRIMARY KEY,
-name VARCHAR(50),
-bio DATE,
-created DATETIME
-)
-SQL;
+            CREATE TABLE schema_authors (
+            id int IDENTITY(1,1) PRIMARY KEY,
+            name VARCHAR(50),
+            bio DATE,
+            created DATETIME
+            )
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_articles (
-id BIGINT PRIMARY KEY,
-title NVARCHAR(20) COLLATE Japanese_Unicode_CI_AI DEFAULT N'無題' COLLATE Japanese_Unicode_CI_AI,
-body NVARCHAR(1000) DEFAULT N'本文なし',
-author_id INTEGER NOT NULL,
-unique_id INTEGER NOT NULL,
-published BIT DEFAULT 0,
-views SMALLINT DEFAULT 0,
-created DATETIME,
-created2 DATETIME2,
-created2_with_default DATETIME2 DEFAULT SYSDATETIME(),
-created2_with_precision DATETIME2(3),
-created2_without_precision DATETIME2(0),
-field1 VARCHAR(10) DEFAULT NULL,
-field2 VARCHAR(10) DEFAULT 'NULL',
-field3 VARCHAR(10) DEFAULT 'O''hare',
-CONSTRAINT [content_idx] UNIQUE ([title], [body]),
-CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE,
-INDEX [unique_id_idx] UNIQUE ([unique_id])
-)
-SQL;
+            CREATE TABLE schema_articles (
+            id BIGINT PRIMARY KEY,
+            title NVARCHAR(20) COLLATE Japanese_Unicode_CI_AI DEFAULT N'無題' COLLATE Japanese_Unicode_CI_AI,
+            body NVARCHAR(1000) DEFAULT N'本文なし',
+            author_id INTEGER NOT NULL,
+            unique_id INTEGER NOT NULL,
+            published BIT DEFAULT 0,
+            views SMALLINT DEFAULT 0,
+            created DATETIME,
+            created2 DATETIME2,
+            created2_with_default DATETIME2 DEFAULT SYSDATETIME(),
+            created2_with_precision DATETIME2(3),
+            created2_without_precision DATETIME2(0),
+            field1 VARCHAR(10) DEFAULT NULL,
+            field2 VARCHAR(10) DEFAULT 'NULL',
+            field3 VARCHAR(10) DEFAULT 'O''hare',
+            CONSTRAINT [content_idx] UNIQUE ([title], [body]),
+            CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE,
+            INDEX [unique_id_idx] UNIQUE ([unique_id])
+            )
+            SQL;
         $connection->execute($table);
 
         $comment = <<<SQL
-            EXECUTE sp_addextendedproperty
-            N'MS_Description', N'is published or not',
-            N'SCHEMA', N'dbo',
-            N'TABLE', N'schema_articles',
-            N'COLUMN', N'published';
-SQL;
+                        EXECUTE sp_addextendedproperty
+                        N'MS_Description', N'is published or not',
+                        N'SCHEMA', N'dbo',
+                        N'TABLE', N'schema_articles',
+                        N'COLUMN', N'published';
+            SQL;
         $connection->execute($comment);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
 
         $table = <<<SQL
-CREATE VIEW schema_articles_v AS
-SELECT * FROM schema_articles
-SQL;
+            CREATE VIEW schema_articles_v AS
+            SELECT * FROM schema_articles
+            SQL;
         $connection->execute($table);
     }
 
@@ -237,10 +237,10 @@ SQL;
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection {$type}
-);
-SQL;
+            CREATE TABLE convert_columns (
+                reflection {$type}
+            );
+            SQL;
         $connection->execute($sql);
 
         $driver = $connection->getDriver();
@@ -272,21 +272,22 @@ SQL;
     public function testConvertColumnCurrentDateTimeDefault(string $type, string $default, string $expected): void
     {
         $statement = $this->createStub(StatementInterface::class);
-        $statement->method('fetchAll')->willReturn([
-            [
-                'column_id' => 1,
-                'name' => 'field',
-                'type' => $type,
-                'char_length' => null,
-                'precision' => null,
-                'scale' => null,
-                'autoincrement' => null,
-                'null' => '0',
-                'default' => $default,
-                'collation_name' => null,
-                'comment' => null,
-            ],
-        ]);
+        $statement->method('fetchAll')
+            ->willReturn([
+                [
+                    'column_id' => 1,
+                    'name' => 'field',
+                    'type' => $type,
+                    'char_length' => null,
+                    'precision' => null,
+                    'scale' => null,
+                    'autoincrement' => null,
+                    'null' => '0',
+                    'default' => $default,
+                    'collation_name' => null,
+                    'comment' => null,
+                ],
+            ]);
 
         $driver = $this->createStub(Sqlserver::class);
         $driver->method('execute')->willReturn($statement);
@@ -506,13 +507,13 @@ SQL;
         $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE schema_composite (
-    [id] INTEGER IDENTITY(1, 1),
-    [site_id] INTEGER NOT NULL,
-    [name] VARCHAR(255),
-    PRIMARY KEY([id], [site_id])
-);
-SQL;
+            CREATE TABLE schema_composite (
+                [id] INTEGER IDENTITY(1, 1),
+                [site_id] INTEGER NOT NULL,
+                [name] VARCHAR(255),
+                PRIMARY KEY([id], [site_id])
+            );
+            SQL;
         $connection->execute($sql);
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_composite');
@@ -636,13 +637,13 @@ SQL;
         $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE schema_index_include (
-    "id" INTEGER NOT NULL,
-    "site_id" INTEGER NOT NULL,
-    "name" VARCHAR(255),
-    PRIMARY KEY("id")
-);
-SQL;
+            CREATE TABLE schema_index_include (
+                "id" INTEGER NOT NULL,
+                "site_id" INTEGER NOT NULL,
+                "name" VARCHAR(255),
+                PRIMARY KEY("id")
+            );
+            SQL;
         $connection->execute($sql);
 
         $sql = 'CREATE INDEX [site_id_name] ON [schema_index_include] ([site_id]) INCLUDE ([name])';
@@ -1018,32 +1019,52 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                    . 'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE NO ACTION',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'cascade',
+                ],
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                    . 'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setDefault'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE NO ACTION',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'setDefault',
+                ],
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                    . 'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE NO ACTION',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'setNull',
+                ],
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                    . 'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                ],
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                    . 'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
         ];
     }
@@ -1060,9 +1081,11 @@ SQL;
         $table = new TableSchema('schema_articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addConstraint($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addConstraint($name, $data);
 
         $this->assertEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -1077,11 +1100,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('posts')
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('posts')->addColumn('author_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1124,11 +1146,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('posts')
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('posts')->addColumn('author_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1194,9 +1215,11 @@ SQL;
         $table = new TableSchema('schema_articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addIndex($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addIndex($name, $data);
 
         $this->assertTextEquals($expected, $schema->indexSql($table, $name));
     }
@@ -1212,9 +1235,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1250,19 +1273,19 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE [schema_articles] (
-[id] INTEGER IDENTITY(1, 1) NOT NULL,
-[title] NVARCHAR(255) NOT NULL,
-[body] NVARCHAR(MAX),
-[data] NVARCHAR(MAX),
-[hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
-[created] DATETIME2,
-[created_with_default] DATETIME2 DEFAULT SYSDATETIME(),
-[created_with_precision] DATETIME2(3),
-[created_without_precision] DATETIME2(0),
-PRIMARY KEY ([id])
-)
-SQL;
+            CREATE TABLE [schema_articles] (
+            [id] INTEGER IDENTITY(1, 1) NOT NULL,
+            [title] NVARCHAR(255) NOT NULL,
+            [body] NVARCHAR(MAX),
+            [data] NVARCHAR(MAX),
+            [hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
+            [created] DATETIME2,
+            [created_with_default] DATETIME2 DEFAULT SYSDATETIME(),
+            [created_with_precision] DATETIME2(3),
+            [created_without_precision] DATETIME2(0),
+            PRIMARY KEY ([id])
+            )
+            SQL;
         $result = $table->createSql($connection);
 
         $this->assertCount(2, $result);
@@ -1309,8 +1332,8 @@ SQL;
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
         $this->assertSame(
-            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
-            "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
+            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) "
+                . "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
             $result[1],
         );
     }

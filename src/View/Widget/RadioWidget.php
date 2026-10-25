@@ -175,10 +175,13 @@ class RadioWidget extends BasicWidget
 
         if (empty($radio['id'])) {
             if (isset($data['id'])) {
-                $radio['id'] = $data['id'] . '-' . rtrim(
-                    $this->idSuffix((string)$radio['value']),
-                    '-',
-                );
+                $radio['id'] =
+                    $data['id']
+                    . '-'
+                    . rtrim(
+                        $this->idSuffix((string)$radio['value']),
+                        '-',
+                    );
             } else {
                 $radio['id'] = $this->id((string)$radio['name'], (string)$radio['value']);
             }
@@ -218,8 +221,11 @@ class RadioWidget extends BasicWidget
         ]);
 
         if (
-            $data['label'] === false &&
-            ($nestedInput || !str_contains($this->templates->get('radioWrapper'), '{{input}}'))
+            $data['label'] === false
+            && (
+                $nestedInput
+                || !str_contains($this->templates->get('radioWrapper'), '{{input}}')
+            )
         ) {
             $label = $input;
             $input = '';

@@ -130,8 +130,9 @@ class HtmlFormatter implements FormatterInterface
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
                 'string' => $this->style('string', "'" . $var->getValue() . "'"),
-                'int', 'float' => $this->style('visibility', "({$var->getType()})") .
-                        ' ' . $this->style('number', "{$var->getValue()}"),
+                'int', 'float' => $this->style('visibility', "({$var->getType()})")
+                    . ' '
+                    . $this->style('number', "{$var->getValue()}"),
                 default => "({$var->getType()}) {$var->getValue()}",
             };
         }
@@ -156,9 +157,10 @@ class HtmlFormatter implements FormatterInterface
      */
     protected function exportArray(ArrayNode $var, int $indent): string
     {
-        $open = '<span class="cake-debug-array">' .
-            $this->style('punct', '[') .
-            '<samp class="cake-debug-array-items">';
+        $open =
+            '<span class="cake-debug-array">'
+            . $this->style('punct', '[')
+            . '<samp class="cake-debug-array-items">';
         $vars = [];
         $break = "\n" . str_repeat('  ', $indent);
         $endBreak = "\n" . str_repeat('  ', $indent - 1);
@@ -166,16 +168,21 @@ class HtmlFormatter implements FormatterInterface
         $arrow = $this->style('punct', ' => ');
         foreach ($var->getChildren() as $item) {
             $val = $item->getValue();
-            $vars[] = $break . '<span class="cake-debug-array-item">' .
-                $this->export($item->getKey(), $indent) . $arrow . $this->export($val, $indent) .
-                $this->style('punct', ',') .
-                '</span>';
+            $vars[] =
+                $break
+                . '<span class="cake-debug-array-item">'
+                . $this->export($item->getKey(), $indent)
+                . $arrow
+                . $this->export($val, $indent)
+                . $this->style('punct', ',')
+                . '</span>';
         }
 
-        $close = '</samp>' .
-            $endBreak .
-            $this->style('punct', ']') .
-            '</span>';
+        $close =
+            '</samp>'
+            . $endBreak
+            . $this->style('punct', ']')
+            . '</span>';
 
         return $open . implode('', $vars) . $close;
     }
@@ -205,21 +212,24 @@ class HtmlFormatter implements FormatterInterface
                 $var->getId(),
             );
 
-            return '<span class="cake-debug-ref">' .
-                $this->style('punct', 'object(') .
-                $this->style('class', $var->getValue()) .
-                $this->style('punct', ') ') .
-                $link .
-                $this->style('punct', ' {}') .
-                '</span>';
+            return (
+                '<span class="cake-debug-ref">'
+                    . $this->style('punct', 'object(')
+                    . $this->style('class', $var->getValue())
+                    . $this->style('punct', ') ')
+                    . $link
+                    . $this->style('punct', ' {}')
+                    . '</span>'
+            );
         }
 
-        $out .= $this->style('punct', 'object(') .
-            $this->style('class', $var->getValue()) .
-            $this->style('punct', ') id:') .
-            $this->style('number', (string)$var->getId()) .
-            $this->style('punct', ' {') .
-            '<samp class="cake-debug-object-props">';
+        $out .=
+            $this->style('punct', 'object(')
+            . $this->style('class', $var->getValue())
+            . $this->style('punct', ') id:')
+            . $this->style('number', (string)$var->getId())
+            . $this->style('punct', ' {')
+            . '<samp class="cake-debug-object-props">';
 
         $props = [];
         foreach ($var->getChildren() as $property) {
@@ -227,28 +237,31 @@ class HtmlFormatter implements FormatterInterface
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = $break .
-                    '<span class="cake-debug-prop">' .
-                    $this->style('visibility', $visibility) .
-                    ' ' .
-                    $this->style('property', $name) .
-                    $arrow .
-                    $this->export($property->getValue(), $indent) .
-                '</span>';
+                $props[] =
+                    $break
+                    . '<span class="cake-debug-prop">'
+                    . $this->style('visibility', $visibility)
+                    . ' '
+                    . $this->style('property', $name)
+                    . $arrow
+                    . $this->export($property->getValue(), $indent)
+                    . '</span>';
             } else {
-                $props[] = $break .
-                    '<span class="cake-debug-prop">' .
-                    $this->style('property', $name) .
-                    $arrow .
-                    $this->export($property->getValue(), $indent) .
-                    '</span>';
+                $props[] =
+                    $break
+                    . '<span class="cake-debug-prop">'
+                    . $this->style('property', $name)
+                    . $arrow
+                    . $this->export($property->getValue(), $indent)
+                    . '</span>';
             }
         }
 
-        $end = '</samp>' .
-            $endBreak .
-            $this->style('punct', '}') .
-            '</span>';
+        $end =
+            '</samp>'
+            . $endBreak
+            . $this->style('punct', '}')
+            . '</span>';
 
         if ($props !== []) {
             return $out . implode('', $props) . $end;

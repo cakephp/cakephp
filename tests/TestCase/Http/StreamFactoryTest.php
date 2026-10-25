@@ -41,6 +41,7 @@ class StreamFactoryTest extends TestCase
 
         // phpcs:disable
         @unlink($this->filename);
+
         // phpcs:enable
     }
 

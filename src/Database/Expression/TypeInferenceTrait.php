@@ -55,8 +55,8 @@ trait TypeInferenceTrait
         } elseif ($value instanceof Stringable) {
             $type = 'string';
         } elseif (
-            $typeMap !== null &&
-            $value instanceof IdentifierExpression
+            $typeMap !== null
+            && $value instanceof IdentifierExpression
         ) {
             $type = $typeMap->type($value->getIdentifier());
         } elseif ($value instanceof TypedResultInterface) {

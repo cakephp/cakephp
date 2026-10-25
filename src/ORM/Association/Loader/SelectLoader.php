@@ -181,8 +181,7 @@ class SelectLoader
         // The DTO's setFromArray() expects arrays, not entities
         $shouldHydrate = $selectQuery->isHydrationEnabled() && !$selectQuery->isDtoProjectionEnabled();
 
-        $fetchQuery = $query
-            ->select($options['fields'])
+        $fetchQuery = $query->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
             ->enableHydration($shouldHydrate)
@@ -361,9 +360,9 @@ class SelectLoader
 
         $driver = $query->getDriver();
         if (
-            $selectAlias !== null &&
-            !$driver->isAutoQuotingEnabled() &&
-            $driver->supports(DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS)
+            $selectAlias !== null
+            && !$driver->isAutoQuotingEnabled()
+            && $driver->supports(DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS)
         ) {
             $identifier = $aliasedTable . '.' . $driver->quoteIdentifier($selectAlias);
         }
@@ -432,14 +431,15 @@ class SelectLoader
         $name = $this->alias;
 
         if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
-                   'You must provide a foreignKey column.';
+            $msg =
+                'Cannot have foreignKey = false for hasMany associations. '
+                . 'You must provide a foreignKey column.';
             throw new DatabaseException($msg);
         }
 
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true)
+            ? $this->foreignKey
+            : $this->bindingKey;
 
         foreach ((array)$keys as $key) {
             $links[] = sprintf('%s.%s', $name, $key);
@@ -537,12 +537,7 @@ class SelectLoader
             $order->iterateParts(function (
                 $direction,
                 $field,
-            ) use (
-                &$fields,
-                &$group,
-                $columns,
-                $includeOrderFields,
-            ) {
+            ) use (&$fields, &$group, $columns, $includeOrderFields) {
                 // A numeric key carries its own column and must not be read as a SELECT offset.
                 if (is_string($field) && isset($columns[$field])) {
                     $column = $columns[$field];
@@ -671,9 +666,9 @@ class SelectLoader
     {
         $resultMap = [];
         $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true)
+            ? $this->foreignKey
+            : $this->bindingKey;
         $key = (array)$keys;
 
         $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
@@ -712,9 +707,9 @@ class SelectLoader
      */
     protected function resultInjector(SelectQuery $fetchQuery, array $resultMap, array $options): Closure
     {
-        $keys = $this->associationType === Association::MANY_TO_ONE ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = $this->associationType === Association::MANY_TO_ONE
+            ? $this->foreignKey
+            : $this->bindingKey;
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {

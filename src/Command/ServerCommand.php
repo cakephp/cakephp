@@ -215,23 +215,28 @@ class ServerCommand extends Command
         $parser->setDescription([
             static::getDescription(),
             "<warning>[WARN] Don't use this in a production environment</warning>",
-        ])->addOption('host', [
-            'short' => 'H',
-            'help' => 'ServerHost',
-        ])->addOption('port', [
-            'short' => 'p',
-            'help' => 'ListenPort',
-        ])->addOption('ini_path', [
-            'short' => 'I',
-            'help' => 'php.ini path',
-        ])->addOption('document_root', [
-            'short' => 'd',
-            'help' => 'DocumentRoot',
-        ])->addOption('frankenphp', [
-            'boolean' => true,
-            'short' => 'f',
-            'help' => "Use frankenphp instead of PHP's built-in server",
-        ]);
+        ])
+            ->addOption('host', [
+                'short' => 'H',
+                'help' => 'ServerHost',
+            ])
+            ->addOption('port', [
+                'short' => 'p',
+                'help' => 'ListenPort',
+            ])
+            ->addOption('ini_path', [
+                'short' => 'I',
+                'help' => 'php.ini path',
+            ])
+            ->addOption('document_root', [
+                'short' => 'd',
+                'help' => 'DocumentRoot',
+            ])
+            ->addOption('frankenphp', [
+                'boolean' => true,
+                'short' => 'f',
+                'help' => "Use frankenphp instead of PHP's built-in server",
+            ]);
 
         return $parser;
     }

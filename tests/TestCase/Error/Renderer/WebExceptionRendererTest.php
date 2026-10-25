@@ -109,8 +109,7 @@ class WebExceptionRendererTest extends TestCase
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
-        $request = $request
-            ->withParam('controller', 'Articles')
+        $request = $request->withParam('controller', 'Articles')
             ->withParam('prefix', 'Admin');
 
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
@@ -134,8 +133,7 @@ class WebExceptionRendererTest extends TestCase
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
-        $request = $request
-            ->withParam('controller', 'Comments')
+        $request = $request->withParam('controller', 'Comments')
             ->withParam('plugin', 'TestPlugin')
             ->withParam('prefix', 'Admin');
 
@@ -152,8 +150,7 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testTemplatePath(): void
     {
-        $request = new ServerRequest()
-            ->withParam('controller', 'Foo')
+        $request = new ServerRequest()->withParam('controller', 'Foo')
             ->withParam('action', 'bar');
         $exception = new NotFoundException();
         $ExceptionRenderer = new WebExceptionRenderer($exception, $request);
@@ -194,8 +191,7 @@ class WebExceptionRendererTest extends TestCase
         Configure::write('debug', false);
 
         // Create a request with a prefix that doesn't have error templates
-        $request = new ServerRequest()
-            ->withParam('controller', 'Foo')
+        $request = new ServerRequest()->withParam('controller', 'Foo')
             ->withParam('action', 'bar')
             ->withParam('prefix', 'CustomPrefix'); // This prefix doesn't have error templates
 
@@ -339,7 +335,11 @@ class WebExceptionRendererTest extends TestCase
         $result = $ExceptionRenderer->render();
 
         $this->assertSame(500, $result->getStatusCode());
-        $this->assertStringContainsString('foul ball.', (string)$result->getBody(), 'Text should show up as its debug mode.');
+        $this->assertStringContainsString(
+            'foul ball.',
+            (string)$result->getBody(),
+            'Text should show up as its debug mode.',
+        );
     }
 
     /**
@@ -451,7 +451,9 @@ class WebExceptionRendererTest extends TestCase
     {
         Router::reload();
 
-        $request = new ServerRequest(['url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>']);
+        $request = new ServerRequest([
+            'url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>',
+        ]);
         Router::setRequest($request);
 
         $exception = new NotFoundException('Custom message');
@@ -763,8 +765,7 @@ class WebExceptionRendererTest extends TestCase
             'scopes' => ['cake.error'],
         ]);
         Configure::write('debug', false);
-        $request = new ServerRequest()
-            ->withParam('controller', 'Foo')
+        $request = new ServerRequest()->withParam('controller', 'Foo')
             ->withParam('action', 'bar')
             ->withParam('prefix', 'CustomPrefix');
         $exception = new NotFoundException('Page not found');
@@ -790,7 +791,7 @@ class WebExceptionRendererTest extends TestCase
         $exception = new TypeError('Bad type');
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        $controller = new class (new ServerRequest()) extends Controller {
+        $controller = new class(new ServerRequest()) extends Controller {
             public function render(?string $template = null, ?string $layout = null): Response
             {
                 if ($template === 'typeError') {
@@ -822,7 +823,7 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         $request = new ServerRequest();
-        $controller = new class ($request) extends Controller {
+        $controller = new class($request) extends Controller {
             public function beforeRender(EventInterface $event): never
             {
                 throw new NotFoundException('Not there, sorry');
@@ -1072,7 +1073,10 @@ class WebExceptionRendererTest extends TestCase
         $exceptionRenderer = new TestAppsExceptionRenderer($exception);
 
         $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('template for TestApp\Error\Exception\MissingWidgetThingException was rendered', $result);
+        $this->assertStringContainsString(
+            'template for TestApp\Error\Exception\MissingWidgetThingException was rendered',
+            $result,
+        );
 
         $exception = new XmlException();
         $exceptionRenderer = new TestAppsExceptionRenderer($exception);

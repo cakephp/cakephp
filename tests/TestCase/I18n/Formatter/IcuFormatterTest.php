@@ -56,11 +56,12 @@ class IcuFormatterTest extends TestCase
     {
         $formatter = new IcuFormatter();
         $locale = 'en_US';
-        $string = '{0,plural,' .
-            '=0{No fruits.}' .
-            '=1{We have one fruit}' .
-            'other{We have {1} fruits}' .
-            '}';
+        $string =
+            '{0,plural,'
+            . '=0{No fruits.}'
+            . '=1{We have one fruit}'
+            . 'other{We have {1} fruits}'
+            . '}';
 
         $params = [0, 0];
         $expect = 'No fruits.';

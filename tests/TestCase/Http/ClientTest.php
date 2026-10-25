@@ -248,10 +248,14 @@ class ClientTest extends TestCase
             ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
-        $result = $http->get('http://cakephp.org/test.html', [], [
-            'headers' => $headers,
-            'cookies' => $cookies,
-        ]);
+        $result = $http->get(
+            'http://cakephp.org/test.html',
+            [],
+            [
+                'headers' => $headers,
+                'cookies' => $cookies,
+            ],
+        );
         $this->assertSame($result, $response);
     }
 
@@ -392,9 +396,13 @@ class ClientTest extends TestCase
             'host' => 'cakephp.org',
             'adapter' => $mock,
         ]);
-        $http->get('/', [], [
-            'auth' => ['type' => 'horribly broken'],
-        ]);
+        $http->get(
+            '/',
+            [],
+            [
+                'auth' => ['type' => 'horribly broken'],
+            ],
+        );
     }
 
     /**
@@ -425,10 +433,14 @@ class ClientTest extends TestCase
             'host' => 'cakephp.org',
             'adapter' => $mock,
         ]);
-        $result = $http->get('/', [], [
-            'auth' => ['username' => 'mark', 'password' => 'secret'],
-            'proxy' => ['username' => 'mark', 'password' => 'pass'],
-        ]);
+        $result = $http->get(
+            '/',
+            [],
+            [
+                'auth' => ['username' => 'mark', 'password' => 'secret'],
+                'proxy' => ['username' => 'mark', 'password' => 'pass'],
+            ],
+        );
         $this->assertSame($result, $response);
     }
 
@@ -886,11 +898,15 @@ class ClientTest extends TestCase
         $client->addCookie(Cookie::create('second-domain', 'not-cake', ['domain' => 'notcakephp.org']));
         $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
 
-        $result = $client->get($url, [], [
-            'headers' => ['Authorization' => 'Bearer abc123'],
-            'cookies' => ['sessionid' => 'cakephp-session'],
-            'redirect' => 2,
-        ]);
+        $result = $client->get(
+            $url,
+            [],
+            [
+                'headers' => ['Authorization' => 'Bearer abc123'],
+                'cookies' => ['sessionid' => 'cakephp-session'],
+                'redirect' => 2,
+            ],
+        );
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($result->isOk());
@@ -962,11 +978,15 @@ class ClientTest extends TestCase
         $client->addCookie(Cookie::create('secure', 'secure-cake', ['secure' => true, 'domain' => 'cakephp.org']));
         $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
 
-        $result = $client->get($url, [], [
-            'headers' => ['Authorization' => 'Bearer abc123'],
-            'cookies' => ['sessionid' => 'cakephp-session'],
-            'redirect' => 2,
-        ]);
+        $result = $client->get(
+            $url,
+            [],
+            [
+                'headers' => ['Authorization' => 'Bearer abc123'],
+                'cookies' => ['sessionid' => 'cakephp-session'],
+                'redirect' => 2,
+            ],
+        );
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($result->isOk());
@@ -1020,7 +1040,9 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (
+                &$eventTriggered,
+            ): void {
                 $eventTriggered = true;
             },
         );

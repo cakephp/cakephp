@@ -783,7 +783,11 @@ class BelongsToManyTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         /** @var \Cake\ORM\Table&\Mockery\MockInterface $joint */
-        $joint = Mockery::mock(new Table(['alias' => 'SpecialTags', 'table' => 'special_tags', 'connection' => $connection]))
+        $joint = Mockery::mock(new Table([
+            'alias' => 'SpecialTags',
+            'table' => 'special_tags',
+            'connection' => $connection,
+        ]))
             ->makePartial();
 
         $articles = $this->getTableLocator()->get('Articles');
@@ -929,7 +933,8 @@ class BelongsToManyTest extends TestCase
 
         // Update an article to not match the association finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
-        $assoc = $tags->associations()->get('Articles')
+        $assoc = $tags->associations()
+            ->get('Articles')
             ->setFinder('published')
             ->setThrough($joint);
         $entity = $tags->get(1, ...['contain' => 'Articles']);
@@ -985,7 +990,8 @@ class BelongsToManyTest extends TestCase
         $joint = $this->getTableLocator()->get('ArticlesTags');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $assoc = $tags->associations()->get('Articles')
+        $assoc = $tags->associations()
+            ->get('Articles')
             ->setFinder(['published' => ['title' => 'First Article']])
             ->setThrough($joint);
         $entity = $tags->get(1, ...['contain' => 'Articles']);
@@ -1013,7 +1019,8 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
 
-        $assoc = $tags->associations()->get('Articles')
+        $assoc = $tags->associations()
+            ->get('Articles')
             ->setFinder('withAuthors')
             ->setThrough($joint);
         $tag = $tags->get(1);
@@ -1033,9 +1040,13 @@ class BelongsToManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
         $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
-            $rules->add(function () {
-                return false;
-            }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
+            $rules->add(
+                function () {
+                    return false;
+                },
+                'rule',
+                ['errorField' => 'name', 'message' => 'Bad data'],
+            );
         });
 
         $assoc = $articles->belongsToMany('Tags', [
@@ -1442,8 +1453,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain(['Tags' => function (SelectQuery $q) {
                 return $q->select(['id']);
             }])
@@ -1452,8 +1462,7 @@ class BelongsToManyTest extends TestCase
         $this->assertNotEmpty($result->tags[0]->id);
         $this->assertEmpty($result->tags[0]->name);
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain([
                 'Tags' => [
                     'fields' => [
@@ -1475,8 +1484,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('Tags');
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain(['Tags' => function (SelectQuery $q) {
                 return $q->select(['two' => $q->expr('1 + 1')])->enableAutoFields();
             }])
@@ -1703,7 +1711,10 @@ class BelongsToManyTest extends TestCase
         ]);
 
         $connection = ConnectionManager::get('test_read_write');
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
 
         // Create belongs to many relationships with unique table names
         $driver = $connection->getDriver(Connection::ROLE_WRITE);
@@ -1723,7 +1734,11 @@ class BelongsToManyTest extends TestCase
         $articles->belongsToMany('UniqueItems')->getTarget()->setConnection($connection);
 
         $query = $articles->find();
-        $this->assertSame(Connection::ROLE_WRITE, $query->getConnectionRole(), 'This test assumes select queries still default to write role');
+        $this->assertSame(
+            Connection::ROLE_WRITE,
+            $query->getConnectionRole(),
+            'This test assumes select queries still default to write role',
+        );
 
         $results = $query->contain('UniqueItems')->useReadRole()->toArray();
         $this->assertCount(1, $results);
@@ -1735,9 +1750,9 @@ class BelongsToManyTest extends TestCase
 
         foreach ($logs as $log) {
             if (
-                str_contains($log, 'FROM articles') ||
-                str_contains($log, 'FROM articles_unique_items') ||
-                str_contains($log, 'FROM unique_items')
+                str_contains($log, 'FROM articles')
+                || str_contains($log, 'FROM articles_unique_items')
+                || str_contains($log, 'FROM unique_items')
             ) {
                 $this->assertStringContainsString('role=read', $log);
             }

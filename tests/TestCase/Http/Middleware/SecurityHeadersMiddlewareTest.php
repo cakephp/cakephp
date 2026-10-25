@@ -41,8 +41,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
         });
 
         $middleware = new SecurityHeadersMiddleware();
-        $middleware
-            ->setCrossDomainPolicy()
+        $middleware->setCrossDomainPolicy()
             ->setReferrerPolicy()
             ->setXFrameOptions()
             ->setXssProtection()
@@ -82,7 +81,9 @@ class SecurityHeadersMiddlewareTest extends TestCase
     public function testCheckValues(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid arg `INVALID-VALUE!`, use one of these: `all`, `none`, `master-only`, `by-content-type`, `by-ftp-filename`');
+        $this->expectExceptionMessage(
+            'Invalid arg `INVALID-VALUE!`, use one of these: `all`, `none`, `master-only`, `by-content-type`, `by-ftp-filename`',
+        );
         $middleware = new SecurityHeadersMiddleware();
         $middleware->setCrossDomainPolicy('INVALID-VALUE!');
     }

@@ -189,19 +189,17 @@ class ConsoleOutput
 
         if (
             (
-                DIRECTORY_SEPARATOR === '\\' &&
-                !str_contains(strtolower(php_uname('v')), 'windows 10') &&
-                !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
-                !env('ANSICON') &&
-                env('ConEmuANSI') !== 'ON'
-            ) ||
-            (
-                function_exists('posix_isatty') &&
-                !posix_isatty($this->output)
-            ) ||
-            (
-                env('NO_COLOR') !== null
+                DIRECTORY_SEPARATOR === '\\'
+                && !str_contains(strtolower(php_uname('v')), 'windows 10')
+                && !str_contains(strtolower((string)env('SHELL')), 'bash.exe')
+                && !env('ANSICON')
+                && env('ConEmuANSI') !== 'ON'
             )
+            || (
+                function_exists('posix_isatty')
+                && !posix_isatty($this->output)
+            )
+            || env('NO_COLOR') !== null
         ) {
             $this->outputAs = self::PLAIN;
         }

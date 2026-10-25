@@ -257,8 +257,7 @@ class EntityTest extends TestCase
     {
         $entity = Mockery::mock(Entity::class)->makePartial();
 
-        $entity
-            ->shouldReceive('patch')
+        $entity->shouldReceive('patch')
             ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true])
             ->once();
 
@@ -278,8 +277,7 @@ class EntityTest extends TestCase
     {
         $entity = Mockery::mock(Entity::class)->makePartial();
 
-        $entity
-            ->shouldReceive('patch')
+        $entity->shouldReceive('patch')
             ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true])
             ->once();
 
@@ -735,7 +733,7 @@ class EntityTest extends TestCase
             'title' => 'Foo',
             'author_id' => 3,
         ]);
-        $expected = ['author_id' => 3, 'title' => 'Foo',];
+        $expected = ['author_id' => 3, 'title' => 'Foo'];
         $this->assertEquals($expected, $entity->extract(['author_id', 'title']));
 
         $expected = ['id' => 1];
@@ -837,7 +835,7 @@ class EntityTest extends TestCase
 
         // Create an object that represents the same value but as object type.
         // In real usage this would be something like BigDecimal.
-        $objectValue = new class (10.50) {
+        $objectValue = new class(10.50) {
             public function __construct(private float $value)
             {
             }
@@ -1647,29 +1645,38 @@ class EntityTest extends TestCase
             'body' => 'einstein',
         ]);
         $this->assertSame($entity, $return);
-        $this->assertSame([
-            'title' => 'albert',
-            'body' => 'einstein',
-        ], $entity->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'albert',
+                'body' => 'einstein',
+            ],
+            $entity->getInvalid(),
+        );
 
         $set = $entity->setInvalid([
             'title' => 'nikola',
             'body' => 'tesla',
         ]);
-        $this->assertSame([
-            'title' => 'albert',
-            'body' => 'einstein',
-        ], $set->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'albert',
+                'body' => 'einstein',
+            ],
+            $set->getInvalid(),
+        );
 
         $overwrite = $entity->setInvalid([
             'title' => 'nikola',
             'body' => 'tesla',
         ], true);
         $this->assertSame($entity, $overwrite);
-        $this->assertSame([
-            'title' => 'nikola',
-            'body' => 'tesla',
-        ], $entity->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'nikola',
+                'body' => 'tesla',
+            ],
+            $entity->getInvalid(),
+        );
     }
 
     /**

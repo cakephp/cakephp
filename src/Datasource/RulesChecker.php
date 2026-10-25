@@ -393,7 +393,7 @@ class RulesChecker
             $name = null;
         }
 
-        if (!($rule instanceof RuleInvoker)) {
+        if (!$rule instanceof RuleInvoker) {
             $rule = new RuleInvoker($rule, $name, $options);
         } else {
             $rule->setOptions($options)->setName($name);

@@ -667,8 +667,19 @@ class ViewBuilder implements JsonSerializable
     public function jsonSerialize(): array
     {
         $properties = [
-            'templatePath', 'template', 'plugin', 'theme', 'layout', 'autoLayout',
-            'layoutPath', 'name', 'className', 'options', 'helpers', 'vars', 'configMergeStrategy',
+            'templatePath',
+            'template',
+            'plugin',
+            'theme',
+            'layout',
+            'autoLayout',
+            'layoutPath',
+            'name',
+            'className',
+            'options',
+            'helpers',
+            'vars',
+            'configMergeStrategy',
         ];
 
         $array = [];
@@ -699,9 +710,9 @@ class ViewBuilder implements JsonSerializable
         }
 
         if (
-            is_resource($item) ||
-            $item instanceof Closure ||
-            $item instanceof PDO
+            is_resource($item)
+            || $item instanceof Closure
+            || $item instanceof PDO
         ) {
             throw new InvalidArgumentException(sprintf(
                 'Failed serializing the `%s` %s in the `%s` view var',

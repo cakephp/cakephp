@@ -71,15 +71,15 @@ class OrderByExpression extends QueryExpression
     {
         foreach ($conditions as $key => $val) {
             if (
-                is_string($key) &&
-                is_string($val) &&
-                !in_array(strtoupper($val), ['ASC', 'DESC'], true)
+                is_string($key)
+                && is_string($val)
+                && !in_array(strtoupper($val), ['ASC', 'DESC'], true)
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        "Passing extra expressions by associative array (`'%s' => '%s'`) " .
-                        'is not allowed to avoid potential SQL injection. ' .
-                        'Use QueryExpression or numeric array instead.',
+                        "Passing extra expressions by associative array (`'%s' => '%s'`) "
+                            . 'is not allowed to avoid potential SQL injection. '
+                            . 'Use QueryExpression or numeric array instead.',
                         $key,
                         $val,
                     ),

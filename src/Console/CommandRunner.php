@@ -322,8 +322,8 @@ class CommandRunner implements EventDispatcherInterface
         }
         if (!$commands->has($name)) {
             throw new MissingOptionException(
-                "Unknown command `{$this->root} {$name}`. " .
-                "Run `{$this->root} --help` to get the list of commands.",
+                "Unknown command `{$this->root} {$name}`. "
+                    . "Run `{$this->root} --help` to get the list of commands.",
                 $name,
                 $commands->keys(),
             );
@@ -454,7 +454,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     protected function loadRoutes(): void
     {
-        if (!($this->app instanceof RoutingApplicationInterface)) {
+        if (!$this->app instanceof RoutingApplicationInterface) {
             return;
         }
         $builder = Router::createRouteBuilder('/');

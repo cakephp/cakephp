@@ -119,7 +119,7 @@ readonly class AttributeInfo implements JsonSerializable
             ));
         }
 
-        $instance = new ($this->attributeName)(...$this->arguments);
+        $instance = new $this->attributeName(...$this->arguments);
 
         if ($expectedClass !== null && !$instance instanceof $expectedClass) {
             throw new InvalidArgumentException(sprintf(

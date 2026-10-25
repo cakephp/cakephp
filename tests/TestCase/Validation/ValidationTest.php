@@ -898,14 +898,35 @@ class ValidationTest extends TestCase
      */
     public function testComparisonTypeChecks(): void
     {
-        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hexish encoding fails');
-        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'binary string data fails');
-        $this->assertFalse(Validation::comparison('0x01', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
-        $this->assertFalse(Validation::comparison('0x1', Validation::COMPARE_GREATER_OR_EQUAL, 1), 'hex string data fails');
+        $this->assertFalse(
+            Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1),
+            'hexish encoding fails',
+        );
+        $this->assertFalse(
+            Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1),
+            'binary string data fails',
+        );
+        $this->assertFalse(
+            Validation::comparison('0x01', Validation::COMPARE_GREATER_OR_EQUAL, 1),
+            'hex string data fails',
+        );
+        $this->assertFalse(
+            Validation::comparison('0x1', Validation::COMPARE_GREATER_OR_EQUAL, 1),
+            'hex string data fails',
+        );
 
-        $this->assertFalse(Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hexish encoding fails');
-        $this->assertFalse(Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'binary string data fails');
-        $this->assertFalse(Validation::comparison('0x02', Validation::COMPARE_GREATER_OR_EQUAL, 1.5), 'hex string data fails');
+        $this->assertFalse(
+            Validation::comparison('\x028', Validation::COMPARE_GREATER_OR_EQUAL, 1.5),
+            'hexish encoding fails',
+        );
+        $this->assertFalse(
+            Validation::comparison('0b010', Validation::COMPARE_GREATER_OR_EQUAL, 1.5),
+            'binary string data fails',
+        );
+        $this->assertFalse(
+            Validation::comparison('0x02', Validation::COMPARE_GREATER_OR_EQUAL, 1.5),
+            'hex string data fails',
+        );
     }
 
     /**
@@ -1499,8 +1520,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::datetime($date));
 
         $date = [
-            'year' => 2014, 'month' => 2, 'day' => 14,
-            'hour' => 1, 'minute' => 14, 'second' => 15,
+            'year' => 2014,
+            'month' => 2,
+            'day' => 14,
+            'hour' => 1,
+            'minute' => 14,
+            'second' => 15,
             'meridian' => 'am',
         ];
         $this->assertTrue(Validation::datetime($date));
@@ -1519,8 +1544,11 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::datetime($date));
 
         $date = [
-            'year' => '2014', 'month' => '02', 'day' => '14',
-            'hour' => 'farts', 'minute' => 'farts',
+            'year' => '2014',
+            'month' => '02',
+            'day' => '14',
+            'hour' => 'farts',
+            'minute' => 'farts',
         ];
         $this->assertFalse(Validation::datetime($date));
     }
@@ -1573,19 +1601,24 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time($date));
 
         $date = [
-            'hour' => 1, 'minute' => 14, 'second' => 15,
+            'hour' => 1,
+            'minute' => 14,
+            'second' => 15,
             'meridian' => 'am',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
-            'hour' => 12, 'minute' => 14, 'second' => 15,
+            'hour' => 12,
+            'minute' => 14,
+            'second' => 15,
             'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
-            'hour' => 'farts', 'minute' => 'farts',
+            'hour' => 'farts',
+            'minute' => 'farts',
         ];
         $this->assertFalse(Validation::time($date));
 
@@ -1790,8 +1823,16 @@ class ValidationTest extends TestCase
      */
     public function testDateCustomRegx(): void
     {
-        $this->assertTrue(Validation::date('2006-12-27', 'ymd', '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
-        $this->assertFalse(Validation::date('12-27-2006', 'ymd', '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%'));
+        $this->assertTrue(Validation::date(
+            '2006-12-27',
+            'ymd',
+            '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%',
+        ));
+        $this->assertFalse(Validation::date(
+            '12-27-2006',
+            'ymd',
+            '%^(19|20)[0-9]{2}[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$%',
+        ));
     }
 
     #[DataProvider('providerDecimal')]
@@ -1876,7 +1917,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::localizedDecimal('1.54'), '"1.54" should be considered a valid decimal');
 
         $this->assertTrue(Validation::localizedDecimal(12345.67), '12345.67 should be considered a valid decimal');
-        $this->assertTrue(Validation::localizedDecimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
+        $this->assertTrue(
+            Validation::localizedDecimal('12,345.67'),
+            '"12,345.67" should be considered a valid decimal',
+        );
 
         $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
         $this->assertTrue(Validation::localizedDecimal('1 200,99'), 'should be considered a valid decimal');
@@ -2067,7 +2111,10 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep(): void
     {
-        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for nonexistent domains, skipping deep email checks.');
+        $this->skipIf(
+            (bool)gethostbynamel('example.abcd'),
+            'Your DNS service responds for nonexistent domains, skipping deep email checks.',
+        );
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
@@ -2078,8 +2125,16 @@ class ValidationTest extends TestCase
      */
     public function testEmailCustomRegex(): void
     {
-        $this->assertTrue(Validation::email('abc.efg@cakephp.org', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
-        $this->assertFalse(Validation::email('abc.efg@com.caphpkeinvalid', null, '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i'));
+        $this->assertTrue(Validation::email(
+            'abc.efg@cakephp.org',
+            null,
+            '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i',
+        ));
+        $this->assertFalse(Validation::email(
+            'abc.efg@com.caphpkeinvalid',
+            null,
+            '/^[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$/i',
+        ));
     }
 
     public function testEnum(): void
@@ -2295,7 +2350,9 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::url('sftp://192.168.0.1/pub/cake'));
         $this->assertTrue(Validation::url('https://my.domain.com/gizmo/app?class=MySip;proc=start'));
         $this->assertTrue(Validation::url('www.domain.tld'));
-        $this->assertTrue(Validation::url('http://123456789112345678921234567893123456789412345678951234567896123.com'));
+        $this->assertTrue(Validation::url(
+            'http://123456789112345678921234567893123456789412345678951234567896123.com',
+        ));
         $this->assertTrue(Validation::url('http://www.domain.com/blogs/index.php?blog=6&tempskin=_rss2'));
         $this->assertTrue(Validation::url('http://www.domain.com/blogs/parenth()eses.php'));
         $this->assertTrue(Validation::url('http://www.domain.com/index.php?get=params&amp;get2=params'));
@@ -2313,7 +2370,9 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::url('http://www.domain.12com'));
         $this->assertFalse(Validation::url('http://www.-invaliddomain.tld'));
         $this->assertFalse(Validation::url('http://www.domain.-invalidtld'));
-        $this->assertFalse(Validation::url('http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com'));
+        $this->assertFalse(Validation::url(
+            'http://this-domain-is-too-loooooong-by-icann-rules-maximum-length-is-63.com',
+        ));
         $this->assertFalse(Validation::url('http://www.underscore_domain.org'));
         $this->assertFalse(Validation::url('http://_jabber._tcp.g_mail.com'));
         $this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
@@ -2461,20 +2520,26 @@ class ValidationTest extends TestCase
             'file2' => ['name' => 'file.jpg'],
             'file3' => ['name' => 'file.jpg'],
         ]));
-        $this->assertFalse(Validation::extension(
-            [
-                'file1' => ['name' => 'file.jpg'],
-                'file2' => ['name' => 'file.gif'],
-            ],
-            ['gif'],
-        ), 'Only the first element should be checked');
-        $this->assertTrue(Validation::extension(
-            [
-                'file1' => ['name' => 'file.gif'],
-                'file2' => ['name' => 'file.jpg'],
-            ],
-            ['gif'],
-        ), 'Only the first element should be checked');
+        $this->assertFalse(
+            Validation::extension(
+                [
+                    'file1' => ['name' => 'file.jpg'],
+                    'file2' => ['name' => 'file.gif'],
+                ],
+                ['gif'],
+            ),
+            'Only the first element should be checked',
+        );
+        $this->assertTrue(
+            Validation::extension(
+                [
+                    'file1' => ['name' => 'file.gif'],
+                    'file2' => ['name' => 'file.jpg'],
+                ],
+                ['gif'],
+            ),
+            'Only the first element should be checked',
+        );
 
         $file = [
             'tmp_name' => '/var/private/secret-file',

@@ -162,7 +162,7 @@ class SchemaDialectTest extends TestCase
 
     public function testDescribeOptionsMysql(): void
     {
-        $this->skipIf(!(ConnectionManager::get('test')->getDriver() instanceof Mysql), 'requires mysql');
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Mysql, 'requires mysql');
         $result = $this->dialect->describeOptions('orders');
         $this->assertTrue(is_array($result));
         $this->assertArrayHasKey('engine', $result);
@@ -207,7 +207,11 @@ class SchemaDialectTest extends TestCase
         $this->assertFalse($this->dialect->hasIndex('orders', ['product_id', 'product_category']));
 
         // Name is wrong
-        $this->assertFalse($this->dialect->hasIndex('orders', ['product_category', 'product_id'], 'product_category_index'));
+        $this->assertFalse($this->dialect->hasIndex(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_index',
+        ));
 
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id']));
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id'], 'product_category'));
@@ -226,9 +230,17 @@ class SchemaDialectTest extends TestCase
     public function testHasForeignKeyNamed(): void
     {
         // Name is wrong
-        $this->assertFalse($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_index'));
+        $this->assertFalse($this->dialect->hasForeignKey(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_index',
+        ));
 
-        $this->assertTrue($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_fk'));
+        $this->assertTrue($this->dialect->hasForeignKey(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_fk',
+        ));
         $this->assertTrue($this->dialect->hasForeignKey('orders', [], 'product_category_fk'));
     }
 }

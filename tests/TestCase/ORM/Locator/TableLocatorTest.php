@@ -164,11 +164,17 @@ class TableLocatorTest extends TestCase
 
         $this->locator->setConfig('TestPlugin.Comments', ['table' => 'comments']);
         $this->assertFalse($this->locator->exists('Comments'), 'The Comments key should not be populated');
-        $this->assertFalse($this->locator->exists('TestPlugin.Comments'), 'The plugin.alias key should not be populated');
+        $this->assertFalse(
+            $this->locator->exists('TestPlugin.Comments'),
+            'The plugin.alias key should not be populated',
+        );
 
         $this->locator->get('TestPlugin.Comments', ['table' => 'comments']);
         $this->assertFalse($this->locator->exists('Comments'), 'The Comments key should not be populated');
-        $this->assertTrue($this->locator->exists('TestPlugin.Comments'), 'The plugin.alias key should now be populated');
+        $this->assertTrue(
+            $this->locator->exists('TestPlugin.Comments'),
+            'The plugin.alias key should now be populated',
+        );
     }
 
     /**
@@ -383,7 +389,10 @@ class TableLocatorTest extends TestCase
         $class = TestPluginCommentsTable::class;
         $this->assertInstanceOf($class, $table);
         $this->assertFalse($this->locator->exists('TestPluginComments'), 'Class name should not exist');
-        $this->assertFalse($this->locator->exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
+        $this->assertFalse(
+            $this->locator->exists('TestPlugin.TestPluginComments'),
+            'Full class alias should not exist',
+        );
         $this->assertTrue($this->locator->exists('Comments'), 'Class name should exist');
 
         $second = $this->locator->get('Comments');
@@ -402,7 +411,10 @@ class TableLocatorTest extends TestCase
         ]);
         $this->assertInstanceOf($class, $table);
         $this->assertFalse($this->locator->exists('TestPluginComments'), 'Class name should not exist');
-        $this->assertFalse($this->locator->exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
+        $this->assertFalse(
+            $this->locator->exists('TestPlugin.TestPluginComments'),
+            'Full class alias should not exist',
+        );
         $this->assertTrue($this->locator->exists('Comments'), 'Class name should exist');
     }
 
@@ -532,7 +544,11 @@ class TableLocatorTest extends TestCase
 
         $second = $this->locator->get('Comments');
 
-        $this->assertNotSame($first, $second, 'Should be different objects, as the reference to the first was destroyed');
+        $this->assertNotSame(
+            $first,
+            $second,
+            'Should be different objects, as the reference to the first was destroyed',
+        );
         $this->assertTrue($this->locator->exists('Comments'));
     }
 

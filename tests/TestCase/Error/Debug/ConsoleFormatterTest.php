@@ -56,18 +56,18 @@ class ConsoleFormatterTest extends TestCase
         $this->assertStringContainsString("\033[1;34m", $result, 'Should contain blue code');
         $this->assertStringContainsString("\033[0;36m", $result, 'Should contain cyan code');
         $expected = <<<TEXT
-object(MyObject) id:1 {
-  stringProp => 'value'
-  protected intProp => (int) 1
-  protected floatProp => (float) 1.1
-  protected boolProp => true
-  private nullProp => null
-  arrayProp => [
-    '' => too much,
-    (int) 1 => object(MyObject) id:1 {}
-  ]
-}
-TEXT;
+            object(MyObject) id:1 {
+              stringProp => 'value'
+              protected intProp => (int) 1
+              protected floatProp => (float) 1.1
+              protected boolProp => true
+              private nullProp => null
+              arrayProp => [
+                '' => too much,
+                (int) 1 => object(MyObject) id:1 {}
+              ]
+            }
+            TEXT;
         $noescape = preg_replace('/\\033\[\d\;\d+\;m([^\\\\]+)\\033\[0m/', '$1', $expected);
         $this->assertSame($expected, $noescape);
     }

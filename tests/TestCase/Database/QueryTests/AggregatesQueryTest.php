@@ -51,15 +51,14 @@ class AggregatesQueryTest extends TestCase
      */
     public function testFilters(): void
     {
-        $skip = !($this->connection->getDriver() instanceof Postgres);
+        $skip = !$this->connection->getDriver() instanceof Postgres;
         if ($this->connection->getDriver() instanceof Sqlite) {
             $skip = version_compare($this->connection->getDriver()->version(), '3.30.0', '<');
         }
         $this->skipif($skip);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->filter(['article_id' => 2])])
+        $result = $query->select(['num_rows' => $query->func()->count('*')->filter(['article_id' => 2])])
             ->from('comments')
             ->execute()
             ->fetchAll('assoc');

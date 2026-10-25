@@ -12,14 +12,17 @@ class ServiceProviderTest extends TestCase
 {
     protected function getServiceProvider(): ServiceProviderInterface
     {
-        return new class extends AbstractServiceProvider implements BootableServiceProviderInterface
-        {
+        return new class extends AbstractServiceProvider implements BootableServiceProviderInterface {
             public function provides(string $id): bool
             {
-                return in_array($id, [
-                    'SomeService',
-                    'AnotherService',
-                ], true);
+                return in_array(
+                    $id,
+                    [
+                        'SomeService',
+                        'AnotherService',
+                    ],
+                    true,
+                );
             }
 
             public function boot(): void

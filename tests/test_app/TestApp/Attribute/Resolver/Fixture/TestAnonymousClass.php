@@ -16,22 +16,24 @@ class TestAnonymousClass
     public function create(): object
     {
         // This anonymous class should NOT be detected by the parser
-        return new #[TestExclude]
-        class {
-            #[TestColumn(type: 'string')]
-            public string $prop;
-        };
+        return new
+            #[TestExclude]
+            class {
+                #[TestColumn(type: 'string')]
+                public string $prop;
+            };
     }
 
     #[TestRoute(path: '/create-another')]
     public function createAnother(): object
     {
-        return new #[TestInternal]
-        class implements Stringable {
-            public function __toString(): string
-            {
-                return 'test';
-            }
-        };
+        return new
+            #[TestInternal]
+            class implements Stringable {
+                public function __toString(): string
+                {
+                    return 'test';
+                }
+            };
     }
 }

@@ -25,11 +25,14 @@ class InflectorTest extends TestCase
 
         $methods = new ReflectionClass($inflector)->getProperty('methods');
 
-        self::assertSame($methods->getValue($inflector), [
-            'method1' => ['arg1'],
-            'method2' => ['arg1'],
-            'method3' => ['arg1'],
-        ]);
+        self::assertSame(
+            $methods->getValue($inflector),
+            [
+                'method1' => ['arg1'],
+                'method2' => ['arg1'],
+                'method3' => ['arg1'],
+            ],
+        );
     }
 
     public function testInflectorSetsExpectedProperties(): void
@@ -46,24 +49,25 @@ class InflectorTest extends TestCase
 
         $properties = new ReflectionClass($inflector)->getProperty('properties');
 
-        self::assertSame($properties->getValue($inflector), [
-            'property1' => 'value',
-            'property2' => 'value',
-            'property3' => 'value',
-        ]);
+        self::assertSame(
+            $properties->getValue($inflector),
+            [
+                'property1' => 'value',
+                'property2' => 'value',
+                'property3' => 'value',
+            ],
+        );
     }
 
     public function testInflectorInflectsWithProperties(): void
     {
         $container = new Container();
 
-        $bar = new class {
-        };
+        $bar = new class {};
 
         $container->add(Bar::class, $bar);
 
-        $inflector = new Inflector('Type')
-            ->setContainer($container)
+        $inflector = new Inflector('Type')->setContainer($container)
             ->setProperty('bar', Bar::class);
 
         $foo = new class {
@@ -79,17 +83,16 @@ class InflectorTest extends TestCase
     {
         $container = new Container();
 
-        $bar = new class {
-        };
+        $bar = new class {};
 
         $container->add(Bar::class, $bar);
 
-        $inflector = new Inflector('Type')
-            ->setContainer($container)
+        $inflector = new Inflector('Type')->setContainer($container)
             ->invokeMethod('setBar', [Bar::class]);
 
         $foo = new class {
             public $bar;
+
             public function setBar($bar): void
             {
                 $this->bar = $bar;
@@ -104,14 +107,14 @@ class InflectorTest extends TestCase
     {
         $foo = new class {
             public $bar;
+
             public function setBar($bar): void
             {
                 $this->bar = $bar;
             }
         };
 
-        $bar = new class {
-        };
+        $bar = new class {};
 
         $inflector = new Inflector('Type', function ($object) use ($bar): void {
             $object->setBar($bar);

@@ -55,11 +55,7 @@ class Oauth
 
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
-                $hasKeys = isset(
-                    $credentials['consumerSecret'],
-                    $credentials['token'],
-                    $credentials['tokenSecret'],
-                );
+                $hasKeys = isset($credentials['consumerSecret'], $credentials['token'], $credentials['tokenSecret']);
                 if (!$hasKeys) {
                     return $request;
                 }
@@ -74,11 +70,7 @@ class Oauth
                 break;
 
             case 'PLAINTEXT':
-                $hasKeys = isset(
-                    $credentials['consumerSecret'],
-                    $credentials['token'],
-                    $credentials['tokenSecret'],
-                );
+                $hasKeys = isset($credentials['consumerSecret'], $credentials['token'], $credentials['tokenSecret']);
                 if (!$hasKeys) {
                     return $request;
                 }

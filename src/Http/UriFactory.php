@@ -120,7 +120,8 @@ class UriFactory implements UriFactoryInterface
      */
     protected static function getBase(UriInterface $uri, array $server): array
     {
-        $config = (array)Configure::read('App') + [
+        $config = (array)Configure::read('App')
+        + [
             'base' => null,
             'webroot' => null,
             'baseUrl' => null,
@@ -169,7 +170,10 @@ class UriFactory implements UriFactoryInterface
 
         $docRoot = $server['DOCUMENT_ROOT'] ?? '';
         if (
-            ($base || !str_contains($docRoot, $webroot))
+            (
+                $base
+                || !str_contains($docRoot, $webroot)
+            )
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

@@ -151,8 +151,9 @@ class TextHelperTest extends TestCase
     public function testAutoLinkMixed(): void
     {
         $text = 'Text with a url/email http://example.com/store?email=mark@example.com and email.';
-        $expected = 'Text with a url/email <a href="http://example.com/store?email=mark@example.com">' .
-            'http://example.com/store?email=mark@example.com</a> and email.';
+        $expected =
+            'Text with a url/email <a href="http://example.com/store?email=mark@example.com">'
+            . 'http://example.com/store?email=mark@example.com</a> and email.';
         $result = $this->Text->autoLink($text);
         $this->assertSame($expected, $result);
     }
@@ -521,48 +522,48 @@ class TextHelperTest extends TestCase
     {
         $text = 'This is a test text';
         $expected = <<<TEXT
-<p>This is a test text</p>
+            <p>This is a test text</p>
 
-TEXT;
+            TEXT;
         $result = $this->Text->autoParagraph($text);
         $text = 'This is a <br/> <BR> test text';
         $expected = <<<TEXT
-<p>This is a </p>
-<p> test text</p>
+            <p>This is a </p>
+            <p> test text</p>
 
-TEXT;
+            TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
         $result = $this->Text->autoParagraph($text);
         $text = 'This is a <BR id="test"/><br class="test"> test text';
         $expected = <<<TEXT
-<p>This is a </p>
-<p> test text</p>
+            <p>This is a </p>
+            <p> test text</p>
 
-TEXT;
+            TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
         $text = <<<TEXT
-This is a test text.
-This is a line return.
-TEXT;
+            This is a test text.
+            This is a line return.
+            TEXT;
         $expected = <<<TEXT
-<p>This is a test text.<br />
-This is a line return.</p>
+            <p>This is a test text.<br />
+            This is a line return.</p>
 
-TEXT;
+            TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
         $text = <<<TEXT
-This is a test text.
+            This is a test text.
 
-This is a new line.
-TEXT;
+            This is a new line.
+            TEXT;
         $expected = <<<TEXT
-<p>This is a test text.</p>
-<p>This is a new line.</p>
+            <p>This is a test text.</p>
+            <p>This is a new line.</p>
 
-TEXT;
+            TEXT;
         $result = $this->Text->autoParagraph($text);
         $this->assertTextEquals($expected, $result);
 

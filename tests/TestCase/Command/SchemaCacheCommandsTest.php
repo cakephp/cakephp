@@ -105,8 +105,10 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testBuildNoArgs(): void
     {
-        $this->cache->shouldReceive('set')
-            ->atLeast()->once()
+        $this->cache
+            ->shouldReceive('set')
+            ->atLeast()
+            ->once()
             ->andReturn(true);
 
         $this->exec('schema_cache build --connection test');
@@ -118,12 +120,12 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testBuildNamedModel(): void
     {
-        $this->cache->shouldReceive('set')
+        $this->cache
+            ->shouldReceive('set')
             ->once()
             ->withSomeOfArgs('test_articles')
             ->andReturn(true);
-        $this->cache->shouldReceive('delete')
-            ->never();
+        $this->cache->shouldReceive('delete')->never();
 
         $this->exec('schema_cache build --connection test articles');
         $this->assertExitSuccess();
@@ -134,14 +136,13 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testBuildOverwritesExistingData(): void
     {
-        $this->cache->shouldReceive('set')
+        $this->cache
+            ->shouldReceive('set')
             ->once()
             ->withSomeOfArgs('test_articles')
             ->andReturn(true);
-        $this->cache->shouldReceive('get')
-            ->never();
-        $this->cache->shouldReceive('delete')
-            ->never();
+        $this->cache->shouldReceive('get')->never();
+        $this->cache->shouldReceive('delete')->never();
 
         $this->exec('schema_cache build --connection test articles');
         $this->assertExitSuccess();
@@ -170,8 +171,10 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testClearNoArgs(): void
     {
-        $this->cache->shouldReceive('delete')
-            ->atLeast()->once()
+        $this->cache
+            ->shouldReceive('delete')
+            ->atLeast()
+            ->once()
             ->andReturn(true);
 
         $this->exec('schema_cache clear --connection test');
@@ -183,9 +186,9 @@ class SchemaCacheCommandsTest extends TestCase
      */
     public function testClearNamedModel(): void
     {
-        $this->cache->shouldReceive('set')
-            ->never();
-        $this->cache->shouldReceive('delete')
+        $this->cache->shouldReceive('set')->never();
+        $this->cache
+            ->shouldReceive('delete')
             ->once()
             ->with('test_articles')
             ->andReturn(false);

@@ -117,12 +117,10 @@ class SelectWithPivotLoader extends SelectLoader
             $types[$key] = $type;
         }
 
-        $query
-            ->where($this->junctionConditions)
+        $query->where($this->junctionConditions)
             ->select($joinFields);
 
-        $query
-            ->getEagerLoader()
+        $query->getEagerLoader()
             ->addToJoinsMap($tempName, $assoc, false, $this->junctionProperty);
 
         $assoc->attachTo($query, [

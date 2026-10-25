@@ -9,16 +9,30 @@ php-version = "8.5.0"
 
 [source]
 workspace = "."
-paths = ["config/", "src/"]
+paths = ["config/", "src/", "tests/"]
 includes = ["vendor", "tests/bootstrap.php"]
 excludes = [
     "vendor/**/tests/**",
     "vendor/**/test/**",
     "vendor/**/Tests/**",
+    "**/templates/**",
 ]
 
 [source.glob]
 literal-separator = true
+
+[formatter]
+preserve-breaking-argument-list = true
+preserve-breaking-parameter-list = true
+preserve-breaking-attribute-list = true
+preserve-breaking-conditional-expression = true
+preserve-breaking-condition-expression = true
+preserve-breaking-binary-expression = true
+preserve-breaking-pipe-expression = true
+preserve-breaking-member-access-chain = true
+space-after-cast-unary-prefix-operators = false
+expand-use-groups = false
+array-table-style-alignment = false
 
 [linter]
 excludes = ["tests"]

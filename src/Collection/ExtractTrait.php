@@ -76,8 +76,8 @@ trait ExtractTrait
             }
 
             if (
-                $collectionTransform &&
-                !is_iterable($data)
+                $collectionTransform
+                && !is_iterable($data)
             ) {
                 return null;
             }

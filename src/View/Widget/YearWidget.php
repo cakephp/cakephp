@@ -80,8 +80,8 @@ class YearWidget extends BasicWidget
         $data['max'] = (int)$data['max'];
 
         if (
-            $data['val'] instanceof ChronosDate ||
-            $data['val'] instanceof DateTimeInterface
+            $data['val'] instanceof ChronosDate
+            || $data['val'] instanceof DateTimeInterface
         ) {
             $data['val'] = $data['val']->format('Y');
         }

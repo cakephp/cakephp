@@ -104,8 +104,10 @@ class ValidationRule
         if (is_string($this->on)) {
             $newRecord = $context['newRecord'];
 
-            return ($this->on === Validator::WHEN_CREATE && !$newRecord)
-                || ($this->on === Validator::WHEN_UPDATE && $newRecord);
+            return (
+                ($this->on === Validator::WHEN_CREATE && !$newRecord)
+                    || ($this->on === Validator::WHEN_UPDATE && $newRecord)
+            );
         }
 
         if ($this->on !== null) {

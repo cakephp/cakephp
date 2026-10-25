@@ -166,7 +166,7 @@ class FormData implements Countable, Stringable
                 is_string($value),
                 sprintf(
                     '`$value` must be a string, a resource or an instance of `Psr\Http\Message\UploadedFileInterface`.'
-                    . ' `%s` given.',
+                        . ' `%s` given.',
                     get_debug_type($value),
                 ),
             );

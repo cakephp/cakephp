@@ -83,12 +83,12 @@ class ValuesExpression implements ExpressionInterface
     {
         if (
             (
-                count($this->values) &&
-                $values instanceof Query
-            ) ||
-            (
-                $this->query &&
-                is_array($values)
+                count($this->values)
+                && $values instanceof Query
+            )
+            || (
+                $this->query
+                && is_array($values)
             )
         ) {
             throw new DatabaseException(

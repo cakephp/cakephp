@@ -192,7 +192,9 @@ class CookieCollectionTest extends TestCase
     public function testConstructorWithInvalidCookieObjects(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1');
+        $this->expectExceptionMessage(
+            'Expected `Cake\Http\Cookie\CookieCollection[]` as $cookies but instead got `array` at index 1',
+        );
         $array = [
             new Cookie('one', 'one'),
             [],
@@ -213,9 +215,11 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'test=value')
-            ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Mon, 09-Jun-2031 10:18:14 GMT; Path=/; HttpOnly; Secure;')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader(
+                'Set-Cookie',
+                'expiring=soon; Expires=Mon, 09-Jun-2031 10:18:14 GMT; Path=/; HttpOnly; Secure;',
+            )
             ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com')
             ->withAddedHeader('Set-Cookie', 'maxage=value; Max-Age=60; Expires=Mon, 09-Jun-2031 10:18:14 GMT;');
         $new = $collection->addFromResponse($response, $request);
@@ -293,8 +297,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'test=value')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
@@ -315,8 +318,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'test=value')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
@@ -331,8 +333,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'test=value')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertTrue($new->has('test'));
@@ -373,8 +374,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'foo.example.com',
             ],
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=example.com')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'match=yes; Domain=example.com')
             ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=evil.com');
         $new = $collection->addFromResponse($response, $request);
         $this->assertNotSame($new, $collection, 'Should clone collection');
@@ -389,8 +389,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', 'match=yes; Domain=foo.example.com')
+        $response = new Response()->withAddedHeader('Set-Cookie', 'match=yes; Domain=foo.example.com')
             ->withAddedHeader('Set-Cookie', 'nope=nope; Domain=badexample.com');
         $new = $collection->addFromResponse($response, $request);
         $this->assertNotSame($new, $collection, 'Should clone collection');
@@ -405,8 +404,7 @@ class CookieCollectionTest extends TestCase
     public function testAddToRequest(): void
     {
         $collection = new CookieCollection();
-        $collection = $collection
-            ->add(new Cookie('default', '1', null, '/', 'example.com'))
+        $collection = $collection->add(new Cookie('default', '1', null, '/', 'example.com'))
             ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
             ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
@@ -437,16 +435,14 @@ class CookieCollectionTest extends TestCase
     public function testAddToRequestSubdomain(): void
     {
         $collection = new CookieCollection();
-        $collection = $collection
-            ->add(new Cookie('bad', '1', null, '/', 'example.com'))
+        $collection = $collection->add(new Cookie('bad', '1', null, '/', 'example.com'))
             ->add(new Cookie('include', 'A', null, '/', 'notexample.com'));
         $request = new ClientRequest('http://notexample.com/api');
         $request = $collection->addToRequest($request);
         $this->assertSame('include=A', $request->getHeaderLine('Cookie'));
 
         $collection = new CookieCollection();
-        $collection = $collection
-            ->add(new Cookie('bad', '1', null, '/', 'notapi.example.com'))
+        $collection = $collection->add(new Cookie('bad', '1', null, '/', 'notapi.example.com'))
             ->add(new Cookie('include', 'A', null, '/', 'api.example.com'));
         $request = new ClientRequest('http://api.example.com/api');
         $request = $collection->addToRequest($request);
@@ -485,8 +481,7 @@ class CookieCollectionTest extends TestCase
     public function testAddToRequestExtraCookies(): void
     {
         $collection = new CookieCollection();
-        $collection = $collection
-            ->add(new Cookie('api', 'A', null, '/api', 'example.com'))
+        $collection = $collection->add(new Cookie('api', 'A', null, '/api', 'example.com'))
             ->add(new Cookie('blog', 'b', null, '/blog', 'blog.example.com'))
             ->add(new Cookie('expired', 'ex', new DateTime('-2 seconds'), '/', 'example.com'));
         $request = new ClientRequest('http://example.com/api');
@@ -517,8 +512,7 @@ class CookieCollectionTest extends TestCase
     public function testAddToRequestSecureCrumb(): void
     {
         $collection = new CookieCollection();
-        $collection = $collection
-            ->add(new Cookie('secret', 'A', null, '/', 'example.com', true))
+        $collection = $collection->add(new Cookie('secret', 'A', null, '/', 'example.com', true))
             ->add(new Cookie('public', 'b', null, '/', '.example.com', false));
         $request = new ClientRequest('https://example.com/api');
         $request = $collection->addToRequest($request);

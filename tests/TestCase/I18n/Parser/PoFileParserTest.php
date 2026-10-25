@@ -139,7 +139,10 @@ class PoFileParserTest extends TestCase
         $this->assertCount(13, $messages);
         $this->assertTextEquals("v\nsecond line", $messages["valid\nsecond line"]['_context']['']);
 
-        $this->assertTextEquals("new line: \nno new line: \\n (translated)", $messages["new line: \nno new line: \\n"]['_context']['']);
+        $this->assertTextEquals(
+            "new line: \nno new line: \\n (translated)",
+            $messages["new line: \nno new line: \\n"]['_context'][''],
+        );
     }
 
     /**
@@ -151,7 +154,10 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'default.po';
         $messages = $parser->parse($file);
 
-        $this->assertTextEquals('this is a "quoted string" (translated)', $messages['this is a "quoted string"']['_context']['']);
+        $this->assertTextEquals(
+            'this is a "quoted string" (translated)',
+            $messages['this is a "quoted string"']['_context'][''],
+        );
     }
 
     /**
@@ -167,12 +173,16 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages) {
-            $package = new Package('default');
-            $package->setMessages($messages);
+        I18n::setTranslator(
+            'default',
+            function () use ($messages) {
+                $package = new Package('default');
+                $package->setMessages($messages);
 
-            return $package;
-        }, 'en_CA');
+                return $package;
+            },
+            'en_CA',
+        );
 
         $this->assertSame('En cours', $messages['Pending']['_context']['']);
         $this->assertSame('En cours - context', $messages['Pending']['_context']['Pay status']);
@@ -201,12 +211,16 @@ class PoFileParserTest extends TestCase
         $file = $this->path . 'en' . DS . 'context.po';
         $messages = $parser->parse($file);
 
-        I18n::setTranslator('default', function () use ($messages) {
-            $package = new Package('default');
-            $package->setMessages($messages);
+        I18n::setTranslator(
+            'default',
+            function () use ($messages) {
+                $package = new Package('default');
+                $package->setMessages($messages);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
 
         // Check translated messages
         I18n::setLocale('en_US');

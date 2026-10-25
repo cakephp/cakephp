@@ -162,29 +162,40 @@ class TimeTypeTest extends TestCase
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 1,
+                    'minute' => 14,
+                    'second' => 15,
                     'meridian' => 'am',
                 ],
                 new Time('01:14:15'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 1,
+                    'minute' => 14,
+                    'second' => 15,
                     'meridian' => 'pm',
                 ],
                 new Time('13:14:15'),
             ],
             [
                 [
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'hour' => 1,
+                    'minute' => 14,
+                    'second' => 15,
                 ],
                 new Time('01:14:15'),
             ],
             [
                 [
-                    'hour' => 1, 'minute' => 14,
+                    'hour' => 1,
+                    'minute' => 14,
                 ],
                 new Time('01:14:00'),
             ],
@@ -204,8 +215,11 @@ class TimeTypeTest extends TestCase
             ],
             [
                 [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'nope', 'minute' => 'nope',
+                    'year' => '2014',
+                    'month' => '02',
+                    'day' => '14',
+                    'hour' => 'nope',
+                    'minute' => 'nope',
                 ],
                 null,
             ],

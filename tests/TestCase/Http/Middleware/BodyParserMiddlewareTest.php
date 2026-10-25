@@ -52,7 +52,10 @@ class BodyParserMiddlewareTest extends TestCase
     public static function httpMethodProvider(): array
     {
         return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
+            ['PATCH'],
+            ['PUT'],
+            ['POST'],
+            ['DELETE'],
         ];
     }
 
@@ -279,11 +282,11 @@ class BodyParserMiddlewareTest extends TestCase
     public function testInvokeXml(): void
     {
         $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<article>
-    <title>yay</title>
-</article>
-XML;
+            <?xml version="1.0" encoding="utf-8"?>
+            <article>
+                <title>yay</title>
+            </article>
+            XML;
 
         $request = new ServerRequest([
             'environment' => [
@@ -310,12 +313,12 @@ XML;
     public function testInvokeXmlCdata(): void
     {
         $xml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<article>
-    <id>1</id>
-    <title><![CDATA[first]]></title>
-</article>
-XML;
+            <?xml version="1.0" encoding="utf-8"?>
+            <article>
+                <id>1</id>
+                <title><![CDATA[first]]></title>
+            </article>
+            XML;
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -344,22 +347,22 @@ XML;
     public function testInvokeXmlInternalEntities(): void
     {
         $xml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE item [
-  <!ENTITY item "item">
-  <!ENTITY item1 "&item;&item;&item;&item;&item;&item;">
-  <!ENTITY item2 "&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;">
-  <!ENTITY item3 "&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;">
-  <!ENTITY item4 "&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;">
-  <!ENTITY item5 "&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;">
-  <!ENTITY item6 "&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;">
-  <!ENTITY item7 "&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;">
-  <!ENTITY item8 "&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;">
-]>
-<item>
-  <description>&item8;</description>
-</item>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE item [
+              <!ENTITY item "item">
+              <!ENTITY item1 "&item;&item;&item;&item;&item;&item;">
+              <!ENTITY item2 "&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;&item1;">
+              <!ENTITY item3 "&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;&item2;">
+              <!ENTITY item4 "&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;&item3;">
+              <!ENTITY item5 "&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;&item4;">
+              <!ENTITY item6 "&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;&item5;">
+              <!ENTITY item7 "&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;&item6;">
+              <!ENTITY item8 "&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;&item7;">
+            ]>
+            <item>
+              <description>&item8;</description>
+            </item>
+            XML;
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
@@ -387,11 +390,11 @@ XML;
         $parser = new BodyParserMiddleware();
 
         $request = new ServerRequest([
-                'environment' => [
-                    'REQUEST_METHOD' => 'POST',
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json',
-                ],
-                'input' => $body,
+            ],
+            'input' => $body,
         ]);
         $handler = new TestRequestHandler(function ($req) use ($expected) {
             $this->assertSame($expected, $req->getParsedBody());

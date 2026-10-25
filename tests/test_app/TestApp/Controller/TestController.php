@@ -94,6 +94,7 @@ class TestController extends ControllerTestAppController
     public function _hidden()
     {
     }
+
     // phpcs:enable
 
     public function admin_add(): void

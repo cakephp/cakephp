@@ -34,12 +34,12 @@ class TextFormatter implements FormatterInterface
     public function formatWrapper(string $contents, array $location): string
     {
         $template = <<<TEXT
-%s
-########## DEBUG ##########
-%s
-###########################
+            %s
+            ########## DEBUG ##########
+            %s
+            ###########################
 
-TEXT;
+            TEXT;
         $lineInfo = '';
         if (isset($location['file'], $location['line'])) {
             $lineInfo = sprintf('%s (line %s)', $location['file'], $location['line']);

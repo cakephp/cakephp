@@ -70,18 +70,18 @@ class HtmlFormatterTest extends TestCase
         $this->assertGreaterThan(0, count($dom->childNodes));
 
         $expected = <<<TEXT
-object(MyObject) id:1 {
-  stringProp =&gt; &#039;value&#039;
-  protected intProp =&gt; (int) 1
-  protected floatProp =&gt; (float) 1.1
-  protected boolProp =&gt; true
-  private nullProp =&gt; null
-  arrayProp =&gt; [
-    &#039;&#039; =&gt; too much,
-    (int) 1 =&gt; object(MyObject) id: 1 {},
-  ]
-}
-TEXT;
+            object(MyObject) id:1 {
+              stringProp =&gt; &#039;value&#039;
+              protected intProp =&gt; (int) 1
+              protected floatProp =&gt; (float) 1.1
+              protected boolProp =&gt; true
+              private nullProp =&gt; null
+              arrayProp =&gt; [
+                &#039;&#039; =&gt; too much,
+                (int) 1 =&gt; object(MyObject) id: 1 {},
+              ]
+            }
+            TEXT;
         $this->assertStringContainsString($expected, strip_tags($result));
     }
 }

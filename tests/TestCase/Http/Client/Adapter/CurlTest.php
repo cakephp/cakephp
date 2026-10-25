@@ -430,8 +430,7 @@ class CurlTest extends TestCase
             ->onlyMethods(['getProtocolVersion'])
             ->getMock();
 
-        $request
-            ->expects($this->once())
+        $request->expects($this->once())
             ->method('getProtocolVersion')
             ->willReturn('3');
 

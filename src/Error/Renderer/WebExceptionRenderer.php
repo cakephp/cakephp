@@ -148,9 +148,9 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller->startupProcess();
         } catch (Throwable $e) {
             Log::warning(
-                "Failed to construct or call startup() on the resolved controller class of `{$class}`. " .
-                    "Using Fallback Controller instead. Error {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                "Failed to construct or call startup() on the resolved controller class of `{$class}`. "
+                    . "Using Fallback Controller instead. Error {$e->getMessage()}"
+                    . "\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error',
             );
             $controller = null;
@@ -318,8 +318,8 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         $message = $exception->getMessage();
 
         if (
-            !Configure::read('debug') &&
-            !($exception instanceof HttpException)
+            !Configure::read('debug')
+            && !$exception instanceof HttpException
         ) {
             if ($code < 500) {
                 $message = __d('cake', 'Not Found');
@@ -393,26 +393,28 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                     $this->controller->render();
                 }
             } else {
-                $isOptionalTemplate = $template === $method &&
-                    !in_array($template, ['error400', 'error500'], true);
+                $isOptionalTemplate =
+                    $template === $method
+                    && !in_array($template, ['error400', 'error500'], true);
                 $this->controller->render($template);
             }
 
             return $this->shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            $isOptionalTemplateMissing = $isOptionalTemplate &&
-                str_contains($attributes['file'], Inflector::underscore($template));
+            $isOptionalTemplateMissing =
+                $isOptionalTemplate
+                && str_contains($attributes['file'], Inflector::underscore($template));
             if (!$isOptionalTemplateMissing) {
                 Log::warning(
                     "MissingTemplateException - Failed to render error template `{$template}`."
-                    . " Error: {$e->getMessage()}\nStack Trace\n: {$e->getTraceAsString()}",
+                        . " Error: {$e->getMessage()}\nStack Trace\n: {$e->getTraceAsString()}",
                     'cake.error',
                 );
             }
             if (
-                $e instanceof MissingLayoutException ||
-                str_contains($attributes['file'], 'error500')
+                $e instanceof MissingLayoutException
+                || str_contains($attributes['file'], 'error500')
             ) {
                 return $this->outputMessageSafe('error500');
             }
@@ -420,8 +422,14 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             // If we have a prefix/plugin and the template is error400 or error500,
             // try to render from the base Error directory before falling back to error500
             if (
-                ($template === 'error400' || $template === 'error500') &&
-                ($this->controller->getRequest()->getParam('prefix') || $this->controller->getPlugin())
+                (
+                    $template === 'error400'
+                    || $template === 'error500'
+                )
+                && (
+                    $this->controller->getRequest()->getParam('prefix')
+                    || $this->controller->getPlugin()
+                )
             ) {
                 return $this->outputMessageSafe($template);
             }
@@ -429,8 +437,8 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->outputMessage('error500', true);
         } catch (MissingPluginException $e) {
             Log::warning(
-                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}" .
-                    "\nStack Trace\n: {$e->getTraceAsString()}",
+                "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}"
+                    . "\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error',
             );
             $attributes = $e->getAttributes();
@@ -441,8 +449,8 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             return $this->outputMessageSafe('error500');
         } catch (Throwable $outer) {
             Log::warning(
-                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}" .
-                    "\nStack Trace\n: {$outer->getTraceAsString()}",
+                "Throwable - Failed to render error template `{$template}`. Error: {$outer->getMessage()}"
+                    . "\nStack Trace\n: {$outer->getTraceAsString()}",
                 'cake.error',
             );
             try {
@@ -463,13 +471,13 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     protected function outputMessageSafe(string $template): Response
     {
         $builder = $this->controller->viewBuilder();
-        $builder
-            ->setHelpers([])
+        $builder->setHelpers([])
             ->setLayoutPath('')
             ->setTemplatePath('Error');
         $view = $this->controller->createView('View');
 
-        $response = $this->controller->getResponse()
+        $response = $this->controller
+            ->getResponse()
             ->withType('html')
             ->withStringBody($view->render($template, 'error'));
         $this->controller->setResponse($response);

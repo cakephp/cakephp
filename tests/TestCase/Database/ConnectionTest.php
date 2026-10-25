@@ -158,8 +158,8 @@ class ConnectionTest extends TestCase
     {
         $this->expectException(MissingExtensionException::class);
         $this->expectExceptionMessageMatches(
-            '/Database driver `.+` cannot be used due to a missing PHP extension or unmet dependency\. ' .
-            'Requested by connection `custom_connection_name`/',
+            '/Database driver `.+` cannot be used due to a missing PHP extension or unmet dependency\. '
+                . 'Requested by connection `custom_connection_name`/',
         );
         $driver = new class extends StubDriver {
             public function enabled(): bool
@@ -194,7 +194,10 @@ class ConnectionTest extends TestCase
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db']];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
     }
@@ -207,7 +210,10 @@ class ConnectionTest extends TestCase
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['write' => ['database' => 'read_test.db']];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
     }
@@ -218,9 +224,13 @@ class ConnectionTest extends TestCase
     public function testSameReadWriteConfig(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
-        $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
+        $config = ConnectionManager::getConfig('test')
+        + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
     }
@@ -233,7 +243,10 @@ class ConnectionTest extends TestCase
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['read' => [], 'write' => []];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
     }
@@ -246,7 +259,10 @@ class ConnectionTest extends TestCase
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['read' => []];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
     }
@@ -257,9 +273,13 @@ class ConnectionTest extends TestCase
     public function testRoleSpecificOverrides(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
-        $config = ConnectionManager::getConfig('test') + ['log' => true, 'write' => ['database' => 'read_test.db', 'log' => false]];
+        $config = ConnectionManager::getConfig('test')
+        + ['log' => true, 'write' => ['database' => 'read_test.db', 'log' => false]];
         $connection = new Connection($config);
-        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotSame(
+            $connection->getDriver(Connection::ROLE_READ),
+            $connection->getDriver(Connection::ROLE_WRITE),
+        );
         $this->assertNotNull($connection->getDriver(Connection::ROLE_READ)->getLogger());
         $this->assertNull($connection->getDriver(Connection::ROLE_WRITE)->getLogger());
     }
@@ -345,7 +365,11 @@ class ConnectionTest extends TestCase
         $this->assertEquals(['total' => 6], $result[0]);
 
         $sql = 'SELECT 1 + :one + :two AS total';
-        $statement = $this->connection->execute($sql, ['one' => 2, 'two' => 3], ['one' => 'integer', 'two' => 'integer']);
+        $statement = $this->connection->execute(
+            $sql,
+            ['one' => 2, 'two' => 3],
+            ['one' => 'integer', 'two' => 'integer'],
+        );
         $result = $statement->fetchAll('assoc');
         $statement->closeCursor();
         $this->assertCount(1, $result);
@@ -540,7 +564,9 @@ class ConnectionTest extends TestCase
         $body = new DateTime('2012-01-01');
         $values = compact('title', 'body');
         $this->connection->update('things', $values, [], ['body' => 'date']);
-        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, [
+            'body' => 'date',
+        ]);
         $rows = $result->fetchAll('assoc');
         $this->assertCount(2, $rows);
         $this->assertSame('2012-01-01', $rows[0]['body']);
@@ -557,7 +583,9 @@ class ConnectionTest extends TestCase
         $body = new DateTime('2012-01-01');
         $values = compact('title', 'body');
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
-        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, [
+            'body' => 'date',
+        ]);
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
         $this->assertSame('2012-01-01', $rows[0]['body']);
@@ -572,10 +600,17 @@ class ConnectionTest extends TestCase
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
         $values = compact('title', 'body');
-        $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
+        $query = $this->connection->updateQuery(
+            'things',
+            $values,
+            ['id' => '1'],
+            ['body' => 'date', 'id' => 'integer'],
+        );
         $query->execute()->closeCursor();
 
-        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
+        $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, [
+            'body' => 'date',
+        ]);
         $row = $result->fetch('assoc');
         $this->assertSame('2012-01-01', $row['body']);
         $result->closeCursor();
@@ -677,9 +712,11 @@ class ConnectionTest extends TestCase
         $logger->shouldReceive('log')
             ->once()
             ->withArgs(function (...$args): bool {
-                return isset($args[0], $args[1])
-                    && $args[0] === 'warning'
-                    && str_contains((string)$args[1], 'The connection is going to be closed');
+                return (
+                    isset($args[0], $args[1])
+                        && $args[0] === 'warning'
+                        && str_contains((string)$args[1], 'The connection is going to be closed')
+                );
             });
 
         Log::setConfig('error', $logger);
@@ -897,7 +934,7 @@ class ConnectionTest extends TestCase
     public function testTransactionalSuccess(): void
     {
         $driver = $this->getDriver();
-        $connection = new class (['driver' => $driver]) extends Connection {
+        $connection = new class(['driver' => $driver]) extends Connection {
             public bool $beginIsCalled = false;
             public bool $commitIsCalled = false;
 
@@ -930,7 +967,7 @@ class ConnectionTest extends TestCase
     public function testTransactionalFail(): void
     {
         $driver = $this->getDriver();
-        $connection = new class (['driver' => $driver]) extends Connection {
+        $connection = new class(['driver' => $driver]) extends Connection {
             public bool $beginIsCalled = false;
             public bool $rollbackIsCalled = false;
 
@@ -971,7 +1008,7 @@ class ConnectionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $driver = $this->getDriver();
-        $connection = new class (['driver' => $driver]) extends Connection {
+        $connection = new class(['driver' => $driver]) extends Connection {
             public bool $beginIsCalled = false;
             public bool $rollbackIsCalled = false;
 
@@ -1014,8 +1051,7 @@ class ConnectionTest extends TestCase
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(Collection::class, $schema);
 
-        $schema = new class ($connection) extends Collection {
-        };
+        $schema = new class($connection) extends Collection {};
         $connection->setSchemaCollection($schema);
         $this->assertSame($schema, $connection->getSchemaCollection());
     }
@@ -1189,11 +1225,11 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-            $prop = new ReflectionProperty($conn, 'readDriver');
-            $prop->setValue($conn, $newDriver);
-            $prop = new ReflectionProperty($conn, 'writeDriver');
-            $prop->setValue($conn, $newDriver);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
             ->method('execute')
@@ -1217,14 +1253,14 @@ class ConnectionTest extends TestCase
         $statement->execute();
         $statement->closeCursor();
 
-            $conn->begin();
+        $conn->begin();
 
-            $newDriver = $this->getMockBuilder(Driver::class)->getMock();
-            $prop = new ReflectionProperty($conn, 'readDriver');
-            $prop->setValue($conn, $newDriver);
-            $prop = new ReflectionProperty($conn, 'writeDriver');
-            $oldDriver = $prop->getValue($conn);
-            $prop->setValue($conn, $newDriver);
+        $newDriver = $this->getMockBuilder(Driver::class)->getMock();
+        $prop = new ReflectionProperty($conn, 'readDriver');
+        $prop->setValue($conn, $newDriver);
+        $prop = new ReflectionProperty($conn, 'writeDriver');
+        $oldDriver = $prop->getValue($conn);
+        $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->once())
             ->method('execute')

@@ -605,7 +605,10 @@ class Text
     public static function truncate(string $text, int $length = 100, array $options = []): string
     {
         $default = [
-            'ellipsis' => '…', 'exact' => true, 'html' => false, 'trimWidth' => false,
+            'ellipsis' => '…',
+            'exact' => true,
+            'html' => false,
+            'trimWidth' => false,
         ];
         if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
@@ -1008,11 +1011,11 @@ class Text
             if ($utf8 < 128) {
                 $ascii .= chr($utf8 & 0xff);
             } elseif ($utf8 < 2048) {
-                $ascii .= chr(192 + (int)(($utf8 - ($utf8 % 64)) / 64) & 0xff);
+                $ascii .= chr((192 + (int)(($utf8 - ($utf8 % 64)) / 64)) & 0xff);
                 $ascii .= chr(128 + ($utf8 % 64));
             } else {
-                $ascii .= chr(224 + (int)(($utf8 - ($utf8 % 4096)) / 4096) & 0xff);
-                $ascii .= chr(128 + (int)((($utf8 % 4096) - ($utf8 % 64)) / 64) & 0xff);
+                $ascii .= chr((224 + (int)(($utf8 - ($utf8 % 4096)) / 4096)) & 0xff);
+                $ascii .= chr((128 + (int)((($utf8 % 4096) - ($utf8 % 64)) / 64)) & 0xff);
                 $ascii .= chr(128 + ($utf8 % 64));
             }
         }
@@ -1281,9 +1284,13 @@ class Text
 
         $regexPattern = '/' . implode('|', $escapedForRegex) . '/u';
 
-        return (string)preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
-            return str_repeat($maskCharacter, mb_strlen($matches[0]));
-        }, $string);
+        return (string)preg_replace_callback(
+            $regexPattern,
+            function ($matches) use ($maskCharacter) {
+                return str_repeat($maskCharacter, mb_strlen($matches[0]));
+            },
+            $string,
+        );
     }
 
     /**
@@ -1314,9 +1321,13 @@ class Text
         }
 
         foreach ($patterns as $regex) {
-            $string = (string)preg_replace_callback($regex, function ($matches) use ($maskCharacter) {
-                return str_repeat($maskCharacter, mb_strlen($matches[0]));
-            }, $string);
+            $string = (string)preg_replace_callback(
+                $regex,
+                function ($matches) use ($maskCharacter) {
+                    return str_repeat($maskCharacter, mb_strlen($matches[0]));
+                },
+                $string,
+            );
         }
 
         return $string;

@@ -260,7 +260,7 @@ class SqliteTest extends TestCase
     public function testJSON(): void
     {
         $connection = ConnectionManager::get('test');
-        $this->skipIf(!($connection->getDriver() instanceof Sqlite));
+        $this->skipIf(!$connection->getDriver() instanceof Sqlite);
         assert($connection instanceof Connection);
 
         $connection->execute('CREATE TABLE json_test (id INTEGER PRIMARY KEY, data JSON_TEXT);');

@@ -274,8 +274,11 @@ class Xml
         }
         if (!is_array($input) || count($input) !== 1) {
             throw new XmlException(
-                'Invalid input of type `' . gettype($input) . '`'
-                . (is_array($input) ? ' (Count of ' . count($input) . ')' : '') . '.',
+                'Invalid input of type `'
+                    . gettype($input)
+                    . '`'
+                    . (is_array($input) ? ' (Count of ' . count($input) . ')' : '')
+                    . '.',
             );
         }
         $key = key($input);
@@ -394,14 +397,14 @@ class Xml
                         throw new XmlException('Invalid array');
                     }
                     if (is_numeric(implode('', array_keys($value)))) {
-// List
+                        // List
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
                             static::createChild($itemData);
                         }
                     } else {
-// Struct
+                        // Struct
                         static::createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }

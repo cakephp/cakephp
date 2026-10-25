@@ -76,8 +76,10 @@ class Parser
                         continue;
                     }
                     assert(
-                        class_exists($className) || interface_exists($className) ||
-                        trait_exists($className) || enum_exists($className),
+                        class_exists($className)
+                            || interface_exists($className)
+                            || trait_exists($className)
+                            || enum_exists($className),
                     );
                     $reflection = new ReflectionClass($className);
 
@@ -160,9 +162,11 @@ class Parser
             // Detect class/interface/trait/enum declaration
             if (in_array($token->id, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
                 if (
-                    $token->id === T_CLASS &&
-                    ($this->previousSignificantTokenId($tokens, $i) === T_DOUBLE_COLON ||
-                    $this->nextSignificantTokenId($tokens, $i) === ord(':'))
+                    $token->id === T_CLASS
+                    && (
+                        $this->previousSignificantTokenId($tokens, $i) === T_DOUBLE_COLON
+                        || $this->nextSignificantTokenId($tokens, $i) === ord(':')
+                    )
                 ) {
                     continue;
                 }
@@ -246,10 +250,12 @@ class Parser
      */
     protected function isTypeLoaded(string $typeName): bool
     {
-        return class_exists($typeName, false)
-            || interface_exists($typeName, false)
-            || trait_exists($typeName, false)
-            || enum_exists($typeName, false);
+        return (
+            class_exists($typeName, false)
+                || interface_exists($typeName, false)
+                || trait_exists($typeName, false)
+                || enum_exists($typeName, false)
+        );
     }
 
     /**
@@ -260,10 +266,12 @@ class Parser
      */
     protected function loadType(string $typeName): bool
     {
-        return class_exists($typeName)
-            || interface_exists($typeName)
-            || trait_exists($typeName)
-            || enum_exists($typeName);
+        return (
+            class_exists($typeName)
+                || interface_exists($typeName)
+                || trait_exists($typeName)
+                || enum_exists($typeName)
+        );
     }
 
     /**

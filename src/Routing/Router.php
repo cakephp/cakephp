@@ -422,10 +422,10 @@ class Router
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
                 if (
-                    empty($url['action']) &&
-                    (
-                        empty($url['controller']) ||
-                        $params['controller'] === $url['controller']
+                    empty($url['action'])
+                    && (
+                        empty($url['controller'])
+                        || $params['controller'] === $url['controller']
                     )
                 ) {
                     $url['action'] = $params['action'];
@@ -456,14 +456,14 @@ class Router
             $url = (string)$url;
 
             if (
-                str_starts_with($url, 'javascript:') ||
-                str_starts_with($url, 'mailto:') ||
-                str_starts_with($url, 'tel:') ||
-                str_starts_with($url, 'sms:') ||
-                str_starts_with($url, '#') ||
-                str_starts_with($url, '?') ||
-                str_starts_with($url, '//') ||
-                str_contains($url, '://')
+                str_starts_with($url, 'javascript:')
+                || str_starts_with($url, 'mailto:')
+                || str_starts_with($url, 'tel:')
+                || str_starts_with($url, 'sms:')
+                || str_starts_with($url, '#')
+                || str_starts_with($url, '?')
+                || str_starts_with($url, '//')
+                || str_contains($url, '://')
             ) {
                 return $url;
             }
@@ -577,11 +577,12 @@ class Router
         }
 
         $uri = new Url(static::$fullBaseUrl);
-        static::$requestContext = [
-            '_scheme' => $uri->getScheme(),
-            '_host' => $uri->getUnicodeHost(),
-            '_port' => $uri->getPort(),
-        ] + static::$requestContext;
+        static::$requestContext =
+            [
+                '_scheme' => $uri->getScheme(),
+                '_host' => $uri->getUnicodeHost(),
+                '_port' => $uri->getPort(),
+            ] + static::$requestContext;
 
         return static::$fullBaseUrl;
     }
@@ -612,12 +613,7 @@ class Router
         $pass = $params['pass'] ?? [];
 
         $template = $params['_matchedRoute'] ?? null;
-        unset(
-            $params['pass'],
-            $params['_matchedRoute'],
-            $params['_name'],
-            $params['_argsByName'],
-        );
+        unset($params['pass'], $params['_matchedRoute'], $params['_name'], $params['_argsByName']);
         if (!$route && $template) {
             // Locate the route that was used to match this route
             // so we can access the pass parameter configuration.
@@ -746,10 +742,15 @@ class Router
         ];
         $options += $defaults;
 
-        return new RouteBuilder(static::$collection, $path, [], [
-            'routeClass' => $options['routeClass'],
-            'extensions' => $options['extensions'],
-        ]);
+        return new RouteBuilder(
+            static::$collection,
+            $path,
+            [],
+            [
+                'routeClass' => $options['routeClass'],
+                'extensions' => $options['extensions'],
+            ],
+        );
     }
 
     /**

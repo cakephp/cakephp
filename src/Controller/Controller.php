@@ -289,10 +289,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
             if ($alias === $tableAlias) {
                 triggerWarning(sprintf(
-                    'Component alias `%s` clashes with the default table name `%s`. ' .
-                    'The table name will take precedence when accessing `$this->%s`. ' .
-                    'Consider using a different component alias or set `Controller::$defaultTable` to ' .
-                    "an empty string if the controller doesn't use a table.",
+                    'Component alias `%s` clashes with the default table name `%s`. '
+                        . 'The table name will take precedence when accessing `$this->%s`. '
+                        . 'Consider using a different component alias or set `Controller::$defaultTable` to '
+                        . "an empty string if the controller doesn't use a table.",
                     $alias,
                     $this->defaultTable,
                     $alias,
@@ -524,7 +524,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $result instanceof Response,
                 sprintf(
                     'Controller actions can only return Response instance or null. '
-                    . 'Got %s instead.',
+                        . 'Got %s instead.',
                     get_debug_type($result),
                 ),
             );
@@ -576,8 +576,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if (
-                !empty($options['except']) &&
-                in_array($action, (array)$options['except'], true)
+                !empty($options['except'])
+                && in_array($action, (array)$options['except'], true)
             ) {
                 continue;
             }
@@ -662,8 +662,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if ($status < 300 || $status > 399) {
             throw new InvalidArgumentException(
-                sprintf('Invalid status code `%s`. It should be within the range ' .
-                    '`300` - `399` for redirect responses.', $status),
+                sprintf(
+                    'Invalid status code `%s`. It should be within the range '
+                        . '`300` - `399` for redirect responses.',
+                    $status,
+                ),
             );
         }
 
@@ -814,8 +817,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $parsed = $contentType->parseAccept($request);
             $topGroup = array_first($parsed) ?: [];
             if (
-                !in_array($preferredType, $topGroup, true) &&
-                array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
+                !in_array($preferredType, $topGroup, true)
+                && array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
             ) {
                 return null;
             }

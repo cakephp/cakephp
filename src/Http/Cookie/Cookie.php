@@ -286,7 +286,8 @@ class Cookie implements CookieInterface
         $name = array_shift($nameValue);
         $value = array_shift($nameValue) ?? '';
 
-        $data = [
+        $data =
+            [
                 'name' => urldecode($name),
                 'value' => urldecode($value),
             ] + $defaults;

@@ -129,7 +129,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testAsk(): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with("<question>Just a test?</question>\n> ", 0)
             ->once();
 
@@ -144,7 +145,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testAskDefaultValue(): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with("<question>Just a test?</question>\n[n] > ", 0)
             ->once();
 
@@ -163,7 +165,8 @@ class ConsoleIoTest extends TestCase
     #[TestWith([''])]
     public function testOut(string|array $message, int $newLines = 1): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with($message, $newLines)
             ->once();
 
@@ -178,7 +181,8 @@ class ConsoleIoTest extends TestCase
     #[TestWith(['Quiet', 1, ConsoleIo::QUIET])]
     public function testVerboseOut(string $message, int $newlines, int $level): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with($message, $newlines)
             ->once();
 
@@ -194,7 +198,8 @@ class ConsoleIoTest extends TestCase
     #[TestWith(['quiet', 'Quiet'])]
     public function testVerboseOutput(string $method, string $message): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with($message, 1)
             ->once();
 
@@ -207,7 +212,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testQuietOutput(): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('Quiet', 1)
             ->twice();
 
@@ -229,7 +235,8 @@ class ConsoleIoTest extends TestCase
     #[TestWith([''])]
     public function testErr(string|array $message, int $newLines = 1): void
     {
-        $this->err->shouldReceive('write')
+        $this->err
+            ->shouldReceive('write')
             ->with($message, $newLines)
             ->once();
 
@@ -245,7 +252,8 @@ class ConsoleIoTest extends TestCase
         $this->expectExceptionMessage('Some error');
         $this->expectExceptionCode(1);
 
-        $this->err->shouldReceive('write')
+        $this->err
+            ->shouldReceive('write')
             ->with('<error>Some error</error>', 1)
             ->once();
 
@@ -265,7 +273,8 @@ class ConsoleIoTest extends TestCase
         $this->expectExceptionMessage('Some error');
         $this->expectExceptionCode(99);
 
-        $this->err->shouldReceive('write')
+        $this->err
+            ->shouldReceive('write')
             ->with('<error>Some error</error>', 1)
             ->once();
 
@@ -313,27 +322,32 @@ class ConsoleIoTest extends TestCase
     {
         $number = strlen('Some text I want to overwrite');
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('Some <info>text</info> I want to overwrite', 0)
             ->andReturn($number)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat("\x08", $number), 0)
             ->andReturn(9)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('Less text', 0)
             ->andReturn(9)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat(' ', $number - 9), 0)
             ->andReturn(1)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(PHP_EOL, 0)
             ->andReturn(0)
             ->once();
@@ -349,40 +363,47 @@ class ConsoleIoTest extends TestCase
     {
         $length = strlen('12345');
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('12345', 1)
             ->andReturn($length)
             ->once();
 
         // Backspaces
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat("\x08", $length), 0)
             ->andReturn($length)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('123', 0)
             ->andReturn(3)
             ->once();
 
         // 2 spaces output to pad up to 5 bytes
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat(' ', $length - 3), 0)
             ->andReturn($length - 3)
             ->once();
 
         // Backspaces
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat("\x08", $length), 0)
             ->andReturn($length)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('12', 0)
             ->andReturn(2)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat(' ', $length - 2), 0)
             ->andReturn($length - 2)
             ->once();
@@ -397,29 +418,34 @@ class ConsoleIoTest extends TestCase
      */
     public function testOverwriteWithLongerContent(): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('1', 1)
             ->andReturn(1)
             ->once();
 
         // Backspaces
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat("\x08", 1), 0)
             ->andReturn(1)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('123', 0)
             ->andReturn(3)
             ->once();
 
         // Backspaces
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(str_repeat("\x08", 3), 0)
             ->andReturn(3)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('12345', 0)
             ->andReturn(5)
             ->once();
@@ -503,7 +529,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testSetStyle(): void
     {
-        $this->out->shouldReceive('setStyle')
+        $this->out
+            ->shouldReceive('setStyle')
             ->with('name', ['props'])
             ->once();
 
@@ -515,7 +542,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testGetStyle(): void
     {
-        $this->out->shouldReceive('getStyle')
+        $this->out
+            ->shouldReceive('getStyle')
             ->with('name')
             ->once();
 
@@ -537,7 +565,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testHelper(): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with('It works!well ish', 1)
             ->once();
 
@@ -553,11 +582,13 @@ class ConsoleIoTest extends TestCase
     #[TestWith(['comment'])]
     public function testOutHelpers(string $method): void
     {
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with("<{$method}>Just a test</{$method}>", 1)
             ->once();
 
-        $this->out->shouldReceive('write')
+        $this->out
+            ->shouldReceive('write')
             ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1)
             ->once();
 
@@ -572,11 +603,13 @@ class ConsoleIoTest extends TestCase
     #[TestWith(['error'])]
     public function testErrHelpers(string $method): void
     {
-        $this->err->shouldReceive('write')
+        $this->err
+            ->shouldReceive('write')
             ->with("<{$method}>Just a test</{$method}>", 1)
             ->once();
 
-        $this->err->shouldReceive('write')
+        $this->err
+            ->shouldReceive('write')
             ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1)
             ->once();
 
@@ -687,7 +720,8 @@ class ConsoleIoTest extends TestCase
         file_put_contents($file, 'original');
         touch($file);
 
-        $this->in->shouldReceive('read')
+        $this->in
+            ->shouldReceive('read')
             ->andReturn('n')
             ->once();
 
@@ -731,7 +765,8 @@ class ConsoleIoTest extends TestCase
         file_put_contents($file, 'original');
         touch($file);
 
-        $this->in->shouldReceive('read')
+        $this->in
+            ->shouldReceive('read')
             ->andReturn('a')
             ->once();
 

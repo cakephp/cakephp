@@ -52,13 +52,13 @@ class PluginUnloadCommandTest extends TestCase
         $this->originalContent = file_get_contents($this->configFile);
 
         $contents = <<<CONTENTS
-        <?php
-        return [
-            'TestPlugin' => ['routes' => false],
-            'TestPluginTwo',
-            'Company/TestPluginThree'
-        ];
-        CONTENTS;
+            <?php
+            return [
+                'TestPlugin' => ['routes' => false],
+                'TestPluginTwo',
+                'Company/TestPluginThree'
+            ];
+            CONTENTS;
 
         $this->writePhpFile($this->configFile, $contents);
 

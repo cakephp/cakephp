@@ -1144,7 +1144,8 @@ class ServerRequestFactoryTest extends TestCase
         ];
 
         $request = ServerRequestFactory::fromGlobals($vars);
-        $expected = $vars + [
+        $expected = $vars
+        + [
             'CONTENT_TYPE' => null,
             'HTTP_CONTENT_TYPE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
@@ -1515,13 +1516,19 @@ class ServerRequestFactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value in files specification');
 
-        ServerRequestFactory::fromGlobals([], [], [], [], [
+        ServerRequestFactory::fromGlobals(
+            [],
+            [],
+            [],
+            [],
             [
-                'invalid' => [
-                    'data',
+                [
+                    'invalid' => [
+                        'data',
+                    ],
                 ],
             ],
-        ]);
+        );
     }
 
     public function testCreateServerRequest(): void

@@ -121,8 +121,10 @@ readonly class AttributeTarget implements JsonSerializable
      */
     public function isInstantiableDeclaringType(): bool
     {
-        return $this->declaringClassType === DeclaringClassType::CLASS_
-            && $this->isDeclaringClassAbstract === false;
+        return (
+            $this->declaringClassType === DeclaringClassType::CLASS_
+                && $this->isDeclaringClassAbstract === false
+        );
     }
 
     /**
@@ -132,7 +134,9 @@ readonly class AttributeTarget implements JsonSerializable
      */
     public function isPublicMethodTarget(): bool
     {
-        return $this->type === AttributeTargetType::METHOD
-            && $this->methodVisibility === MethodVisibility::PUBLIC;
+        return (
+            $this->type === AttributeTargetType::METHOD
+                && $this->methodVisibility === MethodVisibility::PUBLIC
+        );
     }
 }

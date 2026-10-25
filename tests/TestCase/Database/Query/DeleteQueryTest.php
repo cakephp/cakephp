@@ -133,11 +133,12 @@ class DeleteQueryTest extends TestCase
     public function testDeleteRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
+        $this->expectExceptionMessage(
+            'Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.',
+        );
         $query = new DeleteQuery($this->connection);
 
-        $query
-            ->delete('authors')
+        $query->delete('authors')
             ->from(['a ' => 'authors'])
             ->innerJoin('articles')
             ->where(['a.id' => 1]);
@@ -153,8 +154,7 @@ class DeleteQueryTest extends TestCase
     {
         $query = new DeleteQuery($this->connection);
 
-        $query
-            ->delete()
+        $query->delete()
             ->from(['a' => 'authors'])
             ->where([
                 'OR' => [
@@ -173,13 +173,13 @@ class DeleteQueryTest extends TestCase
             ]);
 
         $this->assertQuotedQuery(
-            'DELETE FROM <authors> WHERE \(' .
-                '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c1,:c2\) AND \(' .
-                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
-                    '\)' .
-                '\)' .
-            '\)',
+            'DELETE FROM <authors> WHERE \('
+                . '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \('
+                . '<name> NOT IN \(:c1,:c2\) AND \('
+                . '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)'
+                . '\)'
+                . '\)'
+                . '\)',
             $query->sql(),
             !$this->autoQuote,
         );
@@ -191,8 +191,7 @@ class DeleteQueryTest extends TestCase
     public function testAppendDelete(): void
     {
         $query = new DeleteQuery($this->connection);
-        $sql = $query
-            ->delete('articles')
+        $sql = $query->delete('articles')
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();

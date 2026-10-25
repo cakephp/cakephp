@@ -94,8 +94,8 @@ trait DateFormatTrait
 
             if (!$formatter) {
                 throw new CakeException(
-                    'Your version of icu does not support creating a date formatter for ' .
-                    "`{$key}`. You should try to upgrade libicu and the intl extension.",
+                    'Your version of icu does not support creating a date formatter for '
+                        . "`{$key}`. You should try to upgrade libicu and the intl extension.",
                 );
             }
 
@@ -166,7 +166,7 @@ trait DateFormatTrait
 
         $dateTime = new DateTimeImmutable('@' . $time);
 
-        if (!($tz instanceof DateTimeZone)) {
+        if (!$tz instanceof DateTimeZone) {
             $tz = new DateTimeZone($tz ?? date_default_timezone_get());
         }
         $dateTime = $dateTime->setTimezone($tz);

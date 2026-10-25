@@ -28,7 +28,8 @@ class CaseExpressionQueryTest extends TestCase
 
     public function testOverwrittenReturnType(): void
     {
-        $query = $this->getTableLocator()->get('Products')
+        $query = $this->getTableLocator()
+            ->get('Products')
             ->unhydratedFind()
             ->select(function (SelectQuery $query) {
                 return [
@@ -67,7 +68,8 @@ class CaseExpressionQueryTest extends TestCase
 
     public function testInferredReturnType(): void
     {
-        $query = $this->getTableLocator()->get('Products')
+        $query = $this->getTableLocator()
+            ->get('Products')
             ->unhydratedFind()
             ->select(function (SelectQuery $query) {
                 $expression = $query->expr()

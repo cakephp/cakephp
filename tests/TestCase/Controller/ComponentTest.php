@@ -76,12 +76,15 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentsAreNotEnabled(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
-            public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
-            {
+
+            public function on(
+                EventListenerInterface|string $eventKey,
+                ?callable $callable = null,
+                array $options = [],
+            ): static {
                 $this->isCalled = true;
                 $this->isCorrectType = $eventKey instanceof AppleComponent;
 
@@ -122,10 +125,8 @@ class ComponentTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The `Banana` alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry(new Controller(new ServerRequest()));
-        $Collection->load('Banana', ['property' => ['closure' => function (): void {
-        }]]);
-        $Collection->load('Banana', ['property' => ['closure' => function (): void {
-        }]]);
+        $Collection->load('Banana', ['property' => ['closure' => function (): void {}]]);
+        $Collection->load('Banana', ['property' => ['closure' => function (): void {}]]);
 
         $this->assertInstanceOf(BananaComponent::class, $Collection->Banana, 'class is wrong');
 
@@ -210,7 +211,11 @@ class ComponentTest extends TestCase
     {
         $this->expectException(MissingComponentException::class);
         $this->expectExceptionMessage('Component class `YouHaveNoBananasComponent` could not be found.');
-        $Component = new ConfiguredComponent(new ComponentRegistry(new Controller(new ServerRequest())), [], ['YouHaveNoBananas']);
+        $Component = new ConfiguredComponent(
+            new ComponentRegistry(new Controller(new ServerRequest())),
+            [],
+            ['YouHaveNoBananas'],
+        );
         $Component->YouHaveNoBananas;
     }
 
@@ -234,12 +239,15 @@ class ComponentTest extends TestCase
      */
     public function testEventsInnerComponent(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
-            public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
-            {
+
+            public function on(
+                EventListenerInterface|string $eventKey,
+                ?callable $callable = null,
+                array $options = [],
+            ): static {
                 $this->isCalled = true;
                 $this->isCorrectType = $eventKey instanceof AppleComponent;
 
@@ -263,8 +271,7 @@ class ComponentTest extends TestCase
      */
     public function testNoEventsInnerComponent(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public function on($eventKey, $options = null, $callable = []): never
             {
                 throw new Exception('Should not be called');

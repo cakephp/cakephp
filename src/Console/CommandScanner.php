@@ -105,8 +105,7 @@ class CommandScanner
         $hide[] = '';
 
         $classPattern = '/Command\.php$/';
-        $files = new Finder()
-            ->in($path)
+        $files = new Finder()->in($path)
             ->recursive(false)
             ->name('*Command.php')
             ->files();

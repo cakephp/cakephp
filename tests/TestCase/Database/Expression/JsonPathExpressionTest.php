@@ -31,15 +31,17 @@ class JsonPathExpressionTest extends TestCase
         $binder = new ValueBinder();
         $this->assertSame(':param0', $expr->sql($binder));
 
-        $expr
-            ->passing(['val' => 123, 'name' => 'literal_name'])
+        $expr->passing(['val' => 123, 'name' => 'literal_name'])
             ->returning('int')
             // Called out of order from expected SQL sequence
             ->onError(JsonPathExpression::BEHAVIOR_ERROR)
             ->onEmpty(JsonPathExpression::BEHAVIOR_DEFAULT, 0);
 
         $binder = new ValueBinder();
-        $this->assertSame(':param0 PASSING :param1 AS val, :param2 AS name RETURNING int DEFAULT 0 ON EMPTY ERROR ON ERROR', $expr->sql($binder));
+        $this->assertSame(
+            ':param0 PASSING :param1 AS val, :param2 AS name RETURNING int DEFAULT 0 ON EMPTY ERROR ON ERROR',
+            $expr->sql($binder),
+        );
         $this->assertSame(123, $binder->bindings()[':param1']['value']);
         $this->assertSame('literal_name', $binder->bindings()[':param2']['value']);
     }
@@ -89,7 +91,8 @@ class JsonPathExpressionTest extends TestCase
 
     public function testReturningDoesNotChangeReturnType(): void
     {
-        $expr = new JsonPathExpression('$.id')->setReturnType('int')->returning('float');
+        $expr = new JsonPathExpression('$.id')->setReturnType('int')
+            ->returning('float');
 
         $this->assertSame('int', $expr->getReturnType());
     }
@@ -140,8 +143,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testNullBehavior(): void
     {
-        $expr = new JsonPathExpression('$.id')
-            ->onEmpty(JsonPathExpression::BEHAVIOR_NULL)
+        $expr = new JsonPathExpression('$.id')->onEmpty(JsonPathExpression::BEHAVIOR_NULL)
             ->onError(JsonPathExpression::BEHAVIOR_NULL);
 
         $this->assertSame(':param0 NULL ON EMPTY NULL ON ERROR', $expr->sql(new ValueBinder()));
@@ -149,8 +151,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testBehaviorIsCaseInsensitive(): void
     {
-        $expr = new JsonPathExpression('$.id')
-            ->onEmpty('null')
+        $expr = new JsonPathExpression('$.id')->onEmpty('null')
             ->onError('default', 1);
 
         $this->assertSame(':param0 NULL ON EMPTY DEFAULT 1 ON ERROR', $expr->sql(new ValueBinder()));
@@ -176,8 +177,7 @@ class JsonPathExpressionTest extends TestCase
     #[DataProvider('defaultValueProvider')]
     public function testDefaultValues(mixed $value, string $expected): void
     {
-        $expr = new JsonPathExpression('$.id')
-            ->onEmpty(JsonPathExpression::BEHAVIOR_DEFAULT, $value)
+        $expr = new JsonPathExpression('$.id')->onEmpty(JsonPathExpression::BEHAVIOR_DEFAULT, $value)
             ->onError(JsonPathExpression::BEHAVIOR_DEFAULT, $value);
 
         $this->assertSame(
@@ -188,8 +188,7 @@ class JsonPathExpressionTest extends TestCase
 
     public function testTraverseWithoutExpressions(): void
     {
-        $expr = new JsonPathExpression('$.id')
-            ->passing(['val' => 1])
+        $expr = new JsonPathExpression('$.id')->passing(['val' => 1])
             ->onEmpty(JsonPathExpression::BEHAVIOR_DEFAULT, 'a')
             ->onError(JsonPathExpression::BEHAVIOR_NULL);
 
@@ -208,8 +207,7 @@ class JsonPathExpressionTest extends TestCase
         $empty = new FunctionExpression('ABS', [1]);
         $error = new FunctionExpression('ABS', [2]);
 
-        $expr = new JsonPathExpression('$.id')
-            ->passing(['now' => $passing])
+        $expr = new JsonPathExpression('$.id')->passing(['now' => $passing])
             ->onEmpty(JsonPathExpression::BEHAVIOR_DEFAULT, $empty)
             ->onError(JsonPathExpression::BEHAVIOR_DEFAULT, $error);
 

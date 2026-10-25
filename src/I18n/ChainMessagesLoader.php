@@ -56,7 +56,7 @@ class ChainMessagesLoader
                 continue;
             }
 
-            if (!($package instanceof Package)) {
+            if (!$package instanceof Package) {
                 throw new CakeException(sprintf(
                     'Loader `%s` in the chain did not return a valid Package object.',
                     $k,

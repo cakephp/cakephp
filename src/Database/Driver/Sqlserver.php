@@ -121,7 +121,7 @@ class Sqlserver extends Driver
         if (isset($config['persistent']) && $config['persistent']) {
             throw new InvalidArgumentException(
                 'Config setting "persistent" cannot be set to true, '
-                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT',
+                    . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT',
             );
         }
 
@@ -213,10 +213,10 @@ class Sqlserver extends Driver
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
                 throw new InvalidArgumentException(
-                    'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. ' .
-                    'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
-                    'for each value in the array. ' .
-                    'If using an Association, try changing the `strategy` from select to subquery.',
+                    'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. '
+                        . 'This is probably due to a very large WHERE IN () clause which generates a parameter '
+                        . 'for each value in the array. '
+                        . 'If using an Association, try changing the `strategy` from select to subquery.',
                 );
             }
 
@@ -286,7 +286,8 @@ class Sqlserver extends Driver
             DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
             DriverFeature::SAVEPOINT,
             DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeature::WINDOW => true,
+            DriverFeature::WINDOW,
+                => true,
             DriverFeature::STRING_AGG => version_compare($this->version(), '14', '>='),
             DriverFeature::GROUP_CONCAT => false,
             DriverFeature::INTERSECT => true,
@@ -371,8 +372,8 @@ class Sqlserver extends Driver
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
-                        isset($select[$orderBy]) &&
-                        $select[$orderBy] instanceof ExpressionInterface
+                        isset($select[$orderBy])
+                        && $select[$orderBy] instanceof ExpressionInterface
                     ) {
                         $order->add(new OrderClauseExpression($select[$orderBy], $direction));
                     } else {
@@ -388,8 +389,9 @@ class Sqlserver extends Driver
 
         $query = clone $original;
         $query->select([
-                '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
-            ])->limit(null)
+            '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
+        ])
+            ->limit(null)
             ->offset(null)
             ->orderBy([], true);
 
@@ -434,19 +436,18 @@ class Sqlserver extends Driver
         $query->distinct(false);
 
         $order = new OrderByExpression($distinct);
-        $query
-            ->select(function (Query $q) use ($distinct, $order) {
-                $over = $q->expr('ROW_NUMBER() OVER')
-                    ->add('(PARTITION BY')
-                    ->add($q->expr()->add($distinct)->setConjunction(','))
-                    ->add($order)
-                    ->add(')')
-                    ->setConjunction(' ');
+        $query->select(function (Query $q) use ($distinct, $order) {
+            $over = $q->expr('ROW_NUMBER() OVER')
+                ->add('(PARTITION BY')
+                ->add($q->expr()->add($distinct)->setConjunction(','))
+                ->add($order)
+                ->add(')')
+                ->setConjunction(' ');
 
-                return [
-                    '_cake_distinct_pivot_' => $over,
-                ];
-            })
+            return [
+                '_cake_distinct_pivot_' => $over,
+            ];
+        })
             ->limit(null)
             ->offset(null)
             ->orderBy([], true);
@@ -490,8 +491,7 @@ class Sqlserver extends Driver
      */
     protected function transformStringAggExpression(StringAggExpression $expression): void
     {
-        $expression
-            ->setName('STRING_AGG')
+        $expression->setName('STRING_AGG')
             ->setSyntax(StringAggExpression::SYNTAX_WITHIN_GROUP);
     }
 
@@ -555,16 +555,14 @@ class Sqlserver extends Driver
                     return $params[$key];
                 };
 
-                $expression
-                    ->setName('DATEADD')
+                $expression->setName('DATEADD')
                     ->setConjunction(',')
                     ->iterateParts($visitor)
                     ->iterateParts($manipulator)
                     ->add([$params[2] => 'literal']);
                 break;
             case 'DAYOFWEEK':
-                $expression
-                    ->setName('DATEPART')
+                $expression->setName('DATEPART')
                     ->setConjunction(' ')
                     ->add(['weekday, ' => 'literal'], [], true);
                 break;
@@ -572,10 +570,9 @@ class Sqlserver extends Driver
                 $expression->setName('SUBSTRING');
                 if (count($expression) < 4) {
                     $params = [];
-                    $expression
-                        ->iterateParts(function ($p) use (&$params) {
-                            return $params[] = $p;
-                        })
+                    $expression->iterateParts(function ($p) use (&$params) {
+                        return $params[] = $p;
+                    })
                         ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);
                 }
 

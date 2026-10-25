@@ -174,8 +174,7 @@ class UnhydratedSelectQueryTest extends TestCase
         $factory = new class extends QueryFactory {
             public function unhydratedSelect(Table $table): UnhydratedSelectQuery
             {
-                return new class ($table) extends UnhydratedSelectQuery {
-                };
+                return new class($table) extends UnhydratedSelectQuery {};
             }
         };
         $table = $this->getTableLocator()->get('ArticlesCustomFactory', [
@@ -202,7 +201,11 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testFinderReturningFreshQueryThrows(): void
     {
-        $table = new class (['alias' => 'Articles', 'table' => 'articles', 'connection' => ConnectionManager::get('test')]) extends Table {
+        $table = new class([
+            'alias' => 'Articles',
+            'table' => 'articles',
+            'connection' => ConnectionManager::get('test'),
+        ]) extends Table {
             /**
              * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The passed query.
              * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>

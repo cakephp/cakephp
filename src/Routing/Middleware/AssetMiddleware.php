@@ -83,8 +83,7 @@ class AssetMiddleware implements MiddlewareInterface
         $file = new SplFileInfo($assetFile);
         $modifiedTime = $file->getMTime();
         if ($this->isNotModified($request, $file)) {
-            return new Response()
-                ->withStringBody('')
+            return new Response()->withStringBody('')
                 ->withStatus(304)
                 ->withHeader(
                     'Last-Modified',
@@ -167,8 +166,7 @@ class AssetMiddleware implements MiddlewareInterface
         $now = time();
         $maxAge = $expire - $now;
 
-        return $response
-            ->withHeader('Content-Type', $contentType)
+        return $response->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
             ->withHeader('Date', DateTime::parse($now)->toRfc7231String())
             ->withHeader('Last-Modified', DateTime::parse($modified)->toRfc7231String())

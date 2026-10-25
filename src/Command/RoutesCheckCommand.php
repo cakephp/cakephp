@@ -94,10 +94,10 @@ class RoutesCheckCommand extends Command
             static::getDescription(),
             'Will output the routing parameters the route resolves to.',
         ])
-        ->addArgument('url', [
-            'help' => 'The URL to check.',
-            'required' => true,
-        ]);
+            ->addArgument('url', [
+                'help' => 'The URL to check.',
+                'required' => true,
+            ]);
 
         return $parser;
     }

@@ -93,7 +93,10 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/', $line);
+        $this->assertMatchesRegularExpression(
+            '/2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} error: oh noes/',
+            $line,
+        );
     }
 
     /**

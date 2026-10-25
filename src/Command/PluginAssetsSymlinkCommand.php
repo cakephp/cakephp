@@ -70,18 +70,21 @@ class PluginAssetsSymlinkCommand extends Command
     {
         $parser->setDescription(
             static::getDescription(),
-        )->addArgument('name', [
-            'help' => 'A specific plugin you want to symlink assets for.',
-            'required' => false,
-        ])->addOption('overwrite', [
-            'help' => 'Overwrite existing symlink / folder / files.',
-            'default' => false,
-            'boolean' => true,
-        ])->addOption('relative', [
-            'help' => 'If symlink should be relative.',
-            'default' => false,
-            'boolean' => true,
-        ]);
+        )
+            ->addArgument('name', [
+                'help' => 'A specific plugin you want to symlink assets for.',
+                'required' => false,
+            ])
+            ->addOption('overwrite', [
+                'help' => 'Overwrite existing symlink / folder / files.',
+                'default' => false,
+                'boolean' => true,
+            ])
+            ->addOption('relative', [
+                'help' => 'If symlink should be relative.',
+                'default' => false,
+                'boolean' => true,
+            ]);
 
         return $parser;
     }

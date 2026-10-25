@@ -46,7 +46,7 @@ class TranslatorRegistryTest extends TestCase
         ]);
 
         $cachedTranslator = new Translator('en_CA', $package, new SprintfFormatter());
-        $cacheEngineNullPackage = new class ($cachedTranslator) extends TestAppCacheEngine {
+        $cacheEngineNullPackage = new class($cachedTranslator) extends TestAppCacheEngine {
             public function __construct(protected Translator $translator)
             {
             }

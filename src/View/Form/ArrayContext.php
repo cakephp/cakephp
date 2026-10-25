@@ -103,8 +103,8 @@ class ArrayContext implements ContextInterface
     public function getPrimaryKey(): array
     {
         if (
-            empty($this->context['schema']['_constraints']) ||
-            !is_array($this->context['schema']['_constraints'])
+            empty($this->context['schema']['_constraints'])
+            || !is_array($this->context['schema']['_constraints'])
         ) {
             return [];
         }

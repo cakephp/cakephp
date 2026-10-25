@@ -42,6 +42,7 @@ class UploadedFileFactoryTest extends TestCase
 
         // phpcs:disable
         @unlink($this->filename);
+
         // phpcs:enable
     }
 

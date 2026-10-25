@@ -138,8 +138,13 @@ class MessageTest extends TestCase
 
         $result = $transort->send($this->message);
 
-        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST - 26) . "\r\n" .
-            str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
+        $expected =
+            "<a\r\n"
+            . 'href="http://cakephp.org">'
+            . str_repeat('x', Message::LINE_LENGTH_MUST - 26)
+            . "\r\n"
+            . str_repeat('x', 26)
+            . "\r\n</a>\r\n\r\n";
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
@@ -169,7 +174,8 @@ class MessageTest extends TestCase
         $this->message->setBodyText($message);
 
         $result = $transort->send($this->message);
-        $expected = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+        $expected =
+            $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertSame($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -180,11 +186,11 @@ class MessageTest extends TestCase
     public function testWrapWithTagsAcrossLines(): void
     {
         $str = <<<HTML
-<table>
-<th align="right" valign="top"
-        style="font-weight: bold">The tag is across multiple lines</th>
-</table>
-HTML;
+            <table>
+            <th align="right" valign="top"
+                    style="font-weight: bold">The tag is across multiple lines</th>
+            </table>
+            HTML;
         $message = $str . str_repeat('x', Message::LINE_LENGTH_MUST + 1);
 
         $this->message->setFrom('cake@cakephp.org');
@@ -367,7 +373,10 @@ HTML;
         $this->assertSame($this->message, $result);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->message->setFrom(['cake@cakephp.org' => 'CakePHP', 'fail@cakephp.org' => 'From can only be one address']);
+        $this->message->setFrom([
+            'cake@cakephp.org' => 'CakePHP',
+            'fail@cakephp.org' => 'From can only be one address',
+        ]);
     }
 
     /**
@@ -537,15 +546,21 @@ HTML;
         $regex = '/^[\.a-z0-9!#$%&\'*+\/=?^_`{|}~-]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]{2,6}$/i';
 
         $this->message->setEmailPattern($regex)->setTo('pass.@example.com');
-        $this->assertSame([
-            'pass.@example.com' => 'pass.@example.com',
-        ], $this->message->getTo());
+        $this->assertSame(
+            [
+                'pass.@example.com' => 'pass.@example.com',
+            ],
+            $this->message->getTo(),
+        );
 
         $this->message->addTo('pass..old.docomo@example.com');
-        $this->assertSame([
-            'pass.@example.com' => 'pass.@example.com',
-            'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
-        ], $this->message->getTo());
+        $this->assertSame(
+            [
+                'pass.@example.com' => 'pass.@example.com',
+                'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+            ],
+            $this->message->getTo(),
+        );
 
         $this->message->reset();
         $emails = [
@@ -557,18 +572,24 @@ HTML;
             '.docomo@example.com',
         ];
         $this->message->setEmailPattern($regex)->setTo($emails);
-        $this->assertSame([
-            'pass.@example.com' => 'pass.@example.com',
-            'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
-        ], $this->message->getTo());
+        $this->assertSame(
+            [
+                'pass.@example.com' => 'pass.@example.com',
+                'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+            ],
+            $this->message->getTo(),
+        );
 
         $this->message->addTo($additionalEmails);
-        $this->assertSame([
-            'pass.@example.com' => 'pass.@example.com',
-            'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
-            '.extend.@example.com' => '.extend.@example.com',
-            '.docomo@example.com' => '.docomo@example.com',
-        ], $this->message->getTo());
+        $this->assertSame(
+            [
+                'pass.@example.com' => 'pass.@example.com',
+                'pass..old.docomo@example.com' => 'pass..old.docomo@example.com',
+                '.extend.@example.com' => '.extend.@example.com',
+                '.docomo@example.com' => '.docomo@example.com',
+            ],
+            $this->message->getTo(),
+        );
     }
 
     /**
@@ -653,13 +674,17 @@ HTML;
         $expected = ['=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->formatAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
-        $expected = ["\"=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
-            " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n" .
-            " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n" .
-            " =?ISO-2022-JP?B?GyRCJV0kTiU3JWUhPCVqJXMlLCVzJTclZSE8JWolcyUsJXMkTiUwGyhC?=\r\n" .
-            " =?ISO-2022-JP?B?GyRCITwlaiVzJUAlJCUwITwlaiVzJUAlJCROJV0lcyVdJTMlVCE8GyhC?=\r\n" .
-            ' =?ISO-2022-JP?B?GyRCJE4lXSVzJV0lMyVKITwkTkQ5NVdMPyRORDk9dRsoQg==?=" <cake@cakephp.org>'];
+        $result = $this->message->formatAddress([
+            'cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助',
+        ]);
+        $expected = [
+            "\"=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n"
+                . " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n"
+                . " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n"
+                . " =?ISO-2022-JP?B?GyRCJV0kTiU3JWUhPCVqJXMlLCVzJTclZSE8JWolcyUsJXMkTiUwGyhC?=\r\n"
+                . " =?ISO-2022-JP?B?GyRCITwlaiVzJUAlJCUwITwlaiVzJUAlJCROJV0lcyVdJTMlVCE8GyhC?=\r\n"
+                . ' =?ISO-2022-JP?B?GyRCJE4lXSVzJV0lMyVKITwkTkQ5NVdMPyRORDk9dRsoQg==?=" <cake@cakephp.org>',
+        ];
         $this->assertSame($expected, $result);
     }
 
@@ -682,26 +707,58 @@ HTML;
         $this->message->addReplyTo('replyto2@cakephp.org', 'ReplyTo2 CakePHP');
 
         $this->assertSame($this->message->getFrom(), ['cake@cakephp.org' => 'CakePHP']);
-        $this->assertSame($this->message->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP']);
+        $this->assertSame(
+            $this->message->getReplyTo(),
+            ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP'],
+        );
         $this->assertSame($this->message->getReadReceipt(), ['readreceipt@cakephp.org' => 'ReadReceipt CakePHP']);
         $this->assertSame($this->message->getReturnPath(), ['returnpath@cakephp.org' => 'ReturnPath CakePHP']);
-        $this->assertSame($this->message->getTo(), ['to@cakephp.org' => 'To, CakePHP', 'to2@cakephp.org' => 'To2 CakePHP']);
-        $this->assertSame($this->message->getCc(), ['cc@cakephp.org' => 'Cc CakePHP', 'cc2@cakephp.org' => 'Cc2 CakePHP']);
-        $this->assertSame($this->message->getBcc(), ['bcc@cakephp.org' => 'Bcc CakePHP', 'bcc2@cakephp.org' => 'Bcc2 CakePHP']);
+        $this->assertSame(
+            $this->message->getTo(),
+            ['to@cakephp.org' => 'To, CakePHP', 'to2@cakephp.org' => 'To2 CakePHP'],
+        );
+        $this->assertSame(
+            $this->message->getCc(),
+            ['cc@cakephp.org' => 'Cc CakePHP', 'cc2@cakephp.org' => 'Cc2 CakePHP'],
+        );
+        $this->assertSame(
+            $this->message->getBcc(),
+            ['bcc@cakephp.org' => 'Bcc CakePHP', 'bcc2@cakephp.org' => 'Bcc2 CakePHP'],
+        );
 
-        $headers = $this->message->getHeaders(array_fill_keys(['from', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'], true));
+        $headers = $this->message->getHeaders(array_fill_keys([
+            'from',
+            'replyTo',
+            'readReceipt',
+            'returnPath',
+            'to',
+            'cc',
+            'bcc',
+        ], true));
         $this->assertSame($headers['From'], 'CakePHP <cake@cakephp.org>');
-        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>');
+        $this->assertSame(
+            $headers['Reply-To'],
+            'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>',
+        );
         $this->assertSame($headers['Disposition-Notification-To'], 'ReadReceipt CakePHP <readreceipt@cakephp.org>');
         $this->assertSame($headers['Return-Path'], 'ReturnPath CakePHP <returnpath@cakephp.org>');
         $this->assertSame($headers['To'], '"To, CakePHP" <to@cakephp.org>, To2 CakePHP <to2@cakephp.org>');
         $this->assertSame($headers['Cc'], 'Cc CakePHP <cc@cakephp.org>, Cc2 CakePHP <cc2@cakephp.org>');
         $this->assertSame($headers['Bcc'], 'Bcc CakePHP <bcc@cakephp.org>, Bcc2 CakePHP <bcc2@cakephp.org>');
 
-        $this->message->setReplyTo(['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP']);
-        $this->assertSame($this->message->getReplyTo(), ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP']);
+        $this->message->setReplyTo([
+            'replyto@cakephp.org' => 'ReplyTo CakePHP',
+            'replyto2@cakephp.org' => 'ReplyTo2 CakePHP',
+        ]);
+        $this->assertSame(
+            $this->message->getReplyTo(),
+            ['replyto@cakephp.org' => 'ReplyTo CakePHP', 'replyto2@cakephp.org' => 'ReplyTo2 CakePHP'],
+        );
         $headers = $this->message->getHeaders(array_fill_keys(['replyTo'], true));
-        $this->assertSame($headers['Reply-To'], 'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>');
+        $this->assertSame(
+            $headers['Reply-To'],
+            'ReplyTo CakePHP <replyto@cakephp.org>, ReplyTo2 CakePHP <replyto2@cakephp.org>',
+        );
     }
 
     /**
@@ -844,7 +901,10 @@ HTML;
 
         $input = 'هذه رسالة بعنوان طويل مرسل للمستلم';
         $this->message->setSubject($input);
-        $expected = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
+        $expected =
+            '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?='
+            . "\r\n"
+            . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
         $this->assertSame($expected, $this->message->getSubject());
         $this->assertSame($input, $this->message->getOriginalSubject());
     }
@@ -861,10 +921,13 @@ HTML;
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsJE4bKEJTdWJqZWN0GyRCJEskYkJQMX4kOSRrJGgbKEI=?=';
         $this->assertSame($expected, $this->message->getSubject());
 
-        $this->message->setSubject('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
-        $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
-            " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
-            ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
+        $this->message->setSubject(
+            '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？',
+        );
+        $expected =
+            "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n"
+            . " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n"
+            . ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
         $this->assertSame($expected, $this->message->getSubject());
     }
 
@@ -947,7 +1010,11 @@ HTML;
             'text/x-php',
         );
 
-        $this->message->addAttachment(CAKE . 'Mailer' . DS . 'Message.php', mimetype: 'text/plain', contentId: 'attached');
+        $this->message->addAttachment(
+            CAKE . 'Mailer' . DS . 'Message.php',
+            mimetype: 'text/plain',
+            contentId: 'attached',
+        );
         $this->message->addAttachment($uploadedFile, contentDisposition: false);
 
         $expected = [
@@ -1082,8 +1149,7 @@ HTML;
             'blob.txt',
             "text/plain\rInject: badstuff",
         );
-        $lines = $message
-            ->addAttachment($file)
+        $lines = $message->addAttachment($file)
             ->addAttachment($filePath, mimetype: "text\nhas newline", contentId: "abcd\r\nhas crlf")
             ->setBodyText('Attached an uploaded file')
             ->getBody();
@@ -1129,7 +1195,10 @@ HTML;
         $this->assertTextNotContains('Content-Type: text/plain; charset=ISO-2022-JP-MS', $result); // not charset=iso-2022-jp-ms
 
         $result = implode('', $message->getBody());
-        $this->assertTextNotContains(mb_convert_encoding('①㈱ ってテーブルを作ってやってたらう', 'ISO-2022-JP-MS'), $result);
+        $this->assertTextNotContains(
+            mb_convert_encoding('①㈱ ってテーブルを作ってやってたらう', 'ISO-2022-JP-MS'),
+            $result,
+        );
     }
 
     /**
@@ -1154,7 +1223,10 @@ HTML;
         $this->assertTextNotContains('Content-Type: text/plain; charset=iso-2022-jp-ms', $result); // not charset=iso-2022-jp-ms
 
         $result = implode('', $message->getBody());
-        $this->assertStringContainsString(mb_convert_encoding('①㈱ ってテーブルを作ってやってたらう', 'ISO-2022-JP-MS'), $result);
+        $this->assertStringContainsString(
+            mb_convert_encoding('①㈱ ってテーブルを作ってやってたらう', 'ISO-2022-JP-MS'),
+            $result,
+        );
     }
 
     /**
@@ -1173,7 +1245,10 @@ HTML;
         $this->assertStringContainsString('Content-Type: text/plain; charset=ISO-2022-JP', $result);
 
         $result = implode('', $message->getBody());
-        $this->assertStringContainsString(mb_convert_encoding('ってテーブルを作ってやってたらう', 'ISO-2022-JP'), $result);
+        $this->assertStringContainsString(
+            mb_convert_encoding('ってテーブルを作ってやってたらう', 'ISO-2022-JP'),
+            $result,
+        );
     }
 
     /**
@@ -1187,10 +1262,13 @@ HTML;
         $this->assertSame($expected, $result);
 
         $this->message->setHeaderCharset('ISO-2022-JP');
-        $result = $this->message->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
-        $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
-            " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
-            ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
+        $result = $this->message->encode(
+            '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？',
+        );
+        $expected =
+            "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n"
+            . " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n"
+            . ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
         $this->assertSame($expected, $result);
     }
 
@@ -1205,9 +1283,11 @@ HTML;
         $this->assertSame($expected, $result);
 
         $this->message->setHeaderCharset('ISO-2022-JP');
-        $result = $this->message->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
-            " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
-            ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=');
+        $result = $this->message->decode(
+            "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n"
+                . " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n"
+                . ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=',
+        );
         $expected = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
         $this->assertSame($expected, $result);
     }
@@ -1495,8 +1575,7 @@ HTML;
         $property = $reflection->getProperty('serializableProperties');
         $serializableProperties = $property->getValue($message);
 
-        $message
-            ->setSubject('I haz Cake')
+        $message->setSubject('I haz Cake')
             ->setEmailFormat(Message::MESSAGE_BOTH)
             ->setBody([
                 Message::MESSAGE_TEXT => 'text message',

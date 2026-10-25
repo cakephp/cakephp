@@ -77,9 +77,27 @@ class ResultSetFactoryTest extends TestCase
         $this->factory = new ResultSetFactory();
 
         $this->fixtureData = [
-            ['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
-            ['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            ['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y'],
+            [
+                'id' => 1,
+                'author_id' => 1,
+                'title' => 'First Article',
+                'body' => 'First Article Body',
+                'published' => 'Y',
+            ],
+            [
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+            ],
+            [
+                'id' => 3,
+                'author_id' => 1,
+                'title' => 'Third Article',
+                'body' => 'Third Article Body',
+                'published' => 'Y',
+            ],
         ];
     }
 
@@ -116,7 +134,8 @@ class ResultSetFactoryTest extends TestCase
         // Clear the articles table so we can trigger an empty belongsTo
         $this->table->deleteAll([]);
 
-        $comment = $comments->find()->where(['Comments.id' => 1])
+        $comment = $comments->find()
+            ->where(['Comments.id' => 1])
             ->contain(['Articles'])
             ->enableHydration(false)
             ->first();
@@ -177,7 +196,9 @@ class ResultSetFactoryTest extends TestCase
         $this->assertSame(1, $article->id);
         $this->assertNotEmpty($article->title);
 
-        $article = $this->table->find()->where(['articles.id' => 1])
+        $article = $this->table
+            ->find()
+            ->where(['articles.id' => 1])
             ->contain(['Comments'])
             ->enableHydration(false)
             ->first();
@@ -220,9 +241,11 @@ class ResultSetFactoryTest extends TestCase
         $this->assertSame('TestPlugin.Comments', $result->getSource());
         $this->assertSame('TestPlugin.Authors', $result->author->getSource());
 
-        $result = $comments->find()->matching('Authors', function ($q) {
-            return $q->where(['Authors.id' => 1]);
-        })->first();
+        $result = $comments->find()
+            ->matching('Authors', function ($q) {
+                return $q->where(['Authors.id' => 1]);
+            })
+            ->first();
         $this->assertSame('TestPlugin.Comments', $result->getSource());
         $this->assertSame('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
         $this->clearPlugins();
@@ -241,7 +264,8 @@ class ResultSetFactoryTest extends TestCase
         $messages = Log::engine('queries')->read();
         $this->assertCount(0, $messages);
 
-        $results = $this->table->find('all')
+        $results = $this->table
+            ->find('all')
             ->where(['id' => 0])
             ->all();
 
@@ -261,7 +285,8 @@ class ResultSetFactoryTest extends TestCase
     {
         DtoMapper::clearCache();
 
-        $result = $this->table->find()
+        $result = $this->table
+            ->find()
             ->where(['id' => 1])
             ->projectAs(SimpleArticleDto::class)
             ->first();
@@ -279,7 +304,8 @@ class ResultSetFactoryTest extends TestCase
     {
         DtoMapper::clearCache();
 
-        $results = $this->table->find()
+        $results = $this->table
+            ->find()
             ->projectAs(SimpleArticleDto::class)
             ->toArray();
 
@@ -416,7 +442,8 @@ class ResultSetFactoryTest extends TestCase
     {
         DtoMapper::clearCache();
 
-        $result = $this->table->find()
+        $result = $this->table
+            ->find()
             ->where(['id' => 1])
             ->projectAs(ArticleArrayDto::class)
             ->first();

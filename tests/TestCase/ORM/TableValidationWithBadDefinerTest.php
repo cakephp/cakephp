@@ -44,4 +44,5 @@ class ValidationWithBadDefinerTable extends Table
         return '';
     }
 }
+
 // phpcs:enable

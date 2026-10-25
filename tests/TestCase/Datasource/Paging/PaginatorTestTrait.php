@@ -140,12 +140,11 @@ trait PaginatorTestTrait
         ];
         $table = $this->getTableLocator()->get('PaginatorPosts');
 
-        $expected = $table
-            ->find('author', ...[
-                'conditions' => [
-                    'PaginatorPosts.author_id' => 1,
-                ],
-            ])
+        $expected = $table->find('author', ...[
+            'conditions' => [
+                'PaginatorPosts.author_id' => 1,
+            ],
+        ])
             ->count();
         $result = $this->Paginator->paginate($table, [], $settings)->count();
 
@@ -287,10 +286,14 @@ trait PaginatorTestTrait
         ];
         $defaults = $this->Paginator->getDefaults('Silly', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);
-        $this->assertEquals($settings + [
-            'sortableFields' => null,
-            'finder' => 'all',
-        ], $result);
+        $this->assertEquals(
+            $settings
+                + [
+                    'sortableFields' => null,
+                    'finder' => 'all',
+                ],
+            $result,
+        );
 
         $defaults = $this->Paginator->getDefaults('Posts', $settings);
         $result = $this->Paginator->mergeOptions([], $defaults);

@@ -79,16 +79,15 @@ class CookieCollection implements IteratorAggregate, Countable
                 $domainMatch = true;
                 if ($sourceDomain) {
                     $cookieDomain = $cookie->getDomain();
-                    $domainMatch = (
-                        $cookieDomain === $sourceDomain ||
-                        str_ends_with($sourceDomain, ".{$cookieDomain}") ||
-                        str_ends_with($cookieDomain, ".{$sourceDomain}")
-                    );
+                    $domainMatch =
+                        $cookieDomain === $sourceDomain
+                        || str_ends_with($sourceDomain, ".{$cookieDomain}")
+                        || str_ends_with($cookieDomain, ".{$sourceDomain}");
                 }
                 if ($domainMatch) {
                     $cookies[] = $cookie;
                 }
-            } catch (Exception | TypeError) {
+            } catch (Exception|TypeError) {
                 // @mago-expect lint:no-empty-catch-clause Don't blow up on invalid cookies
             }
         }

@@ -144,7 +144,7 @@ class FixtureHelperTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Found duplicate fixture `core.Articles`');
-        new FixtureHelper()->loadFixtures(['core.Articles','core.Articles']);
+        new FixtureHelper()->loadFixtures(['core.Articles', 'core.Articles']);
     }
 
     /**
@@ -349,7 +349,7 @@ class FixtureHelperTest extends TestCase
      */
     public function testDeleteFixturesException(): void
     {
-        ConnectionManager::setConfig('failing', new class (ConnectionManager::get('test')->config()) extends Connection {
+        ConnectionManager::setConfig('failing', new class(ConnectionManager::get('test')->config()) extends Connection {
             public function deleteQuery(
                 ?string $table = null,
                 array $conditions = [],
@@ -636,7 +636,7 @@ class FixtureHelperTest extends TestCase
                 $record['parent_id'] = 1;
             }
 
-            $fixtures[] = new class ($table, $record) extends TestFixture {
+            $fixtures[] = new class($table, $record) extends TestFixture {
                 public function __construct(string $table, array $record)
                 {
                     $this->table = $table;

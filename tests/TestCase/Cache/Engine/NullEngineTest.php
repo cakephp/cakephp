@@ -57,19 +57,25 @@ class NullEngineTest extends TestCase
 
         $result1 = Cache::readMany($keys, 'null');
 
-        $this->assertSame([
-            'key1' => null,
-            'key2' => null,
-            'key3' => null,
-        ], $result1);
+        $this->assertSame(
+            [
+                'key1' => null,
+                'key2' => null,
+                'key3' => null,
+            ],
+            $result1,
+        );
 
         $e = new Exception('Cache key not found');
         $result2 = Cache::pool('null')->getMultiple($keys, $e);
 
-        $this->assertSame([
-            'key1' => $e,
-            'key2' => $e,
-            'key3' => $e,
-        ], $result2);
+        $this->assertSame(
+            [
+                'key1' => $e,
+                'key2' => $e,
+                'key3' => $e,
+            ],
+            $result2,
+        );
     }
 }

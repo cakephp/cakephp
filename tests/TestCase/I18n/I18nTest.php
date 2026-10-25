@@ -167,14 +167,18 @@ class I18nTest extends TestCase
      */
     public function testCreateCustomTranslationPackage(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Cow' => 'Le moo',
-            ]);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le moo',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
         $translator = I18n::getTranslator('custom', 'fr_FR');
         $this->assertSame('Le moo', $translator->translate('Cow'));
@@ -258,14 +262,18 @@ class I18nTest extends TestCase
      */
     public function testGetTranslatorByDefaultLocale(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Cow' => 'Le moo',
-            ]);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le moo',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
         I18n::setLocale('fr_FR');
         $translator = I18n::getTranslator('custom');
@@ -358,17 +366,21 @@ class I18nTest extends TestCase
      */
     public function testBasicDomainFunction(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Cow' => 'Le moo',
-                'The {0} is tasty' => 'The {0} is delicious',
-                'Average price {0}' => 'Price Average {0}',
-                'Unknown' => '',
-            ]);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le moo',
+                    'The {0} is tasty' => 'The {0} is delicious',
+                    'Average price {0}' => 'Price Average {0}',
+                    'Unknown' => '',
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
         $this->assertSame('Le moo', __d('custom', 'Cow'));
         $this->assertSame('Unknown', __d('custom', 'Unknown'));
 
@@ -397,22 +409,26 @@ class I18nTest extends TestCase
      */
     public function testBasicDomainPluralFunction(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Cow' => 'Le Moo',
-                'Cows' => [
-                    'Le Moo',
-                    'Les Moos',
-                ],
-                '{0} years' => [
-                    '',
-                    '',
-                ],
-            ]);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le Moo',
+                    'Cows' => [
+                        'Le Moo',
+                        'Les Moos',
+                    ],
+                    '{0} years' => [
+                        '',
+                        '',
+                    ],
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
         $this->assertSame('Le Moo', __dn('custom', 'Cow', 'Cows', 1));
         $this->assertSame('Les Moos', __dn('custom', 'Cow', 'Cows', 2));
         $this->assertSame('{0} year', __dn('custom', '{0} year', '{0} years', 1));
@@ -424,31 +440,35 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunction(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}',
-                    ],
-                ],
-                'letters' => [
-                    '_context' => [
-                        'character' => [
-                            'The letter {0}',
-                            'The letters {0} and {1}',
-                        ],
-                        'communication' => [
-                            'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}',
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'character' => 'The letter {0}',
+                            'communication' => 'She wrote a letter to {0}',
                         ],
                     ],
-                ],
-            ]);
+                    'letters' => [
+                        '_context' => [
+                            'character' => [
+                                'The letter {0}',
+                                'The letters {0} and {1}',
+                            ],
+                            'communication' => [
+                                'She wrote a letter to {0}',
+                                'She wrote a letter to {0} and {1}',
+                            ],
+                        ],
+                    ],
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
 
         $this->assertSame('The letters A and B', __x('character', 'letters', ['A', 'B']));
         $this->assertSame('The letter A', __x('character', 'letter', ['A']));
@@ -480,18 +500,22 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunctionNoString(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'character' => '',
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'character' => '',
+                        ],
                     ],
-                ],
-            ]);
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
 
         $this->assertSame('letter', __x('character', 'letter'));
         $this->assertSame('letter', __x('unknown', 'letter'));
@@ -502,18 +526,22 @@ class I18nTest extends TestCase
      */
     public function testBasicContextFunctionInvalidContext(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'noun' => 'a paper letter',
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'noun' => 'a paper letter',
+                        ],
                     ],
-                ],
-            ]);
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
 
         $this->assertSame('letter', __x('garbage', 'letter'));
         $this->assertSame('a paper letter', __('letter'));
@@ -524,31 +552,35 @@ class I18nTest extends TestCase
      */
     public function testPluralContextFunction(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}',
-                    ],
-                ],
-                'letters' => [
-                    '_context' => [
-                        'character' => [
-                            'The letter {0}',
-                            'The letters {0} and {1}',
-                        ],
-                        'communication' => [
-                            'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}',
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'character' => 'The letter {0}',
+                            'communication' => 'She wrote a letter to {0}',
                         ],
                     ],
-                ],
-            ]);
+                    'letters' => [
+                        '_context' => [
+                            'character' => [
+                                'The letter {0}',
+                                'The letters {0} and {1}',
+                            ],
+                            'communication' => [
+                                'She wrote a letter to {0}',
+                                'She wrote a letter to {0} and {1}',
+                            ],
+                        ],
+                    ],
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
         $this->assertSame('The letters A and B', __xn('character', 'letter', 'letters', 2, ['A', 'B']));
         $this->assertSame('The letter A', __xn('character', 'letter', 'letters', 1, ['A']));
 
@@ -576,31 +608,35 @@ class I18nTest extends TestCase
      */
     public function testDomainContextFunction(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}',
-                    ],
-                ],
-                'letters' => [
-                    '_context' => [
-                        'character' => [
-                            'The letter {0}',
-                            'The letters {0} and {1}',
-                        ],
-                        'communication' => [
-                            'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}',
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'character' => 'The letter {0}',
+                            'communication' => 'She wrote a letter to {0}',
                         ],
                     ],
-                ],
-            ]);
+                    'letters' => [
+                        '_context' => [
+                            'character' => [
+                                'The letter {0}',
+                                'The letters {0} and {1}',
+                            ],
+                            'communication' => [
+                                'She wrote a letter to {0}',
+                                'She wrote a letter to {0} and {1}',
+                            ],
+                        ],
+                    ],
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
 
         $this->assertSame('The letters A and B', __dx('custom', 'character', 'letters', ['A', 'B']));
         $this->assertSame('The letter A', __dx('custom', 'character', 'letter', ['A']));
@@ -629,31 +665,35 @@ class I18nTest extends TestCase
      */
     public function testDomainPluralContextFunction(): void
     {
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'letter' => [
-                    '_context' => [
-                        'character' => 'The letter {0}',
-                        'communication' => 'She wrote a letter to {0}',
-                    ],
-                ],
-                'letters' => [
-                    '_context' => [
-                        'character' => [
-                            'The letter {0}',
-                            'The letters {0} and {1}',
-                        ],
-                        'communication' => [
-                            'She wrote a letter to {0}',
-                            'She wrote a letter to {0} and {1}',
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'letter' => [
+                        '_context' => [
+                            'character' => 'The letter {0}',
+                            'communication' => 'She wrote a letter to {0}',
                         ],
                     ],
-                ],
-            ]);
+                    'letters' => [
+                        '_context' => [
+                            'character' => [
+                                'The letter {0}',
+                                'The letters {0} and {1}',
+                            ],
+                            'communication' => [
+                                'She wrote a letter to {0}',
+                                'She wrote a letter to {0} and {1}',
+                            ],
+                        ],
+                    ],
+                ]);
 
-            return $package;
-        }, 'en_US');
+                return $package;
+            },
+            'en_US',
+        );
         $this->assertSame(
             'The letters A and B',
             __dxn('custom', 'character', 'letter', 'letters', 2, ['A', 'B']),
@@ -713,20 +753,20 @@ class I18nTest extends TestCase
 
             if ($locale === 'fr_FR') {
                 $package->setMessages([
-                'Cow' => 'Le Moo',
-                'Cows' => [
-                    'Le Moo',
-                    'Les Moos',
+                    'Cow' => 'Le Moo',
+                    'Cows' => [
+                        'Le Moo',
+                        'Les Moos',
                     ],
                 ]);
             }
 
             if ($locale === 'es_ES') {
                 $package->setMessages([
-                'Cow' => 'El Moo',
-                'Cows' => [
-                    'El Moo',
-                    'Los Moos',
+                    'Cow' => 'El Moo',
+                    'Cows' => [
+                        'El Moo',
+                        'Los Moos',
                     ],
                 ]);
             }
@@ -779,23 +819,31 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslator(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Dog' => 'Le bark',
-            ]);
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Dog' => 'Le bark',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Cow' => 'Le moo',
-            ]);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le moo',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
         $translator = I18n::getTranslator('custom', 'fr_FR');
         $this->assertSame('Le moo', $translator->translate('Cow'));
@@ -807,14 +855,18 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslatorWithMissingMessagesFile(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Dog' => 'Le bark',
-            ]);
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Dog' => 'Le bark',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
         I18n::setTranslator('no_such_domain', new MessagesFileLoader('no_such_domain', 'fr_FR'), 'fr_FR');
 
@@ -830,19 +882,27 @@ class I18nTest extends TestCase
     {
         I18n::useFallback(false);
 
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages(['Dog' => 'Le bark']);
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages(['Dog' => 'Le bark']);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
-        I18n::setTranslator('custom', function (): Package {
-            $package = new Package('default');
-            $package->setMessages(['Cow' => 'Le moo']);
+        I18n::setTranslator(
+            'custom',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages(['Cow' => 'Le moo']);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
 
         $translator = I18n::getTranslator('custom', 'fr_FR');
         $this->assertSame('Le moo', $translator->translate('Cow'));
@@ -855,14 +915,18 @@ class I18nTest extends TestCase
      */
     public function testFallbackTranslatorWithFactory(): void
     {
-        I18n::setTranslator('default', function (): Package {
-            $package = new Package('default');
-            $package->setMessages([
-                'Dog' => 'Le bark',
-            ]);
+        I18n::setTranslator(
+            'default',
+            function (): Package {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Dog' => 'Le bark',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
         I18n::config('custom', function ($name, $locale) {
             $this->assertSame('custom', $name);
             $package = new Package('default');

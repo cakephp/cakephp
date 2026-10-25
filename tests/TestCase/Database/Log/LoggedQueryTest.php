@@ -386,7 +386,9 @@ class LoggedQueryTest extends TestCase
             ]);
 
             $this->expectException(RuntimeException::class);
-            $this->expectExceptionMessage('LoggedQuery redactor must return [string $query, array $params]; got string.');
+            $this->expectExceptionMessage(
+                'LoggedQuery redactor must return [string $query, array $params]; got string.',
+            );
 
             (string)$query;
         } finally {

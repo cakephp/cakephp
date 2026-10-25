@@ -23,8 +23,11 @@ class TestTable extends Table
         $this->setSchema(['id' => ['type' => 'integer']]);
     }
 
-    public function findPublishedWithArgOnly(SelectQuery $query, string $what = 'worked', mixed $other = null): SelectQuery
-    {
+    public function findPublishedWithArgOnly(
+        SelectQuery $query,
+        string $what = 'worked',
+        mixed $other = null,
+    ): SelectQuery {
         return $query->applyOptions(['this' => $what]);
     }
 

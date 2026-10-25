@@ -121,16 +121,20 @@ class EnumLabelTraitTest extends TestCase
         Cache::clear('_cake_translations_');
         I18n::clear();
 
-        I18n::setTranslator('default', function () {
-            $package = new Package();
-            $package->setMessages([
-                'Published' => 'Publié',
-                'Pending Review' => 'En attente de révision',
-                'Article is published' => "L'article est publié",
-            ]);
+        I18n::setTranslator(
+            'default',
+            function () {
+                $package = new Package();
+                $package->setMessages([
+                    'Published' => 'Publié',
+                    'Pending Review' => 'En attente de révision',
+                    'Article is published' => "L'article est publié",
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
         I18n::setLocale('fr_FR');
 
         // Humanized fallback labels are translated.
@@ -149,18 +153,22 @@ class EnumLabelTraitTest extends TestCase
         Cache::clear('_cake_translations_');
         I18n::clear();
 
-        I18n::setTranslator('default', function () {
-            $package = new Package();
-            $package->setMessages([
-                'Article is a draft' => [
-                    '_context' => [
-                        'ArticleStatus' => 'Article est un brouillon',
+        I18n::setTranslator(
+            'default',
+            function () {
+                $package = new Package();
+                $package->setMessages([
+                    'Article is a draft' => [
+                        '_context' => [
+                            'ArticleStatus' => 'Article est un brouillon',
+                        ],
                     ],
-                ],
-            ]);
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
         I18n::setLocale('fr_FR');
 
         $this->assertSame('Article est un brouillon', ArticleStatusTraitLabeled::Draft->label());
@@ -174,19 +182,23 @@ class EnumLabelTraitTest extends TestCase
         Cache::clear('_cake_translations_');
         I18n::clear();
 
-        I18n::setTranslator('news', function () {
-            $package = new Package();
-            $package->setMessages([
-                'Article is published in the news domain' => [
-                    '_context' => [
-                        'Article' => 'Un article est publié dans la presse.',
+        I18n::setTranslator(
+            'news',
+            function () {
+                $package = new Package();
+                $package->setMessages([
+                    'Article is published in the news domain' => [
+                        '_context' => [
+                            'Article' => 'Un article est publié dans la presse.',
+                        ],
                     ],
-                ],
-                'Article is unpublished in the news domain' => 'Un article est non publié dans la presse.',
-            ]);
+                    'Article is unpublished in the news domain' => 'Un article est non publié dans la presse.',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
         I18n::setLocale('fr_FR');
 
         $this->assertSame('Un article est publié dans la presse.', ArticleDomainStatus::Published->label());

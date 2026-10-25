@@ -287,10 +287,10 @@ class MysqlSchemaDialectTest extends TestCase
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection {$type}
-);
-SQL;
+            CREATE TABLE convert_columns (
+                reflection {$type}
+            );
+            SQL;
         $connection->execute($sql);
 
         $driver = $connection->getDriver();
@@ -304,7 +304,11 @@ SQL;
         // MySQL 8.0.17+ strips display width from integer types, so
         // TINYINT(1) UNSIGNED becomes TINYINT UNSIGNED and maps to tinyinteger.
         // MariaDB and older MySQL preserve the display width, mapping to boolean.
-        if ($type === 'TINYINT(1) UNSIGNED' && !$driver->isMariadb() && version_compare($driver->version(), '8.0.17', '>=')) {
+        if (
+            $type === 'TINYINT(1) UNSIGNED'
+            && !$driver->isMariadb()
+            && version_compare($driver->version(), '8.0.17', '>=')
+        ) {
             $expected = ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true];
         }
 
@@ -347,51 +351,51 @@ SQL;
         $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
 
         $table = <<<SQL
-            CREATE TABLE schema_authors (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(50),
-                bio TEXT,
-                created DATETIME
-            )ENGINE=InnoDB
-SQL;
+                        CREATE TABLE schema_authors (
+                            id INT PRIMARY KEY AUTO_INCREMENT,
+                            name VARCHAR(50),
+                            bio TEXT,
+                            created DATETIME
+                        )ENGINE=InnoDB
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-            CREATE TABLE schema_articles (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                title VARCHAR(20) COMMENT 'A title',
-                body TEXT,
-                author_id INT NOT NULL,
-                unique_id INT NOT NULL,
-                published BOOLEAN DEFAULT 0,
-                allow_comments TINYINT(1) DEFAULT 0,
-                location POINT,
-                year_type YEAR,
-                config JSON,
-                created DATETIME,
-                created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
-                updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                KEY `author_idx` (`author_id`),
-                CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
-                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
-                UNIQUE INDEX `unique_id_idx` (`unique_id`)
-            ) ENGINE=InnoDB COLLATE=utf8_general_ci
-SQL;
+                        CREATE TABLE schema_articles (
+                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                            title VARCHAR(20) COMMENT 'A title',
+                            body TEXT,
+                            author_id INT NOT NULL,
+                            unique_id INT NOT NULL,
+                            published BOOLEAN DEFAULT 0,
+                            allow_comments TINYINT(1) DEFAULT 0,
+                            location POINT,
+                            year_type YEAR,
+                            config JSON,
+                            created DATETIME,
+                            created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+                            updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                            KEY `author_idx` (`author_id`),
+                            CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
+                            FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+                            UNIQUE INDEX `unique_id_idx` (`unique_id`)
+                        ) ENGINE=InnoDB COLLATE=utf8_general_ci
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-            CREATE OR REPLACE VIEW schema_articles_v
-                AS SELECT 1
-SQL;
+                        CREATE OR REPLACE VIEW schema_articles_v
+                            AS SELECT 1
+            SQL;
         $connection->execute($table);
 
         if ($connection->getDriver()->supports(DriverFeature::JSON)) {
             $table = <<<SQL
-                CREATE TABLE schema_json (
-                    id INT PRIMARY KEY AUTO_INCREMENT,
-                    data JSON NOT NULL
-                )
-SQL;
+                                CREATE TABLE schema_json (
+                                    id INT PRIMARY KEY AUTO_INCREMENT,
+                                    data JSON NOT NULL
+                                )
+                SQL;
             $connection->execute($table);
         }
     }
@@ -410,10 +414,10 @@ SQL;
         $this->skipIf($isMaria, 'This test requires mysql');
 
         $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection JSON
-);
-SQL;
+            CREATE TABLE convert_columns (
+                reflection JSON
+            );
+            SQL;
         $connection->execute($sql);
 
         $dialect = $driver->schemaDialect();
@@ -439,10 +443,10 @@ SQL;
         $this->skipIf(!$isMaria, 'This test requires mariadb');
 
         $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection UUID
-);
-SQL;
+            CREATE TABLE convert_columns (
+                reflection UUID
+            );
+            SQL;
         $connection->execute($sql);
 
         $dialect = $driver->schemaDialect();
@@ -624,8 +628,14 @@ SQL;
         }
         // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
         if (
-            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>=')) ||
-            (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
+            (
+                $driver->isMariaDb()
+                && version_compare($driver->version(), '10.5.0', '>=')
+            )
+            || (
+                !$driver->isMariaDb()
+                && version_compare($driver->version(), '8.0.30', '>=')
+            )
         ) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
@@ -703,14 +713,14 @@ SQL;
         $this->skipIf(!$hasGeometry, 'This test requires geometry type with srid support.');
 
         $table = <<<SQL
-CREATE TABLE schema_geometry (
-    id INTEGER,
-    geo_line LINESTRING,
-    geo_geometry GEOMETRY SRID 0,
-    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')) SRID 4236,
-    geo_polygon POLYGON SRID 4236
-)
-SQL;
+            CREATE TABLE schema_geometry (
+                id INTEGER,
+                geo_line LINESTRING,
+                geo_geometry GEOMETRY SRID 0,
+                geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')) SRID 4236,
+                geo_polygon POLYGON SRID 4236
+            )
+            SQL;
         $connection->execute($table);
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_geometry');
@@ -779,14 +789,14 @@ SQL;
         $connection = ConnectionManager::get('test');
 
         $table = <<<SQL
-CREATE TABLE schema_geometry (
-    id INTEGER,
-    geo_line LINESTRING,
-    geo_geometry GEOMETRY,
-    geo_point POINT,
-    geo_polygon POLYGON
-)
-SQL;
+            CREATE TABLE schema_geometry (
+                id INTEGER,
+                geo_line LINESTRING,
+                geo_geometry GEOMETRY,
+                geo_point POINT,
+                geo_polygon POLYGON
+            )
+            SQL;
         $connection->execute($table);
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_geometry');
@@ -977,7 +987,7 @@ SQL;
                     $this->assertEquals((array)$value[1], $indexObject->getReferencedColumns());
                     continue;
                 }
-                if ($key === 'length' && !($indexObject instanceof UniqueKey)) {
+                if ($key === 'length' && !$indexObject instanceof UniqueKey) {
                     $this->assertEquals([], $value);
                     continue;
                 }
@@ -995,15 +1005,15 @@ SQL;
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS conditional_constraint');
         $table = <<<SQL
-CREATE TABLE conditional_constraint (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    config_id INT UNSIGNED NOT NULL,
-    status ENUM ('new', 'processing', 'completed', 'failed') DEFAULT 'new' NOT NULL,
-    CONSTRAINT unique_index UNIQUE (config_id, (
-        (CASE WHEN ((`status` = "new") OR (`status` = "processing")) THEN `status` END)
-    ))
-);
-SQL;
+            CREATE TABLE conditional_constraint (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                config_id INT UNSIGNED NOT NULL,
+                status ENUM ('new', 'processing', 'completed', 'failed') DEFAULT 'new' NOT NULL,
+                CONSTRAINT unique_index UNIQUE (config_id, (
+                    (CASE WHEN ((`status` = "new") OR (`status` = "processing")) THEN `status` END)
+                ))
+            );
+            SQL;
         try {
             $connection->execute($table);
         } catch (Exception) {
@@ -1025,17 +1035,17 @@ SQL;
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS functional_index');
         $table = <<<SQL
-CREATE TABLE functional_index (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    properties JSON,
-    child_ids VARCHAR(400) GENERATED ALWAYS AS (
-        properties->>'$.children[*].id'
-    ) VIRTUAL
-);
-SQL;
+            CREATE TABLE functional_index (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                properties JSON,
+                child_ids VARCHAR(400) GENERATED ALWAYS AS (
+                    properties->>'$.children[*].id'
+                ) VIRTUAL
+            );
+            SQL;
         $index = <<<SQL
-CREATE INDEX child_ids_idx ON functional_index ((CAST(child_ids AS UNSIGNED ARRAY)));
-SQL;
+            CREATE INDEX child_ids_idx ON functional_index ((CAST(child_ids AS UNSIGNED ARRAY)));
+            SQL;
         try {
             $connection->execute($table);
             $connection->execute($index);
@@ -1061,16 +1071,19 @@ SQL;
         $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
-        $this->skipIf(!$driver->supports(DriverFeature::CHECK_CONSTRAINTS), 'This test requires check constraint support');
+        $this->skipIf(
+            !$driver->supports(DriverFeature::CHECK_CONSTRAINTS),
+            'This test requires check constraint support',
+        );
 
         $connection->execute('DROP TABLE IF EXISTS schema_constraints');
         $table = <<<SQL
-CREATE TABLE schema_constraints (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    age INT,
-    CONSTRAINT age_check CHECK (age >= 18)
-) Engine=InnoDB;
-SQL;
+            CREATE TABLE schema_constraints (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                age INT,
+                CONSTRAINT age_check CHECK (age >= 18)
+            ) Engine=InnoDB;
+            SQL;
         $connection->execute($table);
 
         $schema = new SchemaCollection($connection);
@@ -1107,13 +1120,13 @@ SQL;
         $connection = ConnectionManager::get('test');
 
         $sql = <<<SQL
-CREATE TABLE `odd_primary_key` (
-`id` BIGINT UNSIGNED NOT NULL,
-`other_field` INTEGER NOT NULL AUTO_INCREMENT,
-PRIMARY KEY (`id`),
-UNIQUE KEY `other_field` (`other_field`)
-)
-SQL;
+            CREATE TABLE `odd_primary_key` (
+            `id` BIGINT UNSIGNED NOT NULL,
+            `other_field` INTEGER NOT NULL AUTO_INCREMENT,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `other_field` (`other_field`)
+            )
+            SQL;
         $connection->execute($sql);
         $schema = new SchemaCollection($connection);
         $table = $schema->describe('odd_primary_key');
@@ -1135,13 +1148,13 @@ SQL;
         $connection->execute('DROP TABLE IF EXISTS test_decimal_precision');
 
         $table = <<<SQL
-            CREATE TABLE test_decimal_precision (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                amount_small DECIMAL(5,2) NOT NULL,
-                amount_medium DECIMAL(10,4) NOT NULL,
-                amount_large DECIMAL(15,6) NOT NULL
-            ) ENGINE=InnoDB
-SQL;
+                        CREATE TABLE test_decimal_precision (
+                            id INT PRIMARY KEY AUTO_INCREMENT,
+                            amount_small DECIMAL(5,2) NOT NULL,
+                            amount_medium DECIMAL(10,4) NOT NULL,
+                            amount_large DECIMAL(15,6) NOT NULL
+                        ) ENGINE=InnoDB
+            SQL;
         $connection->execute($table);
 
         try {
@@ -1709,32 +1722,52 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                    . 'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'cascade',
+                ],
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                    . 'REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'restrict',
+                ],
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                    . 'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE SET NULL ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'setNull',
+                ],
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                    . 'REFERENCES `authors` (`id`) ON UPDATE SET NULL ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                ],
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                    . 'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
             ],
             [
                 'author_id_check',
@@ -1756,9 +1789,11 @@ SQL;
         $table = new TableSchema('articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addConstraint($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addConstraint($name, $data);
 
         $this->assertEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -1796,9 +1831,11 @@ SQL;
         $table = new TableSchema('articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addIndex($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addIndex($name, $data);
 
         $this->assertEquals($expected, $schema->indexSql($table, $name));
     }
@@ -1813,11 +1850,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('posts')
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('posts')->addColumn('author_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1860,11 +1896,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('posts')
-            ->addColumn('author_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('posts')->addColumn('author_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('category_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1907,9 +1942,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1919,9 +1954,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'biginteger',
-                'null' => false,
-            ])
+            'type' => 'biginteger',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1941,9 +1976,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('posts')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1975,16 +2010,16 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE `posts` (
-`id` INTEGER NOT NULL AUTO_INCREMENT,
-`title` VARCHAR(255) NOT NULL COMMENT 'The title',
-`body` TEXT,
-`data` LONGTEXT,
-`hash` CHAR(40) COLLATE latin1_bin NOT NULL,
-`created` DATETIME,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
-SQL;
+            CREATE TABLE `posts` (
+            `id` INTEGER NOT NULL AUTO_INCREMENT,
+            `title` VARCHAR(255) NOT NULL COMMENT 'The title',
+            `body` TEXT,
+            `data` LONGTEXT,
+            `hash` CHAR(40) COLLATE latin1_bin NOT NULL,
+            `created` DATETIME,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
@@ -2000,13 +2035,12 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $this->pdo->shouldReceive('getAttribute')
-            ->andReturn('5.7.0');
+        $this->pdo->shouldReceive('getAttribute')->andReturn('5.7.0');
 
         $table = new TableSchema('posts')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('data', [
                 'type' => 'json',
             ])
@@ -2021,12 +2055,12 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE `posts` (
-`id` INTEGER NOT NULL AUTO_INCREMENT,
-`data` JSON,
-PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
-SQL;
+            CREATE TABLE `posts` (
+            `id` INTEGER NOT NULL AUTO_INCREMENT,
+            `data` JSON,
+            PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
@@ -2060,11 +2094,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('articles_tags')
-            ->addColumn('article_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('articles_tags')->addColumn('article_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('tag_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -2075,22 +2108,21 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE `articles_tags` (
-`article_id` INTEGER NOT NULL,
-`tag_id` INTEGER NOT NULL,
-PRIMARY KEY (`article_id`, `tag_id`)
-)
-SQL;
+            CREATE TABLE `articles_tags` (
+            `article_id` INTEGER NOT NULL,
+            `tag_id` INTEGER NOT NULL,
+            PRIMARY KEY (`article_id`, `tag_id`)
+            )
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
-        $table = new TableSchema('composite_key')
-            ->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-                'autoIncrement' => true,
-            ])
+        $table = new TableSchema('composite_key')->addColumn('id', [
+            'type' => 'integer',
+            'null' => false,
+            'autoIncrement' => true,
+        ])
             ->addColumn('account_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -2101,12 +2133,12 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE `composite_key` (
-`id` INTEGER NOT NULL AUTO_INCREMENT,
-`account_id` INTEGER NOT NULL,
-PRIMARY KEY (`id`, `account_id`)
-)
-SQL;
+            CREATE TABLE `composite_key` (
+            `id` INTEGER NOT NULL AUTO_INCREMENT,
+            `account_id` INTEGER NOT NULL,
+            PRIMARY KEY (`id`, `account_id`)
+            )
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
@@ -2191,7 +2223,8 @@ SQL;
         $connectionConfig = ConnectionManager::getConfig('test');
 
         $this->pdo = Mockery::mock(PDOMocked::class);
-        $this->pdo->shouldReceive('quote')
+        $this->pdo
+            ->shouldReceive('quote')
             ->andReturnUsing(function ($value) {
                 return "'{$value}'";
             });
@@ -2216,6 +2249,9 @@ SQL;
 // phpcs:disable
 class PDOMocked extends PDO
 {
-    public function quoteIdentifier(): void {}
+    public function quoteIdentifier(): void
+    {
+    }
 }
+
 // phpcs:enable

@@ -21,12 +21,10 @@ class TypedArgumentTest extends TestCase
         $arguments = [
             ArrayArgument::class => [],
             BooleanArgument::class => true,
-            CallableArgument::class => function (): void {
-            },
+            CallableArgument::class => function (): void {},
             FloatArgument::class => 1.23,
             IntegerArgument::class => 1,
-            ObjectArgument::class => new class {
-            },
+            ObjectArgument::class => new class {},
             StringArgument::class => 'string',
         ];
 

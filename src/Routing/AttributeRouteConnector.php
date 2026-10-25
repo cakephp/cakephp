@@ -425,10 +425,14 @@ class AttributeRouteConnector
                     continue;
                 }
                 $methodKey = $declaringClass . '::' . $methodName;
-                $attributeKey = $declaringClass
-                    . ':' . $methodName
-                    . ':' . $info->attributeName
-                    . ':' . $info->lineNumber;
+                $attributeKey =
+                    $declaringClass
+                    . ':'
+                    . $methodName
+                    . ':'
+                    . $info->attributeName
+                    . ':'
+                    . $info->lineNumber;
                 $occurrence = $attributeOccurrences[$attributeKey] ?? 0;
                 $attributeOccurrences[$attributeKey] = $occurrence + 1;
                 $attributeKey .= ':' . $occurrence;

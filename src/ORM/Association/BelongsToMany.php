@@ -431,12 +431,12 @@ class BelongsToMany extends Association
         } else {
             $belongsTo = $junction->getAssociation($tAlias);
             if (
-                $this->getTargetForeignKey() !== $belongsTo->getForeignKey() ||
-                $target !== $belongsTo->getTarget()
+                $this->getTargetForeignKey() !== $belongsTo->getForeignKey()
+                || $target !== $belongsTo->getTarget()
             ) {
                 throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
+                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` "
+                        . "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
                 );
             }
         }
@@ -763,7 +763,7 @@ class BelongsToMany extends Association
         $persisted = [];
 
         foreach ($entities as $k => $entity) {
-            if (!($entity instanceof EntityInterface)) {
+            if (!$entity instanceof EntityInterface) {
                 break;
             }
 
@@ -829,14 +829,15 @@ class BelongsToMany extends Association
 
         foreach ($targetEntities as $e) {
             $joint = $e->get($jointProperty);
-            if (!($joint instanceof EntityInterface)) {
+            if (!$joint instanceof EntityInterface) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
-            $changedKeys = $sourceKeys !== $joint->extract($foreignKey) ||
-                $targetKeys !== $joint->extract($assocForeignKey);
+            $changedKeys =
+                $sourceKeys !== $joint->extract($foreignKey)
+                || $targetKeys !== $joint->extract($assocForeignKey);
 
             // Keys were changed, the junction table record _could_ be
             // new. By clearing the primary key values, and marking the entity
@@ -897,11 +898,13 @@ class BelongsToMany extends Association
         $links = array_merge($links, $targetEntities);
         $sourceEntity->set($property, $links);
 
-        return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options) {
-                return $this->saveLinks($sourceEntity, $targetEntities, $options);
-            },
-        );
+        return $this->junction()
+            ->getConnection()
+            ->transactional(
+                function () use ($sourceEntity, $targetEntities, $options) {
+                    return $this->saveLinks($sourceEntity, $targetEntities, $options);
+                },
+            );
     }
 
     /**
@@ -1145,8 +1148,7 @@ class BelongsToMany extends Association
             ],
         ];
 
-        $query
-            ->addDefaultTypes($junctionTable)
+        $query->addDefaultTypes($junctionTable)
             ->join($matching + $joins, [], true);
 
         return $query;
@@ -1211,70 +1213,72 @@ class BelongsToMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $junction = $this->junction();
-                $target = $this->getTarget();
+        return $this->junction()
+            ->getConnection()
+            ->transactional(
+                function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+                    $junction = $this->junction();
+                    $target = $this->getTarget();
 
-                /** @var array<string> $foreignKey */
-                $foreignKey = (array)$this->getForeignKey();
-                $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
-                $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
+                    /** @var array<string> $foreignKey */
+                    $foreignKey = (array)$this->getForeignKey();
+                    $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
+                    $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
 
-                $junctionPrimaryKey = (array)$junction->getPrimaryKey();
-                $junctionQueryAlias = $junction->getAlias() . '__matches';
-                $keys = [];
-                $matchesConditions = [];
-                /** @var string $key */
-                foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
-                    $aliased = $junction->aliasField($key);
-                    $keys[$key] = $aliased;
-                    $matchesConditions[$aliased] = new IdentifierExpression($junctionQueryAlias . '.' . $key);
-                }
+                    $junctionPrimaryKey = (array)$junction->getPrimaryKey();
+                    $junctionQueryAlias = $junction->getAlias() . '__matches';
+                    $keys = [];
+                    $matchesConditions = [];
+                    /** @var string $key */
+                    foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
+                        $aliased = $junction->aliasField($key);
+                        $keys[$key] = $aliased;
+                        $matchesConditions[$aliased] = new IdentifierExpression($junctionQueryAlias . '.' . $key);
+                    }
 
-                // Use association to create row selection
-                // with finders & association conditions.
-                $matches = $this->appendJunctionJoin($this->find())
-                    ->select($keys)
-                    ->where(array_combine($prefixedForeignKey, $primaryValue));
+                    // Use association to create row selection
+                    // with finders & association conditions.
+                    $matches = $this->appendJunctionJoin($this->find())
+                        ->select($keys)
+                        ->where(array_combine($prefixedForeignKey, $primaryValue));
 
-                // Create a subquery join to ensure we get
-                // the correct entity passed to callbacks.
-                /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $existing */
-                $existing = $junction->selectQuery()
-                    ->from([$junctionQueryAlias => $matches])
-                    ->innerJoin(
-                        [$junction->getAlias() => $junction->getTable()],
-                        $matchesConditions,
-                    );
+                    // Create a subquery join to ensure we get
+                    // the correct entity passed to callbacks.
+                    /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $existing */
+                    $existing = $junction->selectQuery()
+                        ->from([$junctionQueryAlias => $matches])
+                        ->innerJoin(
+                            [$junction->getAlias() => $junction->getTable()],
+                            $matchesConditions,
+                        );
 
-                $jointEntities = $this->collectJointEntities($sourceEntity, $targetEntities);
-                $inserts = $this->diffLinks($existing, $jointEntities, $targetEntities, $options);
-                if ($inserts === false) {
-                    return false;
-                }
+                    $jointEntities = $this->collectJointEntities($sourceEntity, $targetEntities);
+                    $inserts = $this->diffLinks($existing, $jointEntities, $targetEntities, $options);
+                    if ($inserts === false) {
+                        return false;
+                    }
 
-                if ($inserts && !$this->saveTarget($sourceEntity, $inserts, $options)) {
-                    return false;
-                }
+                    if ($inserts && !$this->saveTarget($sourceEntity, $inserts, $options)) {
+                        return false;
+                    }
 
-                $property = $this->getProperty();
+                    $property = $this->getProperty();
 
-                if ($inserts !== []) {
-                    $inserted = array_combine(
-                        array_keys($inserts),
-                        (array)$sourceEntity->get($property),
-                    ) ?: [];
-                    $targetEntities = $inserted + $targetEntities;
-                }
+                    if ($inserts !== []) {
+                        $inserted = array_combine(
+                            array_keys($inserts),
+                            (array)$sourceEntity->get($property),
+                        ) ?: [];
+                        $targetEntities = $inserted + $targetEntities;
+                    }
 
-                ksort($targetEntities);
-                $sourceEntity->set($property, array_values($targetEntities));
-                $sourceEntity->setDirty($property, false);
+                    ksort($targetEntities);
+                    $sourceEntity->set($property, array_values($targetEntities));
+                    $sourceEntity->setDirty($property, false);
 
-                return true;
-            },
-        );
+                    return true;
+                },
+            );
     }
 
     /**
@@ -1349,7 +1353,7 @@ class BelongsToMany extends Association
         $primary = (array)$target->getPrimaryKey();
         $jointProperty = $this->junctionProperty;
         foreach ($targetEntities as $k => $entity) {
-            if (!($entity instanceof EntityInterface)) {
+            if (!$entity instanceof EntityInterface) {
                 continue;
             }
             $key = array_values($entity->extract($primary));
@@ -1419,12 +1423,12 @@ class BelongsToMany extends Association
         $missing = [];
 
         foreach ($targetEntities as $entity) {
-            if (!($entity instanceof EntityInterface)) {
+            if (!$entity instanceof EntityInterface) {
                 continue;
             }
             $joint = $entity->get($jointProperty);
 
-            if (!($joint instanceof EntityInterface)) {
+            if (!$joint instanceof EntityInterface) {
                 $missing[] = $entity->extract($primary);
                 continue;
             }
