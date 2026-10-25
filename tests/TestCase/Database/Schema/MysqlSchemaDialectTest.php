@@ -1559,6 +1559,26 @@ SQL;
                 ['type' => 'bit', 'length' => 64],
                 '`permissions` BIT(64)',
             ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'],
+                '`start_date` DATE NOT NULL DEFAULT (CURRENT_DATE)',
+            ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'curdate()'],
+                '`start_date` DATE NOT NULL DEFAULT (CURRENT_DATE)',
+            ],
+            [
+                'start_time',
+                ['type' => 'time', 'null' => false, 'default' => 'current_time'],
+                '`start_time` TIME NOT NULL DEFAULT (CURRENT_TIME)',
+            ],
+            [
+                'label',
+                ['type' => 'string', 'length' => 20, 'null' => false, 'default' => 'CURRENT_DATE'],
+                "`label` VARCHAR(20) NOT NULL DEFAULT 'CURRENT_DATE'",
+            ],
         ];
     }
 

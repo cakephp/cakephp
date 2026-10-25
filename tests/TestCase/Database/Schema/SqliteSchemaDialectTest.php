@@ -1245,6 +1245,16 @@ SQL;
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '"p" POLYGON_TEXT NOT NULL',
             ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'],
+                '"start_date" DATE NOT NULL DEFAULT CURRENT_DATE',
+            ],
+            [
+                'start_time',
+                ['type' => 'time', 'null' => false, 'default' => 'current_time'],
+                '"start_time" TIME NOT NULL DEFAULT CURRENT_TIME',
+            ],
         ];
     }
 
