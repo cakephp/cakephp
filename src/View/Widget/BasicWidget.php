@@ -133,7 +133,8 @@ class BasicWidget implements WidgetInterface
         if (
             empty($data['disabled'])
             && (
-                (isset($data['type'])
+                (
+                    isset($data['type'])
                     && $data['type'] !== 'hidden'
                 )
                 || !isset($data['type'])

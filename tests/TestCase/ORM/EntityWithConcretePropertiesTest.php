@@ -819,12 +819,12 @@ class EntityWithConcretePropertiesTest extends TestCase
         };
         $comments = [
             new class (['user_id' => 1, 'body' => 'Comment 1']) extends Entity {
-            protected $user_id;
-            protected $body;
+                protected $user_id;
+                protected $body;
             },
             new class (['user_id' => 1, 'body' => 'Comment 2']) extends Entity {
-            protected $user_id;
-            protected $body;
+                protected $user_id;
+                protected $body;
             },
         ];
         $user->comments = $comments;

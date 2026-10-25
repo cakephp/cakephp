@@ -96,9 +96,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 $paramType = $parameter->getType();
                 // TODO: In a future minor release it would be good to start requiring the components parameter
                 if (
-                    $parameter->getName() === 'components' &&
-                    $paramType instanceof ReflectionNamedType &&
-                    $paramType->getName() === ComponentRegistry::class
+                    $parameter->getName() === 'components'
+                    && $paramType instanceof ReflectionNamedType
+                    && $paramType->getName() === ComponentRegistry::class
                 ) {
                     $hasComponents = true;
                     break;
@@ -430,10 +430,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // controller names as they allow direct references to
         // be created.
         if (
-            str_contains($controller, '\\') ||
-            str_contains($controller, '/') ||
-            str_contains($controller, '.') ||
-            $firstChar === strtolower($firstChar)
+            str_contains($controller, '\\')
+            || str_contains($controller, '/')
+            || str_contains($controller, '.')
+            || $firstChar === strtolower($firstChar)
         ) {
             throw $this->missingController($request);
         }

@@ -188,8 +188,8 @@ class PostgresTest extends TestCase
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->gte('post_count', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
-            'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
+            . 'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 
@@ -218,8 +218,8 @@ class PostgresTest extends TestCase
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->gte('posts.author_id', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
-            'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
+            . 'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 

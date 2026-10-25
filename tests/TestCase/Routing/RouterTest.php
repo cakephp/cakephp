@@ -1119,8 +1119,8 @@ class RouterTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
-            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
-            ' The filter failed with: nope/',
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.'
+            . ' The filter failed with: nope/',
         );
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/{lang}/{controller}/{action}/*');
@@ -1147,8 +1147,8 @@ class RouterTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
-            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
-            ' The filter failed with: /',
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.'
+            . ' The filter failed with: /',
         );
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/{lang}/{controller}/{action}/*');
@@ -2355,9 +2355,9 @@ class RouterTest extends TestCase
                     'action' => 'view',
                     'organization' => 'cakephp',
                     'repository' => 'debug_kit',],
-                ],
+            ],
             [
-            'Bookmarks::view/organization=cakephp/bake',
+                'Bookmarks::view/organization=cakephp/bake',
                 [
                     'controller' => 'Bookmarks',
                     'action' => 'view',

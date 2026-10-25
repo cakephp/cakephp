@@ -454,7 +454,7 @@ abstract class SchemaDialect
     {
         try {
             $columns = $this->describeColumns($tableName);
-        } catch (PDOException | DatabaseException) {
+        } catch (PDOException|DatabaseException) {
             return false;
         }
 

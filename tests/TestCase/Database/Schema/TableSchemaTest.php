@@ -524,12 +524,12 @@ class TableSchemaTest extends TestCase
             ->addColumn('author_id', 'integer');
 
         $table->addIndex('author_idx', [
-                'columns' => ['author_id'],
-                'type' => 'index',
-            ])->addIndex('texty', [
-                'type' => 'fulltext',
-                'columns' => ['title'],
-            ]);
+            'columns' => ['author_id'],
+            'type' => 'index',
+        ])->addIndex('texty', [
+            'type' => 'fulltext',
+            'columns' => ['title'],
+        ]);
 
         $this->assertEquals(
             ['author_idx', 'texty'],
@@ -663,8 +663,8 @@ class TableSchemaTest extends TestCase
         ];
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)" .
-            ' REFERENCES <products> \(<category>, <id>\)';
+        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)"
+            . ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }

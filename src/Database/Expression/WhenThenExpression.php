@@ -117,12 +117,12 @@ class WhenThenExpression implements ExpressionInterface
             }
 
             if (
-                $type !== null &&
-                !is_array($type)
+                $type !== null
+                && !is_array($type)
             ) {
                 throw new InvalidArgumentException(sprintf(
-                    'When using an array for the `$when` argument, the `$type` argument must be an ' .
-                    'array too, `%s` given.',
+                    'When using an array for the `$when` argument, the `$type` argument must be an '
+                    . 'array too, `%s` given.',
                     get_debug_type($type),
                 ));
             }
@@ -130,8 +130,8 @@ class WhenThenExpression implements ExpressionInterface
             // avoid dirtying the type map for possible consecutive `when()` calls
             $typeMap = clone $this->typeMap;
             if (
-                is_array($type) &&
-                $type !== []
+                is_array($type)
+                && $type !== []
             ) {
                 $typeMap = $typeMap->setTypes($type);
             }
@@ -139,19 +139,19 @@ class WhenThenExpression implements ExpressionInterface
             $when = new QueryExpression($when, $typeMap);
         } else {
             if (
-                $type !== null &&
-                !is_string($type)
+                $type !== null
+                && !is_string($type)
             ) {
                 throw new InvalidArgumentException(sprintf(
-                    'When using a non-array value for the `$when` argument, the `$type` argument must ' .
-                    'be a string, `%s` given.',
+                    'When using a non-array value for the `$when` argument, the `$type` argument must '
+                    . 'be a string, `%s` given.',
                     get_debug_type($type),
                 ));
             }
 
             if (
-                $type === null &&
-                !($when instanceof ExpressionInterface)
+                $type === null
+                && !($when instanceof ExpressionInterface)
             ) {
                 $type = $this->inferType($when, $this->typeMap);
             }
@@ -174,13 +174,13 @@ class WhenThenExpression implements ExpressionInterface
     public function then(mixed $result, ?string $type = null): static
     {
         if (
-            $result !== null &&
-            !is_scalar($result) &&
-            !(is_object($result) && !($result instanceof Closure))
+            $result !== null
+            && !is_scalar($result)
+            && !(is_object($result) && !($result instanceof Closure))
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The `$result` argument must be either `null`, a scalar value, an object, ' .
-                'or an instance of `\%s`, `%s` given.',
+                'The `$result` argument must be either `null`, a scalar value, an object, '
+                . 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
                 get_debug_type($result),
             ));
@@ -250,8 +250,8 @@ class WhenThenExpression implements ExpressionInterface
 
         $when = $this->when;
         if (
-            is_string($this->whenType) &&
-            !($when instanceof ExpressionInterface)
+            is_string($this->whenType)
+            && !($when instanceof ExpressionInterface)
         ) {
             $when = $this->castToExpression($when, $this->whenType);
         }

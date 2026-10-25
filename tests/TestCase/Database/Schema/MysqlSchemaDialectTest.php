@@ -624,8 +624,8 @@ SQL;
         }
         // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
         if (
-            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>=')) ||
-            (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
+            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>='))
+            || (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
         ) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
@@ -1689,32 +1689,32 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                . 'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                . 'REFERENCES `authors` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                . 'REFERENCES `authors` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE SET NULL ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                . 'REFERENCES `authors` (`id`) ON UPDATE SET NULL ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
-                'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
+                'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) '
+                . 'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
             ],
             [
                 'author_id_check',
@@ -1887,9 +1887,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1899,9 +1899,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'biginteger',
-                'null' => false,
-            ])
+            'type' => 'biginteger',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1921,9 +1921,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('posts')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1984,9 +1984,9 @@ SQL;
             ->andReturn('5.7.0');
 
         $table = new TableSchema('posts')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('data', [
                 'type' => 'json',
             ])
@@ -2196,6 +2196,8 @@ SQL;
 // phpcs:disable
 class PDOMocked extends PDO
 {
-    public function quoteIdentifier(): void {}
+    public function quoteIdentifier(): void
+    {
+    }
 }
 // phpcs:enable

@@ -1550,8 +1550,8 @@ class MarshallerTest extends TestCase
             ],
         ];
         $article = new Entity([
-           'title' => 'title for post',
-           'body' => 'body',
+            'title' => 'title for post',
+            'body' => 'body',
         ]);
         $marshall = new Marshaller($this->articles);
         $marshall->merge($article, $data, [
@@ -1565,12 +1565,12 @@ class MarshallerTest extends TestCase
     public function testMergeWithSingleAssociationAndFields(): void
     {
         $user = new Entity([
-           'username' => 'user',
+            'username' => 'user',
         ]);
         $article = new Entity([
-           'title' => 'title for post',
-           'body' => 'body',
-           'user' => $user,
+            'title' => 'title for post',
+            'body' => 'body',
+            'user' => $user,
         ]);
 
         $user->setPatchable('*', true);
@@ -1716,9 +1716,9 @@ class MarshallerTest extends TestCase
             'username' => 'user',
         ]);
         $article = new Entity([
-           'title' => 'title for post',
-           'user_id' => 1,
-           'user' => $user,
+            'title' => 'title for post',
+            'user_id' => 1,
+            'user' => $user,
         ]);
 
         $user->setPatchable('*', true);

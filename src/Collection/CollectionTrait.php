@@ -356,8 +356,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot group by path that does not exist or contains a null value. '
+                    . 'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -391,8 +391,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot index by path that does not exist or contains a null value. '
+                    . 'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -725,8 +725,8 @@ trait CollectionTrait
                 $mapKey = $rowKey($value, $key);
                 if ($mapKey === null) {
                     throw new InvalidArgumentException(
-                        'Cannot index by path that does not exist or contains a null value. ' .
-                        'Use a callback to return a default value for that path.',
+                        'Cannot index by path that does not exist or contains a null value. '
+                        . 'Use a callback to return a default value for that path.',
                     );
                 }
 
@@ -744,16 +744,16 @@ trait CollectionTrait
             $key = $options['groupPath']($value, $key);
             if ($key === null) {
                 throw new InvalidArgumentException(
-                    'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot group by path that does not exist or contains a null value. '
+                    . 'Use a callback to return a default value for that path.',
                 );
             }
 
             $mapKey = $rowKey($value, $key);
             if ($mapKey === null) {
                 throw new InvalidArgumentException(
-                    'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot index by path that does not exist or contains a null value. '
+                    . 'Use a callback to return a default value for that path.',
                 );
             }
 
@@ -1101,11 +1101,11 @@ trait CollectionTrait
         // We unwrap if the class is Collection itself, or a non-Cake subclass,
         // or an anonymous class extending Collection.
         while (
-            $iterator instanceof Collection &&
-            (
-                $iterator::class === Collection::class ||
-                !str_starts_with($iterator::class, 'Cake\\') ||
-                str_contains($iterator::class, '@anonymous')
+            $iterator instanceof Collection
+            && (
+                $iterator::class === Collection::class
+                || !str_starts_with($iterator::class, 'Cake\\')
+                || str_contains($iterator::class, '@anonymous')
             )
         ) {
             $iterator = $iterator->getInnerIterator();

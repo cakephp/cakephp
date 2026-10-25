@@ -12,6 +12,14 @@
 
     <arg value="s"/>
 
+    <!-- This conflicts with PER-CS which requires union type declarations without space around pipe operator -->
+    <rule ref="PSR12.Operators.OperatorSpacing.NoSpaceBefore">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR12.Operators.OperatorSpacing.NoSpaceAfter">
+        <severity>0</severity>
+    </rule>
+
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <property name="rootNamespaces" type="array">

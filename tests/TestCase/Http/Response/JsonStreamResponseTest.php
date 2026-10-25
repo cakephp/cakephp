@@ -28,7 +28,7 @@ class JsonStreamResponseTest extends TestCase
     /**
      * @var bool|null
      */
-    protected bool|null $originalDebug = null;
+    protected ?bool $originalDebug = null;
 
     protected function setUp(): void
     {

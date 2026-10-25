@@ -361,9 +361,9 @@ trait EntityTrait
             }
 
             if (
-                $this->isOriginalField($name) &&
-                !array_key_exists($name, $this->original) &&
-                ($isDynamic || isset($this->assignedProps[$name]))
+                $this->isOriginalField($name)
+                && !array_key_exists($name, $this->original)
+                && ($isDynamic || isset($this->assignedProps[$name]))
             ) {
                 /** @phpstan-ignore-next-line method.nonObject */
                 $existing = $isDynamic ? $this->dynamicFields[$name] : $ref->getRawValue($this);
@@ -548,8 +548,8 @@ trait EntityTrait
         $originals = $this->original;
         foreach ($this->initializedFieldNames() as $key) {
             if (
-                !array_key_exists((string)$key, $originals) &&
-                $this->isOriginalField($key)
+                !array_key_exists((string)$key, $originals)
+                && $this->isOriginalField($key)
             ) {
                 $originals[$key] = $this->getRawValue($key);
             }
@@ -1266,8 +1266,8 @@ trait EntityTrait
             }
 
             if (
-                is_iterable($val) ||
-                $val instanceof EntityInterface
+                is_iterable($val)
+                || $val instanceof EntityInterface
             ) {
                 $entity = $val;
             } else {

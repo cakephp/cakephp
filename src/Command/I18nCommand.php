@@ -63,8 +63,8 @@ class I18nCommand extends Command
                     break;
                 default:
                     $this->io->err(
-                        'You have made an invalid selection. ' .
-                        'Please choose a command to execute by entering E, I, H, or Q.',
+                        'You have made an invalid selection. '
+                        . 'Please choose a command to execute by entering E, I, H, or Q.',
                     );
             }
             if ($code === static::CODE_ERROR) {

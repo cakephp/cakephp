@@ -966,32 +966,32 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                . 'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                . 'REFERENCES [authors] ([id]) ON UPDATE CASCADE ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setDefault'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                . 'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                . 'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE NO ACTION',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-                'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
+                'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) '
+                . 'REFERENCES [authors] ([id]) ON UPDATE NO ACTION ON DELETE NO ACTION',
             ],
         ];
     }
@@ -1160,9 +1160,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1257,8 +1257,8 @@ SQL;
         $this->assertCount(2, $result);
         $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
         $this->assertSame(
-            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
-            "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
+            "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) "
+            . "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
             $result[1],
         );
     }

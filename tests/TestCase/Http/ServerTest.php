@@ -86,8 +86,7 @@ class ServerTest extends TestCase
     public function testAppGetSet(): void
     {
         $eventManager = new EventManager();
-        $app = new class ($this->config, $eventManager) extends BaseApplication
-        {
+        $app = new class ($this->config, $eventManager) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -302,8 +301,7 @@ class ServerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = new class ($this->config) extends BaseApplication
-        {
+        $app = new class ($this->config) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;

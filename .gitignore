@@ -48,3 +48,6 @@ Thumbs.db
 nbproject/*
 # Visual Studio Code
 .vscode
+# php-cs-fixer
+.php-cs-fixer.cache
+.php-cs-fixer.php

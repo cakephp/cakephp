@@ -405,8 +405,8 @@ class HtmlHelperTest extends TestCase
         $this->View->setRequest($request);
         Router::setRequest($request);
 
-        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
-            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4'
+            . '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
         $result = $this->Html->image($data);
         $expected = ['img' => ['src' => $data, 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -685,7 +685,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('app');
         $expected = [
-           'link' => ['rel' => 'stylesheet', 'href' => 'css/app.css', 'nonce' => $nonce],
+            'link' => ['rel' => 'stylesheet', 'href' => 'css/app.css', 'nonce' => $nonce],
         ];
         $this->assertHtml($expected, $result);
     }

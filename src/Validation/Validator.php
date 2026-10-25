@@ -2928,8 +2928,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'scalar', $extra + [
-                'rule' => 'isScalar',
-            ]);
+            'rule' => 'isScalar',
+        ]);
     }
 
     /**
@@ -3205,8 +3205,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         $newRecord = $context['newRecord'];
         if (in_array($required, [static::WHEN_CREATE, static::WHEN_UPDATE], true)) {
-            return ($required === static::WHEN_CREATE && !$newRecord) ||
-                ($required === static::WHEN_UPDATE && $newRecord);
+            return ($required === static::WHEN_CREATE && !$newRecord)
+                || ($required === static::WHEN_UPDATE && $newRecord);
         }
 
         return !$required;
@@ -3229,8 +3229,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         $newRecord = $context['newRecord'];
         if (in_array($allowed, [static::WHEN_CREATE, static::WHEN_UPDATE], true)) {
-            $allowed = ($allowed === static::WHEN_CREATE && $newRecord) ||
-                ($allowed === static::WHEN_UPDATE && !$newRecord);
+            $allowed = ($allowed === static::WHEN_CREATE && $newRecord)
+                || ($allowed === static::WHEN_UPDATE && !$newRecord);
         }
 
         return (bool)$allowed;

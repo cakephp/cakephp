@@ -659,8 +659,8 @@ class PostgresSchemaDialect extends SchemaDialect
         ];
         $primaryKey = $schema->getPrimaryKey();
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            $primaryKey === [$name] && $name === 'id'
+            in_array($data['type'], $autoIncrementTypes, true)
+            && $primaryKey === [$name] && $name === 'id'
         ) {
             $data['autoIncrement'] = true;
         }
@@ -720,8 +720,8 @@ class PostgresSchemaDialect extends SchemaDialect
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         $isAutoincrement = (
-            in_array($column['type'], $autoIncrementTypes, true) &&
-            $autoIncrement
+            in_array($column['type'], $autoIncrementTypes, true)
+            && $autoIncrement
         );
         $version = $this->driver->version();
         $identityVersion = version_compare($version, '10.0', '>=');
@@ -745,10 +745,10 @@ class PostgresSchemaDialect extends SchemaDialect
             $out .= ' TEXT';
             $foundType = true;
         } elseif (
-            $column['type'] === TableSchemaInterface::TYPE_STRING ||
-            (
-                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $column['length'] === TableSchema::LENGTH_TINY
+            $column['type'] === TableSchemaInterface::TYPE_STRING
+            || (
+                $column['type'] === TableSchemaInterface::TYPE_TEXT
+                && $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $out .= ' VARCHAR';
@@ -787,10 +787,10 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         if (
-            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
-            (
-                isset($column['length']) ||
-                isset($column['precision'])
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL
+            && (
+                isset($column['length'])
+                || isset($column['precision'])
             )
         ) {
             $out .= '(' . $column['length'] . ',' . (int)$column['precision'] . ')';
@@ -816,10 +816,10 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
-            isset($column['default']) &&
-            in_array($column['type'], $datetimeTypes) &&
-            is_string($column['default']) &&
-            strtolower($column['default']) === 'current_timestamp'
+            isset($column['default'])
+            && in_array($column['type'], $datetimeTypes)
+            && is_string($column['default'])
+            && strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($column['default'])) {

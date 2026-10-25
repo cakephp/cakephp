@@ -1781,9 +1781,9 @@ class SelectQueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) " .
-            'is not allowed to avoid potential SQL injection. ' .
-            'Use QueryExpression or numeric array instead.',
+            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) "
+            . 'is not allowed to avoid potential SQL injection. '
+            . 'Use QueryExpression or numeric array instead.',
         );
 
         $query = new SelectQuery($this->connection);
@@ -2220,9 +2220,9 @@ class SelectQueryTest extends TestCase
             ->having(['COUNT(DISTINCT Authors.id) =' => 1]);
 
         $this->assertSame(
-            'SELECT id FROM authors Authors WHERE ' .
-            '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
-            'HAVING COUNT(DISTINCT Authors.id) = :c1',
+            'SELECT id FROM authors Authors WHERE '
+            . '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) '
+            . 'HAVING COUNT(DISTINCT Authors.id) = :c1',
             trim($query->sql()),
         );
     }
@@ -2272,7 +2272,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(1, $rows);
-            $this->assertEquals(['id' => 3], $rows[0]);
+        $this->assertEquals(['id' => 3], $rows[0]);
 
         $query = new SelectQuery($this->connection);
         $result = $query->select('id')->from('articles')
@@ -2796,8 +2796,8 @@ class SelectQueryTest extends TestCase
             ->select(['id', 'comment'])
             ->from(['c' => 'comments'])
             ->execute()
-            ->fetchAll()) -
-            count($except->execute()->fetchAll());
+            ->fetchAll())
+            - count($except->execute()->fetchAll());
 
         $this->assertCount($expectedCount, $rows);
         $result->closeCursor();
@@ -2877,8 +2877,8 @@ class SelectQueryTest extends TestCase
                 ->select(['id', 'comment'])
                 ->from(['c' => 'comments'])
                 ->execute()
-                ->fetchAll()) -
-                count($except->execute()->fetchAll()),
+                ->fetchAll())
+                - count($except->execute()->fetchAll()),
             $result->fetchAll(),
         );
     }
@@ -2908,8 +2908,8 @@ class SelectQueryTest extends TestCase
                 ->select(['id', 'comment'])
                 ->from(['c' => 'comments'])
                 ->execute()
-                ->fetchAll()) -
-                count($except->execute()->fetchAll()),
+                ->fetchAll())
+                - count($except->execute()->fetchAll()),
             $rows,
         );
         $result->closeCursor();
@@ -3090,8 +3090,8 @@ class SelectQueryTest extends TestCase
 
         $query = new SelectQuery($this->connection);
         $result = $query->select([
-                'c' => $query->func()->concat(['comment' => 'literal', ' is appended']),
-            ])
+            'c' => $query->func()->concat(['comment' => 'literal', ' is appended']),
+        ])
             ->from('comments')
             ->orderBy(['c' => 'ASC'])
             ->limit(1)
@@ -4168,10 +4168,10 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $stmt = $query->select([
-                'id',
-                'user_id',
-                'is_active',
-            ])
+            'id',
+            'user_id',
+            'is_active',
+        ])
             ->from('profiles')
             ->limit(1)
             ->execute();
@@ -4302,11 +4302,11 @@ class SelectQueryTest extends TestCase
             ]));
 
         $this->assertQuotedQuery(
-            'SELECT <id> FROM <articles> ORDER BY \(' .
-                'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:c1 ELSE \:c2 END\) ' .
-                'FROM <articles> <a> ' .
-                'WHERE a\.id = articles\.id' .
-            '\) DESC, <id> ASC',
+            'SELECT <id> FROM <articles> ORDER BY \('
+                . 'SELECT \(CASE WHEN <a>\.<published> = \:c0 THEN \:c1 ELSE \:c2 END\) '
+                . 'FROM <articles> <a> '
+                . 'WHERE a\.id = articles\.id'
+            . '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote,
         );
@@ -4378,13 +4378,13 @@ class SelectQueryTest extends TestCase
             ]));
 
         $this->assertQuotedQuery(
-            'SELECT <id>, ' .
-                '\(SELECT count\(\*\) FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = :c0\)\) AS <computedA>, ' .
-                '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1\)\) AS <computedB> ' .
-            'FROM <articles> ' .
-            'ORDER BY \(' .
-                'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)' .
-            '\) DESC, <id> ASC',
+            'SELECT <id>, '
+                . '\(SELECT count\(\*\) FROM <articles> <a> WHERE \(a\.id = articles\.id AND <a>\.<published> = :c0\)\) AS <computedA>, '
+                . '\(SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c1\)\) AS <computedB> '
+            . 'FROM <articles> '
+            . 'ORDER BY \('
+                . 'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)'
+            . '\) DESC, <id> ASC',
             $query->sql(),
             !$this->autoQuote,
         );

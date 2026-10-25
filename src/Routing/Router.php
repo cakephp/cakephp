@@ -422,10 +422,10 @@ class Router
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.
                 if (
-                    empty($url['action']) &&
-                    (
-                        empty($url['controller']) ||
-                        $params['controller'] === $url['controller']
+                    empty($url['action'])
+                    && (
+                        empty($url['controller'])
+                        || $params['controller'] === $url['controller']
                     )
                 ) {
                     $url['action'] = $params['action'];
@@ -456,14 +456,14 @@ class Router
             $url = (string)$url;
 
             if (
-                str_starts_with($url, 'javascript:') ||
-                str_starts_with($url, 'mailto:') ||
-                str_starts_with($url, 'tel:') ||
-                str_starts_with($url, 'sms:') ||
-                str_starts_with($url, '#') ||
-                str_starts_with($url, '?') ||
-                str_starts_with($url, '//') ||
-                str_contains($url, '://')
+                str_starts_with($url, 'javascript:')
+                || str_starts_with($url, 'mailto:')
+                || str_starts_with($url, 'tel:')
+                || str_starts_with($url, 'sms:')
+                || str_starts_with($url, '#')
+                || str_starts_with($url, '?')
+                || str_starts_with($url, '//')
+                || str_contains($url, '://')
             ) {
                 return $url;
             }

@@ -78,16 +78,16 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
         $sql .= ' TEXT';
 
         if (
-            isset($data['null']) &&
-            $data['null'] === false
+            isset($data['null'])
+            && $data['null'] === false
         ) {
             $sql .= ' NOT NULL';
         }
 
         if (
-            ($driver instanceof Mysql) &&
-            isset($data['comment']) &&
-            $data['comment'] !== ''
+            ($driver instanceof Mysql)
+            && isset($data['comment'])
+            && $data['comment'] !== ''
         ) {
             $sql .= ' COMMENT ' . $driver->schemaValue($data['comment'] . ' (schema aware)');
         }

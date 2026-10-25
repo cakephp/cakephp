@@ -104,14 +104,14 @@ class TimestampBehavior extends Behavior
                 ));
             }
             if (
-                $when === 'always' ||
-                (
-                    $when === 'new' &&
-                    $new
-                ) ||
-                (
-                    $when === 'existing' &&
-                    !$new
+                $when === 'always'
+                || (
+                    $when === 'new'
+                    && $new
+                )
+                || (
+                    $when === 'existing'
+                    && !$new
                 )
             ) {
                 $this->updateField($entity, $field, $refresh);

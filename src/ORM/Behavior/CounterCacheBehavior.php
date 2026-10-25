@@ -142,10 +142,10 @@ class CounterCacheBehavior extends Behavior
                 $assocEntity = $entity->$entityAlias;
 
                 if (
-                    !is_callable($config) &&
-                    isset($config['ignoreDirty']) &&
-                    $config['ignoreDirty'] === true &&
-                    $assocEntity->isDirty($field)
+                    !is_callable($config)
+                    && isset($config['ignoreDirty'])
+                    && $config['ignoreDirty'] === true
+                    && $assocEntity->isDirty($field)
                 ) {
                     $this->ignoreDirty[$registryAlias][$field] = true;
                 }
@@ -346,8 +346,8 @@ class CounterCacheBehavior extends Behavior
             }
 
             if (
-                isset($this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
-                $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]
+                isset($this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field])
+                && $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]
             ) {
                 continue;
             }

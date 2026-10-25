@@ -151,8 +151,8 @@ class TextHelperTest extends TestCase
     public function testAutoLinkMixed(): void
     {
         $text = 'Text with a url/email http://example.com/store?email=mark@example.com and email.';
-        $expected = 'Text with a url/email <a href="http://example.com/store?email=mark@example.com">' .
-            'http://example.com/store?email=mark@example.com</a> and email.';
+        $expected = 'Text with a url/email <a href="http://example.com/store?email=mark@example.com">'
+            . 'http://example.com/store?email=mark@example.com</a> and email.';
         $result = $this->Text->autoLink($text);
         $this->assertSame($expected, $result);
     }

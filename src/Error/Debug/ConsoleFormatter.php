@@ -66,11 +66,11 @@ class ConsoleFormatter implements FormatterInterface
         }
         // Windows environment checks
         if (
-            DIRECTORY_SEPARATOR === '\\' &&
-            !str_contains(strtolower(php_uname('v')), 'windows 10') &&
-            !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
-            !env('ANSICON') &&
-            env('ConEmuANSI') !== 'ON'
+            DIRECTORY_SEPARATOR === '\\'
+            && !str_contains(strtolower(php_uname('v')), 'windows 10')
+            && !str_contains(strtolower((string)env('SHELL')), 'bash.exe')
+            && !env('ANSICON')
+            && env('ConEmuANSI') !== 'ON'
         ) {
             return false;
         }
@@ -125,8 +125,8 @@ class ConsoleFormatter implements FormatterInterface
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
                 'string' => $this->style('string', "'" . $var->getValue() . "'"),
-                'int', 'float' => $this->style('visibility', "({$var->getType()})") .
-                        ' ' . $this->style('number', "{$var->getValue()}"),
+                'int', 'float' => $this->style('visibility', "({$var->getType()})")
+                        . ' ' . $this->style('number', "{$var->getValue()}"),
                 default => "({$var->getType()}) {$var->getValue()}",
             };
         }
@@ -183,18 +183,18 @@ class ConsoleFormatter implements FormatterInterface
         $props = [];
 
         if ($var instanceof ReferenceNode) {
-            return $this->style('punct', 'object(') .
-                $this->style('class', $var->getValue()) .
-                $this->style('punct', ') id:') .
-                $this->style('number', (string)$var->getId()) .
-                $this->style('punct', ' {}');
+            return $this->style('punct', 'object(')
+                . $this->style('class', $var->getValue())
+                . $this->style('punct', ') id:')
+                . $this->style('number', (string)$var->getId())
+                . $this->style('punct', ' {}');
         }
 
-        $out = $this->style('punct', 'object(') .
-            $this->style('class', $var->getValue()) .
-            $this->style('punct', ') id:') .
-            $this->style('number', (string)$var->getId()) .
-            $this->style('punct', ' {');
+        $out = $this->style('punct', 'object(')
+            . $this->style('class', $var->getValue())
+            . $this->style('punct', ') id:')
+            . $this->style('number', (string)$var->getId())
+            . $this->style('punct', ' {');
 
         $break = "\n" . str_repeat('  ', $indent);
         $end = "\n" . str_repeat('  ', $indent - 1) . $this->style('punct', '}');
@@ -204,15 +204,15 @@ class ConsoleFormatter implements FormatterInterface
             $visibility = $property->getVisibility();
             $name = $property->getName();
             if ($visibility && $visibility !== 'public') {
-                $props[] = $this->style('visibility', $visibility) .
-                    ' ' .
-                    $this->style('property', $name) .
-                    $arrow .
-                    $this->export($property->getValue(), $indent);
+                $props[] = $this->style('visibility', $visibility)
+                    . ' '
+                    . $this->style('property', $name)
+                    . $arrow
+                    . $this->export($property->getValue(), $indent);
             } else {
-                $props[] = $this->style('property', $name) .
-                    $arrow .
-                    $this->export($property->getValue(), $indent);
+                $props[] = $this->style('property', $name)
+                    . $arrow
+                    . $this->export($property->getValue(), $indent);
             }
         }
         if ($props !== []) {

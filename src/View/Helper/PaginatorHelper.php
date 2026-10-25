@@ -440,9 +440,9 @@ class PaginatorHelper extends Helper
             $table = $alias;
         }
         $isSorted = (
-            $sortKey === $table . '.' . $field ||
-            $sortKey === $alias . '.' . $key ||
-            $table . '.' . $field === $alias . '.' . $sortKey
+            $sortKey === $table . '.' . $field
+            || $sortKey === $alias . '.' . $key
+            || $table . '.' . $field === $alias . '.' . $sortKey
         );
 
         $template = 'sort';
@@ -901,7 +901,7 @@ class PaginatorHelper extends Helper
         $last = is_int($options['last']) ? $options['last'] : 0;
         if ($options['last'] && $end < $params['pageCount']) {
             $offset = $params['pageCount'] < $end + $last ? $params['pageCount'] - $end : $options['last'];
-            if ($offset <= $options['last'] && $params['pageCount'] - $end > $last) {
+            if ($offset <= $options['last'] && $last < $params['pageCount'] - $end) {
                 $out .= $ellipsis;
             }
             $out .= $this->last($offset, $options);
@@ -1250,8 +1250,8 @@ class PaginatorHelper extends Helper
         if ($steps !== null) {
             if ($limits !== []) {
                 throw new InvalidArgumentException(
-                    'Cannot use both `steps` option and explicit `$limits` array. ' .
-                    'Use one or the other.',
+                    'Cannot use both `steps` option and explicit `$limits` array. '
+                    . 'Use one or the other.',
                 );
             }
 

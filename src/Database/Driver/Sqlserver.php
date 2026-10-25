@@ -213,10 +213,10 @@ class Sqlserver extends Driver
             $sql = $query->sql();
             if (count($query->getValueBinder()->bindings()) > 2100) {
                 throw new InvalidArgumentException(
-                    'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. ' .
-                    'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
-                    'for each value in the array. ' .
-                    'If using an Association, try changing the `strategy` from select to subquery.',
+                    'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. '
+                    . 'This is probably due to a very large WHERE IN () clause which generates a parameter '
+                    . 'for each value in the array. '
+                    . 'If using an Association, try changing the `strategy` from select to subquery.',
                 );
             }
 
@@ -371,8 +371,8 @@ class Sqlserver extends Driver
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
-                        isset($select[$orderBy]) &&
-                        $select[$orderBy] instanceof ExpressionInterface
+                        isset($select[$orderBy])
+                        && $select[$orderBy] instanceof ExpressionInterface
                     ) {
                         $order->add(new OrderClauseExpression($select[$orderBy], $direction));
                     } else {
@@ -388,8 +388,8 @@ class Sqlserver extends Driver
 
         $query = clone $original;
         $query->select([
-                '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
-            ])->limit(null)
+            '_cake_page_rownum_' => new UnaryExpression('ROW_NUMBER() OVER', $order),
+        ])->limit(null)
             ->offset(null)
             ->orderBy([], true);
 

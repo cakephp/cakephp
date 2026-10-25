@@ -287,9 +287,9 @@ class Cookie implements CookieInterface
         $value = array_shift($nameValue) ?? '';
 
         $data = [
-                'name' => urldecode($name),
-                'value' => urldecode($value),
-            ] + $defaults;
+            'name' => urldecode($name),
+            'value' => urldecode($value),
+        ] + $defaults;
 
         foreach ($parts as $part) {
             if (str_contains($part, '=')) {

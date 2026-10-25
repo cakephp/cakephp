@@ -73,8 +73,8 @@ class ConsoleInputOption
         }
         if ($this->default !== null && $this->prompt) {
             throw new ConsoleException(
-                'You cannot set both `prompt` and `default` options. ' .
-                'Use either a static `default` or interactive `prompt`',
+                'You cannot set both `prompt` and `default` options. '
+                . 'Use either a static `default` or interactive `prompt`',
             );
         }
 

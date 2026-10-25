@@ -581,8 +581,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using an array for the `$when` argument, the `$type` ' .
-            'argument must be an array too, `string` given.',
+            'When using an array for the `$when` argument, the `$type` '
+            . 'argument must be an array too, `string` given.',
         );
 
         new CaseStatementExpression()
@@ -594,8 +594,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using a non-array value for the `$when` argument, ' .
-            'the `$type` argument must be a string, `array` given.',
+            'When using a non-array value for the `$when` argument, '
+            . 'the `$type` argument must be a string, `array` given.',
         );
 
         new CaseStatementExpression()
@@ -764,8 +764,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using an array for the `$when` argument, the `$type` ' .
-            'argument must be an array too, `string` given.',
+            'When using an array for the `$when` argument, the `$type` '
+            . 'argument must be an array too, `string` given.',
         );
 
         new CaseStatementExpression()
@@ -1075,11 +1075,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+            . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+            . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+            . 'ELSE :c4 '
+            . 'END',
             $sql,
         );
     }
@@ -1141,11 +1141,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+            . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+            . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+            . 'ELSE :c4 '
+            . 'END',
             $sql,
         );
     }
@@ -1174,11 +1174,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+            . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+            . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+            . 'ELSE :c4 '
+            . 'END',
             $sql,
         );
     }
@@ -1187,8 +1187,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
-            '`when()` callables must return an instance of ' .
-            '`\Cake\Database\Expression\WhenThenExpression`, `null` given.',
+            '`when()` callables must return an instance of '
+            . '`\Cake\Database\Expression\WhenThenExpression`, `null` given.',
         );
 
         new CaseStatementExpression()
@@ -1225,11 +1225,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+            . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+            . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+            . 'ELSE :c4 '
+            . 'END',
             $sql,
         );
     }
@@ -1258,11 +1258,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+            . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+            . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+            . 'ELSE :c4 '
+            . 'END',
             $sql,
         );
     }
@@ -1854,8 +1854,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$value` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$value` argument must be either `null`, a scalar value, an object, '
+            . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
         new CaseStatementExpression($value);
@@ -1898,8 +1898,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$result` argument must be either `null`, a scalar value, an object, '
+            . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
         new CaseStatementExpression()
@@ -1962,8 +1962,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$result` argument must be either `null`, a scalar value, an object, '
+            . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
         new CaseStatementExpression()

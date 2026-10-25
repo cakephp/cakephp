@@ -199,7 +199,7 @@ class App
             default => throw new CakeException(sprintf(
                 'Invalid type `%s`. Only path types `templates` and `locales` are supported for plugins.',
                 $type,
-            ))
+            )),
         };
     }
 

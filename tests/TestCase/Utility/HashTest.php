@@ -142,7 +142,7 @@ class HashTest extends TestCase
                     'id' => '5',
                     'user' => 'mariano',
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-                    ],
+                ],
                 'Comment' => [],
                 'Tag' => [],
             ],
@@ -259,7 +259,7 @@ class HashTest extends TestCase
                     'id' => '5',
                     'user' => 'mariano',
                     'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
-                    ]),
+                ]),
                 'Comment' => new ArrayObject([]),
                 'Tag' => new ArrayObject([]),
             ]),
@@ -465,23 +465,23 @@ class HashTest extends TestCase
         $this->assertSame(4, $result);
 
         $data = [
-           '1' => [
-               '1.1' => '1.1.1',
-               '1.2' => [
-                   '1.2.1' => [
-                       '1.2.1.1',
-                       ['1.2.2.1'],
-                   ],
-               ],
-           ],
-           '2' => ['2.1' => '2.1.1'],
+            '1' => [
+                '1.1' => '1.1.1',
+                '1.2' => [
+                    '1.2.1' => [
+                        '1.2.1.1',
+                        ['1.2.2.1'],
+                    ],
+                ],
+            ],
+            '2' => ['2.1' => '2.1.1'],
         ];
         $result = Hash::maxDimensions($data);
         $this->assertSame(5, $result);
 
         $data = [
-           '1' => false,
-           '2' => ['2.1' => '2.1.1'],
+            '1' => false,
+            '2' => ['2.1' => '2.1.1'],
         ];
         $result = Hash::maxDimensions($data);
         $this->assertSame(2, $result);

@@ -286,8 +286,8 @@ abstract class Association
     public function setClassName(string $className): static
     {
         if (
-            isset($this->targetTable) &&
-            get_class($this->targetTable) !== App::className($className, 'Model/Table', 'Table')
+            isset($this->targetTable)
+            && get_class($this->targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
                 "The class name `%s` doesn't match the target table class name of `%s`.",
@@ -444,9 +444,9 @@ abstract class Association
     public function getBindingKey(): array|string
     {
         if (!isset($this->bindingKey)) {
-            $this->bindingKey = $this->isOwningSide($this->getSource()) ?
-                $this->getSource()->getPrimaryKey() :
-                $this->getTarget()->getPrimaryKey();
+            $this->bindingKey = $this->isOwningSide($this->getSource())
+                ? $this->getSource()->getPrimaryKey()
+                : $this->getTarget()->getPrimaryKey();
         }
 
         return $this->bindingKey;
@@ -573,8 +573,8 @@ abstract class Association
             $this->checkPropertyName
             && in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)
         ) {
-            $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
+            $msg = 'Association property name `%s` clashes with field of same name of table `%s`.'
+                . ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
             triggerWarning(
                 sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
             );
@@ -739,9 +739,9 @@ abstract class Association
         }
 
         if (
-            !empty($options['matching']) &&
-            $this->strategy === static::STRATEGY_JOIN &&
-            $dummy->getContain()
+            !empty($options['matching'])
+            && $this->strategy === static::STRATEGY_JOIN
+            && $dummy->getContain()
         ) {
             throw new DatabaseException(sprintf(
                 '`%s` association cannot contain() associations when using JOIN strategy.',
@@ -952,8 +952,8 @@ abstract class Association
         $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
         if (
-            ($fields === [] && $options['includeFields']) ||
-            $surrogate->isAutoFieldsEnabled()
+            ($fields === [] && $options['includeFields'])
+            || $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());
         } elseif ($fields !== []) {

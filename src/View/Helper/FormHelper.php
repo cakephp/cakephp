@@ -446,22 +446,24 @@ class FormHelper extends Helper
             case 'get':
                 $htmlAttributes['method'] = 'get';
                 break;
-            // Set enctype for form
+                // Set enctype for form
             case 'file':
                 $htmlAttributes['enctype'] = 'multipart/form-data';
                 $options['type'] = $isCreate ? 'post' : 'put';
-            // Move on
+                // Move on
+                // no break
             case 'put':
-            // Move on
+                // Move on
             case 'delete':
-            // Set patch method
+                // Set patch method
             case 'patch':
                 $append .= $this->hidden('_method', [
                     'name' => '_method',
                     'value' => strtoupper($options['type']),
                     'secure' => static::SECURE_SKIP,
                 ]);
-            // Default to post method
+                // Default to post method
+                // no break
             default:
                 $htmlAttributes['method'] = 'post';
         }
@@ -515,10 +517,10 @@ class FormHelper extends Helper
         }
 
         if (
-            is_string($options['url']) ||
-                (
-                    is_array($options['url']) &&
-                    (isset($options['url']['_name']) || isset($options['url']['_path']))
+            is_string($options['url'])
+                || (
+                    is_array($options['url'])
+                    && (isset($options['url']['_name']) || isset($options['url']['_path']))
                 )
         ) {
             return $options['url'];
@@ -1109,8 +1111,8 @@ class FormHelper extends Helper
 
         $addAriaAttributes = true;
         if (
-            $options['type'] === 'hidden' ||
-            ($options['type'] === 'select' && isset($options['multiple']) && $options['multiple'] === 'checkbox')
+            $options['type'] === 'hidden'
+            || ($options['type'] === 'select' && isset($options['multiple']) && $options['multiple'] === 'checkbox')
         ) {
             $addAriaAttributes = false;
         }
@@ -1124,11 +1126,11 @@ class FormHelper extends Helper
             // Don't include aria-describedby unless we have a good chance of
             // having error message show up.
             if (
-                str_contains($templater->get('error'), '{{id}}') &&
-                str_contains($inputContainer, '{{error}}')
+                str_contains($templater->get('error'), '{{id}}')
+                && str_contains($inputContainer, '{{error}}')
             ) {
                 $options += [
-                   'aria-describedby' => $isFieldError ? $this->domId($fieldName) . '-error' : null,
+                    'aria-describedby' => $isFieldError ? $this->domId($fieldName) . '-error' : null,
                 ];
             }
             if (isset($options['placeholder']) && $options['label'] === false) {
@@ -2221,10 +2223,10 @@ class FormHelper extends Helper
         // Secure the field if there are options, or it's a multi select.
         // Single selects with no options don't submit, but multiselects do.
         if (
-            $attributes['secure'] &&
-            empty($options) &&
-            empty($attributes['empty']) &&
-            empty($attributes['multiple'])
+            $attributes['secure']
+            && empty($options)
+            && empty($attributes['empty'])
+            && empty($attributes['multiple'])
         ) {
             $attributes['secure'] = false;
         }
@@ -2662,10 +2664,10 @@ class FormHelper extends Helper
         $widget = $this->locator->get($name);
         $out = $widget->render($data, $this->context());
         if (
-            $this->formProtector !== null &&
-            isset($data['name']) &&
-            $secure !== null &&
-            $secure !== self::SECURE_SKIP
+            $this->formProtector !== null
+            && isset($data['name'])
+            && $secure !== null
+            && $secure !== self::SECURE_SKIP
         ) {
             foreach ($widget->secureFields($data) as $field) {
                 $this->formProtector->addField($field, $secure);

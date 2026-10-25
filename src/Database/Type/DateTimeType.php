@@ -343,9 +343,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             'hour' => 0, 'minute' => 0, 'second' => 0, 'microsecond' => 0,
         ];
         if (
-            !is_numeric($value['year']) || !is_numeric($value['month']) || !is_numeric($value['day']) ||
-            !is_numeric($value['hour']) || !is_numeric($value['minute']) || !is_numeric($value['second']) ||
-            !is_numeric($value['microsecond'])
+            !is_numeric($value['year']) || !is_numeric($value['month']) || !is_numeric($value['day'])
+            || !is_numeric($value['hour']) || !is_numeric($value['minute']) || !is_numeric($value['second'])
+            || !is_numeric($value['microsecond'])
         ) {
             return null;
         }

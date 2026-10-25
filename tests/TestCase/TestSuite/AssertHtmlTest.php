@@ -137,10 +137,10 @@ HTML;
             'My div',
             '/div',
         ];
-        $input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"' .
-            ' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
-            'My div' .
-            '</div>';
+        $input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"'
+            . ' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />'
+            . 'My div'
+            . '</div>';
         $this->assertHtml($pattern, $input);
     }
 
@@ -184,9 +184,9 @@ HTML;
         $input = '<p><strong>' . $value . '</strong></p>';
         $pattern = [
             '<p',
-                '<strong',
-                    $value,
-                '/strong',
+            '<strong',
+            $value,
+            '/strong',
             '/p',
         ];
         $this->assertHtml($pattern, $input);
@@ -194,14 +194,14 @@ HTML;
         $input = '<p><strong>' . $value . '</strong></p><p><strong>' . $value . '</strong></p>';
         $pattern = [
             '<p',
-                '<strong',
-                    $value,
-                '/strong',
+            '<strong',
+            $value,
+            '/strong',
             '/p',
             '<p',
-                '<strong',
-                    $value,
-                '/strong',
+            '<strong',
+            $value,
+            '/strong',
             '/p',
         ];
         $this->assertHtml($pattern, $input);
@@ -209,14 +209,14 @@ HTML;
         $input = '<p><strong>' . $value . '</strong></p><p id="' . $value . '"><strong>' . $value . '</strong></p>';
         $pattern = [
             '<p',
-                '<strong',
-                    $value,
-                '/strong',
+            '<strong',
+            $value,
+            '/strong',
             '/p',
             'p' => ['id' => $value],
-                '<strong',
-                    $value,
-                '/strong',
+            '<strong',
+            $value,
+            '/strong',
             '/p',
         ];
         $this->assertHtml($pattern, $input);

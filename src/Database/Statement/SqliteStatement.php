@@ -48,8 +48,8 @@ class SqliteStatement extends Statement
         }
 
         if (
-            $this->statement->queryString &&
-            preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->statement->queryString)
+            $this->statement->queryString
+            && preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->statement->queryString)
         ) {
             $changes = $this->driver->prepare('SELECT CHANGES()');
             $changes->execute();

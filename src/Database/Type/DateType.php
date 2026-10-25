@@ -183,9 +183,9 @@ class DateType extends BaseType implements BatchCastingInterface
         }
 
         if (
-            !is_array($value) ||
-            !isset($value['year'], $value['month'], $value['day']) ||
-            !is_numeric($value['year']) || !is_numeric($value['month']) || !is_numeric($value['day'])
+            !is_array($value)
+            || !isset($value['year'], $value['month'], $value['day'])
+            || !is_numeric($value['year']) || !is_numeric($value['month']) || !is_numeric($value['day'])
         ) {
             return null;
         }

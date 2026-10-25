@@ -255,15 +255,15 @@ class SelectBoxWidget extends BasicWidget
             /** @var \ArrayAccess<string, mixed>|array $val */
             if (
                 (
-                    !is_int($key) &&
-                    $isIterable
-                ) ||
-                (
-                    is_int($key) &&
-                    $isIterable &&
-                    (
-                        isset($val['options']) ||
-                        !isset($val['value'])
+                    !is_int($key)
+                    && $isIterable
+                )
+                || (
+                    is_int($key)
+                    && $isIterable
+                    && (
+                        isset($val['options'])
+                        || !isset($val['value'])
                     )
                 )
             ) {

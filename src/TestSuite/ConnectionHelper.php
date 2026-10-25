@@ -68,8 +68,8 @@ class ConnectionHelper
             $connection = ConnectionManager::get($connection);
             $message = '--Starting test run ' . date('Y-m-d H:i:s');
             if (
-                $connection instanceof Connection &&
-                $connection->getWriteDriver()->log($message) === false
+                $connection instanceof Connection
+                && $connection->getWriteDriver()->log($message) === false
             ) {
                 $connection->getWriteDriver()->setLogger(new QueryLogger());
                 $connection->getWriteDriver()->log($message);

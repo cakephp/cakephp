@@ -564,9 +564,9 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
                 if ($options['abbr']) {
                     $dateTimeZone = new DateTimeZone($tz);
                     $trans = $dateTimeZone->getTransitions($now, $now);
-                    $abbr = isset($trans[0]['abbr']) ?
-                        $before . $trans[0]['abbr'] . $after :
-                        '';
+                    $abbr = isset($trans[0]['abbr'])
+                        ? $before . $trans[0]['abbr'] . $after
+                        : '';
                 }
                 $item = explode('/', $tz, 2);
                 if (isset($item[1])) {

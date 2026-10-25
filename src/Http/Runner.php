@@ -69,8 +69,8 @@ class Runner implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (
-            $this->fallbackHandler instanceof RoutingApplicationInterface &&
-            $request instanceof ServerRequest
+            $this->fallbackHandler instanceof RoutingApplicationInterface
+            && $request instanceof ServerRequest
         ) {
             Router::setRequest($request);
         }

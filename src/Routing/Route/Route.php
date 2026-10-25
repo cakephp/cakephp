@@ -469,8 +469,8 @@ class Route
         }
 
         if (
-            isset($this->defaults['_method']) &&
-            !in_array($method, (array)$this->defaults['_method'], true)
+            isset($this->defaults['_method'])
+            && !in_array($method, (array)$this->defaults['_method'], true)
         ) {
             return null;
         }
@@ -635,8 +635,8 @@ class Route
         $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
         if (
-            !empty($this->options['persist']) &&
-            is_array($this->options['persist'])
+            !empty($this->options['persist'])
+            && is_array($this->options['persist'])
         ) {
             $url = $this->persistParams($url, $context['params']);
         }
@@ -659,15 +659,15 @@ class Route
         // Check for properties that will cause an
         // absolute url. Copy the other properties over.
         if (
-            isset($hostOptions['_scheme']) ||
-            isset($hostOptions['_port']) ||
-            isset($hostOptions['_host'])
+            isset($hostOptions['_scheme'])
+            || isset($hostOptions['_port'])
+            || isset($hostOptions['_host'])
         ) {
             $hostOptions += $context;
 
             if (
-                $hostOptions['_scheme'] &&
-                getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
+                $hostOptions['_scheme']
+                && getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
             ) {
                 unset($hostOptions['_port']);
             }
@@ -761,8 +761,8 @@ class Route
 
         // Ensure controller/action keys are not null.
         if (
-            (isset($keyNames['controller']) && !isset($url['controller'])) ||
-            (isset($keyNames['action']) && !isset($url['action']))
+            (isset($keyNames['controller']) && !isset($url['controller']))
+            || (isset($keyNames['action']) && !isset($url['action']))
         ) {
             return null;
         }
@@ -847,9 +847,9 @@ class Route
 
         $out = str_replace('//', '/', $out);
         if (
-            isset($params['_scheme']) ||
-            isset($params['_host']) ||
-            isset($params['_port'])
+            isset($params['_scheme'])
+            || isset($params['_host'])
+            || isset($params['_port'])
         ) {
             $host = $params['_host'];
 

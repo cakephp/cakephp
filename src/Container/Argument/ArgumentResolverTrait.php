@@ -41,7 +41,7 @@ trait ArgumentResolverTrait
             }
 
             if (!is_string($argValue)) {
-                 continue;
+                continue;
             }
 
             // resolve the argument from the container, if it happens to be another

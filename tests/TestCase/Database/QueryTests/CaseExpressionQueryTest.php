@@ -247,8 +247,8 @@ class CaseExpressionQueryTest extends TestCase
         $query = new UpdateQuery($this->connection)
             ->update('comments')
             ->set([
-                'published' =>
-                    $this->query->expr()
+                'published'
+                    => $this->query->expr()
                         ->case()
                         ->when(['published' => 'Y'])
                         ->then('N')

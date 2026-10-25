@@ -787,8 +787,8 @@ class RouteBuilder
 
         foreach ($this->params as $param => $val) {
             if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
-                $msg = 'You cannot define routes that conflict with the scope. ' .
-                    'Scope had %s = %s, while route had %s = %s';
+                $msg = 'You cannot define routes that conflict with the scope. '
+                    . 'Scope had %s = %s, while route had %s = %s';
                 throw new BadMethodCallException(sprintf(
                     $msg,
                     $param,
@@ -1023,8 +1023,8 @@ class RouteBuilder
     {
         foreach ($names as $name) {
             if (!$this->collection->middlewareExists($name)) {
-                $message = "Cannot apply `{$name}` middleware or middleware group. " .
-                    'Use `registerMiddleware()` to register middleware.';
+                $message = "Cannot apply `{$name}` middleware or middleware group. "
+                    . 'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
             }
         }

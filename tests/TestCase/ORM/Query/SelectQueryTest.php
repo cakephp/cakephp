@@ -3999,10 +3999,10 @@ class SelectQueryTest extends TestCase
         );
         $this->skipIf(
             (
-                $this->connection->getDriver() instanceof Mysql ||
-                $this->connection->getDriver() instanceof Sqlite
-            ) &&
-            !$this->connection->getDriver()->supports(DriverFeature::WINDOW),
+                $this->connection->getDriver() instanceof Mysql
+                || $this->connection->getDriver() instanceof Sqlite
+            )
+            && !$this->connection->getDriver()->supports(DriverFeature::WINDOW),
             'The current driver does not support window functions.',
         );
 
@@ -4014,13 +4014,13 @@ class SelectQueryTest extends TestCase
                 $columns = $table->getSchema()->columns();
 
                 return array_combine($columns, $columns) + [
-                        'row_num' => $query
-                            ->func()
-                            ->rowNumber()
-                            ->over()
-                            ->partition('author_id')
-                            ->orderBy(['id' => 'ASC']),
-                    ];
+                    'row_num' => $query
+                        ->func()
+                        ->rowNumber()
+                        ->over()
+                        ->partition('author_id')
+                        ->orderBy(['id' => 'ASC']),
+                ];
             });
 
         $query = $table

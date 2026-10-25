@@ -352,10 +352,10 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
             }
 
             $message = sprintf(
-                "Since %s: %s\n%s, line: %s\n" .
-                'You can disable all deprecation warnings by setting `Error.errorLevel` to ' .
-                '`E_ALL & ~E_USER_DEPRECATED`. Adding `%s` to `Error.ignoredDeprecationPaths` ' .
-                'in your `config/app.php` config will mute deprecations from that file only.',
+                "Since %s: %s\n%s, line: %s\n"
+                . 'You can disable all deprecation warnings by setting `Error.errorLevel` to '
+                . '`E_ALL & ~E_USER_DEPRECATED`. Adding `%s` to `Error.ignoredDeprecationPaths` '
+                . 'in your `config/app.php` config will mute deprecations from that file only.',
                 $version,
                 $message,
                 $frame['file'],

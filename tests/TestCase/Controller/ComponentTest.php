@@ -76,8 +76,7 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentsAreNotEnabled(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
             public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
@@ -234,8 +233,7 @@ class ComponentTest extends TestCase
      */
     public function testEventsInnerComponent(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
             public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
@@ -263,8 +261,7 @@ class ComponentTest extends TestCase
      */
     public function testNoEventsInnerComponent(): void
     {
-        $eventManager = new class extends EventManager
-        {
+        $eventManager = new class extends EventManager {
             public function on($eventKey, $options = null, $callable = []): never
             {
                 throw new Exception('Should not be called');

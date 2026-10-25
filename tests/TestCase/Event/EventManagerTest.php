@@ -554,8 +554,7 @@ class EventManagerTest extends TestCase
      */
     public function testStopPropagation(): void
     {
-        $generalManager = new class extends EventManager
-        {
+        $generalManager = new class extends EventManager {
             public function prioritisedListeners(string $name): array
             {
                 return [];
@@ -584,8 +583,7 @@ class EventManagerTest extends TestCase
     public function testDispatchPrioritizedWithGlobal(): void
     {
         $listener = new CustomTestEventListenerInterface();
-        $generalManager = new class ($listener) extends EventManager
-        {
+        $generalManager = new class ($listener) extends EventManager {
             public function __construct(public CustomTestEventListenerInterface $listener)
             {
             }
@@ -618,8 +616,7 @@ class EventManagerTest extends TestCase
     public function testDispatchGlobalBeforeLocal(): void
     {
         $listener = new CustomTestEventListenerInterface();
-        $generalManager = new class ($listener) extends EventManager
-        {
+        $generalManager = new class ($listener) extends EventManager {
             public function __construct(public CustomTestEventListenerInterface $listener)
             {
             }

@@ -832,8 +832,8 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
 
         if (!class_exists(Cache::class)) {
             throw new CakeException(
-                'To use caching you must either set a cacher using Connection::setCacher()' .
-                ' or require the cakephp/cache package in your composer config.',
+                'To use caching you must either set a cacher using Connection::setCacher()'
+                . ' or require the cakephp/cache package in your composer config.',
             );
         }
 

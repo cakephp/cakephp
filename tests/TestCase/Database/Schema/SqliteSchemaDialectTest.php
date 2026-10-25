@@ -78,8 +78,8 @@ class SqliteSchemaDialectTest extends TestCase
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
         if (
-            in_array('schema_articles', $result) &&
-            in_array('schema_authors', $result)
+            in_array('schema_articles', $result)
+            && in_array('schema_authors', $result)
         ) {
             return;
         }
@@ -1275,11 +1275,11 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-                'length' => 11,
-                'unsigned' => true,
-            ])
+            'type' => 'integer',
+            'null' => false,
+            'length' => 11,
+            'unsigned' => true,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1301,9 +1301,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'biginteger',
-                'null' => false,
-            ])
+            'type' => 'biginteger',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1336,32 +1336,32 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
@@ -1372,8 +1372,8 @@ SQL;
                     'update' => 'noAction',
                     'deferrable' => ForeignKey::DEFERRED,
                 ],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                . 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
             [
                 'author_id_check',
@@ -1448,9 +1448,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('articles')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,

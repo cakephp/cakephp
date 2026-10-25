@@ -97,8 +97,7 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached(): void
     {
-        $eventsManager = new class extends EventManager
-        {
+        $eventsManager = new class extends EventManager {
             public function on(string|EventListenerInterface $eventKey, ?callable $callable = null, array $options = []): never
             {
                 throw new Exception('Should not be called');

@@ -152,9 +152,9 @@ class FileEngine extends CacheEngine
         }
 
         $this->File->rewind();
-        $success = $this->File->ftruncate(0) &&
-            $this->File->fwrite($contents) &&
-            $this->File->fflush();
+        $success = $this->File->ftruncate(0)
+            && $this->File->fwrite($contents)
+            && $this->File->fflush();
 
         if ($this->config['lock']) {
             $this->File->flock(LOCK_UN);
@@ -419,9 +419,9 @@ class FileEngine extends CacheEngine
             return false;
         }
         if (
-            !isset($this->File) ||
-            $this->File->getBasename() !== $key ||
-            $this->File->valid() === false
+            !isset($this->File)
+            || $this->File->getBasename() !== $key
+            || $this->File->valid() === false
         ) {
             $exists = is_file($path->getPathname());
             try {
