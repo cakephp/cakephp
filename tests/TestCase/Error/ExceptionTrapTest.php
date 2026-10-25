@@ -72,9 +72,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFactory(): void
     {
-        $trap = new ExceptionTrap(['exceptionRenderer' => function ($err, $req) {
-            return new WebExceptionRenderer($err, $req);
-        }]);
+        $trap = new ExceptionTrap(['exceptionRenderer' => fn($err, $req) => new WebExceptionRenderer($err, $req)]);
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(WebExceptionRenderer::class, $trap->renderer($error));
     }

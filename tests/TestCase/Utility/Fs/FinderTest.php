@@ -1295,10 +1295,9 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(FsFixture::path('root/src'))
-            ->filter(function (SplFileInfo $file) {
+            ->filter(
                 // Only files with "Controller" in name
-                return str_contains($file->getFilename(), 'Controller');
-            })
+                fn(SplFileInfo $file) => str_contains($file->getFilename(), 'Controller'))
             ->files();
 
         $filenames = [];
@@ -1343,10 +1342,9 @@ class FinderTest extends TestCase
         $finder = new Finder();
         $files = $finder
             ->in(FsFixture::path('root'))
-            ->filter(function (SplFileInfo $file, string $relativePath) {
+            ->filter(
                 // Only files in src directory
-                return str_starts_with($relativePath, 'src');
-            })
+                fn(SplFileInfo $file, string $relativePath) => str_starts_with($relativePath, 'src'))
             ->files();
 
         $count = 0;

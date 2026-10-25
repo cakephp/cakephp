@@ -45,13 +45,6 @@ class HelpFormatter
     protected int $_maxOptions = 6;
 
     /**
-     * Option parser.
-     *
-     * @var \Cake\Console\ConsoleOptionParser
-     */
-    protected ConsoleOptionParser $_parser;
-
-    /**
      * Alias to display in the output.
      *
      * @var string
@@ -61,11 +54,15 @@ class HelpFormatter
     /**
      * Build the help formatter for an OptionParser
      *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser help is being generated for.
+     * @param \Cake\Console\ConsoleOptionParser $_parser The option parser help is being generated for.
      */
-    public function __construct(ConsoleOptionParser $parser)
+    public function __construct(
+        /**
+         * Option parser.
+         */
+        protected ConsoleOptionParser $_parser
+    )
     {
-        $this->_parser = $parser;
     }
 
     /**

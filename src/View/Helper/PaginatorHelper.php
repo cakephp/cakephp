@@ -1274,9 +1274,7 @@ class PaginatorHelper extends Helper
         // Filter out limits that exceed maxLimit
         $maxLimit = $this->param('maxLimit');
         if ($maxLimit !== null) {
-            $limits = array_filter($limits, function ($limit) use ($maxLimit) {
-                return (int)$limit <= $maxLimit;
-            });
+            $limits = array_filter($limits, fn($limit) => (int)$limit <= $maxLimit);
             if (!$limits) {
                 $limits[$maxLimit] = (string)$maxLimit;
             }

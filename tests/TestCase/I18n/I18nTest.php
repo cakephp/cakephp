@@ -207,12 +207,10 @@ class I18nTest extends TestCase
             }
         };
 
-        I18n::config('custom', function ($domain, $locale) use ($loader) {
-            return new $loader(
-                $domain,
-                $locale,
-            );
-        });
+        I18n::config('custom', fn($domain, $locale) => new $loader(
+            $domain,
+            $locale,
+        ));
 
         $this->deprecated(function (): void {
             $translator = I18n::getTranslator('custom', 'fr_FR');

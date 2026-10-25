@@ -130,9 +130,7 @@ class TranslatorRegistryTest extends TestCase
         $state = new class {
             public string $current = 'tenant_a';
         };
-        $registry->setCacheKeyPrefix(function () use ($state): string {
-            return $state->current;
-        });
+        $registry->setCacheKeyPrefix(fn(): string => $state->current);
 
         $translatorA = $registry->get('default');
         $state->current = 'tenant_b';

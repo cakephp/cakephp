@@ -72,11 +72,7 @@ class ArticlesTable extends Table
 
     public function findSlugged(SelectQuery $query): SelectQuery
     {
-        return $query->formatResults(function ($results) {
-            return $results->indexBy(function ($row) {
-                return Text::slug($row['title']);
-            });
-        });
+        return $query->formatResults(fn($results) => $results->indexBy(fn($row) => Text::slug($row['title'])));
     }
 
     /**

@@ -2037,9 +2037,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServices(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"mock":true}');
-        });
+        $this->mockService(stdClass::class, fn() => json_decode('{"mock":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"mock":true', 'Contains the data from the stdClass mock container.');
@@ -2050,9 +2048,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, function () {
-            return new ReflectionDependency();
-        });
+        $this->mockService(ReflectionDependency::class, fn() => new ReflectionDependency());
         $this->get('/dependencies/reflectionDep');
         $this->assertResponseOk();
         $this->assertResponseContains('{"dep":{}}', 'Contains the data from the reflection container');
@@ -2063,12 +2059,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesOverwrite(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"second":true}');
-        });
+        $this->mockService(stdClass::class, fn() => json_decode('{"first":true}'));
+        $this->mockService(stdClass::class, fn() => json_decode('{"second":true}'));
         $this->get('/dependencies/requiredDep');
         $this->assertResponseOk();
         $this->assertResponseContains('"second":true', 'Contains the data from the stdClass mock container.');
@@ -2079,9 +2071,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesUnset(): void
     {
-        $this->mockService(stdClass::class, function () {
-            return json_decode('{"first":true}');
-        });
+        $this->mockService(stdClass::class, fn() => json_decode('{"first":true}'));
         $this->removeMockService(stdClass::class);
 
         $this->get('/dependencies/requiredDep');

@@ -60,16 +60,13 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
     protected ConsoleIo $io;
 
-    protected ?CommandFactoryInterface $factory = null;
-
     /**
      * Constructor
      *
      * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
-    public function __construct(?CommandFactoryInterface $factory = null)
+    public function __construct(protected ?CommandFactoryInterface $factory = null)
     {
-        $this->factory = $factory;
         $this->getEventManager()->on($this);
     }
 

@@ -25,18 +25,12 @@ use Cake\Core\ContainerInterface;
 class CommandFactory implements CommandFactoryInterface
 {
     /**
-     * @var \Cake\Core\ContainerInterface|null
-     */
-    protected ?ContainerInterface $container = null;
-
-    /**
      * Constructor
      *
      * @param \Cake\Core\ContainerInterface|null $container The container to use if available.
      */
-    public function __construct(?ContainerInterface $container = null)
+    public function __construct(protected ?ContainerInterface $container = null)
     {
-        $this->container = $container;
     }
 
     /**

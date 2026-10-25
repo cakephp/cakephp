@@ -661,7 +661,7 @@ eos;
      */
     public function testSetOutputMask(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Debugger::setOutputMask(['password' => '[**********]']);
             $result = Debugger::outputMask();
             $this->assertEquals('[**********]', $result['password']);
@@ -681,7 +681,7 @@ eos;
      */
     public function testConfigureOutputMask(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
             Debugger::getInstance(TestDebugger::class);
             Debugger::getInstance(Debugger::class);
@@ -697,7 +697,7 @@ eos;
      */
     public function testMaskArray(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Debugger::setOutputMask(['password' => '[**********]']);
             $result = Debugger::exportVar(['password' => 'pass1234']);
             $expected = "['password'=>'[**********]']";
@@ -710,7 +710,7 @@ eos;
      */
     public function testMaskObject(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Debugger::setOutputMask(['password' => '[**********]']);
             $object = new SecurityThing();
             $result = Debugger::exportVar($object);
@@ -754,7 +754,7 @@ eos;
      */
     public function testCustomMaskMergesWithDefaults(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Debugger::setOutputMask(['api_key' => 'SECRET']);
             $mask = Debugger::outputMask();
             $this->assertSame('SECRET', $mask['api_key']);
@@ -926,9 +926,7 @@ EXPECTED;
      */
     public function testEditorUrlClosure(): void
     {
-        Debugger::addEditor('open', function (string $file, int $line) {
-            return "{$file}/{$line}";
-        });
+        Debugger::addEditor('open', fn(string $file, int $line) => "{$file}/{$line}");
         Debugger::setEditor('open');
         $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));
     }

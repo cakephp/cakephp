@@ -31,13 +31,6 @@ use Closure;
 class IdentifierExpression implements ExpressionInterface
 {
     /**
-     * Holds the identifier string
-     *
-     * @var string
-     */
-    protected string $_identifier;
-
-    /**
      * @var string|null
      */
     protected ?string $collation = null;
@@ -45,12 +38,14 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * Constructor
      *
-     * @param string $identifier The identifier this expression represents
+     * @param string $_identifier The identifier this expression represents
      * @param string|null $collation The identifier collation
      */
-    public function __construct(string $identifier, ?string $collation = null)
+    public function __construct(/**
+     * Holds the identifier string
+     */
+    protected string $_identifier, ?string $collation = null)
     {
-        $this->_identifier = $identifier;
         if ($collation !== null) {
             $this->setCollation($collation);
         }

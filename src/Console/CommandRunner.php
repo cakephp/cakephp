@@ -42,27 +42,6 @@ class CommandRunner implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * The application console commands are being run for.
-     *
-     * @var \Cake\Core\ConsoleApplicationInterface
-     */
-    protected ConsoleApplicationInterface $app;
-
-    /**
-     * The application console commands are being run for.
-     *
-     * @var \Cake\Console\CommandFactoryInterface|null
-     */
-    protected ?CommandFactoryInterface $factory = null;
-
-    /**
-     * The root command name. Defaults to `cake`.
-     *
-     * @var string
-     */
-    protected string $root;
-
-    /**
      * Alias mappings.
      *
      * @var array<string, string>
@@ -83,13 +62,20 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
     public function __construct(
-        ConsoleApplicationInterface $app,
-        string $root = 'cake',
-        ?CommandFactoryInterface $factory = null,
-    ) {
-        $this->app = $app;
-        $this->root = $root;
-        $this->factory = $factory;
+        /**
+         * The application console commands are being run for.
+         */
+        protected ConsoleApplicationInterface $app,
+        /**
+         * The root command name. Defaults to `cake`.
+         */
+        protected string $root = 'cake',
+        /**
+         * The application console commands are being run for.
+         */
+        protected ?CommandFactoryInterface $factory = null
+    )
+    {
     }
 
     /**

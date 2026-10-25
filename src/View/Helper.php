@@ -68,25 +68,20 @@ class Helper implements EventListenerInterface
     protected array $helperInstances = [];
 
     /**
-     * The View instance this helper is attached to
-     *
-     * @var TView
-     */
-    protected View $_View;
-
-    /**
      * Default Constructor
      *
-     * @param TView $view The View this helper is being attached to.
+     * @param TView $_View The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
-    public function __construct(View $view, array $config = [])
+    public function __construct(/**
+     * The View instance this helper is attached to
+     */
+    protected View $_View, array $config = [])
     {
-        $this->_View = $view;
         $this->setConfig($config);
 
         if ($this->helpers) {
-            $this->helpers = $view->helpers()->normalizeArray($this->helpers);
+            $this->helpers = $this->_View->helpers()->normalizeArray($this->helpers);
         }
 
         $this->initialize($config);

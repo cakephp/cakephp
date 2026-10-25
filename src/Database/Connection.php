@@ -55,13 +55,6 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * Contains the configuration params for this connection.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $_config;
-
-    /**
      * @var \Cake\Database\Driver
      */
     protected Driver $readDriver;
@@ -136,14 +129,16 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      *    If set to a string it will be used as the name of cache config to use.
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      *
-     * @param array<string, mixed> $config Configuration array.
+     * @param array<string, mixed> $_config Configuration array.
      * @throws \Cake\Database\Exception\MissingDriverException when the driver class cannot be found
      * @throws \Cake\Database\Exception\MissingExtensionException when the database extension is not enabled
      */
-    public function __construct(array $config)
+    public function __construct(/**
+     * Contains the configuration params for this connection.
+     */
+    protected array $_config)
     {
-        $this->_config = $config;
-        [self::ROLE_READ => $this->readDriver, self::ROLE_WRITE => $this->writeDriver] = $this->createDrivers($config);
+        [self::ROLE_READ => $this->readDriver, self::ROLE_WRITE => $this->writeDriver] = $this->createDrivers($this->_config);
     }
 
     /**

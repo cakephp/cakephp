@@ -2095,9 +2095,7 @@ SQL;
 
         $mock = Mockery::mock(PDO::class);
         $mock->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
-                return "'{$value}'";
-            });
+            ->andReturnUsing(fn($value) => "'{$value}'");
         $mock->shouldReceive('exec')
             ->zeroOrMoreTimes()
             ->andReturn(0);
@@ -2111,9 +2109,7 @@ SQL;
             ->andReturn($mock);
 
         $driver->shouldReceive('version')
-            ->andReturnUsing(function () {
-                return '10.0.0';
-            });
+            ->andReturnUsing(fn() => '10.0.0');
 
         $driver->connect();
 

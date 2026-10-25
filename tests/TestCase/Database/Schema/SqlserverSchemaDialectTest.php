@@ -1405,9 +1405,7 @@ SQL;
 
         $mock = Mockery::mock(PDO::class);
         $mock->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
-                return "'{$value}'";
-            });
+            ->andReturnUsing(fn($value) => "'{$value}'");
 
         $driver = Mockery::mock(Sqlserver::class)
             ->makePartial()

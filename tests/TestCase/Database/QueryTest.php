@@ -157,11 +157,9 @@ class QueryTest extends TestCase
                     $this->newQuery(),
                 ),
             )
-            ->with(function (CommonTableExpression $cte, Query $query) {
-                return $cte
-                    ->name('cte2')
-                    ->query($query);
-            });
+            ->with(fn(CommonTableExpression $cte, Query $query) => $cte
+                ->name('cte2')
+                ->query($query));
 
         $clause = $this->query->clause('with');
         $clauseClone = (clone $this->query)->clause('with');

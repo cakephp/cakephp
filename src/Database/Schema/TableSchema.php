@@ -33,13 +33,6 @@ use Cake\Database\Exception\DatabaseException;
 class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
     /**
-     * The name of the table
-     *
-     * @var string
-     */
-    protected string $_table;
-
-    /**
      * Columns in the table.
      *
      * @var array<string, \Cake\Database\Schema\Column>
@@ -350,12 +343,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Constructor.
      *
-     * @param string $table The table name.
+     * @param string $_table The table name.
      * @param array<string, array|string> $columns The list of columns for the schema.
      */
-    public function __construct(string $table, array $columns = [])
+    public function __construct(/**
+     * The name of the table
+     */
+    protected string $_table, array $columns = [])
     {
-        $this->_table = $table;
         foreach ($columns as $field => $definition) {
             $this->addColumn($field, $definition);
         }

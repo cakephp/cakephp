@@ -316,9 +316,7 @@ class HasOneTest extends TestCase
         );
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();
-        $association->attachTo($query, ['queryBuilder' => function ($q) {
-            return $q->applyOptions(['something' => 'more']);
-        }]);
+        $association->attachTo($query, ['queryBuilder' => fn($q) => $q->applyOptions(['something' => 'more'])]);
         $this->assertTrue($this->listenerCalled, 'Event not fired');
     }
 
@@ -429,9 +427,7 @@ class HasOneTest extends TestCase
         $association = new HasOne('Profiles', $config);
         $profiles = $association->getTarget();
         $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
-                return false;
-            });
+            $rules->addDelete(fn() => false);
         });
 
         $user = new Entity(['id' => 1]);

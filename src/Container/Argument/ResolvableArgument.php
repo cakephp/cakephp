@@ -5,14 +5,11 @@ namespace Cake\Container\Argument;
 
 class ResolvableArgument implements ResolvableArgumentInterface
 {
-    protected string $value;
-
     /**
      * @param string $value
      */
-    public function __construct(string $value)
+    public function __construct(protected string $value)
     {
-        $this->value = $value;
     }
 
     /**

@@ -676,11 +676,9 @@ class ConnectionTest extends TestCase
         $logger = Mockery::mock(AbstractLogger::class);
         $logger->shouldReceive('log')
             ->once()
-            ->withArgs(function (...$args): bool {
-                return isset($args[0], $args[1])
-                    && $args[0] === 'warning'
-                    && str_contains((string)$args[1], 'The connection is going to be closed');
-            });
+            ->withArgs(fn(...$args): bool => isset($args[0], $args[1])
+                && $args[0] === 'warning'
+                && str_contains((string)$args[1], 'The connection is going to be closed'));
 
         Log::setConfig('error', $logger);
 
@@ -1060,27 +1058,21 @@ class ConnectionTest extends TestCase
     public function testNestedTransactionRollbackExceptionNotThrown(): void
     {
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return true;
-            });
+            $this->connection->transactional(fn() => true);
 
             return true;
         });
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return true;
-            });
+            $this->connection->transactional(fn() => true);
 
             return false;
         });
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
-                return false;
-            });
+            $this->connection->transactional(fn() => false);
 
             return false;
         });
@@ -1098,9 +1090,7 @@ class ConnectionTest extends TestCase
         $e = null;
         try {
             $this->connection->transactional(function () {
-                $this->connection->transactional(function () {
-                    return false;
-                });
+                $this->connection->transactional(fn() => false);
                 $this->rollbackSourceLine = __LINE__ - 1;
                 if (PHP_VERSION_ID >= 80200) {
                     $this->rollbackSourceLine -= 2;
@@ -1132,16 +1122,12 @@ class ConnectionTest extends TestCase
             $this->connection->transactional(function () {
                 $this->pushNestedTransactionState();
 
-                $this->connection->transactional(function () {
-                    return true;
-                });
+                $this->connection->transactional(fn() => true);
 
                 $this->connection->transactional(function () {
                     $this->pushNestedTransactionState();
 
-                    $this->connection->transactional(function () {
-                        return false;
-                    });
+                    $this->connection->transactional(fn() => false);
                     $this->rollbackSourceLine = __LINE__ - 1;
                     if (PHP_VERSION_ID >= 80200) {
                         $this->rollbackSourceLine -= 2;
@@ -1152,9 +1138,7 @@ class ConnectionTest extends TestCase
                     return true;
                 });
 
-                $this->connection->transactional(function () {
-                    return false;
-                });
+                $this->connection->transactional(fn() => false);
 
                 $this->pushNestedTransactionState();
 

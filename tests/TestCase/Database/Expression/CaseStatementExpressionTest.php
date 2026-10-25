@@ -319,9 +319,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         $expression = (new CaseStatementExpressionStub())
             ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen;
-            });
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen);
 
         $this->assertNull($expression->clause('when')[0]->getResultType());
 
@@ -468,16 +466,12 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_a' => true])
-                    ->then(1);
-            })
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_b' => 'foo'])
-                    ->then(2);
-            })
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when(['Table.column_a' => true])
+                ->then(1))
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when(['Table.column_b' => 'foo'])
+                ->then(2))
             ->else(3);
 
         $valueBinder = new ValueBinder();
@@ -527,16 +521,12 @@ class CaseStatementExpressionTest extends TestCase
 
         $expression = (new CaseStatementExpression())
             ->setTypeMap($typeMap)
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
-                    ->then(1);
-            })
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_b' => 'foo'])
-                    ->then(2);
-            })
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
+                ->then(1))
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when(['Table.column_b' => 'foo'])
+                ->then(2))
             ->else(3);
 
         $valueBinder = new ValueBinder();
@@ -1034,9 +1024,7 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenGetThenClause(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen;
-            });
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen);
 
         $this->assertNull($expression->clause('when')[0]->clause('then'));
 
@@ -1120,22 +1108,18 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenCallables(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b IS' => null,
-                    ])
-                    ->then(1);
-            })
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
-                    ])
-                    ->then(2);
-            })
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when([
+                    'Table.column_a' => true,
+                    'Table.column_b IS' => null,
+                ])
+                ->then(1))
+            ->when(fn(WhenThenExpression $whenThen) => $whenThen
+                ->when([
+                    'Table.column_c' => true,
+                    'Table.column_d IS NOT' => null,
+                ])
+                ->then(2))
             ->else(3);
 
         $valueBinder = new ValueBinder();
@@ -1153,22 +1137,18 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenCallablesWithCustomWhenThenExpressions(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(function () {
-                return (new CustomWhenThenExpression())
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b IS' => null,
-                    ])
-                    ->then(1);
-            })
-            ->when(function () {
-                return (new CustomWhenThenExpression())
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
-                    ])
-                    ->then(2);
-            })
+            ->when(fn() => (new CustomWhenThenExpression())
+                ->when([
+                    'Table.column_a' => true,
+                    'Table.column_b IS' => null,
+                ])
+                ->then(1))
+            ->when(fn() => (new CustomWhenThenExpression())
+                ->when([
+                    'Table.column_c' => true,
+                    'Table.column_d IS NOT' => null,
+                ])
+                ->then(2))
             ->else(3);
 
         $valueBinder = new ValueBinder();
@@ -1193,9 +1173,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->deprecated(function (): void {
             (new CaseStatementExpression())
-                ->when(function () {
-                    return null;
-                });
+                ->when(fn() => null);
         });
     }
 
@@ -1302,9 +1280,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->deprecated(function (): void {
             (new CaseStatementExpression())
-                ->when(function (WhenThenExpression $whenThen) {
-                    return $whenThen->then(1);
-                })
+                ->when(fn(WhenThenExpression $whenThen) => $whenThen->then(1))
                 ->sql(new ValueBinder());
         });
     }
@@ -1316,9 +1292,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->deprecated(function (): void {
             (new CaseStatementExpression())
-                ->when(function (WhenThenExpression $whenThen) {
-                    return $whenThen->when(1);
-                })
+                ->when(fn(WhenThenExpression $whenThen) => $whenThen->when(1))
                 ->sql(new ValueBinder());
         });
     }

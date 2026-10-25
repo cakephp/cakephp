@@ -45,9 +45,7 @@ class NullSafeComparisonTest extends TestCase
         $connection->shouldReceive('role')->andReturn('write');
         $connection->shouldReceive('configName')->andReturn('test');
         $connection->shouldReceive('getDriver')->andReturn($driver);
-        $connection->shouldReceive('selectQuery')->andReturnUsing(function () use ($connection) {
-            return new SelectQuery($connection);
-        });
+        $connection->shouldReceive('selectQuery')->andReturnUsing(fn() => new SelectQuery($connection));
 
         $binder = new ValueBinder();
 

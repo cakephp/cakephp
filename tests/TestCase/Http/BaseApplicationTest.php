@@ -69,9 +69,7 @@ class BaseApplicationTest extends TestCase
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
-                    return true;
-                });
+                $eventManager->on('testTrue', fn($event) => true);
 
                 return $eventManager;
             }
@@ -397,9 +395,7 @@ class BaseApplicationTest extends TestCase
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
-                    return true;
-                });
+                $eventManager->on('testTrue', fn($event) => true);
 
                 return $eventManager;
             }

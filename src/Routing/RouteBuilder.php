@@ -74,32 +74,11 @@ class RouteBuilder
     protected array $_extensions = [];
 
     /**
-     * The path prefix scope that this collection uses.
-     *
-     * @var string
-     */
-    protected string $_path;
-
-    /**
-     * The scope parameters if there are any.
-     *
-     * @var array
-     */
-    protected array $_params;
-
-    /**
      * Name prefix for connected routes.
      *
      * @var string
      */
     protected string $_namePrefix = '';
-
-    /**
-     * The route collection routes should be added to.
-     *
-     * @var \Cake\Routing\RouteCollection
-     */
-    protected RouteCollection $_collection;
 
     /**
      * The list of middleware that routes in this builder get
@@ -126,16 +105,22 @@ class RouteBuilder
      * - `namePrefix` - The prefix to prepend to all route names.
      * - `middleware` - The names of the middleware routes should have applied.
      *
-     * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
-     * @param string $path The path prefix the scope is for.
-     * @param array $params The scope's routing parameters.
+     * @param \Cake\Routing\RouteCollection $_collection The route collection to append routes into.
+     * @param string $_path The path prefix the scope is for.
+     * @param array $_params The scope's routing parameters.
      * @param array<string, mixed> $options Options list.
      */
-    public function __construct(RouteCollection $collection, string $path, array $params = [], array $options = [])
+    public function __construct(/**
+     * The route collection routes should be added to.
+     */
+    protected RouteCollection $_collection, /**
+     * The path prefix scope that this collection uses.
+     */
+    protected string $_path, /**
+     * The scope parameters if there are any.
+     */
+    protected array $_params = [], array $options = [])
     {
-        $this->_collection = $collection;
-        $this->_path = $path;
-        $this->_params = $params;
         if (isset($options['routeClass'])) {
             $this->_routeClass = $options['routeClass'];
         }

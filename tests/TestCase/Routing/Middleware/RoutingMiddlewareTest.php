@@ -86,9 +86,7 @@ class RoutingMiddlewareTest extends TestCase
     {
         $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
-            return new Response();
-        });
+        $handler = new TestRequestHandler(fn($request) => new Response());
         $middleware = new RoutingMiddleware($this->app());
         $response = $middleware->process($request, $handler);
 
@@ -470,9 +468,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
-            return new Response('php://memory', 200);
-        });
+        $handler = new TestRequestHandler(fn($request) => new Response('php://memory', 200));
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());
@@ -488,9 +484,7 @@ class RoutingMiddlewareTest extends TestCase
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
-            return new Response('php://memory', 200);
-        });
+        $handler = new TestRequestHandler(fn($request) => new Response('php://memory', 200));
         $middleware = new RoutingMiddleware($app);
         $response = $middleware->process($request, $handler);
         $this->assertSame(200, $response->getStatusCode());

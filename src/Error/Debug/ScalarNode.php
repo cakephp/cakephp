@@ -22,25 +22,13 @@ namespace Cake\Error\Debug;
 class ScalarNode implements NodeInterface
 {
     /**
-     * @var string
-     */
-    private string $type;
-
-    /**
-     * @var resource|string|float|int|bool|null
-     */
-    private $value;
-
-    /**
      * Constructor
      *
      * @param string $type The type of scalar value.
      * @param resource|string|float|int|bool|null $value The wrapped value.
      */
-    public function __construct(string $type, $value)
+    public function __construct(private string $type, private $value)
     {
-        $this->type = $type;
-        $this->value = $value;
     }
 
     /**

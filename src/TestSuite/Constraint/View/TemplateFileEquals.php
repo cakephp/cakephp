@@ -25,18 +25,12 @@ use PHPUnit\Framework\Constraint\Constraint;
 class TemplateFileEquals extends Constraint
 {
     /**
-     * @var string
-     */
-    protected string $filename;
-
-    /**
      * Constructor
      *
      * @param string $filename Template file name
      */
-    public function __construct(string $filename)
+    public function __construct(protected string $filename)
     {
-        $this->filename = $filename;
     }
 
     /**

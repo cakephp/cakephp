@@ -35,9 +35,7 @@ class ConsoleLogTest extends TestCase
 
         $message = ' error: oh noes</error>';
         $output->shouldReceive('write')
-            ->with(Mockery::on(static function ($content) use ($message): bool {
-                return is_string($content) && str_contains($content, $message);
-            }))
+            ->with(Mockery::on(static fn($content): bool => is_string($content) && str_contains($content, $message)))
             ->once();
 
         $log = new ConsoleLog([

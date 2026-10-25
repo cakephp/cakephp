@@ -1675,9 +1675,7 @@ SQL;
 
         $this->pdo = Mockery::mock(PDO::class);
         $this->pdo->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
-                return '"' . $value . '"';
-            });
+            ->andReturnUsing(fn($value) => '"' . $value . '"');
 
         $driver = Mockery::mock(Sqlite::class)
             ->makePartial()

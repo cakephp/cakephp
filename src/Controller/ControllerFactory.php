@@ -45,11 +45,6 @@ use function Cake\Core\toInt;
 class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInterface
 {
     /**
-     * @var \Cake\Core\ContainerInterface
-     */
-    protected ContainerInterface $container;
-
-    /**
      * @var \Cake\Controller\Controller
      */
     protected Controller $controller;
@@ -59,9 +54,8 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param \Cake\Core\ContainerInterface $container The container to build controllers with.
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**

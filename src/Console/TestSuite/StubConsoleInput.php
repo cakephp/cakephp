@@ -27,13 +27,6 @@ use NumberFormatter;
 class StubConsoleInput extends ConsoleInput
 {
     /**
-     * Reply values for ask() and askChoice()
-     *
-     * @var array<string>
-     */
-    protected array $replies = [];
-
-    /**
      * Current message index
      *
      * @var int
@@ -45,11 +38,11 @@ class StubConsoleInput extends ConsoleInput
      *
      * @param array<string> $replies A list of replies for read()
      */
-    public function __construct(array $replies)
+    public function __construct(/**
+     * Reply values for ask() and askChoice()
+     */
+    protected array $replies)
     {
-        // Don't call parent on purpose as it opens php://stdin which doesn't
-        // always exist in RunInSeparateProcess tests.
-        $this->replies = $replies;
         $this->_canReadline = false;
     }
 

@@ -359,9 +359,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate');
         $table->getBehavior('Translate')->setLocale('eng');
 
-        $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
-            return $exp->lt(new QueryExpression('1'), 50);
-        });
+        $query = $table->find()->select()->where(fn(ExpressionInterface $exp) => $exp->lt(new QueryExpression('1'), 50));
 
         $this->assertStringContainsString(
             'articles_translations',
@@ -673,9 +671,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->find()
             ->where(['Comments.id' => 1])
             ->contain([
-                'Articles' => function ($q) {
-                    return $q->find('translations');
-                }]);
+                'Articles' => fn($q) => $q->find('translations')]);
         $record = $query->firstOrFail();
         $this->assertNull($record->article);
     }

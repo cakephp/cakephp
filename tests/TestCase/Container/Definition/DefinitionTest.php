@@ -17,9 +17,7 @@ class DefinitionTest extends TestCase
 {
     public function testDefinitionResolvesClosureWithDefinedArgs(): void
     {
-        $definition = new Definition('callable', function (...$args) {
-            return implode(' ', $args);
-        });
+        $definition = new Definition('callable', fn(...$args) => implode(' ', $args));
 
         $definition->addArguments(['hello', 'world']);
         $actual = $definition->resolve();
@@ -28,9 +26,7 @@ class DefinitionTest extends TestCase
 
     public function testDefinitionResolvesClosureReturningRawArgument(): void
     {
-        $definition = new Definition('callable', function () {
-            return new Literal\StringArgument('hello world');
-        });
+        $definition = new Definition('callable', fn() => new Literal\StringArgument('hello world'));
 
         $actual = $definition->resolve();
         self::assertSame('hello world', $actual);

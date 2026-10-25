@@ -26,18 +26,12 @@ use PHPUnit\Framework\Constraint\Constraint;
 class SessionHasKey extends Constraint
 {
     /**
-     * @var string
-     */
-    protected string $path;
-
-    /**
      * Constructor
      *
      * @param string $path Session Path
      */
-    public function __construct(string $path)
+    public function __construct(protected string $path)
     {
-        $this->path = $path;
     }
 
     /**

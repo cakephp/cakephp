@@ -366,19 +366,17 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function () {
-            return new class implements ExceptionRendererInterface
+        $factory = (fn() => new class implements ExceptionRendererInterface
+        {
+            public function render(): ResponseInterface|string
             {
-                public function render(): ResponseInterface|string
-                {
-                    throw new LogicException('Rendering failed');
-                }
+                throw new LogicException('Rendering failed');
+            }
 
-                public function write(string|ResponseInterface $output): void
-                {
-                }
-            };
-        };
+            public function write(string|ResponseInterface $output): void
+            {
+            }
+        });
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
         ]));

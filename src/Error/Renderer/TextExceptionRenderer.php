@@ -28,18 +28,12 @@ use Throwable;
 class TextExceptionRenderer implements ExceptionRendererInterface
 {
     /**
-     * @var \Throwable
-     */
-    protected Throwable $error;
-
-    /**
      * Constructor.
      *
      * @param \Throwable $error The error to render.
      */
-    public function __construct(Throwable $error)
+    public function __construct(protected Throwable $error)
     {
-        $this->error = $error;
     }
 
     /**

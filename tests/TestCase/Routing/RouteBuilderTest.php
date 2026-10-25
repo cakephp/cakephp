@@ -981,9 +981,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testScopeMiddlewarePathMatch(): void
     {
-        $gate = function () {
-            return new Response(['body' => 'no', 'status' => 403]);
-        };
+        $gate = (fn() => new Response(['body' => 'no', 'status' => 403]));
 
         $routes = new RouteBuilder($this->collection, '/');
         $routes->registerMiddleware('gate', $gate);

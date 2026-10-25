@@ -482,17 +482,15 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sortableFields' => function ($factory) {
-                return $factory
-                    ->add('name', SortField::asc('PaginatorPosts.title'))
-                    ->add(
-                        'popularity',
-                        SortField::desc('PaginatorPosts.id', locked: true),
-                        SortField::asc('PaginatorPosts.title'),
-                    )
-                    ->add('newest', SortField::desc('PaginatorPosts.id'))
-                    ->add('simple_author', 'PaginatorPosts.author_id');
-            },
+            'sortableFields' => fn($factory) => $factory
+                ->add('name', SortField::asc('PaginatorPosts.title'))
+                ->add(
+                    'popularity',
+                    SortField::desc('PaginatorPosts.id', locked: true),
+                    SortField::asc('PaginatorPosts.title'),
+                )
+                ->add('newest', SortField::desc('PaginatorPosts.id'))
+                ->add('simple_author', 'PaginatorPosts.author_id'),
         ];
 
         // Test sorting by mapped key 'name'

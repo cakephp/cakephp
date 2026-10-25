@@ -42,11 +42,6 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
     ];
 
     /**
-     * @var string
-     */
-    protected string $path;
-
-    /**
      * @var array<string, array{value: mixed, type: string|int|null}>
      */
     protected array $passing = [];
@@ -71,9 +66,8 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
      *
      * @param string $path The json path
      */
-    public function __construct(string $path)
+    public function __construct(protected string $path)
     {
-        $this->path = $path;
     }
 
     /**

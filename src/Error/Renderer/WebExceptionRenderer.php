@@ -65,13 +65,6 @@ use function Cake\I18n\__d;
 class WebExceptionRenderer implements ExceptionRendererInterface
 {
     /**
-     * The exception being handled.
-     *
-     * @var \Throwable
-     */
-    protected Throwable $error;
-
-    /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
@@ -93,14 +86,6 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     protected string $method = '';
 
     /**
-     * If set, this will be request used to create the controller that will render
-     * the error.
-     *
-     * @var \Cake\Http\ServerRequest|null
-     */
-    protected ?ServerRequest $request;
-
-    /**
      * Map of exceptions to http status codes.
      *
      * This can be customized for users that don't want specific exceptions to throw 404 errors
@@ -115,14 +100,19 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     /**
      * Creates the controller to perform rendering on the error response.
      *
-     * @param \Throwable $exception Exception.
+     * @param \Throwable $error Exception.
      * @param \Cake\Http\ServerRequest|null $request The request if this is set it will be used
      *   instead of creating a new one.
      */
-    public function __construct(Throwable $exception, ?ServerRequest $request = null)
+    public function __construct(/**
+     * The exception being handled.
+     */
+    protected Throwable $error, /**
+     * If set, this will be request used to create the controller that will render
+     * the error.
+     */
+    protected ?ServerRequest $request = null)
     {
-        $this->error = $exception;
-        $this->request = $request;
         $this->controller = $this->_getController();
     }
 

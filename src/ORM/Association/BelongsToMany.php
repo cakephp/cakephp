@@ -587,9 +587,7 @@ class BelongsToMany extends Association
             'junctionProperty' => $this->_junctionProperty,
             'junctionAssoc' => $this->getTarget()->getAssociation($name),
             'junctionConditions' => $this->junctionConditions(),
-            'finder' => function () {
-                return $this->_appendJunctionJoin($this->find(), []);
-            },
+            'finder' => fn() => $this->_appendJunctionJoin($this->find(), []),
         ]);
 
         return $loader->buildEagerLoader($options);
@@ -903,9 +901,7 @@ class BelongsToMany extends Association
         $sourceEntity->set($property, $links);
 
         return $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options) {
-                return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            },
+            fn() => $this->_saveLinks($sourceEntity, $targetEntities, $options),
         );
     }
 
@@ -1447,14 +1443,10 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function (string $key) {
-            return $key . ' IS';
-        }, $foreignKey);
+        $foreignKey = array_map(fn(string $key) => $key . ' IS', $foreignKey);
         /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function (string $key) {
-            return $key . ' IS';
-        }, $assocForeignKey);
+        $assocForeignKey = array_map(fn(string $key) => $key . ' IS', $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
         $unions = [];

@@ -222,9 +222,7 @@ trait CollectionTrait
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
             return $extractor
-                ->filter(function ($data) {
-                    return is_iterable($data);
-                })
+                ->filter(fn($data) => is_iterable($data))
                 ->unfold();
         }
 
@@ -257,10 +255,9 @@ trait CollectionTrait
             $result = $result->extract($path);
         }
         $result = $result
-            ->reduce(function (array $acc, $current) {
+            ->reduce(
                 // index 0 is the count, index 1 is the sum
-                return [$acc[0] + 1, $acc[1] + $current];
-            }, [0, 0]);
+                fn(array $acc, $current) => [$acc[0] + 1, $acc[1] + $current], [0, 0]);
 
         if ($result[0] === 0) {
             return null;
@@ -1162,9 +1159,7 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, array $keys, $index) {
-                return $value[$keys[$index]];
-            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
+            $currentCombination = array_map(fn($value, array $keys, $index) => $value[$keys[$index]], $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
             if ($filter === null || $filter($currentCombination)) {
                 $result[] = $operation === null ? $currentCombination : $operation($currentCombination);

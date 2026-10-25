@@ -582,9 +582,7 @@ class EntityContext implements ContextInterface
      */
     protected function _getValidator(array $parts): Validator
     {
-        $keyParts = array_filter(array_slice($parts, 0, -1), function (string $part) {
-            return !is_numeric($part);
-        });
+        $keyParts = array_filter(array_slice($parts, 0, -1), fn(string $part) => !is_numeric($part));
         $key = implode('.', $keyParts);
         $entity = $this->entity($parts);
 
@@ -632,9 +630,7 @@ class EntityContext implements ContextInterface
             return $this->_tables[$this->_rootName];
         }
 
-        $normalized = array_slice(array_filter($parts, function (string $part) {
-            return !is_numeric($part);
-        }), 0, -1);
+        $normalized = array_slice(array_filter($parts, fn(string $part) => !is_numeric($part)), 0, -1);
 
         $path = implode('.', $normalized);
         if (isset($this->_tables[$path])) {

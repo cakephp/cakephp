@@ -63,9 +63,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
-            return new Response();
-        });
+        return new TestRequestHandler(fn() => new Response());
     }
 
     /**

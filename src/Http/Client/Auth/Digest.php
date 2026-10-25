@@ -57,12 +57,6 @@ class Digest
         self::ALGO_SHA_256_SESS => 'sha256',
         self::ALGO_SHA_512_256_SESS => 'sha512/256',
     ];
-    /**
-     * Instance of Cake\Http\Client
-     *
-     * @var \Cake\Http\Client
-     */
-    protected Client $_client;
 
     /**
      * Algorithm
@@ -90,12 +84,17 @@ class Digest
      *
      * Deprecated: $options list is unused and will be removed in 6.0.
      *
-     * @param \Cake\Http\Client $client Http client object.
+     * @param \Cake\Http\Client $_client Http client object.
      * @param array|null $options Options list.
      */
-    public function __construct(Client $client, ?array $options = null)
+    public function __construct(
+        /**
+         * Instance of Cake\Http\Client
+         */
+        protected Client $_client,
+        ?array $options = null
+    )
     {
-        $this->_client = $client;
     }
 
     /**

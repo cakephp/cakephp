@@ -43,20 +43,17 @@ class Marshaller
     use AssociationsNormalizerTrait;
 
     /**
-     * The table instance this marshaller is for.
-     *
-     * @var \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity>
-     */
-    protected Table $_table;
-
-    /**
      * Constructor.
      *
-     * @param \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity> $table The table this marshaller is for.
+     * @param \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity> $_table The table this marshaller is for.
      */
-    public function __construct(Table $table)
+    public function __construct(
+        /**
+         * The table instance this marshaller is for.
+         */
+        protected Table $_table
+    )
     {
-        $this->_table = $table;
     }
 
     /**
@@ -699,9 +696,7 @@ class Marshaller
 
                 return implode(';', $keys);
             })
-            ->map(function ($element, $key) {
-                return $key === '' ? $element : $element[0];
-            })
+            ->map(fn($element, $key) => $key === '' ? $element : $element[0])
             ->toArray();
 
         $new = $indexed[''] ?? [];
@@ -723,9 +718,7 @@ class Marshaller
         }
 
         $conditions = (new Collection($indexed))
-            ->map(function ($data, $key) {
-                return explode(';', (string)$key);
-            })
+            ->map(fn($data, $key) => explode(';', (string)$key))
             ->filter(fn($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map($this->_table->aliasField(...), $primary);

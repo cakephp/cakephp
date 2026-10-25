@@ -54,13 +54,6 @@ abstract class AbstractStreamResponse extends Response
     use InstanceConfigTrait;
 
     /**
-     * The iterable data to stream.
-     *
-     * @var iterable
-     */
-    protected iterable $data;
-
-    /**
      * Number of streamed rows since the last flush.
      *
      * @var int
@@ -86,9 +79,11 @@ abstract class AbstractStreamResponse extends Response
      *   `flushEvery` (int >= 1) controlling how many items are buffered before
      *   flushing. Subclasses add their own keys.
      */
-    public function __construct(iterable $data, array $options = [])
+    public function __construct(/**
+     * The iterable data to stream.
+     */
+    protected iterable $data, array $options = [])
     {
-        $this->data = $data;
         $this->setConfig(
             $this->normalizeStreamOptions($options + $this->_defaultConfig, $options),
             null,

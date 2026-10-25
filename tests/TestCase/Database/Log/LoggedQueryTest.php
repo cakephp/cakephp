@@ -291,9 +291,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testRedactorRewritesInlinedQueryText(): void
     {
-        LoggedQuery::setRedactor(static function (string $query, array $params): array {
-            return [str_replace('SECRET-KEY', '«REDACTED»', $query), $params];
-        });
+        LoggedQuery::setRedactor(static fn(string $query, array $params): array => [str_replace('SECRET-KEY', '«REDACTED»', $query), $params]);
 
         try {
             $query = new LoggedQuery();
@@ -317,9 +315,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testRedactorAppliedToGetContext(): void
     {
-        LoggedQuery::setRedactor(static function (string $query, array $params): array {
-            return [str_replace('SECRET-KEY', '«REDACTED»', $query), $params];
-        });
+        LoggedQuery::setRedactor(static fn(string $query, array $params): array => [str_replace('SECRET-KEY', '«REDACTED»', $query), $params]);
 
         try {
             $query = new LoggedQuery();
@@ -374,9 +370,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testRedactorMalformedReturnThrows(): void
     {
-        LoggedQuery::setRedactor(static function (string $query, array $params): mixed {
-            return 'not-a-tuple';
-        });
+        LoggedQuery::setRedactor(static fn(string $query, array $params): mixed => 'not-a-tuple');
 
         try {
             $query = new LoggedQuery();

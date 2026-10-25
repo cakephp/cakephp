@@ -33,21 +33,16 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * View object to use when making helpers.
-     *
-     * @var \Cake\View\View
-     */
-    protected View $_View;
-
-    /**
      * Constructor
      *
-     * @param \Cake\View\View $view View object.
+     * @param \Cake\View\View $_View View object.
      */
-    public function __construct(View $view)
+    public function __construct(/**
+     * View object to use when making helpers.
+     */
+    protected View $_View)
     {
-        $this->_View = $view;
-        $this->setEventManager($view->getEventManager());
+        $this->setEventManager($this->_View->getEventManager());
     }
 
     /**

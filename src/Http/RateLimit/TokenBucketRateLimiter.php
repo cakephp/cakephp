@@ -24,20 +24,17 @@ use Psr\SimpleCache\CacheInterface;
 class TokenBucketRateLimiter implements RateLimiterInterface
 {
     /**
-     * Cache instance
-     *
-     * @var \Psr\SimpleCache\CacheInterface
-     */
-    protected CacheInterface $cache;
-
-    /**
      * Constructor
      *
      * @param \Psr\SimpleCache\CacheInterface $cache Cache instance
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(
+        /**
+         * Cache instance
+         */
+        protected CacheInterface $cache
+    )
     {
-        $this->cache = $cache;
     }
 
     /**

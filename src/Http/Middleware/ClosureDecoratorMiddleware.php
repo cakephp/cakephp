@@ -39,20 +39,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ClosureDecoratorMiddleware implements MiddlewareInterface
 {
     /**
-     * A Closure.
-     *
-     * @var \Closure
-     */
-    protected Closure $callable;
-
-    /**
      * Constructor
      *
      * @param \Closure $callable A closure.
      */
-    public function __construct(Closure $callable)
+    public function __construct(
+        /**
+         * A Closure.
+         */
+        protected Closure $callable
+    )
     {
-        $this->callable = $callable;
     }
 
     /**

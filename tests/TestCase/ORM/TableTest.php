@@ -788,9 +788,7 @@ class TableTest extends TestCase
         );
 
         $query = $table->find('all')
-            ->formatResults(function (ResultSet $results) {
-                return $results;
-            });
+            ->formatResults(fn(ResultSet $results) => $results);
         $query->limit(1);
         $this->assertEquals($expected, $query->all()->toArray());
     }
@@ -1605,9 +1603,7 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $query = $table->find('list', valueField: function ($row) {
-            return $row->username;
-        });
+        $query = $table->find('list', valueField: fn($row) => $row->username);
         $this->assertEmpty($query->clause('select'));
 
         $expected = ['odd' => new QueryExpression('id % 2'), 'id', 'username'];
@@ -3209,9 +3205,7 @@ class TableTest extends TestCase
 
             public function buildRules(RulesChecker $rules): RulesChecker
             {
-                return $rules->add(function () {
-                    return 'Xyz';
-                });
+                return $rules->add(fn() => 'Xyz');
             }
         };
         TableRegistry::getTableLocator()->set('Comments', $Comments);
@@ -3417,9 +3411,7 @@ class TableTest extends TestCase
         $sections = $this->getTableLocator()->get('Sections');
         $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
         $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
-                return false;
-            });
+            $rules->addDelete(fn() => false);
         });
 
         $sections->belongsToMany('Members', [
@@ -6510,9 +6502,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $options = [
             'SiteArticles' => ['fields' => ['title', 'author_id']],
-            'Articles.Tags' => function ($q) {
-                return $q->where(['Tags.name' => 'tag2']);
-            },
+            'Articles.Tags' => fn($q) => $q->where(['Tags.name' => 'tag2']),
         ];
         $result = $table->loadInto($entity, $options);
         $this->assertSame($entity, $result);
@@ -6548,11 +6538,7 @@ class TableTest extends TestCase
 
         $entity = $table->get(2);
         $result = $table->loadInto($entity, [
-            'Articles' => function (SelectQuery $q) {
-                return $q->innerJoinWith('Authors', function ($q) {
-                    return $q->where(['Authors.name' => 'mariano']);
-                });
-            },
+            'Articles' => fn(SelectQuery $q) => $q->innerJoinWith('Authors', fn($q) => $q->where(['Authors.name' => 'mariano'])),
             'Articles.Authors',
         ]);
 

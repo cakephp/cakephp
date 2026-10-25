@@ -26,20 +26,17 @@ use Countable;
 class ValidCount
 {
     /**
-     * The field to check
-     *
-     * @var string
-     */
-    protected string $_field;
-
-    /**
      * Constructor.
      *
-     * @param string $field The field to check the count on.
+     * @param string $_field The field to check the count on.
      */
-    public function __construct(string $field)
+    public function __construct(
+        /**
+         * The field to check
+         */
+        protected string $_field
+    )
     {
-        $this->_field = $field;
     }
 
     /**

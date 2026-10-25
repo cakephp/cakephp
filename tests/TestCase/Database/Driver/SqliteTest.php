@@ -178,9 +178,7 @@ class SqliteTest extends TestCase
             ->shouldAllowMockingMethod('quoteIdentifier')
             ->makePartial();
         $mock->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
-                return '"' . $value . '"';
-            });
+            ->andReturnUsing(fn($value) => '"' . $value . '"');
 
         $driver = Mockery::mock(Sqlite::class)
             ->makePartial()

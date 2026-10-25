@@ -136,9 +136,7 @@ class ReflectionContainerTest extends TestCase
     {
         $container = new ReflectionContainer();
 
-        $foo = $container->call(function (Foo $foo) {
-            return $foo;
-        });
+        $foo = $container->call(fn(Foo $foo) => $foo);
 
         self::assertInstanceOf(Foo::class, $foo);
         self::assertInstanceOf(Bar::class, $foo->bar);

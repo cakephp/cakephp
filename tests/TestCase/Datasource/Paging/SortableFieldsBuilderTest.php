@@ -147,11 +147,9 @@ class SortableFieldsBuilderTest extends TestCase
      */
     public function testCreateFromCallable(): void
     {
-        $builder = SortableFieldsBuilder::create(function ($factory) {
-            return $factory
-                ->add('name', SortField::asc('Users.name'))
-                ->add('newest', SortField::desc('created'));
-        });
+        $builder = SortableFieldsBuilder::create(fn($factory) => $factory
+            ->add('name', SortField::asc('Users.name'))
+            ->add('newest', SortField::desc('created')));
 
         $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
         $map = $builder->toArray();
@@ -450,11 +448,9 @@ class SortableFieldsBuilderTest extends TestCase
      */
     public function testFromCallable(): void
     {
-        $builder = SortableFieldsBuilder::fromCallable(function ($factory) {
-            return $factory
-                ->add('name', 'Users.name')
-                ->add('newest', SortField::desc('created'));
-        });
+        $builder = SortableFieldsBuilder::fromCallable(fn($factory) => $factory
+            ->add('name', 'Users.name')
+            ->add('newest', SortField::desc('created')));
 
         $map = $builder->toArray();
         $this->assertArrayHasKey('name', $map);

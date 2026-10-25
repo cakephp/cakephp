@@ -13,20 +13,14 @@ use TestApp\Service\TestService;
 class InjectedServiceComponent extends Component
 {
     /**
-     * @var \TestApp\Service\TestService
-     */
-    protected TestService $service;
-
-    /**
      * Constructor
      *
      * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry
      * @param \TestApp\Service\TestService $service The injected service
      * @param array $config Array of configuration settings
      */
-    public function __construct(ComponentRegistry $registry, TestService $service, array $config = [])
+    public function __construct(ComponentRegistry $registry, protected TestService $service, array $config = [])
     {
-        $this->service = $service;
         parent::__construct($registry, $config);
     }
 

@@ -36,9 +36,7 @@ class ServiceProviderAggregateTest extends TestCase
             {
                 $this->registered++;
 
-                $this->getContainer()->add('SomeService', function ($arg) {
-                    return $arg;
-                });
+                $this->getContainer()->add('SomeService', fn($arg) => $arg);
             }
         };
     }

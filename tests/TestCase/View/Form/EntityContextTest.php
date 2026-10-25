@@ -739,10 +739,9 @@ class EntityContextTest extends TestCase
 
         $articles = $this->getTableLocator()->get('Articles');
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Title is required', function ($context) {
+        $validator->notEmptyString('title', 'Title is required', 
             // Condition depends on submitted data — cannot be evaluated at render time
-            return $context['newRecord'];
-        });
+            fn($context) => $context['newRecord']);
         $articles->setValidator('default', $validator);
 
         $context = new EntityContext([
@@ -845,9 +844,7 @@ class EntityContextTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
-        $validator->notEmptyString('title', 'nope', function ($context) {
-            return $context['providers']['entity']->isRequired();
-        });
+        $validator->notEmptyString('title', 'nope', fn($context) => $context['providers']['entity']->isRequired());
         $articles->setValidator('default', $validator);
 
         $row = new Entity([
@@ -872,9 +869,7 @@ class EntityContextTest extends TestCase
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
-        $validator->allowEmptyString('comment', null, function ($context) {
-            return $context['providers']['entity']->isNew();
-        });
+        $validator->allowEmptyString('comment', null, fn($context) => $context['providers']['entity']->isNew());
 
         $row = new Article([
             'title' => 'My title',

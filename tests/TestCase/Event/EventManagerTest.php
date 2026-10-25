@@ -939,9 +939,7 @@ class EventManagerTest extends TestCase
     public function testEventWithoutSubjectWorksWithReturningListener(): void
     {
         $eventManager = new EventManager();
-        $eventManager->on('example', function (): string {
-            return 'example event called';
-        });
+        $eventManager->on('example', fn(): string => 'example event called');
         $result = '';
         $this->deprecated(function () use (&$eventManager, &$result): void {
             $result = $eventManager->dispatch(new Event('example'));

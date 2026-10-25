@@ -32,29 +32,22 @@ use function Cake\Core\deprecationWarning;
 class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
     /**
-     * Resultset instance.
-     *
-     * @var \Traversable<TKey, TValue>
-     */
-    protected Traversable $results;
-
-    /**
-     * Paging params.
-     *
-     * @var array
-     */
-    protected array $params = [];
-
-    /**
      * Constructor
      *
      * @param \Traversable<TKey, TValue> $results Resultset instance.
      * @param array $params Paging params.
      */
-    public function __construct(Traversable $results, array $params)
+    public function __construct(
+        /**
+         * Resultset instance.
+         */
+        protected Traversable $results,
+        /**
+         * Paging params.
+         */
+        protected array $params
+    )
     {
-        $this->results = $results;
-        $this->params = $params;
     }
 
     /**

@@ -35,20 +35,17 @@ use function Cake\Core\deprecationWarning;
 class MiddlewareDispatcher
 {
     /**
-     * The application that is being dispatched.
-     *
-     * @var \Cake\Core\HttpApplicationInterface
-     */
-    protected HttpApplicationInterface $app;
-
-    /**
      * Constructor
      *
      * @param \Cake\Core\HttpApplicationInterface $app The test case to run.
      */
-    public function __construct(HttpApplicationInterface $app)
+    public function __construct(
+        /**
+         * The application that is being dispatched.
+         */
+        protected HttpApplicationInterface $app
+    )
     {
-        $this->app = $app;
     }
 
     /**

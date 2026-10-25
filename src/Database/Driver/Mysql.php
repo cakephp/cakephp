@@ -295,13 +295,11 @@ class Mysql extends Driver
      */
     public function supports(DriverFeatureEnum $feature): bool
     {
-        $versionCompare = function () use ($feature) {
-            return version_compare(
-                $this->version(),
-                $this->featureVersions[$this->serverType][$feature->value],
-                '>=',
-            );
-        };
+        $versionCompare = (fn() => version_compare(
+            $this->version(),
+            $this->featureVersions[$this->serverType][$feature->value],
+            '>=',
+        ));
 
         return match ($feature) {
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,

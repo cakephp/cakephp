@@ -32,32 +32,11 @@ use function Cake\Core\pluginSplit;
 class MessagesFileLoader
 {
     /**
-     * The package (domain) name.
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
      * The package (domain) plugin
      *
      * @var string|null
      */
     protected ?string $_plugin = null;
-
-    /**
-     * The locale to load for the given package.
-     *
-     * @var string
-     */
-    protected string $_locale;
-
-    /**
-     * The extension name.
-     *
-     * @var string
-     */
-    protected string $_extension;
 
     /**
      * Creates a translation file loader. The file to be loaded corresponds to
@@ -94,15 +73,23 @@ class MessagesFileLoader
      * Vendor prefixed plugins are expected to use `my_prefix_my_plugin` syntax.
      * ```
      *
-     * @param string $name The name (domain) of the translations package.
-     * @param string $locale The locale to load, this will be mapped to a folder
+     * @param string $_name The name (domain) of the translations package.
+     * @param string $_locale The locale to load, this will be mapped to a folder
      * in the system.
-     * @param string $extension The file extension to use. This will also be mapped
+     * @param string $_extension The file extension to use. This will also be mapped
      * to a messages parser class.
      */
-    public function __construct(string $name, string $locale, string $extension = 'po')
+    public function __construct(/**
+     * The package (domain) name.
+     */
+    protected string $_name, /**
+     * The locale to load for the given package.
+     */
+    protected string $_locale, /**
+     * The extension name.
+     */
+    protected string $_extension = 'po')
     {
-        $this->_name = $name;
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
         if (strpos($this->_name, '.')) {
@@ -110,8 +97,6 @@ class MessagesFileLoader
         } elseif (Plugin::isLoaded($pluginName)) {
             $this->_plugin = $pluginName;
         }
-        $this->_locale = $locale;
-        $this->_extension = $extension;
     }
 
     /**

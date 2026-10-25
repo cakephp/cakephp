@@ -66,24 +66,19 @@ class IniConfig implements ConfigEngineInterface
     protected string $_extension = '.ini';
 
     /**
-     * The section to read, if null all sections will be read.
-     *
-     * @var string|null
-     */
-    protected ?string $_section = null;
-
-    /**
      * Build and construct a new ini file parser. The parser can be used to read
      * ini files that are on the filesystem.
      *
      * @param string|null $path Path to load ini config files from. Defaults to CONFIG.
-     * @param string|null $section Only get one section, leave null to parse and fetch
+     * @param string|null $_section Only get one section, leave null to parse and fetch
      *     all sections in the ini file.
      */
-    public function __construct(?string $path = null, ?string $section = null)
+    public function __construct(?string $path = null, /**
+     * The section to read, if null all sections will be read.
+     */
+    protected ?string $_section = null)
     {
         $this->_path = $path ?? CONFIG;
-        $this->_section = $section;
     }
 
     /**

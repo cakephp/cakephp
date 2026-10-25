@@ -69,9 +69,7 @@ class InflectorAggregateTest extends TestCase
             'my-string' => 'foo bar',
             'my-generated-array' => [DateTimeZone::class, 'listIdentifiers'],
             'my-generated-number' => 'time',
-            'my-generated-string' => function (): string {
-                return 'blahblahblah';
-            },
+            'my-generated-string' => fn(): string => 'blahblahblah',
         ];
 
         foreach ($types as $alias => $concrete) {

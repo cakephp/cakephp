@@ -28,9 +28,7 @@ class ServiceProviderTest extends TestCase
 
             public function register(): void
             {
-                $this->getContainer()->add('SomeService', function ($arg) {
-                    return $arg;
-                });
+                $this->getContainer()->add('SomeService', fn($arg) => $arg);
             }
         };
     }

@@ -679,9 +679,7 @@ class ViewBuilder implements JsonSerializable
 
         array_walk_recursive($array['_vars'], $this->_checkViewVars(...));
 
-        return array_filter($array, function (array|bool|string|null $i) {
-            return !is_array($i) && strlen((string)$i) || !empty($i);
-        });
+        return array_filter($array, fn(array|bool|string|null $i) => !is_array($i) && strlen((string)$i) || !empty($i));
     }
 
     /**

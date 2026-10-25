@@ -178,11 +178,8 @@ class AbstractStreamResponseTest extends TestCase
         return new class ($data, $options, $simulateSuccessfulFlush) extends AbstractStreamResponse {
             public int $flushCalls = 0;
 
-            protected bool $simulateSuccessfulFlush;
-
-            public function __construct(iterable $data, array $options, bool $simulateSuccessfulFlush)
+            public function __construct(iterable $data, array $options, protected bool $simulateSuccessfulFlush)
             {
-                $this->simulateSuccessfulFlush = $simulateSuccessfulFlush;
                 parent::__construct($data, $options);
             }
 

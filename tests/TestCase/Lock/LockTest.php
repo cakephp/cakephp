@@ -162,9 +162,7 @@ class LockTest extends TestCase
     {
         $this->_configLock();
 
-        $result = Lock::synchronized('test-resource', function () {
-            return 'callback-result';
-        }, config: 'tests');
+        $result = Lock::synchronized('test-resource', fn() => 'callback-result', config: 'tests');
 
         $this->assertSame('callback-result', $result);
     }
@@ -183,9 +181,7 @@ class LockTest extends TestCase
 
         Lock::setConfig('mock', ['className' => NullLockEngine::class]);
 
-        $result = Lock::synchronized('test-resource', function () {
-            return 'should-not-execute';
-        }, timeout: 0, config: 'mock');
+        $result = Lock::synchronized('test-resource', fn() => 'should-not-execute', timeout: 0, config: 'mock');
 
         $this->assertNull($result);
     }

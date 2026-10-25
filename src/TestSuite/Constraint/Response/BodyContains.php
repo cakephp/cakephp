@@ -25,21 +25,14 @@ use Psr\Http\Message\ResponseInterface;
 class BodyContains extends ResponseBase
 {
     /**
-     * @var bool
-     */
-    protected bool $ignoreCase;
-
-    /**
      * Constructor.
      *
      * @param \Psr\Http\Message\ResponseInterface $response A response instance.
      * @param bool $ignoreCase Ignore case
      */
-    public function __construct(ResponseInterface $response, bool $ignoreCase = false)
+    public function __construct(ResponseInterface $response, protected bool $ignoreCase = false)
     {
         parent::__construct($response);
-
-        $this->ignoreCase = $ignoreCase;
     }
 
     /**

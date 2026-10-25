@@ -33,27 +33,6 @@ use Psr\Http\Message\ResponseInterface;
 class CorsBuilder
 {
     /**
-     * The response object this builder is attached to.
-     *
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    protected ResponseInterface $_response;
-
-    /**
-     * The request's Origin header value
-     *
-     * @var string
-     */
-    protected string $_origin;
-
-    /**
-     * Whether the request was over SSL.
-     *
-     * @var bool
-     */
-    protected bool $_isSsl;
-
-    /**
      * The headers that have been queued so far.
      *
      * @var array<string, mixed>
@@ -63,15 +42,25 @@ class CorsBuilder
     /**
      * Constructor.
      *
-     * @param \Psr\Http\Message\ResponseInterface $response The response object to add headers onto.
-     * @param string $origin The request's Origin header.
-     * @param bool $isSsl Whether the request was over SSL.
+     * @param \Psr\Http\Message\ResponseInterface $_response The response object to add headers onto.
+     * @param string $_origin The request's Origin header.
+     * @param bool $_isSsl Whether the request was over SSL.
      */
-    public function __construct(ResponseInterface $response, string $origin, bool $isSsl = false)
+    public function __construct(
+        /**
+         * The response object this builder is attached to.
+         */
+        protected ResponseInterface $_response,
+        /**
+         * The request's Origin header value
+         */
+        protected string $_origin,
+        /**
+         * Whether the request was over SSL.
+         */
+        protected bool $_isSsl = false
+    )
     {
-        $this->_origin = $origin;
-        $this->_isSsl = $isSsl;
-        $this->_response = $response;
     }
 
     /**

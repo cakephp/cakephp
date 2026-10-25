@@ -26,16 +26,10 @@ use Cake\Utility\Hash;
 class TestSession
 {
     /**
-     * @var array|null
-     */
-    protected ?array $session = null;
-
-    /**
      * @param array|null $session Session data.
      */
-    public function __construct(?array $session)
+    public function __construct(protected ?array $session)
     {
-        $this->session = $session;
     }
 
     /**

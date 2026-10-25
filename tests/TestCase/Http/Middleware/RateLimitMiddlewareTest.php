@@ -140,9 +140,7 @@ class RateLimitMiddlewareTest extends TestCase
             'limit' => 1,
             'window' => 60,
             'cache' => 'rate_limit_test',
-            'skipCheck' => function ($request) {
-                return $request->getParam('action') === 'health';
-            },
+            'skipCheck' => fn($request) => $request->getParam('action') === 'health',
         ]);
 
         $request = new ServerRequest([
@@ -170,9 +168,7 @@ class RateLimitMiddlewareTest extends TestCase
             'limit' => 1,
             'window' => 60,
             'cache' => 'rate_limit_test',
-            'identifierCallback' => function ($request) {
-                return $request->getHeaderLine('X-API-Key');
-            },
+            'identifierCallback' => fn($request) => $request->getHeaderLine('X-API-Key'),
         ]);
 
         $request1 = (new ServerRequest())->withHeader('X-API-Key', 'key1');
@@ -198,9 +194,7 @@ class RateLimitMiddlewareTest extends TestCase
             'limit' => 10,
             'window' => 60,
             'cache' => 'rate_limit_test',
-            'costCallback' => function ($request) {
-                return $request->getMethod() === 'POST' ? 5 : 1;
-            },
+            'costCallback' => fn($request) => $request->getMethod() === 'POST' ? 5 : 1,
         ]);
 
         $getRequest = new ServerRequest([

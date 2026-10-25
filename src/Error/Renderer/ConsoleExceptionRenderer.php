@@ -33,11 +33,6 @@ use Throwable;
 class ConsoleExceptionRenderer implements ExceptionRendererInterface
 {
     /**
-     * @var \Throwable
-     */
-    private Throwable $error;
-
-    /**
      * @var \Cake\Console\ConsoleOutput
      */
     private ConsoleOutput $output;
@@ -54,9 +49,8 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ServerRequestInterface|null $request Not used.
      * @param array $config Error handling configuration.
      */
-    public function __construct(Throwable $error, ?ServerRequestInterface $request, array $config)
+    public function __construct(private Throwable $error, ?ServerRequestInterface $request, array $config)
     {
-        $this->error = $error;
         $this->output = $config['stderr'] ?? new ConsoleOutput('php://stderr');
         $this->trace = $config['trace'] ?? true;
     }

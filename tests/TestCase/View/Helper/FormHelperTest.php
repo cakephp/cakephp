@@ -226,9 +226,7 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1]);
 
         $widget->shouldHaveReceived('render')
-            ->withArgs(function (array $data) {
-                return $data === ['val' => 1];
-            })
+            ->withArgs(fn(array $data) => $data === ['val' => 1])
             ->once();
     }
 
@@ -249,9 +247,7 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
 
         $widget->shouldHaveReceived('render')
-            ->withArgs(function (array $data) {
-                return $data === ['val' => 1, 'name' => 'test'];
-            })
+            ->withArgs(fn(array $data) => $data === ['val' => 1, 'name' => 'test'])
             ->once();
         $widget->shouldHaveReceived('secureFields')
             ->with(['val' => 1, 'name' => 'test'])
@@ -303,9 +299,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = new StubContext();
-        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
-            return $stub;
-        });
+        $this->Form->addContextProvider('orm', fn($request, $data) => $stub);
         $this->Form->create($entity);
         $result = $this->Form->context();
         $this->assertSame($stub, $result);

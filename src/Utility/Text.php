@@ -1274,15 +1274,11 @@ class Text
             throw new InvalidArgumentException('Mask character must be a single character.');
         }
 
-        $escapedForRegex = array_map(function (string $needle) {
-            return preg_quote($needle, '/');
-        }, $needles);
+        $escapedForRegex = array_map(fn(string $needle) => preg_quote($needle, '/'), $needles);
 
         $regexPattern = '/' . implode('|', $escapedForRegex) . '/u';
 
-        return (string)preg_replace_callback($regexPattern, function ($matches) use ($maskCharacter) {
-            return str_repeat($maskCharacter, mb_strlen($matches[0]));
-        }, $string);
+        return (string)preg_replace_callback($regexPattern, fn($matches) => str_repeat($maskCharacter, mb_strlen($matches[0])), $string);
     }
 
     /**
@@ -1313,9 +1309,7 @@ class Text
         }
 
         foreach ($patterns as $regex) {
-            $string = (string)preg_replace_callback($regex, function ($matches) use ($maskCharacter) {
-                return str_repeat($maskCharacter, mb_strlen($matches[0]));
-            }, $string);
+            $string = (string)preg_replace_callback($regex, fn($matches) => str_repeat($maskCharacter, mb_strlen($matches[0])), $string);
         }
 
         return $string;

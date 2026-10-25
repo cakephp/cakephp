@@ -27,27 +27,6 @@ use Cake\Core\Exception\CakeException;
 class Event implements EventInterface
 {
     /**
-     * Name of the event
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
-     * The object this event applies to (usually the same object that generates the event)
-     *
-     * @var TSubject|null
-     */
-    protected ?object $_subject = null;
-
-    /**
-     * Custom data for the method that receives the event
-     *
-     * @var array
-     */
-    protected array $_data;
-
-    /**
      * Property used to retain the result value of the event listeners
      *
      * Use setResult() and getResult() to set and get the result.
@@ -73,17 +52,27 @@ class Event implements EventInterface
      *  $event = new Event('User.afterRegister', $userModel);
      * ```
      *
-     * @param string $name Name of the event
-     * @param TSubject|null $subject the object that this event applies to
+     * @param string $_name Name of the event
+     * @param TSubject|null $_subject the object that this event applies to
      *   (usually the object that is generating the event).
-     * @param array $data any value you wish to be transported
+     * @param array $_data any value you wish to be transported
      *   with this event to it can be read by listeners.
      */
-    public function __construct(string $name, ?object $subject = null, array $data = [])
+    public function __construct(
+        /**
+         * Name of the event
+         */
+        protected string $_name,
+        /**
+         * The object this event applies to (usually the same object that generates the event)
+         */
+        protected ?object $_subject = null,
+        /**
+         * Custom data for the method that receives the event
+         */
+        protected array $_data = []
+    )
     {
-        $this->_name = $name;
-        $this->_subject = $subject;
-        $this->_data = $data;
     }
 
     /**

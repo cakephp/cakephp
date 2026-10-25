@@ -637,15 +637,11 @@ class ControllerTest extends TestCase
 
         $eventManager
             ->shouldHaveReceived('dispatch')
-            ->withArgs(function ($event) {
-                return $event->getName() === 'Controller.initialize';
-            });
+            ->withArgs(fn($event) => $event->getName() === 'Controller.initialize');
 
         $eventManager
             ->shouldHaveReceived('dispatch')
-            ->withArgs(function ($event) {
-                return $event->getName() === 'Controller.startup';
-            });
+            ->withArgs(fn($event) => $event->getName() === 'Controller.startup');
     }
 
     /**
@@ -659,9 +655,7 @@ class ControllerTest extends TestCase
 
         $eventManager->shouldHaveReceived('dispatch')
             ->once()
-            ->withArgs(function ($event) {
-                return $event->getName() === 'Controller.shutdown';
-            });
+            ->withArgs(fn($event) => $event->getName() === 'Controller.shutdown');
     }
 
     /**
@@ -1011,9 +1005,7 @@ class ControllerTest extends TestCase
     public function testLoadComponentWithContainer(): void
     {
         $container = new Container();
-        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
-            return new FlashComponent($registry, $config);
-        })
+        $container->add(FlashComponent::class, fn(ComponentRegistry $registry, array $config) => new FlashComponent($registry, $config))
         ->addArgument(ComponentRegistry::class)
         ->addArgument(['key' => 'customFlash']);
 

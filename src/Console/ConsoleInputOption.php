@@ -28,34 +28,6 @@ use SimpleXMLElement;
 class ConsoleInputOption
 {
     /**
-     * Name of the option
-     *
-     * @var string
-     */
-    protected string $_name;
-
-    /**
-     * Short (1 character) alias for the option.
-     *
-     * @var string
-     */
-    protected string $_short;
-
-    /**
-     * Help text for the option.
-     *
-     * @var string
-     */
-    protected string $_help;
-
-    /**
-     * Is the option a boolean option. Boolean options do not consume a parameter.
-     *
-     * @var bool
-     */
-    protected bool $_boolean;
-
-    /**
      * Default value for the option
      *
      * @var string|bool|null
@@ -63,77 +35,59 @@ class ConsoleInputOption
     protected string|bool|null $_default = null;
 
     /**
-     * Can the option accept multiple value definition.
-     *
-     * @var bool
-     */
-    protected bool $_multiple;
-
-    /**
-     * An array of choices for the option.
-     *
-     * @var array<string>
-     */
-    protected array $_choices;
-
-    /**
-     * The prompt string
-     *
-     * @var string|null
-     */
-    protected ?string $prompt = null;
-
-    /**
-     * Is the option required.
-     *
-     * @var bool
-     */
-    protected bool $required;
-
-    /**
-     * The multiple separator.
-     *
-     * @var string|null
-     */
-    protected ?string $_separator = null;
-
-    /**
      * Make a new Input Option
      *
-     * @param string $name The long name of the option, or an array with all the properties.
-     * @param string $short The short alias for this option
-     * @param string $help The help text for this option
-     * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
+     * @param string $_name The long name of the option, or an array with all the properties.
+     * @param string $_short The short alias for this option
+     * @param string $_help The help text for this option
+     * @param bool $_boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
-     * @param array<string> $choices Valid choices for this option.
-     * @param bool $multiple Whether this option can accept multiple value definition.
+     * @param array<string> $_choices Valid choices for this option.
+     * @param bool $_multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
      * @param string|null $prompt The prompt string.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        string $name,
-        string $short = '',
-        string $help = '',
-        bool $isBoolean = false,
+        /**
+         * Name of the option
+         */
+        protected string $_name,
+        /**
+         * Short (1 character) alias for the option.
+         */
+        protected string $_short = '',
+        /**
+         * Help text for the option.
+         */
+        protected string $_help = '',
+        /**
+         * Is the option a boolean option. Boolean options do not consume a parameter.
+         */
+        protected bool $_boolean = false,
         string|bool|null $default = null,
-        array $choices = [],
-        bool $multiple = false,
-        bool $required = false,
-        ?string $prompt = null,
-        ?string $separator = null,
+        /**
+         * An array of choices for the option.
+         */
+        protected array $_choices = [],
+        /**
+         * Can the option accept multiple value definition.
+         */
+        protected bool $_multiple = false,
+        /**
+         * Is the option required.
+         */
+        protected bool $required = false,
+        /**
+         * The prompt string
+         */
+        protected ?string $prompt = null,
+        /**
+         * The multiple separator.
+         */
+        protected ?string $_separator = null,
     ) {
-        $this->_name = $name;
-        $this->_short = $short;
-        $this->_help = $help;
-        $this->_boolean = $isBoolean;
-        $this->_choices = $choices;
-        $this->_multiple = $multiple;
-        $this->required = $required;
-        $this->prompt = $prompt;
-        $this->_separator = $separator;
-
-        if ($isBoolean) {
+        if ($this->_boolean) {
             $this->_default = (bool)$default;
         } elseif ($default !== null) {
             $this->_default = (string)$default;
