@@ -661,17 +661,19 @@ eos;
      */
     public function testSetOutputMask(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
-        $result = Debugger::outputMask();
-        $this->assertEquals('[**********]', $result['password']);
-        $this->assertEquals('********', $result['login']);
-        $this->assertEquals('********', $result['host']);
-        Debugger::setOutputMask(['serial' => 'XXXXXX']);
-        $result = Debugger::outputMask();
-        $this->assertEquals('[**********]', $result['password']);
-        $this->assertEquals('XXXXXX', $result['serial']);
-        Debugger::setOutputMask([], false);
-        $this->assertSame([], Debugger::outputMask());
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $result = Debugger::outputMask();
+            $this->assertEquals('[**********]', $result['password']);
+            $this->assertEquals('********', $result['login']);
+            $this->assertEquals('********', $result['host']);
+            Debugger::setOutputMask(['serial' => 'XXXXXX']);
+            $result = Debugger::outputMask();
+            $this->assertEquals('[**********]', $result['password']);
+            $this->assertEquals('XXXXXX', $result['serial']);
+            Debugger::setOutputMask([], false);
+            $this->assertSame([], Debugger::outputMask());
+        });
     }
 
     /**
@@ -679,13 +681,15 @@ eos;
      */
     public function testConfigureOutputMask(): void
     {
-        Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
-        Debugger::getInstance(TestDebugger::class);
-        Debugger::getInstance(Debugger::class);
+        $this->deprecated(function (): void {
+            Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
+            Debugger::getInstance(TestDebugger::class);
+            Debugger::getInstance(Debugger::class);
 
-        $result = Debugger::exportVar(['wow' => 'pass1234']);
-        $this->assertStringContainsString('xxx', $result);
-        $this->assertStringNotContainsString('pass1234', $result);
+            $result = Debugger::exportVar(['wow' => 'pass1234']);
+            $this->assertStringContainsString('xxx', $result);
+            $this->assertStringNotContainsString('pass1234', $result);
+        });
     }
 
     /**
@@ -693,10 +697,12 @@ eos;
      */
     public function testMaskArray(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
-        $result = Debugger::exportVar(['password' => 'pass1234']);
-        $expected = "['password'=>'[**********]']";
-        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $result = Debugger::exportVar(['password' => 'pass1234']);
+            $expected = "['password'=>'[**********]']";
+            $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        });
     }
 
     /**
@@ -704,11 +710,13 @@ eos;
      */
     public function testMaskObject(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
-        $object = new SecurityThing();
-        $result = Debugger::exportVar($object);
-        $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
-        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $object = new SecurityThing();
+            $result = Debugger::exportVar($object);
+            $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
+            $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        });
     }
 
     /**
@@ -732,14 +740,12 @@ eos;
         $this->assertArrayHasKey('host', $mask);
         $this->assertArrayHasKey('database', $mask);
         $this->assertArrayHasKey('port', $mask);
-        $this->assertArrayHasKey('prefix', $mask);
         $this->assertArrayHasKey('schema', $mask);
         $this->assertSame('********', $mask['password']);
         $this->assertSame('********', $mask['login']);
         $this->assertSame('********', $mask['host']);
         $this->assertSame('********', $mask['database']);
         $this->assertSame('********', $mask['port']);
-        $this->assertSame('********', $mask['prefix']);
         $this->assertSame('********', $mask['schema']);
     }
 
@@ -748,11 +754,13 @@ eos;
      */
     public function testCustomMaskMergesWithDefaults(): void
     {
-        Debugger::setOutputMask(['api_key' => 'SECRET']);
-        $mask = Debugger::outputMask();
-        $this->assertSame('SECRET', $mask['api_key']);
-        $this->assertSame('********', $mask['password']);
-        $this->assertSame('********', $mask['host']);
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['api_key' => 'SECRET']);
+            $mask = Debugger::outputMask();
+            $this->assertSame('SECRET', $mask['api_key']);
+            $this->assertSame('********', $mask['password']);
+            $this->assertSame('********', $mask['host']);
+        });
     }
 
     /**

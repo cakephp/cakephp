@@ -20,6 +20,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests FunctionExpression class
@@ -30,6 +31,12 @@ class FunctionExpressionTest extends TestCase
      * @var string The expression class to test with
      */
     protected $expressionClass = FunctionExpression::class;
+
+    public function testInvalidName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new FunctionExpression('OR 1 = 1', [1]);
+    }
 
     /**
      * Tests generating a function with no arguments
