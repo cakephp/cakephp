@@ -870,4 +870,20 @@ class QueryExpression implements ExpressionInterface, Countable
             }
         }
     }
+
+    /**
+     * Ensures that string values are simple ascii values with no whitespace
+     *
+     * @param string $parameterName The name of the parameter being checked.
+     * @param string $value The value to check
+     * @return void
+     * @internal
+     */
+    public static function ensureSimpleString(string $parameterName, string $value): void
+    {
+        if (preg_match('/^(?:[\'"])?[a-zA-Z0-9_\.]+(?:[\'"])?$/', $value)) {
+            return;
+        }
+        throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
+    }
 }
