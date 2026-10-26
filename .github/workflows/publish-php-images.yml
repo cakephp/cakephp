@@ -102,6 +102,9 @@ jobs:
       # Report-only: a CVE with no upstream fix should not block publishing.
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          # Trivy defaults to linux/amd64, even on ARM runners.
+          TRIVY_PLATFORM: ${{ matrix.platform }}
         with:
           image-ref: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
           scanners: vuln
