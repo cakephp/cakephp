@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Html;
+use Cake\View\HtmlString;
 use Cake\View\HtmlStringable;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -28,7 +28,7 @@ use function Cake\Core\h;
 /**
  * Tests trusted HTML values and content escaping.
  */
-class HtmlTest extends TestCase
+class HtmlStringTest extends TestCase
 {
     /**
      * Verify that markup survives rendering and serialization unchanged.
@@ -38,10 +38,10 @@ class HtmlTest extends TestCase
     #[DataProvider('valueProvider')]
     public function testValue(string $value): void
     {
-        $html = new Html($value);
+        $html = new HtmlString($value);
 
         $this->assertSame($value, (string)$html);
-        $this->assertSame($value, Html::render($html));
+        $this->assertSame($value, HtmlString::render($html));
         $this->assertSame(json_encode($value), json_encode($html));
         $this->assertEquals($html, unserialize(serialize($html)));
     }
@@ -68,10 +68,10 @@ class HtmlTest extends TestCase
     {
         $this->assertSame(
             '&lt;strong&gt;&quot;Save&quot; &amp; &#039;continue&#039;&lt;/strong&gt;',
-            Html::render('<strong>"Save" & \'continue\'</strong>'),
+            HtmlString::render('<strong>"Save" & \'continue\'</strong>'),
         );
-        $this->assertSame('&amp;amp;', Html::render('&amp;'));
-        $this->assertSame("\u{FFFD}&lt;", Html::render("\xFF<"));
+        $this->assertSame('&amp;amp;', HtmlString::render('&amp;'));
+        $this->assertSame("\u{FFFD}&lt;", HtmlString::render("\xFF<"));
     }
 
     /**
@@ -84,7 +84,7 @@ class HtmlTest extends TestCase
         $encoding = mb_internal_encoding();
         try {
             mb_internal_encoding('ISO-8859-1');
-            $this->assertSame("\xE9&lt;", Html::render("\xE9<"));
+            $this->assertSame("\xE9&lt;", HtmlString::render("\xE9<"));
         } finally {
             mb_internal_encoding($encoding);
         }
@@ -98,7 +98,7 @@ class HtmlTest extends TestCase
         $html = Mockery::mock(HtmlStringable::class);
         $html->shouldReceive('__toString')->andReturn('<em>Custom</em>');
 
-        $this->assertSame('<em>Custom</em>', Html::render($html));
+        $this->assertSame('<em>Custom</em>', HtmlString::render($html));
         $this->assertSame('&lt;em&gt;Custom&lt;/em&gt;', h($html));
     }
 }

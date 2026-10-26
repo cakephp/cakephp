@@ -24,7 +24,7 @@ use function Cake\Core\h;
  *
  * This class marks markup as trusted; it does not sanitize it.
  */
-final readonly class Html implements HtmlStringable, JsonSerializable
+final readonly class HtmlString implements HtmlStringable, JsonSerializable
 {
     /**
      * Wrap trusted markup without escaping it.
