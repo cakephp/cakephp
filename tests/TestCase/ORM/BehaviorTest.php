@@ -129,7 +129,7 @@ class BehaviorTest extends TestCase
         $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table);
         $expected = [
-            'doSomething' => 'doSomething',
+            'dosomething' => 'dosomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -146,7 +146,7 @@ class BehaviorTest extends TestCase
             ],
         ]);
         $expected = [
-            'aliased' => 'doSomething',
+            'aliased' => 'dosomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -184,8 +184,8 @@ class BehaviorTest extends TestCase
             'implementedMethods' => true,
         ]);
         $expected = [
-            'doSomething' => 'doSomething',
-            'testReflectionCache' => 'testReflectionCache',
+            'dosomething' => 'dosomething',
+            'testreflectioncache' => 'testreflectioncache',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -201,8 +201,8 @@ class BehaviorTest extends TestCase
             'implementedMethods' => ['doSomething', 'aliased' => 'doSomething'],
         ]);
         $expected = [
-            'doSomething' => 'doSomething',
-            'aliased' => 'doSomething',
+            'dosomething' => 'dosomething',
+            'aliased' => 'dosomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
     }
@@ -218,9 +218,41 @@ class BehaviorTest extends TestCase
             'implementedMethods' => ['doSomething'],
         ]);
         $expected = [
-            'doSomething' => 'doSomething',
+            'dosomething' => 'dosomething',
         ];
         $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * Alias keys and method names are lowercased in the generated map
+     * as method resolution is case-insensitive.
+     */
+    public function testImplementedMethodsAreLowercased(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test3Behavior($table, [
+            'implementedMethods' => ['DoAlias' => 'DoSomething'],
+        ]);
+        $expected = [
+            'doalias' => 'dosomething',
+        ];
+        $this->assertEquals($expected, $behavior->implementedMethods());
+    }
+
+    /**
+     * The generated map is memoized on first read, later changes to the
+     * `implementedMethods` config do not refresh it.
+     */
+    public function testImplementedMethodsCachedAfterFirstRead(): void
+    {
+        $table = Mockery::mock(Table::class);
+        $behavior = new Test3Behavior($table, [
+            'implementedMethods' => ['DoAlias' => 'DoSomething'],
+        ]);
+        $this->assertSame(['doalias' => 'dosomething'], $behavior->implementedMethods());
+
+        $behavior->setConfig('implementedMethods', ['other' => 'doSomething'], false);
+        $this->assertSame(['doalias' => 'dosomething'], $behavior->implementedMethods());
     }
 
     /**

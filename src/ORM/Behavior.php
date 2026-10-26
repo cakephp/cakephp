@@ -138,6 +138,15 @@ class Behavior implements EventListenerInterface
     protected array $defaultConfig = [];
 
     /**
+     * Cached, normalized map of proxied methods.
+     *
+     * Generated on first read and reused for subsequent calls.
+     *
+     * @var array<string, string>|null
+     */
+    private ?array $implementedMethods = null;
+
+    /**
      * Constructor
      *
      * Merges config with the default and store in the config property
@@ -361,28 +370,37 @@ class Behavior implements EventListenerInterface
      *  ['method' => 'method', 'somethingElse' => 'somethingElse']
      * ```
      *
+     * The generated map is normalized: alias keys and method names are
+     * lowercased, as method resolution is case-insensitive. Consumers can
+     * compare against it without having to normalize case themselves.
+     *
+     * The generated map is memoized on first read. Later changes to the
+     * `implementedMethods` config do not refresh it.
+     *
      * @return array<string, string>
      * @throws \ReflectionException
      */
     public function implementedMethods(): array
     {
+        if ($this->implementedMethods !== null) {
+            return $this->implementedMethods;
+        }
+
         $methods = $this->getConfig('implementedMethods');
         if ($methods === true) {
-            return $this->reflectionCache()['methods'];
+            $methods = $this->reflectionCache()['methods'];
+        } elseif (!is_array($methods)) {
+            $methods = [];
         }
 
-        if (!is_array($methods)) {
-            return [];
-        }
-
-        // Support numerically indexed lists of method names, where each
-        // value is used as its own alias key.
+        // Support numerically indexed method names, where each value is used as its own alias key.
         $map = [];
         foreach ($methods as $key => $method) {
-            $map[is_int($key) ? $method : $key] = $method;
+            $key = is_int($key) ? $method : $key;
+            $map[strtolower($key)] = strtolower($method);
         }
 
-        return $map;
+        return $this->implementedMethods = $map;
     }
 
     /**

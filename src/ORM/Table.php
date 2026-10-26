@@ -3380,24 +3380,27 @@ class Table implements
     }
 
     /**
-     * Get the object that should be used to invoke a validation rule method.
+     * Get the object and method that should be used to invoke a validation rule method.
      *
      * Resolves rule methods provided by behaviors, when the behavior's
-     * `implementedMethods` config is set.
+     * `implementedMethods` config is set. The rule method name is matched
+     * against the configured alias keys, case-insensitively.
      *
      * @param string $method The name of the rule method.
-     * @return object|null Object providing the method, or null to invoke the
-     *   method on the table itself.
+     * @return array{0: object, 1: string}|null Provider and method to invoke,
+     *   or null to invoke the method on the table itself.
      */
-    public function resolveRuleProvider(string $method): ?object
+    public function resolveRuleProvider(string $method): ?array
     {
         if (method_exists($this, $method) || !$this->behaviors->hasMethod($method)) {
             return null;
         }
 
+        $needle = strtolower($method);
         foreach ($this->behaviors as $behavior) {
-            if (in_array($method, $behavior->implementedMethods(), true)) {
-                return $behavior;
+            $map = $behavior->implementedMethods();
+            if (isset($map[$needle])) {
+                return [$behavior, $map[$needle]];
             }
         }
 

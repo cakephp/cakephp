@@ -18,22 +18,22 @@ namespace Cake\Validation;
 
 /**
  * Interface for rule providers that can resolve a validation rule's method
- * to an alternate object.
+ * to an alternate object and method name.
  *
  * Rule providers implementing this interface allow validators to invoke a
  * rule's method on another object, e.g. ORM tables resolving rule methods
- * provided by behaviors. Resolving the provider object before the rule's
- * callable is created ensures the method's signature can be correctly
- * reflected for passing the validation context.
+ * provided by behaviors. Resolving the provider and method before the
+ * rule's callable is created ensures the method's signature can be
+ * correctly reflected for passing the validation context.
  */
 interface RuleProviderResolverInterface
 {
     /**
-     * Get the object that should be used to invoke the given rule method.
+     * Get the object and method that should be used to invoke the given rule method.
      *
      * @param string $method The name of the rule method.
-     * @return object|null Object providing the method, or null to invoke the
-     *   method on the provider itself.
+     * @return array{0: object, 1: string}|null Provider and method to invoke,
+     *   or null to invoke the method on the provider itself.
      */
-    public function resolveRuleProvider(string $method): ?object;
+    public function resolveRuleProvider(string $method): ?array;
 }

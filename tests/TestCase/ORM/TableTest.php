@@ -3681,7 +3681,19 @@ class TableTest extends TestCase
         $table->addBehavior('Validation', ['implementedMethods' => true]);
 
         $behavior = $table->getBehavior('Validation');
-        $this->assertSame($behavior, $table->resolveRuleProvider('customValidationRule'));
+        $this->assertSame([$behavior, 'customvalidationrule'], $table->resolveRuleProvider('customValidationRule'));
+
+        // Rule method names are matched case-insensitively.
+        $this->assertSame([$behavior, 'customvalidationrule'], $table->resolveRuleProvider('CustomValidationRule'));
+        $this->assertSame([$behavior, 'customvalidationrule'], $table->resolveRuleProvider('CUSTOMVALIDATIONRULE'));
+
+        // Aliased methods resolve to the behavior and its target method.
+        $table2 = new Table(['table' => 'articles']);
+        $table2->addBehavior('Validation', ['implementedMethods' => ['myRule' => 'customValidationRule']]);
+        $this->assertSame(
+            [$table2->getBehavior('Validation'), 'customvalidationrule'],
+            $table2->resolveRuleProvider('myRule'),
+        );
 
         // Methods declared on the table itself are not resolved.
         $this->assertNull($table->resolveRuleProvider('getEventManager'));
@@ -3690,9 +3702,67 @@ class TableTest extends TestCase
         $this->assertNull($table->resolveRuleProvider('nope'));
 
         // Behaviors which have not opted in to method proxying are not resolved.
-        $table2 = new Table(['table' => 'articles']);
-        $table2->addBehavior('Validation');
-        $this->assertNull($table2->resolveRuleProvider('customValidationRule'));
+        $table3 = new Table(['table' => 'articles']);
+        $table3->addBehavior('Validation');
+        $this->assertNull($table3->resolveRuleProvider('customValidationRule'));
+    }
+
+    /**
+     * Tests that a validation rule can use a behavior method with the table
+     * as the provider, regardless of the case of the method name.
+     */
+    public function testValidatorWithMethodInBehaviorCaseInsensitive(): void
+    {
+        $table = new Table();
+        $table->addBehavior('Validation', ['implementedMethods' => true]);
+
+        $table->getValidator('default')->add(
+            'name',
+            'customValidationRule',
+            ['rule' => 'CustomValidationRule', 'provider' => 'table'],
+        );
+
+        $result = $table->getValidator('default')->validate([
+            'name' => 'test',
+        ], true);
+
+        $this->assertSame(
+            [
+                'name' => [
+                    'customValidationRule' => 'The provided value is invalid',
+                ],
+            ],
+            $result,
+        );
+    }
+
+    /**
+     * Tests that a validation rule can be named by a behavior method alias,
+     * with the context passed through to the aliased method.
+     */
+    public function testValidatorWithAliasedMethodInBehavior(): void
+    {
+        $table = new Table();
+        $table->addBehavior('Validation', ['implementedMethods' => ['myRule' => 'customValidationRule']]);
+
+        $table->getValidator('default')->add(
+            'name',
+            'myRule',
+            ['rule' => 'myRule', 'provider' => 'table'],
+        );
+
+        $result = $table->getValidator('default')->validate([
+            'name' => 'test',
+        ], true);
+
+        $this->assertSame(
+            [
+                'name' => [
+                    'myRule' => 'The provided value is invalid',
+                ],
+            ],
+            $result,
+        );
     }
 
     /**

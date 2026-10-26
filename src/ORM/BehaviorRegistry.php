@@ -173,7 +173,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     protected function getMethods(Behavior $instance, string $class, string $alias): array
     {
         $finders = array_change_key_case($instance->implementedFinders());
-        $methods = array_change_key_case($instance->implementedMethods());
+        $methods = $instance->implementedMethods();
 
         foreach ($finders as $finder => $methodName) {
             if (isset($this->finderMap[$finder]) && $this->has($this->finderMap[$finder][0])) {
@@ -237,8 +237,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = $this->get($name);
         $result = parent::unload($name);
 
-        $methods = array_map('strtolower', array_keys($instance->implementedMethods()));
-        foreach ($methods as $method) {
+        foreach (array_keys($instance->implementedMethods()) as $method) {
             unset($this->methodMap[$method]);
         }
         $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
