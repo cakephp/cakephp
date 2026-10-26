@@ -40,7 +40,6 @@ class HtmlTest extends TestCase
     {
         $html = new Html($value);
 
-        $this->assertSame($value, $html->value);
         $this->assertSame($value, (string)$html);
         $this->assertSame($value, Html::render($html));
         $this->assertSame(json_encode($value), json_encode($html));

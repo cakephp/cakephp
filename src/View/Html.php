@@ -31,7 +31,7 @@ final readonly class Html implements HtmlStringable, JsonSerializable
      *
      * @param string $value The trusted HTML.
      */
-    public function __construct(public string $value)
+    public function __construct(private string $value)
     {
     }
 
