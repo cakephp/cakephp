@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
-use Cake\View\Html;
+use Cake\View\HtmlString;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\LabelWidget;
 use Mockery;
@@ -59,8 +59,8 @@ class LabelWidgetTest extends TestCase
     {
         $widget = new LabelWidget($this->templates);
         $result = $widget->render([
-            'text' => new Html('<strong>Content</strong>'),
-            'title' => new Html('"Title" & more'),
+            'text' => new HtmlString('<strong>Content</strong>'),
+            'title' => new HtmlString('"Title" & more'),
             'escape' => true,
         ], $this->context);
         $this->assertStringContainsString('<strong>Content</strong>', $result);

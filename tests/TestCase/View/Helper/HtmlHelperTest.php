@@ -25,7 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
-use Cake\View\Html;
+use Cake\View\HtmlString;
 use Cake\View\HtmlStringable;
 use Cake\View\View;
 use InvalidArgumentException;
@@ -345,7 +345,7 @@ class HtmlHelperTest extends TestCase
         foreach ([true, false, 'UTF-8'] as $escape) {
             $result = $this->Html->link($content, '/save', [
                 'escape' => $escape,
-                'title' => new Html('"Save" & continue'),
+                'title' => new HtmlString('"Save" & continue'),
             ]);
             $this->assertSame(
                 '<a href="/save" title="&quot;Save&quot; &amp; continue"><strong>Save</strong></a>',
@@ -359,7 +359,7 @@ class HtmlHelperTest extends TestCase
         );
         $this->assertSame(
             '<a href="/articles"><strong>Save</strong></a>',
-            $this->Html->linkFromPath(new Html('<strong>Save</strong>'), 'Articles::index'),
+            $this->Html->linkFromPath(new HtmlString('<strong>Save</strong>'), 'Articles::index'),
         );
     }
 
@@ -370,7 +370,7 @@ class HtmlHelperTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('An explicit URL is required for trusted HTML link content.');
-        $this->Html->link(new Html('<strong>Save</strong>'));
+        $this->Html->link(new HtmlString('<strong>Save</strong>'));
     }
 
     /**
@@ -378,8 +378,8 @@ class HtmlHelperTest extends TestCase
      */
     public function testContainersTrustedHtml(): void
     {
-        $html = new Html('<em>Content</em>');
-        $options = ['escape' => true, 'title' => new Html('"Title" & more')];
+        $html = new HtmlString('<em>Content</em>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Title" & more')];
         $this->assertSame(
             '<section title="&quot;Title&quot; &amp; more"><em>Content</em></section>',
             $this->Html->tag('section', $html, $options),
@@ -392,7 +392,7 @@ class HtmlHelperTest extends TestCase
             '<p title="&quot;Title&quot; &amp; more"><em>Content</em></p>',
             $this->Html->para(null, $html, $options),
         );
-        $this->assertSame('<div></div>', $this->Html->div(null, new Html('')));
+        $this->assertSame('<div></div>', $this->Html->div(null, new HtmlString('')));
     }
 
     public function testLinkFromPath(): void

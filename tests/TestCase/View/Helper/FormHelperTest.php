@@ -39,7 +39,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\FormContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
-use Cake\View\Html;
+use Cake\View\HtmlString;
 use Cake\View\View;
 use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\WidgetInterface;
@@ -156,8 +156,8 @@ class FormHelperTest extends TestCase
      */
     public function testActionsTrustedHtml(): void
     {
-        $content = new Html('<strong>Save</strong>');
-        $options = ['escape' => true, 'title' => new Html('"Save" & continue')];
+        $content = new HtmlString('<strong>Save</strong>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Save" & continue')];
         $results = [
             $this->Form->button($content, $options),
             $this->Form->postButton($content, '/save', $options),
@@ -175,14 +175,14 @@ class FormHelperTest extends TestCase
      */
     public function testLabelsTrustedHtml(): void
     {
-        $content = new Html('<strong>Name</strong>');
-        $options = ['escape' => true, 'title' => new Html('"Name" & more')];
+        $content = new HtmlString('<strong>Name</strong>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Name" & more')];
         $this->assertSame(
             '<label title="&quot;Name&quot; &amp; more" for="name"><strong>Name</strong></label>',
             $this->Form->label('name', $content, $options),
         );
         foreach (['text', 'checkbox'] as $type) {
-            foreach ([$content, ['text' => $content, 'title' => new Html('"Name" & more')]] as $label) {
+            foreach ([$content, ['text' => $content, 'title' => new HtmlString('"Name" & more')]] as $label) {
                 $result = $this->Form->control('name', ['type' => $type, 'label' => $label]);
                 $this->assertStringContainsString('<strong>Name</strong></label>', $result);
                 $this->assertStringContainsString('<input', $result);
@@ -196,7 +196,7 @@ class FormHelperTest extends TestCase
     public function testChoiceLabelsTrustedHtml(): void
     {
         $options = [
-            ['value' => '"value"', 'text' => new Html('<strong>Choice</strong>')],
+            ['value' => '"value"', 'text' => new HtmlString('<strong>Choice</strong>')],
             ['value' => 'other', 'text' => '<em>Other</em>'],
         ];
         foreach (['radio', 'multiCheckbox'] as $method) {
@@ -205,7 +205,7 @@ class FormHelperTest extends TestCase
             $this->assertStringContainsString('&lt;em&gt;Other&lt;/em&gt;</label>', $result);
             $this->assertStringContainsString('value="&quot;value&quot;"', $result);
         }
-        $result = $this->Form->radio('choice', [new Html('<strong>Choice</strong>')]);
+        $result = $this->Form->radio('choice', [new HtmlString('<strong>Choice</strong>')]);
         $this->assertStringContainsString('<strong>Choice</strong></label>', $result);
     }
 
@@ -218,7 +218,7 @@ class FormHelperTest extends TestCase
             'name' => ['required' => 'Required', 'invalid' => '<em>Invalid</em>', 'length' => '<em>Too long</em>'],
         ];
         $this->Form->create($this->article);
-        $content = new Html('<strong>Required</strong>');
+        $content = new HtmlString('<strong>Required</strong>');
         $this->assertStringContainsString('<strong>Required</strong>', $this->Form->error('name', $content));
         $errors = ['required' => $content, 'invalid' => '<em>Override</em>'];
         foreach (
@@ -244,12 +244,12 @@ class FormHelperTest extends TestCase
     public function testContextErrorsRemainEscaped(): void
     {
         $this->article['errors'] = [
-            'name' => ['required' => 'Required', 'invalid' => new Html('<em>Invalid</em>')],
+            'name' => ['required' => 'Required', 'invalid' => new HtmlString('<em>Invalid</em>')],
         ];
         $this->Form->create($this->article);
         $this->assertStringContainsString('&lt;em&gt;Invalid&lt;/em&gt;', $this->Form->error('name'));
 
-        $result = $this->Form->error('name', ['required' => new Html('<strong>Required</strong>')]);
+        $result = $this->Form->error('name', ['required' => new HtmlString('<strong>Required</strong>')]);
         $this->assertStringContainsString('<strong>Required</strong>', $result);
         $this->assertStringContainsString('&lt;em&gt;Invalid&lt;/em&gt;', $result);
     }
@@ -259,7 +259,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtmlInTextOnlyPositions(): void
     {
-        $html = new Html('<strong>Value</strong>');
+        $html = new HtmlString('<strong>Value</strong>');
         $this->assertStringContainsString(
             'value="&lt;strong&gt;Value&lt;/strong&gt;"',
             $this->Form->text('name', ['value' => $html]),
