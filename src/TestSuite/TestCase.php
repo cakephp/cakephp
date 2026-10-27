@@ -82,6 +82,13 @@ abstract class TestCase extends BaseTestCase
     protected array $appPluginsToLoad = [];
 
     /**
+     * Plugins loaded before the test, restored at end of test.
+     *
+     * @var array<string, \Cake\Core\PluginInterface>
+     */
+    private array $pluginsBeforeTest = [];
+
+    /**
      * @var \Cake\Error\PhpError|null
      */
     private ?PhpError $_capturedError = null;
@@ -247,6 +254,7 @@ abstract class TestCase extends BaseTestCase
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
+        $this->pluginsBeforeTest = iterator_to_array(Plugin::getCollection());
         if (class_exists(Router::class, false)) {
             Router::reload();
         }
@@ -274,6 +282,7 @@ abstract class TestCase extends BaseTestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
+        $this->restorePlugins();
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
@@ -471,6 +480,23 @@ abstract class TestCase extends BaseTestCase
         $collection = Plugin::getCollection();
         foreach ($names as $name) {
             $collection->remove($name);
+        }
+    }
+
+    /**
+     * Restore the plugins that were loaded before the test, if the test changed them.
+     *
+     * @return void
+     */
+    private function restorePlugins(): void
+    {
+        $collection = Plugin::getCollection();
+        if (array_keys(iterator_to_array($collection)) === array_keys($this->pluginsBeforeTest)) {
+            return;
+        }
+        $collection->clear();
+        foreach ($this->pluginsBeforeTest as $plugin) {
+            $collection->add($plugin);
         }
     }
 

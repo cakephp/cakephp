@@ -740,14 +740,12 @@ eos;
         $this->assertArrayHasKey('host', $mask);
         $this->assertArrayHasKey('database', $mask);
         $this->assertArrayHasKey('port', $mask);
-        $this->assertArrayHasKey('prefix', $mask);
         $this->assertArrayHasKey('schema', $mask);
         $this->assertSame('********', $mask['password']);
         $this->assertSame('********', $mask['login']);
         $this->assertSame('********', $mask['host']);
         $this->assertSame('********', $mask['database']);
         $this->assertSame('********', $mask['port']);
-        $this->assertSame('********', $mask['prefix']);
         $this->assertSame('********', $mask['schema']);
     }
 

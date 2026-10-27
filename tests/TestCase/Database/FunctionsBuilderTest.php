@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
@@ -149,6 +150,25 @@ class FunctionsBuilderTest extends TestCase
 
         $function = $this->functions->stringAgg('name', ',', ['sort_order' => 'DESC']);
         $this->assertSame('STRING_AGG(name, :param0 ORDER BY sort_order DESC)', $function->sql(new ValueBinder()));
+    }
+
+    /**
+     * Tests generating a portable STRING_AGG() function
+     */
+    public function testStringAggInvalidOrder(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->functions->stringAgg('name', ',', 'OR 1=1');
+    }
+
+    /**
+     * Tests generating a portable STRING_AGG() function
+     */
+    public function testStringAggLiteralOrder(): void
+    {
+        $function = $this->functions->stringAgg('name', ',', new QueryExpression('1=1'));
+        $this->assertInstanceOf(StringAggExpression::class, $function);
+        $this->assertSame('STRING_AGG(name, :param0 ORDER BY 1=1)', $function->sql(new ValueBinder()));
     }
 
     /**
