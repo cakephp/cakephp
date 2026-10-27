@@ -1097,9 +1097,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function domain(int $tldLength = 1): string
     {
-        $host = $this->host();
+        $host = $this->hostName();
         if (!$host) {
             return '';
+        }
+        if ($this->isIpHost($host)) {
+            return $host;
         }
 
         $segments = explode('.', $host);
@@ -1117,14 +1120,48 @@ class ServerRequest implements ServerRequestInterface
      */
     public function subdomains(int $tldLength = 1): array
     {
-        $host = $this->host();
-        if (!$host) {
+        $host = $this->hostName();
+        if (!$host || $this->isIpHost($host)) {
             return [];
         }
 
         $segments = explode('.', $host);
 
         return array_slice($segments, 0, -1 * ($tldLength + 1));
+    }
+
+    /**
+     * Get the host without its port, for domain() and subdomains().
+     *
+     * @return string|null
+     */
+    protected function hostName(): ?string
+    {
+        $host = $this->host();
+        if (!$host) {
+            return $host;
+        }
+
+        if (str_starts_with($host, '[')) {
+            $end = strpos($host, ']');
+
+            return $end === false ? $host : substr($host, 0, $end + 1);
+        }
+
+        $colon = strrpos($host, ':');
+
+        return $colon === false ? $host : substr($host, 0, $colon);
+    }
+
+    /**
+     * Check whether a host name is an IP address, which has no domain or subdomains.
+     *
+     * @param string $host The host name, without a port.
+     * @return bool
+     */
+    protected function isIpHost(string $host): bool
+    {
+        return str_starts_with($host, '[') || filter_var($host, FILTER_VALIDATE_IP) !== false;
     }
 
     /**

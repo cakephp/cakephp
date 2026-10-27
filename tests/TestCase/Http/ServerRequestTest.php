@@ -709,6 +709,24 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test that domain() leaves out the port and keeps IP addresses whole.
+     */
+    public function testDomainWithPortOrIpAddress(): void
+    {
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com:8765']]);
+        $this->assertSame('example.com', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1');
+        $this->assertSame('127.0.0.1', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1:8765');
+        $this->assertSame('127.0.0.1', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '[::1]:8765');
+        $this->assertSame('[::1]', $request->domain());
+    }
+
+    /**
      * Test scheme() method.
      */
     public function testScheme(): void
@@ -742,6 +760,24 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_HOST', 'example.co.uk');
         $this->assertEquals([], $request->subdomains(2));
+    }
+
+    /**
+     * Test that subdomains() leaves out the port and finds none in IP addresses.
+     */
+    public function testSubdomainWithPortOrIpAddress(): void
+    {
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'www.something.example.com:8765']]);
+        $this->assertEquals(['www', 'something'], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1:8765');
+        $this->assertEquals([], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '192.168.0.10');
+        $this->assertEquals([], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '[2001:db8::1]:8765');
+        $this->assertEquals([], $request->subdomains());
     }
 
     /**
