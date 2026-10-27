@@ -325,7 +325,7 @@ class WindowExpressionTest extends TestCase
     public function testFrameInvalidStartEnd(string $start, string $end): void
     {
         $this->expectException(InvalidArgumentException::class);
-        (new WindowExpression())->frame(
+        new WindowExpression()->frame(
             WindowExpression::ROWS,
             $start,
             WindowExpression::PRECEDING,
