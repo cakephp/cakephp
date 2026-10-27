@@ -520,6 +520,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         $provider = $this->providers[$rule['provider']];
         $method = $rule['rule'];
+        if (is_string($method) && $provider instanceof RuleProviderResolverInterface) {
+            // Use the resolved provider and method as the rule's callable,
+            // so that the method's signature can be correctly reflected for
+            // passing the validation context.
+            [$provider, $method] = $provider->resolveRuleProvider($method) ?? [$provider, $method];
+        }
         if (is_string($method)) {
             $callable = [$provider, $method];
         } elseif (is_array($method) && !is_callable($method)) {

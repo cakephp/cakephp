@@ -33,8 +33,9 @@ use ReflectionMethod;
  * ### Mixin methods
  *
  * Behaviors can provide mixin like features by declaring public
- * methods. These methods will be accessible on the tables the
- * behavior has been added to.
+ * methods. These methods can be made accessible on the tables the
+ * behavior has been added to by setting the `implementedMethods`
+ * config to `true` or a method map when adding the behavior.
  *
  * ```
  * function doSomething($arg1, $arg2) {
@@ -42,7 +43,8 @@ use ReflectionMethod;
  * }
  * ```
  *
- * Would be called like `$table->doSomething($arg1, $arg2);`.
+ * Would be called like `$table->doSomething($arg1, $arg2);` when the
+ * behavior is added with `['implementedMethods' => true]`.
  *
  * ### Callback methods
  *
@@ -119,7 +121,7 @@ class Behavior implements EventListenerInterface
     /**
      * Reflection method cache for behaviors.
      *
-     * Stores the reflected finder methods per class.
+     * Stores the reflected method + finder methods per class.
      * This prevents reflecting the same class multiple times in a single process.
      *
      * @var array<string, array>
@@ -136,6 +138,15 @@ class Behavior implements EventListenerInterface
     protected array $defaultConfig = [];
 
     /**
+     * Cached, normalized map of proxied methods.
+     *
+     * Generated on first read and reused for subsequent calls.
+     *
+     * @var array<string, string>|null
+     */
+    private ?array $implementedMethods = null;
+
+    /**
      * Constructor
      *
      * Merges config with the default and store in the config property
@@ -147,6 +158,11 @@ class Behavior implements EventListenerInterface
     {
         $config = $this->resolveMethodAliases(
             'implementedFinders',
+            $this->defaultConfig,
+            $config,
+        );
+        $config = $this->resolveMethodAliases(
+            'implementedMethods',
             $this->defaultConfig,
             $config,
         );
@@ -190,6 +206,9 @@ class Behavior implements EventListenerInterface
         if (!isset($defaults[$key], $config[$key])) {
             return $config;
         }
+        if (!is_array($defaults[$key]) || !is_array($config[$key])) {
+            return $config;
+        }
         if ($config[$key] === []) {
             $this->setConfig($key, [], false);
             unset($config[$key]);
@@ -218,9 +237,9 @@ class Behavior implements EventListenerInterface
      */
     public function verifyConfig(): void
     {
-        $keys = ['implementedFinders'];
+        $keys = ['implementedFinders', 'implementedMethods'];
         foreach ($keys as $key) {
-            if (!isset($this->config[$key])) {
+            if (!isset($this->config[$key]) || !is_array($this->config[$key])) {
                 continue;
             }
 
@@ -314,7 +333,74 @@ class Behavior implements EventListenerInterface
             return $methods;
         }
 
-        return $this->reflectionCache();
+        return $this->reflectionCache()['finders'];
+    }
+
+    /**
+     * Provides an alias -> methodname map of which methods a behavior proxies on
+     * the tables they are attached to. Example:
+     *
+     * ```
+     *  [
+     *    'method' => 'method',
+     *    'aliasedMethod' => 'somethingElse'
+     *  ]
+     * ```
+     *
+     * With the above example, a call to `$table->method()` will call `$behavior->method()`
+     * and a call to `$table->aliasedMethod()` will call `$behavior->somethingElse()`
+     *
+     * Proxying of behavior methods through the table instance is disabled by
+     * default. To enable it, set the `implementedMethods` config to `true` or
+     * a method map when adding the behavior. When set to `true` the list of
+     * proxied methods is derived using reflection. Methods declared on
+     * `Cake\ORM\Behavior`, event callback methods and finder methods are
+     * excluded from the reflected list.
+     *
+     * The config can also be a numerically indexed list of method names, in
+     * which case each method is proxied under its own name. That is, the list
+     *
+     * ```
+     *  ['method', 'somethingElse']
+     * ```
+     *
+     * is equivalent to the map
+     *
+     * ```
+     *  ['method' => 'method', 'somethingElse' => 'somethingElse']
+     * ```
+     *
+     * The generated map is normalized: alias keys and method names are
+     * lowercased, as method resolution is case-insensitive. Consumers can
+     * compare against it without having to normalize case themselves.
+     *
+     * The generated map is memoized on first read. Later changes to the
+     * `implementedMethods` config do not refresh it.
+     *
+     * @return array<string, string>
+     * @throws \ReflectionException
+     */
+    public function implementedMethods(): array
+    {
+        if ($this->implementedMethods !== null) {
+            return $this->implementedMethods;
+        }
+
+        $methods = $this->getConfig('implementedMethods');
+        if ($methods === true) {
+            $methods = $this->reflectionCache()['methods'];
+        } elseif (!is_array($methods)) {
+            $methods = [];
+        }
+
+        // Support numerically indexed method names, where each value is used as its own alias key.
+        $map = [];
+        foreach ($methods as $key => $method) {
+            $key = is_int($key) ? $method : $key;
+            $map[strtolower($key)] = strtolower($method);
+        }
+
+        return $this->implementedMethods = $map;
     }
 
     /**
@@ -353,7 +439,10 @@ class Behavior implements EventListenerInterface
             self::$reflectionCache[$baseClass] = $baseMethods;
         }
 
-        $return = [];
+        $return = [
+            'finders' => [],
+            'methods' => [],
+        ];
 
         $reflection = new ReflectionClass($class);
 
@@ -367,7 +456,9 @@ class Behavior implements EventListenerInterface
             }
 
             if (str_starts_with($methodName, 'find')) {
-                $return[lcfirst(substr($methodName, 4))] = $methodName;
+                $return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
+            } else {
+                $return['methods'][$methodName] = $methodName;
             }
         }
 

@@ -171,6 +171,118 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test load() duplicate method error
+     */
+    public function testLoadDuplicateMethodError(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate method `slugify`'
+        . ' which is already provided by `Sluggable`.');
+        $this->Behaviors->load('Sluggable', [
+            'implementedMethods' => ['slugify' => 'slugify'],
+        ]);
+        $this->Behaviors->load('Duplicate');
+    }
+
+    /**
+     * Test load() duplicate method aliasing
+     */
+    public function testLoadDuplicateMethodAliasing(): void
+    {
+        $this->Behaviors->load('Tree');
+        $this->Behaviors->load('Duplicate', [
+            'implementedFinders' => [
+                'renamed' => 'findChildren',
+            ],
+            'implementedMethods' => [
+                'renamed' => 'slugify',
+            ],
+        ]);
+        $this->assertTrue($this->Behaviors->hasMethod('renamed'));
+    }
+
+    /**
+     * Test set()
+     */
+    public function testSet(): void
+    {
+        $this->Behaviors->set('Sluggable', new SluggableBehavior($this->Table, [
+            'replacement' => '_',
+            'implementedMethods' => ['slugify' => 'slugify'],
+        ]));
+
+        $config = $this->Behaviors->get('Sluggable')->getConfig();
+        $this->assertSame('_', $config['replacement']);
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+    }
+
+    /**
+     * test hasMethod()
+     */
+    public function testHasMethod(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+        $this->Behaviors->load('TestPlugin.PersisterOne', ['implementedMethods' => true]);
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => true]);
+
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+        $this->assertTrue($this->Behaviors->hasMethod('SLUGIFY'));
+
+        $this->assertTrue($this->Behaviors->hasMethod('persist'));
+        $this->assertTrue($this->Behaviors->hasMethod('PERSIST'));
+
+        $this->assertFalse($this->Behaviors->hasMethod('__construct'));
+        $this->assertFalse($this->Behaviors->hasMethod('config'));
+        $this->assertFalse($this->Behaviors->hasMethod('implementedEvents'));
+
+        $this->assertFalse($this->Behaviors->hasMethod('nope'));
+        $this->assertFalse($this->Behaviors->hasMethod('beforeFind'));
+        $this->assertFalse($this->Behaviors->hasMethod('noSlug'));
+    }
+
+    /**
+     * Methods are not proxied unless the `implementedMethods` config is set.
+     */
+    public function testHasMethodNotEnabledByDefault(): void
+    {
+        $this->Behaviors->load('Sluggable');
+
+        $this->assertFalse($this->Behaviors->hasMethod('slugify'));
+    }
+
+    /**
+     * Test hasMethod() and call() with a numerically indexed list of method names.
+     */
+    public function testHasMethodWithNumericList(): void
+    {
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => ['slugify']]);
+
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+        $this->assertSame('some-value', $this->Behaviors->call('slugify', ['some value']));
+    }
+
+    /**
+     * test call()
+     */
+    public function testCall(): void
+    {
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => true]);
+        $return = $this->Behaviors->call('slugify', ['some value']);
+        $this->assertSame('some-value', $return);
+    }
+
+    /**
+     * Test errors on unknown methods.
+     */
+    public function testCallError(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call `nope`, it does not belong to any attached behavior.');
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => true]);
+        $this->Behaviors->call('nope');
+    }
+
+    /**
      * Test load() duplicate finder error
      */
     public function testLoadDuplicateFinderError(): void
@@ -253,6 +365,22 @@ class BehaviorRegistryTest extends TestCase
     }
 
     /**
+     * Test errors on unloaded behavior methods.
+     */
+    public function testUnloadBehaviorThenCall(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => true]);
+
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+        $this->Behaviors->unload('Sluggable');
+
+        $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
+        $this->Behaviors->call('slugify');
+    }
+
+    /**
      * Test that unloading then reloading a behavior does not throw any errors.
      */
     public function testUnloadBehaviorThenReload(): void
@@ -272,15 +400,22 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testUnload(): void
     {
-        $this->Behaviors->load('Sluggable');
+        $this->Behaviors->load('Sluggable', ['implementedMethods' => true]);
         $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
 
+        $this->Behaviors->load('Validation', ['implementedMethods' => true]);
+        $this->assertTrue($this->Behaviors->hasMethod('customValidationRule'));
+
+        $this->Behaviors->unload('Validation');
         $this->Behaviors->unload('Sluggable');
 
         $this->assertEmpty($this->Behaviors->loaded());
         $this->assertCount(0, $this->EventManager->listeners('Model.beforeFind'));
         $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
         $this->assertFalse($this->Behaviors->hasFinder('noslug'));
+        $this->assertFalse($this->Behaviors->hasMethod('customValidationRule'));
+        $this->assertFalse($this->Behaviors->hasMethod('customvalidationrule'));
     }
 
     /**

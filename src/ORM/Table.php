@@ -52,6 +52,7 @@ use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
+use Cake\Validation\RuleProviderResolverInterface;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 use Closure;
@@ -158,7 +159,12 @@ use function Cake\Core\namespaceSplit;
  * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
  */
-class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
+class Table implements
+    EventDispatcherInterface,
+    EventListenerInterface,
+    RepositoryInterface,
+    RuleProviderResolverInterface,
+    ValidatorAwareInterface
 {
     use EventDispatcherTrait;
     use RulesAwareTrait;
@@ -2900,6 +2906,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __call(string $method, array $args): mixed
     {
+        if ($this->behaviors->hasMethod($method)) {
+            return $this->behaviors->call($method, $args);
+        }
         if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
             return $this->dynamicFinder($method, $args);
         }
@@ -3360,6 +3369,42 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $result = new LazyEagerLoader()->loadInto($entities, $contain, $this);
 
         return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function validationMethodExists(string $name): bool
+    {
+        return method_exists($this, $name) || $this->behaviors->hasMethod($name);
+    }
+
+    /**
+     * Get the object and method that should be used to invoke a validation rule method.
+     *
+     * Resolves rule methods provided by behaviors, when the behavior's
+     * `implementedMethods` config is set. The rule method name is matched
+     * against the configured alias keys, case-insensitively.
+     *
+     * @param string $method The name of the rule method.
+     * @return array{0: object, 1: string}|null Provider and method to invoke,
+     *   or null to invoke the method on the table itself.
+     */
+    public function resolveRuleProvider(string $method): ?array
+    {
+        if (method_exists($this, $method) || !$this->behaviors->hasMethod($method)) {
+            return null;
+        }
+
+        $needle = strtolower($method);
+        foreach ($this->behaviors as $behavior) {
+            $map = $behavior->implementedMethods();
+            if (isset($map[$needle])) {
+                return [$behavior, $map[$needle]];
+            }
+        }
+
+        return null;
     }
 
     /**
