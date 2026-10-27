@@ -1458,6 +1458,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $statement = $this->getConnection()->selectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
+                ->setConnectionRole($query->getConnectionRole())
                 ->execute();
         } else {
             $query->getEagerLoader()->disableAutoFields();

@@ -723,6 +723,49 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test checkNotModified method with a weak entity tag in If-None-Match
+     */
+    public function testCheckNotModifiedByEtagWeakComparison(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-None-Match', 'W/"something"');
+
+        $response = new Response();
+        $response = $response->withEtag('something')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->isNotModified($request));
+    }
+
+    /**
+     * Test checkNotModified method when the request only sends If-Modified-Since
+     */
+    public function testCheckNotModifiedByTimeWithEtag(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-01 00:00:00');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withEtag('something')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->isNotModified($request));
+    }
+
+    /**
+     * Test checkNotModified method with an If-Modified-Since date after Last-Modified
+     */
+    public function testCheckNotModifiedByLaterTime(): void
+    {
+        $request = new ServerRequest();
+        $request = $request->withHeader('If-Modified-Since', '2012-01-02 00:00:00');
+
+        $response = new Response();
+        $response = $response->withModified('2012-01-01 00:00:00')
+            ->withHeader('Content-Length', 99);
+        $this->assertTrue($response->isNotModified($request));
+    }
+
+    /**
      * Test checkNotModified method
      */
     public function testCheckNotModifiedNoHints(): void
@@ -1177,6 +1220,16 @@ class ResponseTest extends TestCase
             // Spaced out
             [
                 'bytes = 10 - 20', 11, 'bytes 10-20/38',
+            ],
+
+            // suffix-byte-range longer than the file
+            [
+                'bytes=-50', 38, 'bytes 0-37/38',
+            ],
+
+            // last-pos past the end of the file
+            [
+                'bytes=30-100', 8, 'bytes 30-37/38',
             ],
         ];
     }

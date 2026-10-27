@@ -43,6 +43,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      * `Query::where()`.
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions to filter on.
+     *  This parameter is not safe with user controlled values.
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @return $this
      * @see \Cake\Database\Query::where()

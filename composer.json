@@ -28,7 +28,7 @@
         "ext-mbstring": "*",
         "brick/varexporter": "^0.7.0",
         "cakephp/chronos": "4.x-dev",
-        "composer/ca-bundle": "^1.5",
+        "composer/ca-bundle": "^1.6",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
         "psr/container": "^1.1 || ^2.0",

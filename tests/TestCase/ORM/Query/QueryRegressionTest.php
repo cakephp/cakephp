@@ -1058,7 +1058,7 @@ class QueryRegressionTest extends TestCase
 
         $rows = $table->find()
             ->matching('Tags', function ($q) {
-                return $q->where(null);
+                return $q->where();
             })
             ->all();
         $this->assertNotEmpty($rows);

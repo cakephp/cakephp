@@ -1781,6 +1781,97 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Data provider for testCountUsesConnectionRole
+     *
+     * @return array
+     */
+    public static function countConnectionRoleProvider(): array
+    {
+        return [
+            'simple' => ['simple', 3],
+            'group' => ['group', 2],
+            'distinct' => ['distinct', 2],
+            'having' => ['having', 1],
+            'union' => ['union', 2],
+            'intersect' => ['intersect', 1],
+            'expression field' => ['expression field', 3],
+            'nested order' => ['nested order', 3],
+        ];
+    }
+
+    /**
+     * Test that count() uses the connection role of the query, including
+     * complex queries that are counted through a wrapping query.
+     */
+    #[DataProvider('countConnectionRoleProvider')]
+    public function testCountUsesConnectionRole(string $type, int $expected): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        ConnectionManager::setConfig('test_read_write', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'write' => [
+                'database' => ':memory:',
+                'cached' => 'shared', // used so role configs are unique
+            ],
+            'read' => [
+                'database' => ':memory:',
+            ],
+        ]);
+
+        try {
+            $connection = ConnectionManager::get('test_read_write');
+            $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+
+            // Only the read connection has rows, so counting on the write connection returns 0.
+            $connection->getDriver(Connection::ROLE_WRITE)->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
+            $read = $connection->getDriver(Connection::ROLE_READ);
+            $read->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
+            $read->execute('INSERT INTO role_items (id, grp) VALUES (1, 1), (2, 1), (3, 2)');
+
+            $table = $this->getTableLocator()->get('RoleItems', [
+                'table' => 'role_items',
+                'connection' => $connection,
+            ]);
+
+            $factory = function () use ($table, $type): SelectQuery {
+                $query = $table->find();
+
+                $query = match ($type) {
+                    'simple' => $query,
+                    'group' => $query->select(['grp'])->groupBy(['grp']),
+                    'distinct' => $query->select(['grp'])->distinct(),
+                    'having' => $query->select(['grp'])
+                        ->groupBy(['grp'])
+                        ->having(['COUNT(*) >' => 1], ['COUNT(*)' => 'integer']),
+                    'union' => $query->select(['grp'])
+                        ->where(['id' => 1])
+                        ->union($table->find()->select(['grp'])->where(['id' => 3])),
+                    'intersect' => $query->select(['grp'])
+                        ->intersect($table->find()->select(['grp'])->where(['id' => 3])),
+                    'expression field' => $query->select(['next' => $query->expr('grp + 1')]),
+                    'nested order' => $query->orderBy(fn(QueryExpression $exp) => $exp->add(['grp' => 1])),
+                };
+                if ($type === 'nested order') {
+                    // A compiled query with a nested order expression is counted
+                    // through a wrapping query as well.
+                    $query->sql();
+                }
+
+                return $query;
+            };
+
+            $this->assertSame($expected, $factory()->useReadRole()->count());
+            $this->assertSame(0, $factory()->count(), 'Queries default to the write role');
+            $this->assertSame(0, $factory()->useReadRole()->useWriteRole()->count());
+        } finally {
+            $this->getTableLocator()->remove('RoleItems');
+            ConnectionManager::drop('test_read_write');
+        }
+    }
+
+    /**
      * Tests that it is possible to provide a callback for calculating the count
      * of a query
      */

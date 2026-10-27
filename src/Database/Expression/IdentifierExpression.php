@@ -31,15 +31,21 @@ use Closure;
 class IdentifierExpression implements ExpressionInterface
 {
     /**
+     * @var string|null
+     */
+    protected ?string $collation = null;
+
+    /**
      * Constructor
      *
      * @param string $identifier The identifier this expression represents
      * @param string|null $collation The identifier collation
      */
-    public function __construct(
-        protected string $identifier,
-        protected ?string $collation = null,
-    ) {
+    public function __construct(protected string $identifier, ?string $collation = null)
+    {
+        if ($collation !== null) {
+            $this->setCollation($collation);
+        }
     }
 
     /**
@@ -71,6 +77,7 @@ class IdentifierExpression implements ExpressionInterface
      */
     public function setCollation(string $collation): void
     {
+        QueryExpression::ensureSimpleString('collation', $collation);
         $this->collation = $collation;
     }
 

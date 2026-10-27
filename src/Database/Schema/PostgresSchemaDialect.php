@@ -815,6 +815,10 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
+        $currentDefault = null;
+        if (isset(static::CURRENT_DATE_TIME_DEFAULTS[$column['type']])) {
+            $currentDefault = $this->currentDateTimeDefault($column);
+        }
         if (
             isset($column['default']) &&
             in_array($column['type'], $datetimeTypes) &&
@@ -822,6 +826,8 @@ class PostgresSchemaDialect extends SchemaDialect
             strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+        } elseif ($currentDefault !== null) {
+            $out .= ' DEFAULT ' . $currentDefault;
         } elseif (isset($column['default'])) {
             $defaultValue = $column['default'];
             if ($column['type'] === 'boolean') {

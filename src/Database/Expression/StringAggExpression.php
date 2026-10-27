@@ -72,6 +72,9 @@ class StringAggExpression extends AggregateExpression
      */
     public function setAggregateOrderBy(ExpressionInterface|array|string $fields): static
     {
+        if (is_string($fields)) {
+            QueryExpression::ensureSimpleString('fields', $fields);
+        }
         $this->aggregateOrderBy ??= new OrderByExpression();
         $this->aggregateOrderBy->add($fields);
 

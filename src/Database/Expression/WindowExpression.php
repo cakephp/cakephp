@@ -95,6 +95,8 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         if ($partitions instanceof Closure) {
             $partitions = $partitions(new QueryExpression([], [], ''));
+        } elseif (is_string($partitions)) {
+            QueryExpression::ensureSimpleString('partitions', $partitions);
         }
 
         if (!is_array($partitions)) {
@@ -123,7 +125,9 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         $this->order ??= new OrderByExpression();
 
-        if ($fields instanceof Closure) {
+        if (is_string($fields)) {
+            QueryExpression::ensureSimpleString('fields', $fields);
+        } elseif ($fields instanceof Closure) {
             $fields = $fields(new QueryExpression([], [], ''));
         }
 
@@ -139,6 +143,13 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         ExpressionInterface|string|int|null $start,
         ExpressionInterface|string|int|null $end = 0,
     ): static {
+        if (is_string($start)) {
+            QueryExpression::ensureSimpleString('start', $start);
+        }
+        if (is_string($end)) {
+            QueryExpression::ensureSimpleString('end', $end);
+        }
+
         return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
     }
 
@@ -168,6 +179,15 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         ExpressionInterface|string|int|null $endOffset,
         string $endDirection,
     ): static {
+        if (is_string($startOffset)) {
+            QueryExpression::ensureSimpleString('startOffset', $startOffset);
+        }
+        if (is_string($endOffset)) {
+            QueryExpression::ensureSimpleString('endOffset', $endOffset);
+        }
+        QueryExpression::ensureSimpleString('startDirection', $startDirection);
+        QueryExpression::ensureSimpleString('endDirection', $endDirection);
+
         $this->frame = [
             'type' => $type,
             'start' => [

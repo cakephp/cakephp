@@ -23,6 +23,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -253,6 +254,47 @@ SQL;
             $data,
             array_keys($expected),
         );
+    }
+
+    public static function currentDateTimeDefaultProvider(): array
+    {
+        return [
+            ['date', '(CONVERT([date],getdate()))', 'CURRENT_DATE'],
+            ['time', '(CONVERT([time],getdate()))', 'CURRENT_TIME'],
+            ['date', "('2026-01-01')", '2026-01-01'],
+        ];
+    }
+
+    /**
+     * Test that reflected CONVERT(..., GETDATE()) defaults map back to CURRENT_DATE / CURRENT_TIME.
+     */
+    #[DataProvider('currentDateTimeDefaultProvider')]
+    public function testConvertColumnCurrentDateTimeDefault(string $type, string $default, string $expected): void
+    {
+        $statement = $this->createStub(StatementInterface::class);
+        $statement->method('fetchAll')->willReturn([
+            [
+                'column_id' => 1,
+                'name' => 'field',
+                'type' => $type,
+                'char_length' => null,
+                'precision' => null,
+                'scale' => null,
+                'autoincrement' => null,
+                'null' => '0',
+                'default' => $default,
+                'collation_name' => null,
+                'comment' => null,
+            ],
+        ]);
+
+        $driver = $this->createStub(Sqlserver::class);
+        $driver->method('execute')->willReturn($statement);
+
+        $dialect = new SqlserverSchemaDialect($driver);
+        $columns = $dialect->describeColumns('table');
+
+        $this->assertSame($expected, $columns[0]['default']);
     }
 
     /**
@@ -925,6 +967,16 @@ SQL;
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '[p] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'],
+                '[start_date] DATE NOT NULL DEFAULT CONVERT(DATE, GETDATE())',
+            ],
+            [
+                'start_time',
+                ['type' => 'time', 'null' => false, 'default' => 'current_time'],
+                '[start_time] TIME NOT NULL DEFAULT CONVERT(TIME, GETDATE())',
             ],
         ];
     }

@@ -23,6 +23,8 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests WindowExpression class
@@ -156,7 +158,7 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->range("'1 day'", "'10 days'");
+        $w = new WindowExpression()->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
         $this->assertRegExpSql(
             "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
             $w->sql(new ValueBinder()),
@@ -301,6 +303,63 @@ class WindowExpressionTest extends TestCase
             'GROUPS BETWEEN 2 PRECEDING AND 1 PRECEDING',
             $w->sql($b),
         );
+    }
+
+    public static function invalidFrameProvider(): array
+    {
+        return [
+            // start, end
+            ['no way', 'ok'],
+            ['no-way', 'ok'],
+            ['no-way', 'no way'],
+            ['ok', "\n"],
+            ["\r", "\n"],
+            ["\n", "\r"],
+            [' ', ' '],
+            ['DROP TABLE users', ''],
+            ['', 'DROP TABLE users'],
+        ];
+    }
+
+    #[DataProvider('invalidFrameProvider')]
+    public function testFrameInvalidStartEnd(string $start, string $end): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new WindowExpression())->frame(
+            WindowExpression::ROWS,
+            $start,
+            WindowExpression::PRECEDING,
+            $end,
+            WindowExpression::PRECEDING,
+        );
+    }
+
+    #[DataProvider('invalidFrameProvider')]
+    public function testFrameInvalidDirection(string $start, string $end): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->frame(
+            WindowExpression::ROWS,
+            1,
+            $start,
+            2,
+            $end,
+        );
+    }
+
+    #[DataProvider('invalidFrameProvider')]
+    public function testFrameInvalidPartitionOrderBy(string $start, string $end): void
+    {
+        // Half the cases fail for partition, half for orderby
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->partition($start)->orderBy($end);
+    }
+
+    #[DataProvider('invalidFrameProvider')]
+    public function testFrameRange(string $start, string $end): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->range($start, $end);
     }
 
     /**

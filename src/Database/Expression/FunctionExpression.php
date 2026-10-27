@@ -35,6 +35,13 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     use TypedResultTrait;
 
     /**
+     * The name of the function to be constructed when generating the SQL string
+     *
+     * @var string
+     */
+    protected string $name;
+
+    /**
      * Constructor. Takes a name for the function to be invoked and a list of params
      * to be passed into the function. Optionally you can pass a list of types to
      * be used for each bound param.
@@ -59,12 +66,11 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * passed arguments
      * @param string $returnType The return type of this expression
      */
-    public function __construct(
-        protected string $name,
-        array $params = [],
-        array $types = [],
-        string $returnType = 'string',
-    ) {
+    public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
+    {
+        QueryExpression::ensureSimpleString('name', $name);
+
+        $this->name = $name;
         $this->returnType = $returnType;
         parent::__construct($params, $types, ',');
     }
@@ -77,6 +83,9 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      */
     public function setName(string $name): static
     {
+        if ($name !== '') {
+            QueryExpression::ensureSimpleString('name', $name);
+        }
         $this->name = $name;
 
         return $this;

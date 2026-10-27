@@ -30,11 +30,17 @@ class StringExpression implements ExpressionInterface, TypedResultInterface
     use TypedResultTrait;
 
     /**
+     * @var string
+     */
+    protected string $collation;
+
+    /**
      * @param string $string String value
      * @param string $collation String collation
      */
-    public function __construct(protected string $string, protected string $collation)
+    public function __construct(protected string $string, string $collation)
     {
+        $this->setCollation($collation);
     }
 
     /**
@@ -45,6 +51,7 @@ class StringExpression implements ExpressionInterface, TypedResultInterface
      */
     public function setCollation(string $collation): void
     {
+        QueryExpression::ensureSimpleString('collation', $collation);
         $this->collation = $collation;
     }
 
