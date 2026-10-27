@@ -19,6 +19,7 @@ namespace Cake\TestSuite;
 use Cake\Log\Engine\ArrayLog;
 use Cake\Log\Log;
 use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
 
 /**
  * Make assertions on logs
@@ -28,7 +29,28 @@ use PHPUnit\Framework\Attributes\After;
 trait LogTestTrait
 {
     /**
-     * Reset log configs
+     * Log configs that existed before the test, restored after it.
+     *
+     * @var array<string, array<string, mixed>>
+     */
+    private array $logConfigsBeforeTest = [];
+
+    /**
+     * Capture the log configs before setUp() runs.
+     *
+     * @return void
+     */
+    #[Before(priority: 1)]
+    public function captureLogConfigs(): void
+    {
+        $this->logConfigsBeforeTest = [];
+        foreach (Log::configured() as $name) {
+            $this->logConfigsBeforeTest[$name] = (array)Log::getConfig($name);
+        }
+    }
+
+    /**
+     * Reset log configs to the ones that existed before the test.
      *
      * @return void
      */
@@ -36,6 +58,9 @@ trait LogTestTrait
     public function cleanupLog(): void
     {
         Log::reset();
+        foreach ($this->logConfigsBeforeTest as $name => $config) {
+            Log::setConfig($name, $config);
+        }
     }
 
     /**
