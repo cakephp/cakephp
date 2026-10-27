@@ -39,11 +39,19 @@ use TestPlugin\Cache\Engine\TestPluginCacheEngine;
 class CacheTest extends TestCase
 {
     /**
+     * Cache configs that existed before the test, so the ones a test adds can be dropped.
+     *
+     * @var array<string>
+     */
+    protected array $configured = [];
+
+    /**
      * setUp method
      */
     protected function setUp(): void
     {
         parent::setUp();
+        $this->configured = Cache::configured();
         Cache::enable();
     }
 
@@ -53,10 +61,10 @@ class CacheTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Cache::drop('tests');
-        Cache::drop('test_trigger');
-        Cache::drop('tests_fallback');
-        Cache::drop('tests_fallback_final');
+        foreach (array_diff(Cache::configured(), $this->configured) as $config) {
+            Cache::drop($config);
+        }
+        Cache::enable();
     }
 
     /**
@@ -417,12 +425,14 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject(): void
     {
-        $object = new stdClass();
-        $this->expectException(BadMethodCallException::class);
-
-        Cache::setConfig('test', [
-            'engine' => $object,
+        Cache::setConfig('tests', [
+            'engine' => new stdClass(),
         ]);
+
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('Cache engines must extend `' . CacheEngine::class . '`');
+
+        Cache::pool('tests');
     }
 
     /**
@@ -591,6 +601,24 @@ class CacheTest extends TestCase
         $result = Cache::configured();
         $this->assertContains('_cake_translations_', $result);
         $this->assertNotContains('default', $result, 'Unconnected engines should not display.');
+    }
+
+    /**
+     * Test that dropping a config removes it from the group mappings.
+     */
+    public function testDropRemovesGroupConfig(): void
+    {
+        Cache::setConfig('grouped', [
+            'engine' => 'File',
+            'path' => CACHE,
+            'groups' => ['posts'],
+        ]);
+        Cache::pool('grouped');
+        $this->assertSame(['posts' => ['grouped']], Cache::groupConfigs('posts'));
+
+        Cache::drop('grouped');
+
+        $this->assertArrayNotHasKey('posts', Cache::groupConfigs());
     }
 
     /**

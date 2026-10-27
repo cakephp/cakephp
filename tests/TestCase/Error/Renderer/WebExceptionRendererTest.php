@@ -82,6 +82,7 @@ class WebExceptionRendererTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Log::drop('test_error');
         Configure::write('Config.language', 'eng');
         Router::reload();
 

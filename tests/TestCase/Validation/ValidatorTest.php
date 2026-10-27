@@ -35,6 +35,33 @@ use Traversable;
 class ValidatorTest extends TestCase
 {
     /**
+     * Default providers registered before the test, restored after it.
+     *
+     * @var array<string, object|string>
+     */
+    protected array $defaultProviders = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->defaultProviders = [];
+        foreach (Validator::getDefaultProviders() as $name) {
+            $this->defaultProviders[$name] = Validator::getDefaultProvider($name);
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        foreach (Validator::getDefaultProviders() as $name) {
+            Validator::removeDefaultProvider($name);
+        }
+        foreach ($this->defaultProviders as $name => $provider) {
+            Validator::addDefaultProvider($name, $provider);
+        }
+    }
+
+    /**
      * tests getRequiredMessage
      */
     public function testGetRequiredMessage(): void
@@ -3044,6 +3071,23 @@ class ValidatorTest extends TestCase
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+    }
+
+    /**
+     * Tests removing a default provider
+     */
+    public function testRemoveDefaultProvider(): void
+    {
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $existing = new Validator();
+
+        Validator::removeDefaultProvider('test-provider');
+        $this->assertNull(Validator::getDefaultProvider('test-provider'));
+        $this->assertNotContains('test-provider', Validator::getDefaultProviders());
+        $this->assertNull((new Validator())->getProvider('test-provider'));
+        $this->assertSame('MyNameSpace\Validation\MyProvider', $existing->getProvider('test-provider'));
+
+        Validator::removeDefaultProvider('invalid-provider');
     }
 
     /**
