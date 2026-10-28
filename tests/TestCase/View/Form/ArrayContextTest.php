@@ -24,14 +24,6 @@ use Cake\View\Form\ArrayContext;
  */
 class ArrayContextTest extends TestCase
 {
-    /**
-     * setup method.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function testGetRequiredMessage(): void
     {
         $context = new ArrayContext([

@@ -773,11 +773,6 @@ class CommandRunnerTest extends TestCase
     protected function getRunner(): CommandRunner
     {
         $app = new class ($this->config) extends BaseApplication {
-            public function bootstrap(): void
-            {
-                parent::bootstrap();
-            }
-
             public function console(CommandCollection $commands): CommandCollection
             {
                 parent::console($commands);
