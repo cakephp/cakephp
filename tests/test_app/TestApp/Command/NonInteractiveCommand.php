@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class NonInteractiveCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): void
     {
         $result = $io->ask('What?', 'Default!');
         $io->quiet('Result: ' . $result);

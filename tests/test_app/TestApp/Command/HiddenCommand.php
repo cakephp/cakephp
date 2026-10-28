@@ -15,7 +15,7 @@ class HiddenCommand extends Command implements CommandHiddenInterface
         return 'This command should not appear in help';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): void
     {
         $io->out('Hidden Command Executed!');
     }
