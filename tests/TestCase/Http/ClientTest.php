@@ -831,7 +831,7 @@ class ClientTest extends TestCase
     {
         $url = 'http://cakephp.org';
 
-        $adapter = Mockery::mock(Client\Adapter\Stream::class);
+        $adapter = Mockery::mock(Stream::class);
 
         $redirect = new Response([
             'HTTP/1.0 301',
@@ -907,7 +907,7 @@ class ClientTest extends TestCase
     {
         $url = 'https://cakephp.org';
 
-        $adapter = Mockery::mock(Client\Adapter\Stream::class);
+        $adapter = Mockery::mock(Stream::class);
 
         $redirect = new Response([
             'HTTP/1.0 301',
