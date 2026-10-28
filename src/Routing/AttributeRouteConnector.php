@@ -67,9 +67,7 @@ class AttributeRouteConnector
     /**
      * @param \Cake\Routing\RouteBuilder $routeBuilder Route builder instance.
      */
-    public function __construct(protected readonly RouteBuilder $routeBuilder)
-    {
-    }
+    public function __construct(protected readonly RouteBuilder $routeBuilder) {}
 
     /**
      * Resolves attribute routes from the configured attribute resolver and connects them.

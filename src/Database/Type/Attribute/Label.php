@@ -39,6 +39,5 @@ readonly class Label
         public string $label,
         public string $domain = 'default',
         public string $context = '',
-    ) {
-    }
+    ) {}
 }

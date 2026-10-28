@@ -33,6 +33,5 @@ readonly class Prefix
     public function __construct(
         public string $name,
         public ?string $path = null,
-    ) {
-    }
+    ) {}
 }

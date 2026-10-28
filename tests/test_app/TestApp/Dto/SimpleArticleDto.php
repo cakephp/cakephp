@@ -17,6 +17,5 @@ readonly class SimpleArticleDto
         public int $id,
         public string $title,
         public ?string $body = null,
-    ) {
-    }
+    ) {}
 }

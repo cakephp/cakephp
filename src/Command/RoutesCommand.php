@@ -100,14 +100,8 @@ class RoutesCommand extends Command
             foreach ($methods as $method) {
                 if (
                     $duplicateRoutesCounter[$route->template][$method] > 1
-                    || (
-                        $method === ''
-                        && count($duplicateRoutesCounter[$route->template]) > 1
-                    )
-                    || (
-                        $method !== ''
-                        && isset($duplicateRoutesCounter[$route->template][''])
-                    )
+                    || ($method === '' && count($duplicateRoutesCounter[$route->template]) > 1)
+                    || ($method !== '' && isset($duplicateRoutesCounter[$route->template]['']))
                 ) {
                     $duplicateRoutes[] = [
                         $route->options['_name'] ?? $route->getName(),

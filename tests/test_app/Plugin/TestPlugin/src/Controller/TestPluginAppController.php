@@ -23,6 +23,4 @@ use Cake\Controller\Controller;
 /**
  * TestPluginAppController
  */
-class TestPluginAppController extends Controller
-{
-}
+class TestPluginAppController extends Controller {}

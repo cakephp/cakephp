@@ -97,13 +97,9 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
 // phpcs:disable
 class MockedTable extends Table
 {
-    public function saveAssociated()
-    {
-    }
+    public function saveAssociated() {}
 
-    public function schema()
-    {
-    }
+    public function schema() {}
 }
 
 // phpcs:enable

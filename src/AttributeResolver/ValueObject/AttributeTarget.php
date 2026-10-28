@@ -53,8 +53,7 @@ readonly class AttributeTarget implements JsonSerializable
         public bool $isDeclaringClassAbstract = false,
         public DeclaringClassType $declaringClassType = DeclaringClassType::CLASS_,
         public ?MethodVisibility $methodVisibility = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Convert to array for serialization.

@@ -628,14 +628,8 @@ class MysqlSchemaDialectTest extends TestCase
         }
         // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
         if (
-            (
-                $driver->isMariaDb()
-                && version_compare($driver->version(), '10.5.0', '>=')
-            )
-            || (
-                !$driver->isMariaDb()
-                && version_compare($driver->version(), '8.0.30', '>=')
-            )
+            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>='))
+            || (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
         ) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
@@ -2249,9 +2243,7 @@ class MysqlSchemaDialectTest extends TestCase
 // phpcs:disable
 class PDOMocked extends PDO
 {
-    public function quoteIdentifier(): void
-    {
-    }
+    public function quoteIdentifier(): void {}
 }
 
 // phpcs:enable

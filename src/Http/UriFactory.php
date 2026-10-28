@@ -170,10 +170,7 @@ class UriFactory implements UriFactoryInterface
 
         $docRoot = $server['DOCUMENT_ROOT'] ?? '';
         if (
-            (
-                $base
-                || !str_contains($docRoot, $webroot)
-            )
+            ($base || !str_contains($docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

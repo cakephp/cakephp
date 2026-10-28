@@ -766,14 +766,8 @@ class Route
 
         // Ensure controller/action keys are not null.
         if (
-            (
-                isset($keyNames['controller'])
-                && !isset($url['controller'])
-            )
-            || (
-                isset($keyNames['action'])
-                && !isset($url['action'])
-            )
+            (isset($keyNames['controller']) && !isset($url['controller']))
+            || (isset($keyNames['action']) && !isset($url['action']))
         ) {
             return null;
         }

@@ -51,8 +51,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     public function __construct(
         protected array $queue = [],
         protected ?ContainerInterface $container = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Resolve middleware name to a PSR 15 compliant middleware instance.

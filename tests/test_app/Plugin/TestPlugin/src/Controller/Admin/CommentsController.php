@@ -29,7 +29,5 @@ class CommentsController extends Controller
      *
      * @return void
      */
-    public function index()
-    {
-    }
+    public function index() {}
 }

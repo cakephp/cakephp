@@ -17,7 +17,5 @@ class AttributeRoutingController extends AppController
      * @return void
      */
     #[Get('/dashboard', 'admin-dashboard')]
-    public function dashboard(): void
-    {
-    }
+    public function dashboard(): void {}
 }

@@ -665,9 +665,7 @@ abstract class Association
      * @param array<string, mixed> $options List of options used for initialization
      * @return void
      */
-    protected function options(array $options): void
-    {
-    }
+    protected function options(array $options): void {}
 
     /**
      * Alters a Query object to include the associated target table data in the final
@@ -954,10 +952,7 @@ abstract class Association
         $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
         if (
-            (
-                $fields === []
-                && $options['includeFields']
-            )
+            ($fields === [] && $options['includeFields'])
             || $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());

@@ -21,6 +21,4 @@ use Cake\Form\Schema;
 /**
  * Contains the schema information for Form instances.
  */
-class FormSchema extends Schema
-{
-}
+class FormSchema extends Schema {}

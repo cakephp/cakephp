@@ -329,9 +329,7 @@ abstract class BaseApplication implements
      * @param \Cake\Container\ContainerInterface $container The Container to update.
      * @return void
      */
-    public function services(ContainerInterface $container): void
-    {
-    }
+    public function services(ContainerInterface $container): void {}
 
     /**
      * Register application events.

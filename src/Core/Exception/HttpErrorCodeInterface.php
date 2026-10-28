@@ -16,6 +16,4 @@ namespace Cake\Core\Exception;
 
 use Throwable;
 
-interface HttpErrorCodeInterface extends Throwable
-{
-}
+interface HttpErrorCodeInterface extends Throwable {}

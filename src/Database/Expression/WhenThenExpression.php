@@ -86,9 +86,7 @@ class WhenThenExpression implements ExpressionInterface
      * @param \Cake\Database\TypeMap $typeMap The type map to use when using an array of conditions for the `WHEN`
      *  value.
      */
-    public function __construct(protected TypeMap $typeMap = new TypeMap())
-    {
-    }
+    public function __construct(protected TypeMap $typeMap = new TypeMap()) {}
 
     /**
      * Sets the `WHEN` value.
@@ -176,10 +174,7 @@ class WhenThenExpression implements ExpressionInterface
         if (
             $result !== null
             && !is_scalar($result)
-            && !(
-                is_object($result)
-                && !$result instanceof Closure
-            )
+            && !(is_object($result) && !$result instanceof Closure)
         ) {
             throw new InvalidArgumentException(sprintf(
                 'The `$result` argument must be either `null`, a scalar value, an object, '

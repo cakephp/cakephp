@@ -84,9 +84,7 @@ class Digest
      *
      * @param \Cake\Http\Client $client Http client object.
      */
-    public function __construct(protected Client $client)
-    {
-    }
+    public function __construct(protected Client $client) {}
 
     /**
      * Set algorithm based on credentials

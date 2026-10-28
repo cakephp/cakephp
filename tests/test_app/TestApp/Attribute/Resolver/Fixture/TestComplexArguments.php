@@ -18,9 +18,7 @@ class TestComplexArguments
         enum: TestPriority::HIGH,
         constant: self::DEFAULT_TIMEOUT,
     )]
-    public function methodWithComplexAttributes(): void
-    {
-    }
+    public function methodWithComplexAttributes(): void {}
 
     #[TestComplexArgument(
         object: new TestConfig('cache', ['driver' => 'redis']),
@@ -38,14 +36,10 @@ class TestComplexArguments
             ],
         ),
     )]
-    public function nestedObjects(): void
-    {
-    }
+    public function nestedObjects(): void {}
 
     #[TestComplexArgument(constant: self::MAX_RETRIES)]
     #[TestComplexArgument(enum: TestPriority::LOW)]
     #[TestComplexArgument(object: new TestConfig('multi', []))]
-    public function multipleAttributes(): void
-    {
-    }
+    public function multipleAttributes(): void {}
 }

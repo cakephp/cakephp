@@ -5,6 +5,4 @@ namespace TestApp\Error;
 
 use Cake\Error\Debugger;
 
-class TestDebugger extends Debugger
-{
-}
+class TestDebugger extends Debugger {}

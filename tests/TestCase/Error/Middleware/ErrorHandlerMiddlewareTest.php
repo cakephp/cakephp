@@ -105,9 +105,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
                     return new Response();
                 }
 
-                public function write(string|ResponseInterface $output): void
-                {
-                }
+                public function write(string|ResponseInterface $output): void {}
             };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
@@ -372,9 +370,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
                     throw new LogicException('Rendering failed');
                 }
 
-                public function write(string|ResponseInterface $output): void
-                {
-                }
+                public function write(string|ResponseInterface $output): void {}
             };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([

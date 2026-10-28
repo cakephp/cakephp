@@ -21,7 +21,5 @@ abstract class AttributeRoutingBaseController extends AppController
      */
     #[Get('/parent', 'parent')]
     #[Get('/parent-alias', 'parent-alias')]
-    public function parentRoute(): void
-    {
-    }
+    public function parentRoute(): void {}
 }

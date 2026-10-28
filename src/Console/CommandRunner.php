@@ -65,8 +65,7 @@ class CommandRunner implements EventDispatcherInterface
         protected ConsoleApplicationInterface $app,
         protected string $root = 'cake',
         protected ?CommandFactoryInterface $factory = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Replace the entire alias map for a runner.

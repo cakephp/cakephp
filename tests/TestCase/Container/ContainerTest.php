@@ -205,9 +205,7 @@ class ContainerTest extends TestCase
                 return true;
             }
 
-            public function register(): void
-            {
-            }
+            public function register(): void {}
         };
 
         $container = new Container();

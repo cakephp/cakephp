@@ -244,9 +244,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return void
      */
-    public function initialize(): void
-    {
-    }
+    public function initialize(): void {}
 
     /**
      * Get the component registry for this controller.
@@ -958,9 +956,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(EventInterface $event): void
-    {
-    }
+    public function beforeFilter(EventInterface $event): void {}
 
     /**
      * Called after the controller action is run, but before the view is rendered. You can use this method
@@ -970,9 +966,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(EventInterface $event): void
-    {
-    }
+    public function beforeRender(EventInterface $event): void {}
 
     /**
      * The beforeRedirect method is invoked when the controller's redirect method is called but before any
@@ -990,9 +984,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response): void
-    {
-    }
+    public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response): void {}
 
     /**
      * Called after the controller action is run and rendered.
@@ -1001,7 +993,5 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(EventInterface $event): void
-    {
-    }
+    public function afterFilter(EventInterface $event): void {}
 }

@@ -54,9 +54,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      *
      * @param \Cake\Container\ContainerInterface $container The container to build controllers with.
      */
-    public function __construct(protected ContainerInterface $container)
-    {
-    }
+    public function __construct(protected ContainerInterface $container) {}
 
     /**
      * Create a controller for a given request.

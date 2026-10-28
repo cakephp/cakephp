@@ -21,6 +21,4 @@ use Cake\Core\Exception\CakeException;
 /**
  * Used when a SerializedView class fails to serialize data.
  */
-class SerializationFailureException extends CakeException
-{
-}
+class SerializationFailureException extends CakeException {}

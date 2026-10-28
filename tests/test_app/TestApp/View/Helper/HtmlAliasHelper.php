@@ -11,7 +11,5 @@ use Cake\View\Helper;
  */
 class HtmlAliasHelper extends Helper
 {
-    public function afterRender(EventInterface $event, string $viewFile): void
-    {
-    }
+    public function afterRender(EventInterface $event, string $viewFile): void {}
 }

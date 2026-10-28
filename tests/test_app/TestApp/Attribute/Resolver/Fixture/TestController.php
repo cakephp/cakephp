@@ -9,22 +9,14 @@ use TestApp\Attribute\Resolver\TestRoute;
 class TestController
 {
     #[TestRoute('/public')]
-    public function publicMethod(): void
-    {
-    }
+    public function publicMethod(): void {}
 
     #[TestRoute('/protected')]
-    protected function protectedMethod(): void
-    {
-    }
+    protected function protectedMethod(): void {}
 
     #[TestRoute('/private')]
-    private function privateMethod(): void
-    {
-    }
+    private function privateMethod(): void {}
 
     #[TestRoute('/static')]
-    public static function staticMethod(): void
-    {
-    }
+    public static function staticMethod(): void {}
 }

@@ -47,9 +47,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity> $table The table this marshaller is for.
      */
-    public function __construct(protected Table $table)
-    {
-    }
+    public function __construct(protected Table $table) {}
 
     /**
      * Build the map of property => marshaling callable.
@@ -89,10 +87,7 @@ class Marshaller
             if (!$this->table->hasAssociation($stringifiedKey)) {
                 if (
                     !str_starts_with($stringifiedKey, '_')
-                    && (
-                        !isset($options['junctionProperty'])
-                        || $options['junctionProperty'] !== $stringifiedKey
-                    )
+                    && (!isset($options['junctionProperty']) || $options['junctionProperty'] !== $stringifiedKey)
                 ) {
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for `%s` association. It is not associated with `%s`.',

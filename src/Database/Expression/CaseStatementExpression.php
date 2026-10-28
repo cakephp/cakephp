@@ -128,10 +128,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             if (
                 $value !== null
                 && !is_scalar($value)
-                && !(
-                    is_object($value)
-                    && !$value instanceof Closure
-                )
+                && !(is_object($value) && !$value instanceof Closure)
             ) {
                 throw new InvalidArgumentException(sprintf(
                     'The `$value` argument must be either `null`, a scalar value, an object, '
@@ -415,10 +412,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
         if (
             $result !== null
             && !is_scalar($result)
-            && !(
-                is_object($result)
-                && !$result instanceof Closure
-            )
+            && !(is_object($result) && !$result instanceof Closure)
         ) {
             throw new InvalidArgumentException(sprintf(
                 'The `$result` argument must be either `null`, a scalar value, an object, '

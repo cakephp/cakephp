@@ -634,12 +634,10 @@ class Text
                 }
 
                 if ($truncate === '') {
-                    if (
-                        !preg_match(
-                            '/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/i',
-                            $tag[2],
-                        )
-                    ) {
+                    if (!preg_match(
+                        '/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/i',
+                        $tag[2],
+                    )) {
                         if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
                             array_unshift($openTags, $tag[2]);
                         } elseif (preg_match('/<\/([\w]+)[^>]*>/', $tag[0], $closeTag)) {

@@ -375,9 +375,7 @@ class Table implements
      * @param array<string, mixed> $config Configuration options passed to the constructor
      * @return void
      */
-    public function initialize(array $config): void
-    {
-    }
+    public function initialize(array $config): void {}
 
     /**
      * Sets the database table name.

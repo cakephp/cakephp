@@ -134,9 +134,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @return void
      */
-    public function initialize(): void
-    {
-    }
+    public function initialize(): void {}
 
     /**
      * Get the view builder being used.

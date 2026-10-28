@@ -37,9 +37,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
-    {
-    }
+    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {}
 
     /**
      * The Model.afterMarshal event is fired after request data is converted into entities.
@@ -57,8 +55,7 @@ trait TableEventsTrait
         EntityInterface $entity,
         ArrayObject $data,
         ArrayObject $options,
-    ): void {
-    }
+    ): void {}
 
     /**
      * The Model.buildValidator event is fired when $name validator is created.
@@ -69,9 +66,7 @@ trait TableEventsTrait
      * @param string $name Name.
      * @return void
      */
-    public function buildValidator(EventInterface $event, Validator $validator, string $name): void
-    {
-    }
+    public function buildValidator(EventInterface $event, Validator $validator, string $name): void {}
 
     /**
      * The Model.beforeFind event is fired before each find operation.
@@ -82,9 +77,7 @@ trait TableEventsTrait
      * @param bool $primary `true` if it is the root query, `false` if it is the associated query.
      * @return void
      */
-    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void
-    {
-    }
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {}
 
     /**
      * The Model.beforeSave event is fired before each entity is saved.
@@ -96,9 +89,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.afterSave event is fired after an entity is saved.
@@ -108,9 +99,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.afterSaveCommit event is fired after the transaction in which the save operation is wrapped has been
@@ -123,9 +112,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function afterSaveCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.beforeDelete event is fired before an entity is deleted.
@@ -137,9 +124,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.afterDelete event is fired after an entity has been deleted.
@@ -149,9 +134,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.afterDeleteCommit event is fired after the transaction in which the delete operation is wrapped has
@@ -164,9 +147,7 @@ trait TableEventsTrait
      * @param \ArrayObject<string, mixed> $options Options.
      * @return void
      */
-    public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
-    {
-    }
+    public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {}
 
     /**
      * The Model.beforeRules event is fired before an entity has had rules applied.
@@ -183,8 +164,7 @@ trait TableEventsTrait
         EntityInterface $entity,
         ArrayObject $options,
         string $operation,
-    ): void {
-    }
+    ): void {}
 
     /**
      * The Model.afterRules event is fired after an entity has rules applied.
@@ -203,6 +183,5 @@ trait TableEventsTrait
         ArrayObject $options,
         bool $result,
         string $operation,
-    ): void {
-    }
+    ): void {}
 }

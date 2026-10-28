@@ -25,9 +25,7 @@ class DummyCell extends Cell
     /**
      * Default cell action.
      */
-    public function display(): void
-    {
-    }
+    public function display(): void {}
 
     /**
      * Simple echo.

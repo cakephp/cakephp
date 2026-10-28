@@ -25,9 +25,7 @@ class TestController extends ControllerTestAppController
      */
     protected ?string $modelClass = 'Comments';
 
-    public function beforeFilter(EventInterface $event): void
-    {
-    }
+    public function beforeFilter(EventInterface $event): void {}
 
     /**
      * index method
@@ -62,9 +60,7 @@ class TestController extends ControllerTestAppController
     /**
      * @param mixed $passed
      */
-    public function reflection($passed, Table $table)
-    {
-    }
+    public function reflection($passed, Table $table) {}
 
     /**
      * @return \Cake\Http\Response
@@ -83,21 +79,13 @@ class TestController extends ControllerTestAppController
     }
 
     // phpcs:disable
-    protected function protected_m()
-    {
-    }
+    protected function protected_m() {}
 
-    private function private_m()
-    {
-    }
+    private function private_m() {}
 
-    public function _hidden()
-    {
-    }
+    public function _hidden() {}
 
     // phpcs:enable
 
-    public function admin_add(): void
-    {
-    }
+    public function admin_add(): void {}
 }

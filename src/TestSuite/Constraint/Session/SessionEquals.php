@@ -30,9 +30,7 @@ class SessionEquals extends Constraint
      *
      * @param string $path Session Path
      */
-    public function __construct(protected string $path)
-    {
-    }
+    public function __construct(protected string $path) {}
 
     /**
      * Compare session value

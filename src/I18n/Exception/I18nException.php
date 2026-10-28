@@ -22,6 +22,4 @@ use Cake\Core\Exception\CakeException;
 /**
  * I18n exception.
  */
-class I18nException extends CakeException
-{
-}
+class I18nException extends CakeException {}

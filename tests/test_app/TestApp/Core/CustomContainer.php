@@ -9,6 +9,4 @@ use Cake\Container\Container;
  * A custom container implementation used to test that
  * `Cake\Core\ContainerFactory` respects `App.container`.
  */
-class CustomContainer extends Container
-{
-}
+class CustomContainer extends Container {}

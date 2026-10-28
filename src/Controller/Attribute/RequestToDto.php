@@ -20,8 +20,7 @@ readonly class RequestToDto implements ParameterAttributeInterface
     public function __construct(
         protected ?string $class = null,
         protected RequestToDtoSource $source = RequestToDtoSource::Auto,
-    ) {
-    }
+    ) {}
 
     /**
      * @inheritDoc

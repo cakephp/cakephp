@@ -466,9 +466,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testAppWithoutContainerApplicationInterface(): void
     {
         $app = new class implements RoutingApplicationInterface {
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+            public function routes(RouteBuilder $routes): void {}
         };
         $this->builder->scope('/', function (RouteBuilder $routes): void {
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
@@ -510,9 +508,7 @@ class RoutingMiddlewareTest extends TestCase
         $app = new class(CONFIG) extends Application {
             public ?Closure $handleCallback = null;
 
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+            public function routes(RouteBuilder $routes): void {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {

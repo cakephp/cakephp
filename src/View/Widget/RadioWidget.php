@@ -222,10 +222,7 @@ class RadioWidget extends BasicWidget
 
         if (
             $data['label'] === false
-            && (
-                $nestedInput
-                || !str_contains($this->templates->get('radioWrapper'), '{{input}}')
-            )
+            && ($nestedInput || !str_contains($this->templates->get('radioWrapper'), '{{input}}'))
         ) {
             $label = $input;
             $input = '';

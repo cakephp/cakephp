@@ -19,6 +19,5 @@ readonly class CommentDto
         public string $comment,
         public int $article_id,
         public int $user_id,
-    ) {
-    }
+    ) {}
 }

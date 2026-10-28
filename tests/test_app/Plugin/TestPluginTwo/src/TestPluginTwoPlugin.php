@@ -17,6 +17,4 @@ namespace TestPluginTwo;
 
 use Cake\Core\BasePlugin;
 
-class TestPluginTwoPlugin extends BasePlugin
-{
-}
+class TestPluginTwoPlugin extends BasePlugin {}

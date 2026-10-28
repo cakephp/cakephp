@@ -31,14 +31,8 @@ class LiteralArgument implements LiteralArgumentInterface
     {
         if (
             $type === null
-            || (
-                $type === self::TYPE_CALLABLE
-                && is_callable($value)
-            )
-            || (
-                $type === self::TYPE_OBJECT
-                && is_object($value)
-            )
+            || ($type === self::TYPE_CALLABLE && is_callable($value))
+            || ($type === self::TYPE_OBJECT && is_object($value))
             || gettype($value) === $type
         ) {
             $this->value = $value;

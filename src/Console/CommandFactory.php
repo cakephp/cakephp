@@ -31,9 +31,7 @@ class CommandFactory implements CommandFactoryInterface
      *
      * @param \Cake\Container\ContainerInterface|null $container The container to use if available.
      */
-    public function __construct(protected ?ContainerInterface $container = null)
-    {
-    }
+    public function __construct(protected ?ContainerInterface $container = null) {}
 
     /**
      * @inheritDoc

@@ -50,9 +50,7 @@ class MiddlewareApplicationTest extends TestCase
         ]);
 
         $app = new class extends MiddlewareApplication {
-            public function bootstrap(): void
-            {
-            }
+            public function bootstrap(): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {

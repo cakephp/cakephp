@@ -680,10 +680,7 @@ class EagerLoader
                 // be attached to joined associations.
                 if (
                     !str_contains($path, '.')
-                    && (
-                        !array_key_exists($path, $collected)
-                        || !array_key_exists($alias, $collected[$path])
-                    )
+                    && (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
                 ) {
                     $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";
                     throw new InvalidArgumentException($message);

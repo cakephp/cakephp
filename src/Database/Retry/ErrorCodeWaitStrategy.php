@@ -31,9 +31,7 @@ class ErrorCodeWaitStrategy implements RetryStrategyInterface
      * @param array<int> $errorCodes DB-specific error codes that allow retrying
      * @param int $retryInterval Seconds to wait before allowing next retry, 0 for no wait.
      */
-    public function __construct(protected array $errorCodes, protected int $retryInterval)
-    {
-    }
+    public function __construct(protected array $errorCodes, protected int $retryInterval) {}
 
     /**
      * @inheritDoc

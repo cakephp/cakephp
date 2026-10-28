@@ -344,10 +344,7 @@ class Validation
     public static function comparison(mixed $check1, string $operator, mixed $check2): bool
     {
         if (
-            (
-                !is_numeric($check1)
-                || !is_numeric($check2)
-            )
+            (!is_numeric($check1) || !is_numeric($check2))
             && !in_array($operator, static::COMPARE_STRING, true)
         ) {
             return false;
@@ -455,10 +452,7 @@ class Validation
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
         if (
-            (
-                class_exists(ChronosDate::class)
-                && $check instanceof ChronosDate
-            )
+            (class_exists(ChronosDate::class) && $check instanceof ChronosDate)
             || $check instanceof DateTimeInterface
         ) {
             return true;
@@ -663,10 +657,7 @@ class Validation
     public static function time(mixed $check): bool
     {
         if (
-            (
-                class_exists(ChronosTime::class)
-                && $check instanceof ChronosTime
-            )
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
             || $check instanceof DateTimeInterface
         ) {
             return true;
@@ -707,10 +698,7 @@ class Validation
         }
 
         if (
-            (
-                class_exists(ChronosTime::class)
-                && $check instanceof ChronosTime
-            )
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
             || $check instanceof DateTimeInterface
         ) {
             return true;
@@ -1716,14 +1704,8 @@ class Validation
         $imageSize = getimagesize($file);
         if ($imageSize) {
             if (
-                (
-                    isset($options['width'])
-                    && ($imageSize['width_unit'] ?? 'px') !== 'px'
-                )
-                || (
-                    isset($options['height'])
-                    && ($imageSize['height_unit'] ?? 'px') !== 'px'
-                )
+                (isset($options['width']) && ($imageSize['width_unit'] ?? 'px') !== 'px')
+                || (isset($options['height']) && ($imageSize['height_unit'] ?? 'px') !== 'px')
             ) {
                 return false;
             }

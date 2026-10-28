@@ -41,8 +41,7 @@ class IdentifierQuoter
     public function __construct(
         protected string $startQuote,
         protected string $endQuote,
-    ) {
-    }
+    ) {}
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to

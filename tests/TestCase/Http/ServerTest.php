@@ -324,9 +324,7 @@ class ServerTest extends TestCase
     public function testGetEventManagerNonEventedApplication(): void
     {
         $app = new class implements HttpApplicationInterface {
-            public function bootstrap(): void
-            {
-            }
+            public function bootstrap(): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
@@ -349,9 +347,7 @@ class ServerTest extends TestCase
     public function testSetEventManagerNonEventedApplication(): void
     {
         $app = new class implements HttpApplicationInterface {
-            public function bootstrap(): void
-            {
-            }
+            public function bootstrap(): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
@@ -378,9 +374,7 @@ class ServerTest extends TestCase
     public function testAppWithoutContainerApplicationInterface(): void
     {
         $app = new class implements HttpApplicationInterface {
-            public function bootstrap(): void
-            {
-            }
+            public function bootstrap(): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
@@ -416,9 +410,7 @@ class ServerTest extends TestCase
         );
 
         $emitter = new class extends ResponseEmitter {
-            public function emit(ResponseInterface $response, $stream = null): void
-            {
-            }
+            public function emit(ResponseInterface $response, $stream = null): void {}
         };
         $server->emit(new Response(), $emitter);
 

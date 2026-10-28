@@ -517,10 +517,7 @@ class FormHelper extends Helper
             is_string($options['url'])
             || (
                 is_array($options['url'])
-                && (
-                    isset($options['url']['_name'])
-                    || isset($options['url']['_path'])
-                )
+                && (isset($options['url']['_name']) || isset($options['url']['_path']))
             )
         ) {
             return $options['url'];
@@ -1113,11 +1110,7 @@ class FormHelper extends Helper
         $addAriaAttributes = true;
         if (
             $options['type'] === 'hidden'
-            || (
-                $options['type'] === 'select'
-                && isset($options['multiple'])
-                && $options['multiple'] === 'checkbox'
-            )
+            || ($options['type'] === 'select' && isset($options['multiple']) && $options['multiple'] === 'checkbox')
         ) {
             $addAriaAttributes = false;
         }

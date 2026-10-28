@@ -39,6 +39,5 @@ readonly class Scope
         public array $defaults = [],
         public array $patterns = [],
         public ?string $host = null,
-    ) {
-    }
+    ) {}
 }

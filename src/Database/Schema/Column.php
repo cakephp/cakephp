@@ -71,8 +71,7 @@ class Column
         protected ?string $baseType = null,
         protected ?bool $fixed = null,
         protected ?string $charset = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Serializes column data.

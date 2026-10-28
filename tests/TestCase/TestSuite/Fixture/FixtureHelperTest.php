@@ -158,9 +158,7 @@ class FixtureHelperTest extends TestCase
                 return 'test1';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
         };
         $fixture2 = new class extends TestFixture {
             public function connection(): string
@@ -168,9 +166,7 @@ class FixtureHelperTest extends TestCase
                 return 'test2';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
         };
 
         ConnectionManager::alias('test', 'test1');
@@ -215,9 +211,7 @@ class FixtureHelperTest extends TestCase
                 return 'test';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
 
             public function insert(ConnectionInterface $connection): void
             {
@@ -234,9 +228,7 @@ class FixtureHelperTest extends TestCase
                         return 'test';
                     }
 
-                    protected function schemaFromReflection(): void
-                    {
-                    }
+                    protected function schemaFromReflection(): void {}
 
                     public function insert(ConnectionInterface $connection): void
                     {
@@ -282,9 +274,7 @@ class FixtureHelperTest extends TestCase
                 return 'test';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
 
             public function truncate(ConnectionInterface $connection): void
             {
@@ -301,9 +291,7 @@ class FixtureHelperTest extends TestCase
                         return 'test';
                     }
 
-                    protected function schemaFromReflection(): void
-                    {
-                    }
+                    protected function schemaFromReflection(): void {}
 
                     public function truncate(ConnectionInterface $connection): void
                     {
@@ -367,9 +355,7 @@ class FixtureHelperTest extends TestCase
                 return 'failing';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
         };
 
         $this->expectException(CakeException::class);
@@ -393,9 +379,7 @@ class FixtureHelperTest extends TestCase
                 return 'fake';
             }
 
-            protected function schemaFromReflection(): void
-            {
-            }
+            protected function schemaFromReflection(): void {}
 
             public function truncate(ConnectionInterface $connection): void
             {

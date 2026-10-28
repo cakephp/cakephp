@@ -19,21 +19,15 @@ class Test2Behavior extends Behavior
     /**
      * Test for event bindings.
      */
-    public function beforeFind(): void
-    {
-    }
+    public function beforeFind(): void {}
 
     /**
      * Test finder
      */
-    public function findFoo(): void
-    {
-    }
+    public function findFoo(): void {}
 
     /**
      * Test method
      */
-    public function doSomething(): void
-    {
-    }
+    public function doSomething(): void {}
 }

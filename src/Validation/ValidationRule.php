@@ -39,8 +39,7 @@ class ValidationRule
         public readonly Closure|string|null $on = null,
         public readonly bool $last = false,
         public readonly array $pass = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Dispatches the validation rule to the given validator method and returns

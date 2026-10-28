@@ -422,14 +422,8 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             // If we have a prefix/plugin and the template is error400 or error500,
             // try to render from the base Error directory before falling back to error500
             if (
-                (
-                    $template === 'error400'
-                    || $template === 'error500'
-                )
-                && (
-                    $this->controller->getRequest()->getParam('prefix')
-                    || $this->controller->getPlugin()
-                )
+                ($template === 'error400' || $template === 'error500')
+                && ($this->controller->getRequest()->getParam('prefix') || $this->controller->getPlugin())
             ) {
                 return $this->outputMessageSafe($template);
             }

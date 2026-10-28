@@ -156,10 +156,7 @@ class QueryCompiler
             if (
                 $part === null
                 || $part === []
-                || (
-                    $part instanceof Countable
-                    && count($part) === 0
-                )
+                || ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
             }
@@ -217,11 +214,7 @@ class QueryCompiler
         $driver = $query->getDriver();
         $select = 'SELECT%s%s %s%s';
         if (
-            (
-                $query->clause('union')
-                || $query->clause('except')
-                || $query->clause('intersect')
-            )
+            ($query->clause('union') || $query->clause('except') || $query->clause('intersect'))
             && $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
         ) {
             $select = '(SELECT%s%s %s%s';

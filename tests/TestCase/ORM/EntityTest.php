@@ -836,9 +836,7 @@ class EntityTest extends TestCase
         // Create an object that represents the same value but as object type.
         // In real usage this would be something like BigDecimal.
         $objectValue = new class(10.50) {
-            public function __construct(private float $value)
-            {
-            }
+            public function __construct(private float $value) {}
 
             public function getValue(): float
             {

@@ -583,9 +583,7 @@ class EventManagerTest extends TestCase
     {
         $listener = new CustomTestEventListenerInterface();
         $generalManager = new class($listener) extends EventManager {
-            public function __construct(public CustomTestEventListenerInterface $listener)
-            {
-            }
+            public function __construct(public CustomTestEventListenerInterface $listener) {}
 
             public function prioritisedListeners(string $name): array
             {
@@ -618,9 +616,7 @@ class EventManagerTest extends TestCase
     {
         $listener = new CustomTestEventListenerInterface();
         $generalManager = new class($listener) extends EventManager {
-            public function __construct(public CustomTestEventListenerInterface $listener)
-            {
-            }
+            public function __construct(public CustomTestEventListenerInterface $listener) {}
 
             public function prioritisedListeners(string $name): array
             {

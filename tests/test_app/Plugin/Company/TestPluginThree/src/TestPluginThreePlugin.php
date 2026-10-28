@@ -17,6 +17,4 @@ namespace Company\TestPluginThree;
 
 use Cake\Core\BasePlugin;
 
-class TestPluginThreePlugin extends BasePlugin
-{
-}
+class TestPluginThreePlugin extends BasePlugin {}

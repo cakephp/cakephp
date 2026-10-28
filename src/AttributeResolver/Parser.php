@@ -49,8 +49,7 @@ class Parser
      */
     public function __construct(
         protected array $excludeAttributes = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Parse a PHP file and extract all attributes.

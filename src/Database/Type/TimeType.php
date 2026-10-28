@@ -234,10 +234,7 @@ class TimeType extends BaseType implements BatchCastingInterface
     {
         if (
             $enable
-            && (
-                $this->className !== Time::class
-                && !is_subclass_of($this->className, Time::class)
-            )
+            && ($this->className !== Time::class && !is_subclass_of($this->className, Time::class))
         ) {
             throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
         }

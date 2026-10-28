@@ -8,7 +8,5 @@ use Attribute;
 #[Attribute]
 class TestColumn
 {
-    public function __construct(public string $type)
-    {
-    }
+    public function __construct(public string $type) {}
 }

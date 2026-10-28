@@ -336,9 +336,7 @@ class BasePluginTest extends TestCase
         };
 
         $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+            public function routes(RouteBuilder $routes): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {

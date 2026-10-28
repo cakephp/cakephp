@@ -8,6 +8,4 @@ use TestApp\Attribute\Resolver\TestInclude;
 
 #[TestInclude]
 #[TestExclude]
-class TestExcludeClass
-{
-}
+class TestExcludeClass {}

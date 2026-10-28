@@ -52,8 +52,7 @@ class Statement implements StatementInterface
         protected PDOStatement $statement,
         protected Driver $driver,
         protected array $resultDecorators = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @inheritDoc

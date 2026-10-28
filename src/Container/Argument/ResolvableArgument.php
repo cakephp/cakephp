@@ -8,9 +8,7 @@ class ResolvableArgument implements ResolvableArgumentInterface
     /**
      * @param string $value
      */
-    public function __construct(protected string $value)
-    {
-    }
+    public function __construct(protected string $value) {}
 
     /**
      * @return string

@@ -65,37 +65,21 @@ class TableImplementedEventsTest extends TestCase
 // phpcs:disable
 class ImplementedEventsTable extends Table
 {
-    public function buildValidator(): void
-    {
-    }
+    public function buildValidator(): void {}
 
-    public function beforeMarshal(): void
-    {
-    }
+    public function beforeMarshal(): void {}
 
-    public function beforeFind(): void
-    {
-    }
+    public function beforeFind(): void {}
 
-    public function beforeSave(): void
-    {
-    }
+    public function beforeSave(): void {}
 
-    public function afterSave(): void
-    {
-    }
+    public function afterSave(): void {}
 
-    public function beforeDelete(): void
-    {
-    }
+    public function beforeDelete(): void {}
 
-    public function afterDelete(): void
-    {
-    }
+    public function afterDelete(): void {}
 
-    public function afterRules(): void
-    {
-    }
+    public function afterRules(): void {}
 }
 
 class ImplementedAllEventsTable extends Table

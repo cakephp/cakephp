@@ -24,6 +24,5 @@ readonly class ArticleDto
         public ?AuthorDto $author = null,
         #[CollectionOf(CommentDto::class)]
         public array $comments = [],
-    ) {
-    }
+    ) {}
 }

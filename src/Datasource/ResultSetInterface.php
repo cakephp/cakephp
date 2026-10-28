@@ -25,6 +25,4 @@ use Cake\Collection\CollectionInterface;
  * @template-covariant TValue
  * @extends \Cake\Collection\CollectionInterface<TKey, TValue>
  */
-interface ResultSetInterface extends CollectionInterface
-{
-}
+interface ResultSetInterface extends CollectionInterface {}

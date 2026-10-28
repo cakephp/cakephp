@@ -32,8 +32,7 @@ class QueryFactory
      */
     public function __construct(
         protected Connection $connection,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new SelectQuery instance.

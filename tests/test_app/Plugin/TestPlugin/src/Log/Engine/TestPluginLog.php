@@ -26,7 +26,5 @@ class TestPluginLog extends AbstractLogger
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = []): void
-    {
-    }
+    public function log($level, $message, array $context = []): void {}
 }

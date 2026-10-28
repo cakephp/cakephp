@@ -21,6 +21,4 @@ use Cake\Core\Exception\CakeException;
 /**
  * Exception thrown when a lock operation fails.
  */
-class LockException extends CakeException
-{
-}
+class LockException extends CakeException {}

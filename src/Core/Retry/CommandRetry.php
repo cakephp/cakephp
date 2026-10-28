@@ -41,8 +41,7 @@ class CommandRetry
     public function __construct(
         protected RetryStrategyInterface $strategy,
         protected int $maxRetries = 1,
-    ) {
-    }
+    ) {}
 
     /**
      * The number of retries to perform in case of failure

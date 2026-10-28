@@ -16,9 +16,7 @@ class AssociationTableMixinClassReflectionExtension implements
     PropertiesClassReflectionExtension,
     MethodsClassReflectionExtension
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
-    {
-    }
+    public function __construct(private ReflectionProvider $reflectionProvider) {}
 
     protected function getTableReflection(): ClassReflection
     {

@@ -15,6 +15,4 @@ use TestApp\Attribute\Resolver\TestRoute;
     name: 'list',
     class: /* Named argument */ TestRoute::/* Class reference */ class,
 )]
-class TestNamedClassArgument
-{
-}
+class TestNamedClassArgument {}

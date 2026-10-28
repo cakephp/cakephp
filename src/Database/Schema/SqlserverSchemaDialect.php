@@ -652,10 +652,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         if (
             $column['type'] === TableSchemaInterface::TYPE_DECIMAL
-            && (
-                isset($column['length'])
-                || isset($column['precision'])
-            )
+            && (isset($column['length']) || isset($column['precision']))
         ) {
             $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }

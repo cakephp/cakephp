@@ -24,6 +24,5 @@ readonly class TestClassReference
         public ?string $routeClass = null,
         public ?string $name = null,
         public ?string $class = null,
-    ) {
-    }
+    ) {}
 }
