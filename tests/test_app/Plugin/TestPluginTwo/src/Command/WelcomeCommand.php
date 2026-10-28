@@ -7,7 +7,7 @@ use Cake\Command\Command;
 
 class WelcomeCommand extends Command
 {
-    public function execute()
+    public function execute(): void
     {
         $this->io->out('This is the say_hello method called from TestPluginTwo.WelcomeCommand');
     }

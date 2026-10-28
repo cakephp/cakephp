@@ -39,14 +39,6 @@ use function Cake\I18n\__xn;
 class I18nTest extends TestCase
 {
     /**
-     * Set Up
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    /**
      * Tear down method
      */
     protected function tearDown(): void

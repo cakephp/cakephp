@@ -25,7 +25,7 @@ class MailerSendFailsEmailIsReset extends TestCase
         $mailer = new class extends Mailer {
             public bool $restoreIsCalled = false;
 
-            public function welcome()
+            public function welcome(): void
             {
             }
 

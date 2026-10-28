@@ -7,7 +7,7 @@ use Cake\Command\Command;
 
 class AbortCommand extends Command
 {
-    public function execute()
+    public function execute(): void
     {
         $this->io->error('Command aborted');
         $this->abort(127);

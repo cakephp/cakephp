@@ -7,7 +7,7 @@ use Cake\Command\Command;
 
 class NonInteractiveCommand extends Command
 {
-    public function execute()
+    public function execute(): void
     {
         $result = $this->io->ask('What?', 'Default!');
         $this->io->quiet('Result: ' . $result);

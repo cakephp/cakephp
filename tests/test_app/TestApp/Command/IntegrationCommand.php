@@ -8,7 +8,7 @@ use Cake\Console\ConsoleOptionParser;
 
 class IntegrationCommand extends Command
 {
-    public function execute()
+    public function execute(): void
     {
         $this->io->out('arg: ' . $this->args->getArgument('arg'));
         $this->io->out('opt: ' . $this->args->getOption('opt'));

@@ -7,7 +7,7 @@ use Cake\Command\Command;
 
 class SampleCommand extends Command
 {
-    public function execute()
+    public function execute(): void
     {
         $this->io->out('This is the main method called from SampleCommand');
     }

@@ -29,14 +29,6 @@ class Test3Behavior extends Behavior
     }
 
     /**
-     * Test method to ensure it is ignored as a callable method.
-     */
-    public function verifyConfig(): void
-    {
-        parent::verifyConfig();
-    }
-
-    /**
      * implementedEvents
      *
      * This class does pretend to implement beforeFind

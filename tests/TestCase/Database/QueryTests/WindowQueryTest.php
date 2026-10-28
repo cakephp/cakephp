@@ -67,11 +67,6 @@ class WindowQueryTest extends TestCase
         }
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * Tests window sql generation.
      */

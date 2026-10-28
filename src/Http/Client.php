@@ -518,7 +518,18 @@ class Client implements EventDispatcherInterface, ClientInterface
                     'scheme' => $url->getScheme(),
                     'protocolRelative' => true,
                 ]);
-                $request = $request->withUri(new Uri($locationUrl));
+
+                $locationUri = new Uri($locationUrl);
+                if (
+                    $locationUri->getScheme() !== $url->getScheme() ||
+                    strtolower($locationUri->getHost()) !== strtolower($url->getHost()) ||
+                    $locationUri->getPort() !== $url->getPort()
+                ) {
+                    $request = $request
+                        ->withoutHeader('Authorization')
+                        ->withoutHeader('Cookie');
+                }
+                $request = $request->withUri($locationUri);
                 $request = $this->cookies->addToRequest($request, []);
             }
         } while ($handleRedirect);

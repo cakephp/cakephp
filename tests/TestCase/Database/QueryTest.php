@@ -396,11 +396,6 @@ class QueryTest extends TestCase
                 $this->visitedExpressions = new WeakMap();
                 $this->expressionsVisitor($expression, $callback);
             }
-
-            protected function expressionsVisitor(mixed $expression, Closure $callback): void
-            {
-                parent::expressionsVisitor($expression, $callback);
-            }
         };
 
         $leaf = new QueryExpression(['a' => 1]);

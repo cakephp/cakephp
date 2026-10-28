@@ -12,7 +12,7 @@ class GroupedCommand extends Command
         return 'custom_group';
     }
 
-    public function execute()
+    public function execute(): void
     {
         $this->io->out('Grouped Command!');
     }
