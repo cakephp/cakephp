@@ -94,21 +94,15 @@ class HostHeaderMiddleware implements MiddlewareInterface
         $patterns = $this->getTrustedHostPatterns();
         $host = $request->getUri()->getHost();
         $trusted = false;
-        set_error_handler(static function (int $code, string $message): never {
-            throw new InternalErrorException('Invalid regular expression in trusted host patterns: ' . $message);
-        }, E_WARNING);
-        try {
-            foreach ($patterns as $pattern) {
-                $result = preg_match('{' . $pattern . '}iD', $host);
-                if ($result === false) {
-                    throw new InternalErrorException(
-                        'Unable to evaluate trusted host pattern: ' . preg_last_error_msg(),
-                    );
-                }
-                $trusted = $trusted || $result === 1;
+        foreach ($patterns as $pattern) {
+            // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- Regex failures become configuration exceptions below.
+            $result = @preg_match('{' . $pattern . '}iD', $host);
+            if ($result === false) {
+                throw new InternalErrorException(
+                    'Unable to evaluate trusted host pattern: ' . preg_last_error_msg(),
+                );
             }
-        } finally {
-            restore_error_handler();
+            $trusted = $trusted || $result === 1;
         }
 
         if ($host === '' || !$trusted) {

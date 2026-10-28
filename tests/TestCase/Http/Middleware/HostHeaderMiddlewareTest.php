@@ -308,52 +308,9 @@ class HostHeaderMiddlewareTest extends TestCase
             'null entry' => [[null]],
             'nested array' => [[['^example\\.com$']]],
             'invalid regex' => [['[']],
+            'regex execution failure' => [['(*LIMIT_MATCH=1)^(e+)+x$']],
             'invalid regex after matching pattern' => [['^example\\.com$', '(']],
             'invalid entry after matching pattern' => [['^example\\.com$', false]],
-        ];
-    }
-
-    /**
-     * Test restoration of the original error handler after successful matches and regex failures.
-     *
-     * @param string $pattern The host pattern to evaluate.
-     * @param class-string<\Cake\Http\Exception\HttpException>|null $exception The expected failure, if any.
-     */
-    #[DataProvider('errorHandlerRestorationProvider')]
-    public function testErrorHandlerIsRestored(string $pattern, ?string $exception): void
-    {
-        $originalHandler = set_error_handler(static fn(): bool => false);
-        restore_error_handler();
-        $middleware = new HostHeaderMiddleware(trustedHostPatterns: [$pattern]);
-        $request = new ServerRequest(['uri' => new Uri('https://example.com')]);
-
-        try {
-            if ($exception !== null) {
-                $this->assertHostRejected($middleware, $request, $exception);
-
-                return;
-            }
-
-            $this->assertHostAccepted($middleware, $request);
-        } finally {
-            $currentHandler = set_error_handler(static fn(): bool => false);
-            restore_error_handler();
-            $this->assertSame($originalHandler, $currentHandler);
-        }
-    }
-
-    /**
-     * Provide matching, rejected, malformed, and resource-limited regular expressions.
-     *
-     * @return array<string, array{string, class-string<\Cake\Http\Exception\HttpException>|null}>
-     */
-    public static function errorHandlerRestorationProvider(): array
-    {
-        return [
-            'matching host' => ['^example\\.com$', null],
-            'untrusted host' => ['^other\\.example$', BadRequestException::class],
-            'invalid regex' => ['[', InternalErrorException::class],
-            'regex execution failure' => ['(*LIMIT_MATCH=1)^(e+)+x$', InternalErrorException::class],
         ];
     }
 
