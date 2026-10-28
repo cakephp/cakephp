@@ -318,7 +318,7 @@ class ServerRequestTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at `avatar`');
         $request = new ServerRequest();
-        $request->withUploadedFiles(['avatar' => 'not a file']);
+        (void)$request->withUploadedFiles(['avatar' => 'not a file']);
     }
 
     /**
@@ -329,7 +329,7 @@ class ServerRequestTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid file at `user.avatar`');
         $request = new ServerRequest();
-        $request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
+        (void)$request->withUploadedFiles(['user' => ['avatar' => 'not a file']]);
     }
 
     /**
@@ -604,7 +604,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
-        $request->withMethod('no good');
+        (void)$request->withMethod('no good');
     }
 
     /**
@@ -661,7 +661,7 @@ class ServerRequestTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported protocol version `no good` provided');
         $request = new ServerRequest();
-        $request->withProtocolVersion('no good');
+        (void)$request->withProtocolVersion('no good');
     }
 
     /**
@@ -1948,7 +1948,7 @@ class ServerRequestTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $request = new ServerRequest([]);
-        $request->withoutAttribute($prop);
+        (void)$request->withoutAttribute($prop);
     }
 
     /**
