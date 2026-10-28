@@ -27,6 +27,7 @@ use Generator;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
+use ReflectionProperty;
 use SplFileInfo;
 
 /**
@@ -311,26 +312,36 @@ class ScannerTest extends TestCase
     public function testGetLoadedPluginsExcludesDebugPluginsWhenDebugDisabled(): void
     {
         $originalDebug = Configure::read('debug');
-        Configure::write('debug', false);
-
-        // Clear plugin config cache to force reload
         PluginConfig::clearCache();
+        new ReflectionProperty(PluginConfig::class, 'cachedPlugins')->setValue(null, [
+            'DebugOnlyPlugin' => [
+                'path' => $this->scanRoot . '/plugin',
+                'isLoaded' => true,
+                'onlyDebug' => true,
+            ],
+            'RegularPlugin' => [
+                'path' => $this->scanRoot . '/plugin-extra',
+                'isLoaded' => false,
+            ],
+        ]);
 
-        $parser = new Parser();
-        $scanner = new Scanner($parser);
+        try {
+            $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
 
-        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+            // Positive control: debug-only plugins are included when debug is on.
+            Configure::write('debug', true);
+            $pluginNames = array_column($method->invoke(new Scanner(new Parser())), 'plugin');
+            $this->assertContains('DebugOnlyPlugin', $pluginNames);
 
-        $plugins = $method->invoke($scanner);
-
-        // Verify no debug-only plugins are included when debug is off
-        foreach ($plugins as $plugin) {
-            $this->assertIsString($plugin['plugin']);
-            // If we had a debug-only plugin configured, it shouldn't be in the list
+            // Behavior under test: debug-only plugins are excluded when debug is off.
+            Configure::write('debug', false);
+            $pluginNames = array_column($method->invoke(new Scanner(new Parser())), 'plugin');
+            $this->assertContains('RegularPlugin', $pluginNames);
+            $this->assertNotContains('DebugOnlyPlugin', $pluginNames);
+        } finally {
+            Configure::write('debug', $originalDebug);
+            PluginConfig::clearCache();
         }
-
-        Configure::write('debug', $originalDebug);
-        PluginConfig::clearCache();
     }
 
     /**

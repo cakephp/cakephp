@@ -163,7 +163,7 @@ class CookieTest extends TestCase
         $this->expectException(ValueError::class);
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie->withSameSite('invalid');
+        (void)$cookie->withSameSite('invalid');
     }
 
     public function testGetSameSite(): void

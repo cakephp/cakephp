@@ -206,7 +206,7 @@ class ResponseTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('`beans` is an invalid content type');
         $response = new Response();
-        $response->withType('beans');
+        (void)$response->withType('beans');
     }
 
     /**
@@ -1060,7 +1060,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('The requested file /some/missing/folder/file.jpg was not found');
 
         $response = new Response();
-        $response->withFile('/some/missing/folder/file.jpg');
+        (void)$response->withFile('/some/missing/folder/file.jpg');
     }
 
     /**
@@ -1073,7 +1073,7 @@ class ResponseTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('The requested file was not found');
         $response = new Response();
-        $response->withFile('/some/missing/folder/file.jpg');
+        (void)$response->withFile('/some/missing/folder/file.jpg');
     }
 
     /**
@@ -1101,7 +1101,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage($expectedMessage);
 
         $response = new Response();
-        $response->withFile($path);
+        (void)$response->withFile($path);
     }
 
     /**
@@ -1416,7 +1416,7 @@ class ResponseTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid status code: 1001. Use a valid HTTP status code in range 1xx - 5xx.');
         $response = new Response();
-        $response->withStatus(1001);
+        (void)$response->withStatus(1001);
     }
 
     /**
