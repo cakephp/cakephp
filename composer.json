@@ -63,6 +63,7 @@
         "boundwize/structarmed": "^0.19",
         "cakephp/cakephp-codesniffer": "6.x-dev",
         "cakephp/mago-rules": "dev-main",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "http-interop/http-factory-tests": "^2.0",
         "mockery/mockery": "^1.6.12",
         "paragonie/csp-builder": "^3.0.2",

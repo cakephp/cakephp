@@ -173,9 +173,9 @@ class Scanner
         foreach ($installedPlugins as $pluginName => $config) {
             // Skip plugins that shouldn't be included
             if (
-                ($config['isUnknown'] ?? false) ||
-                (($config['onlyDebug'] ?? false) && !$debugMode) ||
-                !isset($config['path'])
+                ($config['isUnknown'] ?? false)
+                || (($config['onlyDebug'] ?? false) && !$debugMode)
+                || !isset($config['path'])
             ) {
                 continue;
             }

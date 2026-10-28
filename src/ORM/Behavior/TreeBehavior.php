@@ -884,9 +884,9 @@ class TreeBehavior extends Behavior
             $movement->add($field)->add((string)$shift)->setConjunction($dir);
 
             $inverse = clone $exp;
-            $movement = $mark ?
-                $inverse->add($movement)->setConjunction('*')->add('-1') :
-                $movement;
+            $movement = $mark
+                ? $inverse->add($movement)->setConjunction('*')->add('-1')
+                : $movement;
 
             $where = clone $exp;
             $where->add($field)->add($conditions)->setConjunction('');

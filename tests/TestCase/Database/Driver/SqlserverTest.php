@@ -366,9 +366,9 @@ class SqlserverTest extends TestCase
         if ($connection->getDriver()->isAutoQuotingEnabled()) {
             $identifier = $connection->getDriver()->quoteIdentifier($identifier);
         }
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS ' . $identifier . ' ' .
-            'FROM articles) _cake_paging_ ' .
-            'WHERE _cake_paging_._cake_page_rownum_ > 10';
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) AS ' . $identifier . ' '
+            . 'FROM articles) _cake_paging_ '
+            . 'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
         $query = new SelectQuery($connection);
@@ -376,9 +376,9 @@ class SqlserverTest extends TestCase
             ->from('articles')
             ->orderBy(['id'])
             ->offset(10);
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
-            'FROM articles) _cake_paging_ ' .
-            'WHERE _cake_paging_._cake_page_rownum_ > 10';
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' '
+            . 'FROM articles) _cake_paging_ '
+            . 'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
         $query = new SelectQuery($connection);
@@ -388,9 +388,9 @@ class SqlserverTest extends TestCase
             ->where(['title' => 'Something'])
             ->limit(10)
             ->offset(50);
-        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' ' .
-            'FROM articles WHERE title = :c0) _cake_paging_ ' .
-            'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
+        $expected = 'SELECT * FROM (SELECT id, title, (ROW_NUMBER() OVER (ORDER BY id)) AS ' . $identifier . ' '
+            . 'FROM articles WHERE title = :c0) _cake_paging_ '
+            . 'WHERE (_cake_paging_._cake_page_rownum_ > 50 AND _cake_paging_._cake_page_rownum_ <= 60)';
         $this->assertSame($expected, $query->sql());
 
         $query = new SelectQuery($connection);
@@ -406,12 +406,12 @@ class SqlserverTest extends TestCase
                 'computed' => 'ASC',
             ])
             ->offset(10);
-        $expected =
-            'SELECT * FROM (' .
-                'SELECT id, (SELECT 1) AS computed, ' .
-                '(ROW_NUMBER() OVER (ORDER BY (SELECT 1) ASC)) AS _cake_page_rownum_ FROM articles' .
-            ') _cake_paging_ ' .
-            'WHERE _cake_paging_._cake_page_rownum_ > 10';
+        $expected
+            = 'SELECT * FROM ('
+                . 'SELECT id, (SELECT 1) AS computed, '
+                . '(ROW_NUMBER() OVER (ORDER BY (SELECT 1) ASC)) AS _cake_page_rownum_ FROM articles'
+            . ') _cake_paging_ '
+            . 'WHERE _cake_paging_._cake_page_rownum_ > 10';
         $this->assertSame($expected, $query->sql());
 
         $subqueryA = new SelectQuery($connection);
@@ -446,13 +446,13 @@ class SqlserverTest extends TestCase
             ->offset(10);
 
         $this->assertSame(
-            'SELECT * FROM (' .
-                'SELECT id, ' .
-                '(SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c0)) AS computedA, ' .
-                '(SELECT count(*) FROM articles b WHERE (b.id = articles.id AND b.published = :c1)) AS computedB, ' .
-                '(ROW_NUMBER() OVER (ORDER BY (SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c2)) ASC)) AS _cake_page_rownum_ FROM articles' .
-            ') _cake_paging_ ' .
-            'WHERE _cake_paging_._cake_page_rownum_ > 10',
+            'SELECT * FROM ('
+                . 'SELECT id, '
+                . '(SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c0)) AS computedA, '
+                . '(SELECT count(*) FROM articles b WHERE (b.id = articles.id AND b.published = :c1)) AS computedB, '
+                . '(ROW_NUMBER() OVER (ORDER BY (SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c2)) ASC)) AS _cake_page_rownum_ FROM articles'
+            . ') _cake_paging_ '
+            . 'WHERE _cake_paging_._cake_page_rownum_ > 10',
             $query->sql(),
         );
     }
@@ -503,8 +503,8 @@ class SqlserverTest extends TestCase
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->gte('post_count', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
-            'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count '
+            . 'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 
@@ -533,8 +533,8 @@ class SqlserverTest extends TestCase
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->gte('posts.author_id', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
-            'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
+        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count '
+            . 'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 

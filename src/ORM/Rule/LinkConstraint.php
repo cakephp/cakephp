@@ -92,12 +92,12 @@ class LinkConstraint
 
         if (
             (
-                $this->requiredLinkState === static::STATUS_LINKED &&
-                $count < 1
-            ) ||
-            (
-                $this->requiredLinkState === static::STATUS_NOT_LINKED &&
-                $count !== 0
+                $this->requiredLinkState === static::STATUS_LINKED
+                && $count < 1
+            )
+            || (
+                $this->requiredLinkState === static::STATUS_NOT_LINKED
+                && $count !== 0
             )
         ) {
             return false;
@@ -156,8 +156,8 @@ class LinkConstraint
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             throw new DatabaseException(sprintf(
-                'LinkConstraint rule on `%s` requires all primary key values for building the counting ' .
-                'conditions, expected values for `(%s)`, got `(%s)`.',
+                'LinkConstraint rule on `%s` requires all primary key values for building the counting '
+                . 'conditions, expected values for `(%s)`, got `(%s)`.',
                 $source->getAlias(),
                 implode(', ', $primaryKey),
                 implode(', ', $entity->extract($primaryKey)),

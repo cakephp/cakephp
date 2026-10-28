@@ -314,6 +314,10 @@ jobs:
         if: always()
         run: vendor/bin/phpcs --parallel=8 --cache=${{ runner.temp }}/phpcs.cache --report=checkstyle | cs2pr
 
+      - name: Run php-cs-fixer
+        if: always()
+        run: vendor/bin/php-cs-fixer check -v --diff --allow-risky=yes --format=checkstyle | cs2pr
+
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
         run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github

@@ -91,8 +91,7 @@ class QueryTest extends TestCase
 
     protected function newQuery(): Query
     {
-        return new class ($this->connection) extends Query
-        {
+        return new class ($this->connection) extends Query {
         };
     }
 
@@ -389,8 +388,7 @@ class QueryTest extends TestCase
 
     public function testExpressionsVisitorAcceptsTwoArguments(): void
     {
-        $query = new class ($this->connection) extends Query
-        {
+        $query = new class ($this->connection) extends Query {
             public function visitExpression(ExpressionInterface $expression, Closure $callback): void
             {
                 $this->visitedExpressions = new WeakMap();
@@ -413,8 +411,7 @@ class QueryTest extends TestCase
 
     public function testExpressionsVisitorRequiresVisitedExpressions(): void
     {
-        $query = new class ($this->connection) extends Query
-        {
+        $query = new class ($this->connection) extends Query {
             public function visitExpression(ExpressionInterface $expression, Closure $callback): void
             {
                 $this->expressionsVisitor($expression, $callback);

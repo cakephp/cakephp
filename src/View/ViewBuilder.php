@@ -699,9 +699,9 @@ class ViewBuilder implements JsonSerializable
         }
 
         if (
-            is_resource($item) ||
-            $item instanceof Closure ||
-            $item instanceof PDO
+            is_resource($item)
+            || $item instanceof Closure
+            || $item instanceof PDO
         ) {
             throw new InvalidArgumentException(sprintf(
                 'Failed serializing the `%s` %s in the `%s` view var',

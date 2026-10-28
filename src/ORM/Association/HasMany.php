@@ -155,8 +155,8 @@ class HasMany extends Association
         $isEmpty = in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
             if (
-                $entity->isNew() ||
-                $this->getSaveStrategy() !== self::SAVE_REPLACE
+                $entity->isNew()
+                || $this->getSaveStrategy() !== self::SAVE_REPLACE
             ) {
                 return $entity;
             }
@@ -180,8 +180,8 @@ class HasMany extends Association
         $options['sourceTable'] = $this->getSource();
 
         if (
-            $this->saveStrategy === self::SAVE_REPLACE &&
-            !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
+            $this->saveStrategy === self::SAVE_REPLACE
+            && !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
         }

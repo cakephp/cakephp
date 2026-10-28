@@ -65,11 +65,11 @@ class I18nExtractCommandTest extends TestCase
     public function testExecute(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--merge=no ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'templates' . DS . 'Pages ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--merge=no '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'templates' . DS . 'Pages '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -132,10 +132,10 @@ class I18nExtractCommandTest extends TestCase
     public function testExecuteNoPathOption(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--merge=no ' .
-            '--extract-core=no ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--merge=no '
+            . '--extract-core=no '
+            . '--output=' . $this->path . DS,
             [
                 TEST_APP . 'templates' . DS,
                 'D',
@@ -151,11 +151,11 @@ class I18nExtractCommandTest extends TestCase
     public function testExecuteMerge(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--merge=yes ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'templates' . DS . 'Pages ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--merge=yes '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'templates' . DS . 'Pages '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -169,11 +169,11 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractWithExclude(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--exclude=Pages,Layout ' .
-            '--paths=' . TEST_APP . 'templates' . DS . ' ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--exclude=Pages,Layout '
+            . '--paths=' . TEST_APP . 'templates' . DS . ' '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -192,12 +192,12 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractWithoutLocations(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--no-location=true ' .
-            '--exclude=Pages,Layout ' .
-            '--paths=' . TEST_APP . 'templates' . DS . ' ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--no-location=true '
+            . '--exclude=Pages,Layout '
+            . '--paths=' . TEST_APP . 'templates' . DS . ' '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -214,12 +214,12 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractMultiplePaths(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--exclude=Pages,Layout ' .
-            '--paths=' . TEST_APP . 'templates/Pages,' .
-                TEST_APP . 'templates/Posts ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--exclude=Pages,Layout '
+            . '--paths=' . TEST_APP . 'templates/Pages,'
+                . TEST_APP . 'templates/Posts '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $result = file_get_contents($this->path . DS . 'default.pot');
@@ -235,11 +235,11 @@ class I18nExtractCommandTest extends TestCase
     {
         static::setAppNamespace();
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--exclude-plugins=true ' .
-            '--paths=' . TEST_APP . 'TestApp/ ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--exclude-plugins=true '
+            . '--paths=' . TEST_APP . 'TestApp/ '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
 
@@ -255,10 +255,10 @@ class I18nExtractCommandTest extends TestCase
         Configure::write('Plugins.autoload', ['TestPlugin']);
 
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--plugin=TestPlugin ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--plugin=TestPlugin '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
 
@@ -278,10 +278,10 @@ class I18nExtractCommandTest extends TestCase
         $this->loadPlugins(['Company/TestPluginThree']);
 
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--plugin=Company/TestPluginThree ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--plugin=Company/TestPluginThree '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
 
@@ -301,11 +301,11 @@ class I18nExtractCommandTest extends TestCase
         $original = file_get_contents($this->path . DS . 'default.pot');
 
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--overwrite ' .
-            '--paths=' . TEST_APP . 'TestApp/ ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--overwrite '
+            . '--paths=' . TEST_APP . 'TestApp/ '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
 
@@ -319,10 +319,10 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractCore(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=yes ' .
-            '--paths=' . TEST_APP . 'TestApp/ ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=yes '
+            . '--paths=' . TEST_APP . 'TestApp/ '
+            . '--output=' . $this->path . DS,
         );
         $this->assertNotNull($this->err);
         $this->assertEmpty($this->err->messages(), 'Should not have output to stderr');
@@ -347,12 +347,12 @@ class I18nExtractCommandTest extends TestCase
     public function testMarkerErrorSets(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--marker-error ' .
-            '--merge=no ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'templates/Pages ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--marker-error '
+            . '--merge=no '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'templates/Pages '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertErrorContains('Invalid marker content in');
@@ -365,11 +365,11 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractLabelAttributes(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--merge=no ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'TestApp/Model/Enum ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--merge=no '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'TestApp/Model/Enum '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -388,10 +388,10 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractWithRelativePaths(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'templates ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'templates '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -407,10 +407,10 @@ class I18nExtractCommandTest extends TestCase
     public function testExtractWithInvalidPaths(): void
     {
         $this->exec(
-            'i18n extract ' .
-            '--extract-core=no ' .
-            '--paths=' . TEST_APP . 'templates,' . TEST_APP . 'unknown ' .
-            '--output=' . $this->path . DS,
+            'i18n extract '
+            . '--extract-core=no '
+            . '--paths=' . TEST_APP . 'templates,' . TEST_APP . 'unknown '
+            . '--output=' . $this->path . DS,
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
@@ -432,9 +432,9 @@ class I18nExtractCommandTest extends TestCase
         ]);
 
         $this->exec(
-            'i18n extract ' .
-            '--merge=no ' .
-            '--extract-core=no ',
+            'i18n extract '
+            . '--merge=no '
+            . '--extract-core=no ',
             [
                 // Sending two empty inputs so \Cake\Command\I18nExtractCommand::_getPaths()
                 // loops through all paths

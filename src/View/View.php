@@ -797,8 +797,8 @@ class View implements EventDispatcherInterface
         if ($this->autoLayout) {
             if (!$this->layout) {
                 throw new CakeException(
-                    'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
+                    'View::$layout must be a non-empty string.'
+                    . 'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
 
@@ -1470,8 +1470,8 @@ class View implements EventDispatcherInterface
         if ($name === null) {
             if (!$this->layout) {
                 throw new CakeException(
-                    'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
+                    'View::$layout must be a non-empty string.'
+                    . 'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
             $name = $this->layout;

@@ -431,12 +431,12 @@ class BelongsToMany extends Association
         } else {
             $belongsTo = $junction->getAssociation($tAlias);
             if (
-                $this->getTargetForeignKey() !== $belongsTo->getForeignKey() ||
-                $target !== $belongsTo->getTarget()
+                $this->getTargetForeignKey() !== $belongsTo->getForeignKey()
+                || $target !== $belongsTo->getTarget()
             ) {
                 throw new InvalidArgumentException(
-                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
+                    "The existing `{$tAlias}` association on `{$junction->getAlias()}` "
+                    . "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
                 );
             }
         }
@@ -835,8 +835,8 @@ class BelongsToMany extends Association
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetBindingKey));
 
-            $changedKeys = $sourceKeys !== $joint->extract($foreignKey) ||
-                $targetKeys !== $joint->extract($assocForeignKey);
+            $changedKeys = $sourceKeys !== $joint->extract($foreignKey)
+                || $targetKeys !== $joint->extract($assocForeignKey);
 
             // Keys were changed, the junction table record _could_ be
             // new. By clearing the primary key values, and marking the entity

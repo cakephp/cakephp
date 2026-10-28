@@ -147,20 +147,20 @@ class CommonTableExpressionQueryTest extends TestCase
             ->from('cte');
 
         if ($this->connection->getDriver() instanceof Sqlserver) {
-            $expectedSql =
-                'WITH cte(col) AS ' .
-                    "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) " .
-                        'SELECT col FROM cte';
+            $expectedSql
+                = 'WITH cte(col) AS '
+                    . "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) "
+                        . 'SELECT col FROM cte';
         } elseif ($this->connection->getDriver() instanceof Sqlite) {
-            $expectedSql =
-                'WITH RECURSIVE cte(col) AS ' .
-                    "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) " .
-                        'SELECT col FROM cte';
+            $expectedSql
+                = 'WITH RECURSIVE cte(col) AS '
+                    . "(SELECT 1\nUNION ALL SELECT (col + 1) FROM cte WHERE col != :c0) "
+                        . 'SELECT col FROM cte';
         } else {
-            $expectedSql =
-                'WITH RECURSIVE cte(col) AS ' .
-                    "((SELECT 1)\nUNION ALL (SELECT (col + 1) FROM cte WHERE col != :c0)) " .
-                        'SELECT col FROM cte';
+            $expectedSql
+                = 'WITH RECURSIVE cte(col) AS '
+                    . "((SELECT 1)\nUNION ALL (SELECT (col + 1) FROM cte WHERE col != :c0)) "
+                        . 'SELECT col FROM cte';
         }
         $this->assertEqualsSql(
             $expectedSql,
@@ -217,8 +217,8 @@ class CommonTableExpressionQueryTest extends TestCase
             );
 
         $this->assertRegExpSql(
-            "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) " .
-                'INSERT INTO <articles> \(<title>, <body>\)',
+            "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) "
+                . 'INSERT INTO <articles> \(<title>, <body>\)',
             $query->sql(new ValueBinder()),
             !$this->autoQuote,
         );
@@ -267,8 +267,8 @@ class CommonTableExpressionQueryTest extends TestCase
             );
 
         $this->assertRegExpSql(
-            'INSERT INTO <articles> \(<title>, <body>\) ' .
-                "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
+            'INSERT INTO <articles> \(<title>, <body>\) '
+                . "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
             $query->sql(new ValueBinder()),
             !$this->autoQuote,
         );
@@ -332,8 +332,8 @@ class CommonTableExpressionQueryTest extends TestCase
             });
 
         $this->assertEqualsSql(
-            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
-                'UPDATE articles SET published = :c1 WHERE id IN (SELECT cte.id FROM cte)',
+            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) '
+                . 'UPDATE articles SET published = :c1 WHERE id IN (SELECT cte.id FROM cte)',
             $query->sql(new ValueBinder()),
         );
 
@@ -386,8 +386,8 @@ class CommonTableExpressionQueryTest extends TestCase
             });
 
         $this->assertEqualsSql(
-            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
-                'DELETE FROM articles WHERE id IN (SELECT cte.id FROM cte)',
+            'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) '
+                . 'DELETE FROM articles WHERE id IN (SELECT cte.id FROM cte)',
             $query->sql(new ValueBinder()),
         );
 

@@ -1307,10 +1307,10 @@ class Message implements JsonSerializable
     protected function createBoundary(): void
     {
         if (
-            $this->boundary === null &&
-            (
-                $this->attachments ||
-                $this->emailFormat === static::MESSAGE_BOTH
+            $this->boundary === null
+            && (
+                $this->attachments
+                || $this->emailFormat === static::MESSAGE_BOTH
             )
         ) {
             $this->boundary = hash('xxh128', Security::randomBytes(16));
@@ -1427,8 +1427,8 @@ class Message implements JsonSerializable
             }
             $data = $fileInfo['data'] ?? $this->readFile($fileInfo['file']);
             $hasDisposition = (
-                !isset($fileInfo['contentDisposition']) ||
-                $fileInfo['contentDisposition']
+                !isset($fileInfo['contentDisposition'])
+                || $fileInfo['contentDisposition']
             );
             $part = new FormDataPart('', $data, '', $this->getHeaderCharset());
 

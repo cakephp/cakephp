@@ -60,8 +60,7 @@ class BaseApplicationTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $this->app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $this->app = new class (dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -163,8 +162,7 @@ class BaseApplicationTest extends TestCase
 
     public function testAppBootstrapPlugins(): void
     {
-        $app = new class (dirname(__DIR__, 2) . DS . 'test_app' . DS . 'config_plugins') extends BaseApplication
-        {
+        $app = new class (dirname(__DIR__, 2) . DS . 'test_app' . DS . 'config_plugins') extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -355,8 +353,7 @@ class BaseApplicationTest extends TestCase
     public function testConsoleEventsAreRegistered(): void
     {
         static::setAppNamespace();
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication {
             public function routes(RouteBuilder $routes): void
             {
             }

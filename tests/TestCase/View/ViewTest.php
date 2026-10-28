@@ -340,8 +340,8 @@ class ViewTest extends TestCase
         $View = new TestView(null, null, null, $viewOptions);
 
         $pluginPath = Plugin::path('TestPlugin');
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'Tests' . DS . 'index.php';
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS
+            . 'Tests' . DS . 'index.php';
         $result = $View->innerGetTemplateFileName('index');
         $this->assertPathEquals($expected, $result);
 
@@ -383,8 +383,8 @@ class ViewTest extends TestCase
         $this->assertPathEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
 
         $View->setTemplatePath('Tests');
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'Tests' . DS . 'index.php';
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS
+            . 'Tests' . DS . 'index.php';
         $result = $View->innerGetTemplateFileName('TestPlugin.index');
         $this->assertPathEquals($expected, $result);
     }
@@ -491,14 +491,14 @@ class ViewTest extends TestCase
 
         $View = new TestView(null, null, null, $viewOptions);
 
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'layout' . DS . 'default.php';
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS
+            . 'layout' . DS . 'default.php';
         $result = $View->innerGetLayoutFileName('TestPlugin.default');
         $this->assertPathEquals($expected, $result);
 
         $View->setRequest($View->getRequest()->withParam('plugin', 'TestPlugin'));
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'layout' . DS . 'default.php';
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS
+            . 'layout' . DS . 'default.php';
         $result = $View->innerGetLayoutFileName('default');
         $this->assertPathEquals($expected, $result);
     }
@@ -512,8 +512,8 @@ class ViewTest extends TestCase
 
         // Prefix specific layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix'));
-        $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'layout' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS
+            . 'FooPrefix' . DS . 'layout' . DS . 'default.php';
         $result = $View->innerGetLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
@@ -523,20 +523,20 @@ class ViewTest extends TestCase
 
         // Nested prefix layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix/bar_prefix'));
-        $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'BarPrefix' . DS . 'layout' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS
+            . 'FooPrefix' . DS . 'BarPrefix' . DS . 'layout' . DS . 'default.php';
         $result = $View->innerGetLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'layout' . DS . 'nested_prefix_cascade.php';
+        $expected = TEST_APP . 'templates' . DS
+            . 'FooPrefix' . DS . 'layout' . DS . 'nested_prefix_cascade.php';
         $result = $View->innerGetLayoutFileName('nested_prefix_cascade');
         $this->assertPathEquals($expected, $result);
 
         // Fallback to app's layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'Admin'));
-        $expected = TEST_APP . 'templates' . DS .
-            'layout' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS
+            . 'layout' . DS . 'default.php';
         $result = $View->innerGetLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }

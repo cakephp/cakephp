@@ -254,7 +254,7 @@ class RedisLockEngine extends LockEngine
             }
 
             return null;
-        } catch (RedisException | RedisClusterException) {
+        } catch (RedisException|RedisClusterException) {
             return null;
         }
     }
@@ -286,7 +286,7 @@ class RedisLockEngine extends LockEngine
             $result = $this->redis->eval($script, [$key, $lock->getToken()], 1);
 
             return $result === 1;
-        } catch (RedisException | RedisClusterException) {
+        } catch (RedisException|RedisClusterException) {
             return false;
         }
     }
@@ -303,7 +303,7 @@ class RedisLockEngine extends LockEngine
 
         try {
             return $this->redis->exists($key) === 1;
-        } catch (RedisException | RedisClusterException) {
+        } catch (RedisException|RedisClusterException) {
             return false;
         }
     }
@@ -335,7 +335,7 @@ class RedisLockEngine extends LockEngine
             $result = $this->redis->eval($script, [$key, $lock->getToken(), $ttl], 1);
 
             return $result === 1;
-        } catch (RedisException | RedisClusterException) {
+        } catch (RedisException|RedisClusterException) {
             return false;
         }
     }
@@ -352,7 +352,7 @@ class RedisLockEngine extends LockEngine
 
         try {
             return $this->redis->del($key) >= 0;
-        } catch (RedisException | RedisClusterException) {
+        } catch (RedisException|RedisClusterException) {
             return false;
         }
     }

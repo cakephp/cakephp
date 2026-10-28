@@ -100,7 +100,7 @@ class EnumType extends BaseType
 
         try {
             return $this->enumClassName::from($value)->value;
-        } catch (ValueError | TypeError $exception) {
+        } catch (ValueError|TypeError $exception) {
             if ($exception instanceof TypeError) {
                 throw new InvalidArgumentException(sprintf(
                     'Given value `%s` of type `%s` does not match associated `%s` backed enum in `%s`',
@@ -182,7 +182,7 @@ class EnumType extends BaseType
 
         try {
             return $this->enumClassName::from($value);
-        } catch (ValueError | TypeError) {
+        } catch (ValueError|TypeError) {
             return null;
         }
     }

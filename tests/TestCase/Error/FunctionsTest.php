@@ -174,14 +174,16 @@ EXPECTED;
     {
         ob_start();
         // phpcs:ignore
-        stackTrace(); $expected = Debugger::trace();
+        stackTrace();
+        $expected = Debugger::trace();
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
 
         $opts = ['args' => true];
         ob_start();
         // phpcs:ignore
-        stackTrace($opts); $expected = Debugger::trace($opts);
+        stackTrace($opts);
+        $expected = Debugger::trace($opts);
         $result = ob_get_clean();
         $this->assertSame($expected, $result);
 

@@ -40,8 +40,8 @@ trait CaseExpressionTrait
     protected function compileNullableValue(ValueBinder $binder, mixed $value, ?string $type = null): string
     {
         if (
-            $type !== null &&
-            !($value instanceof ExpressionInterface)
+            $type !== null
+            && !($value instanceof ExpressionInterface)
         ) {
             $value = $this->castToExpression($value, $type);
         }

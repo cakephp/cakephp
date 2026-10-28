@@ -50,8 +50,8 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             }
         }
         assert(
-            ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
-            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
+            ($first instanceof ChronosDate && $second instanceof ChronosDate)
+            || ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
         );
 
         $diffInterval = $first->diff($second);

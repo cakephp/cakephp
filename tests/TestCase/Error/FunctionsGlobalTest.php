@@ -71,7 +71,8 @@ EXPECTED;
     {
         ob_start();
         // phpcs:ignore
-        stackTrace(); $expected = Debugger::trace();
+        stackTrace();
+        $expected = Debugger::trace();
         $this->assertSame($expected, ob_get_clean());
 
         Configure::write('debug', false);

@@ -173,13 +173,13 @@ class DeleteQueryTest extends TestCase
             ]);
 
         $this->assertQuotedQuery(
-            'DELETE FROM <authors> WHERE \(' .
-                '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c1,:c2\) AND \(' .
-                        '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)' .
-                    '\)' .
-                '\)' .
-            '\)',
+            'DELETE FROM <authors> WHERE \('
+                . '<id> = :c0 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \('
+                    . '<name> NOT IN \(:c1,:c2\) AND \('
+                        . '<name> = :c3 OR <name> = :c4 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c5\)'
+                    . '\)'
+                . '\)'
+            . '\)',
             $query->sql(),
             !$this->autoQuote,
         );

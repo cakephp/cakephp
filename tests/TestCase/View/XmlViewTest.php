@@ -116,16 +116,16 @@ class XmlViewTest extends TestCase
         $Controller = new Controller($Request);
         $data = [
             'tags' => [
-                    'tag' => [
-                        [
-                            'id' => '1',
-                            'name' => 'defect',
-                        ],
-                        [
-                            'id' => '2',
-                            'name' => 'enhancement',
-                        ],
+                'tag' => [
+                    [
+                        'id' => '1',
+                        'name' => 'defect',
                     ],
+                    [
+                        'id' => '2',
+                        'name' => 'enhancement',
+                    ],
+                ],
             ],
         ];
         $xmlOptions = ['format' => 'attributes', 'return' => 'domdocument'];

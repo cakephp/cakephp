@@ -47,6 +47,7 @@ rector.php export-ignore
 structarmed.php export-ignore
 mago.toml export-ignore
 mago-lint-baseline.toml export-ignore
+.php-cs-fixer.dist.php export-ignore
 
 tests/composer.lock export-ignore
 tests/phpstan.neon export-ignore

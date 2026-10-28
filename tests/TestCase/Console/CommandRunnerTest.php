@@ -83,8 +83,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = new class ($this->config) extends BaseApplication
-        {
+        $app = new class ($this->config) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -321,8 +320,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunNoCommandWithCustomHeaderProvider(): void
     {
-        $app = new class ($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface
-        {
+        $app = new class ($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;

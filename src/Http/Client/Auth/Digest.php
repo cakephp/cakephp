@@ -98,8 +98,8 @@ class Digest
     {
         $algorithm = $credentials['algorithm'] ?? self::ALGO_MD5;
         if (!isset(self::HASH_ALGORITHMS[$algorithm])) {
-            throw new InvalidArgumentException('Invalid Algorithm. Valid ones are: ' .
-                implode(',', array_keys(self::HASH_ALGORITHMS)));
+            throw new InvalidArgumentException('Invalid Algorithm. Valid ones are: '
+                . implode(',', array_keys(self::HASH_ALGORITHMS)));
         }
         $this->algorithm = $algorithm;
         $this->isSessAlgorithm = str_contains($this->algorithm, '-sess');
@@ -186,9 +186,9 @@ class Digest
 
         if ($this->isSessAlgorithm) {
             $credentials['cnonce'] = $this->generateCnonce();
-            $a1 = hash($this->hashType, $credentials['username'] . ':' .
-                    $credentials['realm'] . ':' . $credentials['password']) . ':' .
-                $credentials['nonce'] . ':' . $credentials['cnonce'];
+            $a1 = hash($this->hashType, $credentials['username'] . ':'
+                    . $credentials['realm'] . ':' . $credentials['password']) . ':'
+                . $credentials['nonce'] . ':' . $credentials['cnonce'];
         } else {
             $a1 = $credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password'];
         }
@@ -201,8 +201,8 @@ class Digest
             $response = hash($this->hashType, $ha1 . ':' . $credentials['nonce'] . ':' . $ha2);
         } else {
             if (!in_array($credentials['qop'], [self::QOP_AUTH, self::QOP_AUTH_INT])) {
-                throw new InvalidArgumentException('Invalid QOP parameter. Valid types are: ' .
-                    implode(',', [self::QOP_AUTH, self::QOP_AUTH_INT]));
+                throw new InvalidArgumentException('Invalid QOP parameter. Valid types are: '
+                    . implode(',', [self::QOP_AUTH, self::QOP_AUTH_INT]));
             }
             if ($credentials['qop'] === self::QOP_AUTH_INT) {
                 $a2 = $request->getMethod() . ':' . $path . ':' . hash($this->hashType, (string)$request->getBody());
@@ -213,8 +213,8 @@ class Digest
             $ha2 = hash($this->hashType, $a2);
             $response = hash(
                 $this->hashType,
-                $ha1 . ':' . $credentials['nonce'] . ':' . $nc . ':' .
-                $credentials['cnonce'] . ':' . $credentials['qop'] . ':' . $ha2,
+                $ha1 . ':' . $credentials['nonce'] . ':' . $nc . ':'
+                . $credentials['cnonce'] . ':' . $credentials['qop'] . ':' . $ha2,
             );
         }
 

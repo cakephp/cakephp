@@ -163,9 +163,9 @@ class SqlserverSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
         if (
-            str_contains($col, 'numeric') ||
-            str_contains($col, 'money') ||
-            str_contains($col, 'decimal')
+            str_contains($col, 'numeric')
+            || str_contains($col, 'money')
+            || str_contains($col, 'decimal')
         ) {
             return ['type' => TableSchemaInterface::TYPE_DECIMAL, 'length' => $precision, 'precision' => $scale];
         }
@@ -508,9 +508,9 @@ class SqlserverSchemaDialect extends SchemaDialect
         ];
         $primaryKey = $schema->getPrimaryKey();
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            $primaryKey === [$name] &&
-            $name === 'id'
+            in_array($data['type'], $autoIncrementTypes, true)
+            && $primaryKey === [$name]
+            && $name === 'id'
         ) {
             $data['autoIncrement'] = true;
         }
@@ -584,8 +584,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($column['type'] === TableSchemaInterface::TYPE_STRING && !isset($column['length'])) {
             $column['length'] = TableSchema::LENGTH_TINY;
         } elseif (
-            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-            $column['length'] !== TableSchema::LENGTH_TINY
+            $column['type'] === TableSchemaInterface::TYPE_TEXT
+            && $column['length'] !== TableSchema::LENGTH_TINY
         ) {
             $out .= ' NVARCHAR(MAX)';
             $foundType = true;
@@ -650,8 +650,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
 
         if (
-            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
-            (isset($column['length']) || isset($column['precision']))
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL
+            && (isset($column['length']) || isset($column['precision']))
         ) {
             $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }
@@ -679,10 +679,10 @@ class SqlserverSchemaDialect extends SchemaDialect
             $currentDefault = $this->currentDateTimeDefault($column);
         }
         if (
-            isset($column['default']) &&
-            in_array($column['type'], $dateTimeTypes, true) &&
-            is_string($column['default']) &&
-            in_array(strtolower($column['default']), $dateTimeDefaults, true)
+            isset($column['default'])
+            && in_array($column['type'], $dateTimeTypes, true)
+            && is_string($column['default'])
+            && in_array(strtolower($column['default']), $dateTimeDefaults, true)
         ) {
             $out .= ' DEFAULT ' . strtoupper($column['default']);
         } elseif ($currentDefault !== null) {
@@ -879,8 +879,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             assert($column !== null);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
-                    "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = '%s' AND " .
-                    "last_value IS NOT NULL) DBCC CHECKIDENT('%s', RESEED, 0)",
+                    "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = '%s' AND "
+                    . "last_value IS NOT NULL) DBCC CHECKIDENT('%s', RESEED, 0)",
                     $schema->name(),
                     $schema->name(),
                 );

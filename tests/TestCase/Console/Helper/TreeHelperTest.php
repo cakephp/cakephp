@@ -133,7 +133,7 @@ class TreeHelperTest extends TestCase
 
     public function testStringbleValue(): void
     {
-        $c = new class () implements Stringable {
+        $c = new class implements Stringable {
             public function __toString(): string
             {
                 return 'from stringable';

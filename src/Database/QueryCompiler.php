@@ -132,9 +132,9 @@ class QueryCompiler
     {
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
-                $part === null ||
-                ($part === []) ||
-                ($part instanceof Countable && count($part) === 0)
+                $part === null
+                || ($part === [])
+                || ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
             }
@@ -192,8 +192,8 @@ class QueryCompiler
         $driver = $query->getDriver();
         $select = 'SELECT%s%s %s%s';
         if (
-            ($query->clause('union') || $query->clause('except') || $query->clause('intersect')) &&
-            $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
+            ($query->clause('union') || $query->clause('except') || $query->clause('intersect'))
+            && $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
         ) {
             $select = '(SELECT%s%s %s%s';
         }
@@ -269,8 +269,8 @@ class QueryCompiler
         foreach ($parts as $join) {
             if (!isset($join['table'])) {
                 throw new DatabaseException(sprintf(
-                    'Could not compile join clause for alias `%s`. No table was specified. ' .
-                    'Use the `table` key to define a table.',
+                    'Could not compile join clause for alias `%s`. No table was specified. '
+                    . 'Use the `table` key to define a table.',
                     $join['alias'],
                 ));
             }
@@ -439,8 +439,8 @@ class QueryCompiler
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
-                'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.',
+                'Could not compile insert query. No table was specified. '
+                . 'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

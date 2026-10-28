@@ -1735,9 +1735,9 @@ class BelongsToManyTest extends TestCase
 
         foreach ($logs as $log) {
             if (
-                str_contains($log, 'FROM articles') ||
-                str_contains($log, 'FROM articles_unique_items') ||
-                str_contains($log, 'FROM unique_items')
+                str_contains($log, 'FROM articles')
+                || str_contains($log, 'FROM articles_unique_items')
+                || str_contains($log, 'FROM unique_items')
             ) {
                 $this->assertStringContainsString('role=read', $log);
             }

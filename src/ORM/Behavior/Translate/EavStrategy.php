@@ -182,9 +182,9 @@ class EavStrategy implements TranslateStrategyInterface
                 $q->where([$table->aliasField('locale') => $locale]);
 
                 if (
-                    $query->isAutoFieldsEnabled() ||
-                    in_array($field, $select, true) ||
-                    in_array($this->table->aliasField($field), $select, true)
+                    $query->isAutoFieldsEnabled()
+                    || in_array($field, $select, true)
+                    || in_array($this->table->aliasField($field), $select, true)
                 ) {
                     $q->select(['id', 'content']);
                 }
@@ -198,8 +198,8 @@ class EavStrategy implements TranslateStrategyInterface
         $alias = $this->table->getAlias();
         $select = $query->clause('select');
 
-        $changeFilter = isset($options['filterByCurrentLocale']) &&
-            $options['filterByCurrentLocale'] !== $this->config['onlyTranslated'];
+        $changeFilter = isset($options['filterByCurrentLocale'])
+            && $options['filterByCurrentLocale'] !== $this->config['onlyTranslated'];
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';

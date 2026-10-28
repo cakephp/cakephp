@@ -170,10 +170,10 @@ class Hash
                 foreach ($next as $item) {
                     if (
                         (
-                            is_array($item) ||
-                            $item instanceof ArrayAccess
-                        ) &&
-                        static::matches($item, $conditions)
+                            is_array($item)
+                            || $item instanceof ArrayAccess
+                        )
+                        && static::matches($item, $conditions)
                     ) {
                         $filter[] = $item;
                     }
@@ -274,12 +274,12 @@ class Hash
                 }
                 // phpcs:disable
             } elseif (
-                ($op === '=' && $prop != $val) ||
-                ($op === '!=' && $prop == $val) ||
-                ($op === '>' && $prop <= $val) ||
-                ($op === '<' && $prop >= $val) ||
-                ($op === '>=' && $prop < $val) ||
-                ($op === '<=' && $prop > $val)
+                ($op === '=' && $prop != $val)
+                || ($op === '!=' && $prop == $val)
+                || ($op === '>' && $prop <= $val)
+                || ($op === '<' && $prop >= $val)
+                || ($op === '>=' && $prop < $val)
+                || ($op === '<=' && $prop > $val)
                 // phpcs:enable
             ) {
                 return false;
@@ -333,8 +333,8 @@ class Hash
 
         foreach ($data as $k => $v) {
             if (
-                static::matchToken($k, $token) &&
-                (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::matches($v, $conditions)))
+                static::matchToken($k, $token)
+                && (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::matches($v, $conditions)))
             ) {
                 $data[$k] = $nextPath
                     ? static::insert($v, $nextPath, $values)

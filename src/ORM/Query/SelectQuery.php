@@ -1429,11 +1429,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         $complex = (
-            $query->clause('distinct') ||
-            count($query->clause('group')) ||
-            count($query->clause('union')) ||
-            count($query->clause('intersect')) ||
-            $query->clause('having')
+            $query->clause('distinct')
+            || count($query->clause('group'))
+            || count($query->clause('union'))
+            || count($query->clause('intersect'))
+            || $query->clause('having')
         );
 
         if (!$complex) {

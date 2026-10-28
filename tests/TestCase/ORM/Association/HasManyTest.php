@@ -468,8 +468,8 @@ class HasManyTest extends TestCase
         foreach ($select as $key => $field) {
             // Check if the field contains author_id (handles both quoted and non-quoted)
             if (
-                str_contains((string)$field, 'author_id') ||
-                str_contains((string)$key, 'author_id')
+                str_contains((string)$field, 'author_id')
+                || str_contains((string)$key, 'author_id')
             ) {
                 $hasAuthorId = true;
                 break;
@@ -1919,8 +1919,8 @@ class HasManyTest extends TestCase
 
         foreach ($logs as $log) {
             if (
-                str_contains($log, 'FROM articles') ||
-                str_contains($log, 'FROM unique_items')
+                str_contains($log, 'FROM articles')
+                || str_contains($log, 'FROM unique_items')
             ) {
                 $this->assertStringContainsString('role=read', $log);
             }

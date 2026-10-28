@@ -527,7 +527,7 @@ XML;
         $xmlResponse = Xml::fromArray($xml, ['pretty' => true]);
         $this->assertTextEquals($expected, $xmlResponse->asXML());
 
-                $xml = [
+        $xml = [
             'tags' => [
                 'tag' => [
                     [
@@ -540,17 +540,17 @@ XML;
                     ],
                 ],
             ],
-                ];
+        ];
 
-                $expected = <<<XML
+        $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>
 
 XML;
-                $xmlResponse = Xml::fromArray($xml, ['pretty' => false, 'format' => 'attributes']);
-                $this->assertTextEquals($expected, $xmlResponse->asXML());
+        $xmlResponse = Xml::fromArray($xml, ['pretty' => false, 'format' => 'attributes']);
+        $this->assertTextEquals($expected, $xmlResponse->asXML());
 
-                $expected = <<<XML
+        $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
   <tag id="1" name="defect"/>
@@ -558,8 +558,8 @@ XML;
 </tags>
 
 XML;
-                $xmlResponse = Xml::fromArray($xml, ['pretty' => true, 'format' => 'attributes']);
-                $this->assertTextEquals($expected, $xmlResponse->asXML());
+        $xmlResponse = Xml::fromArray($xml, ['pretty' => true, 'format' => 'attributes']);
+        $this->assertTextEquals($expected, $xmlResponse->asXML());
     }
 
     /**
@@ -1175,8 +1175,8 @@ XML;
      */
     public function testCdata(): void
     {
-        $xml = '<' . '?xml version="1.0" encoding="UTF-8"?>' .
-            '<people><name><![CDATA[ Mark ]]></name></people>';
+        $xml = '<' . '?xml version="1.0" encoding="UTF-8"?>'
+            . '<people><name><![CDATA[ Mark ]]></name></people>';
 
         $result = Xml::build($xml);
         $this->assertSame(' Mark ', (string)$result->name);

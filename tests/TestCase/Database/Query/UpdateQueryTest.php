@@ -319,13 +319,13 @@ class UpdateQueryTest extends TestCase
             ]);
 
         $this->assertQuotedQuery(
-            'UPDATE <authors> SET <name> = :c0 WHERE \(' .
-                '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c2,:c3\) AND \(' .
-                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
-                    '\)' .
-                '\)' .
-            '\)',
+            'UPDATE <authors> SET <name> = :c0 WHERE \('
+                . '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \('
+                    . '<name> NOT IN \(:c2,:c3\) AND \('
+                        . '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)'
+                    . '\)'
+                . '\)'
+            . '\)',
             $query->sql(),
             !$this->autoQuote,
         );

@@ -117,8 +117,8 @@ class LinkConstraintTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage(
-            'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
-            'conditions, expected values for `(id, nonexistent)`, got `(1, )`.',
+            'LinkConstraint rule on `Articles` requires all primary key values for building the counting '
+            . 'conditions, expected values for `(id, nonexistent)`, got `(1, )`.',
         );
 
         $Articles = $this->getTableLocator()->get('Articles');

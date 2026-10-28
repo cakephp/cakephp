@@ -78,8 +78,8 @@ class TupleComparisonQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Sqlite ||
-            $driver instanceof Sqlserver
+            $driver instanceof Sqlite
+            || $driver instanceof Sqlserver
         ) {
             $this->expectException(InvalidArgumentException::class);
             $this->expectExceptionMessage(
@@ -217,8 +217,8 @@ class TupleComparisonQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Mysql ||
-            $driver instanceof Postgres
+            $driver instanceof Mysql
+            || $driver instanceof Postgres
         ) {
             $this->expectException(PDOException::class);
             $this->expectExceptionMessageMatches('/cardinality violation/i');

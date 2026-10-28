@@ -120,13 +120,13 @@ class OauthTest extends TestCase
             $result,
         );
         $this->assertStringContainsString(
-            'cat%3D2%26oauth_consumer_key%3Dconsumer-key' .
-            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
-            '%26oauth_signature_method%3DHMAC-SHA1' .
-            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
-            '%26oauth_token%3Dtoken' .
-            '%26oauth_version%3D1.0' .
-            '%26q%3Dpogo',
+            'cat%3D2%26oauth_consumer_key%3Dconsumer-key'
+            . '%26oauth_nonce%3D' . $values['oauth_nonce']
+            . '%26oauth_signature_method%3DHMAC-SHA1'
+            . '%26oauth_timestamp%3D' . $values['oauth_timestamp']
+            . '%26oauth_token%3Dtoken'
+            . '%26oauth_version%3D1.0'
+            . '%26q%3Dpogo',
             $result,
         );
     }
@@ -173,15 +173,15 @@ class OauthTest extends TestCase
             $result,
         );
         $this->assertStringContainsString(
-            '&oauth_consumer_key%3Dconsumer-key' .
-            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
-            '%26oauth_signature_method%3DHMAC-SHA1' .
-            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
-            '%26oauth_token%3Dtoken' .
-            '%26oauth_version%3D1.0' .
-            '%26q%3Dpogo' .
-            '%26search%5Bfilters%5D%5Bfield%5D%3Ddate' .
-            '%26search%5Bfilters%5D%5Bvalue%5D%3Done%20two',
+            '&oauth_consumer_key%3Dconsumer-key'
+            . '%26oauth_nonce%3D' . $values['oauth_nonce']
+            . '%26oauth_signature_method%3DHMAC-SHA1'
+            . '%26oauth_timestamp%3D' . $values['oauth_timestamp']
+            . '%26oauth_token%3Dtoken'
+            . '%26oauth_version%3D1.0'
+            . '%26q%3Dpogo'
+            . '%26search%5Bfilters%5D%5Bfield%5D%3Ddate'
+            . '%26search%5Bfilters%5D%5Bvalue%5D%3Done%20two',
             $result,
         );
     }
@@ -226,17 +226,17 @@ class OauthTest extends TestCase
             $result,
         );
         $this->assertStringContainsString(
-            '&address%3Dpost' .
-            '%26oauth_consumer_key%3Dconsumer-key' .
-            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
-            '%26oauth_signature_method%3DHMAC-SHA1' .
-            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
-            '%26oauth_token%3Dtoken' .
-            '%26oauth_version%3D1.0' .
-            '%26q%3Dpogo' .
-            '%26tags%3Dcake' .
-            '%26tags%3Doauth' .
-            '%26zed%3Dlast',
+            '&address%3Dpost'
+            . '%26oauth_consumer_key%3Dconsumer-key'
+            . '%26oauth_nonce%3D' . $values['oauth_nonce']
+            . '%26oauth_signature_method%3DHMAC-SHA1'
+            . '%26oauth_timestamp%3D' . $values['oauth_timestamp']
+            . '%26oauth_token%3Dtoken'
+            . '%26oauth_version%3D1.0'
+            . '%26q%3Dpogo'
+            . '%26tags%3Dcake'
+            . '%26tags%3Doauth'
+            . '%26zed%3Dlast',
             $result,
         );
     }
@@ -278,13 +278,13 @@ class OauthTest extends TestCase
             $result,
         );
         $this->assertStringContainsString(
-            'oauth_consumer_key%3Dconsumer-key' .
-            '%26oauth_nonce%3D' . $values['oauth_nonce'] .
-            '%26oauth_signature_method%3DHMAC-SHA1' .
-            '%26oauth_timestamp%3D' . $values['oauth_timestamp'] .
-            '%26oauth_token%3Dtoken' .
-            '%26oauth_version%3D1.0' .
-            '%26q%3Dpogo',
+            'oauth_consumer_key%3Dconsumer-key'
+            . '%26oauth_nonce%3D' . $values['oauth_nonce']
+            . '%26oauth_signature_method%3DHMAC-SHA1'
+            . '%26oauth_timestamp%3D' . $values['oauth_timestamp']
+            . '%26oauth_token%3Dtoken'
+            . '%26oauth_version%3D1.0'
+            . '%26q%3Dpogo',
             $result,
         );
     }

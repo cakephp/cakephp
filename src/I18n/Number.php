@@ -116,10 +116,10 @@ class Number
         return match (true) {
             $size < $divisor => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
             round($size / $divisor) < $divisor => __d('cake', '{0,number,#,###.##} {1}', $size / $divisor, $units[0]),
-            round($size / pow($divisor, 2), 2) < $divisor =>
-            __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 2), $units[1]),
-            round($size / pow($divisor, 3), 2) < $divisor =>
-            __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 3), $units[2]),
+            round($size / pow($divisor, 2), 2) < $divisor
+            => __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 2), $units[1]),
+            round($size / pow($divisor, 3), 2) < $divisor
+            => __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 3), $units[2]),
             default => __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 4), $units[3]),
         };
     }

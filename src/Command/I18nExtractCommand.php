@@ -251,8 +251,8 @@ class I18nExtractCommand extends Command
 
                 $this->io->err('');
                 $this->io->error(
-                    'The directory path you supplied was ' .
-                    'not found. Please try again.',
+                    'The directory path you supplied was '
+                    . 'not found. Please try again.',
                 );
                 $this->io->err('');
             }
@@ -362,8 +362,8 @@ class I18nExtractCommand extends Command
     {
         $parser->setDescription([
             static::getDescription(),
-            'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
+            'Source files are parsed and string literal format strings '
+            . 'provided to the <info>__</info> family of functions are extracted.',
         ])->addOption('app', [
             'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
@@ -385,8 +385,8 @@ class I18nExtractCommand extends Command
                 . "puts the result in the plugin's `locales` directory.",
             'short' => 'p',
         ])->addOption('exclude', [
-            'help' => 'Comma separated list of directories to exclude.' .
-                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
+            'help' => 'Comma separated list of directories to exclude.'
+                . ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
         ])->addOption('overwrite', [
             'boolean' => true,
             'default' => false,
@@ -723,7 +723,8 @@ class I18nExtractCommand extends Command
         $count = 0;
         while (
             $count < $target
-            && ($this->tokens[$position] === ','
+            && (
+                $this->tokens[$position] === ','
                 || $this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                 || $this->tokens[$position][0] === T_LNUMBER
             )

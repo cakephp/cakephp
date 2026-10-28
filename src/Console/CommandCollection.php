@@ -67,8 +67,8 @@ class CommandCollection implements IteratorAggregate, Countable
             assert(
                 is_subclass_of($command, CommandInterface::class),
                 sprintf(
-                    'Cannot use `%s` for command `%s`. ' .
-                    'It is not a subclass of `%s`.',
+                    'Cannot use `%s` for command `%s`. '
+                    . 'It is not a subclass of `%s`.',
                     $command,
                     $name,
                     CommandInterface::class,
@@ -234,8 +234,8 @@ class CommandCollection implements IteratorAggregate, Countable
     {
         if ($prefix === '') {
             throw new InvalidArgumentException(
-                'A non-empty `$prefix` is required so discovered commands ' .
-                'de-duplicate against existing ones instead of overwriting them.',
+                'A non-empty `$prefix` is required so discovered commands '
+                . 'de-duplicate against existing ones instead of overwriting them.',
             );
         }
         $namespace = rtrim($namespace, '\\') . '\\';

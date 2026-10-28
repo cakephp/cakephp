@@ -58,7 +58,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
             $data['count'] = (int)ceil($data['count'] * $weight);
         }
 
-        $allowed = $data['count'] + $cost <= $limit;
+        $allowed = $limit >= $data['count'] + $cost;
 
         if ($allowed) {
             $data['count'] += $cost;

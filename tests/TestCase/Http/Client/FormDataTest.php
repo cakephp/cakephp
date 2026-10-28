@@ -153,8 +153,8 @@ class FormDataTest extends TestCase
             'tags' => ['blog', 'cakephp'],
         ]);
         $result = (string)$data;
-        $expected = 'Article%5Btitle%5D=first+post&Article%5Bpublished%5D=Y&' .
-            'Article%5Btags%5D%5B0%5D=blog&Article%5Btags%5D%5B1%5D=cakephp';
+        $expected = 'Article%5Btitle%5D=first+post&Article%5Bpublished%5D=Y&'
+            . 'Article%5Btags%5D%5B0%5D=blog&Article%5Btags%5D%5B1%5D=cakephp';
         $this->assertSame($expected, $result);
     }
 

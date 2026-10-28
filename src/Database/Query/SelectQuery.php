@@ -649,7 +649,7 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->limit($limit);
         }
         $offset = ($num - 1) * $limit;
-        if (PHP_INT_MAX <= $offset) {
+        if ($offset >= PHP_INT_MAX) {
             $offset = PHP_INT_MAX;
         }
         $this->offset((int)$offset);

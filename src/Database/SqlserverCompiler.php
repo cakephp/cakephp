@@ -88,8 +88,8 @@ class SqlserverCompiler extends QueryCompiler
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
-                'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.',
+                'Could not compile insert query. No table was specified. '
+                . 'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

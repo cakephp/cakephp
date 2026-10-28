@@ -58,8 +58,8 @@ class WindowQueryTest extends TestCase
 
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Mysql ||
-            $driver instanceof Sqlite
+            $driver instanceof Mysql
+            || $driver instanceof Sqlite
         ) {
             $this->skipTests = !$this->connection->getDriver()->supports(DriverFeature::WINDOW);
         } else {

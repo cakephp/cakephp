@@ -181,7 +181,7 @@ class TestCaseTest extends TestCase
     {
         $errorLevel = error_reporting();
         $this->withErrorReporting(E_USER_WARNING, function (): void {
-              $this->assertSame(E_USER_WARNING, error_reporting());
+            $this->assertSame(E_USER_WARNING, error_reporting());
         });
         $this->assertSame($errorLevel, error_reporting());
     }

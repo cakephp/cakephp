@@ -361,9 +361,9 @@ class SelectLoader
 
         $driver = $query->getDriver();
         if (
-            $selectAlias !== null &&
-            !$driver->isAutoQuotingEnabled() &&
-            $driver->supports(DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS)
+            $selectAlias !== null
+            && !$driver->isAutoQuotingEnabled()
+            && $driver->supports(DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS)
         ) {
             $identifier = $aliasedTable . '.' . $driver->quoteIdentifier($selectAlias);
         }
@@ -432,14 +432,14 @@ class SelectLoader
         $name = $this->alias;
 
         if ($options['foreignKey'] === false && $this->associationType === Association::ONE_TO_MANY) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
-                   'You must provide a foreignKey column.';
+            $msg = 'Cannot have foreignKey = false for hasMany associations. '
+                   . 'You must provide a foreignKey column.';
             throw new DatabaseException($msg);
         }
 
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true)
+            ? $this->foreignKey
+            : $this->bindingKey;
 
         foreach ((array)$keys as $key) {
             $links[] = sprintf('%s.%s', $name, $key);
@@ -671,9 +671,9 @@ class SelectLoader
     {
         $resultMap = [];
         $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true)
+            ? $this->foreignKey
+            : $this->bindingKey;
         $key = (array)$keys;
 
         $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
@@ -712,9 +712,9 @@ class SelectLoader
      */
     protected function resultInjector(SelectQuery $fetchQuery, array $resultMap, array $options): Closure
     {
-        $keys = $this->associationType === Association::MANY_TO_ONE ?
-            $this->foreignKey :
-            $this->bindingKey;
+        $keys = $this->associationType === Association::MANY_TO_ONE
+            ? $this->foreignKey
+            : $this->bindingKey;
 
         $sourceKeys = [];
         foreach ((array)$keys as $key) {

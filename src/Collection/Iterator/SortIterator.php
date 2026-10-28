@@ -81,10 +81,9 @@ class SortIterator extends Collection
         $results = [];
         foreach ($items as $key => $val) {
             $val = $callback($val);
-            $isDateTime =
-                $val instanceof ChronosDate ||
-                $val instanceof ChronosTime ||
-                $val instanceof DateTimeInterface;
+            $isDateTime = $val instanceof ChronosDate
+                || $val instanceof ChronosTime
+                || $val instanceof DateTimeInterface;
             if ($isDateTime && $type === SORT_NUMERIC) {
                 $val = $val->format('U');
             }

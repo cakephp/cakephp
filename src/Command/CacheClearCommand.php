@@ -55,9 +55,9 @@ class CacheClearCommand extends Command
         $parser
             ->setDescription(static::getDescription())
             ->addArgument('engine', [
-                'help' => 'The cache engine to clear.' .
-                    'For example, `cake cache clear _cake_model_` will clear the model cache.' .
-                    ' Use `cake cache list` to list available engines.',
+                'help' => 'The cache engine to clear.'
+                    . 'For example, `cake cache clear _cake_model_` will clear the model cache.'
+                    . ' Use `cake cache list` to list available engines.',
                 'required' => true,
             ]);
 
@@ -78,8 +78,8 @@ class CacheClearCommand extends Command
             $engine = Cache::pool($name);
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
-                $this->io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
-                    "but {$name} web cache must be cleared separately.");
+                $this->io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully "
+                    . "but {$name} web cache must be cleared separately.");
             } else {
                 $this->io->out("<success>Cleared {$name} cache</success>");
             }

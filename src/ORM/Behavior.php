@@ -449,8 +449,8 @@ class Behavior implements EventListenerInterface
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if (
-                in_array($methodName, $baseMethods, true) ||
-                isset($eventMethods[$methodName])
+                in_array($methodName, $baseMethods, true)
+                || isset($eventMethods[$methodName])
             ) {
                 continue;
             }

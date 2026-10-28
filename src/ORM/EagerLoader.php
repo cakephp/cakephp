@@ -493,8 +493,8 @@ class EagerLoader
         $paths['aliasPath'] .= '.' . $alias;
 
         if (
-            isset($options['matching']) &&
-            $options['matching'] === true
+            isset($options['matching'])
+            && $options['matching'] === true
         ) {
             $paths['propertyPath'] = '_matchingData.' . $alias;
         } else {
@@ -678,8 +678,8 @@ class EagerLoader
                 // Nested paths are not subject to this condition because they could
                 // be attached to joined associations.
                 if (
-                    !str_contains($path, '.') &&
-                    (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
+                    !str_contains($path, '.')
+                    && (!array_key_exists($path, $collected) || !array_key_exists($alias, $collected[$path]))
                 ) {
                     $message = "Unable to load `{$path}` association. Ensure foreign key in `{$alias}` is selected.";
                     throw new InvalidArgumentException($message);
@@ -826,8 +826,8 @@ class EagerLoader
             $instance = $meta->instance();
             $strategy = $config['strategy'] ?? $instance->getStrategy();
             if (
-                $strategy !== Association::STRATEGY_SUBQUERY ||
-                $instance->getSource()->getAlias() === $primaryAlias
+                $strategy !== Association::STRATEGY_SUBQUERY
+                || $instance->getSource()->getAlias() === $primaryAlias
             ) {
                 continue;
             }
@@ -856,9 +856,9 @@ class EagerLoader
             }
 
             $source = $instance->getSource();
-            $keys = $instance->type() === Association::MANY_TO_ONE ?
-                (array)$instance->getForeignKey() :
-                (array)$instance->getBindingKey();
+            $keys = $instance->type() === Association::MANY_TO_ONE
+                ? (array)$instance->getForeignKey()
+                : (array)$instance->getBindingKey();
 
             $alias = $source->getAlias();
             $pkFields = [];

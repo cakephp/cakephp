@@ -600,10 +600,10 @@ class TableTest extends TestCase
             $nameLength = $maxAlias - 2;
             $this->expectException(DatabaseException::class);
             $this->expectExceptionMessage(
-                'ORM queries generate field aliases using the table name/alias and column name. ' .
-                "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
-                'You must change the table schema in the database and shorten either the table or column ' .
-                'identifier so they fit within the database alias limits.',
+                'ORM queries generate field aliases using the table name/alias and column name. '
+                . "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). "
+                . 'You must change the table schema in the database and shorten either the table or column '
+                . 'identifier so they fit within the database alias limits.',
             );
         }
         $this->assertNotNull($table->setSchema($schema));
@@ -6094,8 +6094,8 @@ class TableTest extends TestCase
     {
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
-            'Entity findOrCreate failure. ' .
-            'Found the following errors (title._empty: "This field cannot be left empty").',
+            'Entity findOrCreate failure. '
+            . 'Found the following errors (title._empty: "This field cannot be left empty").',
         );
 
         $articles = $this->getTableLocator()->get('Articles');
@@ -6136,8 +6136,8 @@ class TableTest extends TestCase
 
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
-            'Entity findOrCreate failure. ' .
-            'Found the following errors (title._required: "This field is required").',
+            'Entity findOrCreate failure. '
+            . 'Found the following errors (title._required: "This field is required").',
         );
 
         $articles->findOrCreate(['body' => 'test']);
@@ -6221,14 +6221,14 @@ class TableTest extends TestCase
      */
     public function testCustomProviderFromBuildValidatorIsAvailableInValidationDefault(): void
     {
-        $provider = new class () {
+        $provider = new class {
             public function customRule(mixed $value): bool
             {
                 return $value !== 'bad';
             }
         };
 
-        $table = new class () extends Table {
+        $table = new class extends Table {
             public function __construct()
             {
                 parent::__construct(['alias' => 'ValidatorArticles', 'table' => 'articles']);

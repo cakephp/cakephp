@@ -713,20 +713,20 @@ class I18nTest extends TestCase
 
             if ($locale === 'fr_FR') {
                 $package->setMessages([
-                'Cow' => 'Le Moo',
-                'Cows' => [
-                    'Le Moo',
-                    'Les Moos',
+                    'Cow' => 'Le Moo',
+                    'Cows' => [
+                        'Le Moo',
+                        'Les Moos',
                     ],
                 ]);
             }
 
             if ($locale === 'es_ES') {
                 $package->setMessages([
-                'Cow' => 'El Moo',
-                'Cows' => [
-                    'El Moo',
-                    'Los Moos',
+                    'Cow' => 'El Moo',
+                    'Cows' => [
+                        'El Moo',
+                        'Los Moos',
                     ],
                 ]);
             }

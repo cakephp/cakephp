@@ -238,8 +238,8 @@ class Response extends Message implements ResponseInterface
             static::STATUS_PERMANENT_REDIRECT,
         ];
 
-        return in_array($this->code, $codes, true) &&
-            $this->getHeaderLine('Location');
+        return in_array($this->code, $codes, true)
+            && $this->getHeaderLine('Location');
     }
 
     /**

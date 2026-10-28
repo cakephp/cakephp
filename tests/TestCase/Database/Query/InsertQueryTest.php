@@ -113,8 +113,8 @@ class InsertQueryTest extends TestCase
 
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+            'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?'
+            . 'VALUES \(:c0\)',
             $result,
             !$this->autoQuote,
         );
@@ -134,8 +134,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?'
+            . 'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote,
         );
@@ -173,8 +173,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+            'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?'
+            . 'VALUES \(:c0\)',
             $result,
             !$this->autoQuote,
         );
@@ -194,8 +194,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?'
+            . 'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote,
         );

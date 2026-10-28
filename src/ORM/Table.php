@@ -601,10 +601,10 @@ class Table implements
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
                 throw new DatabaseException(
-                    'ORM queries generate field aliases using the table name/alias and column name. ' .
-                    "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
-                    'You must change the table schema in the database and shorten either the table or column ' .
-                    'identifier so they fit within the database alias limits.',
+                    'ORM queries generate field aliases using the table name/alias and column name. '
+                    . "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). "
+                    . 'You must change the table schema in the database and shorten either the table or column '
+                    . 'identifier so they fit within the database alias limits.',
                 );
             }
         }
@@ -689,10 +689,10 @@ class Table implements
         foreach ($schema->columns() as $column) {
             $columnSchema = $schema->getColumn($column);
             if (
-                $columnSchema &&
-                $columnSchema['null'] !== true &&
-                $columnSchema['type'] === 'string' &&
-                !preg_match('/pass|token|secret/i', $column)
+                $columnSchema
+                && $columnSchema['null'] !== true
+                && $columnSchema['type'] === 'string'
+                && !preg_match('/pass|token|secret/i', $column)
             ) {
                 return $this->displayField = $column;
             }
@@ -1493,10 +1493,10 @@ class Table implements
         $valueField ??= $this->getDisplayField();
 
         if (
-            !$query->clause('select') &&
-            !$keyField instanceof Closure &&
-            !$valueField instanceof Closure &&
-            !$groupField instanceof Closure
+            !$query->clause('select')
+            && !$keyField instanceof Closure
+            && !$valueField instanceof Closure
+            && !$groupField instanceof Closure
         ) {
             $fields = array_merge(
                 (array)$keyField,
@@ -2630,10 +2630,10 @@ class Table implements
     protected function doDeleteMany(iterable $entities, array $options = []): ?EntityInterface
     {
         $options = new ArrayObject($options + [
-                'atomic' => true,
-                'checkRules' => true,
-                '_primary' => true,
-            ]);
+            'atomic' => true,
+            'checkRules' => true,
+            '_primary' => true,
+        ]);
 
         $failed = $this->executeTransaction(function () use ($entities, $options) {
             foreach ($entities as $entity) {
@@ -2931,8 +2931,8 @@ class Table implements
         $association = $this->associations->get($property);
         if (!$association) {
             throw new DatabaseException(sprintf(
-                'Undefined property `%s`. ' .
-                'You have not defined the `%s` association on `%s`.',
+                'Undefined property `%s`. '
+                . 'You have not defined the `%s` association on `%s`.',
                 $property,
                 $property,
                 static::class,

@@ -89,8 +89,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             '',
             $modeHelp,
             '',
-            'This command is not intended to be called manually, and should be invoked from a ' .
-                'terminal completion script.',
+            'This command is not intended to be called manually, and should be invoked from a '
+                . 'terminal completion script.',
         ]);
 
         return $parser;
@@ -148,8 +148,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             if (!$verbose && str_contains($commandName, '.')) {
                 $shortName = explode('.', $commandName)[1];
                 if (
-                    isset($commandClasses[$shortName], $commandClasses[$commandName]) &&
-                    $commandClasses[$shortName] === $commandClasses[$commandName]
+                    isset($commandClasses[$shortName], $commandClasses[$commandName])
+                    && $commandClasses[$shortName] === $commandClasses[$commandName]
                 ) {
                     continue;
                 }

@@ -55,8 +55,7 @@ class DigestTest extends TestCase
      */
     protected function getDigestMock(): Digest
     {
-        return new class ($this->client) extends Digest
-        {
+        return new class ($this->client) extends Digest {
             public function generateCnonce(): string
             {
                 return 'cnonce';

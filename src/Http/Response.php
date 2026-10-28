@@ -278,10 +278,10 @@ class Response implements ResponseInterface, Stringable
 
         $charset = false;
         if (
-            $this->charset &&
-            (
-                str_starts_with($type, 'text/') ||
-                in_array($type, $allowed, true)
+            $this->charset
+            && (
+                str_starts_with($type, 'text/')
+                || in_array($type, $allowed, true)
             )
         ) {
             $charset = true;
@@ -885,10 +885,10 @@ class Response implements ResponseInterface, Stringable
      */
     public function compress(): bool
     {
-        return ini_get('zlib.output_compression') !== '1' &&
-            extension_loaded('zlib') &&
-            str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') &&
-            ob_start('ob_gzhandler');
+        return ini_get('zlib.output_compression') !== '1'
+            && extension_loaded('zlib')
+            && str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip')
+            && ob_start('ob_gzhandler');
     }
 
     /**
