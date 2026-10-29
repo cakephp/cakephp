@@ -197,7 +197,7 @@ jobs:
 
     - name: Setup PHP extensions cache
       id: php-ext-cache
-      uses: shivammathur/cache-extensions@2abd2f0f7e31e52e198f67f882dea153f87bc11b # 1.15.3
+      uses: shivammathur/cache-extensions@38b47b5568926cb949d3c946e30cf8eab5326c39 # 1.15.5
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
