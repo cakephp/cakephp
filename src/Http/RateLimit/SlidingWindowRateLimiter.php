@@ -20,6 +20,9 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * Sliding window rate limiter implementation
+ *
+ * Counts requests per fixed window and estimates the sliding window by adding
+ * the previous window's count, weighted by how much of it still overlaps.
  */
 class SlidingWindowRateLimiter implements RateLimiterInterface
 {
@@ -46,39 +49,69 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
         $now = time();
-        $key = $identifier;
 
-        $data = $this->cache->get($key, [
-            'count' => 0,
-            'reset' => $now + $window,
-            'window_start' => $now,
-        ]);
+        $data = $this->cache->get($identifier);
+        $windowStart = (int)($data['window_start'] ?? $now);
+        // Entries written by older versions only have `count`.
+        $current = (int)($data['current'] ?? $data['count'] ?? 0);
+        $previous = (int)($data['previous'] ?? 0);
 
-        $elapsed = $now - $data['window_start'];
+        $elapsed = $now - $windowStart;
         if ($elapsed >= $window) {
-            $data = [
-                'count' => 0,
-                'reset' => $now + $window,
-                'window_start' => $now,
-            ];
-        } else {
-            $weight = 1 - ($elapsed / $window);
-            $data['count'] = (int)ceil($data['count'] * $weight);
+            $previous = $elapsed < 2 * $window ? $current : 0;
+            $current = 0;
+            $windowStart += intdiv($elapsed, $window) * $window;
+            $elapsed = $now - $windowStart;
         }
 
-        $allowed = $data['count'] + $cost <= $limit;
+        $used = $current + intdiv($previous * ($window - $elapsed) + $window - 1, $window);
+        $allowed = $used + $cost <= $limit;
+        $reset = $windowStart + $window;
 
-        if ($allowed) {
-            $data['count'] += $cost;
-            $this->cache->set($key, $data, $window);
+        if (!$allowed) {
+            $reset = $this->retryAt($windowStart, $window, $limit, $cost, $current, $previous);
+        } else {
+            $current += $cost;
+            $used += $cost;
+            $this->cache->set($identifier, [
+                'window_start' => $windowStart,
+                'current' => $current,
+                'previous' => $previous,
+            ], $windowStart + 2 * $window - $now);
         }
 
         return [
             'allowed' => $allowed,
             'limit' => $limit,
-            'remaining' => max(0, $limit - (int)$data['count']),
-            'reset' => $data['reset'],
+            'remaining' => max(0, $limit - $used),
+            'reset' => $reset,
         ];
+    }
+
+    /**
+     * Get the earliest timestamp at which a request with the given cost is allowed.
+     *
+     * @param int $windowStart Start of the current window
+     * @param int $window The time window in seconds
+     * @param int $limit The maximum number of requests
+     * @param int $cost The cost of the request
+     * @param int $current Count of the current window
+     * @param int $previous Count of the previous window
+     * @return int
+     */
+    protected function retryAt(int $windowStart, int $window, int $limit, int $cost, int $current, int $previous): int
+    {
+        $room = $limit - $cost - $current;
+        if ($room >= 0 && $previous > 0) {
+            return $windowStart + $window - intdiv($room * $window, $previous);
+        }
+
+        $room = $limit - $cost;
+        if ($room < 0 || $current === 0) {
+            return $windowStart + 2 * $window;
+        }
+
+        return $windowStart + 2 * $window - intdiv($room * $window, $current);
     }
 
     /**

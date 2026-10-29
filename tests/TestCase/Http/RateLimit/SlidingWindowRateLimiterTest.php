@@ -186,29 +186,116 @@ class SlidingWindowRateLimiterTest extends TestCase
     }
 
     /**
-     * Test sliding window behavior
+     * Test the previous window is weighted by its remaining overlap
      *
      * @return void
      */
     public function testSlidingWindowDecay(): void
     {
         $identifier = 'test_sliding';
-        $limit = 10;
-        $window = 2; // 2 second window for testing
+        $this->cache->set($identifier, [
+            'window_start' => time() - 90,
+            'current' => 10,
+            'previous' => 0,
+        ]);
 
-        // Make initial request
-        $result = $this->limiter->attempt($identifier, $limit, $window, 5);
+        // 30s into the next window, half of the previous 10 still counts.
+        $result = $this->limiter->attempt($identifier, 10, 60);
         $this->assertTrue($result['allowed']);
-        $this->assertEquals(5, $result['remaining']);
+        $this->assertSame(4, $result['remaining']);
+    }
 
-        // Wait for half the window
-        sleep(1);
+    /**
+     * Test an exhausted limit stays exhausted for the rest of the window
+     *
+     * @return void
+     */
+    public function testNoDecayWithinCurrentWindow(): void
+    {
+        $identifier = 'test_no_bypass';
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertTrue($this->limiter->attempt($identifier, 5, 60)['allowed']);
+        }
 
-        // The count should have decayed by ~50%
-        $result = $this->limiter->attempt($identifier, $limit, $window, 1);
+        $start = time() - 12;
+        $this->cache->set($identifier, [
+            'window_start' => $start,
+            'current' => 5,
+            'previous' => 0,
+        ]);
+
+        for ($i = 0; $i < 10; $i++) {
+            $result = $this->limiter->attempt($identifier, 5, 60);
+            $this->assertFalse($result['allowed']);
+            $this->assertSame(0, $result['remaining']);
+            // Next window, once ceil(5 * remaining overlap) drops to 4.
+            $this->assertSame($start + 72, $result['reset']);
+        }
+    }
+
+    /**
+     * Test repeated attempts do not decay the previous window again
+     *
+     * @return void
+     */
+    public function testRepeatedAttemptsDoNotCompoundDecay(): void
+    {
+        $identifier = 'test_compound';
+        $start = time() - 72;
+        $this->cache->set($identifier, [
+            'window_start' => $start,
+            'current' => 5,
+            'previous' => 0,
+        ]);
+
+        // 12s into the next window: ceil(5 * 0.8) = 4 used, room for one more.
+        $result = $this->limiter->attempt($identifier, 5, 60);
         $this->assertTrue($result['allowed']);
-        // Due to decay, remaining should be more than 4
-        $this->assertGreaterThan(4, $result['remaining']);
+        $this->assertSame(0, $result['remaining']);
+
+        for ($i = 0; $i < 10; $i++) {
+            $result = $this->limiter->attempt($identifier, 5, 60);
+            $this->assertFalse($result['allowed']);
+            // 24s into the window, ceil(5 * 0.6) = 3 plus the 1 already taken.
+            $this->assertSame($start + 84, $result['reset']);
+        }
+    }
+
+    /**
+     * Test the previous window is dropped once it no longer overlaps
+     *
+     * @return void
+     */
+    public function testPreviousWindowExpires(): void
+    {
+        $identifier = 'test_previous_expires';
+        $this->cache->set($identifier, [
+            'window_start' => time() - 130,
+            'current' => 5,
+            'previous' => 5,
+        ]);
+
+        $result = $this->limiter->attempt($identifier, 5, 60);
+        $this->assertTrue($result['allowed']);
+        $this->assertSame(4, $result['remaining']);
+    }
+
+    /**
+     * Test cache entries in the old single-counter format are still honored
+     *
+     * @return void
+     */
+    public function testLegacyCacheEntry(): void
+    {
+        $identifier = 'test_legacy';
+        $this->cache->set($identifier, [
+            'count' => 5,
+            'reset' => time() + 50,
+            'window_start' => time() - 10,
+        ]);
+
+        $result = $this->limiter->attempt($identifier, 5, 60);
+        $this->assertFalse($result['allowed']);
     }
 
     /**
