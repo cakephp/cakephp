@@ -21,6 +21,4 @@ use Cake\Core\Exception\CakeException;
 /**
  * Exception raised when the provided primary key does not match the table primary key
  */
-class InvalidPrimaryKeyException extends CakeException
-{
-}
+class InvalidPrimaryKeyException extends CakeException {}

@@ -140,9 +140,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $fieldsAdded = $this->addFieldsToQuery($query, $config);
         $orderByTranslatedField = $this->iterateClause($query, 'order', $config);
         $filteredByTranslatedField =
-            $this->traverseClause($query, 'where', $config) ||
-            $config['onlyTranslated'] ||
-            ($options['filterByCurrentLocale'] ?? null);
+            $this->traverseClause($query, 'where', $config)
+            || $config['onlyTranslated']
+            || ($options['filterByCurrentLocale'] ?? null);
 
         if (!$fieldsAdded && !$orderByTranslatedField && !$filteredByTranslatedField) {
             return;
@@ -168,7 +168,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $config = $this->getConfig();
 
         [$plugin] = pluginSplit($config['translationTable']);
-        $hasOneTargetAlias = $plugin ? ($plugin . '.' . $config['hasOneAlias']) : $config['hasOneAlias'];
+        $hasOneTargetAlias = $plugin ? $plugin . '.' . $config['hasOneAlias'] : $config['hasOneAlias'];
         if (!$this->getTableLocator()->exists($hasOneTargetAlias)) {
             // Load table before hand with fallback class usage enabled
             $this->getTableLocator()->get(
@@ -316,7 +316,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $clause->traverse(
             function ($expression) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired): void {
-                if (!($expression instanceof FieldInterface)) {
+                if (!$expression instanceof FieldInterface) {
                     return;
                 }
                 $field = $expression->getField();
@@ -408,7 +408,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             $where['id'] = $id;
 
             /** @var \Cake\Datasource\EntityInterface|null $translation */
-            $translation = $this->translationTable->find()
+            $translation = $this->translationTable
+                ->find()
                 ->select(array_merge(['id', 'locale'], $fields))
                 ->where($where)
                 ->first();

@@ -12,11 +12,11 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Reflection\ReflectionProvider;
 
-class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension
+class AssociationTableMixinClassReflectionExtension implements
+    PropertiesClassReflectionExtension,
+    MethodsClassReflectionExtension
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
-    {
-    }
+    public function __construct(private ReflectionProvider $reflectionProvider) {}
 
     protected function getTableReflection(): ClassReflection
     {

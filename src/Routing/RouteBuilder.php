@@ -425,7 +425,8 @@ class RouteBuilder
             if ($prefix) {
                 $routeParams['prefix'] = $prefix;
             }
-            $routeOptions = $connectOptions + [
+            $routeOptions = $connectOptions
+            + [
                 'id' => $options['id'],
                 'pass' => ['id'],
                 '_ext' => $ext,
@@ -555,12 +556,13 @@ class RouteBuilder
         if ($name !== null) {
             $name = $this->namePrefix . $name;
         }
-        $options = [
-            '_name' => $name,
-            '_ext' => $this->extensions,
-            '_middleware' => $this->middleware,
-            'routeClass' => $this->routeClass,
-        ] + $this->defaultOptions;
+        $options =
+            [
+                '_name' => $name,
+                '_ext' => $this->extensions,
+                '_middleware' => $this->middleware,
+                'routeClass' => $this->routeClass,
+            ] + $this->defaultOptions;
 
         $target = $this->parseDefaults($target);
         $target['_method'] = $method;
@@ -787,8 +789,9 @@ class RouteBuilder
 
         foreach ($this->params as $param => $val) {
             if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
-                $msg = 'You cannot define routes that conflict with the scope. ' .
-                    'Scope had %s = %s, while route had %s = %s';
+                $msg =
+                    'You cannot define routes that conflict with the scope. '
+                    . 'Scope had %s = %s, while route had %s = %s';
                 throw new BadMethodCallException(sprintf(
                     $msg,
                     $param,
@@ -1023,8 +1026,9 @@ class RouteBuilder
     {
         foreach ($names as $name) {
             if (!$this->collection->middlewareExists($name)) {
-                $message = "Cannot apply `{$name}` middleware or middleware group. " .
-                    'Use `registerMiddleware()` to register middleware.';
+                $message =
+                    "Cannot apply `{$name}` middleware or middleware group. "
+                    . 'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
             }
         }

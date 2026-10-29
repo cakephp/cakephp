@@ -11,7 +11,5 @@ class UuidValue
     /**
      * @param mixed $value
      */
-    public function __construct(public $value)
-    {
-    }
+    public function __construct(public $value) {}
 }

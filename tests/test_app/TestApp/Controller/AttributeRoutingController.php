@@ -24,9 +24,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      * @return void
      */
     #[Get]
-    public function root(): void
-    {
-    }
+    public function root(): void {}
 
     /**
      * Action fixture used to verify GET and POST attribute shortcuts.
@@ -35,9 +33,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      */
     #[Get('/index', 'index')]
     #[Post('/index', 'index-post')]
-    public function index(): void
-    {
-    }
+    public function index(): void {}
 
     /**
      * Action fixture used to verify repeated route and middleware attributes.
@@ -48,9 +44,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
     #[Get('/repeated-alias', 'repeated-alias')]
     #[Middleware('first')]
     #[Middleware('second')]
-    public function repeated(): void
-    {
-    }
+    public function repeated(): void {}
 
     /**
      * Action fixture used to verify placeholder patterns and pass parameters.
@@ -60,9 +54,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      */
     #[Route('/view/{id}', name: 'view', patterns: ['id' => '\\d+'], pass: ['id'])]
     #[Middleware('rate-limit')]
-    public function view(int $id): void
-    {
-    }
+    public function view(int $id): void {}
 
     /**
      * Action fixture used to verify method-level extension overrides.
@@ -71,9 +63,7 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      */
     #[Route('/feed', name: 'feed')]
     #[Extensions(['xml'])]
-    public function feed(): void
-    {
-    }
+    public function feed(): void {}
 
     /**
      * Action fixture used to verify inferred pass parameter ordering.
@@ -82,7 +72,5 @@ class AttributeRoutingController extends AttributeRoutingBaseController
      * @param int $id Route identifier value.
      * @return void
      */
-    public function reorder(string $slug, int $id): void
-    {
-    }
+    public function reorder(string $slug, int $id): void {}
 }

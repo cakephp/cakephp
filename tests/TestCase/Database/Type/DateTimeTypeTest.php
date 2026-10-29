@@ -255,37 +255,56 @@ class DateTimeTypeTest extends TestCase
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 1,
+                    'minute' => 14,
+                    'second' => 15,
                     'meridian' => 'am',
                 ],
                 new DateTime('2014-02-14 01:14:15'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 12, 'minute' => 04, 'second' => 15,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 12,
+                    'minute' => 04,
+                    'second' => 15,
                     'meridian' => 'pm',
                 ],
                 new DateTime('2014-02-14 12:04:15'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
-                    'hour' => 1, 'minute' => 14, 'second' => 15,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 1,
+                    'minute' => 14,
+                    'second' => 15,
                     'meridian' => 'pm',
                 ],
                 new DateTime('2014-02-14 13:14:15'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14,
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
                 ],
                 new DateTime('2014-02-14 00:00:00'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
+                    'year' => 2014,
+                    'month' => 2,
+                    'day' => 14,
+                    'hour' => 12,
+                    'minute' => 30,
+                    'timezone' => 'Europe/Paris',
                 ],
                 new DateTime('2014-02-14 11:30:00', 'UTC'),
             ],
@@ -301,8 +320,11 @@ class DateTimeTypeTest extends TestCase
             ],
             [
                 [
-                    'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts',
+                    'year' => '2014',
+                    'month' => '02',
+                    'day' => '14',
+                    'hour' => 'farts',
+                    'minute' => 'farts',
                 ],
                 null,
             ],
@@ -363,8 +385,12 @@ class DateTimeTypeTest extends TestCase
 
         $expected = new DateTime('2020-05-01 21:28:00', 'UTC');
         $result = $this->type->marshal([
-            'year' => 2020, 'month' => 5, 'day' => 1,
-            'hour' => 23, 'minute' => 28, 'second' => 0,
+            'year' => 2020,
+            'month' => 5,
+            'day' => 1,
+            'hour' => 23,
+            'minute' => 28,
+            'second' => 0,
         ]);
         $this->assertEquals('UTC', $result->getTimezone()->getName());
         $this->assertEquals($expected, $result);

@@ -155,8 +155,9 @@ class Session
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
-                    'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR)
-                         . 'sessions',
+                    'session.save_path' =>
+                        (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR)
+                            . 'sessions',
                     'session.save_handler' => 'files',
                 ],
             ],
@@ -246,7 +247,7 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+        $this->isCLI = PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg';
         session_register_shutdown();
     }
 
@@ -629,10 +630,12 @@ class Session
      */
     protected function hasSession(): bool
     {
-        return !ini_get('session.use_cookies')
-            || isset($_COOKIE[session_name()])
-            || $this->isCLI
-            || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
+        return (
+            !ini_get('session.use_cookies')
+                || isset($_COOKIE[session_name()])
+                || $this->isCLI
+                || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]))
+        );
     }
 
     /**
@@ -673,7 +676,7 @@ class Session
         $result = false;
 
         $checkTime = $time !== null && $this->lifetime > 0;
-        if ($checkTime && (time() - (int)$time > $this->lifetime)) {
+        if ($checkTime && time() - (int)$time > $this->lifetime) {
             $result = true;
         }
 

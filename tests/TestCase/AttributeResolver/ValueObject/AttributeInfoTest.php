@@ -35,8 +35,7 @@ class TestAttribute
     public function __construct(
         public string $value = 'test',
         public int $number = 42,
-    ) {
-    }
+    ) {}
 }
 
 /**
@@ -45,9 +44,7 @@ class TestAttribute
 #[Attribute]
 class AnotherAttribute
 {
-    public function __construct(public string $name)
-    {
-    }
+    public function __construct(public string $name) {}
 }
 
 /**

@@ -9,7 +9,5 @@ use TestApp\Attribute\Resolver\TestRoute;
 trait TestTrait
 {
     #[TestRoute(path: '/trait-method')]
-    public function traitMethod(): void
-    {
-    }
+    public function traitMethod(): void {}
 }

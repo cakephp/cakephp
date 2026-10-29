@@ -49,8 +49,7 @@ class AttributesWarmCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
+        $parser->setDescription(static::getDescription())
             ->addOption('config', [
                 'short' => 'c',
                 'default' => 'default',

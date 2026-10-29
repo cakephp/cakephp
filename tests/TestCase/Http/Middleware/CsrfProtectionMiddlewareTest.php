@@ -59,7 +59,13 @@ class CsrfProtectionMiddlewareTest extends TestCase
     public static function httpMethodProvider(): array
     {
         return [
-            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],
+            ['OPTIONS'],
+            ['PATCH'],
+            ['PUT'],
+            ['POST'],
+            ['DELETE'],
+            ['PURGE'],
+            ['INVALIDMETHOD'],
         ];
     }
 
@@ -303,7 +309,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
-            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertSame(
+                'csrfToken',
+                $cookie->getName(),
+                'Should automatically delete cookie with invalid CSRF token',
+            );
             $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
         }
     }
@@ -417,7 +427,11 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertArrayHasKey('Set-Cookie', $responseHeaders);
 
             $cookie = Cookie::createFromHeaderString($responseHeaders['Set-Cookie']);
-            $this->assertSame('csrfToken', $cookie->getName(), 'Should automatically delete cookie with invalid CSRF token');
+            $this->assertSame(
+                'csrfToken',
+                $cookie->getName(),
+                'Should automatically delete cookie with invalid CSRF token',
+            );
             $this->assertTrue($cookie->isExpired(), 'Should automatically delete cookie with invalid CSRF token');
         }
     }

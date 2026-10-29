@@ -478,7 +478,12 @@ class TranslateBehaviorEavTest extends TestCase
         $results = $table->find('translations');
         $expected = [
             [
-                'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'description' => 'Description #1', 'locale' => 'eng'],
+                'eng' => [
+                    'title' => 'Title #1',
+                    'body' => 'Content #1',
+                    'description' => 'Description #1',
+                    'locale' => 'eng',
+                ],
                 'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
                 'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze'],
                 'spa' => ['body' => 'Contenido #1', 'locale' => 'spa', 'description' => ''],
@@ -560,13 +565,12 @@ class TranslateBehaviorEavTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $results = $table
-            ->find(
-                'list',
-                keyField: 'title',
-                valueField: '_translations.deu.title',
-                groupField: 'id',
-            )
+        $results = $table->find(
+            'list',
+            keyField: 'title',
+            valueField: '_translations.deu.title',
+            groupField: 'id',
+        )
             ->find('translations', locales: ['deu']);
 
         $expected = [
@@ -628,9 +632,10 @@ class TranslateBehaviorEavTest extends TestCase
         $table->getBehavior('Translate')->setLocale('eng');
         $comments->getBehavior('Translate')->setLocale('eng');
 
-        $results = $table->find()->contain(['Comments' => function ($q) {
-            return $q->select(['id', 'comment', 'article_id']);
-        }]);
+        $results = $table->find()
+            ->contain(['Comments' => function ($q) {
+                return $q->select(['id', 'comment', 'article_id']);
+            }]);
 
         $list = new Collection($results->first()->comments);
         $expected = [
@@ -653,11 +658,12 @@ class TranslateBehaviorEavTest extends TestCase
         $comments = $table->associations()->get('Comments')->getTarget();
         $comments->addBehavior('Translate', ['fields' => ['comment']]);
 
-        $results = $table->find('translations')->contain([
-            'Comments' => function ($q) {
-                return $q->find('translations')->select(['id', 'comment', 'article_id']);
-            },
-        ]);
+        $results = $table->find('translations')
+            ->contain([
+                'Comments' => function ($q) {
+                    return $q->find('translations')->select(['id', 'comment', 'article_id']);
+                },
+            ]);
 
         $comments = $results->first()->comments;
         $expected = [
@@ -694,11 +700,12 @@ class TranslateBehaviorEavTest extends TestCase
 
         $table->getBehavior('Translate')->setLocale('cze');
         $comments->getBehavior('Translate')->setLocale('eng');
-        $results = $table->find('translations')->contain([
-            'Comments' => function ($q) {
-                return $q->find('translations')->select(['id', 'comment', 'article_id']);
-            },
-        ]);
+        $results = $table->find('translations')
+            ->contain([
+                'Comments' => function ($q) {
+                    return $q->find('translations')->select(['id', 'comment', 'article_id']);
+                },
+            ]);
 
         $comments = $results->first()->comments;
         $expected = [
@@ -1025,7 +1032,9 @@ class TranslateBehaviorEavTest extends TestCase
 
         $table->save($article);
 
-        $fra = $table->I18n->find()
+        $fra = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'fra',
                 'field' => 'body',
@@ -1036,7 +1045,9 @@ class TranslateBehaviorEavTest extends TestCase
         // Remove the Behavior to unset the content != '' condition
         $table->removeBehavior('Translate');
 
-        $noTitle = $table->I18n->find()
+        $noTitle = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'fra',
                 'field' => 'title',
@@ -1071,7 +1082,9 @@ class TranslateBehaviorEavTest extends TestCase
 
         $table->save($article);
 
-        $fra = $table->I18n->find()
+        $fra = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'fra',
                 'field' => 'body',
@@ -1079,7 +1092,9 @@ class TranslateBehaviorEavTest extends TestCase
             ->first();
         $this->assertSame('Bonjour', $fra->content);
 
-        $deTitle = $table->I18n->find()
+        $deTitle = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'de',
                 'field' => 'title',
@@ -1087,7 +1102,9 @@ class TranslateBehaviorEavTest extends TestCase
             ->first();
         $this->assertSame('Titel', $deTitle->content);
 
-        $deBody = $table->I18n->find()
+        $deBody = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'de',
                 'field' => 'body',
@@ -1098,7 +1115,9 @@ class TranslateBehaviorEavTest extends TestCase
         // Remove the Behavior to unset the content != '' condition
         $table->removeBehavior('Translate');
 
-        $noTitle = $table->I18n->find()
+        $noTitle = $table
+            ->I18n
+            ->find()
             ->where([
                 'locale' => 'fra',
                 'field' => 'title',
@@ -1165,7 +1184,9 @@ class TranslateBehaviorEavTest extends TestCase
         $article = $table->find()->first();
         $this->assertTrue($table->delete($article));
 
-        $translations = $this->getTableLocator()->get('I18n')->find()
+        $translations = $this->getTableLocator()
+            ->get('I18n')
+            ->find()
             ->where(['model' => 'Articles', 'foreign_key' => $article->id])
             ->count();
         $this->assertSame(0, $translations);
@@ -1967,8 +1988,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEquals($table->Comments->getBehavior('Translate')->getLocale(), I18n::getLocale());
         $this->assertNotEquals($table->Comments->Authors->getBehavior('Translate')->getLocale(), I18n::getLocale());
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain('Comments')
             ->matching('Comments.Authors')
             ->first();
@@ -1989,8 +2009,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $this->assertNotEquals($table->Comments->getBehavior('Translate')->getLocale(), I18n::getLocale());
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain('Comments')
             ->matching('Comments')
             ->first();
@@ -2018,8 +2037,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEquals($table->Comments->getBehavior('Translate')->getLocale(), I18n::getLocale());
         $this->assertNotEquals($table->Comments->Authors->getBehavior('Translate')->getLocale(), I18n::getLocale());
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain('Comments.Authors')
             ->matching('Comments.Authors')
             ->first();
@@ -2048,8 +2066,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEquals($table->Articles->getBehavior('Translate')->getLocale(), I18n::getLocale());
         $this->assertNotEquals($table->Articles->Tags->getBehavior('Translate')->getLocale(), I18n::getLocale());
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain([
                 'Articles' => function ($query) {
                     return $query->matching('Tags');

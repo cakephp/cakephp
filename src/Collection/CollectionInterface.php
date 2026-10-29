@@ -1086,6 +1086,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function zipWith(iterable $items, $callback): CollectionInterface;
+
     // phpcs:enable
 
     /**

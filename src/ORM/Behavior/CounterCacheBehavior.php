@@ -142,10 +142,10 @@ class CounterCacheBehavior extends Behavior
                 $assocEntity = $entity->$entityAlias;
 
                 if (
-                    !is_callable($config) &&
-                    isset($config['ignoreDirty']) &&
-                    $config['ignoreDirty'] === true &&
-                    $assocEntity->isDirty($field)
+                    !is_callable($config)
+                    && isset($config['ignoreDirty'])
+                    && $config['ignoreDirty'] === true
+                    && $assocEntity->isDirty($field)
                 ) {
                     $this->ignoreDirty[$registryAlias][$field] = true;
                 }
@@ -253,7 +253,8 @@ class CounterCacheBehavior extends Behavior
         /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
 
-        $query = $assoc->getTarget()->find()
+        $query = $assoc->getTarget()
+            ->find()
             ->select($primaryKeys)
             ->limit($limit);
 
@@ -265,8 +266,7 @@ class CounterCacheBehavior extends Behavior
         $page ??= 1;
 
         do {
-            $results = $query
-                ->page($page++)
+            $results = $query->page($page++)
                 ->all();
 
             /** @var \Cake\Datasource\EntityInterface $entity */
@@ -346,8 +346,8 @@ class CounterCacheBehavior extends Behavior
             }
 
             if (
-                isset($this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]) &&
-                $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]
+                isset($this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field])
+                && $this->ignoreDirty[$assoc->getTarget()->getRegistryAlias()][$field]
             ) {
                 continue;
             }
@@ -412,8 +412,7 @@ class CounterCacheBehavior extends Behavior
             return $query->count();
         }
 
-        return $query
-            ->select(['count' => $query->func()->count('*')], true)
+        return $query->select(['count' => $query->func()->count('*')], true)
             ->orderBy([], true);
     }
 }

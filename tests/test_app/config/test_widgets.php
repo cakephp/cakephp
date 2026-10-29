@@ -1,6 +1,8 @@
 <?php
 
-use Cake\View\Widget\LabelWidget;/*
+use Cake\View\Widget\LabelWidget;
+
+/*
  * Widgets list for testing.
  */
 

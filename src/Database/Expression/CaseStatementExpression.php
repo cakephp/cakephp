@@ -126,13 +126,13 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     {
         if (func_num_args() > 0) {
             if (
-                $value !== null &&
-                !is_scalar($value) &&
-                !(is_object($value) && !($value instanceof Closure))
+                $value !== null
+                && !is_scalar($value)
+                && !(is_object($value) && !$value instanceof Closure)
             ) {
                 throw new InvalidArgumentException(sprintf(
-                    'The `$value` argument must be either `null`, a scalar value, an object, ' .
-                    'or an instance of `\%s`, `%s` given.',
+                    'The `$value` argument must be either `null`, a scalar value, an object, '
+                        . 'or an instance of `\%s`, `%s` given.',
                     ExpressionInterface::class,
                     get_debug_type($value),
                 ));
@@ -141,9 +141,9 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             $this->value = $value;
 
             if (
-                $value !== null &&
-                $type === null &&
-                !($value instanceof ExpressionInterface)
+                $value !== null
+                && $type === null
+                && !$value instanceof ExpressionInterface
             ) {
                 $type = $this->inferType($value, $this->typeMap);
             }
@@ -299,7 +299,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
 
         if ($when instanceof Closure) {
             $when = $when(new WhenThenExpression($this->getTypeMap()));
-            if (!($when instanceof WhenThenExpression)) {
+            if (!$when instanceof WhenThenExpression) {
                 throw new LogicException(sprintf(
                     '`when()` callables must return an instance of `\%s`, `%s` given.',
                     WhenThenExpression::class,
@@ -379,8 +379,10 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             throw new LogicException('Cannot call `then()` before `when()`.');
         }
 
-        $whenThen = new WhenThenExpression($this->getTypeMap())
-            ->when($this->whenBuffer['when'], $this->whenBuffer['type'])
+        $whenThen = new WhenThenExpression($this->getTypeMap())->when(
+            $this->whenBuffer['when'],
+            $this->whenBuffer['type'],
+        )
             ->then($result, $type);
 
         $this->whenBuffer = null;
@@ -408,13 +410,13 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
         }
 
         if (
-            $result !== null &&
-            !is_scalar($result) &&
-            !(is_object($result) && !($result instanceof Closure))
+            $result !== null
+            && !is_scalar($result)
+            && !(is_object($result) && !$result instanceof Closure)
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The `$result` argument must be either `null`, a scalar value, an object, ' .
-                'or an instance of `\%s`, `%s` given.',
+                'The `$result` argument must be either `null`, a scalar value, an object, '
+                    . 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
                 get_debug_type($result),
             ));

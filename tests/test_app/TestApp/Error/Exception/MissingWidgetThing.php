@@ -8,6 +8,4 @@ use Exception;
 /**
  * Exception class for testing app error handlers and custom errors.
  */
-class MissingWidgetThing extends Exception
-{
-}
+class MissingWidgetThing extends Exception {}

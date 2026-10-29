@@ -256,9 +256,10 @@ class TreeBehaviorTest extends TestCase
         $query = $table->find('treeList');
 
         $result = null;
-        $query->clause('order')->iterateParts(function ($dir, $field) use (&$result): void {
-            $result = $field;
-        });
+        $query->clause('order')
+            ->iterateParts(function ($dir, $field) use (&$result): void {
+                $result = $field;
+            });
         $this->assertSame('MenuLinkTrees.lft', $result);
 
         $result = $query->toArray();
@@ -319,8 +320,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $result = $table
-            ->find('treeList', keyPath: 'url', valuePath: 'id', spacer: ' ')
+        $result = $table->find('treeList', keyPath: 'url', valuePath: 'id', spacer: ' ')
             ->toArray();
         $expected = [
             '/link1.html' => '1',
@@ -343,8 +343,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree');
 
-        $query = $table
-            ->find('threaded')
+        $query = $table->find('threaded')
             ->where(['menu' => 'main-menu']);
 
         $options = ['keyPath' => 'url', 'valuePath' => 'id', 'spacer' => ' '];
@@ -634,8 +633,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
 
-        $expectedLevels = $table
-            ->find('list', valueField: 'depth')
+        $expectedLevels = $table->find('list', valueField: 'depth')
             ->orderBy('lft')
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
@@ -657,8 +655,7 @@ class TreeBehaviorTest extends TestCase
         ];
         $this->assertMpttValues($expected, $table);
 
-        $result = $table
-            ->find('list', valueField: 'depth')
+        $result = $table->find('list', valueField: 'depth')
             ->orderBy('lft')
             ->toArray();
         $this->assertSame($expectedLevels, $result);
@@ -709,7 +706,10 @@ class TreeBehaviorTest extends TestCase
     public function testRecoverWithCustomOrder(): void
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
-        $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu'], 'recoverOrder' => ['MenuLinkTrees.title' => 'desc']]);
+        $table->addBehavior('Tree', [
+            'scope' => ['menu' => 'main-menu'],
+            'recoverOrder' => ['MenuLinkTrees.title' => 'desc'],
+        ]);
         $table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
         $table->getBehavior('Tree')->recover();
 
@@ -1272,7 +1272,6 @@ class TreeBehaviorTest extends TestCase
             '__15:16 -  9:cd',
             '19:20 - 11:alien hardware',
             '21:22 - 10:radios',
-
         ];
         $this->assertMpttValues($expected, $table);
     }
@@ -1345,8 +1344,7 @@ class TreeBehaviorTest extends TestCase
         $table->hasOne('FriendlyTrees', [
             'foreignKey' => 'id',
         ]);
-        $result = $table
-            ->find('children', for: 1)
+        $result = $table->find('children', for: 1)
             ->contain('FriendlyTrees')
             ->toArray();
         $this->assertCount(9, $result);
@@ -1465,7 +1463,11 @@ class TreeBehaviorTest extends TestCase
             $subExpected = array_diff($expected, $result);
             if ($subExpected) {
                 $subResult = array_intersect_key($result, $subExpected);
-                $this->assertSame($subExpected, $subResult, 'Differences in the tree were found (lft:rght id:display-name)');
+                $this->assertSame(
+                    $subExpected,
+                    $subResult,
+                    'Differences in the tree were found (lft:rght id:display-name)',
+                );
             }
         }
 

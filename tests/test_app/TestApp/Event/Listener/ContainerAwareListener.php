@@ -23,9 +23,7 @@ class ContainerAwareListener
      *
      * @param object $service Service resolved by the application's container.
      */
-    public function __construct(public readonly object $service)
-    {
-    }
+    public function __construct(public readonly object $service) {}
 
     /**
      * Records that the order placement event was handled.

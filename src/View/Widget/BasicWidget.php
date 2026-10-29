@@ -46,9 +46,7 @@ class BasicWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(protected StringTemplate $templates)
-    {
-    }
+    public function __construct(protected StringTemplate $templates) {}
 
     /**
      * Render a text widget or other simple widget like email/tel/number.
@@ -133,7 +131,8 @@ class BasicWidget implements WidgetInterface
         if (
             empty($data['disabled'])
             && (
-                (isset($data['type'])
+                (
+                    isset($data['type'])
                     && $data['type'] !== 'hidden'
                 )
                 || !isset($data['type'])

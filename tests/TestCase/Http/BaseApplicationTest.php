@@ -60,8 +60,7 @@ class BaseApplicationTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $this->app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $this->app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -163,8 +162,7 @@ class BaseApplicationTest extends TestCase
 
     public function testAppBootstrapPlugins(): void
     {
-        $app = new class (dirname(__DIR__, 2) . DS . 'test_app' . DS . 'config_plugins') extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2) . DS . 'test_app' . DS . 'config_plugins') extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -274,7 +272,7 @@ class BaseApplicationTest extends TestCase
 
     public function testServerBuildMiddlewareEventIsCalledOnBootstrap(): void
     {
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public bool $isCalled = false;
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
@@ -302,7 +300,7 @@ class BaseApplicationTest extends TestCase
 
     public function testMiddlewareEventIsCaughtByApplicationEventsListener(): void
     {
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public bool $isCalled = false;
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
@@ -355,11 +353,8 @@ class BaseApplicationTest extends TestCase
     public function testConsoleEventsAreRegistered(): void
     {
         static::setAppNamespace();
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
+            public function routes(RouteBuilder $routes): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
@@ -388,7 +383,7 @@ class BaseApplicationTest extends TestCase
     {
         static::setAppNamespace();
 
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public function eventListeners(): array
             {
                 return [DependencyInjectedEventListener::class];
@@ -417,14 +412,14 @@ class BaseApplicationTest extends TestCase
 
     public function testPluginEventsRegisteredForPluginsAddedAfterParentBootstrap(): void
     {
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public bool $pluginEventFired = false;
 
             public function bootstrap(): void
             {
                 parent::bootstrap();
 
-                $this->addPlugin(new class ($this) extends BasePlugin {
+                $this->addPlugin(new class($this) extends BasePlugin {
                     public function __construct(protected BaseApplication $app)
                     {
                         parent::__construct();

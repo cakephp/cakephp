@@ -139,9 +139,13 @@ class IndexTest extends TestCase
         $index = new Index('title_idx', ['title']);
         // Simulate a legacy serialized payload: remove the property so it is
         // absent from the serialized data, exactly like a pre-5.4 dump.
-        Closure::bind(function (): void {
-            unset($this->accessMethod);
-        }, $index, Index::class)();
+        Closure::bind(
+            function (): void {
+                unset($this->accessMethod);
+            },
+            $index,
+            Index::class,
+        )();
 
         $restored = unserialize(serialize($index));
 

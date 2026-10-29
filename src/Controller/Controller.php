@@ -244,9 +244,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return void
      */
-    public function initialize(): void
-    {
-    }
+    public function initialize(): void {}
 
     /**
      * Get the component registry for this controller.
@@ -289,10 +287,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
             if ($alias === $tableAlias) {
                 triggerWarning(sprintf(
-                    'Component alias `%s` clashes with the default table name `%s`. ' .
-                    'The table name will take precedence when accessing `$this->%s`. ' .
-                    'Consider using a different component alias or set `Controller::$defaultTable` to ' .
-                    "an empty string if the controller doesn't use a table.",
+                    'Component alias `%s` clashes with the default table name `%s`. '
+                        . 'The table name will take precedence when accessing `$this->%s`. '
+                        . 'Consider using a different component alias or set `Controller::$defaultTable` to '
+                        . "an empty string if the controller doesn't use a table.",
                     $alias,
                     $this->defaultTable,
                     $alias,
@@ -524,7 +522,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 $result instanceof Response,
                 sprintf(
                     'Controller actions can only return Response instance or null. '
-                    . 'Got %s instead.',
+                        . 'Got %s instead.',
                     get_debug_type($result),
                 ),
             );
@@ -576,8 +574,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             }
 
             if (
-                !empty($options['except']) &&
-                in_array($action, (array)$options['except'], true)
+                !empty($options['except'])
+                && in_array($action, (array)$options['except'], true)
             ) {
                 continue;
             }
@@ -662,8 +660,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if ($status < 300 || $status > 399) {
             throw new InvalidArgumentException(
-                sprintf('Invalid status code `%s`. It should be within the range ' .
-                    '`300` - `399` for redirect responses.', $status),
+                sprintf(
+                    'Invalid status code `%s`. It should be within the range '
+                        . '`300` - `399` for redirect responses.',
+                    $status,
+                ),
             );
         }
 
@@ -814,8 +815,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $parsed = $contentType->parseAccept($request);
             $topGroup = array_first($parsed) ?: [];
             if (
-                !in_array($preferredType, $topGroup, true) &&
-                array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
+                !in_array($preferredType, $topGroup, true)
+                && array_intersect($topGroup, ['text/html', 'application/xhtml+xml'])
             ) {
                 return null;
             }
@@ -955,9 +956,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(EventInterface $event): void
-    {
-    }
+    public function beforeFilter(EventInterface $event): void {}
 
     /**
      * Called after the controller action is run, but before the view is rendered. You can use this method
@@ -967,9 +966,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(EventInterface $event): void
-    {
-    }
+    public function beforeRender(EventInterface $event): void {}
 
     /**
      * The beforeRedirect method is invoked when the controller's redirect method is called but before any
@@ -987,9 +984,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response): void
-    {
-    }
+    public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response): void {}
 
     /**
      * Called after the controller action is run and rendered.
@@ -998,7 +993,5 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(EventInterface $event): void
-    {
-    }
+    public function afterFilter(EventInterface $event): void {}
 }

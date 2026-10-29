@@ -30,9 +30,7 @@ class ChainMessagesLoader
      *
      * @param array<callable> $loaders The list of callables to execute one after another for loading messages
      */
-    public function __construct(protected array $loaders)
-    {
-    }
+    public function __construct(protected array $loaders) {}
 
     /**
      * Executes this object returning the translations package as configured in
@@ -56,7 +54,7 @@ class ChainMessagesLoader
                 continue;
             }
 
-            if (!($package instanceof Package)) {
+            if (!$package instanceof Package) {
                 throw new CakeException(sprintf(
                     'Loader `%s` in the chain did not return a valid Package object.',
                     $k,

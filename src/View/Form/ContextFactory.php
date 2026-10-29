@@ -56,51 +56,52 @@ class ContextFactory
      */
     public static function createWithDefaults(array $providers = []): static
     {
-        $providers = [
+        $providers =
             [
-                'type' => 'orm',
-                'callable' => function ($request, $data) {
-                    if ($data['entity'] instanceof EntityInterface) {
-                        return new EntityContext($data);
-                    }
-                    if (isset($data['table'])) {
-                        return new EntityContext($data);
-                    }
-                    if (is_iterable($data['entity'])) {
-                        $pass = new Collection($data['entity'])->first() !== null;
-                        if ($pass) {
+                [
+                    'type' => 'orm',
+                    'callable' => function ($request, $data) {
+                        if ($data['entity'] instanceof EntityInterface) {
                             return new EntityContext($data);
                         }
+                        if (isset($data['table'])) {
+                            return new EntityContext($data);
+                        }
+                        if (is_iterable($data['entity'])) {
+                            $pass = new Collection($data['entity'])->first() !== null;
+                            if ($pass) {
+                                return new EntityContext($data);
+                            }
 
-                        return new NullContext($data);
-                    }
-                },
-            ],
-            [
-                'type' => 'form',
-                'callable' => function ($request, $data) {
-                    if ($data['entity'] instanceof Form) {
-                        return new FormContext($data);
-                    }
-                },
-            ],
-            [
-                'type' => 'array',
-                'callable' => function ($request, $data) {
-                    if (is_array($data['entity']) && isset($data['entity']['schema'])) {
-                        return new ArrayContext($data['entity']);
-                    }
-                },
-            ],
-            [
-                'type' => 'null',
-                'callable' => function ($request, $data) {
-                    if ($data['entity'] === null) {
-                        return new NullContext($data);
-                    }
-                },
-            ],
-        ] + $providers;
+                            return new NullContext($data);
+                        }
+                    },
+                ],
+                [
+                    'type' => 'form',
+                    'callable' => function ($request, $data) {
+                        if ($data['entity'] instanceof Form) {
+                            return new FormContext($data);
+                        }
+                    },
+                ],
+                [
+                    'type' => 'array',
+                    'callable' => function ($request, $data) {
+                        if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+                            return new ArrayContext($data['entity']);
+                        }
+                    },
+                ],
+                [
+                    'type' => 'null',
+                    'callable' => function ($request, $data) {
+                        if ($data['entity'] === null) {
+                            return new NullContext($data);
+                        }
+                    },
+                ],
+            ] + $providers;
 
         return new static($providers);
     }
@@ -122,7 +123,8 @@ class ContextFactory
      */
     public function addProvider(string $type, callable $check): static
     {
-        $this->providers = [$type => ['type' => $type, 'callable' => $check]]
+        $this->providers =
+            [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;
 
         return $this;
@@ -154,7 +156,7 @@ class ContextFactory
         if ($context === null) {
             throw new CakeException(sprintf(
                 'No context provider found for value of type `%s`.'
-                . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.',
+                    . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.',
                 get_debug_type($data['entity']),
             ));
         }

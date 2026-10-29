@@ -98,7 +98,8 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();
-        $hasData = in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+        $hasData =
+            in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
             || $request->getParsedBody();
 
         if (
@@ -112,7 +113,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
         }
 
         $session = $request->getAttribute('session');
-        if (!($session instanceof Session)) {
+        if (!$session instanceof Session) {
             throw new CakeException('You must have a `session` attribute to use session based CSRF tokens');
         }
 

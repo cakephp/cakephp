@@ -175,9 +175,10 @@ class Curl implements AdapterInterface
             '1.1' => CURL_HTTP_VERSION_1_1,
             '2', '2.0' => defined('CURL_HTTP_VERSION_2TLS')
                 ? CURL_HTTP_VERSION_2TLS
-                : (defined('CURL_HTTP_VERSION_2_0')
-                    ? CURL_HTTP_VERSION_2_0
-                    : throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support')
+                : (
+                    defined('CURL_HTTP_VERSION_2_0')
+                        ? CURL_HTTP_VERSION_2_0
+                        : throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support')
                 ),
             '3', '3.0' => defined('CURL_HTTP_VERSION_3')
                 ? CURL_HTTP_VERSION_3

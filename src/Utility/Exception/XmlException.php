@@ -20,6 +20,4 @@ use Cake\Core\Exception\CakeException;
  * Exception class for Xml. This exception will be thrown from Xml when it
  * encounters an error.
  */
-class XmlException extends CakeException
-{
-}
+class XmlException extends CakeException {}

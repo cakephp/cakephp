@@ -269,7 +269,8 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
-        return new DateTime($dateString)->setTimezone($timezone)->toAtomString();
+        return new DateTime($dateString)->setTimezone($timezone)
+            ->toAtomString();
     }
 
     /**
@@ -285,7 +286,8 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
-        return new DateTime($dateString)->setTimezone($timezone)->toRssString();
+        return new DateTime($dateString)->setTimezone($timezone)
+            ->toRssString();
     }
 
     /**

@@ -99,7 +99,10 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('json'));
 
         $request = new ServerRequest();
-        $request = $request->withEnv('HTTP_ACCEPT', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8');
+        $request = $request->withEnv(
+            'HTTP_ACCEPT',
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        );
         $this->assertFalse($request->is('json'));
         $this->assertFalse($request->is('xml'));
         $this->assertFalse($request->is('xml'));
@@ -942,13 +945,15 @@ class ServerRequestTest extends TestCase
      */
     public function testGetHeaders(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => 1337,
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $headers = $request->getHeaders();
         $expected = [
             'Host' => ['localhost'],
@@ -965,13 +970,15 @@ class ServerRequestTest extends TestCase
      */
     public function testHasHeader(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => 1337,
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $this->assertTrue($request->hasHeader('Host'));
         $this->assertTrue($request->hasHeader('Content-Type'));
         $this->assertTrue($request->hasHeader('Content-MD5'));
@@ -984,13 +991,15 @@ class ServerRequestTest extends TestCase
      */
     public function testGetHeader(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => 1337,
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $this->assertEquals([], $request->getHeader('Not-there'));
 
         $expected = [$request->getEnv('HTTP_HOST')];
@@ -1005,13 +1014,15 @@ class ServerRequestTest extends TestCase
      */
     public function testGetHeaderLine(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => '1337',
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => '1337',
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $this->assertSame('', $request->getHeaderLine('Authorization'));
 
         $expected = $request->getEnv('CONTENT_LENGTH');
@@ -1026,13 +1037,15 @@ class ServerRequestTest extends TestCase
      */
     public function testWithHeader(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => '1337',
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => '1337',
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $new = $request->withHeader('Content-Length', '999');
         $this->assertNotSame($new, $request);
 
@@ -1048,13 +1061,15 @@ class ServerRequestTest extends TestCase
      */
     public function testWithAddedHeader(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => 1337,
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $new = $request->withAddedHeader('Double', 'c');
         $this->assertNotSame($new, $request);
 
@@ -1073,13 +1088,15 @@ class ServerRequestTest extends TestCase
      */
     public function testWithoutHeader(): void
     {
-        $request = new ServerRequest(['environment' => [
-            'HTTP_HOST' => 'localhost',
-            'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_HOST' => 'localhost',
+                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_LENGTH' => 1337,
+                'HTTP_CONTENT_MD5' => 'abc123',
+                'HTTP_DOUBLE' => ['a', 'b'],
+            ],
+        ]);
         $new = $request->withoutHeader('Content-Length');
         $this->assertNotSame($new, $request);
 
@@ -1098,7 +1115,12 @@ class ServerRequestTest extends TestCase
 
         $result = $request->accepts();
         $expected = [
-            'text/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png', 'application/xml',
+            'text/xml',
+            'application/xhtml+xml',
+            'text/html',
+            'text/plain',
+            'image/png',
+            'application/xml',
         ];
         $this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -1119,7 +1141,10 @@ class ServerRequestTest extends TestCase
         ]]);
         $result = $request->accepts();
         $expected = [
-            'text/xml', 'text/html', 'text/plain', 'image/png',
+            'text/xml',
+            'text/html',
+            'text/plain',
+            'image/png',
         ];
         $this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -1149,19 +1174,24 @@ class ServerRequestTest extends TestCase
                 'foo' => 'bar',
                 'zero' => '0',
                 'test' => [
-                    'foo', 'bar',
+                    'foo',
+                    'bar',
                 ],
             ],
         ];
         $request = new ServerRequest($array);
 
-        $this->assertEquals([
-            'foo' => 'bar',
-            'zero' => '0',
-            'test' => [
-                'foo', 'bar',
+        $this->assertEquals(
+            [
+                'foo' => 'bar',
+                'zero' => '0',
+                'test' => [
+                    'foo',
+                    'bar',
+                ],
             ],
-        ], $request->getQuery());
+            $request->getQuery(),
+        );
 
         $this->assertSame('bar', $request->getQuery('foo'));
         $this->assertSame('0', $request->getQuery('zero'));
@@ -2025,9 +2055,11 @@ class ServerRequestTest extends TestCase
         $this->assertSame('1.1.1.1, 2.2.2.2', $request->getEnv('HTTP_X_FORWARDED_FOR'));
 
         // Test array values in environment
-        $request = new ServerRequest(['environment' => [
-            'HTTP_X_CUSTOM' => ['value1', 'value2', 'value3'],
-        ]]);
+        $request = new ServerRequest([
+            'environment' => [
+                'HTTP_X_CUSTOM' => ['value1', 'value2', 'value3'],
+            ],
+        ]);
         $this->assertSame('value1, value2, value3', $request->getEnv('HTTP_X_CUSTOM'));
 
         // Test that clientIp() works correctly with array header values
@@ -2035,8 +2067,7 @@ class ServerRequestTest extends TestCase
             'REMOTE_ADDR' => '127.0.0.1',
         ]]);
         $request->trustProxy = true;
-        $request = $request
-            ->withAddedHeader('X-Forwarded-For', '10.0.1.1')
+        $request = $request->withAddedHeader('X-Forwarded-For', '10.0.1.1')
             ->withAddedHeader('X-Forwarded-For', '192.168.1.1');
         $this->assertSame('192.168.1.1', $request->clientIp(), 'Takes the most trusted IP');
     }

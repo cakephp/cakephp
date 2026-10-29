@@ -21,6 +21,4 @@ use Cake\Core\Exception\CakeException;
 /**
  * Exception thrown when invalid arguments are provided to lock operations.
  */
-class InvalidArgumentException extends CakeException
-{
-}
+class InvalidArgumentException extends CakeException {}

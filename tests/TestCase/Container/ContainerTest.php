@@ -176,8 +176,7 @@ class ContainerTest extends TestCase
 
     public function testContainerAddsAndGetsWithServiceProvider(): void
     {
-        $provider = new class extends AbstractServiceProvider
-        {
+        $provider = new class extends AbstractServiceProvider {
             public function provides(string $id): bool
             {
                 return $id === Foo::class;
@@ -200,16 +199,13 @@ class ContainerTest extends TestCase
 
     public function testThrowsWhenServiceProviderLies(): void
     {
-        $liar = new class extends AbstractServiceProvider
-        {
+        $liar = new class extends AbstractServiceProvider {
             public function provides(string $id): bool
             {
                 return true;
             }
 
-            public function register(): void
-            {
-            }
+            public function register(): void {}
         };
 
         $container = new Container();
@@ -250,8 +246,7 @@ class ContainerTest extends TestCase
 
     public function testContainerCanExtendDefinitionFromServiceProvider(): void
     {
-        $provider = new class extends AbstractServiceProvider
-        {
+        $provider = new class extends AbstractServiceProvider {
             public function provides(string $id): bool
             {
                 return $id === Foo::class;

@@ -512,21 +512,24 @@ class Client implements EventDispatcherInterface, ClientInterface
                 $url = $request->getUri();
 
                 $location = $response->getHeaderLine('Location');
-                $locationUrl = $this->buildUrl($location, [], [
-                    'host' => $url->getHost(),
-                    'port' => $url->getPort(),
-                    'scheme' => $url->getScheme(),
-                    'protocolRelative' => true,
-                ]);
+                $locationUrl = $this->buildUrl(
+                    $location,
+                    [],
+                    [
+                        'host' => $url->getHost(),
+                        'port' => $url->getPort(),
+                        'scheme' => $url->getScheme(),
+                        'protocolRelative' => true,
+                    ],
+                );
 
                 $locationUri = new Uri($locationUrl);
                 if (
-                    $locationUri->getScheme() !== $url->getScheme() ||
-                    strtolower($locationUri->getHost()) !== strtolower($url->getHost()) ||
-                    $locationUri->getPort() !== $url->getPort()
+                    $locationUri->getScheme() !== $url->getScheme()
+                    || strtolower($locationUri->getHost()) !== strtolower($url->getHost())
+                    || $locationUri->getPort() !== $url->getPort()
                 ) {
-                    $request = $request
-                        ->withoutHeader('Authorization')
+                    $request = $request->withoutHeader('Authorization')
                         ->withoutHeader('Cookie');
                 }
                 $request = $request->withUri($locationUri);

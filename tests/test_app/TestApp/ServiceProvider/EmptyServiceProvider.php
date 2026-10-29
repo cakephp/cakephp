@@ -10,7 +10,5 @@ class EmptyServiceProvider extends ServiceProvider
 {
     protected array $provides = [];
 
-    public function services(ContainerInterface $container): void
-    {
-    }
+    public function services(ContainerInterface $container): void {}
 }

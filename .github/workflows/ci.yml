@@ -314,6 +314,10 @@ jobs:
         if: always()
         run: vendor/bin/phpcs --parallel=8 --cache=${{ runner.temp }}/phpcs.cache --report=checkstyle | cs2pr
 
+      - name: Run mago format
+        if: always()
+        run: vendor/bin/mago format --dry-run
+
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
         run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github

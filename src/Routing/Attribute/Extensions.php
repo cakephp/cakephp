@@ -29,7 +29,5 @@ readonly class Extensions
      *
      * @param array<string>|string $extensions File extensions.
      */
-    public function __construct(public array|string $extensions)
-    {
-    }
+    public function __construct(public array|string $extensions) {}
 }

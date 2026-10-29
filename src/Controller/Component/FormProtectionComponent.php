@@ -93,7 +93,7 @@ class FormProtectionComponent extends Component
     {
         $request = $this->getController()->getRequest();
         $data = $request->getParsedBody();
-        $hasData = ($data || $request->is(['put', 'post', 'delete', 'patch']));
+        $hasData = $data || $request->is(['put', 'post', 'delete', 'patch']);
 
         if (
             !in_array($request->getParam('action'), $this->config['unlockedActions'], true)

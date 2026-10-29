@@ -77,8 +77,7 @@ class LazyEagerLoader
 
         $keys = Hash::map($entities, '{*}', fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
 
-        $query = $source
-            ->find()
+        $query = $source->find()
             ->select((array)$primaryKey)
             ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
@@ -147,8 +146,7 @@ class LazyEagerLoader
         $properties = $this->getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
         /** @var array<\Cake\Datasource\EntityInterface> $results */
-        $results = $query
-            ->all()
+        $results = $query->all()
             ->indexBy(fn(EntityInterface $e) => implode(';', $e->extract($primaryKey)))
             ->toArray();
 

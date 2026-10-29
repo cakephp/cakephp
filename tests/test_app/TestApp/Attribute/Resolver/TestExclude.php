@@ -6,6 +6,4 @@ namespace TestApp\Attribute\Resolver;
 use Attribute;
 
 #[Attribute]
-class TestExclude
-{
-}
+class TestExclude {}

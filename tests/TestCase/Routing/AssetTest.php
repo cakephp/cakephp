@@ -83,12 +83,18 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
 
         Configure::write('Asset.timestamp', 'force');
         Configure::write('debug', false);
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
 
         $result = Asset::assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
@@ -96,7 +102,10 @@ class AssetTest extends TestCase
         $request = Router::getRequest()->withAttribute('webroot', '/some/dir/');
         Router::setRequest($request);
         $result = Asset::assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**
@@ -146,8 +155,9 @@ class AssetTest extends TestCase
             ->withAttribute('webroot', 'subdir/');
         Router::setRequest($request);
 
-        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
-            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $data =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4'
+            . '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
         $result = Asset::url($data);
         $this->assertSame($data, $result);
 
@@ -208,7 +218,10 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = Asset::url('cake.generic.css', ['pathPrefix' => Configure::read('App.cssBaseUrl')]);
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**
@@ -232,13 +245,25 @@ class AssetTest extends TestCase
         $this->loadPlugins(['TestTheme', 'TestPlugin', 'Company/TestPluginThree']);
 
         $result = Asset::assetTimestamp('/test_plugin/css/test_plugin_asset.css');
-        $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+        $this->assertMatchesRegularExpression(
+            '#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#',
+            $result,
+            'Missing timestamp plugin',
+        );
 
         $result = Asset::assetTimestamp('/company/test_plugin_three/css/company.css');
-        $this->assertMatchesRegularExpression('#/company/test_plugin_three/css/company.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+        $this->assertMatchesRegularExpression(
+            '#/company/test_plugin_three/css/company.css\?[0-9]+$#',
+            $result,
+            'Missing timestamp plugin',
+        );
 
         $result = Asset::assetTimestamp('/test_plugin/css/i_dont_exist.css');
-        $this->assertMatchesRegularExpression('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
+        $this->assertMatchesRegularExpression(
+            '#/test_plugin/css/i_dont_exist.css$#',
+            $result,
+            'No error on missing file',
+        );
 
         $result = Asset::assetTimestamp('/test_theme/js/theme.js');
         $this->assertMatchesRegularExpression('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
@@ -266,7 +291,10 @@ class AssetTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = Asset::scriptUrl('script.js');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**

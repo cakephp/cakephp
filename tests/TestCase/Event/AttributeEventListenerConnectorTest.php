@@ -120,7 +120,7 @@ class AttributeEventListenerConnectorTest extends TestCase
         object $instance,
         string $className,
     ): AttributeEventListenerConnector {
-        return new class ($manager, $instance, $className) extends AttributeEventListenerConnector {
+        return new class($manager, $instance, $className) extends AttributeEventListenerConnector {
             public function __construct(
                 EventManagerInterface $eventManager,
                 private readonly object $fixedInstance,

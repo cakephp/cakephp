@@ -53,7 +53,10 @@ class ParserTest extends TestCase
         // Should find 1 class attribute + 4 method attributes
         $this->assertCount(5, $results);
 
-        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
+        $classAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_,
+        );
         $this->assertCount(1, $classAttrs);
 
         $classAttr = array_first($classAttrs);
@@ -78,7 +81,10 @@ class ParserTest extends TestCase
         $filePath = $this->testDataPath . 'TestController.php';
         $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD,
+        );
         $this->assertCount(4, $methodAttrs);
 
         foreach ($methodAttrs as $attr) {
@@ -150,7 +156,10 @@ class ParserTest extends TestCase
     {
         $filePath = $this->testDataPath . 'TestExcludeClass.php';
 
-        $parser = new Parser(['TestApp\\Attribute\\Resolver\\TestExclude*', 'TestApp\\Attribute\\Resolver\\TestInternal*']);
+        $parser = new Parser([
+            'TestApp\\Attribute\\Resolver\\TestExclude*',
+            'TestApp\\Attribute\\Resolver\\TestInternal*',
+        ]);
         $results = iterator_to_array($parser->parseFile(new SplFileInfo($filePath)), false);
 
         $this->assertCount(1, $results);
@@ -193,7 +202,10 @@ class ParserTest extends TestCase
 
         // Should find attributes on TestAnonymousClass and its methods
         $this->assertGreaterThan(0, count($results), 'Should find some attributes in file');
-        $hasMainClass = array_any($results, fn(AttributeInfo $result) => str_contains($result->target->declaringClass ?? '', 'TestAnonymousClass'));
+        $hasMainClass = array_any($results, fn(AttributeInfo $result) => str_contains(
+            $result->target->declaringClass ?? '',
+            'TestAnonymousClass',
+        ));
         $this->assertTrue($hasMainClass, 'Main class TestAnonymousClass should be found');
     }
 
@@ -338,14 +350,20 @@ class ParserTest extends TestCase
         // Should find interface-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
+        $interfaceAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_,
+        );
         $this->assertCount(1, $interfaceAttrs);
         $this->assertSame(
             DeclaringClassType::INTERFACE,
             array_first($interfaceAttrs)->target->declaringClassType,
         );
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD,
+        );
         $this->assertCount(1, $methodAttrs);
     }
 
@@ -357,14 +375,20 @@ class ParserTest extends TestCase
         // Should find trait-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
+        $traitAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_,
+        );
         $this->assertCount(1, $traitAttrs);
         $this->assertSame(
             DeclaringClassType::TRAIT,
             array_first($traitAttrs)->target->declaringClassType,
         );
 
-        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $methodAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD,
+        );
         $this->assertCount(1, $methodAttrs);
     }
 
@@ -376,7 +400,10 @@ class ParserTest extends TestCase
         // Should find enum-level and case attributes
         $this->assertGreaterThan(0, count($results));
 
-        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
+        $enumAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_,
+        );
         $this->assertCount(1, $enumAttrs);
         $this->assertSame(
             DeclaringClassType::ENUM,
@@ -384,7 +411,10 @@ class ParserTest extends TestCase
         );
 
         // Enum cases are treated as class constants
-        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT);
+        $caseAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT,
+        );
         $this->assertCount(2, $caseAttrs);
     }
 
@@ -407,15 +437,15 @@ class ParserTest extends TestCase
         // Create a temporary file with an attribute that doesn't exist
         $filePath = tempnam(sys_get_temp_dir(), 'parser_test_') . '.php';
         $content = <<<'PHP'
-<?php
-namespace TestApp\Temp;
+            <?php
+            namespace TestApp\Temp;
 
-use NonExistent\AttributeClass;
+            use NonExistent\AttributeClass;
 
-#[AttributeClass('test')]
-class TempClass {
-}
-PHP;
+            #[AttributeClass('test')]
+            class TempClass {
+            }
+            PHP;
         file_put_contents($filePath, $content);
 
         // Manually include the file to load the class
@@ -460,19 +490,28 @@ PHP;
     public static function classReferenceProvider(): array
     {
         return [
-            'array of references' => ['TestClassReferences', [
-                'actions' => [TestRoute::class, TestStatus::class],
-            ]],
-            'reference followed by named argument' => ['TestClassReferenceWithFollowup', [
-                'actions' => ['index'],
-                'routeClass' => TestRoute::class,
-                'name' => 'list',
-            ]],
-            'class named argument with comments' => ['TestNamedClassArgument', [
-                'actions' => ['index'],
-                'name' => 'list',
-                'class' => TestRoute::class,
-            ]],
+            'array of references' => [
+                'TestClassReferences',
+                [
+                    'actions' => [TestRoute::class, TestStatus::class],
+                ],
+            ],
+            'reference followed by named argument' => [
+                'TestClassReferenceWithFollowup',
+                [
+                    'actions' => ['index'],
+                    'routeClass' => TestRoute::class,
+                    'name' => 'list',
+                ],
+            ],
+            'class named argument with comments' => [
+                'TestNamedClassArgument',
+                [
+                    'actions' => ['index'],
+                    'name' => 'list',
+                    'class' => TestRoute::class,
+                ],
+            ],
         ];
     }
 }

@@ -96,10 +96,10 @@ class RoutesGenerateCommand extends Command
     {
         $parser->setDescription([
             static::getDescription(),
-            'Will output the URL if there is a match.' .
-            "\n\n" .
-            'Routing parameters should be supplied in a key:value format. ' .
-            'For example `controller:Articles action:view 2`',
+            'Will output the URL if there is a match.'
+                . "\n\n"
+                . 'Routing parameters should be supplied in a key:value format. '
+                . 'For example `controller:Articles action:view 2`',
         ]);
 
         return $parser;

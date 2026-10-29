@@ -25,6 +25,4 @@ use Cake\Core\Exception\CakeException;
  * when a declared listener cannot be resolved (e.g. a referenced method
  * does not exist or is not publicly accessible).
  */
-class EventAttributeException extends CakeException
-{
-}
+class EventAttributeException extends CakeException {}

@@ -36,8 +36,7 @@ class Arguments
         protected array $args,
         protected array $options,
         protected array $argNames,
-    ) {
-    }
+    ) {}
 
     /**
      * Get all positional arguments.

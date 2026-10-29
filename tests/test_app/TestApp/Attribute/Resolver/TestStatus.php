@@ -8,7 +8,5 @@ use Attribute;
 #[Attribute]
 class TestStatus
 {
-    public function __construct(public string $label)
-    {
-    }
+    public function __construct(public string $label) {}
 }

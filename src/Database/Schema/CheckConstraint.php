@@ -36,8 +36,7 @@ class CheckConstraint extends Constraint
     public function __construct(
         protected string $name,
         protected string $expression,
-    ) {
-    }
+    ) {}
 
     /**
      * Set the check constraint expression.

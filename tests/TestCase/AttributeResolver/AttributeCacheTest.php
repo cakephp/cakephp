@@ -277,7 +277,11 @@ class AttributeCacheTest extends TestCase
 
             // Should still return cached data because validation is disabled
             $result2 = $cache->read('test_no_validation');
-            $this->assertInstanceOf(AttributeCollection::class, $result2, 'Second read should return collection because validateFiles=false');
+            $this->assertInstanceOf(
+                AttributeCollection::class,
+                $result2,
+                'Second read should return collection because validateFiles=false',
+            );
             $this->assertCount(1, $result2);
         } finally {
             if (file_exists($sourceFile)) {
@@ -294,9 +298,13 @@ class AttributeCacheTest extends TestCase
         $cache = new AttributeCache('attribute_test', false);
 
         // Write invalid data directly to cache
-        Cache::write('attribute_resolver_test_invalid', [
-            ['invalid' => 'structure'], // Missing required keys
-        ], 'attribute_test');
+        Cache::write(
+            'attribute_resolver_test_invalid',
+            [
+                ['invalid' => 'structure'], // Missing required keys
+            ],
+            'attribute_test',
+        );
 
         $result = $cache->read('test_invalid');
         $this->assertNull($result);

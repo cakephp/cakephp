@@ -223,16 +223,23 @@ class I18nExtractCommand extends Command
         if ($this->args->hasOption('output')) {
             $this->output = (string)$this->args->getOption('output');
         } elseif ($this->args->hasOption('plugin')) {
-            $this->output = Plugin::path($plugin)
-                . 'resources' . DIRECTORY_SEPARATOR
-                . 'locales' . DIRECTORY_SEPARATOR;
+            $this->output =
+                Plugin::path($plugin)
+                . 'resources'
+                . DIRECTORY_SEPARATOR
+                . 'locales'
+                . DIRECTORY_SEPARATOR;
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
             $localePaths = array_values(App::path('locales'));
             if (!$localePaths) {
-                $localePaths[] = ROOT . DIRECTORY_SEPARATOR
-                    . 'resources' . DIRECTORY_SEPARATOR
-                    . 'locales' . DIRECTORY_SEPARATOR;
+                $localePaths[] =
+                    ROOT
+                    . DIRECTORY_SEPARATOR
+                    . 'resources'
+                    . DIRECTORY_SEPARATOR
+                    . 'locales'
+                    . DIRECTORY_SEPARATOR;
             }
             while (true) {
                 $response = $this->io->ask(
@@ -251,8 +258,8 @@ class I18nExtractCommand extends Command
 
                 $this->io->err('');
                 $this->io->error(
-                    'The directory path you supplied was ' .
-                    'not found. Please try again.',
+                    'The directory path you supplied was '
+                        . 'not found. Please try again.',
                 );
                 $this->io->err('');
             }
@@ -362,47 +369,61 @@ class I18nExtractCommand extends Command
     {
         $parser->setDescription([
             static::getDescription(),
-            'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
-        ])->addOption('app', [
-            'help' => 'Directory where your application is located.',
-        ])->addOption('paths', [
-            'help' => 'Comma separated list of paths that are searched for source files.',
-        ])->addOption('merge', [
-            'help' => 'Merge all domain strings into a single default.po file.',
-            'default' => 'no',
-            'choices' => ['yes', 'no'],
-        ])->addOption('output', [
-            'help' => 'Full path to output directory.',
-        ])->addOption('files', [
-            'help' => 'Comma separated list of files to parse.',
-        ])->addOption('exclude-plugins', [
-            'boolean' => true,
-            'default' => true,
-            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
-        ])->addOption('plugin', [
-            'help' => 'Extracts tokens only from the plugin specified and '
-                . "puts the result in the plugin's `locales` directory.",
-            'short' => 'p',
-        ])->addOption('exclude', [
-            'help' => 'Comma separated list of directories to exclude.' .
-                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
-        ])->addOption('overwrite', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Always overwrite existing .pot files.',
-        ])->addOption('extract-core', [
-            'help' => 'Extract messages from the CakePHP core libraries.',
-            'choices' => ['yes', 'no'],
-        ])->addOption('no-location', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Do not write file locations for each extracted message.',
-        ])->addOption('marker-error', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Do not display marker error.',
-        ]);
+            'Source files are parsed and string literal format strings '
+                . 'provided to the <info>__</info> family of functions are extracted.',
+        ])
+            ->addOption('app', [
+                'help' => 'Directory where your application is located.',
+            ])
+            ->addOption('paths', [
+                'help' => 'Comma separated list of paths that are searched for source files.',
+            ])
+            ->addOption('merge', [
+                'help' => 'Merge all domain strings into a single default.po file.',
+                'default' => 'no',
+                'choices' => ['yes', 'no'],
+            ])
+            ->addOption('output', [
+                'help' => 'Full path to output directory.',
+            ])
+            ->addOption('files', [
+                'help' => 'Comma separated list of files to parse.',
+            ])
+            ->addOption('exclude-plugins', [
+                'boolean' => true,
+                'default' => true,
+                'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
+            ])
+            ->addOption('plugin', [
+                'help' =>
+                    'Extracts tokens only from the plugin specified and '
+                        . "puts the result in the plugin's `locales` directory.",
+                'short' => 'p',
+            ])
+            ->addOption('exclude', [
+                'help' =>
+                    'Comma separated list of directories to exclude.'
+                        . ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
+            ])
+            ->addOption('overwrite', [
+                'boolean' => true,
+                'default' => false,
+                'help' => 'Always overwrite existing .pot files.',
+            ])
+            ->addOption('extract-core', [
+                'help' => 'Extract messages from the CakePHP core libraries.',
+                'choices' => ['yes', 'no'],
+            ])
+            ->addOption('no-location', [
+                'boolean' => true,
+                'default' => false,
+                'help' => 'Do not write file locations for each extracted message.',
+            ])
+            ->addOption('marker-error', [
+                'boolean' => true,
+                'default' => false,
+                'help' => 'Do not display marker error.',
+            ]);
 
         return $parser;
     }
@@ -485,7 +506,7 @@ class I18nExtractCommand extends Command
             }
 
             [$type, $string, $line] = $countToken;
-            if (($type === T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
+            if ($type === T_STRING && $string === $functionName && $firstParenthesis === '(') {
                 $position = $count;
                 $depth = 0;
 
@@ -557,7 +578,8 @@ class I18nExtractCommand extends Command
                         }
                         $occurrences = implode("\n#: ", $occurrences);
 
-                        $header = '#: '
+                        $header =
+                            '#: '
                             . str_replace(DIRECTORY_SEPARATOR, '/', $occurrences)
                             . "\n";
                     }
@@ -723,7 +745,8 @@ class I18nExtractCommand extends Command
         $count = 0;
         while (
             $count < $target
-            && ($this->tokens[$position] === ','
+            && (
+                $this->tokens[$position] === ','
                 || $this->tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
                 || $this->tokens[$position][0] === T_LNUMBER
             )
@@ -796,7 +819,7 @@ class I18nExtractCommand extends Command
         $tokenCount = count($this->tokens);
         $parenthesis = 1;
 
-        while (($tokenCount - $count > 0) && $parenthesis) {
+        while ($tokenCount - $count > 0 && $parenthesis) {
             if (is_array($this->tokens[$count])) {
                 $this->io->err($this->tokens[$count][1], 0);
             } else {
@@ -952,8 +975,7 @@ class I18nExtractCommand extends Command
                 continue;
             }
             $path .= DIRECTORY_SEPARATOR;
-            $files = new Finder()
-                ->in($path)
+            $files = new Finder()->in($path)
                 ->name('*.php')
                 ->files();
             foreach ($files as $file) {

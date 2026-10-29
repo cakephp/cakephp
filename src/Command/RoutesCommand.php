@@ -99,9 +99,9 @@ class RoutesCommand extends Command
 
             foreach ($methods as $method) {
                 if (
-                    $duplicateRoutesCounter[$route->template][$method] > 1 ||
-                    ($method === '' && count($duplicateRoutesCounter[$route->template]) > 1) ||
-                    ($method !== '' && isset($duplicateRoutesCounter[$route->template]['']))
+                    $duplicateRoutesCounter[$route->template][$method] > 1
+                    || ($method === '' && count($duplicateRoutesCounter[$route->template]) > 1)
+                    || ($method !== '' && isset($duplicateRoutesCounter[$route->template]['']))
                 ) {
                     $duplicateRoutes[] = [
                         $route->options['_name'] ?? $route->getName(),
@@ -136,8 +136,7 @@ class RoutesCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser
-            ->setDescription(static::getDescription())
+        $parser->setDescription(static::getDescription())
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',

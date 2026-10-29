@@ -39,8 +39,7 @@ class ValidationRule
         public readonly Closure|string|null $on = null,
         public readonly bool $last = false,
         public readonly array $pass = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Dispatches the validation rule to the given validator method and returns
@@ -104,8 +103,10 @@ class ValidationRule
         if (is_string($this->on)) {
             $newRecord = $context['newRecord'];
 
-            return ($this->on === Validator::WHEN_CREATE && !$newRecord)
-                || ($this->on === Validator::WHEN_UPDATE && $newRecord);
+            return (
+                ($this->on === Validator::WHEN_CREATE && !$newRecord)
+                    || ($this->on === Validator::WHEN_UPDATE && $newRecord)
+            );
         }
 
         if ($this->on !== null) {

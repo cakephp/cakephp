@@ -33,7 +33,9 @@ class AssociationProxyTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'core.Articles', 'core.Authors', 'core.Comments',
+        'core.Articles',
+        'core.Authors',
+        'core.Comments',
     ];
 
     /**
@@ -189,8 +191,7 @@ class AssociationProxyTest extends TestCase
 
         $articles->authors->crazy('a', 'b');
 
-        $spy
-            ->shouldHaveReceived('crazy')
+        $spy->shouldHaveReceived('crazy')
             ->with('a', 'b')
             ->once();
     }

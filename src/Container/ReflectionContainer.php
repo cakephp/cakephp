@@ -25,9 +25,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     /**
      * @param bool $cacheResolutions
      */
-    public function __construct(protected bool $cacheResolutions = false)
-    {
-    }
+    public function __construct(protected bool $cacheResolutions = false) {}
 
     /**
      * @inheritDoc

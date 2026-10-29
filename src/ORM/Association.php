@@ -286,8 +286,8 @@ abstract class Association
     public function setClassName(string $className): static
     {
         if (
-            isset($this->targetTable) &&
-            get_class($this->targetTable) !== App::className($className, 'Model/Table', 'Table')
+            isset($this->targetTable)
+            && get_class($this->targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
                 "The class name `%s` doesn't match the target table class name of `%s`.",
@@ -444,9 +444,9 @@ abstract class Association
     public function getBindingKey(): array|string
     {
         if (!isset($this->bindingKey)) {
-            $this->bindingKey = $this->isOwningSide($this->getSource()) ?
-                $this->getSource()->getPrimaryKey() :
-                $this->getTarget()->getPrimaryKey();
+            $this->bindingKey = $this->isOwningSide($this->getSource())
+                ? $this->getSource()->getPrimaryKey()
+                : $this->getTarget()->getPrimaryKey();
         }
 
         return $this->bindingKey;
@@ -573,8 +573,9 @@ abstract class Association
             $this->checkPropertyName
             && in_array($this->propertyName, $this->sourceTable->getSchema()->columns(), true)
         ) {
-            $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
+            $msg =
+                'Association property name `%s` clashes with field of same name of table `%s`.'
+                . ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
             triggerWarning(
                 sprintf($msg, $this->propertyName, $this->sourceTable->getTable()),
             );
@@ -664,9 +665,7 @@ abstract class Association
      * @param array<string, mixed> $options List of options used for initialization
      * @return void
      */
-    protected function options(array $options): void
-    {
-    }
+    protected function options(array $options): void {}
 
     /**
      * Alters a Query object to include the associated target table data in the final
@@ -723,14 +722,13 @@ abstract class Association
         }
 
         [$finder, $opts] = $this->extractFinder($options['finder']);
-        $dummy = $this
-            ->find($finder, ...$opts)
+        $dummy = $this->find($finder, ...$opts)
             ->eagerLoaded(true);
 
         if (!empty($options['queryBuilder'])) {
             assert(is_callable($options['queryBuilder']));
             $dummy = $options['queryBuilder']($dummy);
-            if (!($dummy instanceof SelectQuery)) {
+            if (!$dummy instanceof SelectQuery) {
                 throw new DatabaseException(sprintf(
                     'Query builder for association `%s` did not return a query.',
                     $this->getName(),
@@ -739,9 +737,9 @@ abstract class Association
         }
 
         if (
-            !empty($options['matching']) &&
-            $this->strategy === static::STRATEGY_JOIN &&
-            $dummy->getContain()
+            !empty($options['matching'])
+            && $this->strategy === static::STRATEGY_JOIN
+            && $dummy->getContain()
         ) {
             throw new DatabaseException(sprintf(
                 '`%s` association cannot contain() associations when using JOIN strategy.',
@@ -752,11 +750,13 @@ abstract class Association
         $dummy->where($options['conditions']);
         $this->dispatchBeforeFind($dummy);
 
-        $query->join([$this->name => [
-            'table' => $options['table'],
-            'conditions' => $dummy->clause('where'),
-            'type' => $options['joinType'],
-        ]]);
+        $query->join([
+            $this->name => [
+                'table' => $options['table'],
+                'conditions' => $dummy->clause('where'),
+                'type' => $options['joinType'],
+            ],
+        ]);
 
         $this->appendFields($query, $dummy, $options);
         $this->formatAssociationResults($query, $dummy, $options);
@@ -952,8 +952,8 @@ abstract class Association
         $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
         if (
-            ($fields === [] && $options['includeFields']) ||
-            $surrogate->isAutoFieldsEnabled()
+            ($fields === [] && $options['includeFields'])
+            || $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());
         } elseif ($fields !== []) {

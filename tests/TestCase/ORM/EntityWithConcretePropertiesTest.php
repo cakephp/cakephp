@@ -90,7 +90,8 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testGetOriginal(): void
     {
-        $entity = new class (['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''], ['markNew' => true], ) extends Entity {
+        $entity = new class(['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''], ['markNew' => true]) extends
+            Entity {
             protected bool|string $false;
             protected ?string $null;
             protected int|string $zero;
@@ -115,7 +116,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testGetOriginalFallback(): void
     {
-        $entity = new class (['foo' => 'foo', 'bar' => 'bar'], ['markNew' => true], ) extends Entity {
+        $entity = new class(['foo' => 'foo', 'bar' => 'bar'], ['markNew' => true]) extends Entity {
             protected string $foo;
             protected string $bar;
         };
@@ -130,7 +131,9 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testExtractOriginal(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'original', 'body' => 'no', 'null' => null], ['markNew' => true]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'original', 'body' => 'no', 'null' => null], [
+            'markNew' => true,
+        ]) extends Entity {
             protected int $id;
             protected string $title;
             protected string $body;
@@ -167,7 +170,9 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testExtractOriginalValues(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'original', 'body' => 'no', 'null' => null], ['markNew' => true]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'original', 'body' => 'no', 'null' => null], [
+            'markNew' => true,
+        ]) extends Entity {
             protected int $id;
             protected string $title;
             protected string $body;
@@ -231,7 +236,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testGetNoGetters(): void
     {
-        $entity = new class (['id' => 1, 'foo' => 'bar']) extends Entity {
+        $entity = new class(['id' => 1, 'foo' => 'bar']) extends Entity {
             protected int $id;
             protected string $foo;
         };
@@ -247,7 +252,7 @@ class EntityWithConcretePropertiesTest extends TestCase
         $this->expectException(MissingPropertyException::class);
         $this->expectExceptionMessage('Property `not_present` does not exist for the entity');
 
-        $entity = new class (['is_present' => null]) extends Entity {
+        $entity = new class(['is_present' => null]) extends Entity {
             protected bool $requireFieldPresence = true;
         };
         $entity->not_present;
@@ -258,7 +263,7 @@ class EntityWithConcretePropertiesTest extends TestCase
         $entity = new Entity();
         $this->assertNull($entity->get('not_present'));
 
-        $entity = new class (['is_present' => null]) extends Entity {
+        $entity = new class(['is_present' => null]) extends Entity {
             protected ?bool $is_present;
         };
         $this->assertNull($entity->get('is_present'));
@@ -415,7 +420,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testHas(): void
     {
-        $entity = new class (['id' => 1]) extends Entity {
+        $entity = new class(['id' => 1]) extends Entity {
             protected $id;
             protected $name;
             protected $foo;
@@ -443,7 +448,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testUnset(): void
     {
-        $entity = new class (['id' => 1, 'name' => 'bar']) extends Entity {
+        $entity = new class(['id' => 1, 'name' => 'bar']) extends Entity {
             protected int $id;
             protected string $name = 'admad';
         };
@@ -461,7 +466,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testUnsetMakesClean(): void
     {
-        $entity = new class (['id' => 1, 'name' => 'bar']) extends Entity {
+        $entity = new class(['id' => 1, 'name' => 'bar']) extends Entity {
             protected $id;
             protected $name;
         };
@@ -475,7 +480,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testMagicIsset(): void
     {
-        $entity = new class (['id' => 1, 'name' => 'Juan', 'foo' => null]) extends Entity {
+        $entity = new class(['id' => 1, 'name' => 'Juan', 'foo' => null]) extends Entity {
             protected int $id;
             protected string $name;
             protected ?string $foo;
@@ -491,7 +496,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testIssetArrayPatchable(): void
     {
-        $entity = new class (['id' => 1, 'name' => 'Juan', 'foo' => null]) extends Entity {
+        $entity = new class(['id' => 1, 'name' => 'Juan', 'foo' => null]) extends Entity {
             protected int $id;
             protected string $name;
             protected ?string $foo;
@@ -507,7 +512,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testJsonSerialize(): void
     {
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected string $name;
             protected int $age;
             protected array $phones;
@@ -537,7 +542,7 @@ class EntityWithConcretePropertiesTest extends TestCase
             ->getMock();
         $phone->expects($this->once())->method('jsonSerialize')->willReturn(['something']);
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected string $name;
             protected int $age;
             protected Entity $phone;
@@ -551,7 +556,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testExtract(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected int $id;
             protected string $title;
             protected int $author_id;
@@ -581,7 +586,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testIsDirty(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected int $id;
             protected string $title;
             protected int $author_id;
@@ -608,7 +613,7 @@ class EntityWithConcretePropertiesTest extends TestCase
         $entity->is_approved = true;
         $this->assertTrue($entity->isDirty('is_approved'));
 
-        $entity2 = new class (['id' => 1, 'title' => 'Foo'], ['markClean' => true]) extends Entity {
+        $entity2 = new class(['id' => 1, 'title' => 'Foo'], ['markClean' => true]) extends Entity {
             protected int $id;
             protected string $title;
             protected ?bool $is_approved = null;
@@ -633,7 +638,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testSetDirty(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3], ['markClean' => true]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3], ['markClean' => true]) extends Entity {
             protected int $id;
             protected string $title;
             protected int $author_id;
@@ -653,7 +658,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testDirtyChangingProperties(): void
     {
-        $entity = new class (['title' => 'Foo']) extends Entity {
+        $entity = new class(['title' => 'Foo']) extends Entity {
             protected string $title;
             protected string $something;
         };
@@ -676,7 +681,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testExtractDirty(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected $id;
             protected $title;
             protected $author_id;
@@ -693,7 +698,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testGetDirty(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected $id;
             protected $title;
             protected $author_id;
@@ -712,7 +717,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testClean(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected $id;
             protected $title;
             protected $author_id;
@@ -732,7 +737,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testIsNew(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'Foo', 'author_id' => 3]) extends Entity {
             protected $id;
             protected $title;
             protected $author_id;
@@ -794,7 +799,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testToArray(): void
     {
         $data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected $name;
             protected $age;
             protected $phones;
@@ -809,7 +814,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testToArrayRecursive(): void
     {
         $data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-        $user = new class ($data) extends Entity {
+        $user = new class($data) extends Entity {
             protected $id;
             protected $name;
             protected $age;
@@ -818,17 +823,17 @@ class EntityWithConcretePropertiesTest extends TestCase
             protected $profile;
         };
         $comments = [
-            new class (['user_id' => 1, 'body' => 'Comment 1']) extends Entity {
-            protected $user_id;
-            protected $body;
+            new class(['user_id' => 1, 'body' => 'Comment 1']) extends Entity {
+                protected $user_id;
+                protected $body;
             },
-            new class (['user_id' => 1, 'body' => 'Comment 2']) extends Entity {
-            protected $user_id;
-            protected $body;
+            new class(['user_id' => 1, 'body' => 'Comment 2']) extends Entity {
+                protected $user_id;
+                protected $body;
             },
         ];
         $user->comments = $comments;
-        $user->profile = new class (['email' => 'mark@example.com']) extends Entity {
+        $user->profile = new class(['email' => 'mark@example.com']) extends Entity {
             protected $email;
         };
 
@@ -851,12 +856,9 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testToArrayMixed(): void
     {
-        $test = new class (['id' => 1, 'foo' => [new class (['hi' => 'test']) extends Entity {
+        $test = new class(['id' => 1, 'foo' => [new class(['hi' => 'test']) extends Entity {
             protected $hi;
-        },
-            'notentity' => 1,
-        ],
-        ]) extends Entity {
+        }, 'notentity' => 1]]) extends Entity {
             protected $id;
             protected $foo;
         };
@@ -893,7 +895,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testToArrayHiddenProperties(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected $secret;
             protected $name;
             protected $id;
@@ -908,7 +910,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testSetHidden(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected $secret;
             protected $name;
             protected $id;
@@ -930,7 +932,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testSetHiddenWithMerge(): void
     {
         $data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected $secret;
             protected $name;
             protected $id;
@@ -998,7 +1000,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     public function testSetVirtualWithMerge(): void
     {
         $data = ['virt' => 'sauce', 'name' => 'mark', 'id' => 1];
-        $entity = new class ($data) extends Entity {
+        $entity = new class($data) extends Entity {
             protected $virt;
             protected $name;
             protected $id;
@@ -1070,7 +1072,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     {
         $user = new Entity();
         $owner = new Entity();
-        $author = new class (['foo' => 'bar', 'thing' => 'baz', 'user' => $user, 'owner' => $owner]) extends Entity {
+        $author = new class(['foo' => 'bar', 'thing' => 'baz', 'user' => $user, 'owner' => $owner]) extends Entity {
             protected $foo;
             protected $thing;
             protected $user;
@@ -1149,7 +1151,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     {
         $assoc = new Entity();
         $assoc2 = new Entity();
-        $entity = new class (['field' => 'value', 'one' => $assoc, 'many' => [$assoc2]]) extends Entity {
+        $entity = new class(['field' => 'value', 'one' => $assoc, 'many' => [$assoc2]]) extends Entity {
             protected $field;
             protected $one;
             protected $many;
@@ -1177,7 +1179,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testDirtyRemovesError(): void
     {
-        $entity = new class ((['a' => 'b'])) extends Entity {
+        $entity = new class(['a' => 'b']) extends Entity {
             protected $a;
         };
         $entity->setError('a', 'is not good');
@@ -1194,7 +1196,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testCleanRemovesErrors(): void
     {
-        $entity = new class ((['a' => 'b'])) extends Entity {
+        $entity = new class(['a' => 'b']) extends Entity {
             protected $a;
         };
         $entity->setError('a', 'is not good');
@@ -1297,7 +1299,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testSetWithPatchable(): void
     {
-        $entity = new class (['foo' => 1, 'bar' => 2]) extends Entity {
+        $entity = new class(['foo' => 1, 'bar' => 2]) extends Entity {
             protected $foo;
             protected $bar;
         };
@@ -1319,7 +1321,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testSetWithPatchableWithArray(): void
     {
-        $entity = new class (['foo' => 1, 'bar' => 2]) extends Entity {
+        $entity = new class(['foo' => 1, 'bar' => 2]) extends Entity {
             protected $foo;
             protected $bar;
         };
@@ -1341,7 +1343,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testSetWithPatchableSingleProperty(): void
     {
-        $entity = new class (['foo' => 1, 'bar' => 2]) extends Entity {
+        $entity = new class(['foo' => 1, 'bar' => 2]) extends Entity {
             protected $foo;
             protected $bar;
             protected $title;
@@ -1366,7 +1368,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testDebugInfo(): void
     {
-        $entity = new class (['foo' => 'bar'], ['markClean' => true]) extends Entity {
+        $entity = new class(['foo' => 'bar'], ['markClean' => true]) extends Entity {
             protected $foo;
             protected $somethingElse;
             protected $baz {
@@ -1436,7 +1438,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testIsDirtyFromClone(): void
     {
-        $entity = new class (['a' => 1, 'b' => 2], ['markNew' => false, 'markClean' => true], ) extends Entity {
+        $entity = new class(['a' => 1, 'b' => 2], ['markNew' => false, 'markClean' => true]) extends Entity {
             protected $a;
             protected $b;
         };
@@ -1463,29 +1465,38 @@ class EntityWithConcretePropertiesTest extends TestCase
             'body' => 'einstein',
         ]);
         $this->assertSame($entity, $return);
-        $this->assertSame([
-            'title' => 'albert',
-            'body' => 'einstein',
-        ], $entity->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'albert',
+                'body' => 'einstein',
+            ],
+            $entity->getInvalid(),
+        );
 
         $set = $entity->setInvalid([
             'title' => 'nikola',
             'body' => 'tesla',
         ]);
-        $this->assertSame([
-            'title' => 'albert',
-            'body' => 'einstein',
-        ], $set->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'albert',
+                'body' => 'einstein',
+            ],
+            $set->getInvalid(),
+        );
 
         $overwrite = $entity->setInvalid([
             'title' => 'nikola',
             'body' => 'tesla',
         ], true);
         $this->assertSame($entity, $overwrite);
-        $this->assertSame([
-            'title' => 'nikola',
-            'body' => 'tesla',
-        ], $entity->getInvalid());
+        $this->assertSame(
+            [
+                'title' => 'nikola',
+                'body' => 'tesla',
+            ],
+            $entity->getInvalid(),
+        );
     }
 
     /**
@@ -1517,7 +1528,21 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testHasValue(): void
     {
-        $entity = new class (['array' => ['foo' => 'bar'], 'emptyArray' => [], 'object' => new stdClass(), 'string' => 'string', 'stringZero' => '0', 'emptyString' => '', 'intZero' => 0, 'intNotZero' => 1, 'floatZero' => 0.0, 'floatNonZero' => 1.5, 'null' => null, 'true' => true, 'false' => false]) extends Entity {
+        $entity = new class([
+            'array' => ['foo' => 'bar'],
+            'emptyArray' => [],
+            'object' => new stdClass(),
+            'string' => 'string',
+            'stringZero' => '0',
+            'emptyString' => '',
+            'intZero' => 0,
+            'intNotZero' => 1,
+            'floatZero' => 0.0,
+            'floatNonZero' => 1.5,
+            'null' => null,
+            'true' => true,
+            'false' => false,
+        ]) extends Entity {
             protected $array;
             protected $emptyArray;
             protected $object;
@@ -1551,7 +1576,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testIsOriginalField(): void
     {
-        $entity = new class (['foo' => null]) extends Entity {
+        $entity = new class(['foo' => null]) extends Entity {
             protected $foo;
         };
         $return = $entity->isOriginalField('foo');
@@ -1573,7 +1598,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testGetOriginalFields(): void
     {
-        $entity = new class (['foo' => 'foo', 'bar' => 'bar']) extends Entity {
+        $entity = new class(['foo' => 'foo', 'bar' => 'bar']) extends Entity {
             protected $foo;
             protected $bar;
             protected $baz;
@@ -1769,7 +1794,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testHydrationBypassesPropertyHooks(): void
     {
-        $entity = new class (['title' => 'HELLO'], [
+        $entity = new class(['title' => 'HELLO'], [
             'useSetters' => false,
             'markClean' => true,
             'markNew' => false,
@@ -1796,7 +1821,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testConstructorWithSettersFiresHooks(): void
     {
-        $entity = new class (['title' => 'HELLO'], [
+        $entity = new class(['title' => 'HELLO'], [
             'useSetters' => true,
         ]) extends Entity {
             protected string $title {
@@ -1857,7 +1882,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testVirtualPropertyGetHook(): void
     {
-        $entity = new class (['title' => 'Hello', 'author_name' => 'World'], [
+        $entity = new class(['title' => 'Hello', 'author_name' => 'World'], [
             'useSetters' => false,
         ]) extends Entity {
             protected string $title;
@@ -1947,7 +1972,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testRestrictedPropertiesCannotBeAccessedViaEntityMethods(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'test']) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'test']) extends Entity {
             protected int $id;
             protected string $title;
         };
@@ -1966,7 +1991,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testSetRestrictedPropertyNameDoesNotCorruptState(): void
     {
-        $entity = new class (['id' => 1, 'title' => 'test']) extends Entity {
+        $entity = new class(['id' => 1, 'title' => 'test']) extends Entity {
             protected int $id;
             protected string $title;
         };
@@ -1994,7 +2019,7 @@ class EntityWithConcretePropertiesTest extends TestCase
      */
     public function testUnsetRestrictedPropertyNameDoesNotCorruptState(): void
     {
-        $entity = new class (['id' => 1]) extends Entity {
+        $entity = new class(['id' => 1]) extends Entity {
             protected int $id;
         };
 

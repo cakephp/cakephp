@@ -112,24 +112,27 @@ class StringAggExpression extends AggregateExpression
         [$value, $separator] = $parts + [null, null];
 
         $sql = match ($this->syntax) {
-            static::SYNTAX_GROUP_CONCAT => $this->name . sprintf(
-                '(%s%s SEPARATOR %s)',
-                $value,
-                $this->aggregateOrderBy ? ' ' . $this->aggregateOrderBy->sql($binder) : '',
-                $separator,
-            ),
-            static::SYNTAX_WITHIN_GROUP => $this->name . sprintf(
-                '(%s, %s)%s',
-                $value,
-                $separator,
-                $this->aggregateOrderBy ? ' WITHIN GROUP (' . $this->aggregateOrderBy->sql($binder) . ')' : '',
-            ),
-            default => $this->name . sprintf(
-                '(%s, %s%s)',
-                $value,
-                $separator,
-                $this->aggregateOrderBy ? ' ' . $this->aggregateOrderBy->sql($binder) : '',
-            ),
+            static::SYNTAX_GROUP_CONCAT => $this->name
+                . sprintf(
+                    '(%s%s SEPARATOR %s)',
+                    $value,
+                    $this->aggregateOrderBy ? ' ' . $this->aggregateOrderBy->sql($binder) : '',
+                    $separator,
+                ),
+            static::SYNTAX_WITHIN_GROUP => $this->name
+                . sprintf(
+                    '(%s, %s)%s',
+                    $value,
+                    $separator,
+                    $this->aggregateOrderBy ? ' WITHIN GROUP (' . $this->aggregateOrderBy->sql($binder) . ')' : '',
+                ),
+            default => $this->name
+                . sprintf(
+                    '(%s, %s%s)',
+                    $value,
+                    $separator,
+                    $this->aggregateOrderBy ? ' ' . $this->aggregateOrderBy->sql($binder) : '',
+                ),
         };
 
         if ($this->filter !== null) {

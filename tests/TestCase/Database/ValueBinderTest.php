@@ -153,13 +153,11 @@ class ValueBinderTest extends TestCase
         $valueBinder->bind(':c1', 'value1', 'string');
         $valueBinder->attachTo($statementMock);
 
-        $statementMock
-            ->shouldHaveReceived('bindValue')
+        $statementMock->shouldHaveReceived('bindValue')
             ->with('c0', 'value0', 'string')
             ->once();
 
-        $statementMock
-            ->shouldHaveReceived('bindValue')
+        $statementMock->shouldHaveReceived('bindValue')
             ->with('c1', 'value1', 'string')
             ->once();
     }

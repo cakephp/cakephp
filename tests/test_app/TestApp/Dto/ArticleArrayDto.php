@@ -13,8 +13,7 @@ readonly class ArticleArrayDto
         public string $title,
         public ?string $body = null,
         public ?AuthorArrayDto $author = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Create from array data.

@@ -28,9 +28,13 @@ class ColumnTest extends TestCase
         $column = new Column('created', 'string');
         // Simulate a legacy serialized payload: remove properties added after
         // Column first shipped so they are absent from the serialized data.
-        Closure::bind(function (): void {
-            unset($this->fixed, $this->geometryType);
-        }, $column, Column::class)();
+        Closure::bind(
+            function (): void {
+                unset($this->fixed, $this->geometryType);
+            },
+            $column,
+            Column::class,
+        )();
 
         $restored = unserialize(serialize($column));
 
@@ -69,8 +73,7 @@ class ColumnTest extends TestCase
         $column = new Column('body', 'string');
         $this->assertEquals(TableSchemaInterface::TYPE_STRING, $column->getBaseType());
 
-        $column
-            ->setType('fancy-int')
+        $column->setType('fancy-int')
             ->setBaseType('integer');
         $this->assertSame('fancy-int', $column->getType());
         $this->assertSame('integer', $column->getBaseType());

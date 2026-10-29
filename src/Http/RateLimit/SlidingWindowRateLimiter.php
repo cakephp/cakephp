@@ -28,9 +28,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
      *
      * @param \Psr\SimpleCache\CacheInterface $cache Cache instance
      */
-    public function __construct(protected CacheInterface $cache)
-    {
-    }
+    public function __construct(protected CacheInterface $cache) {}
 
     /**
      * @inheritDoc

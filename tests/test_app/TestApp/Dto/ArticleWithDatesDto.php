@@ -21,6 +21,5 @@ readonly class ArticleWithDatesDto
         public string $title,
         public ?DateTime $created = null,
         public ?DateTime $modified = null,
-    ) {
-    }
+    ) {}
 }

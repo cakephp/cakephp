@@ -156,12 +156,12 @@ class DebuggerTest extends TestCase
 
         $result = Debugger::exportVar($std);
         $expected = <<<TEXT
-object(stdClass) id:0 {
-  int => (int) 2
-  float => (float) 1.333
-  string => '  '
-}
-TEXT;
+            object(stdClass) id:0 {
+              int => (int) 2
+              float => (float) 1.333
+              string => '  '
+            }
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         $Controller = new Controller(new ServerRequest());
@@ -170,59 +170,59 @@ TEXT;
 
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
-object(Cake\View\View) id:0 {
-  [protected] helperRegistry => object(Cake\View\HelperRegistry) id:1 {}
-  [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
-  [protected] plugin => null
-  [protected] name => ''
-  [protected] helpers => [
-    'Html' => [
-      '' => [maximum depth reached]
-    ],
-    'Form' => [
-      '' => [maximum depth reached]
-    ]
-  ]
-  [protected] templatePath => ''
-  [protected] template => ''
-  [protected] layout => 'default'
-  [protected] layoutPath => ''
-  [protected] autoLayout => true
-  [protected] viewVars => []
-  [protected] ext => '.php'
-  [protected] subDir => ''
-  [protected] theme => null
-  [protected] request => object(Cake\Http\ServerRequest) id:3 {}
-  [protected] response => object(Cake\Http\Response) id:4 {}
-  [protected] elementCache => 'default'
-  [protected] configMergeStrategy => 'deep'
-  [protected] passedVars => [
-    (int) 0 => 'viewVars',
-    (int) 1 => 'autoLayout',
-    (int) 2 => 'helpers',
-    (int) 3 => 'template',
-    (int) 4 => 'layout',
-    (int) 5 => 'name',
-    (int) 6 => 'theme',
-    (int) 7 => 'layoutPath',
-    (int) 8 => 'templatePath',
-    (int) 9 => 'plugin',
-    (int) 10 => 'configMergeStrategy'
-  ]
-  [protected] defaultConfig => []
-  [protected] paths => []
-  [protected] pathsForPlugin => []
-  [protected] parents => []
-  [protected] current => ''
-  [protected] currentType => ''
-  [protected] stack => []
-  [protected] viewBlockClass => 'Cake\View\ViewBlock'
-  [protected] eventManager => object(Cake\Event\EventManager) id:5 {}
-  [protected] eventClass => 'Cake\Event\Event'
-  [protected] config => []
-  [protected] configInitialized => true
-}
-TEXT;
+            object(Cake\View\View) id:0 {
+              [protected] helperRegistry => object(Cake\View\HelperRegistry) id:1 {}
+              [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
+              [protected] plugin => null
+              [protected] name => ''
+              [protected] helpers => [
+                'Html' => [
+                  '' => [maximum depth reached]
+                ],
+                'Form' => [
+                  '' => [maximum depth reached]
+                ]
+              ]
+              [protected] templatePath => ''
+              [protected] template => ''
+              [protected] layout => 'default'
+              [protected] layoutPath => ''
+              [protected] autoLayout => true
+              [protected] viewVars => []
+              [protected] ext => '.php'
+              [protected] subDir => ''
+              [protected] theme => null
+              [protected] request => object(Cake\Http\ServerRequest) id:3 {}
+              [protected] response => object(Cake\Http\Response) id:4 {}
+              [protected] elementCache => 'default'
+              [protected] configMergeStrategy => 'deep'
+              [protected] passedVars => [
+                (int) 0 => 'viewVars',
+                (int) 1 => 'autoLayout',
+                (int) 2 => 'helpers',
+                (int) 3 => 'template',
+                (int) 4 => 'layout',
+                (int) 5 => 'name',
+                (int) 6 => 'theme',
+                (int) 7 => 'layoutPath',
+                (int) 8 => 'templatePath',
+                (int) 9 => 'plugin',
+                (int) 10 => 'configMergeStrategy'
+              ]
+              [protected] defaultConfig => []
+              [protected] paths => []
+              [protected] pathsForPlugin => []
+              [protected] parents => []
+              [protected] current => ''
+              [protected] currentType => ''
+              [protected] stack => []
+              [protected] viewBlockClass => 'Cake\View\ViewBlock'
+              [protected] eventManager => object(Cake\Event\EventManager) id:5 {}
+              [protected] eventClass => 'Cake\Event\Event'
+              [protected] config => []
+              [protected] configInitialized => true
+            }
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         $data = [
@@ -231,11 +231,11 @@ TEXT;
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
-[
-  (int) 1 => 'Index one',
-  (int) 5 => 'Index five'
-]
-TEXT;
+            [
+              (int) 1 => 'Index one',
+              (int) 5 => 'Index five'
+            ]
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         $data = [
@@ -245,19 +245,19 @@ TEXT;
         ];
         $result = Debugger::exportVar($data, 1);
         $expected = <<<TEXT
-[
-  'key' => [
-    '' => [maximum depth reached]
-  ]
-]
-TEXT;
+            [
+              'key' => [
+                '' => [maximum depth reached]
+              ]
+            ]
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         $data = false;
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
-false
-TEXT;
+            false
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         $file = fopen('php://output', 'w');
@@ -291,14 +291,14 @@ TEXT;
         ];
         $result = Debugger::exportVar($data);
         $expected = <<<TEXT
-[
-  'nothing' => '',
-  'null' => null,
-  'false' => false,
-  'szero' => '0',
-  'zero' => (int) 0
-]
-TEXT;
+            [
+              'nothing' => '',
+              'null' => null,
+              'false' => false,
+              'szero' => '0',
+              'zero' => (int) 0
+            ]
+            TEXT;
         $this->assertTextEquals($expected, $result);
     }
 
@@ -317,14 +317,14 @@ TEXT;
 
         $result = Debugger::exportVar($parent, 6);
         $expected = <<<TEXT
-object(stdClass) id:0 {
-  name => 'cake'
-  child => object(stdClass) id:1 {
-    name => 'php'
-    child => object(stdClass) id:0 {}
-  }
-}
-TEXT;
+            object(stdClass) id:0 {
+              name => 'cake'
+              child => object(stdClass) id:1 {
+                name => 'php'
+                child => object(stdClass) id:0 {}
+              }
+            }
+            TEXT;
         $this->assertTextEquals($expected, $result);
     }
 
@@ -502,18 +502,20 @@ TEXT;
      */
     public function testDump(): void
     {
-        $var = ['People' => [
-            [
-                'name' => 'joeseph',
-                'coat' => 'technicolor',
-                'hair_color' => 'brown',
+        $var = [
+            'People' => [
+                [
+                    'name' => 'joeseph',
+                    'coat' => 'technicolor',
+                    'hair_color' => 'brown',
+                ],
+                [
+                    'name' => 'Shaft',
+                    'coat' => 'black',
+                    'hair' => 'black',
+                ],
             ],
-            [
-                'name' => 'Shaft',
-                'coat' => 'black',
-                'hair' => 'black',
-            ],
-        ]];
+        ];
         ob_start();
         Debugger::dump($var);
         $result = ob_get_clean();
@@ -521,21 +523,21 @@ TEXT;
         $open = "\n";
         $close = "\n\n";
         $expected = <<<TEXT
-{$open}[
-  'People' => [
-    (int) 0 => [
-      'name' => 'joeseph',
-      'coat' => 'technicolor',
-      'hair_color' => 'brown'
-    ],
-    (int) 1 => [
-      'name' => 'Shaft',
-      'coat' => 'black',
-      'hair' => 'black'
-    ]
-  ]
-]{$close}
-TEXT;
+            {$open}[
+              'People' => [
+                (int) 0 => [
+                  'name' => 'joeseph',
+                  'coat' => 'technicolor',
+                  'hair_color' => 'brown'
+                ],
+                (int) 1 => [
+                  'name' => 'Shaft',
+                  'coat' => 'black',
+                  'hair' => 'black'
+                ]
+              ]
+            ]{$close}
+            TEXT;
         $this->assertTextEquals($expected, $result);
 
         ob_start();
@@ -543,12 +545,12 @@ TEXT;
         $result = ob_get_clean();
 
         $expected = <<<TEXT
-{$open}[
-  'People' => [
-    '' => [maximum depth reached]
-  ]
-]{$close}
-TEXT;
+            {$open}[
+              'People' => [
+                '' => [maximum depth reached]
+              ]
+            ]{$close}
+            TEXT;
         $this->assertTextEquals($expected, $result);
     }
 
@@ -591,12 +593,18 @@ TEXT;
     public function testTraceExclude(): void
     {
         $result = Debugger::trace();
-        $this->assertMatchesRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
+        $this->assertMatchesRegularExpression(
+            '/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m',
+            $result,
+        );
 
         $result = Debugger::trace([
             'exclude' => ['Cake\Test\TestCase\Error\DebuggerTest->testTraceExclude'],
         ]);
-        $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
+        $this->assertDoesNotMatchRegularExpression(
+            '/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m',
+            $result,
+        );
     }
 
     public function testTraceShortPoints(): void
@@ -604,8 +612,19 @@ TEXT;
         $result = Debugger::trace(['format' => 'shortPoints']);
         $this->assertIsArray($result);
         $this->assertEquals(
-            'CORE' . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'src' . DS .
-                'Framework' . DS . 'TestCase.php',
+            'CORE'
+                . DS
+                . 'vendor'
+                . DS
+                . 'phpunit'
+                . DS
+                . 'phpunit'
+                . DS
+                . 'src'
+                . DS
+                . 'Framework'
+                . DS
+                . 'TestCase.php',
             $result[0]['file'],
         );
     }
@@ -639,11 +658,11 @@ TEXT;
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
         $expected = <<<eos
-object(TestApp\Error\Thing\DebuggableThing) id:0 {
-  'foo' => 'bar'
-  'inner' => object(TestApp\Error\Thing\DebuggableThing) id:1 {}
-}
-eos;
+            object(TestApp\Error\Thing\DebuggableThing) id:0 {
+              'foo' => 'bar'
+              'inner' => object(TestApp\Error\Thing\DebuggableThing) id:1 {}
+            }
+            eos;
         $this->assertSame($expected, $result);
     }
 
@@ -656,12 +675,12 @@ eos;
         Debugger::printVar('this-is-a-test', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
         $expectedText = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'this-is-a-test'
-###########################
+            %s (line %d)
+            ########## DEBUG ##########
+            'this-is-a-test'
+            ###########################
 
-EXPECTED;
+            EXPECTED;
         $expected = sprintf($expectedText, Debugger::trimPath(__FILE__), __LINE__ - 9);
 
         $this->assertSame($expected, $result);
@@ -676,11 +695,11 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output cake-debug" style="direction:ltr">
-<span><strong>%s</strong> (line <strong>%d</strong>)</span>
-<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
-</div>
-EXPECTED;
+            <div class="cake-debug-output cake-debug" style="direction:ltr">
+            <span><strong>%s</strong> (line <strong>%d</strong>)</span>
+            <div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+            </div>
+            EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 8);
         $this->assertSame($expected, $result);
 
@@ -688,23 +707,23 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output cake-debug" style="direction:ltr">
+            <div class="cake-debug-output cake-debug" style="direction:ltr">
 
-<div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
-</div>
-EXPECTED;
+            <div class="cake-debug"><span class="cake-debug-string">&#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;</span></div>
+            </div>
+            EXPECTED;
         $this->assertSame($expected, $result);
 
         ob_start();
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
+            %s (line %d)
+            ########## DEBUG ##########
+            '<div>this-is-a-test</div>'
+            ###########################
 
-EXPECTED;
+            EXPECTED;
         $expected = sprintf($expected, Debugger::trimPath(__FILE__), __LINE__ - 9);
         $this->assertSame($expected, $result);
 
@@ -713,11 +732,11 @@ EXPECTED;
         $result = ob_get_clean();
         $expected = <<<EXPECTED
 
-########## DEBUG ##########
-'<div>this-is-a-test</div>'
-###########################
+            ########## DEBUG ##########
+            '<div>this-is-a-test</div>'
+            ###########################
 
-EXPECTED;
+            EXPECTED;
         $this->assertSame($expected, $result);
     }
 

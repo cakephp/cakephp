@@ -71,7 +71,7 @@ trait TranslateTrait
     {
         $i18n = $this->get('_translations') ?? [];
 
-        if (!isset($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
+        if (!isset($i18n[$language]) || !$i18n[$language] instanceof EntityInterface) {
             $i18n[$language] = new static();
             $this->set('_translations', $i18n);
         }

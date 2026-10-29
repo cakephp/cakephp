@@ -154,7 +154,7 @@ class FileLockEngine extends LockEngine
         }
 
         $mtime = filemtime($file);
-        if ($mtime !== false && (time() - $mtime) > $ttl) {
+        if ($mtime !== false && time() - $mtime > $ttl) {
             // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
             @unlink($file);
         }

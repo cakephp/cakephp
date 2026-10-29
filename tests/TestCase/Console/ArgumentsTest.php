@@ -54,7 +54,9 @@ class ArgumentsTest extends TestCase
         $values = [['one', 'two']];
         $args = new Arguments($values, [], []);
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Argument at index `0` is not of type `string`, use `getArrayArgument()` instead.');
+        $this->expectExceptionMessage(
+            'Argument at index `0` is not of type `string`, use `getArrayArgument()` instead.',
+        );
         $args->getArgumentAt(0);
     }
 
@@ -144,7 +146,9 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], $names);
 
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Argument `color` is not defined on this Command. Could this be an option maybe?');
+        $this->expectExceptionMessage(
+            'Argument `color` is not defined on this Command. Could this be an option maybe?',
+        );
 
         $args->getArgument('color');
     }
@@ -279,7 +283,9 @@ class ArgumentsTest extends TestCase
         $names = ['size'];
         $args = new Arguments($values, [], $names);
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Argument `colors` is not defined on this Command. Could this be an option maybe?');
+        $this->expectExceptionMessage(
+            'Argument `colors` is not defined on this Command. Could this be an option maybe?',
+        );
         $args->getArrayArgument('colors');
     }
 

@@ -194,11 +194,7 @@ abstract class TestCase extends BaseTestCase
                 $file,
                 $line,
                 $context = null,
-            ) use (
-                $previousHandler,
-                &$deprecation,
-                $type,
-            ): bool {
+            ) use ($previousHandler, &$deprecation, $type): bool {
                 if ($code === $type) {
                     $deprecation = true;
 
@@ -371,8 +367,7 @@ abstract class TestCase extends BaseTestCase
     {
         $this->appPluginsToLoad = $plugins;
 
-        $app = new class ('') extends BaseApplication
-        {
+        $app = new class('') extends BaseApplication {
             /**
              * @param \Cake\Http\MiddlewareQueue $middlewareQueue
              * @return \Cake\Http\MiddlewareQueue
@@ -990,7 +985,7 @@ abstract class TestCase extends BaseTestCase
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
-// phpcs:disable
+    // phpcs:disable
 
     /**
      * Compatibility function to test if a value is between an acceptable range.
@@ -1005,7 +1000,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        self::assertTrue(($expected <= $upper) && ($expected >= $lower), $message);
+        self::assertTrue($expected <= $upper && $expected >= $lower, $message);
     }
 
     /**
@@ -1021,7 +1016,7 @@ abstract class TestCase extends BaseTestCase
     {
         $upper = $result + $margin;
         $lower = $result - $margin;
-        self::assertTrue(($expected > $upper) || ($expected < $lower), $message);
+        self::assertTrue($expected > $upper || $expected < $lower, $message);
     }
 
     /**
@@ -1055,7 +1050,7 @@ abstract class TestCase extends BaseTestCase
         return $condition;
     }
 
-// phpcs:enable
+    // phpcs:enable
 
     /**
      * Mock a model with PHPUnit mocks, maintain fixtures and table association

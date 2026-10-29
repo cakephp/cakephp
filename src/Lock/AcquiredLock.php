@@ -43,8 +43,7 @@ class AcquiredLock
         protected readonly int $ttl,
         protected readonly float $acquiredAt,
         protected readonly ?LockInterface $engine = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the locked resource identifier.

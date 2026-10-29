@@ -91,11 +91,18 @@ class HttpsEnforcerMiddlewareTest extends TestCase
             return new Response(['body' => 'success']);
         });
 
-        $middleware = new HttpsEnforcerMiddleware(['hsts' => ['maxAge' => 63072000, 'includeSubDomains' => true, 'preload' => true]]);
+        $middleware = new HttpsEnforcerMiddleware(['hsts' => [
+            'maxAge' => 63072000,
+            'includeSubDomains' => true,
+            'preload' => true,
+        ]]);
 
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(Response::class, $result);
-        $this->assertSame('max-age=63072000; includeSubDomains; preload', $result->getHeaderLine('strict-transport-security'));
+        $this->assertSame(
+            'max-age=63072000; includeSubDomains; preload',
+            $result->getHeaderLine('strict-transport-security'),
+        );
     }
 
     public function testHstsResponseInvalidConfig(): void

@@ -560,6 +560,7 @@ class PostgresSchemaDialect extends SchemaDialect
         WHERE n.nspname = ?
         AND cl.relname = ?
         ORDER BY name, column_order ASC, references_field_order ASC';
+
         // phpcs:enable Generic.Files.LineLength
     }
 
@@ -659,8 +660,9 @@ class PostgresSchemaDialect extends SchemaDialect
         ];
         $primaryKey = $schema->getPrimaryKey();
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            $primaryKey === [$name] && $name === 'id'
+            in_array($data['type'], $autoIncrementTypes, true)
+            && $primaryKey === [$name]
+            && $name === 'id'
         ) {
             $data['autoIncrement'] = true;
         }
@@ -719,10 +721,9 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
-        $isAutoincrement = (
-            in_array($column['type'], $autoIncrementTypes, true) &&
-            $autoIncrement
-        );
+        $isAutoincrement =
+            in_array($column['type'], $autoIncrementTypes, true)
+            && $autoIncrement;
         $version = $this->driver->version();
         $identityVersion = version_compare($version, '10.0', '>=');
 
@@ -745,10 +746,10 @@ class PostgresSchemaDialect extends SchemaDialect
             $out .= ' TEXT';
             $foundType = true;
         } elseif (
-            $column['type'] === TableSchemaInterface::TYPE_STRING ||
-            (
-                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $column['length'] === TableSchema::LENGTH_TINY
+            $column['type'] === TableSchemaInterface::TYPE_STRING
+            || (
+                $column['type'] === TableSchemaInterface::TYPE_TEXT
+                && $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $out .= ' VARCHAR';
@@ -787,10 +788,10 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         if (
-            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
-            (
-                isset($column['length']) ||
-                isset($column['precision'])
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL
+            && (
+                isset($column['length'])
+                || isset($column['precision'])
             )
         ) {
             $out .= '(' . $column['length'] . ',' . (int)$column['precision'] . ')';
@@ -820,10 +821,10 @@ class PostgresSchemaDialect extends SchemaDialect
             $currentDefault = $this->currentDateTimeDefault($column);
         }
         if (
-            isset($column['default']) &&
-            in_array($column['type'], $datetimeTypes) &&
-            is_string($column['default']) &&
-            strtolower($column['default']) === 'current_timestamp'
+            isset($column['default'])
+            && in_array($column['type'], $datetimeTypes)
+            && is_string($column['default'])
+            && strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif ($currentDefault !== null) {
@@ -953,16 +954,17 @@ class PostgresSchemaDialect extends SchemaDialect
             $data['columns'],
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
-            return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
-                implode(', ', $columns),
-                $this->driver->quoteIdentifier($data['references'][0]),
-                $this->convertConstraintColumns($data['references'][1]),
-                $this->foreignOnClause($data['update']),
-                $this->foreignOnClause($data['delete']),
-                // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
-                $data['deferrable'] ?? ForeignKey::IMMEDIATE,
-            );
+            return $prefix
+                . sprintf(
+                    ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
+                    implode(', ', $columns),
+                    $this->driver->quoteIdentifier($data['references'][0]),
+                    $this->convertConstraintColumns($data['references'][1]),
+                    $this->foreignOnClause($data['update']),
+                    $this->foreignOnClause($data['delete']),
+                    // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
+                    $data['deferrable'] ?? ForeignKey::IMMEDIATE,
+                );
         }
 
         return $prefix . ' (' . implode(', ', $columns) . ')';

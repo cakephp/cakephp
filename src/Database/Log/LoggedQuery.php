@@ -163,39 +163,42 @@ class LoggedQuery implements JsonSerializable, Stringable
     {
         [$query, $rawParams] = $this->redacted();
 
-        $params = array_map(function ($p) {
-            if ($p === null) {
-                return 'NULL';
-            }
-
-            if (is_bool($p)) {
-                if ($this->driver instanceof Sqlserver) {
-                    return $p ? '1' : '0';
+        $params = array_map(
+            function ($p) {
+                if ($p === null) {
+                    return 'NULL';
                 }
 
-                return $p ? 'TRUE' : 'FALSE';
-            }
+                if (is_bool($p)) {
+                    if ($this->driver instanceof Sqlserver) {
+                        return $p ? '1' : '0';
+                    }
 
-            if (is_string($p)) {
-                // Likely binary data like a blob or binary uuid.
-                // pattern matches ascii control chars.
-                if (preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $p) !== $p) {
-                    $p = bin2hex($p);
+                    return $p ? 'TRUE' : 'FALSE';
                 }
 
-                $replacements = [
-                    '$' => '\\$',
-                    '\\' => '\\\\\\\\',
-                    "'" => "''",
-                ];
+                if (is_string($p)) {
+                    // Likely binary data like a blob or binary uuid.
+                    // pattern matches ascii control chars.
+                    if (preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $p) !== $p) {
+                        $p = bin2hex($p);
+                    }
 
-                $p = strtr($p, $replacements);
+                    $replacements = [
+                        '$' => '\\$',
+                        '\\' => '\\\\\\\\',
+                        "'" => "''",
+                    ];
 
-                return "'{$p}'";
-            }
+                    $p = strtr($p, $replacements);
 
-            return $p;
-        }, $rawParams);
+                    return "'{$p}'";
+                }
+
+                return $p;
+            },
+            $rawParams,
+        );
 
         $keys = [];
         $limit = is_int(key($params)) ? 1 : -1;

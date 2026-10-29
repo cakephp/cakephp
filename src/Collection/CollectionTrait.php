@@ -221,10 +221,9 @@ trait CollectionTrait
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
-            return $extractor
-                ->filter(function ($data) {
-                    return is_iterable($data);
-                })
+            return $extractor->filter(function ($data) {
+                return is_iterable($data);
+            })
                 ->unfold();
         }
 
@@ -257,10 +256,13 @@ trait CollectionTrait
             $result = $result->extract($path);
         }
         $result = $result
-            ->reduce(function (array $acc, $current) {
-                // index 0 is the count, index 1 is the sum
-                return [$acc[0] + 1, $acc[1] + $current];
-            }, [0, 0]);
+            ->reduce(
+                function (array $acc, $current) {
+                    // index 0 is the count, index 1 is the sum
+                    return [$acc[0] + 1, $acc[1] + $current];
+                },
+                [0, 0],
+            );
 
         if ($result[0] === 0) {
             return null;
@@ -356,8 +358,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot group by path that does not exist or contains a null value. '
+                        . 'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -391,8 +393,8 @@ trait CollectionTrait
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
-                    'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot index by path that does not exist or contains a null value. '
+                        . 'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -621,7 +623,7 @@ trait CollectionTrait
 
             foreach ($iterator as $k => $item) {
                 $result[$bucket] = [$k, $item];
-                $bucket = (++$bucket) % $length;
+                $bucket = ++$bucket % $length;
                 $offset++;
             }
 
@@ -725,8 +727,8 @@ trait CollectionTrait
                 $mapKey = $rowKey($value, $key);
                 if ($mapKey === null) {
                     throw new InvalidArgumentException(
-                        'Cannot index by path that does not exist or contains a null value. ' .
-                        'Use a callback to return a default value for that path.',
+                        'Cannot index by path that does not exist or contains a null value. '
+                            . 'Use a callback to return a default value for that path.',
                     );
                 }
 
@@ -744,16 +746,16 @@ trait CollectionTrait
             $key = $options['groupPath']($value, $key);
             if ($key === null) {
                 throw new InvalidArgumentException(
-                    'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot group by path that does not exist or contains a null value. '
+                        . 'Use a callback to return a default value for that path.',
                 );
             }
 
             $mapKey = $rowKey($value, $key);
             if ($mapKey === null) {
                 throw new InvalidArgumentException(
-                    'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.',
+                    'Cannot index by path that does not exist or contains a null value. '
+                        . 'Use a callback to return a default value for that path.',
                 );
             }
 
@@ -1101,11 +1103,11 @@ trait CollectionTrait
         // We unwrap if the class is Collection itself, or a non-Cake subclass,
         // or an anonymous class extending Collection.
         while (
-            $iterator instanceof Collection &&
-            (
-                $iterator::class === Collection::class ||
-                !str_starts_with($iterator::class, 'Cake\\') ||
-                str_contains($iterator::class, '@anonymous')
+            $iterator instanceof Collection
+            && (
+                $iterator::class === Collection::class
+                || !str_starts_with($iterator::class, 'Cake\\')
+                || str_contains($iterator::class, '@anonymous')
             )
         ) {
             $iterator = $iterator->getInnerIterator();
@@ -1160,9 +1162,14 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, array $keys, $index) {
-                return $value[$keys[$index]];
-            }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
+            $currentCombination = array_map(
+                function ($value, array $keys, $index) {
+                    return $value[$keys[$index]];
+                },
+                $collectionArrays,
+                $collectionArraysKeys,
+                $currentIndexes,
+            );
 
             if ($filter === null || $filter($currentCombination)) {
                 $result[] = $operation === null ? $currentCombination : $operation($currentCombination);

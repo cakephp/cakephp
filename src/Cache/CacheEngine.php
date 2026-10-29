@@ -315,14 +315,20 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
             $success = $this->set($key, $value);
             $this->eventClass = CacheAfterAddEvent::class;
             $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-                'key' => $prefixedKey, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+                'key' => $prefixedKey,
+                'value' => $value,
+                'success' => $success,
+                'ttl' => $duration,
             ]);
 
             return $success;
         }
         $this->eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $prefixedKey, 'value' => $value, 'success' => false, 'ttl' => $duration,
+            'key' => $prefixedKey,
+            'value' => $value,
+            'success' => false,
+            'ttl' => $duration,
         ]);
 
         return false;
@@ -408,8 +414,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
         /** @var \DateTime $datetime */
         $datetime = DateTime::createFromFormat('U', '0');
 
-        return (int)$datetime
-            ->add($ttl)
+        return (int)$datetime->add($ttl)
             ->format('U');
     }
 }

@@ -55,7 +55,8 @@ class Filesystem
      */
     public function find(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??=
+            FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
 
@@ -85,7 +86,8 @@ class Filesystem
      */
     public function findRecursive(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??=
+            FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
 
@@ -234,16 +236,20 @@ class Filesystem
         $result = true;
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isDir()) {
-                $result = $result && $this->copyDir(
-                    $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
-                );
+                $result =
+                    $result
+                    && $this->copyDir(
+                        $fileInfo->getPathname(),
+                        $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
+                    );
             } else {
                 // phpcs:ignore
-                $result = $result && @copy(
-                    $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
-                );
+                $result =
+                    $result
+                    && @copy(
+                        $fileInfo->getPathname(),
+                        $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
+                    );
             }
         }
 

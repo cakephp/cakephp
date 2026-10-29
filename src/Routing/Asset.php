@@ -171,9 +171,9 @@ class Asset
             $path = str_replace('{plugin}', $placeHolderVal, $pathPrefix) . $path;
         }
         if (
-            !empty($options['ext']) &&
-            !str_contains($path, '?') &&
-            !str_ends_with($path, $options['ext'])
+            !empty($options['ext'])
+            && !str_contains($path, '?')
+            && !str_ends_with($path, $options['ext'])
         ) {
             $path .= $options['ext'];
         }
@@ -264,7 +264,8 @@ class Asset
             }
             if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
-                $pluginPath = Plugin::path($plugin)
+                $pluginPath =
+                    Plugin::path($plugin)
                     . 'webroot'
                     . DIRECTORY_SEPARATOR
                     . implode(DIRECTORY_SEPARATOR, $segments);

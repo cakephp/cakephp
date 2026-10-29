@@ -91,7 +91,11 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build('/controller/action/1?one=1&two=2');
         $this->assertSame('/controller/action/1?one=1&amp;two=2', $result);
 
-        $result = $this->Helper->build(['controller' => 'Posts', 'action' => 'index', '?' => ['page' => '1" onclick="alert(\'XSS\');"']]);
+        $result = $this->Helper->build([
+            'controller' => 'Posts',
+            'action' => 'index',
+            '?' => ['page' => '1" onclick="alert(\'XSS\');"'],
+        ]);
         $this->assertSame('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
@@ -104,13 +108,15 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'Posts', 'action' => 'index',
+            'controller' => 'Posts',
+            'action' => 'index',
             '?' => ['param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'],
         ]);
         $this->assertSame('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'Posts', 'action' => 'index',
+            'controller' => 'Posts',
+            'action' => 'index',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple', 'page' => '1'],
         ]);
         $this->assertSame('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
@@ -155,7 +161,10 @@ class UrlHelperTest extends TestCase
                 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             ],
         ], ['escape' => false]);
-        $this->assertSame('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
+        $this->assertSame(
+            '/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524',
+            $result,
+        );
     }
 
     public function testBuildFromPath(): void
@@ -191,12 +200,18 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
 
         Configure::write('Asset.timestamp', 'force');
         Configure::write('debug', false);
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertSame(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
@@ -205,7 +220,10 @@ class UrlHelperTest extends TestCase
         $this->View->setRequest($request);
         Router::setRequest($request);
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**
@@ -243,15 +261,17 @@ class UrlHelperTest extends TestCase
      */
     public function testAssetUrlDataUri(): void
     {
-        $request = $this->View->getRequest()
+        $request = $this->View
+            ->getRequest()
             ->withAttribute('base', 'subdir')
             ->withAttribute('webroot', 'subdir/');
 
         $this->View->setRequest($request);
         Router::setRequest($request);
 
-        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
-            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $data =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4'
+            . '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
         $result = $this->Helper->assetUrl($data);
         $this->assertSame($data, $result);
 
@@ -312,7 +332,10 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->assetUrl('cake.generic.css', ['pathPrefix' => Configure::read('App.cssBaseUrl')]);
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**
@@ -336,10 +359,18 @@ class UrlHelperTest extends TestCase
         $this->loadPlugins(['TestTheme', 'TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
-        $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+        $this->assertMatchesRegularExpression(
+            '#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#',
+            $result,
+            'Missing timestamp plugin',
+        );
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
-        $this->assertMatchesRegularExpression('#/test_plugin/css/i_dont_exist.css$#', $result, 'No error on missing file');
+        $this->assertMatchesRegularExpression(
+            '#/test_plugin/css/i_dont_exist.css$#',
+            $result,
+            'No error on missing file',
+        );
 
         $result = $this->Helper->assetTimestamp('/test_theme/js/theme.js');
         $this->assertMatchesRegularExpression('#/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
@@ -368,7 +399,10 @@ class UrlHelperTest extends TestCase
         Configure::write('Asset.timestamp', 'force');
 
         $result = $this->Helper->script('script.js');
-        $this->assertMatchesRegularExpression('/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/', $result);
+        $this->assertMatchesRegularExpression(
+            '/' . preg_quote(Configure::read('App.jsBaseUrl') . 'script.js?', '/') . '[0-9]+/',
+            $result,
+        );
     }
 
     /**

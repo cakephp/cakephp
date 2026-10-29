@@ -50,8 +50,8 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             }
         }
         assert(
-            ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
-            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
+            ($first instanceof ChronosDate && $second instanceof ChronosDate)
+                || ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
         );
 
         $diffInterval = $first->diff($second);
@@ -117,7 +117,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         $from = $options['from'];
         $now = (int)$from->format('U');
         $inSeconds = (int)$time->format('U');
-        $backwards = ($inSeconds > $now);
+        $backwards = $inSeconds > $now;
 
         $futureTime = $now;
         $pastTime = $inSeconds;
@@ -347,7 +347,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         $from = $options['from'];
         $now = (int)$from->format('U');
         $inSeconds = (int)$date->format('U');
-        $backwards = ($inSeconds > $now);
+        $backwards = $inSeconds > $now;
 
         $futureTime = $now;
         $pastTime = $inSeconds;

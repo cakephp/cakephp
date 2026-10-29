@@ -47,9 +47,7 @@ class Marshaller
      *
      * @param \Cake\ORM\Table<array<string, \Cake\ORM\Behavior>, TEntity> $table The table this marshaller is for.
      */
-    public function __construct(protected Table $table)
-    {
-    }
+    public function __construct(protected Table $table) {}
 
     /**
      * Build the map of property => marshaling callable.
@@ -108,10 +106,7 @@ class Marshaller
                 $callback = function (
                     $value,
                     EntityInterface $entity,
-                ) use (
-                    $assoc,
-                    $nested,
-                ): array|EntityInterface|null {
+                ) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->mergeAssociation(
@@ -678,15 +673,14 @@ class Marshaller
     {
         $primary = (array)$this->table->getPrimaryKey();
 
-        $indexed = new Collection($data)
-            ->groupBy(function ($el) use ($primary) {
-                $keys = [];
-                foreach ($primary as $key) {
-                    $keys[] = $el[$key] ?? '';
-                }
+        $indexed = new Collection($data)->groupBy(function ($el) use ($primary) {
+            $keys = [];
+            foreach ($primary as $key) {
+                $keys[] = $el[$key] ?? '';
+            }
 
-                return implode(';', $keys);
-            })
+            return implode(';', $keys);
+        })
             ->map(function ($element, $key) {
                 return $key === '' ? $element : $element[0];
             })
@@ -697,7 +691,7 @@ class Marshaller
         $output = [];
 
         foreach ($entities as $entity) {
-            if (!($entity instanceof EntityInterface)) {
+            if (!$entity instanceof EntityInterface) {
                 continue;
             }
 
@@ -710,10 +704,9 @@ class Marshaller
             unset($indexed[$key]);
         }
 
-        $conditions = new Collection($indexed)
-            ->map(function ($data, $key) {
-                return explode(';', (string)$key);
-            })
+        $conditions = new Collection($indexed)->map(function ($data, $key) {
+            return explode(';', (string)$key);
+        })
             ->filter(fn($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map($this->table->aliasField(...), $primary);

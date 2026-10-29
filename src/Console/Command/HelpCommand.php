@@ -533,12 +533,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $parser->setDescription(
             'Get the list of available commands for this application.',
-        )->addArgument('command', [
-            'help' => 'Filter commands by prefix (e.g., "cache" to show only cache commands).',
-        ])->addOption('xml', [
-            'help' => 'Get the listing as XML.',
-            'boolean' => true,
-        ]);
+        )
+            ->addArgument('command', [
+                'help' => 'Filter commands by prefix (e.g., "cache" to show only cache commands).',
+            ])
+            ->addOption('xml', [
+                'help' => 'Get the listing as XML.',
+                'boolean' => true,
+            ]);
 
         return $parser;
     }

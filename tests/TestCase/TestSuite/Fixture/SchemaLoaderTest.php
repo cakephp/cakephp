@@ -208,8 +208,7 @@ class SchemaLoaderTest extends TestCase
         $connection = ConnectionManager::get('test');
 
         $schema = new TableSchema($tableName);
-        $schema
-            ->addColumn('id', 'integer')
+        $schema->addColumn('id', 'integer')
             ->addColumn('name', 'string');
 
         $query = $schema->createSql($connection)[0] . ';';

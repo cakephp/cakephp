@@ -29,8 +29,11 @@ class NullSafeComparisonTest extends TestCase
     }
 
     #[DataProvider('dialectProvider')]
-    public function testNullSafeComparisonSql(string $driverClass, string $expectedDistinct, string $expectedNotDistinct): void
-    {
+    public function testNullSafeComparisonSql(
+        string $driverClass,
+        string $expectedDistinct,
+        string $expectedNotDistinct,
+    ): void {
         $driver = Mockery::mock($driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -45,9 +48,10 @@ class NullSafeComparisonTest extends TestCase
         $connection->shouldReceive('role')->andReturn('write');
         $connection->shouldReceive('configName')->andReturn('test');
         $connection->shouldReceive('getDriver')->andReturn($driver);
-        $connection->shouldReceive('selectQuery')->andReturnUsing(function () use ($connection) {
-            return new SelectQuery($connection);
-        });
+        $connection->shouldReceive('selectQuery')
+            ->andReturnUsing(function () use ($connection) {
+                return new SelectQuery($connection);
+            });
 
         $binder = new ValueBinder();
 

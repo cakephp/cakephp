@@ -37,8 +37,7 @@ class LocaleSelectorMiddleware implements MiddlewareInterface
      */
     public function __construct(
         protected array $locales = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Set locale based on request headers.

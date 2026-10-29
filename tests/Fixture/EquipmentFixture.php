@@ -22,6 +22,4 @@ use Cake\TestSuite\Fixture\TestFixture;
  * "equipment" is in the default uninflected list, so the table
  * should be "equipment" (not "equipments").
  */
-class EquipmentFixture extends TestFixture
-{
-}
+class EquipmentFixture extends TestFixture {}

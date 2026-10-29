@@ -194,8 +194,7 @@ class UpdateQueryTest extends TestCase
         $this->skipIf($this->connection->getDriver() instanceof Mysql);
 
         $subquery = new SelectQuery($this->connection);
-        $subquery
-            ->select('created')
+        $subquery->select('created')
             ->from(['c' => 'comments'])
             ->where(['c.id' => new IdentifierExpression('comments.id')]);
 
@@ -212,7 +211,9 @@ class UpdateQueryTest extends TestCase
         $this->assertSame(6, $result->rowCount());
         $result->closeCursor();
 
-        $result = new SelectQuery($this->connection)->select(['created', 'updated'])->from('comments')->execute();
+        $result = new SelectQuery($this->connection)->select(['created', 'updated'])
+            ->from('comments')
+            ->execute();
         foreach ($result->fetchAll('assoc') as $row) {
             $this->assertSame($row['created'], $row['updated']);
         }
@@ -256,8 +257,7 @@ class UpdateQueryTest extends TestCase
         $date = new DateTime();
         $query->update('comments')
             ->set(function ($exp) use ($date) {
-                return $exp
-                    ->eq('comment', 'mark')
+                return $exp->eq('comment', 'mark')
                     ->eq('created', $date, 'date');
             })
             ->where(['id' => 1]);
@@ -281,8 +281,7 @@ class UpdateQueryTest extends TestCase
     {
         $expression = new QueryExpression(['post_count = post_count + 10']);
         $query = new UpdateQuery($this->connection);
-        $query
-            ->update('counter_cache_users')
+        $query->update('counter_cache_users')
             ->set($expression)
             ->where(['id' => 1]);
         $this->assertStringContainsString(
@@ -299,8 +298,7 @@ class UpdateQueryTest extends TestCase
     {
         $query = new UpdateQuery($this->connection);
 
-        $query
-            ->update('authors')
+        $query->update('authors')
             ->set(['name' => 'name'])
             ->where([
                 'OR' => [
@@ -319,13 +317,13 @@ class UpdateQueryTest extends TestCase
             ]);
 
         $this->assertQuotedQuery(
-            'UPDATE <authors> SET <name> = :c0 WHERE \(' .
-                '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \(' .
-                    '<name> NOT IN \(:c2,:c3\) AND \(' .
-                        '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)' .
-                    '\)' .
-                '\)' .
-            '\)',
+            'UPDATE <authors> SET <name> = :c0 WHERE \('
+                . '<id> = :c1 OR \(<name>\) IS NULL OR \(<email>\) IS NOT NULL OR \('
+                . '<name> NOT IN \(:c2,:c3\) AND \('
+                . '<name> = :c4 OR <name> = :c5 OR \(SELECT <e>\.<name> WHERE <e>\.<name> = :c6\)'
+                . '\)'
+                . '\)'
+                . '\)',
             $query->sql(),
             !$this->autoQuote,
         );
@@ -339,11 +337,12 @@ class UpdateQueryTest extends TestCase
     public function testUpdateRemovingAliasesCanBreakJoins(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.');
+        $this->expectExceptionMessage(
+            'Aliases are being removed from conditions for UPDATE/DELETE queries, this can break references to joined tables.',
+        );
         $query = new UpdateQuery($this->connection);
 
-        $query
-            ->update('authors')
+        $query->update('authors')
             ->set(['name' => 'name'])
             ->innerJoin('articles')
             ->where(['a.id' => 1]);
@@ -357,8 +356,7 @@ class UpdateQueryTest extends TestCase
     public function testAppendUpdate(): void
     {
         $query = new UpdateQuery($this->connection);
-        $sql = $query
-            ->update('articles')
+        $sql = $query->update('articles')
             ->set(['title' => 'foo'])
             ->where(['id' => 1])
             ->epilog('RETURNING id')
@@ -416,8 +414,7 @@ class UpdateQueryTest extends TestCase
     public function testCloneSetExpression(): void
     {
         $query = new UpdateQuery($this->connection);
-        $query
-            ->update('table')
+        $query->update('table')
             ->set(['column' => $query->expr('value')]);
 
         $clause = $query->clause('set');
@@ -437,8 +434,7 @@ class UpdateQueryTest extends TestCase
     public function testUpdateModifiers(): void
     {
         $query = new UpdateQuery($this->connection);
-        $result = $query
-            ->update('authors')
+        $result = $query->update('authors')
             ->set('name', 'mark')
             ->modifier('TOP 10 PERCENT');
         $this->assertQuotedQuery(
@@ -448,8 +444,7 @@ class UpdateQueryTest extends TestCase
         );
 
         $query = new UpdateQuery($this->connection);
-        $result = $query
-            ->update('authors')
+        $result = $query->update('authors')
             ->set('name', 'mark')
             ->modifier(['TOP 10 PERCENT', 'FOO']);
         $this->assertQuotedQuery(
@@ -459,8 +454,7 @@ class UpdateQueryTest extends TestCase
         );
 
         $query = new UpdateQuery($this->connection);
-        $result = $query
-            ->update('authors')
+        $result = $query->update('authors')
             ->set('name', 'mark')
             ->modifier([$query->expr('TOP 10 PERCENT')]);
         $this->assertQuotedQuery(
@@ -476,18 +470,17 @@ class UpdateQueryTest extends TestCase
     public function testSymmetricJsonType(): void
     {
         $query = new UpdateQuery($this->connection);
-        $query
-            ->update('comments')
+        $query->update('comments')
             ->set('comment', ['a' => 'b', 'c' => true], 'json')
             ->where(['id' => 1]);
         $query->execute()->closeCursor();
 
         $query = new SelectQuery($this->connection);
-        $query
-            ->select(['comment'])
+        $query->select(['comment'])
             ->from('comments')
             ->where(['id' => 1])
-            ->getSelectTypeMap()->setTypes(['comment' => 'json']);
+            ->getSelectTypeMap()
+            ->setTypes(['comment' => 'json']);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc')[0]['comment'];
@@ -515,18 +508,17 @@ class UpdateQueryTest extends TestCase
         $this->skipIf($skip, 'The current database backend does not support JSON value operations');
 
         $query = new UpdateQuery($this->connection);
-        $query
-            ->update('comments')
+        $query->update('comments')
             ->set('comment', ['a' => ['a1' => 'b1'], 'c' => true, 'scores' => [25, 36, 48]], 'json')
             ->where(['id' => 1]);
         $query->execute()->closeCursor();
 
         $query = new SelectQuery($this->connection);
-        $query
-            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+        $query->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
             ->from('comments')
             ->where(['id' => 1])
-            ->getSelectTypeMap()->setTypes(['score' => 'integer']);
+            ->getSelectTypeMap()
+            ->setTypes(['score' => 'integer']);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc')[0]['score'];

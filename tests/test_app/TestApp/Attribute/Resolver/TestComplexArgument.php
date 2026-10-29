@@ -13,6 +13,5 @@ class TestComplexArgument
         public mixed $object = null,
         public mixed $enum = null,
         public mixed $constant = null,
-    ) {
-    }
+    ) {}
 }

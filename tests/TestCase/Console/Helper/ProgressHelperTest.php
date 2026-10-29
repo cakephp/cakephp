@@ -173,7 +173,8 @@ class ProgressHelperTest extends TestCase
      */
     public function testIncrementAndRenderChained(): void
     {
-        $this->helper->init()
+        $this->helper
+            ->init()
             ->increment(20)
             ->draw()
             ->increment(40)

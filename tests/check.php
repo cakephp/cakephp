@@ -19,5 +19,7 @@ if (!defined('PHPUNIT_TESTSUITE') || !PHPUNIT_TESTSUITE) {
 
 $assertions = (int)ini_get('zend.assertions');
 if ($assertions !== 1) {
-    throw new RuntimeException('Assertions are not activated, but needed for tests to run. Please set respective directives in your php.ini (`zend.assertions = 1`).');
+    throw new RuntimeException(
+        'Assertions are not activated, but needed for tests to run. Please set respective directives in your php.ini (`zend.assertions = 1`).',
+    );
 }

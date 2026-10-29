@@ -58,8 +58,8 @@ class WindowQueryTest extends TestCase
 
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Mysql ||
-            $driver instanceof Sqlite
+            $driver instanceof Mysql
+            || $driver instanceof Sqlite
         ) {
             $this->skipTests = !$this->connection->getDriver()->supports(DriverFeature::WINDOW);
         } else {
@@ -73,21 +73,22 @@ class WindowQueryTest extends TestCase
     public function testWindowSql(): void
     {
         $query = new SelectQuery($this->connection);
-        $sql = $query
-            ->select('*')
+        $sql = $query->select('*')
             ->window('name', new WindowExpression())
             ->sql();
         $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\)', $sql, !$this->autoQuote);
 
-        $sql = $query
-            ->window('name2', new WindowExpression('name'))
+        $sql = $query->window('name2', new WindowExpression('name'))
             ->sql();
         $this->assertRegExpSql('SELECT \* WINDOW <name> AS \(\), <name2> AS \(<name>\)', $sql, !$this->autoQuote);
 
-        $sql = $query
-            ->window('name', function ($window, $query) {
+        $sql = $query->window(
+            'name',
+            function ($window, $query) {
                 return $window->name('name3');
-            }, true)
+            },
+            true,
+        )
             ->sql();
         $this->assertEqualsSql('SELECT * WINDOW name AS (name3)', $sql);
     }
@@ -106,16 +107,14 @@ class WindowQueryTest extends TestCase
         $this->skipIf($this->skipTests);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->over()])
+        $result = $query->select(['num_rows' => $query->func()->count('*')->over()])
             ->from('comments')
             ->execute()
             ->fetchAll();
         $this->assertCount(6, $result);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->partition('article_id')])
+        $result = $query->select(['num_rows' => $query->func()->count('*')->partition('article_id')])
             ->from('comments')
             ->orderBy(['article_id'])
             ->execute()
@@ -123,8 +122,9 @@ class WindowQueryTest extends TestCase
         $this->assertEquals(4, $result[0]['num_rows']);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->partition('article_id')->orderBy('updated')])
+        $result = $query->select([
+            'num_rows' => $query->func()->count('*')->partition('article_id')->orderBy('updated'),
+        ])
             ->from('comments')
             ->orderBy(['updated'])
             ->execute()
@@ -146,8 +146,7 @@ class WindowQueryTest extends TestCase
         $this->skipIf($skip);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->over('window1')])
+        $result = $query->select(['num_rows' => $query->func()->count('*')->over('window1')])
             ->from('comments')
             ->window('window1', new WindowExpression()->partition('article_id'))
             ->orderBy(['article_id'])
@@ -169,8 +168,7 @@ class WindowQueryTest extends TestCase
         $this->skipIf($skip);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['num_rows' => $query->func()->count('*')->over('window2')])
+        $result = $query->select(['num_rows' => $query->func()->count('*')->over('window2')])
             ->from('comments')
             ->window('window1', new WindowExpression()->partition('article_id'))
             ->window('window2', new WindowExpression('window1'))

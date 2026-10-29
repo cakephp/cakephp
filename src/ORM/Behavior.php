@@ -179,9 +179,7 @@ class Behavior implements EventListenerInterface
      * @param array<string, mixed> $config The configuration settings provided to this behavior.
      * @return void
      */
-    public function initialize(array $config): void
-    {
-    }
+    public function initialize(array $config): void {}
 
     /**
      * Get the table instance this behavior is bound to.
@@ -449,8 +447,8 @@ class Behavior implements EventListenerInterface
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $methodName = $method->getName();
             if (
-                in_array($methodName, $baseMethods, true) ||
-                isset($eventMethods[$methodName])
+                in_array($methodName, $baseMethods, true)
+                || isset($eventMethods[$methodName])
             ) {
                 continue;
             }

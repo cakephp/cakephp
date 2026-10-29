@@ -175,10 +175,13 @@ class MultiCheckboxWidget extends BasicWidget
             $checkbox['disabled'] = $this->isDisabled((string)$checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
                 if (isset($data['id'])) {
-                    $checkbox['id'] = $data['id'] . '-' . trim(
-                        $this->idSuffix((string)$checkbox['value']),
-                        '-',
-                    );
+                    $checkbox['id'] =
+                        $data['id']
+                        . '-'
+                        . trim(
+                            $this->idSuffix((string)$checkbox['value']),
+                            '-',
+                        );
                 } else {
                     $checkbox['id'] = $this->id($checkbox['name'], (string)$checkbox['value']);
                 }

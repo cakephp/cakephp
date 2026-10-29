@@ -37,12 +37,12 @@ class FunctionsGlobalTest extends TestCase
         $this->assertSame('this-is-a-test', debug('this-is-a-test', false));
         $result = ob_get_clean();
         $expectedText = <<<EXPECTED
-%s (line %d)
-########## DEBUG ##########
-'this-is-a-test'
-###########################
+            %s (line %d)
+            ########## DEBUG ##########
+            'this-is-a-test'
+            ###########################
 
-EXPECTED;
+            EXPECTED;
         $expected = sprintf($expectedText, Debugger::trimPath(__FILE__), __LINE__ - 9);
         $this->assertSame($expected, $result);
 
@@ -71,7 +71,8 @@ EXPECTED;
     {
         ob_start();
         // phpcs:ignore
-        stackTrace(); $expected = Debugger::trace();
+        stackTrace();
+        $expected = Debugger::trace();
         $this->assertSame($expected, ob_get_clean());
 
         Configure::write('debug', false);

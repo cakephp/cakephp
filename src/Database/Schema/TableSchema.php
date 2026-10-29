@@ -504,8 +504,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             throw new DatabaseException($message);
         }
 
-        $this->columns[$name]
-            ->setType($type)
+        $this->columns[$name]->setType($type)
             ->setBaseType(null);
         $this->typeMap[$name] = $type;
 
@@ -600,8 +599,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         foreach ($attrs['columns'] as $field) {
             if (empty($this->columns[$field])) {
                 $msg = sprintf(
-                    'Columns used in index `%s` in table `%s` must be added to the Table schema first. ' .
-                    'The column `%s` was not found.',
+                    'Columns used in index `%s` in table `%s` must be added to the Table schema first. '
+                        . 'The column `%s` was not found.',
                     $name,
                     $this->table,
                     $field,
@@ -715,8 +714,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             foreach ($attrs['columns'] as $field) {
                 if (empty($this->columns[$field])) {
                     $msg = sprintf(
-                        'Columns used in constraints must be added to the Table schema first. ' .
-                        'The column `%s` was not found in table `%s`.',
+                        'Columns used in constraints must be added to the Table schema first. '
+                            . 'The column `%s` was not found in table `%s`.',
                         $field,
                         $this->table,
                     );

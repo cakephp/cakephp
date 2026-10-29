@@ -212,7 +212,9 @@ class EntityRouteTest extends TestCase
     public function testInvalidEntityValueException(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.');
+        $this->expectExceptionMessage(
+            'Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.',
+        );
 
         $route = new EntityRoute('/', [
             '_entity' => 'Something else',

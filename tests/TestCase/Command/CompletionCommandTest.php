@@ -243,7 +243,9 @@ class CompletionCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
-            'list', 'clear', 'clear_all',
+            'list',
+            'clear',
+            'clear_all',
         ];
         foreach ($expected as $value) {
             $this->assertOutputContains($value);

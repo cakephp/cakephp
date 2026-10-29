@@ -38,19 +38,28 @@ class FileLogTest extends TestCase
         $this->assertFileExists(LOGS . 'error.log');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning/',
+            $result,
+        );
 
         $log->log('debug', 'Test warning');
         $this->assertFileExists(LOGS . 'debug.log');
 
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test warning/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test warning/',
+            $result,
+        );
 
         $log->log('random', 'Test warning');
         $this->assertFileExists(LOGS . 'random.log');
 
         $result = file_get_contents(LOGS . 'random.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ random: Test warning/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ random: Test warning/',
+            $result,
+        );
     }
 
     /**
@@ -143,7 +152,10 @@ class FileLogTest extends TestCase
         $this->assertFileExists($path . 'debug.log');
 
         $result = file_get_contents($path . 'debug.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test debug/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ debug: Test debug/',
+            $result,
+        );
         $this->assertFalse(strstr($result, 'greater than 5 bytes'));
         $this->assertCount(0, glob($path . 'debug.log.*'));
     }
@@ -204,6 +216,9 @@ class FileLogTest extends TestCase
         $log->log('warning', 'Test warning');
 
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+T[0-9]+:[0-9]+:[0-9]+\+\d{2}:\d{2} warning: Test warning/',
+            $result,
+        );
     }
 }

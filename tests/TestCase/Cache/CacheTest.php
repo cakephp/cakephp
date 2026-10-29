@@ -730,7 +730,9 @@ class CacheTest extends TestCase
         ]);
 
         $this->expectException(CacheWriteException::class);
-        $this->expectExceptionMessage('test_trigger cache was unable to write \'fail\' to TestApp\Cache\Engine\TestAppCacheEngine cache');
+        $this->expectExceptionMessage(
+            'test_trigger cache was unable to write \'fail\' to TestApp\Cache\Engine\TestAppCacheEngine cache',
+        );
 
         Cache::write('fail', 'value', 'test_trigger');
     }

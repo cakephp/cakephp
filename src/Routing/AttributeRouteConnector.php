@@ -67,9 +67,7 @@ class AttributeRouteConnector
     /**
      * @param \Cake\Routing\RouteBuilder $routeBuilder Route builder instance.
      */
-    public function __construct(protected readonly RouteBuilder $routeBuilder)
-    {
-    }
+    public function __construct(protected readonly RouteBuilder $routeBuilder) {}
 
     /**
      * Resolves attribute routes from the configured attribute resolver and connects them.
@@ -425,10 +423,14 @@ class AttributeRouteConnector
                     continue;
                 }
                 $methodKey = $declaringClass . '::' . $methodName;
-                $attributeKey = $declaringClass
-                    . ':' . $methodName
-                    . ':' . $info->attributeName
-                    . ':' . $info->lineNumber;
+                $attributeKey =
+                    $declaringClass
+                    . ':'
+                    . $methodName
+                    . ':'
+                    . $info->attributeName
+                    . ':'
+                    . $info->lineNumber;
                 $occurrence = $attributeOccurrences[$attributeKey] ?? 0;
                 $attributeOccurrences[$attributeKey] = $occurrence + 1;
                 $attributeKey .= ':' . $occurrence;

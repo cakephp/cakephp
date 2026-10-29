@@ -168,7 +168,9 @@ class AttributeRouteConnectorTest extends TestCase
         $this->assertSame('index', $result['action']);
         $route = $this->collection->routes()[0];
         $this->assertSame($path, $route->match([
-            'controller' => 'AttributeRouting', 'action' => 'index', '_method' => $method,
+            'controller' => 'AttributeRouting',
+            'action' => 'index',
+            '_method' => $method,
         ], []));
 
         if ($attribute === Route::class) {
@@ -357,7 +359,11 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/ghost', 'ghost'],
                 filePath: __FILE__,
                 lineNumber: 1,
-                target: new AttributeTarget(AttributeTargetType::METHOD, 'index', 'Missing\\Controller\\GhostController'),
+                target: new AttributeTarget(
+                    AttributeTargetType::METHOD,
+                    'index',
+                    'Missing\\Controller\\GhostController',
+                ),
             ),
             new AttributeInfo(
                 className: 'Cake\\Routing\\RouteBuilder',
@@ -394,7 +400,12 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 3,
-                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $className, true),
+                target: new AttributeTarget(
+                    AttributeTargetType::CLASS_,
+                    'AttributeRoutingBaseController',
+                    $className,
+                    true,
+                ),
             ),
             new AttributeInfo(
                 className: $className,
@@ -518,7 +529,11 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 13,
-                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $baseClassName),
+                target: new AttributeTarget(
+                    AttributeTargetType::CLASS_,
+                    'AttributeRoutingBaseController',
+                    $baseClassName,
+                ),
             ),
             new AttributeInfo(
                 className: $className,
@@ -585,7 +600,11 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 13,
-                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $baseClassName),
+                target: new AttributeTarget(
+                    AttributeTargetType::CLASS_,
+                    'AttributeRoutingBaseController',
+                    $baseClassName,
+                ),
             ),
             new AttributeInfo(
                 className: $className,
@@ -778,7 +797,7 @@ class AttributeRouteConnectorTest extends TestCase
     public function testExtractControllerMetadata(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param string|null $pluginName Plugin name.
@@ -793,7 +812,10 @@ class AttributeRouteConnectorTest extends TestCase
         $this->assertNull($helper->callExtractControllerMetadata('App\\Model\\Table\\UsersTable', null));
         $this->assertNull($helper->callExtractControllerMetadata('App\\Controller\\UsersTable', null));
 
-        $metadata = $helper->callExtractControllerMetadata('TestApp\\Controller\\Admin\\AttributeRoutingController', null);
+        $metadata = $helper->callExtractControllerMetadata(
+            'TestApp\\Controller\\Admin\\AttributeRoutingController',
+            null,
+        );
         $this->assertSame('AttributeRouting', $metadata['controller']);
         $this->assertSame('Admin', $metadata['prefix']);
         $this->assertSame('/admin', $metadata['prefixPath']);
@@ -807,7 +829,7 @@ class AttributeRouteConnectorTest extends TestCase
     public function testConnectControllerClassWithoutAttributes(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
@@ -832,40 +854,47 @@ class AttributeRouteConnectorTest extends TestCase
     public function testGetMethodAttributeGroupsSkipsMagicAndEmptyDeclaringClass(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param list<string> $hierarchy Parent-to-child class hierarchy.
              * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
              * @return array<int, array{methodName: string, infos: array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>}>
              */
-            public function callGetMethodAttributeGroups(string $className, array $hierarchy, array $classAttributes): array
-            {
+            public function callGetMethodAttributeGroups(
+                string $className,
+                array $hierarchy,
+                array $classAttributes,
+            ): array {
                 return $this->getMethodAttributeGroups($className, $hierarchy, $classAttributes);
             }
         };
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
-        $groups = $helper->callGetMethodAttributeGroups($className, [$className], [
-            $className => [
-                new AttributeInfo(
-                    className: $className,
-                    attributeName: Route::class,
-                    arguments: ['/magic', 'magic'],
-                    filePath: __FILE__,
-                    lineNumber: 1,
-                    target: new AttributeTarget(AttributeTargetType::METHOD, '__invoke', $className),
-                ),
-                new AttributeInfo(
-                    className: $className,
-                    attributeName: Route::class,
-                    arguments: ['/empty', 'empty'],
-                    filePath: __FILE__,
-                    lineNumber: 2,
-                    target: new AttributeTarget(AttributeTargetType::METHOD, 'index', ''),
-                ),
+        $groups = $helper->callGetMethodAttributeGroups(
+            $className,
+            [$className],
+            [
+                $className => [
+                    new AttributeInfo(
+                        className: $className,
+                        attributeName: Route::class,
+                        arguments: ['/magic', 'magic'],
+                        filePath: __FILE__,
+                        lineNumber: 1,
+                        target: new AttributeTarget(AttributeTargetType::METHOD, '__invoke', $className),
+                    ),
+                    new AttributeInfo(
+                        className: $className,
+                        attributeName: Route::class,
+                        arguments: ['/empty', 'empty'],
+                        filePath: __FILE__,
+                        lineNumber: 2,
+                        target: new AttributeTarget(AttributeTargetType::METHOD, 'index', ''),
+                    ),
+                ],
             ],
-        ]);
+        );
 
         $this->assertSame([], $groups);
     }
@@ -878,50 +907,57 @@ class AttributeRouteConnectorTest extends TestCase
     public function testGetMethodAttributeGroupsSkipsNonPublicMethods(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param list<string> $hierarchy Parent-to-child class hierarchy.
              * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
              * @return array<int, array{methodName: string, infos: array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>}>
              */
-            public function callGetMethodAttributeGroups(string $className, array $hierarchy, array $classAttributes): array
-            {
+            public function callGetMethodAttributeGroups(
+                string $className,
+                array $hierarchy,
+                array $classAttributes,
+            ): array {
                 return $this->getMethodAttributeGroups($className, $hierarchy, $classAttributes);
             }
         };
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
-        $groups = $helper->callGetMethodAttributeGroups($className, [$className], [
-            $className => [
-                new AttributeInfo(
-                    className: $className,
-                    attributeName: Route::class,
-                    arguments: ['/public', 'public'],
-                    filePath: __FILE__,
-                    lineNumber: 1,
-                    target: new AttributeTarget(
-                        AttributeTargetType::METHOD,
-                        'publicMethod',
-                        $className,
-                        methodVisibility: MethodVisibility::PUBLIC,
+        $groups = $helper->callGetMethodAttributeGroups(
+            $className,
+            [$className],
+            [
+                $className => [
+                    new AttributeInfo(
+                        className: $className,
+                        attributeName: Route::class,
+                        arguments: ['/public', 'public'],
+                        filePath: __FILE__,
+                        lineNumber: 1,
+                        target: new AttributeTarget(
+                            AttributeTargetType::METHOD,
+                            'publicMethod',
+                            $className,
+                            methodVisibility: MethodVisibility::PUBLIC,
+                        ),
                     ),
-                ),
-                new AttributeInfo(
-                    className: $className,
-                    attributeName: Route::class,
-                    arguments: ['/private', 'private'],
-                    filePath: __FILE__,
-                    lineNumber: 2,
-                    target: new AttributeTarget(
-                        AttributeTargetType::METHOD,
-                        'privateMethod',
-                        $className,
-                        methodVisibility: MethodVisibility::PRIVATE,
+                    new AttributeInfo(
+                        className: $className,
+                        attributeName: Route::class,
+                        arguments: ['/private', 'private'],
+                        filePath: __FILE__,
+                        lineNumber: 2,
+                        target: new AttributeTarget(
+                            AttributeTargetType::METHOD,
+                            'privateMethod',
+                            $className,
+                            methodVisibility: MethodVisibility::PRIVATE,
+                        ),
                     ),
-                ),
+                ],
             ],
-        ]);
+        );
 
         $this->assertCount(1, $groups);
         $this->assertSame('publicMethod', $groups[0]['methodName']);
@@ -935,43 +971,50 @@ class AttributeRouteConnectorTest extends TestCase
     public function testGetMethodAttributeGroupsDoesNotCollideAcrossFiles(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param list<string> $hierarchy Parent-to-child class hierarchy.
              * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
              * @return array<int, array{methodName: string, infos: array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>}>
              */
-            public function callGetMethodAttributeGroups(string $className, array $hierarchy, array $classAttributes): array
-            {
+            public function callGetMethodAttributeGroups(
+                string $className,
+                array $hierarchy,
+                array $classAttributes,
+            ): array {
                 return $this->getMethodAttributeGroups($className, $hierarchy, $classAttributes);
             }
         };
 
         $parentClass = 'TestApp\\Controller\\ParentController';
         $childClass = 'TestApp\\Controller\\ChildController';
-        $groups = $helper->callGetMethodAttributeGroups($childClass, [$parentClass, $childClass], [
-            $parentClass => [
-                new AttributeInfo(
-                    className: $parentClass,
-                    attributeName: Route::class,
-                    arguments: ['/same', 'same-parent'],
-                    filePath: '/tmp/ParentController.php',
-                    lineNumber: 10,
-                    target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $parentClass),
-                ),
+        $groups = $helper->callGetMethodAttributeGroups(
+            $childClass,
+            [$parentClass, $childClass],
+            [
+                $parentClass => [
+                    new AttributeInfo(
+                        className: $parentClass,
+                        attributeName: Route::class,
+                        arguments: ['/same', 'same-parent'],
+                        filePath: '/tmp/ParentController.php',
+                        lineNumber: 10,
+                        target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $parentClass),
+                    ),
+                ],
+                $childClass => [
+                    new AttributeInfo(
+                        className: $childClass,
+                        attributeName: Route::class,
+                        arguments: ['/same', 'same-child'],
+                        filePath: '/tmp/ChildController.php',
+                        lineNumber: 10,
+                        target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $childClass),
+                    ),
+                ],
             ],
-            $childClass => [
-                new AttributeInfo(
-                    className: $childClass,
-                    attributeName: Route::class,
-                    arguments: ['/same', 'same-child'],
-                    filePath: '/tmp/ChildController.php',
-                    lineNumber: 10,
-                    target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $childClass),
-                ),
-            ],
-        ]);
+        );
 
         $this->assertCount(2, $groups);
     }
@@ -984,7 +1027,7 @@ class AttributeRouteConnectorTest extends TestCase
     public function testBuildArgsByNameMapWithNamedKeys(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param array<int|string, string> $pass Route pass definitions.
              * @return array<string, int>
@@ -1008,7 +1051,7 @@ class AttributeRouteConnectorTest extends TestCase
     public function testNormalizePath(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param string $path Raw route path.
              * @return string
@@ -1033,7 +1076,7 @@ class AttributeRouteConnectorTest extends TestCase
     public function testExtractSpecialDefaults(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteConnector {
+        $helper = new class($routes) extends AttributeRouteConnector {
             /**
              * @param array<string, mixed> $defaults Route defaults.
              * @param array<string, mixed> $options Route options.

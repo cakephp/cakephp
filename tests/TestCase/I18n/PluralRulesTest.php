@@ -166,8 +166,12 @@ class PluralRulesTest extends TestCase
      * Tests that the correct plural form is returned when a custom plural rule is set
      */
     #[DataProvider('customResolverProvider')]
-    public function testCalculateCustomResolver(string $ruleLocale, string $calcLocale, int $number, int $expected): void
-    {
+    public function testCalculateCustomResolver(
+        string $ruleLocale,
+        string $calcLocale,
+        int $number,
+        int $expected,
+    ): void {
         PluralRules::setRule($ruleLocale, fn(int $n) => $n * 2);
         $this->assertEquals($expected, PluralRules::calculate($calcLocale, $number));
     }

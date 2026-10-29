@@ -40,25 +40,25 @@ class HelpFormatterTest extends TestCase
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text(30);
         $expected = <<<txt
-This is fifteen This is
-fifteen This is fifteen
+            This is fifteen This is
+            fifteen This is fifteen
 
-<info>Usage:</info>
-cake test [--four] [-h] [<four>]
+            <info>Usage:</info>
+            cake test [--four] [-h] [<four>]
 
-<info>Options:</info>
+            <info>Options:</info>
 
---four      this is help text
-            this is help text
---help, -h  Display this help.
+            --four      this is help text
+                        this is help text
+            --help, -h  Display this help.
 
-<info>Arguments:</info>
+            <info>Arguments:</info>
 
-four  this is help text this
-      is help text
-      <comment>(optional)</comment>
+            four  this is help text this
+                  is help text
+                  <comment>(optional)</comment>
 
-txt;
+            txt;
         $this->assertTextEquals($expected, $result, 'Generated help is too wide');
     }
 
@@ -79,20 +79,20 @@ txt;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = <<<txt
-<info>Usage:</info>
-cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
+            <info>Usage:</info>
+            cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
 
-<info>Options:</info>
+            <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option. <comment>(choices: one|two)</comment>
+            --help, -h  Display this help.
+            --test      A test option. <comment>(choices: one|two)</comment>
 
-<info>Arguments:</info>
+            <info>Arguments:</info>
 
-type          Resource type. <comment>(choices: aco|aro)</comment>
-other_longer  Another argument. <comment>(optional)</comment>
+            type          Resource type. <comment>(choices: aco|aro)</comment>
+            other_longer  Another argument. <comment>(optional)</comment>
 
-txt;
+            txt;
         $this->assertTextEquals($expected, $result, 'Help does not match');
     }
 
@@ -110,23 +110,23 @@ txt;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = <<<txt
-Description text
+            Description text
 
-<info>Usage:</info>
-cake mycommand [-h] [--test] <model>
+            <info>Usage:</info>
+            cake mycommand [-h] [--test] <model>
 
-<info>Options:</info>
+            <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option.
+            --help, -h  Display this help.
+            --test      A test option.
 
-<info>Arguments:</info>
+            <info>Arguments:</info>
 
-model  The model to make.
+            model  The model to make.
 
-epilog text
+            epilog text
 
-txt;
+            txt;
         $this->assertTextEquals($expected, $result, 'Help is wrong.');
     }
 
@@ -137,31 +137,31 @@ txt;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
-               ->addOption('number', [
-                   'help' => 'The number',
-                   'default' => '2',
-               ])
-                ->addOption('connection', [
-                    'short' => 'c',
-                    'help' => 'The connection to use.',
-                    'default' => 'default',
-                ]);
+            ->addOption('number', [
+                'help' => 'The number',
+                'default' => '2',
+            ])
+            ->addOption('connection', [
+                'short' => 'c',
+                'help' => 'The connection to use.',
+                'default' => 'default',
+            ]);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = <<<txt
-<info>Usage:</info>
-cake mycommand [-c default] [-h] [--number 2] [--test]
+            <info>Usage:</info>
+            cake mycommand [-c default] [-h] [--number 2] [--test]
 
-<info>Options:</info>
+            <info>Options:</info>
 
---connection, -c  The connection to use. <comment>(default:
-                  default)</comment>
---help, -h        Display this help.
---number          The number <comment>(default: 2)</comment>
---test            A test option.
+            --connection, -c  The connection to use. <comment>(default:
+                              default)</comment>
+            --help, -h        Display this help.
+            --number          The number <comment>(default: 2)</comment>
+            --test            A test option.
 
-txt;
+            txt;
         $this->assertTextEquals($expected, $result, 'Help does not match');
     }
 
@@ -178,20 +178,20 @@ txt;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = <<<xml
-<info>Usage:</info>
-cake mycommand [-h] [--test] <model> [<other_longer>]
+            <info>Usage:</info>
+            cake mycommand [-h] [--test] <model> [<other_longer>]
 
-<info>Options:</info>
+            <info>Options:</info>
 
---help, -h  Display this help.
---test      A test option.
+            --help, -h  Display this help.
+            --test      A test option.
 
-<info>Arguments:</info>
+            <info>Arguments:</info>
 
-model         The model to make.
-other_longer  Another argument. <comment>(optional)</comment>
+            model         The model to make.
+            other_longer  Another argument. <comment>(optional)</comment>
 
-xml;
+            xml;
         $this->assertTextEquals($expected, $result, 'Help does not match');
     }
 
@@ -201,8 +201,7 @@ xml;
     public function testHelpWithLotsOfOptions(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser
-            ->addOption('test', ['help' => 'A test option.'])
+        $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('test2', ['help' => 'A test option.'])
             ->addOption('test3', ['help' => 'A test option.'])
             ->addOption('test4', ['help' => 'A test option.'])
@@ -224,8 +223,7 @@ xml;
     public function testHelpWithLotsOfArguments(): void
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser
-            ->addArgument('test', ['help' => 'A test option.', 'required' => true])
+        $parser->addArgument('test', ['help' => 'A test option.', 'required' => true])
             ->addArgument('test2', ['help' => 'A test option.', 'required' => true])
             ->addArgument('test3', ['help' => 'A test option.'])
             ->addArgument('test4', ['help' => 'A test option.'])
@@ -271,37 +269,37 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
         $expected = <<<xml
-<?xml version="1.0"?>
-<shell>
-<command>mycommand</command>
-<description />
-<options>
-	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-		<default>false</default>
-		<choices></choices>
-	</option>
-	<option name="--test" short="" help="A test option." boolean="0" required="0">
-		<default></default>
-		<choices>
-			<choice>one</choice>
-			<choice>two</choice>
-		</choices>
-	</option>
-</options>
-<arguments>
-	<argument name="type" help="Resource type." required="1">
-		<choices>
-			<choice>aco</choice>
-			<choice>aro</choice>
-		</choices>
-	</argument>
-	<argument name="other_longer" help="Another argument." required="0" default="foo">
-		<choices></choices>
-	</argument>
-</arguments>
-<epilog />
-</shell>
-xml;
+            <?xml version="1.0"?>
+            <shell>
+            <command>mycommand</command>
+            <description />
+            <options>
+            	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+            		<default>false</default>
+            		<choices></choices>
+            	</option>
+            	<option name="--test" short="" help="A test option." boolean="0" required="0">
+            		<default></default>
+            		<choices>
+            			<choice>one</choice>
+            			<choice>two</choice>
+            		</choices>
+            	</option>
+            </options>
+            <arguments>
+            	<argument name="type" help="Resource type." required="1">
+            		<choices>
+            			<choice>aco</choice>
+            			<choice>aro</choice>
+            		</choices>
+            	</argument>
+            	<argument name="other_longer" help="Another argument." required="0" default="foo">
+            		<choices></choices>
+            	</argument>
+            </arguments>
+            <epilog />
+            </shell>
+            xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -319,28 +317,28 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
         $expected = <<<xml
-<?xml version="1.0"?>
-<shell>
-<command>mycommand</command>
-<description>Description text</description>
-<options>
-	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-		<default>false</default>
-		<choices></choices>
-	</option>
-	<option name="--test" short="" help="A test option." boolean="0" required="0">
-		<default></default>
-		<choices></choices>
-	</option>
-</options>
-<arguments>
-	<argument name="model" help="The model to make." required="1">
-		<choices></choices>
-	</argument>
-</arguments>
-<epilog>epilog text</epilog>
-</shell>
-xml;
+            <?xml version="1.0"?>
+            <shell>
+            <command>mycommand</command>
+            <description>Description text</description>
+            <options>
+            	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+            		<default>false</default>
+            		<choices></choices>
+            	</option>
+            	<option name="--test" short="" help="A test option." boolean="0" required="0">
+            		<default></default>
+            		<choices></choices>
+            	</option>
+            </options>
+            <arguments>
+            	<argument name="model" help="The model to make." required="1">
+            		<choices></choices>
+            	</argument>
+            </arguments>
+            <epilog>epilog text</epilog>
+            </shell>
+            xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -352,34 +350,36 @@ xml;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
+                'short' => 'c',
+                'help' => 'The connection to use.',
+                'default' => 'default',
             ]);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
         $expected = <<<xml
-<?xml version="1.0"?>
-<shell>
-<command>mycommand</command>
-<description/>
-<options>
-	<option name="--connection" short="-c" help="The connection to use." boolean="0" required="0">
-		<default>default</default>
-		<choices></choices>
-	</option>
-	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-		<default>false</default>
-		<choices></choices>
-	</option>
-	<option name="--test" short="" help="A test option." boolean="0" required="0">
-		<default></default>
-		<choices></choices>
-	</option>
-</options>
-<arguments/>
-<epilog/>
-</shell>
-xml;
+            <?xml version="1.0"?>
+            <shell>
+            <command>mycommand</command>
+            <description/>
+            <options>
+            	<option name="--connection" short="-c" help="The connection to use." boolean="0" required="0">
+            		<default>default</default>
+            		<choices></choices>
+            	</option>
+            	<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+            		<default>false</default>
+            		<choices></choices>
+            	</option>
+            	<option name="--test" short="" help="A test option." boolean="0" required="0">
+            		<default></default>
+            		<choices></choices>
+            	</option>
+            </options>
+            <arguments/>
+            <epilog/>
+            </shell>
+            xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
@@ -396,31 +396,31 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
         $expected = <<<xml
-<?xml version="1.0"?>
-<shell>
-	<command>mycommand</command>
-	<description/>
-	<options>
-		<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
-			<default>false</default>
-			<choices></choices>
-		</option>
-		<option name="--test" short="" help="A test option." boolean="0" required="0">
-			<default></default>
-			<choices></choices>
-		</option>
-	</options>
-	<arguments>
-		<argument name="model" help="The model to make." required="1">
-			<choices></choices>
-		</argument>
-		<argument name="other_longer" help="Another argument." required="0">
-			<choices></choices>
-		</argument>
-	</arguments>
-	<epilog/>
-</shell>
-xml;
+            <?xml version="1.0"?>
+            <shell>
+            	<command>mycommand</command>
+            	<description/>
+            	<options>
+            		<option name="--help" short="-h" help="Display this help." boolean="1" required="0">
+            			<default>false</default>
+            			<choices></choices>
+            		</option>
+            		<option name="--test" short="" help="A test option." boolean="0" required="0">
+            			<default></default>
+            			<choices></choices>
+            		</option>
+            	</options>
+            	<arguments>
+            		<argument name="model" help="The model to make." required="1">
+            			<choices></choices>
+            		</argument>
+            		<argument name="other_longer" help="Another argument." required="0">
+            			<choices></choices>
+            		</argument>
+            	</arguments>
+            	<epilog/>
+            </shell>
+            xml;
         $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 

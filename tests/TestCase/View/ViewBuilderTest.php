@@ -290,8 +290,7 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
 
-        $builder
-            ->setTemplate('default')
+        $builder->setTemplate('default')
             ->setLayout('test')
             ->setHelpers(['Html'])
             ->setClassName('JsonView');
@@ -319,8 +318,7 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
 
-        $builder
-            ->setTemplate('default')
+        $builder->setTemplate('default')
             ->setLayout('test')
             ->setHelpers(['Html'])
             ->setClassName('JsonView');

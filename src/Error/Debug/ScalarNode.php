@@ -27,9 +27,7 @@ class ScalarNode implements NodeInterface
      * @param string $type The type of scalar value.
      * @param resource|string|float|int|bool|null $value The wrapped value.
      */
-    public function __construct(private string $type, private $value)
-    {
-    }
+    public function __construct(private string $type, private $value) {}
 
     /**
      * Get the type of value

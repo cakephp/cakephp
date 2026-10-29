@@ -338,7 +338,7 @@ class SelectQuery extends Query implements IteratorAggregate
                 $t['conditions'] = $t['conditions']($this->expr(), $this);
             }
 
-            if (!($t['conditions'] instanceof ExpressionInterface)) {
+            if (!$t['conditions'] instanceof ExpressionInterface) {
                 $t['conditions'] = $this->expr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
@@ -609,7 +609,7 @@ class SelectQuery extends Query implements IteratorAggregate
 
         if ($window instanceof Closure) {
             $window = $window(new WindowExpression(), $this);
-            if (!($window instanceof WindowExpression)) {
+            if (!$window instanceof WindowExpression) {
                 throw new CakeException('You must return a `WindowExpression` from a Closure passed to `window()`.');
             }
         }

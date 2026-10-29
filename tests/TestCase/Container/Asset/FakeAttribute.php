@@ -9,9 +9,7 @@ use Cake\Container\Attribute\AttributeInterface;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 readonly class FakeAttribute implements AttributeInterface
 {
-    public function __construct(protected string $value)
-    {
-    }
+    public function __construct(protected string $value) {}
 
     public function resolve(): mixed
     {

@@ -34,9 +34,7 @@ class ButtonWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(protected StringTemplate $templates)
-    {
-    }
+    public function __construct(protected StringTemplate $templates) {}
 
     /**
      * Render a button.

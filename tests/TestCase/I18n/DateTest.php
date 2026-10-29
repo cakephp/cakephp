@@ -38,14 +38,18 @@ class DateTest extends TestCase
         parent::setUp();
 
         Cache::clear('_cake_translations_');
-        I18n::setTranslator('cake', function () {
-            $package = new Package();
-            $package->setMessages([
-                '{0} ago' => '{0} ago (translated)',
-            ]);
+        I18n::setTranslator(
+            'cake',
+            function () {
+                $package = new Package();
+                $package->setMessages([
+                    '{0} ago' => '{0} ago (translated)',
+                ]);
 
-            return $package;
-        }, 'fr_FR');
+                return $package;
+            },
+            'fr_FR',
+        );
     }
 
     /**

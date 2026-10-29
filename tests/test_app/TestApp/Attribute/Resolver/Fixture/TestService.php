@@ -12,6 +12,5 @@ class TestService
         $param1,
         #[TestInject(service: 'cache')]
         $param2,
-    ): void {
-    }
+    ): void {}
 }

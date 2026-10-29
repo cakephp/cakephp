@@ -22,6 +22,4 @@ use Cake\Controller\ErrorController as CoreErrorController;
  *
  * Controller used by ErrorHandler to render error views.
  */
-class ErrorController extends CoreErrorController
-{
-}
+class ErrorController extends CoreErrorController {}

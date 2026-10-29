@@ -35,9 +35,7 @@ class MiddlewareDispatcher
      *
      * @param \Cake\Core\HttpApplicationInterface $app The application that is being dispatched.
      */
-    public function __construct(protected HttpApplicationInterface $app)
-    {
-    }
+    public function __construct(protected HttpApplicationInterface $app) {}
 
     /**
      * Create a PSR7 request from the request spec.
@@ -67,8 +65,7 @@ class MiddlewareDispatcher
             $spec['files'],
         );
 
-        return $request
-            ->withAttribute('session', $spec['session'])
+        return $request->withAttribute('session', $spec['session'])
             ->withAttribute('flash', new FlashMessage($spec['session']));
     }
 

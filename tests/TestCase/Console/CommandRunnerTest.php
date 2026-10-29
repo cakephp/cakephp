@@ -83,8 +83,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testEventManagerProxies(): void
     {
-        $app = new class ($this->config) extends BaseApplication
-        {
+        $app = new class($this->config) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -321,8 +320,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunNoCommandWithCustomHeaderProvider(): void
     {
-        $app = new class ($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface
-        {
+        $app = new class($this->config) extends BaseApplication implements ConsoleHelpHeaderProviderInterface {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -578,13 +576,17 @@ class CommandRunnerTest extends TestCase
         $runner = $this->getRunner();
         $startedEventTriggered = false;
         $finishedEventTriggered = false;
-        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args, $io) use (&$startedEventTriggered): void {
+        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args, $io) use (
+            &$startedEventTriggered,
+        ): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $this->assertInstanceOf(ConsoleIo::class, $io);
             $startedEventTriggered = true;
         });
-        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $io, $result) use (&$finishedEventTriggered): void {
+        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $io, $result) use (
+            &$finishedEventTriggered,
+        ): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $this->assertInstanceOf(ConsoleIo::class, $io);
@@ -614,8 +616,12 @@ class CommandRunnerTest extends TestCase
                 return static::CODE_SUCCESS;
             }
 
-            public function afterExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io, ?int $result): void
-            {
+            public function afterExecute(
+                EventInterface $event,
+                Arguments $args,
+                ConsoleIoInterface $io,
+                ?int $result,
+            ): void {
                 $io->out('afterExecute run');
             }
         };
@@ -626,11 +632,14 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', 'lifecycle'], $this->getMockIo($output));
 
         $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
-        $this->assertSame([
-            'beforeExecute run',
-            'execute run',
-            'afterExecute run',
-        ], $output->messages());
+        $this->assertSame(
+            [
+                'beforeExecute run',
+                'execute run',
+                'afterExecute run',
+            ],
+            $output->messages(),
+        );
     }
 
     /**
@@ -640,8 +649,12 @@ class CommandRunnerTest extends TestCase
     {
         $app = $this->getMockBuilder(BaseApplication::class)
             ->onlyMethods([
-                'middleware', 'bootstrap', 'routes',
-                'pluginBootstrap', 'pluginConsole', 'pluginRoutes',
+                'middleware',
+                'bootstrap',
+                'routes',
+                'pluginBootstrap',
+                'pluginConsole',
+                'pluginRoutes',
             ])
             ->setConstructorArgs([$this->config])
             ->getMock();
@@ -683,7 +696,7 @@ class CommandRunnerTest extends TestCase
     public function testRunRegistersEventsEarly(): void
     {
         $output = new StubConsoleOutput();
-        $app = new class ($this->config) extends Application {
+        $app = new class($this->config) extends Application {
             public bool $customEventFired = false;
             public bool $pluginEventFired = false;
 
@@ -731,7 +744,7 @@ class CommandRunnerTest extends TestCase
                 return CommandInterface::CODE_SUCCESS;
             }
         };
-        $app = new class ($this->config, $command) extends Application {
+        $app = new class($this->config, $command) extends Application {
             public function __construct(
                 string $configDir,
                 protected Command $command,
@@ -773,7 +786,7 @@ class CommandRunnerTest extends TestCase
 
     protected function getRunner(): CommandRunner
     {
-        $app = new class ($this->config) extends BaseApplication {
+        $app = new class($this->config) extends BaseApplication {
             public function console(CommandCollection $commands): CommandCollection
             {
                 parent::console($commands);

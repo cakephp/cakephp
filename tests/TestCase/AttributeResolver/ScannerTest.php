@@ -446,17 +446,26 @@ class ScannerTest extends TestCase
     {
         $alias = $this->createPluginSymlink();
         $parser = Mockery::mock(Parser::class);
-        $parser->shouldReceive('parseFile')->once()->with(
-            Mockery::on(fn(SplFileInfo $file): bool => $file->getRealPath() === $this->fixturePath('plugin/src/Plugin.php')),
-            'Example',
-        )->andReturnUsing(static function (): Generator {
-            yield from [];
-        });
+        $parser->shouldReceive('parseFile')
+            ->once()
+            ->with(
+                Mockery::on(
+                    fn(SplFileInfo $file): bool => $file->getRealPath() === $this->fixturePath('plugin/src/Plugin.php'),
+                ),
+                'Example',
+            )
+            ->andReturnUsing(static function (): Generator {
+                yield from [];
+            });
 
-        $scanner = $this->createScanner(['src/Plugin.php'], plugins: [
-            ['path' => $alias, 'plugin' => 'Example'],
-            ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
-        ], parser: $parser);
+        $scanner = $this->createScanner(
+            ['src/Plugin.php'],
+            plugins: [
+                ['path' => $alias, 'plugin' => 'Example'],
+                ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
+            ],
+            parser: $parser,
+        );
 
         iterator_to_array($scanner->scanAll());
         $this->assertSame([$this->fixturePath('plugin/src/Plugin.php')], $scanner->getScannedFiles());
@@ -471,7 +480,9 @@ class ScannerTest extends TestCase
     {
         $alias = $this->createPluginSymlink();
         $parser = Mockery::mock(Parser::class);
-        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Example')
+        $parser->shouldReceive('parseFile')
+            ->once()
+            ->with(Mockery::type(SplFileInfo::class), 'Example')
             ->andReturnUsing(static function (): Generator {
                 yield from [];
             });
@@ -491,7 +502,9 @@ class ScannerTest extends TestCase
     public function testScanAllPreservesPluginForSharedBasePath(): void
     {
         $parser = Mockery::mock(Parser::class);
-        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Example')
+        $parser->shouldReceive('parseFile')
+            ->once()
+            ->with(Mockery::type(SplFileInfo::class), 'Example')
             ->andReturnUsing(static function (): Generator {
                 yield from [];
             });
@@ -512,7 +525,9 @@ class ScannerTest extends TestCase
     public function testScanAllRequiresPluginDirectoryBoundary(): void
     {
         $parser = Mockery::mock(Parser::class);
-        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), null)
+        $parser->shouldReceive('parseFile')
+            ->once()
+            ->with(Mockery::type(SplFileInfo::class), null)
             ->andReturnUsing(static function (): Generator {
                 yield from [];
             });
@@ -532,7 +547,9 @@ class ScannerTest extends TestCase
     public function testScanAllIdentifiesNestedPlugin(): void
     {
         $parser = Mockery::mock(Parser::class);
-        $parser->shouldReceive('parseFile')->once()->with(Mockery::type(SplFileInfo::class), 'Nested')
+        $parser->shouldReceive('parseFile')
+            ->once()
+            ->with(Mockery::type(SplFileInfo::class), 'Nested')
             ->andReturnUsing(static function (): Generator {
                 yield from [];
             });
@@ -601,7 +618,7 @@ class ScannerTest extends TestCase
         $file = $this->scanRoot . '/plugin/src/Large.php';
         $handle = fopen($file, 'w');
         $this->assertNotFalse($handle);
-        ftruncate($handle, 10 * 1024 * 1024 + 1);
+        ftruncate($handle, (10 * 1024 * 1024) + 1);
         fclose($handle);
 
         $scanner = $this->createScanner(['src/*.php', 'src/**/*.php']);
@@ -641,16 +658,34 @@ class ScannerTest extends TestCase
         return [
             'recursive source glob' => [['src/**/*.php'], [], ['src/Controller/Example.php']],
             'direct source file' => [['src/Plugin.php'], [], ['src/Plugin.php']],
-            'backslash separators' => [['src\\*.php', 'src\\**\\*.php'], [], [
-                'src/Plugin.php', 'src/Controller/Example.php',
-            ]],
+            'backslash separators' => [
+                ['src\\*.php', 'src\\**\\*.php'],
+                [],
+                [
+                    'src/Plugin.php',
+                    'src/Controller/Example.php',
+                ],
+            ],
             'custom plugin directory' => [['config/*.php'], [], ['config/routes.php']],
-            'source and config' => [['src/*.php', 'src/**/*.php', 'config/*.php'], [], [
-                'src/Plugin.php', 'src/Controller/Example.php', 'config/routes.php',
-            ]],
-            'broad glob' => [['**/*.php'], [], [
-                'src/Plugin.php', 'src/Controller/Example.php', 'config/routes.php', 'vendor/package/Dependency.php',
-            ]],
+            'source and config' => [
+                ['src/*.php', 'src/**/*.php', 'config/*.php'],
+                [],
+                [
+                    'src/Plugin.php',
+                    'src/Controller/Example.php',
+                    'config/routes.php',
+                ],
+            ],
+            'broad glob' => [
+                ['**/*.php'],
+                [],
+                [
+                    'src/Plugin.php',
+                    'src/Controller/Example.php',
+                    'config/routes.php',
+                    'vendor/package/Dependency.php',
+                ],
+            ],
             'excluded source root' => [['src/*.php', 'src/**/*.php'], ['src'], []],
             'excluded source subdirectory' => [['src/*.php', 'src/**/*.php'], ['Controller'], ['src/Plugin.php']],
             'excluded file' => [['src/*.php', 'src/**/*.php'], ['Plugin.php'], ['src/Controller/Example.php']],
@@ -690,11 +725,19 @@ class ScannerTest extends TestCase
         ?string $basePath = null,
     ): Scanner {
         $scanner = Mockery::mock(Scanner::class, [
-            $parser ?? new Parser(), $paths, $excludePaths, $basePath ?? $this->scanRoot . '/app',
-        ])->makePartial()->shouldAllowMockingProtectedMethods();
-        $scanner->shouldReceive('getLoadedPlugins')->andReturn($plugins ?? [
-            ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
-        ]);
+            $parser ?? new Parser(),
+            $paths,
+            $excludePaths,
+            $basePath ?? $this->scanRoot . '/app',
+        ])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $scanner->shouldReceive('getLoadedPlugins')
+            ->andReturn(
+                $plugins ?? [
+                    ['path' => $this->scanRoot . '/plugin', 'plugin' => 'Example'],
+                ],
+            );
 
         return $scanner;
     }

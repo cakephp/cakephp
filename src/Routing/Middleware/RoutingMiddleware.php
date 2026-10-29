@@ -41,9 +41,7 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @param \Cake\Routing\RoutingApplicationInterface $app The application instance that routes are defined on.
      */
-    public function __construct(protected RoutingApplicationInterface $app)
-    {
-    }
+    public function __construct(protected RoutingApplicationInterface $app) {}
 
     /**
      * Trigger the application's and plugin's routes() hook.

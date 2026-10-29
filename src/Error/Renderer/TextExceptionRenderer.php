@@ -32,9 +32,7 @@ class TextExceptionRenderer implements ExceptionRendererInterface
      *
      * @param \Throwable $error The error to render.
      */
-    public function __construct(protected Throwable $error)
-    {
-    }
+    public function __construct(protected Throwable $error) {}
 
     /**
      * Render an exception into a plain text message.

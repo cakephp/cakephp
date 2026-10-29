@@ -166,11 +166,11 @@ class ResponseTest extends TestCase
     public function testBodyXml(): void
     {
         $data = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-	<test>Test</test>
-</root>
-XML;
+            <?xml version="1.0" encoding="utf-8"?>
+            <root>
+            	<test>Test</test>
+            </root>
+            XML;
         $response = new Response([], $data);
         $this->assertSame('Test', (string)$response->getXml()->test);
 
@@ -244,52 +244,73 @@ XML;
         return [
             [
                 true,
-                new Response([
-                    'HTTP/1.1 200 OK',
-                    'Content-Type: text/html',
-                ], 'ok'),
+                new Response(
+                    [
+                        'HTTP/1.1 200 OK',
+                        'Content-Type: text/html',
+                    ],
+                    'ok',
+                ),
             ],
             [
                 true,
-                new Response([
-                    'HTTP/1.1 201 Created',
-                    'Content-Type: text/html',
-                ], 'ok'),
+                new Response(
+                    [
+                        'HTTP/1.1 201 Created',
+                        'Content-Type: text/html',
+                    ],
+                    'ok',
+                ),
             ],
             [
                 true,
-                new Response([
-                    'HTTP/1.1 202 Accepted',
-                    'Content-Type: text/html',
-                ], 'ok'),
+                new Response(
+                    [
+                        'HTTP/1.1 202 Accepted',
+                        'Content-Type: text/html',
+                    ],
+                    'ok',
+                ),
             ],
             [
                 true,
-                new Response([
-                    'HTTP/1.1 203 Non-Authoritative Information',
-                    'Content-Type: text/html',
-                ], 'ok'),
+                new Response(
+                    [
+                        'HTTP/1.1 203 Non-Authoritative Information',
+                        'Content-Type: text/html',
+                    ],
+                    'ok',
+                ),
             ],
             [
                 true,
-                new Response([
-                    'HTTP/1.1 204 No Content',
-                    'Content-Type: text/html',
-                ], ''),
+                new Response(
+                    [
+                        'HTTP/1.1 204 No Content',
+                        'Content-Type: text/html',
+                    ],
+                    '',
+                ),
             ],
             [
                 false,
-                new Response([
-                    'HTTP/1.1 301 Moved Permanently',
-                    'Content-Type: text/html',
-                ], ''),
+                new Response(
+                    [
+                        'HTTP/1.1 301 Moved Permanently',
+                        'Content-Type: text/html',
+                    ],
+                    '',
+                ),
             ],
             [
                 false,
-                new Response([
-                    'HTTP/1.0 404 Not Found',
-                    'Content-Type: text/html',
-                ], ''),
+                new Response(
+                    [
+                        'HTTP/1.0 404 Not Found',
+                        'Content-Type: text/html',
+                    ],
+                    '',
+                ),
             ],
         ];
     }

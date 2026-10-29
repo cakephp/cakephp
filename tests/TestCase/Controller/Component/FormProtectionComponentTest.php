@@ -83,10 +83,12 @@ class FormProtectionComponentTest extends TestCase
         $unlocked = '';
         $debug = '';
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $event = new Event('Controller.startup', $this->Controller);
 
@@ -121,10 +123,12 @@ class FormProtectionComponentTest extends TestCase
         );
         $fields .= urlencode(':id');
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'id' => '1',
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'id' => '1',
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->assertNull($this->FormProtection->startup($event));
@@ -140,10 +144,13 @@ class FormProtectionComponentTest extends TestCase
             [],
         ]));
 
-        $this->Controller->setRequest($this->Controller->getRequest()
-            ->withEnv('REQUEST_METHOD', 'GET')
-            ->withData('Model', ['username' => 'nate', 'password' => 'foo', 'valid' => '0'])
-            ->withData('_Token', compact('fields', 'unlocked', 'debug')));
+        $this->Controller->setRequest(
+            $this->Controller
+                ->getRequest()
+                ->withEnv('REQUEST_METHOD', 'GET')
+                ->withData('Model', ['username' => 'nate', 'password' => 'foo', 'valid' => '0'])
+                ->withData('_Token', compact('fields', 'unlocked', 'debug')),
+        );
 
         $event = new Event('Controller.startup', $this->Controller);
 
@@ -162,23 +169,30 @@ class FormProtectionComponentTest extends TestCase
 
         $fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $event = new Event('Controller.startup', $this->Controller);
 
         $this->expectException(FormProtectionException::class);
-        $this->expectExceptionMessage('Unexpected field `Model.password` in POST data, Unexpected field `Model.username` in POST data');
+        $this->expectExceptionMessage(
+            'Unexpected field `Model.password` in POST data, Unexpected field `Model.username` in POST data',
+        );
         $this->FormProtection->startup($event);
     }
 
     public function testValidationEmptyForm(): void
     {
-        $this->Controller->setRequest($this->Controller->getRequest()
-            ->withEnv('REQUEST_METHOD', 'POST')
-            ->withParsedBody([]));
+        $this->Controller->setRequest(
+            $this->Controller
+                ->getRequest()
+                ->withEnv('REQUEST_METHOD', 'POST')
+                ->withParsedBody([]),
+        );
 
         $event = new Event('Controller.startup', $this->Controller);
 
@@ -199,16 +213,20 @@ class FormProtectionComponentTest extends TestCase
         $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
         $fields .= urlencode(':Model.hidden|Model.id');
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'Model' => [
-                'hidden' => 'tampered',
-                'id' => '1',
-            ],
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'Model' => [
+                    'hidden' => 'tampered',
+                    'id' => '1',
+                ],
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $this->expectException(FormProtectionException::class);
-        $this->expectExceptionMessage('Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
+        $this->expectExceptionMessage(
+            'Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)',
+        );
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->FormProtection->startup($event);
@@ -226,11 +244,13 @@ class FormProtectionComponentTest extends TestCase
         ]));
         $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'open' => 'yes',
-            'title' => 'yay',
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'open' => 'yes',
+                'title' => 'yay',
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $this->expectException(FormProtectionException::class);
         $this->expectExceptionMessage('Missing unlocked field');
@@ -251,11 +271,13 @@ class FormProtectionComponentTest extends TestCase
         ]));
         $fields = hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt());
 
-        $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
-            'title' => 'yay',
-            'open' => 'yes',
-            '_Token' => compact('fields', 'unlocked', 'debug'),
-        ]));
+        $this->Controller->setRequest($this->Controller
+            ->getRequest()
+            ->withParsedBody([
+                'title' => 'yay',
+                'open' => 'yes',
+                '_Token' => compact('fields', 'unlocked', 'debug'),
+            ]));
 
         $event = new Event('Controller.startup', $this->Controller);
         $this->FormProtection->setConfig('unlockedFields', ['open']);
@@ -269,9 +291,12 @@ class FormProtectionComponentTest extends TestCase
             return new Response(['body' => 'from callback']);
         });
 
-        $this->Controller->setRequest($this->Controller->getRequest()
-            ->withEnv('REQUEST_METHOD', 'POST')
-            ->withParsedBody([]));
+        $this->Controller->setRequest(
+            $this->Controller
+                ->getRequest()
+                ->withEnv('REQUEST_METHOD', 'POST')
+                ->withParsedBody([]),
+        );
 
         $event = new Event('Controller.startup', $this->Controller);
 

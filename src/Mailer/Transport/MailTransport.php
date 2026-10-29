@@ -93,6 +93,7 @@ class MailTransport extends AbstractTransport
             $msg = 'Could not send email: ' . ($error['message'] ?? 'unknown');
             throw new CakeException($msg);
         }
+
         // phpcs:enable
     }
 }

@@ -116,16 +116,16 @@ class XmlViewTest extends TestCase
         $Controller = new Controller($Request);
         $data = [
             'tags' => [
-                    'tag' => [
-                        [
-                            'id' => '1',
-                            'name' => 'defect',
-                        ],
-                        [
-                            'id' => '2',
-                            'name' => 'enhancement',
-                        ],
+                'tag' => [
+                    [
+                        'id' => '1',
+                        'name' => 'defect',
                     ],
+                    [
+                        'id' => '2',
+                        'name' => 'enhancement',
+                    ],
+                ],
             ],
         ];
         $xmlOptions = ['format' => 'attributes', 'return' => 'domdocument'];
@@ -352,7 +352,8 @@ class XmlViewTest extends TestCase
         $Request = new ServerRequest();
         $Controller = new Controller($Request);
 
-        $data = $this->getTableLocator()->get('Authors')
+        $data = $this->getTableLocator()
+            ->get('Authors')
             ->find('all')
             ->where(['id' => 1]);
         $Controller->set(['authors' => $data]);
@@ -363,8 +364,10 @@ class XmlViewTest extends TestCase
         $output = $View->render();
 
         $this->assertSame(
-            '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
-            . '<response><authors><id>1</id><name>mariano</name></authors></response>' . "\n",
+            '<?xml version="1.0" encoding="UTF-8"?>'
+                . "\n"
+                . '<response><authors><id>1</id><name>mariano</name></authors></response>'
+                . "\n",
             $output,
         );
         $this->assertSame('application/xml', $View->getResponse()->getType());

@@ -150,19 +150,22 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder()),
         );
 
-        $f = new AggregateExpression('MyFunction')->range(null)->excludeCurrent();
+        $f = new AggregateExpression('MyFunction')->range(null)
+            ->excludeCurrent();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = new AggregateExpression('MyFunction')->range(null)->excludeGroup();
+        $f = new AggregateExpression('MyFunction')->range(null)
+            ->excludeGroup();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = new AggregateExpression('MyFunction')->range(null)->excludeTies();
+        $f = new AggregateExpression('MyFunction')->range(null)
+            ->excludeTies();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES)',
             $f->sql(new ValueBinder()),
@@ -174,8 +177,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testTraverse(): void
     {
-        $w = new AggregateExpression('MyFunction')
-            ->filter(['this' => true])
+        $w = new AggregateExpression('MyFunction')->filter(['this' => true])
             ->over();
 
         $expressions = [];

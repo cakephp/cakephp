@@ -153,8 +153,9 @@ class TableSchemaTest extends TestCase
             'type' => 'string',
             'length' => 25,
             'null' => false,
-        ])->removeColumn('title')
-        ->removeColumn('unknown');
+        ])
+            ->removeColumn('title')
+            ->removeColumn('unknown');
 
         $this->assertSame($table, $result);
         $this->assertEquals([], $table->columns());
@@ -321,22 +322,26 @@ class TableSchemaTest extends TestCase
         $table->addColumn('id', [
             'type' => 'integer',
             'default' => 0,
-        ])->addColumn('title', [
-            'type' => 'string',
-            'default' => 'A title',
-        ])->addColumn('name', [
-            'type' => 'string',
-            'null' => false,
-            'default' => null,
-        ])->addColumn('body', [
-            'type' => 'text',
-            'null' => true,
-            'default' => null,
-        ])->addColumn('hash', [
-            'type' => 'char',
-            'default' => '098f6bcd4621d373cade4e832627b4f6',
-            'length' => 32,
-        ]);
+        ])
+            ->addColumn('title', [
+                'type' => 'string',
+                'default' => 'A title',
+            ])
+            ->addColumn('name', [
+                'type' => 'string',
+                'null' => false,
+                'default' => null,
+            ])
+            ->addColumn('body', [
+                'type' => 'text',
+                'null' => true,
+                'default' => null,
+            ])
+            ->addColumn('hash', [
+                'type' => 'char',
+                'default' => '098f6bcd4621d373cade4e832627b4f6',
+                'length' => 32,
+            ]);
         $result = $table->defaultValues();
         $expected = [
             'id' => 0,
@@ -380,23 +385,27 @@ class TableSchemaTest extends TestCase
             'default' => null,
             'limit' => 11,
             'null' => false,
-        ])->addColumn('id', [
-            'type' => 'integer',
-            'autoIncrement' => true,
-            'limit' => 11,
-        ])->addColumn('user_id', [
-            'type' => 'integer',
-            'default' => null,
-            'limit' => 11,
-            'null' => false,
-        ])->addConstraint('users_idx', [
-            'type' => 'unique',
-            'columns' => ['project_id', 'user_id'],
-        ])->addConstraint('users_idx', [
-            'type' => 'foreign',
-            'references' => ['users', 'project_id', 'id'],
-            'columns' => ['project_id', 'user_id'],
-        ]);
+        ])
+            ->addColumn('id', [
+                'type' => 'integer',
+                'autoIncrement' => true,
+                'limit' => 11,
+            ])
+            ->addColumn('user_id', [
+                'type' => 'integer',
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
+            ->addConstraint('users_idx', [
+                'type' => 'unique',
+                'columns' => ['project_id', 'user_id'],
+            ])
+            ->addConstraint('users_idx', [
+                'type' => 'foreign',
+                'references' => ['users', 'project_id', 'id'],
+                'columns' => ['project_id', 'user_id'],
+            ]);
         $this->assertEquals(['users_idx'], $table->constraints());
     }
 
@@ -524,12 +533,12 @@ class TableSchemaTest extends TestCase
             ->addColumn('author_id', 'integer');
 
         $table->addIndex('author_idx', [
-                'columns' => ['author_id'],
-                'type' => 'index',
-            ])->addIndex('texty', [
-                'type' => 'fulltext',
-                'columns' => ['title'],
-            ]);
+            'columns' => ['author_id'],
+            'type' => 'index',
+        ])->addIndex('texty', [
+            'type' => 'fulltext',
+            'columns' => ['title'],
+        ]);
 
         $this->assertEquals(
             ['author_idx', 'texty'],
@@ -549,7 +558,8 @@ class TableSchemaTest extends TestCase
             ->addConstraint('author_idx', [
                 'columns' => ['author_id'],
                 'type' => 'unique',
-            ])->addConstraint('primary', [
+            ])
+            ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
             ]);
@@ -663,8 +673,9 @@ class TableSchemaTest extends TestCase
         ];
         $this->assertEquals($expected, $compositeConstraint);
 
-        $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)" .
-            ' REFERENCES <products> \(<category>, <id>\)';
+        $expectedSubstring =
+            "CONSTRAINT <{$name}> FOREIGN KEY \\(<product_category>, <product_id>\\)"
+            . ' REFERENCES <products> \(<category>, <id>\)';
 
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
     }
@@ -733,8 +744,8 @@ class TableSchemaTest extends TestCase
     {
         // Serialized state from <5.3 where columns, indexes, and constraints contained array data.
         $state = <<<'STATE'
-        O:32:"Cake\Database\Schema\TableSchema":7:{s:8:" * table";s:8:"articles";s:10:" * columns";a:6:{s:2:"id";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:13:"autoIncrement";b:1;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;}s:5:"title";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}s:7:"excerpt";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:6:"rating";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;s:13:"autoIncrement";N;}s:7:"content";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:4:"name";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}}s:10:" * typeMap";a:6:{s:2:"id";s:7:"integer";s:5:"title";s:6:"string";s:7:"excerpt";s:4:"text";s:6:"rating";s:7:"integer";s:7:"content";s:4:"text";s:4:"name";s:6:"string";}s:10:" * indexes";a:2:{s:12:"rating_index";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:6:"rating";}s:6:"length";a:0:{}}s:7:"by_name";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:4:"name";}s:6:"length";a:0:{}}}s:14:" * constraints";a:1:{s:7:"primary";a:3:{s:4:"type";s:7:"primary";s:7:"columns";a:1:{i:0;s:2:"id";}s:6:"length";a:0:{}}}s:10:" * options";a:0:{}s:12:" * temporary";b:0;}
-        STATE;
+            O:32:"Cake\Database\Schema\TableSchema":7:{s:8:" * table";s:8:"articles";s:10:" * columns";a:6:{s:2:"id";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:13:"autoIncrement";b:1;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;}s:5:"title";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}s:7:"excerpt";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:6:"rating";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;s:13:"autoIncrement";N;}s:7:"content";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:4:"name";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}}s:10:" * typeMap";a:6:{s:2:"id";s:7:"integer";s:5:"title";s:6:"string";s:7:"excerpt";s:4:"text";s:6:"rating";s:7:"integer";s:7:"content";s:4:"text";s:4:"name";s:6:"string";}s:10:" * indexes";a:2:{s:12:"rating_index";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:6:"rating";}s:6:"length";a:0:{}}s:7:"by_name";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:4:"name";}s:6:"length";a:0:{}}}s:14:" * constraints";a:1:{s:7:"primary";a:3:{s:4:"type";s:7:"primary";s:7:"columns";a:1:{i:0;s:2:"id";}s:6:"length";a:0:{}}}s:10:" * options";a:0:{}s:12:" * temporary";b:0;}
+            STATE;
         $schema = unserialize(trim($state));
 
         $this->assertInstanceOf(TableSchema::class, $schema);

@@ -86,7 +86,9 @@ class LinkConstraintTest extends TestCase
     public function testInvalidConstructorArgumentTwo(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.');
+        $this->expectExceptionMessage(
+            'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.',
+        );
 
         new LinkConstraint('Association', 'invalid');
     }
@@ -117,8 +119,8 @@ class LinkConstraintTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage(
-            'LinkConstraint rule on `Articles` requires all primary key values for building the counting ' .
-            'conditions, expected values for `(id, nonexistent)`, got `(1, )`.',
+            'LinkConstraint rule on `Articles` requires all primary key values for building the counting '
+                . 'conditions, expected values for `(id, nonexistent)`, got `(1, )`.',
         );
 
         $Articles = $this->getTableLocator()->get('Articles');
@@ -154,8 +156,7 @@ class LinkConstraintTest extends TestCase
         /** @var \Cake\ORM\Rule\LinkConstraint&\Mockery\MockInterface $ruleMock */
         $ruleMock = Mockery::mock(LinkConstraint::class, ['Comments', LinkConstraint::STATUS_NOT_LINKED])
             ->makePartial();
-        $ruleMock
-            ->shouldAllowMockingProtectedMethods()
+        $ruleMock->shouldAllowMockingProtectedMethods()
             ->shouldReceive('aliasFields')
             ->once()
             ->andReturn([]);
@@ -190,7 +191,9 @@ class LinkConstraintTest extends TestCase
     public function testInvalidRepository($options): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`');
+        $this->expectExceptionMessage(
+            'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`',
+        );
 
         $rulesChecker = new RulesChecker($options);
 
@@ -616,8 +619,7 @@ class LinkConstraintTest extends TestCase
             'foreignKey' => false,
             'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
-                $subQuery = $connection
-                    ->selectQuery(['RecentComments.id'])
+                $subQuery = $connection->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(
@@ -652,8 +654,7 @@ class LinkConstraintTest extends TestCase
             'foreignKey' => false,
             'conditions' => function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
-                $subQuery = $connection
-                    ->selectQuery(['RecentComments.id'])
+                $subQuery = $connection->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
                         return $exp->eq(
@@ -934,13 +935,11 @@ class LinkConstraintTest extends TestCase
     public function testImplicitHasManyDeleteErrors(): void
     {
         $Articles = $this->getTableLocator()->get('Articles');
-        $Articles
-            ->hasMany('Comments')
+        $Articles->hasMany('Comments')
             ->setDependent(true)
             ->setCascadeCallbacks(true)
             ->setSaveStrategy(HasMany::SAVE_REPLACE);
-        $Articles
-            ->getAssociation('Comments')
+        $Articles->getAssociation('Comments')
             ->hasMany('Attachments');
 
         $rulesChecker = $Articles->getAssociation('Comments')->rulesChecker();
@@ -954,10 +953,11 @@ class LinkConstraintTest extends TestCase
 
         $article = $Articles->get(2);
         $article->set('comments', [
-            $Articles->getAssociation('Comments')->newEntity([
-                'user_id' => 1,
-                'comment' => 'New Comment',
-            ]),
+            $Articles->getAssociation('Comments')
+                ->newEntity([
+                    'user_id' => 1,
+                    'comment' => 'New Comment',
+                ]),
         ]);
         $article->setDirty('comments', true);
         $this->assertFalse($Articles->save($article));
@@ -987,10 +987,11 @@ class LinkConstraintTest extends TestCase
 
         $article = $Articles->get(1);
         $article->set('tags', [
-            $Articles->getAssociation('Tags')->newEntity([
-                'name' => 'New Tag',
-                'description' => 'New Tag',
-            ]),
+            $Articles->getAssociation('Tags')
+                ->newEntity([
+                    'name' => 'New Tag',
+                    'description' => 'New Tag',
+                ]),
         ]);
         $article->setDirty('tags', true);
         $this->assertFalse($Articles->save($article));

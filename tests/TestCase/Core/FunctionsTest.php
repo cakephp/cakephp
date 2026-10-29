@@ -461,7 +461,7 @@ class FunctionsTest extends TestCase
     }
 
     #[DataProvider('toIntProvider')]
-    public function testToInt(mixed $rawValue, null|int $expected): void
+    public function testToInt(mixed $rawValue, ?int $expected): void
     {
         $this->assertSame($expected, toInt($rawValue));
     }
@@ -556,7 +556,7 @@ class FunctionsTest extends TestCase
     }
 
     #[DataProvider('toIntProviderWithWarning')]
-    public function testToIntWithWarning(mixed $rawValue, null|int $expected): void
+    public function testToIntWithWarning(mixed $rawValue, ?int $expected): void
     {
         if (version_compare(PHP_VERSION, '8.5', '>=')) {
             $this->expectErrorHandlerMessageMatches(
@@ -582,7 +582,7 @@ class FunctionsTest extends TestCase
     }
 
     #[DataProvider('toFloatProvider')]
-    public function testToFloat(mixed $rawValue, null|float $expected): void
+    public function testToFloat(mixed $rawValue, ?float $expected): void
     {
         $this->assertSame($expected, toFloat($rawValue));
     }

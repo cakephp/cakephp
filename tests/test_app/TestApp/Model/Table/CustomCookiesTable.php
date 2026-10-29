@@ -19,6 +19,4 @@ use Cake\ORM\Table;
 /**
  * CustomCookies table class
  */
-class CustomCookiesTable extends Table
-{
-}
+class CustomCookiesTable extends Table {}

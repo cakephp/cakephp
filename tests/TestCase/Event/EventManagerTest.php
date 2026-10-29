@@ -201,8 +201,7 @@ class EventManagerTest extends TestCase
     public function testOffFromAll(): void
     {
         $manager = new EventManager();
-        $callable = function (): void {
-        };
+        $callable = function (): void {};
         $manager->on('fake.event', $callable);
         $manager->on('another.event', $callable);
         $manager->on('another.event', 'substr', ['priority' => 1]);
@@ -420,7 +419,7 @@ class EventManagerTest extends TestCase
 
         $event = new Event('another.event', $this, ['some' => 'data']);
         $manager->dispatch($event);
-        $this->assertEquals(['listenerFunction','secondListenerFunction'], $listener->callList);
+        $this->assertEquals(['listenerFunction', 'secondListenerFunction'], $listener->callList);
     }
 
     /**
@@ -447,7 +446,7 @@ class EventManagerTest extends TestCase
         $manager->on($listener);
         $event = new Event('multiple.handlers');
         $manager->dispatch($event);
-        $this->assertEquals(['listenerFunction','secondListenerFunction'], $listener->callList);
+        $this->assertEquals(['listenerFunction', 'secondListenerFunction'], $listener->callList);
     }
 
     /**
@@ -485,8 +484,7 @@ class EventManagerTest extends TestCase
     public function testDetachSubscriber(): void
     {
         $manager = new EventManager();
-        $listener = new class extends CustomTestEventListenerInterface {
-        };
+        $listener = new class extends CustomTestEventListenerInterface {};
         $manager->on($listener);
         $expected = [
             ['callable' => $listener->secondListenerFunction(...)],
@@ -536,7 +534,8 @@ class EventManagerTest extends TestCase
             }
         };
 
-        $generalManager = new EventManager()->trackEvents(true)->setEventList(new EventList());
+        $generalManager = new EventManager()->trackEvents(true)
+            ->setEventList(new EventList());
         $manager = new EventManager();
         $event = new Event('fake.event');
         EventManager::instance($generalManager);
@@ -554,8 +553,7 @@ class EventManagerTest extends TestCase
      */
     public function testStopPropagation(): void
     {
-        $generalManager = new class extends EventManager
-        {
+        $generalManager = new class extends EventManager {
             public function prioritisedListeners(string $name): array
             {
                 return [];
@@ -584,17 +582,16 @@ class EventManagerTest extends TestCase
     public function testDispatchPrioritizedWithGlobal(): void
     {
         $listener = new CustomTestEventListenerInterface();
-        $generalManager = new class ($listener) extends EventManager
-        {
-            public function __construct(public CustomTestEventListenerInterface $listener)
-            {
-            }
+        $generalManager = new class($listener) extends EventManager {
+            public function __construct(public CustomTestEventListenerInterface $listener) {}
 
             public function prioritisedListeners(string $name): array
             {
-                return [11 => [
-                    ['callable' => $this->listener->secondListenerFunction(...)],
-                ]];
+                return [
+                    11 => [
+                        ['callable' => $this->listener->secondListenerFunction(...)],
+                    ],
+                ];
             }
         };
         $manager = new EventManager();
@@ -618,17 +615,16 @@ class EventManagerTest extends TestCase
     public function testDispatchGlobalBeforeLocal(): void
     {
         $listener = new CustomTestEventListenerInterface();
-        $generalManager = new class ($listener) extends EventManager
-        {
-            public function __construct(public CustomTestEventListenerInterface $listener)
-            {
-            }
+        $generalManager = new class($listener) extends EventManager {
+            public function __construct(public CustomTestEventListenerInterface $listener) {}
 
             public function prioritisedListeners(string $name): array
             {
-                return [10 => [
-                    ['callable' => $this->listener->listenerFunction(...)],
-                ]];
+                return [
+                    10 => [
+                        ['callable' => $this->listener->listenerFunction(...)],
+                    ],
+                ];
             }
         };
         $manager = new EventManager();
@@ -797,8 +793,7 @@ class EventManagerTest extends TestCase
 
         $eventManager->unsetEventList();
 
-        $func = function (): void {
-        };
+        $func = function (): void {};
         $eventManager->on('foo', $func);
 
         $this->assertSame(
@@ -829,14 +824,10 @@ class EventManagerTest extends TestCase
             $eventManager->__debugInfo(),
         );
 
-        $eventManager->on('bar', function (): void {
-        });
-        $eventManager->on('bar', function (): void {
-        });
-        $eventManager->on('bar', function (): void {
-        });
-        $eventManager->on('baz', function (): void {
-        });
+        $eventManager->on('bar', function (): void {});
+        $eventManager->on('bar', function (): void {});
+        $eventManager->on('bar', function (): void {});
+        $eventManager->on('baz', function (): void {});
 
         $this->assertSame(
             [
@@ -862,8 +853,7 @@ class EventManagerTest extends TestCase
         $eventList = new EventList();
         $eventManager = new EventManager();
         $eventManager->setEventList($eventList);
-        $eventManager->on('example', function (): void {
-        });
+        $eventManager->on('example', function (): void {});
         $eventManager->dispatch('example');
 
         $this->assertSame(
@@ -895,8 +885,7 @@ class EventManagerTest extends TestCase
                 return [];
             }
         };
-        $callable = function (): void {
-        };
+        $callable = function (): void {};
 
         $returnValue = $eventManager->on($listener);
         $this->assertSame($eventManager, $returnValue);

@@ -449,7 +449,9 @@ class MultiCheckboxWidgetTest extends TestCase
         $result = $input->render($data, $this->context);
         $expected = [
             '<fieldset',
-            '<legend', 'Group 1', '/legend',
+            '<legend',
+            'Group 1',
+            '/legend',
             ['div' => ['class' => 'checkbox']],
             ['input' => [
                 'type' => 'checkbox',
@@ -464,7 +466,9 @@ class MultiCheckboxWidgetTest extends TestCase
             '/fieldset',
 
             '<fieldset',
-            '<legend', 'Group 2', '/legend',
+            '<legend',
+            'Group 2',
+            '/legend',
             ['div' => ['class' => 'checkbox']],
             ['input' => [
                 'type' => 'checkbox',
@@ -513,7 +517,9 @@ class MultiCheckboxWidgetTest extends TestCase
             '/div',
 
             '<fieldset',
-            '<legend', 'Group 1', '/legend',
+            '<legend',
+            'Group 1',
+            '/legend',
             ['div' => ['class' => 'checkbox']],
             ['input' => [
                 'type' => 'checkbox',
@@ -688,7 +694,13 @@ class MultiCheckboxWidgetTest extends TestCase
         $expected = [
             [
                 'div' => ['class' => 'checkbox'],
-                'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '1', 'checked' => 'checked', 'id' => 'field-1'],
+                'input' => [
+                    'type' => 'checkbox',
+                    'name' => 'field[]',
+                    'value' => '1',
+                    'checked' => 'checked',
+                    'id' => 'field-1',
+                ],
                 'label' => ['title' => 'my label', 'for' => 'field-1', 'class' => 'active'],
             ],
             'value1',

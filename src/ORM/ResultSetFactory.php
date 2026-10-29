@@ -89,13 +89,11 @@ class ResultSetFactory
         ];
 
         $assocMap = $query->getEagerLoader()->associationsMap($primaryTable);
-        $data['matchingAssoc'] = new Collection($assocMap)
-            ->match(['matching' => true])
+        $data['matchingAssoc'] = new Collection($assocMap)->match(['matching' => true])
             ->indexBy('alias')
             ->toArray();
 
-        $data['containAssoc'] = new Collection(array_reverse($assocMap))
-            ->match(['matching' => false])
+        $data['containAssoc'] = new Collection(array_reverse($assocMap))->match(['matching' => false])
             ->indexBy('nestKey')
             ->toArray();
 
@@ -242,7 +240,7 @@ class ResultSetFactory
             return $results;
         }
 
-        if ($data['hydrate'] && !($results instanceof EntityInterface)) {
+        if ($data['hydrate'] && !$results instanceof EntityInterface) {
             /** @var \Cake\Datasource\EntityInterface */
             return new $data['entityClass']($results, $options);
         }

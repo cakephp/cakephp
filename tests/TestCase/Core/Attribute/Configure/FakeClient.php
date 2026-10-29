@@ -13,6 +13,5 @@ class FakeClient
     public function __construct(
         #[Configure('Star.apiKey')]
         public string $apiKey,
-    ) {
-    }
+    ) {}
 }

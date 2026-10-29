@@ -28,9 +28,7 @@ class TestSession
     /**
      * @param array|null $session Session data.
      */
-    public function __construct(protected ?array $session)
-    {
-    }
+    public function __construct(protected ?array $session) {}
 
     /**
      * Returns true if given variable name is set in session.

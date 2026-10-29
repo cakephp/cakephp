@@ -67,8 +67,9 @@ class ContentTypeNegotiationTest extends TestCase
         $request = new ServerRequest([
             'url' => '/dashboard',
             'environment' => [
-                'HTTP_ACCEPT' => 'text/xml,application/xml,application/xhtml+xml,' .
-                    'text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+                'HTTP_ACCEPT' =>
+                    'text/xml,application/xml,application/xhtml+xml,'
+                        . 'text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
             ],
         ]);
         $this->assertEquals('text/xml', $content->preferredType($request));

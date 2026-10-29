@@ -101,7 +101,7 @@ class CommonTableExpression implements ExpressionInterface
     {
         if ($query instanceof Closure) {
             $query = $query();
-            if (!($query instanceof ExpressionInterface)) {
+            if (!$query instanceof ExpressionInterface) {
                 throw new DatabaseException(
                     'You must return an `ExpressionInterface` from a Closure passed to `query()`.',
                 );
@@ -123,7 +123,7 @@ class CommonTableExpression implements ExpressionInterface
         $fields = (array)$fields;
         /** @var array<string|\Cake\Database\Expression\IdentifierExpression> $fields */
         foreach ($fields as &$field) {
-            if (!($field instanceof IdentifierExpression)) {
+            if (!$field instanceof IdentifierExpression) {
                 $field = new IdentifierExpression($field);
             }
         }

@@ -74,7 +74,7 @@ class InsertIterator extends Collection
     {
         parent::__construct($into);
 
-        if (!($values instanceof Collection)) {
+        if (!$values instanceof Collection) {
             $values = new Collection($values);
         }
 

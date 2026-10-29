@@ -120,7 +120,8 @@ class UriFactory implements UriFactoryInterface
      */
     protected static function getBase(UriInterface $uri, array $server): array
     {
-        $config = (array)Configure::read('App') + [
+        $config = (array)Configure::read('App')
+        + [
             'base' => null,
             'webroot' => null,
             'baseUrl' => null,

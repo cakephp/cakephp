@@ -717,7 +717,10 @@ class DateTimeTest extends TestCase
 
         // Unlike DateTime constructor, the instance is not created with the time zone
         // in time string but converted to default time zone.
-        $time = DateTime::parseDateTime('10/13/2013 12:54:00am GMT+08:00', [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
+        $time = DateTime::parseDateTime('10/13/2013 12:54:00am GMT+08:00', [
+            IntlDateFormatter::SHORT,
+            IntlDateFormatter::FULL,
+        ]);
         $this->assertNotNull($time);
         $this->assertSame('2013-10-12 16:54', $time->format('Y-m-d H:i'));
         $this->assertSame(date_default_timezone_get(), $time->tzName);

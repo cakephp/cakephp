@@ -377,7 +377,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function all(): ResultSetInterface
     {
         if ($this->results !== null) {
-            if (!($this->results instanceof ResultSetInterface)) {
+            if (!$this->results instanceof ResultSetInterface) {
                 $this->results = $this->ormDecorateResults($this->results);
             }
 
@@ -745,7 +745,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $result = new $resultSetClass($result);
         }
 
-        if (!($result instanceof ResultSetInterface)) {
+        if (!$result instanceof ResultSetInterface) {
             $result = new $resultSetClass($result);
         }
 
@@ -754,7 +754,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 $result = $formatter($result, $this);
             }
 
-            if (!($result instanceof ResultSetInterface)) {
+            if (!$result instanceof ResultSetInterface) {
                 $result = new $resultSetClass($result);
             }
         }
@@ -765,7 +765,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $hydrator = $this->resultSetFactory()->getDtoHydrator($this->dtoClass);
             $result = $result->map($hydrator);
 
-            if (!($result instanceof ResultSetInterface)) {
+            if (!$result instanceof ResultSetInterface) {
                 $result = new $resultSetClass($result);
             }
         }
@@ -1428,13 +1428,12 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return (int)$counter($query);
         }
 
-        $complex = (
-            $query->clause('distinct') ||
-            count($query->clause('group')) ||
-            count($query->clause('union')) ||
-            count($query->clause('intersect')) ||
-            $query->clause('having')
-        );
+        $complex =
+            $query->clause('distinct')
+            || count($query->clause('group'))
+            || count($query->clause('union'))
+            || count($query->clause('intersect'))
+            || $query->clause('having');
 
         if (!$complex) {
             // Expression fields could have bound parameters.
@@ -1455,15 +1454,15 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $count = ['count' => $query->func()->count('*')];
 
         if ($complex) {
-            $statement = $this->getConnection()->selectQuery()
+            $statement = $this->getConnection()
+                ->selectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
                 ->setConnectionRole($query->getConnectionRole())
                 ->execute();
         } else {
             $query->getEagerLoader()->disableAutoFields();
-            $statement = $query
-                ->select($count, true)
+            $statement = $query->select($count, true)
                 ->disableAutoFields()
                 ->execute();
         }
@@ -1759,15 +1758,16 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $eagerLoader = $this->getEagerLoader();
 
-        return parent::__debugInfo() + [
-            'hydrate' => $this->hydrate,
-            'formatters' => count($this->formatters),
-            'mapReducers' => count($this->mapReduce),
-            'contain' => $eagerLoader->getContain(),
-            'matching' => $eagerLoader->getMatching(),
-            'extraOptions' => $this->options,
-            'repository' => $this->repository,
-        ];
+        return parent::__debugInfo()
+            + [
+                'hydrate' => $this->hydrate,
+                'formatters' => count($this->formatters),
+                'mapReducers' => count($this->mapReduce),
+                'contain' => $eagerLoader->getContain(),
+                'matching' => $eagerLoader->getMatching(),
+                'extraOptions' => $this->options,
+                'repository' => $this->repository,
+            ];
     }
 
     /**

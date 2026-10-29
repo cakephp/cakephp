@@ -78,8 +78,8 @@ class TupleComparisonQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Sqlite ||
-            $driver instanceof Sqlserver
+            $driver instanceof Sqlite
+            || $driver instanceof Sqlserver
         ) {
             $this->expectException(InvalidArgumentException::class);
             $this->expectExceptionMessage(
@@ -95,11 +95,12 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->selectQuery(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles'],
-                    )
-                    ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection
+                        ->selectQuery(
+                            ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                            ['ArticlesAlias' => 'articles'],
+                        )
+                        ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'NOT IN',
                 ),
@@ -121,11 +122,12 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->selectQuery(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles'],
-                    )
-                    ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection
+                        ->selectQuery(
+                            ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                            ['ArticlesAlias' => 'articles'],
+                        )
+                        ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     'IN',
                 ),
@@ -159,11 +161,12 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->selectQuery(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles'],
-                    )
-                    ->where(['ArticlesAlias.id' => 1]),
+                    $this->connection
+                        ->selectQuery(
+                            ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                            ['ArticlesAlias' => 'articles'],
+                        )
+                        ->where(['ArticlesAlias.id' => 1]),
                     [],
                     'IN',
                 ),
@@ -217,8 +220,8 @@ class TupleComparisonQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         if (
-            $driver instanceof Mysql ||
-            $driver instanceof Postgres
+            $driver instanceof Mysql
+            || $driver instanceof Postgres
         ) {
             $this->expectException(PDOException::class);
             $this->expectExceptionMessageMatches('/cardinality violation/i');
@@ -236,11 +239,12 @@ class TupleComparisonQueryTest extends TestCase
             ->where([
                 new TupleComparison(
                     ['articles.id', 'articles.author_id'],
-                    $this->connection->selectQuery(
-                        ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles'],
-                    )
-                    ->where(['ArticlesAlias.author_id' => 1]),
+                    $this->connection
+                        ->selectQuery(
+                            ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
+                            ['ArticlesAlias' => 'articles'],
+                        )
+                        ->where(['ArticlesAlias.author_id' => 1]),
                     [],
                     '=',
                 ),
@@ -266,7 +270,7 @@ class TupleComparisonQueryTest extends TestCase
                         fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
                         table: ['ArticlesAlias' => 'articles'],
                     )
-                    ->where(['ArticlesAlias.id' => 1]),
+                        ->where(['ArticlesAlias.id' => 1]),
                     [],
                     '=',
                 ),

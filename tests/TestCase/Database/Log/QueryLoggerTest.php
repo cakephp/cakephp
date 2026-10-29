@@ -83,8 +83,7 @@ class QueryLoggerTest extends TestCase
 
         $logger = new QueryLogger(['connection' => '']);
 
-        $stringable = new class implements Stringable
-        {
+        $stringable = new class implements Stringable {
             public function __toString(): string
             {
                 return 'FooBar';
@@ -112,6 +111,9 @@ class QueryLoggerTest extends TestCase
         ]);
         $logger->log(LogLevel::DEBUG, '', compact('query'));
 
-        $this->assertStringContainsString('connection=test role= duration=', current(Log::engine('queryLoggerTest')->read()));
+        $this->assertStringContainsString(
+            'connection=test role= duration=',
+            current(Log::engine('queryLoggerTest')->read()),
+        );
     }
 }

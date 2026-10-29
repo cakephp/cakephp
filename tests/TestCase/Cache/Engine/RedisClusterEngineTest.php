@@ -50,8 +50,9 @@ class RedisClusterEngineTest extends TestCase
                 // phpcs:enable
 
                 if ($socket === false) {
-                    $this->skipTest = ($this->skipTest === false ? '' : "\n") .
-                        "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})";
+                    $this->skipTest =
+                        ($this->skipTest === false ? '' : "\n")
+                        . "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})";
                 } else {
                     fclose($socket);
                 }
@@ -201,7 +202,10 @@ class RedisClusterEngineTest extends TestCase
             'nodes' => ['127.0.0.1:7000'],
             'persistent' => true,
         ]);
-        $this->assertLogMessageContains('error', 'RedisClusterEngine could not connect. Got error: Mocked cluster failure');
+        $this->assertLogMessageContains(
+            'error',
+            'RedisClusterEngine could not connect. Got error: Mocked cluster failure',
+        );
         $this->assertFalse($result);
     }
 

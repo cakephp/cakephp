@@ -91,7 +91,8 @@ class SmtpTransportTest extends TestCase
         $this->SmtpTransport->setConfig(['tls' => true]);
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
@@ -117,7 +118,8 @@ class SmtpTransportTest extends TestCase
         $this->SmtpTransport->setConfig(['tls' => true]);
         $this->socket->shouldReceive('connect')->andReturnTrue();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
@@ -135,7 +137,10 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertSame('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
+        $this->assertSame(
+            'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.',
+            $e->getMessage(),
+        );
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('500 5.3.3 Unrecognized command', $e->getPrevious()->getMessage());
     }
@@ -149,7 +154,8 @@ class SmtpTransportTest extends TestCase
         $this->expectExceptionMessage('SMTP authentication method not allowed, check if SMTP server requires TLS.');
         $this->SmtpTransport->setConfig(['tls' => false] + $this->credentials);
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n",
@@ -171,7 +177,8 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
@@ -214,7 +221,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectHelo(): void
     {
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "200 Not Accepted\r\n",
@@ -233,7 +241,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnectFail(): void
     {
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "200 Not Accepted\r\n",
@@ -266,7 +275,8 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
@@ -286,7 +296,8 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH PLAIN LOGIN\r\n",
@@ -305,7 +316,8 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
@@ -321,7 +333,8 @@ class SmtpTransportTest extends TestCase
     {
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
@@ -346,7 +359,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testAuthLogin(): void
     {
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "334 Login\r\n",
@@ -388,9 +402,12 @@ class SmtpTransportTest extends TestCase
     public function testAuthNotRecognized(): void
     {
         $this->expectException(SocketException::class);
-        $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
+        $this->expectExceptionMessage(
+            'AUTH command not recognized or not implemented, SMTP server may not require authentication.',
+        );
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "500 5.3.3 Unrecognized command\r\n",
@@ -409,9 +426,12 @@ class SmtpTransportTest extends TestCase
     public function testAuthNotImplemented(): void
     {
         $this->expectException(SocketException::class);
-        $this->expectExceptionMessage('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
+        $this->expectExceptionMessage(
+            'AUTH command not recognized or not implemented, SMTP server may not require authentication.',
+        );
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
                 "502 5.3.3 Command not implemented\r\n",
@@ -588,7 +608,8 @@ class SmtpTransportTest extends TestCase
         $data .= "\r\n";
         $data .= "\r\n\r\n.\r\n";
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "354 OK\r\n",
                 "250 OK\r\n",
@@ -639,7 +660,8 @@ class SmtpTransportTest extends TestCase
         $data .= "\r\n\r\n";
         $data .= "\r\n\r\n.\r\n";
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "354 OK\r\n",
                 "250 OK\r\n",
@@ -784,7 +806,8 @@ class SmtpTransportTest extends TestCase
      */
     public function testConnected(): void
     {
-        $this->socket->shouldReceive('isConnected')
+        $this->socket
+            ->shouldReceive('isConnected')
             ->andReturn(true, false)
             ->twice();
 
@@ -841,7 +864,8 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->shouldNotReceive('disconnect');
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
@@ -877,7 +901,8 @@ class SmtpTransportTest extends TestCase
             [Mockery::pattern('/First Line/')],
         ];
         foreach ($expected as $data) {
-            $this->socket->shouldReceive('write')
+            $this->socket
+                ->shouldReceive('write')
                 ->withArgs($data)
                 ->andReturnUsing($andReturnCallback)
                 ->once();
@@ -903,7 +928,8 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
@@ -924,7 +950,8 @@ class SmtpTransportTest extends TestCase
             ["QUIT\r\n"],
         ];
         foreach ($expected as $data) {
-            $this->socket->shouldReceive('write')
+            $this->socket
+                ->shouldReceive('write')
                 ->withArgs($data)
                 ->once();
         }
@@ -946,7 +973,8 @@ class SmtpTransportTest extends TestCase
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
@@ -967,7 +995,8 @@ class SmtpTransportTest extends TestCase
             [Mockery::pattern('/First Line/')],
         ];
         foreach ($expected as $data) {
-            $this->socket->shouldReceive('write')
+            $this->socket
+                ->shouldReceive('write')
                 ->withArgs($data)
                 ->once();
         }
@@ -984,7 +1013,8 @@ class SmtpTransportTest extends TestCase
     public function testSerializeCleanupSocket(): void
     {
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
-        $this->socket->shouldReceive('read')
+        $this->socket
+            ->shouldReceive('read')
             ->andReturn(
                 "220 Welcome message\r\n",
                 "250 OK\r\n",
@@ -1141,27 +1171,37 @@ class SmtpTransportTest extends TestCase
         $connected = false;
         $writes = new ArrayObject();
 
-        $this->socket->shouldReceive('connect')->andReturnUsing(function () use (&$connected): bool {
-            $connected = true;
+        $this->socket
+            ->shouldReceive('connect')
+            ->andReturnUsing(function () use (&$connected): bool {
+                $connected = true;
 
-            return true;
-        });
-        $this->socket->shouldReceive('disconnect')->andReturnUsing(function () use (&$connected): bool {
-            $connected = false;
+                return true;
+            });
+        $this->socket
+            ->shouldReceive('disconnect')
+            ->andReturnUsing(function () use (&$connected): bool {
+                $connected = false;
 
-            return true;
-        });
-        $this->socket->shouldReceive('isConnected')->andReturnUsing(function () use (&$connected): bool {
-            return $connected;
-        });
-        $this->socket->shouldReceive('write')->andReturnUsing(function (string $data) use ($writes): int {
-            $writes[] = $data;
+                return true;
+            });
+        $this->socket
+            ->shouldReceive('isConnected')
+            ->andReturnUsing(function () use (&$connected): bool {
+                return $connected;
+            });
+        $this->socket
+            ->shouldReceive('write')
+            ->andReturnUsing(function (string $data) use ($writes): int {
+                $writes[] = $data;
 
-            return strlen($data);
-        });
-        $this->socket->shouldReceive('read')->andReturnUsing(function () use (&$reads): ?string {
-            return array_shift($reads);
-        });
+                return strlen($data);
+            });
+        $this->socket
+            ->shouldReceive('read')
+            ->andReturnUsing(function () use (&$reads): ?string {
+                return array_shift($reads);
+            });
 
         return $writes;
     }

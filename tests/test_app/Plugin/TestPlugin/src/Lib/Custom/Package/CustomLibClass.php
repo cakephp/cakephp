@@ -22,6 +22,4 @@ declare(strict_types=1);
  */
 namespace TestPlugin\Lib\Custom\Package;
 
-class CustomLibClass
-{
-}
+class CustomLibClass {}

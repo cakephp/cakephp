@@ -22,9 +22,7 @@ class SmtpTestTransport extends SmtpTransport
     /**
      * Disabled the socket change
      */
-    protected function generateSocket(): void
-    {
-    }
+    protected function generateSocket(): void {}
 
     /**
      * Magic function to call protected methods

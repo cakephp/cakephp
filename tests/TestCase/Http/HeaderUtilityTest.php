@@ -53,10 +53,12 @@ class HeaderUtilityTest extends TestCase
         ];
         $this->assertSame($expected, HeaderUtility::parseLinks($new->getHeader('Link')));
 
-        $new = $response
-            ->withAddedLink('http://example.com/1', ['rel' => 'prev'])
+        $new = $response->withAddedLink('http://example.com/1', ['rel' => 'prev'])
             ->withAddedLink('http://example.com/3', ['rel' => 'next']);
-        $this->assertSame('<http://example.com/1>; rel="prev",<http://example.com/3>; rel="next"', $new->getHeaderLine('Link'));
+        $this->assertSame(
+            '<http://example.com/1>; rel="prev",<http://example.com/3>; rel="next"',
+            $new->getHeaderLine('Link'),
+        );
         $expected = [
             [
                 'link' => 'http://example.com/1',
@@ -116,7 +118,9 @@ class HeaderUtilityTest extends TestCase
 
     public function testWwwAuthenticateWithAlgo(): void
     {
-        $result = HeaderUtility::parseWwwAuthenticate('Digest qop="auth", realm="shellyplus1pm-44179393e8a8", nonce="63f8c86f", algorithm=SHA-256');
+        $result = HeaderUtility::parseWwwAuthenticate(
+            'Digest qop="auth", realm="shellyplus1pm-44179393e8a8", nonce="63f8c86f", algorithm=SHA-256',
+        );
         $expected = [
             'qop' => 'auth',
             'realm' => 'shellyplus1pm-44179393e8a8',

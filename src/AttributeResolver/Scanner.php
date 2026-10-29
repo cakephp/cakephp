@@ -67,8 +67,7 @@ class Scanner
         private array $paths = [],
         private array $excludePaths = [],
         private ?string $basePath = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Scan all configured paths and yield discovered attributes.
@@ -173,9 +172,9 @@ class Scanner
         foreach ($installedPlugins as $pluginName => $config) {
             // Skip plugins that shouldn't be included
             if (
-                ($config['isUnknown'] ?? false) ||
-                (($config['onlyDebug'] ?? false) && !$debugMode) ||
-                !isset($config['path'])
+                ($config['isUnknown'] ?? false)
+                || (($config['onlyDebug'] ?? false) && !$debugMode)
+                || !isset($config['path'])
             ) {
                 continue;
             }

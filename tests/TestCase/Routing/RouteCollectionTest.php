@@ -185,7 +185,11 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
-        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
+        $routes->connect(
+            '/media/search/*',
+            ['controller' => 'Media', 'action' => 'search'],
+            ['_name' => 'media_search'],
+        );
 
         $result = $this->collection->parseRequest(new ServerRequest(['url' => '/b/']));
         unset($result['_route']);
@@ -282,7 +286,6 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             'pass' => [],
             '_matchedRoute' => '/{controller}/{action}',
-
         ];
         $this->assertEquals($expected, $result);
     }
@@ -596,7 +599,11 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
-        $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
+        $result = $this->collection->match([
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'index',
+        ], $context);
         $this->assertSame('b', $result);
 
         $result = $this->collection->match(
@@ -623,7 +630,12 @@ class RouteCollectionTest extends TestCase
         $result = $this->collection->match(['_name' => 'article:view', 'id' => '2'], $context);
         $this->assertSame('/b/2', $result);
 
-        $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'view', 'id' => '2'], $context);
+        $result = $this->collection->match([
+            'plugin' => null,
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => '2',
+        ], $context);
         $this->assertSame('b/2', $result);
     }
 
@@ -677,7 +689,11 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/contacts', ['plugin' => 'Contacts']);
         $routes->connect('/', ['controller' => 'Contacts']);
 
-        $result = $this->collection->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
+        $result = $this->collection->match([
+            'plugin' => 'Contacts',
+            'controller' => 'Contacts',
+            'action' => 'index',
+        ], $context);
         $this->assertSame('contacts', $result);
     }
 
@@ -781,12 +797,10 @@ class RouteCollectionTest extends TestCase
      */
     public function testRegisterMiddleware(): void
     {
-        $result = $this->collection->registerMiddleware('closure', function (): void {
-        });
+        $result = $this->collection->registerMiddleware('closure', function (): void {});
         $this->assertSame($result, $this->collection);
 
-        $callable = function (): void {
-        };
+        $callable = function (): void {};
         $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
 
@@ -801,11 +815,9 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroup(): void
     {
-        $this->collection->registerMiddleware('closure', function (): void {
-        });
+        $this->collection->registerMiddleware('closure', function (): void {});
 
-        $callable = function (): void {
-        };
+        $callable = function (): void {};
         $this->collection->registerMiddleware('callable', $callable);
 
         $this->collection->middlewareGroup('group', ['closure', 'callable']);
@@ -818,8 +830,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroupOverwrite(): void
     {
-        $stub = function (): void {
-        };
+        $stub = function (): void {};
         $this->collection->registerMiddleware('closure', $stub);
         $this->collection->registerMiddleware('callable', $stub);
 

@@ -395,6 +395,7 @@ class MemcachedEngineTest extends TestCase
             if (!$Memcached->addServer($host, (int)$port)) {
                 $available = false;
             }
+
             // phpcs:enable
         }
 

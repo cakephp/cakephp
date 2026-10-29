@@ -97,10 +97,12 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached(): void
     {
-        $eventsManager = new class extends EventManager
-        {
-            public function on(string|EventListenerInterface $eventKey, ?callable $callable = null, array $options = []): never
-            {
+        $eventsManager = new class extends EventManager {
+            public function on(
+                string|EventListenerInterface $eventKey,
+                ?callable $callable = null,
+                array $options = [],
+            ): never {
                 throw new Exception('Should not be called');
             }
         };
@@ -143,8 +145,7 @@ class HelperTest extends TestCase
                 'Html' => [],
                 'OtherHelper' => ['className' => 'TestPlugin.OtherHelper'],
             ],
-            'implementedEvents' => [
-            ],
+            'implementedEvents' => [],
             '_config' => [
                 'key1' => 'val1',
                 'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],

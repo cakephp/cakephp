@@ -131,9 +131,15 @@ class FlashHelperTest extends TestCase
         $result = $this->Flash->render('notification');
         $expected = [
             'div' => ['id' => 'notificationLayout'],
-            '<h1', 'Alert!', '/h1',
-            '<h3', 'Notice!', '/h3',
-            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '<h1',
+            'Alert!',
+            '/h1',
+            '<h3',
+            'Notice!',
+            '/h3',
+            '<p',
+            'This is a test of the emergency broadcasting system',
+            '/p',
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -152,9 +158,15 @@ class FlashHelperTest extends TestCase
 
         $expected = [
             'div' => ['id' => 'notificationLayout'],
-            '<h1', 'Alert!', '/h1',
-            '<h3', 'Notice!', '/h3',
-            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            '<h1',
+            'Alert!',
+            '/h1',
+            '<h3',
+            'Notice!',
+            '/h3',
+            '<p',
+            'This is a test of the emergency broadcasting system',
+            '/p',
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -193,13 +205,23 @@ class FlashHelperTest extends TestCase
     {
         $result = $this->Flash->render('stack');
         $expected = [
-            ['div' => ['class' => 'message']], 'This is a calling', '/div',
-            ['div' => ['id' => 'notificationLayout']],
-            '<h1', 'Alert!', '/h1',
-            '<h3', 'Notice!', '/h3',
-            '<p', 'This is a test of the emergency broadcasting system', '/p',
+            ['div' => ['class' => 'message']],
+            'This is a calling',
             '/div',
-            ['div' => ['id' => 'classy-message']], 'Recorded', '/div',
+            ['div' => ['id' => 'notificationLayout']],
+            '<h1',
+            'Alert!',
+            '/h1',
+            '<h3',
+            'Notice!',
+            '/h3',
+            '<p',
+            'This is a test of the emergency broadcasting system',
+            '/p',
+            '/div',
+            ['div' => ['id' => 'classy-message']],
+            'Recorded',
+            '/div',
         ];
         $this->assertHtml($expected, $result);
         $this->assertNull($this->View->getRequest()->getSession()->read('Flash.stack'));

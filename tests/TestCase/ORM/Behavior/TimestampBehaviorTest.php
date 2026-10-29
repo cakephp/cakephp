@@ -177,7 +177,11 @@ class TimestampBehaviorTest extends TestCase
 
         $this->Behavior->handleEvent($event, $entity);
         $this->assertInstanceOf(DateTime::class, $entity->modified);
-        $this->assertSame($ts->format('c'), $entity->modified->format('c'), 'Modified timestamp is expected to be updated');
+        $this->assertSame(
+            $ts->format('c'),
+            $entity->modified->format('c'),
+            'Modified timestamp is expected to be updated',
+        );
     }
 
     /**
@@ -222,7 +226,9 @@ class TimestampBehaviorTest extends TestCase
     public function testNonDateTimeTypeException(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('TimestampBehavior only supports columns of type `Cake\Database\Type\DateTimeType`.');
+        $this->expectExceptionMessage(
+            'TimestampBehavior only supports columns of type `Cake\Database\Type\DateTimeType`.',
+        );
 
         $table = $this->getTableInstance();
         $this->Behavior = new TimestampBehavior($table, [
@@ -247,7 +253,9 @@ class TimestampBehaviorTest extends TestCase
     public function testInvalidEventConfig(): void
     {
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('When should be one of "always", "new" or "existing". The passed value `fat fingers` is invalid.');
+        $this->expectExceptionMessage(
+            'When should be one of "always", "new" or "existing". The passed value `fat fingers` is invalid.',
+        );
         $table = $this->getTableInstance();
         $settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
         $this->Behavior = new TimestampBehavior($table, $settings);

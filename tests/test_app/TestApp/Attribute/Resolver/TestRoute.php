@@ -8,7 +8,5 @@ use Attribute;
 #[Attribute]
 class TestRoute
 {
-    public function __construct(public string $path)
-    {
-    }
+    public function __construct(public string $path) {}
 }

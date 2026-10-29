@@ -208,7 +208,6 @@ class SortIteratorTest extends TestCase
             new DateTime('2016-06-30'),
             new DateTime('2015-07-21'),
             new DateTimeImmutable('2013-08-12'),
-
         ];
         $this->assertEquals($expected, $sorted->toList());
 

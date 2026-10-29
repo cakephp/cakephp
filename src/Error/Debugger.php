@@ -272,11 +272,10 @@ class Debugger
             $tail = $frames[$i];
 
             // Frames without file/line are never equal to another frame.
-            $isEqual = (
+            $isEqual =
                 isset($tail['file'], $tail['line'], $parentTail['file'], $parentTail['line'])
                 && $tail['file'] === $parentTail['file']
-                && $tail['line'] === $parentTail['line']
-            );
+                && $tail['line'] === $parentTail['line'];
             if ($isEqual) {
                 unset($frames[$i]);
                 $i--;
@@ -712,8 +711,8 @@ class Debugger
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
                     if (
-                        method_exists($reflectionProperty, 'isInitialized') &&
-                        !$reflectionProperty->isInitialized($var)
+                        method_exists($reflectionProperty, 'isInitialized')
+                        && !$reflectionProperty->isInitialized($var)
                     ) {
                         $value = new SpecialNode('[uninitialized]');
                     } else {
@@ -819,8 +818,8 @@ class Debugger
         $salt = Security::getSalt();
         if ($salt === '__SALT__' || strlen($salt) < 32) {
             triggerWarning(
-                'Please change the value of `Security.salt` in `ROOT/config/app_local.php` ' .
-                'to a random value of at least 32 characters.',
+                'Please change the value of `Security.salt` in `ROOT/config/app_local.php` '
+                    . 'to a random value of at least 32 characters.',
                 E_USER_NOTICE,
             );
         }

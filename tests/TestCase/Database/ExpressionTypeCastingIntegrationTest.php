@@ -41,15 +41,17 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        $this->skipIf($this->connection->getDriver() instanceof Sqlserver, 'This tests uses functions specific to other drivers');
+        $this->skipIf(
+            $this->connection->getDriver() instanceof Sqlserver,
+            'This tests uses functions specific to other drivers',
+        );
         TypeFactory::map('ordered_uuid', OrderedUuidType::class);
     }
 
     protected function insert(): void
     {
         $query = $this->connection->insertQuery();
-        $query
-            ->insert(['id', 'published', 'name'], ['id' => 'ordered_uuid'])
+        $query->insert(['id', 'published', 'name'], ['id' => 'ordered_uuid'])
             ->into('ordered_uuid_items')
             ->values(['id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'published' => 0, 'name' => 'Item 1'])
             ->values(['id' => '48298a29-81c0-4c26-a7fb-413140cf8569', 'published' => 0, 'name' => 'Item 2'])
@@ -65,7 +67,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testInsert(): void
     {
         $this->insert();
-        $query = $this->connection->selectQuery('id', 'ordered_uuid_items')
+        $query = $this->connection
+            ->selectQuery('id', 'ordered_uuid_items')
             ->orderBy('id')
             ->setDefaultTypes(['id' => 'ordered_uuid']);
 
@@ -83,7 +86,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithConditions(): void
     {
         $this->insert();
-        $result = $this->connection->selectQuery('id', 'ordered_uuid_items')
+        $result = $this->connection
+            ->selectQuery('id', 'ordered_uuid_items')
             ->where(['id' => '48298a29-81c0-4c26-a7fb-413140cf8569'], ['id' => 'ordered_uuid'])
             ->execute()
             ->fetchAll('assoc');
@@ -98,7 +102,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithConditionsValueObject(): void
     {
         $this->insert();
-        $result = $this->connection->selectQuery('id', 'ordered_uuid_items')
+        $result = $this->connection
+            ->selectQuery('id', 'ordered_uuid_items')
             ->where(['id' => new UuidValue('48298a29-81c0-4c26-a7fb-413140cf8569')], ['id' => 'ordered_uuid'])
             ->execute()
             ->fetchAll('assoc');
@@ -115,7 +120,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithInCondition(): void
     {
         $this->insert();
-        $result = $this->connection->selectQuery('id', 'ordered_uuid_items')
+        $result = $this->connection
+            ->selectQuery('id', 'ordered_uuid_items')
             ->where(
                 ['id' => ['48298a29-81c0-4c26-a7fb-413140cf8569', '482b7756-8da0-419a-b21f-27da40cf8569']],
                 ['id' => 'ordered_uuid[]'],
@@ -135,7 +141,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithBetween(): void
     {
         $this->insert();
-        $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
+        $result = $this->connection
+            ->selectQuery(fields: 'id', table: 'ordered_uuid_items')
             ->where(function (QueryExpression $exp) {
                 return $exp->between(
                     'id',
@@ -156,7 +163,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     public function testSelectWithFunction(): void
     {
         $this->insert();
-        $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
+        $result = $this->connection
+            ->selectQuery(fields: 'id', table: 'ordered_uuid_items')
             ->where(function (QueryExpression $exp, Query $q) {
                 return $exp->eq(
                     'id',

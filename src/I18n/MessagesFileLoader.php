@@ -151,9 +151,13 @@ class MessagesFileLoader
 
         $localePaths = App::path('locales');
         if (!$localePaths && defined('ROOT')) {
-            $localePaths[] = ROOT . DIRECTORY_SEPARATOR
-                . 'resources' . DIRECTORY_SEPARATOR
-                . 'locales' . DIRECTORY_SEPARATOR;
+            $localePaths[] =
+                ROOT
+                . DIRECTORY_SEPARATOR
+                . 'resources'
+                . DIRECTORY_SEPARATOR
+                . 'locales'
+                . DIRECTORY_SEPARATOR;
         }
         if ($this->plugin && Plugin::isLoaded($this->plugin)) {
             $localePaths[] = App::path('locales', $this->plugin)[0];

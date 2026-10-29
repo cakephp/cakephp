@@ -55,7 +55,13 @@ class FunctionsQueryTest extends TestCase
                     continue;
                 }
 
-                $this->skipIf(version_compare($driverVersion, $version, '<'), sprintf('The current database backend does not support the required function. Requires version %s.', $version));
+                $this->skipIf(
+                    version_compare($driverVersion, $version, '<'),
+                    sprintf(
+                        'The current database backend does not support the required function. Requires version %s.',
+                        $version,
+                    ),
+                );
 
                 return;
             }
@@ -75,16 +81,16 @@ class FunctionsQueryTest extends TestCase
         ]);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 1])),
-                    '$.a',
-                ),
-            ])
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 1])),
+                '$.a',
+            ),
+        ])
             // Set type because drivers like sqlite use non-standard functions that return the sqlite type not json string
             ->setSelectTypeMap(['value' => 'integer'])
-            ->execute()->fetchAll('assoc');
+            ->execute()
+            ->fetchAll('assoc');
 
         $this->assertSame(1, $result[0]['value']);
     }
@@ -97,25 +103,25 @@ class FunctionsQueryTest extends TestCase
 
         // Bound parameters are typed as text by Postgres, so only string values compare correctly
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 'x'])),
-                    new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'x']),
-                ),
-            ])
-            ->execute()->fetchAll('assoc');
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 'x'])),
+                new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'x']),
+            ),
+        ])
+            ->execute()
+            ->fetchAll('assoc');
         $this->assertSame('x', $result[0]['value']);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 'x'])),
-                    new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'y']),
-                ),
-            ])
-            ->execute()->fetchAll('assoc');
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 'x'])),
+                new JsonPathExpression('$.a ? (@ == $v)')->passing(['v' => 'y']),
+            ),
+        ])
+            ->execute()
+            ->fetchAll('assoc');
         $this->assertNull($result[0]['value']);
     }
 
@@ -128,15 +134,15 @@ class FunctionsQueryTest extends TestCase
         ]);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 1])),
-                    new JsonPathExpression('$.a')->returning('float'),
-                ),
-            ])
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 1])),
+                new JsonPathExpression('$.a')->returning('float'),
+            ),
+        ])
             ->setSelectTypeMap(['value' => 'float'])
-            ->execute()->fetchAll('assoc');
+            ->execute()
+            ->fetchAll('assoc');
 
         $this->assertSame(1.0, $result[0]['value']);
     }
@@ -149,14 +155,14 @@ class FunctionsQueryTest extends TestCase
         ]);
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 1])),
-                    new JsonPathExpression('$.b')->onEmpty('DEFAULT', 5),
-                ),
-            ])
-            ->execute()->fetchAll('assoc');
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 1])),
+                new JsonPathExpression('$.b')->onEmpty('DEFAULT', 5),
+            ),
+        ])
+            ->execute()
+            ->fetchAll('assoc');
 
         $this->assertSame('5', $result[0]['value']);
     }
@@ -172,15 +178,16 @@ class FunctionsQueryTest extends TestCase
         $returning = $this->connection->getDriver() instanceof Mysql ? 'signed' : 'integer';
 
         $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 'abc'])),
-                    new JsonPathExpression('$.a')->returning($returning)->onError('DEFAULT', 7),
-                ),
-            ])
+        $result = $query->select([
+            'value' => $query->func()->jsonValue(
+                $this->quoteString(json_encode(['a' => 'abc'])),
+                new JsonPathExpression('$.a')->returning($returning)
+                    ->onError('DEFAULT', 7),
+            ),
+        ])
             ->setSelectTypeMap(['value' => 'integer'])
-            ->execute()->fetchAll('assoc');
+            ->execute()
+            ->fetchAll('assoc');
 
         $this->assertSame(7, $result[0]['value']);
     }

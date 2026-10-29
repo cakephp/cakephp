@@ -236,18 +236,21 @@ class FixtureHelper
      */
     public function delete(array $fixtures): void
     {
-        $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
-            if (!$connection instanceof Connection) {
-                throw new CakeException('Connection does not support delete, use an alternative fixture strategy');
-            }
+        $this->runPerConnection(
+            function (ConnectionInterface $connection, array $groupFixtures): void {
+                if (!$connection instanceof Connection) {
+                    throw new CakeException('Connection does not support delete, use an alternative fixture strategy');
+                }
 
-            // Unlike truncate, delete is subject to foreign keys on every driver, so
-            // the constraints are disabled rather than the fixtures ordered.
-            ConnectionHelper::runWithoutConstraints(
-                $connection,
-                fn(Connection $connection) => $this->deleteConnection($connection, $groupFixtures),
-            );
-        }, $fixtures);
+                // Unlike truncate, delete is subject to foreign keys on every driver, so
+                // the constraints are disabled rather than the fixtures ordered.
+                ConnectionHelper::runWithoutConstraints(
+                    $connection,
+                    fn(Connection $connection) => $this->deleteConnection($connection, $groupFixtures),
+                );
+            },
+            $fixtures,
+        );
     }
 
     /**

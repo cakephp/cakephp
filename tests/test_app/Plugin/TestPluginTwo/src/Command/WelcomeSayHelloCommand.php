@@ -12,7 +12,5 @@ class WelcomeSayHelloCommand extends Command
         return 'welcome say_hello';
     }
 
-    public function execute()
-    {
-    }
+    public function execute() {}
 }

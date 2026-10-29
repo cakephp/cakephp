@@ -258,8 +258,14 @@ class LogTest extends TestCase
         Log::write(LOG_WARNING, 'Test warning 1');
         Log::write(LOG_WARNING, 'Test warning 2');
         $result = file_get_contents(LOGS . 'error.log');
-        $this->assertMatchesRegularExpression('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 1/', $result);
-        $this->assertMatchesRegularExpression('/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 2$/', $result);
+        $this->assertMatchesRegularExpression(
+            '/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 1/',
+            $result,
+        );
+        $this->assertMatchesRegularExpression(
+            '/2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ warning: Test warning 2$/',
+            $result,
+        );
         unlink(LOGS . 'error.log');
     }
 

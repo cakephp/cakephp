@@ -32,9 +32,7 @@ class ClassNode implements NodeInterface
      * @param string $class The class name
      * @param int $id The reference id of this object in the DumpContext
      */
-    public function __construct(private string $class, private int $id)
-    {
-    }
+    public function __construct(private string $class, private int $id) {}
 
     /**
      * Add a property

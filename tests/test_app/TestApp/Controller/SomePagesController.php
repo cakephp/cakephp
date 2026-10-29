@@ -28,9 +28,7 @@ class SomePagesController extends Controller
      * @param mixed $page
      * @return void
      */
-    public function display($page = null)
-    {
-    }
+    public function display($page = null) {}
 
     /**
      * index method
@@ -52,7 +50,5 @@ class SomePagesController extends Controller
         return $this->response->withStringBody('new response');
     }
 
-    protected function fail()
-    {
-    }
+    protected function fail() {}
 }
