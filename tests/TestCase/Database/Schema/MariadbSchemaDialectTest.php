@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mariadb;
 use Cake\Database\DriverFeatureEnum;
@@ -26,6 +27,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Mariadb Schema Dialect.
@@ -35,6 +37,50 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     protected string $schemaDialectClass = MariadbSchemaDialect::class;
 
     protected string $driverClass = Mariadb::class;
+
+    /**
+     * Provides defaults to reflect without deprecated MariaDB detection.
+     *
+     * @return array<string, array{string, ?string, ?string}>
+     */
+    public static function columnDefaultProvider(): array
+    {
+        return [
+            'null' => ['varchar(20)', null, null],
+            'literal' => ['varchar(20)', 'example', 'example'],
+            'timestamp' => ['timestamp', 'current_timestamp()', 'CURRENT_TIMESTAMP'],
+            'text with collation' => ['text', "_utf8mb4\\'abc\\'", 'abc'],
+        ];
+    }
+
+    /**
+     * Tests default reflection with the MariaDB driver without suppressing deprecations.
+     *
+     * @param string $type The database column type.
+     * @param string|null $default The reflected database default.
+     * @param string|null $expected The normalized default.
+     */
+    #[DataProvider('columnDefaultProvider')]
+    public function testConvertColumnDefaultWithoutDeprecation(string $type, ?string $default, ?string $expected): void
+    {
+        Configure::write('Error.ignoredDeprecationPaths', []);
+        Configure::write('Error.allowDuplicateDeprecations', true);
+        $driver = Mockery::mock(Mariadb::class)->makePartial();
+        $driver->shouldReceive('connect')->once();
+        $dialect = new MariadbSchemaDialect($driver);
+        $schema = new TableSchema('articles');
+
+        $dialect->convertColumnDescription($schema, [
+            'Field' => 'field',
+            'Type' => $type,
+            'Null' => 'YES',
+            'Default' => $default,
+            'Collation' => null,
+            'Comment' => '',
+        ]);
+
+        $this->assertSame($expected, $schema->getColumn('field')['default']);
+    }
 
     /**
      * Helper method for skipping tests that need a real connection.

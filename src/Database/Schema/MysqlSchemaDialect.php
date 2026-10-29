@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
@@ -236,6 +237,7 @@ class MysqlSchemaDialect extends SchemaDialect
 
         if (
             $this->_driver instanceof Mysql &&
+            !($this->_driver instanceof Mariadb) &&
             $this->_driver->isMariaDb() &&
             $default === 'current_timestamp()'
         ) {
