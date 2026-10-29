@@ -44,6 +44,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * With no arguments, reads `App.trustedHostPatterns` and `App.fullBaseUrl`.
  * Nonempty patterns define the complete allowlist. Without patterns, only the
  * host in `App.fullBaseUrl` is trusted. Schemes and ports are not compared.
+ * Use `['*']` to explicitly allow any nonempty host, for example in local
+ * development configuration. Validation is independent of debug mode.
  */
 class HostHeaderMiddleware implements MiddlewareInterface
 {
@@ -63,12 +65,10 @@ class HostHeaderMiddleware implements MiddlewareInterface
      * @param array<string>|null $trustedHostPatterns Patterns, or null to read `App.trustedHostPatterns`.
      *   An empty array overrides configured patterns and selects the full base URL fallback.
      * @param string|null $fullBaseUrl An absolute HTTP(S) URL, or null to read `App.fullBaseUrl`.
-     * @param bool $disableOnDebug Whether to skip host checks when debug is enabled.
      */
     public function __construct(
         ?array $trustedHostPatterns = null,
         ?string $fullBaseUrl = null,
-        protected bool $disableOnDebug = true,
     ) {
         $this->trustedHostPatterns = $trustedHostPatterns ?? Configure::read('App.trustedHostPatterns', []);
         $this->fullBaseUrl = $fullBaseUrl ?? Configure::read('App.fullBaseUrl');
@@ -77,7 +77,7 @@ class HostHeaderMiddleware implements MiddlewareInterface
     /**
      * Validate the request URI host before delegating to the request handler.
      *
-     * Regular expression warnings are converted into configuration exceptions.
+     * Invalid regular expressions emit PHP warnings and cause configuration exceptions.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
@@ -87,16 +87,11 @@ class HostHeaderMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->disableOnDebug && Configure::read('debug')) {
-            return $handler->handle($request);
-        }
-
         $patterns = $this->getTrustedHostPatterns();
         $host = $request->getUri()->getHost();
         $trusted = false;
         foreach ($patterns as $pattern) {
-            // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- Regex failures become configuration exceptions below.
-            $result = @preg_match('{' . $pattern . '}iD', $host);
+            $result = $pattern === '*' ? 1 : preg_match('{' . $pattern . '}iD', $host);
             if ($result === false) {
                 throw new InternalErrorException(
                     'Unable to evaluate trusted host pattern: ' . preg_last_error_msg(),

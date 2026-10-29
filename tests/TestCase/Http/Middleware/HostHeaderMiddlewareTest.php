@@ -96,6 +96,10 @@ class HostHeaderMiddlewareTest extends TestCase
             'pattern with slash' => [['^example\\.com(?=/|$)'], 'https://example.com', true],
             'caller controls anchors' => [['example\\.com'], 'https://sub.example.com', true],
             'empty host' => [['^$'], '/', false],
+            'wildcard host' => [['*'], 'https://any.example', true],
+            'wildcard before nonmatching pattern' => [['*', '^example\\.com$'], 'https://any.example', true],
+            'wildcard after nonmatching pattern' => [['^example\\.com$', '*'], 'https://any.example', true],
+            'wildcard empty host' => [['*'], '/', false],
         ];
     }
 
@@ -236,40 +240,77 @@ class HostHeaderMiddlewareTest extends TestCase
     }
 
     /**
-     * Test debug bypass without requiring valid host configuration.
+     * Test an explicit wildcard allowing any host without a full base URL in either debug mode.
+     *
+     * @param bool $debug Whether debug mode is enabled.
      */
-    public function testDebugBypass(): void
+    #[DataProvider('debugModeProvider')]
+    public function testWildcardApplicationPattern(bool $debug): void
     {
-        Configure::write('App.trustedHostPatterns', 'invalid');
+        Configure::write('debug', $debug);
+        Configure::write('App.trustedHostPatterns', ['*']);
         Configure::write('App.fullBaseUrl', false);
-        $middleware = new HostHeaderMiddleware();
-        Configure::write('debug', true);
 
-        $this->assertHostAccepted($middleware, new ServerRequest(['uri' => new Uri('/')]));
+        $this->assertHostAccepted(
+            new HostHeaderMiddleware(),
+            new ServerRequest(['uri' => new Uri('https://any.example')]),
+        );
     }
 
     /**
-     * Test host enforcement in debug mode when the bypass is disabled.
+     * Provide enabled and disabled debug settings.
+     *
+     * @return array<string, array{bool}>
      */
-    public function testDebugBypassCanBeDisabled(): void
+    public static function debugModeProvider(): array
+    {
+        return [
+            'debug enabled' => [true],
+            'debug disabled' => [false],
+        ];
+    }
+
+    /**
+     * Test that empty patterns still require a valid full base URL in either debug mode.
+     *
+     * @param bool $debug Whether debug mode is enabled.
+     */
+    #[DataProvider('debugModeProvider')]
+    public function testEmptyPatternsRequireFullBaseUrl(bool $debug): void
+    {
+        Configure::write('debug', $debug);
+        Configure::write('App.trustedHostPatterns', []);
+        Configure::write('App.fullBaseUrl', false);
+
+        $this->assertHostRejected(
+            new HostHeaderMiddleware(),
+            new ServerRequest(['uri' => new Uri('https://example.com')]),
+            InternalErrorException::class,
+        );
+    }
+
+    /**
+     * Test that debug mode does not bypass host validation.
+     */
+    public function testDebugDoesNotBypassHostValidation(): void
     {
         Configure::write('debug', true);
-        $middleware = new HostHeaderMiddleware(disableOnDebug: false);
+        $middleware = new HostHeaderMiddleware();
 
         $this->assertHostAccepted($middleware, new ServerRequest(['uri' => new Uri('https://example.com')]));
         $this->assertHostRejected($middleware, new ServerRequest(['uri' => new Uri('https://evil.test')]));
     }
 
     /**
-     * Test configuration errors when validation is explicitly enabled in debug mode.
+     * Test that debug mode does not bypass configuration errors.
      */
-    public function testInvalidConfigurationWithDebugBypassDisabled(): void
+    public function testInvalidConfigurationInDebugMode(): void
     {
         Configure::write('debug', true);
         Configure::write('App.fullBaseUrl', false);
 
         $this->assertHostRejected(
-            new HostHeaderMiddleware(disableOnDebug: false),
+            new HostHeaderMiddleware(),
             new ServerRequest(['uri' => new Uri('https://example.com')]),
             InternalErrorException::class,
         );
@@ -307,10 +348,52 @@ class HostHeaderMiddlewareTest extends TestCase
             'integer entry' => [[123]],
             'null entry' => [[null]],
             'nested array' => [[['^example\\.com$']]],
-            'invalid regex' => [['[']],
             'regex execution failure' => [['(*LIMIT_MATCH=1)^(e+)+x$']],
-            'invalid regex after matching pattern' => [['^example\\.com$', '(']],
+            'regex execution failure after wildcard' => [['*', '(*LIMIT_MATCH=1)^(e+)+x$']],
             'invalid entry after matching pattern' => [['^example\\.com$', false]],
+            'invalid entry after wildcard' => [['*', false]],
+        ];
+    }
+
+    /**
+     * Test that malformed regexes emit a diagnostic warning and reject the request with HTTP 500.
+     *
+     * @param array<string> $patterns The malformed host patterns.
+     */
+    #[DataProvider('malformedPatternsProvider')]
+    public function testMalformedPatternsEmitWarnings(array $patterns): void
+    {
+        $middleware = new HostHeaderMiddleware(trustedHostPatterns: $patterns);
+        $request = new ServerRequest(['uri' => new Uri('https://example.com')]);
+        $warnings = [];
+        set_error_handler(static function (int $code, string $message) use (&$warnings): bool {
+            if (error_reporting() & $code) {
+                $warnings[] = $message;
+            }
+
+            return true;
+        }, E_WARNING);
+
+        try {
+            $this->assertHostRejected($middleware, $request, InternalErrorException::class);
+        } finally {
+            restore_error_handler();
+            $this->assertCount(1, $warnings);
+            $this->assertStringContainsString('preg_match(): Compilation failed:', $warnings[0]);
+        }
+    }
+
+    /**
+     * Provide malformed regexes before and after a trusted host has matched.
+     *
+     * @return array<string, array{array<string>}>
+     */
+    public static function malformedPatternsProvider(): array
+    {
+        return [
+            'invalid regex' => [['[']],
+            'invalid regex after matching pattern' => [['^example\\.com$', '(']],
+            'invalid regex after wildcard' => [['*', '(']],
         ];
     }
 
