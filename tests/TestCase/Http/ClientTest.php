@@ -732,7 +732,7 @@ class ClientTest extends TestCase
     {
         $url = 'http://cakephp.org';
 
-        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
+        $adapter = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
 
@@ -806,6 +806,179 @@ class ClientTest extends TestCase
 
         $this->assertTrue($cookies->has('redirect1'));
         $this->assertTrue($cookies->has('redirect2'));
+    }
+
+    /**
+     * test that redirects that change domains drop cookies and authorization
+     * headers from the original domain, and add matching cookies from the target domain.
+     */
+    public function testRedirectsAcrossDomainsRemoveAuthorizationAndCookie(): void
+    {
+        $url = 'http://cakephp.org';
+
+        $adapter = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+
+        $redirect = new Response([
+            'HTTP/1.0 301',
+            'Location: http://notcakephp.org/redirect1?foo=bar',
+            'Set-Cookie: redirect1=true;path=/',
+        ]);
+
+        $response = new Response([
+            'HTTP/1.0 200',
+            'Set-Cookie: target=true; path=/',
+        ]);
+
+        $adapter->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [
+                    $this->callback(function (Request $request) use ($url) {
+                        $this->assertSame($url, (string)$request->getUri());
+                        $this->assertEquals('Bearer abc123', $request->getHeaderLine('Authorization'));
+
+                        $cookie = $request->getHeaderLine('Cookie');
+                        $this->assertStringContainsString('match-cake', $cookie, 'cookies added');
+                        $this->assertStringContainsString('sessionid', $cookie, 'target domain cookies added');
+                        $this->assertStringNotContainsString('second-domain', $cookie, 'target domain cookies added');
+
+                        return true;
+                    }),
+                    $this->callback(function ($options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ],
+                [
+                    $this->callback(function (Request $request) {
+                        $this->assertSame('http://notcakephp.org/redirect1?foo=bar', (string)$request->getUri());
+
+                        $this->assertFalse(
+                            $request->hasHeader('Authorization'),
+                            'cross domain redirect must remove authorization',
+                        );
+                        $cookie = $request->getHeaderLine('Cookie');
+                        $this->assertStringContainsString('second-domain', $cookie, 'target domain cookies should be added');
+                        $this->assertStringNotContainsString('match-cake', $cookie, 'original domain cookie should be removed');
+                        $this->assertStringNotContainsString('sessionid', $cookie, 'original domain cookie should be removed');
+
+                        return true;
+                    }),
+                    $this->callback(function ($options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ],
+            )->will($this->onConsecutiveCalls([$redirect], [$response]));
+
+        $client = new Client([
+            'adapter' => $adapter,
+        ]);
+        // Add cookies to the jar for both domains.
+        $client->addCookie(Cookie::create('second-domain', 'not-cake', ['domain' => 'notcakephp.org']));
+        $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
+
+        $result = $client->get($url, [], [
+            'headers' => ['Authorization' => 'Bearer abc123'],
+            'cookies' => ['sessionid' => 'cakephp-session'],
+            'redirect' => 2,
+        ]);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertTrue($result->isOk());
+        $cookies = $client->cookies();
+
+        $this->assertTrue($cookies->has('target'));
+    }
+
+    /**
+     * test that redirects that change domains drop cookies and authorization
+     * headers from the original domain, and add matching cookies from the target domain.
+     */
+    public function testRedirectsAcrossSchemeRemoveAuthorization(): void
+    {
+        $url = 'https://cakephp.org';
+
+        $adapter = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+
+        $redirect = new Response([
+            'HTTP/1.0 301',
+            'Location: http://cakephp.org/redirect1?foo=bar',
+            'Set-Cookie: redirect1=true;path=/',
+        ]);
+
+        $response = new Response([
+            'HTTP/1.0 200',
+            'Set-Cookie: target=true; path=/',
+        ]);
+
+        $adapter->expects($this->exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [
+                    $this->callback(function (Request $request) use ($url) {
+                        $this->assertSame($url, (string)$request->getUri());
+                        $this->assertEquals('Bearer abc123', $request->getHeaderLine('Authorization'));
+
+                        $cookie = $request->getHeaderLine('Cookie');
+                        $this->assertStringContainsString('match-cake', $cookie, 'cookies added');
+                        $this->assertStringContainsString('sessionid', $cookie, 'cookies added');
+                        $this->assertStringContainsString('secure', $cookie, 'secure domain cookies added');
+
+                        return true;
+                    }),
+                    $this->callback(function (array $options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ],
+                [
+                    $this->callback(function (Request $request) {
+                        $this->assertSame('http://cakephp.org/redirect1?foo=bar', (string)$request->getUri());
+                        $this->assertFalse(
+                            $request->hasHeader('Authorization'),
+                            'cross scheme redirect must remove authorization',
+                        );
+                        $cookie = $request->getHeaderLine('Cookie');
+                        $this->assertStringNotContainsString('secure', $cookie, 'secure domain cookies should be removed');
+                        $this->assertStringNotContainsString('session', $cookie, 'secure domain cookie should be removed');
+                        $this->assertStringContainsString('match-cake', $cookie, 'original domain cookie should be present');
+
+                        return true;
+                    }),
+                    $this->callback(function (array $options) {
+                        $this->assertArrayNotHasKey('redirect', $options);
+
+                        return true;
+                    }),
+                ]
+            )->will($this->onConsecutiveCalls([$redirect], [$response]));
+
+        $client = new Client([
+            'adapter' => $adapter,
+        ]);
+        // Add cookies to the jar for both domains.
+        $client->addCookie(Cookie::create('secure', 'secure-cake', ['secure' => true, 'domain' => 'cakephp.org']));
+        $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
+
+        $result = $client->get($url, [], [
+            'headers' => ['Authorization' => 'Bearer abc123'],
+            'cookies' => ['sessionid' => 'cakephp-session'],
+            'redirect' => 2,
+        ]);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertTrue($result->isOk());
+        $cookies = $client->cookies();
+
+        $this->assertTrue($cookies->has('target'));
     }
 
     /**
