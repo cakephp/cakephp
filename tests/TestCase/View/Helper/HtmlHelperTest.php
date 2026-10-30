@@ -2097,7 +2097,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = ['td content 1', 'td content 2', 'td content 3'];
-        $result = $this->Html->tableCells($tr, null, null, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
@@ -2108,7 +2108,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = ['td content 1', 'td content 2', 'td content 3'];
-        $result = $this->Html->tableCells($tr, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
@@ -2152,7 +2152,7 @@ class HtmlHelperTest extends TestCase
             'td content 2',
             ['td content 3', ['class' => 'foo']],
         ];
-        $result = $this->Html->tableCells($tr, null, null, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']], 'td content 1', '/td',
