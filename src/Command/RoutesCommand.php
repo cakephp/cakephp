@@ -50,9 +50,11 @@ class RoutesCommand extends Command
 
         $availableRoutes = Router::routes();
         $output = [];
+        /** @var array<string, array<string, int>> $duplicateRoutesCounter */
         $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
+            /** @var array<string> $methods */
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             $item = [
@@ -95,6 +97,7 @@ class RoutesCommand extends Command
         $duplicateRoutes = [];
 
         foreach ($availableRoutes as $route) {
+            /** @var array<string> $methods */
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             foreach ($methods as $method) {

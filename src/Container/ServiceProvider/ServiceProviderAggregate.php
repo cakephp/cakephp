@@ -12,7 +12,7 @@ class ServiceProviderAggregate implements ServiceProviderAggregateInterface
     use ContainerAwareTrait;
 
     /**
-     * @var array<\Cake\Container\ServiceProvider\ServiceProviderInterface>
+     * @var array<int, \Cake\Container\ServiceProvider\ServiceProviderInterface>
      */
     protected array $providers = [];
 
@@ -56,7 +56,7 @@ class ServiceProviderAggregate implements ServiceProviderAggregateInterface
     }
 
     /**
-     * @inheritDoc
+     * @return \Generator<int, \Cake\Container\ServiceProvider\ServiceProviderInterface, mixed, mixed>
      */
     public function getIterator(): Generator
     {

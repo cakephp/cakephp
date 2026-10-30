@@ -294,7 +294,7 @@ class MimeType
      * Get the MIME types associated with a given file extension.
      *
      * @param string|null $ext The file extension to look up. Use null to return the full list.
-     * @return array|null An array of MIME types if found, or null if no MIME types are associated with the extension.
+     * @return ($ext is null ? array<string, array<string>> : array<string>|null) An array of MIME types if found, or null if no MIME types are associated with the extension.
      */
     public static function getMimeTypes(?string $ext = null): ?array
     {

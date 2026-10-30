@@ -7,7 +7,7 @@ use Cake\Container\ContainerAwareInterface;
 use IteratorAggregate;
 
 /**
- * @template-extends \IteratorAggregate<string, \Cake\Container\ServiceProvider\ServiceProviderInterface>
+ * @template-extends \IteratorAggregate<\Cake\Container\ServiceProvider\ServiceProviderInterface>
  */
 interface ServiceProviderAggregateInterface extends ContainerAwareInterface, IteratorAggregate
 {

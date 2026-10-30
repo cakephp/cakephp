@@ -45,7 +45,9 @@ class DebugContext
      */
     public function __construct(private int $maxDepth)
     {
-        $this->refs = new SplObjectStorage();
+        /** @var \SplObjectStorage<object, int> $refs */
+        $refs = new SplObjectStorage();
+        $this->refs = $refs;
     }
 
     /**

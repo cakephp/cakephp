@@ -234,6 +234,7 @@ class JsonStreamResponse extends AbstractStreamResponse
     {
         $transform = $this->getConfig('transform');
         if ($transform !== null) {
+            assert(is_callable($transform));
             $item = $transform($item);
         }
 

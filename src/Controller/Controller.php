@@ -791,8 +791,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $request = $this->getRequest();
 
         // Prefer the _ext route parameter if it is defined.
+        /** @var string|null $ext */
         $ext = $request->getParam('_ext');
-        if ($ext) {
+        if ($ext !== null) {
             $extTypes = MimeType::getMimeTypes($ext) ?? [];
             foreach ($extTypes as $extType) {
                 if (isset($typeMap[$extType])) {

@@ -734,7 +734,7 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Remove alias if needed.
      *
-     * @param array<string, mixed> $fields Current fields
+     * @param array<mixed> $fields Current fields
      * @param string $model Current model alias
      * @return array<string, mixed> $fields Unaliased fields where applicable
      */

@@ -65,7 +65,9 @@ class StoppableIterator extends Collection
     {
         $this->condition = $condition;
         parent::__construct($items);
-        $this->innerIterator = $this->getInnerIterator();
+        $innerIterator = $this->getInnerIterator();
+        assert($innerIterator !== null);
+        $this->innerIterator = $innerIterator;
     }
 
     /**

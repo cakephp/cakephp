@@ -40,3 +40,17 @@ no-negated-ternary = { enabled = true }
 no-parameter-shadowing = { enabled = true }
 no-literal-password = { enabled = false } # This complains even when you mask a password value like `'password' => '********'` in `__debugInfo()`
 prefer-early-continue = { enabled = false } # This rule at times requires adding negated conditions and `continue` statements, which can make code less readable.
+
+[analyzer]
+ignore = [
+    "mixed-argument",
+    "mixed-operand",
+    "mixed-property-type-coercion",
+    "mixed-array-index",
+    "mixed-return-statement",
+    "mixed-array-access",
+    "mixed-array-assignment",
+    "mixed-assignment",
+    "property-type-coercion",
+    "possibly-false-argument"
+]

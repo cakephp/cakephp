@@ -33,6 +33,8 @@ use RecursiveIterator;
  * Can be used to include or exclude files based on the $negate parameter:
  * - When $negate is false (default): includes files matching patterns
  * - When $negate is true: excludes files matching patterns
+ *
+ * @extends \RecursiveFilterIterator<string, \SplFileInfo, \RecursiveIterator<string, \SplFileInfo>>
  */
 final class ContainsPathFilterIterator extends RecursiveFilterIterator
 {

@@ -271,12 +271,6 @@ parameters:
 			path: src/View/Form/NullContext.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/View/View.php
-
-		-
 			message: '#^Cannot access constant class on Closure\|PDO\|resource\.$#'
 			identifier: classConstant.nonObject
 			count: 1

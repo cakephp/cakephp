@@ -87,7 +87,7 @@ class TimeHelper extends Helper
     /**
      * Returns a nicely formatted date string for given Datetime string.
      *
-     * @param \DateTimeInterface|string|int|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @param string|null $locale Locale string.
      * @return string Formatted date string

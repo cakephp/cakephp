@@ -22,6 +22,7 @@ use RecursiveFilterIterator;
  * Filters out hidden files and directories (those starting with a dot).
  *
  * @internal
+ * @extends \RecursiveFilterIterator<string, \SplFileInfo, \RecursiveIterator<string, \SplFileInfo>>
  */
 final class HiddenFileFilterIterator extends RecursiveFilterIterator
 {

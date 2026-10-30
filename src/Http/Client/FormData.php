@@ -121,7 +121,7 @@ class FormData implements Countable, Stringable
      *
      * Iterates the parameter and adds all the key/values.
      *
-     * @param array $data Array of data to add.
+     * @param array<string, mixed> $data Array of data to add.
      * @return $this
      */
     public function addMany(array $data): static
@@ -191,10 +191,10 @@ class FormData implements Countable, Stringable
      * Recursively add data.
      *
      * @param string $name The name to use.
-     * @param mixed $value The value to add.
+     * @param array $value The value to add.
      * @return void
      */
-    public function addRecursive(string $name, mixed $value): void
+    public function addRecursive(string $name, array $value): void
     {
         foreach ($value as $key => $item) {
             $key = $name . '[' . $key . ']';

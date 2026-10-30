@@ -7,7 +7,7 @@ use Cake\Container\ContainerAwareInterface;
 use IteratorAggregate;
 
 /**
- * @template-extends \IteratorAggregate<string, \Cake\Container\Inflector\Inflector>
+ * @template-extends \IteratorAggregate<\Cake\Container\Inflector\Inflector>
  */
 interface InflectorAggregateInterface extends ContainerAwareInterface, IteratorAggregate
 {
