@@ -119,12 +119,17 @@ trait ValidatorAwareTrait
         }
 
         $validator = new $this->validatorClass();
+        if (defined(static::class . '::VALIDATOR_PROVIDER_NAME')) {
+            $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
+        }
+
         if ($this instanceof EventDispatcherInterface) {
             $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
                 ? static::BUILD_VALIDATOR_EVENT
                 : 'Model.buildValidator';
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
+
         $validator = $this->$method($validator);
 
         assert(
@@ -160,7 +165,10 @@ trait ValidatorAwareTrait
      */
     public function setValidator(string $name, Validator $validator): static
     {
-        if (defined(static::class . '::VALIDATOR_PROVIDER_NAME')) {
+        if (
+            defined(static::class . '::VALIDATOR_PROVIDER_NAME')
+            && !isset($this->validators[$name])
+        ) {
             $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
         }
 
