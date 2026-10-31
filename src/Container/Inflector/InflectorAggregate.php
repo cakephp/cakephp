@@ -11,7 +11,7 @@ class InflectorAggregate implements InflectorAggregateInterface
     use ContainerAwareTrait;
 
     /**
-     * @var array<\Cake\Container\Inflector\Inflector>
+     * @var array<int, \Cake\Container\Inflector\Inflector>
      */
     protected array $inflectors = [];
 
@@ -44,7 +44,7 @@ class InflectorAggregate implements InflectorAggregateInterface
     }
 
     /**
-     * @inheritDoc
+     * @return \Generator<int, \Cake\Container\Inflector\Inflector, mixed, mixed>
      */
     public function getIterator(): Generator
     {

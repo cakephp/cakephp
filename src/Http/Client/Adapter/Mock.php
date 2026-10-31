@@ -91,7 +91,9 @@ class Mock implements AdapterInterface
                 continue;
             }
             if (isset($mock['options']['match'])) {
-                $match = $mock['options']['match']($request, $options);
+                $matchCallback = $mock['options']['match'];
+                assert(is_callable($matchCallback));
+                $match = $matchCallback($request, $options);
                 if (!is_bool($match)) {
                     throw new InvalidArgumentException('Match callback must return a boolean value.');
                 }

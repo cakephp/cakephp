@@ -51,7 +51,7 @@ class Route
     /**
      * Default parameters for a Route
      *
-     * @var array
+     * @var array<string, mixed>
      */
     public array $defaults = [];
 
@@ -87,7 +87,7 @@ class Route
     /**
      * List of middleware that should be applied.
      *
-     * @var array
+     * @var array<string>
      */
     protected array $middleware = [];
 
@@ -122,7 +122,7 @@ class Route
      * - '_urldecode' - Set to `false` to disable URL decoding before route parsing.
      *
      * @param string $template Template string with parameter placeholders
-     * @param array $defaults Defaults for the route.
+     * @param array<string, mixed> $defaults Defaults for the route.
      * @param array<string, mixed> $options Array of additional options for the Route
      * @throws \InvalidArgumentException When `$options['_method']` are not in `VALID_METHODS` list.
      */
@@ -904,7 +904,7 @@ class Route
     /**
      * Set the names of the middleware that should be applied to this route.
      *
-     * @param array $middleware The list of middleware names to apply to this route.
+     * @param array<string> $middleware The list of middleware names to apply to this route.
      *   Middleware names will not be checked until the route is matched.
      * @return $this
      */
@@ -918,7 +918,7 @@ class Route
     /**
      * Get the names of the middleware that should be applied to this route.
      *
-     * @return array
+     * @return array<string>
      */
     public function getMiddleware(): array
     {

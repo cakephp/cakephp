@@ -145,6 +145,7 @@ class ContextFactory
         $context = null;
         foreach ($this->providers as $provider) {
             $check = $provider['callable'];
+            assert(is_callable($check));
             $context = $check($request, $data);
             if ($context) {
                 break;

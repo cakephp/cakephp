@@ -279,7 +279,7 @@ class Statement implements StatementInterface
     /**
      * Get the inner iterator
      *
-     * @return \Generator
+     * @return \Generator<mixed, array<array-key, mixed>, mixed, mixed>
      */
     public function getIterator(): Generator
     {
@@ -290,6 +290,7 @@ class Statement implements StatementInterface
                 $row = $decorator($row);
             }
 
+            /** @var array<array-key, mixed> $row */
             yield $row;
         }
 

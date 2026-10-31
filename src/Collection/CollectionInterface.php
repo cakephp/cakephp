@@ -1081,7 +1081,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```
      *
-     * @param iterable ...$items The collections to zip.
+     * @param iterable $items The collections to zip.
      * @param callable $callback The function to use for zipping the elements together.
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */

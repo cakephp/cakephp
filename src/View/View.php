@@ -875,7 +875,7 @@ class View implements EventDispatcherInterface
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
-     * @param array|string $name A string or an array of data.
+     * @param array<string>|string $name A string or an array of data.
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
@@ -886,11 +886,6 @@ class View implements EventDispatcherInterface
         if (is_array($name)) {
             if (is_array($value)) {
                 $data = array_combine($name, $value);
-                if ($data === false) {
-                    throw new CakeException(
-                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.',
-                    );
-                }
             } else {
                 $data = $name;
             }
@@ -1494,7 +1489,7 @@ class View implements EventDispatcherInterface
      * Get an iterator for layout paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<string>
      */
     protected function getLayoutPaths(?string $plugin): Generator
     {
@@ -1538,7 +1533,7 @@ class View implements EventDispatcherInterface
      * Get an iterator for element paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<string>
      */
     protected function getElementPaths(?string $plugin): Generator
     {

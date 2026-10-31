@@ -162,7 +162,7 @@ class HelpFormatter
      * Iterate over a collection and find the longest named thing.
      *
      * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument> $collection The collection to find a max length of.
-     * @return int
+     * @return non-negative-int
      */
     protected function getMaxLength(array $collection): int
     {

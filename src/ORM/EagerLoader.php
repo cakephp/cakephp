@@ -848,6 +848,7 @@ class EagerLoader
      */
     protected function collectKeys(array $external, SelectQuery $query, array $results): array
     {
+        /** @var array<string, array{0: string, 1: array<string>, 2: bool}> $collectKeys */
         $collectKeys = [];
         foreach ($external as $meta) {
             $instance = $meta->instance();
@@ -856,15 +857,15 @@ class EagerLoader
             }
 
             $source = $instance->getSource();
+            /** @var array<string> $keys */
             $keys = $instance->type() === Association::MANY_TO_ONE ?
                 (array)$instance->getForeignKey() :
                 (array)$instance->getBindingKey();
 
             $alias = $source->getAlias();
             $pkFields = [];
-            /** @var string $key */
             foreach ($keys as $key) {
-                $pkFields[] = key($query->aliasField($key, $alias));
+                $pkFields[] = (string)array_key_first($query->aliasField($key, $alias));
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
@@ -880,7 +881,7 @@ class EagerLoader
      * defined in $collectKeys.
      *
      * @param array $results Results array.
-     * @param array<string, array> $collectKeys The keys to collect.
+     * @param array<string, array{0: string, 1: array<string>, 2: bool}> $collectKeys The keys to collect.
      * @return array
      */
     protected function groupKeys(array $results, array $collectKeys): array

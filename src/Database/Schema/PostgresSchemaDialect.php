@@ -45,7 +45,7 @@ class PostgresSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
      */
     protected function listTablesSql(array $config): array
     {
@@ -890,7 +890,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $index = $schema->index($name);
         $columns = array_map(
             $this->driver->quoteIdentifier(...),
-            (array)$index->getColumns(),
+            $index->getColumns() ?? [],
         );
 
         // Build USING clause for non-btree access methods (gin, gist, spgist, brin, hash)
