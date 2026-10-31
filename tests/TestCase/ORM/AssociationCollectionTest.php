@@ -206,7 +206,7 @@ class AssociationCollectionTest extends TestCase
     /**
      * Type should return empty array.
      */
-    public function hasTypeReturnsEmptyArray(): void
+    public function testHasTypeReturnsEmptyArray(): void
     {
         foreach (['HasMany', 'hasMany', 'FooBar', 'DoesNotExist'] as $value) {
             $this->assertSame([], $this->associations->getByType($value));

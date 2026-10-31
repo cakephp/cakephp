@@ -178,7 +178,7 @@ class ResponseTest extends TestCase
     /**
      * test withType() and full mime-types
      */
-    public function withTypeFull(): void
+    public function testWithTypeFull(): void
     {
         $response = new Response();
         $this->assertSame(
