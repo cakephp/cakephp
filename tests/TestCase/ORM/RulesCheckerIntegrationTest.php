@@ -29,6 +29,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Closure;
 use stdClass;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests the integration between the ORM and the domain checker
@@ -1304,7 +1305,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', [
-            'conditions' => ['Authors.name !=' => 'mariano'],
+            'conditions' => ['Authors.name' => notEquals('mariano')],
         ]);
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));

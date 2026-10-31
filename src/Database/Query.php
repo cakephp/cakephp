@@ -28,6 +28,8 @@ use Stringable;
 use Throwable;
 use WeakMap;
 
+use function Cake\Database\Expression\{equals, in, notEquals, notIn};
+
 /**
  * This class represents a Relational database SQL Query. A query can be of
  * different types like select, update, insert and delete. Exposes the methods
@@ -598,7 +600,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->join(['a' => [
      *     'table' => 'articles',
      *     'conditions' => [
-     *         'a.posted >=' => new DateTime('-3 days'),
+     *         'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *         'a.published' => true,
      *         'a.author_id = authors.id'
      *     ]
@@ -701,7 +703,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->leftJoin(['a' => 'articles'], [
-     *      'a.posted >=' => new DateTime('-3 days'),
+     *      'a.posted' => greaterThanOrEquals(new DateTime('-3 days')),
      *      'a.published' => true,
      *      'a.author_id = authors.id'
      * ], ['a.posted' => 'datetime', 'a.published' => 'boolean']);
@@ -815,9 +817,8 @@ abstract class Query implements ExpressionInterface, Stringable
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this
-     * query. Conditions can be expressed as an array of fields as keys with
-     * comparison operators in it, the values for the array will be used for comparing
-     * the field to such literal. Finally, conditions can be expressed as a single
+     * query. Conditions use field keys with literal values for equality or namespaced
+     * predicate functions from Cake\Database\Expression for other comparisons. Finally, conditions can be expressed as a single
      * string or an array of strings.
      *
      * When using arrays, each entry will be joined to the rest of the conditions using
@@ -828,12 +829,12 @@ abstract class Query implements ExpressionInterface, Stringable
      * Any conditions created with this methods can be used with any `SELECT`, `UPDATE`
      * and `DELETE` type of queries.
      *
-     * ### Conditions using operators:
+     * ### Conditions using predicate functions:
      *
      * ```
      * $query->where([
-     *     'posted >=' => new DateTime('3 days ago'),
-     *     'title LIKE' => 'Hello W%',
+     *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
+     *     'title' => like('Hello W%'),
      *     'author_id' => 1,
      * ], ['posted' => 'datetime']);
      * ```
@@ -849,8 +850,8 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->where([
-     *     'author_id !=' => 1,
-     *     'OR' => ['published' => true, 'posted <' => new DateTime('now')],
+     *     'author_id' => notEquals(1),
+     *     'OR' => ['published' => true, 'posted' => lessThan(new DateTime('now'))],
      *     'NOT' => ['title' => 'Hello']
      * ], ['published' => boolean, 'posted' => 'datetime']
      * ```
@@ -877,7 +878,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Using expressions objects:
      *
      * ```
-     * $exp = $query->expr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     * $exp = $query->expr()->add(['id' => notEquals(100), 'author_id' != 1])->tieWith('OR');
      * $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -896,10 +897,10 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query
-     *   ->where(['title !=' => 'Hello World'])
+     *   ->where(['title' => notEquals('Hello World')])
      *   ->where(function ($exp, $query) {
      *     $or = $exp->or(['id' => 1]);
-     *     $and = $exp->and(['id >' => 2, 'id <' => 10]);
+     *     $and = $exp->and([['id' => greaterThan(2)], ['id' => lessThan(10)]]);
      *    return $or->add($and);
      *   });
      * ```
@@ -928,12 +929,12 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ### Using null-able values
      *
-     * When using values that can be null you can use the 'IS' keyword to let the ORM generate the correct SQL based on the value's type
+     * Use equals() with nullable values to choose between equality and IS NULL based on the value.
      *
      * ```
      * $query->where([
-     *     'posted >=' => new DateTime('3 days ago'),
-     *     'category_id IS' => $category,
+     *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
+     *     'category_id' => equals($category),
      * ]);
      * ```
      *
@@ -1037,7 +1038,7 @@ abstract class Query implements ExpressionInterface, Stringable
             return $this->where('1=0');
         }
 
-        return $this->where([$field . ' IN' => $values], $options['types']);
+        return $this->where([$field => in($values)], $options['types']);
     }
 
     /**
@@ -1061,10 +1062,10 @@ abstract class Query implements ExpressionInterface, Stringable
         ];
 
         if ($options['allowEmpty'] && !$values) {
-            return $this->where([$field . ' IS NOT' => null]);
+            return $this->where([$field => notEquals(null)]);
         }
 
-        return $this->where([$field . ' NOT IN' => $values], $options['types']);
+        return $this->where([$field => notIn($values)], $options['types']);
     }
 
     /**
@@ -1089,12 +1090,12 @@ abstract class Query implements ExpressionInterface, Stringable
         ];
 
         if ($options['allowEmpty'] && !$values) {
-            return $this->where([$field . ' IS NOT' => null]);
+            return $this->where([$field => notEquals(null)]);
         }
 
         return $this->where(
             [
-                'OR' => [$field . ' NOT IN' => $values, $field . ' IS' => null],
+                'OR' => [[$field => notIn($values)], [$field => equals(null)]],
             ],
             $options['types'],
         );
@@ -1129,7 +1130,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ```
      * $query
      *   ->where(['OR' => ['published' => false, 'published is NULL']])
-     *   ->andWhere(['author_id' => 1, 'comments_count >' => 10])
+     *   ->andWhere(['author_id' => 1, 'comments_count' => greaterThan(10)])
      * ```
      *
      * Produces:
