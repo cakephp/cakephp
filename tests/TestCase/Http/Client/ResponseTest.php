@@ -37,7 +37,8 @@ class ResponseTest extends TestCase
     #[DataProvider('cachedJsonProvider')]
     public function testJsonIsCachedForLiveBody(string $json, ?array $expected): void
     {
-        $pair = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $domain = PHP_OS_FAMILY === 'Windows' ? STREAM_PF_INET : STREAM_PF_UNIX;
+        $pair = stream_socket_pair($domain, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
         $this->assertIsArray($pair);
         fwrite($pair[0], $json);
         fclose($pair[0]);
@@ -102,7 +103,8 @@ class ResponseTest extends TestCase
      */
     public function testLiveBody(): void
     {
-        $pair = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $domain = PHP_OS_FAMILY === 'Windows' ? STREAM_PF_INET : STREAM_PF_UNIX;
+        $pair = stream_socket_pair($domain, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
         $this->assertIsArray($pair);
         fwrite($pair[0], 'first second');
         fclose($pair[0]);

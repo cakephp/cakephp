@@ -111,6 +111,8 @@ final class FsFixture
             $itemPath = $path . DS . $item;
             if (is_dir($itemPath) && !is_link($itemPath)) {
                 self::remove($itemPath);
+            } elseif (PHP_OS_FAMILY === 'Windows' && is_dir($itemPath) && is_link($itemPath)) {
+                rmdir($itemPath);
             } else {
                 unlink($itemPath);
             }
