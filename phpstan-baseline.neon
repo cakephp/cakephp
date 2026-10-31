@@ -49,24 +49,6 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: '#^Method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) should return array\<bool\|string\> but returns array\<int\|string, array\<string\>\|bool\|string\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Command/RoutesGenerateCommand.php
-
-		-
-			message: '#^Parameter \#1 \$haystack of function str_contains expects string, array\<string\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Command/RoutesGenerateCommand.php
-
-		-
-			message: '#^Parameter \#2 \$string of function explode expects string, array\<string\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Command/RoutesGenerateCommand.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
