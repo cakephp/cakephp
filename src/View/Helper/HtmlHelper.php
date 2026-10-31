@@ -790,9 +790,9 @@ class HtmlHelper extends Helper
      * Returns a formatted string of table rows (TR's with TD's in them).
      *
      * @param array|string $data Array of table data
-     * @param array<string, mixed>|bool|null $oddTrOptions HTML options for odd TR elements if true useCount is used
-     * @param array<string, mixed>|bool|null $evenTrOptions HTML options for even TR elements
-     * @param bool $useCount adds class "column-$i"
+     * @param array<string, mixed> $oddTrOptions HTML options for odd TR elements
+     * @param array<string, mixed> $evenTrOptions HTML options for even TR elements
+     * @param bool $useCount Adds class "column-$i"
      * @param bool $continueOddEven If false, will use a non-static $count variable,
      *    so that the odd/even count is reset to zero just for that call.
      * @return string Formatted HTML
@@ -800,8 +800,8 @@ class HtmlHelper extends Helper
      */
     public function tableCells(
         array|string $data,
-        array|bool|null $oddTrOptions = null,
-        array|bool|null $evenTrOptions = null,
+        array $oddTrOptions = [],
+        array $evenTrOptions = [],
         bool $useCount = false,
         bool $continueOddEven = true,
     ): string {
@@ -809,16 +809,6 @@ class HtmlHelper extends Helper
             $data = [[$data]];
         } elseif (empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
-        }
-
-        if ($oddTrOptions === true) {
-            $useCount = true;
-            $oddTrOptions = null;
-        }
-
-        if ($evenTrOptions === false) {
-            $continueOddEven = false;
-            $evenTrOptions = null;
         }
 
         if ($continueOddEven) {
@@ -831,9 +821,7 @@ class HtmlHelper extends Helper
         foreach ($data as $line) {
             $count++;
             $cellsOut = $this->renderCells($line, $useCount);
-            $opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
-            /** @var array<string, mixed> $options */
-            $options = (array)$opts;
+            $options = $count % 2 ? $oddTrOptions : $evenTrOptions;
             $out[] = $this->tableRow(implode(' ', $cellsOut), $options);
         }
 
