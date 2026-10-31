@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
@@ -259,8 +260,11 @@ class SchemaDialectTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
+        $driverVersion = $driver->version();
+        $isMariadb = $driver instanceof Mariadb
+            || ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB'));
         $this->skipIf(
-            $driver instanceof Mysql && !$driver->isMariaDb() && version_compare($driver->version(), '8.0.13', '<'),
+            $driver instanceof Mysql && !$isMariadb && version_compare($driverVersion, '8.0.13', '<'),
             'Expression defaults need MySQL 8.0.13 or newer.',
         );
 
