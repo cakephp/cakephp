@@ -35,7 +35,7 @@ class Mock implements AdapterInterface
     /**
      * List of mocked responses.
      *
-     * @var array
+     * @var array<int, array{request: \Psr\Http\Message\RequestInterface, response: \Cake\Http\Client\Response, options: array<string, mixed>}>
      */
     protected array $responses = [];
 
@@ -48,7 +48,7 @@ class Mock implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request A partial request to use for matching.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param array<string, mixed> $options See above.
+     * @param array{match?: \Closure(\Psr\Http\Message\RequestInterface, array<string, mixed>): bool} $options See above.
      * @return void
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void
@@ -72,7 +72,7 @@ class Mock implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to match
      * @param array<string, mixed> $options The options are passed to match callbacks.
-     * @return array<\Cake\Http\Client\Response> The matched response.
+     * @return non-empty-list<\Cake\Http\Client\Response> The matched response.
      * @throws \Cake\Http\Client\Exception\MissingResponseException When no mock response matches.
      */
     public function send(RequestInterface $request, array $options): array
@@ -82,7 +82,6 @@ class Mock implements AdapterInterface
         $requestUri = (string)$request->getUri();
 
         foreach ($this->responses as $index => $mock) {
-            /** @var \Psr\Http\Message\RequestInterface $mockRequest */
             $mockRequest = $mock['request'];
             if ($method !== $mockRequest->getMethod()) {
                 continue;

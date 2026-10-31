@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -24,12 +25,19 @@ use Cake\TestSuite\TestCase;
 use Exception;
 use Mockery;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
+use Uri\WhatWg\Url;
 
 /**
  * HTTP stream adapter test.
  */
 class StreamTest extends TestCase
 {
+    public function testCreateResponsesRejectsMissingStatusLine(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->stream->createResponses(['Content-Type: text/plain'], 'body');
+    }
+
     /**
      * @var \Cake\Http\Client\Adapter\Stream
      */
@@ -143,6 +151,7 @@ class StreamTest extends TestCase
         $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertSame(0, $result['max_redirects']);
         $this->assertTrue($result['ignore_errors']);
+        $this->assertSame(Url::class, $result['uri_parser_class']);
     }
 
     /**

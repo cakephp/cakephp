@@ -18,24 +18,91 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\MissingResponseException;
+use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Request as LaminasRequest;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Uri\WhatWg\InvalidUrlException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * HTTP client test.
  */
 class ClientTest extends TestCase
 {
+    public function testCustomAdapterOptionsArePreserved(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            /**
+             * @var array<string, mixed>
+             */
+            public array $options = [];
+
+            public function send(RequestInterface $request, array $options): array
+            {
+                $this->options = $options;
+
+                return [new Response(['HTTP/1.1 200 OK'])];
+            }
+        };
+        $client = new Client(['adapter' => $adapter, 'timeout' => 0.5, 'custom' => ['enabled' => true]]);
+        $client->get('http://example.com', options: ['readTimeout' => 0]);
+
+        $this->assertSame(['enabled' => true], $adapter->options['custom']);
+        $this->assertSame(0.5, $adapter->options['timeout']);
+        $this->assertSame(0, $adapter->options['readTimeout']);
+    }
+
+    public function testEmptyAdapterResponseIsRejected(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            public function send(RequestInterface $request, array $options): array
+            {
+                return [];
+            }
+        };
+        $client = new Client(['adapter' => $adapter]);
+        $this->expectException(RequestException::class);
+        $client->get('http://example.com');
+    }
+
+    public function testSendRequestPreservesPsrExceptionContract(): void
+    {
+        $adapter = new class implements AdapterInterface {
+            public function send(RequestInterface $request, array $options): array
+            {
+                return [new Response(['Invalid Header Name: value'])];
+            }
+        };
+        $client = new Client(['adapter' => $adapter]);
+        $this->expectException(ClientExceptionInterface::class);
+        $client->sendRequest(new Request('http://example.com'));
+    }
+
+    public function testAuthenticationRequiresInterface(): void
+    {
+        $client = new Client();
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('must implement');
+        $client->get('http://example.com', options: ['auth' => ['type' => '\\stdClass']]);
+    }
+
+    public function testProxyAuthenticationRequiresCapability(): void
+    {
+        $client = new Client();
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('does not support proxy authentication');
+        $client->get('http://example.com', options: ['proxy' => ['type' => 'Digest']]);
+    }
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -755,6 +822,55 @@ class ClientTest extends TestCase
     /**
      * test redirects
      */
+    #[DataProvider('relativeRedirects')]
+    public function testRedirectsResolveAgainstRequestUri(string $location, string $expected): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: ' . $location]),
+        ]);
+        $adapter->shouldReceive('send')->once()->ordered()
+            ->withArgs(function (RequestInterface $request, array $options) use ($expected): bool {
+                $this->assertSame($expected, (string)$request->getUri());
+
+                return true;
+            })
+            ->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+
+        $client = new Client(['adapter' => $adapter, 'basePath' => '/scoped']);
+        $client->send(new Request('https://example.com/a/b?original=1'), ['redirect' => 1]);
+    }
+
+    public function testRedirectRejectsInvalidUri(): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: http://[invalid]/']),
+        ]);
+        $client = new Client(['adapter' => $adapter]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $client->send(new Request('https://example.com/a/b'), ['redirect' => 1]);
+    }
+
+    public static function relativeRedirects(): array
+    {
+        return [
+            'sibling' => ['next', 'https://example.com/a/next'],
+            'parent' => ['../next', 'https://example.com/next'],
+            'query' => ['?page=2', 'https://example.com/a/b?page=2'],
+            'fragment' => ['#section', 'https://example.com/a/b?original=1#section'],
+            'root' => ['/next', 'https://example.com/next'],
+            'authority' => ['//other.example/next', 'https://other.example/next'],
+            'absolute' => ['http://other.example/next', 'http://other.example/next'],
+            'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
+            'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
+            'space' => ['next page', 'https://example.com/a/next%20page'],
+            'unicode' => ['https://bücher.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
+            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
+        ];
+    }
+
     public function testRedirects(): void
     {
         $url = 'http://cakephp.org';
@@ -992,7 +1108,7 @@ class ClientTest extends TestCase
         $mock->shouldReceive('send')
             ->once()
             ->withArgs(function ($request) use ($headers) {
-                $this->assertInstanceOf(LaminasRequest::class, $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertSame($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -1003,10 +1119,9 @@ class ClientTest extends TestCase
             ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock]);
-        $request = new LaminasRequest(
+        $request = new Request(
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
-            'php://temp',
             $headers,
         );
         $result = $http->sendRequest($request);
@@ -1121,7 +1236,7 @@ class ClientTest extends TestCase
 
         $adapter->shouldReceive('send')
             ->withArgs(function ($request) {
-                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                $this->assertSame('http://backstage.example.org/', (string)$request->getUri());
                 $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
                 return true;
@@ -1164,6 +1279,76 @@ class ClientTest extends TestCase
     /**
      * basePath is set when passed to client in string
      */
+    public function testCreateFromUrlNormalizesComponents(): void
+    {
+        $client = Client::createFromUrl('HTTP://Example.com:80/a%2Fb/../c');
+
+        $this->assertSame('http', $client->getConfig('scheme'));
+        $this->assertSame('example.com', $client->getConfig('host'));
+        $this->assertNull($client->getConfig('port'));
+        $this->assertSame('/c', $client->getConfig('basePath'));
+    }
+
+    public function testCreateFromUrlBuildsPathsAtRoot(): void
+    {
+        $client = Client::createFromUrl('https://example.com');
+
+        $this->assertSame('/', $client->getConfig('basePath'));
+        $this->assertSame('https://example.com/next', $client->buildUrl('next', [], $client->getConfig()));
+    }
+
+    #[DataProvider('unicodeUrls')]
+    public function testCreateFromUrlNormalizesUnicode(string $url): void
+    {
+        $client = Client::createFromUrl($url);
+
+        $this->assertSame('bücher.example', $client->getConfig('host'));
+        $this->assertSame('/%C3%A4%20b', $client->getConfig('basePath'));
+    }
+
+    public static function unicodeUrls(): array
+    {
+        return [
+            ['https://bücher.example/ä b'],
+            ['https://xn--bcher-kva.example/ä b'],
+        ];
+    }
+
+    #[DataProvider('unsupportedUrls')]
+    public function testCreateFromUrlRejectsUnsupportedScheme(string $url): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl($url);
+    }
+
+    #[DataProvider('unsupportedUrls')]
+    public function testRedirectRejectsUnsupportedScheme(string $url): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: ' . $url]),
+        ]);
+        $client = new Client(['adapter' => $adapter]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $client->send(new Request('https://example.com/'), ['redirect' => 1]);
+    }
+
+    public static function unsupportedUrls(): array
+    {
+        return [
+            ['ftp://example.com/file'],
+            ['file:///tmp/file'],
+            ['mailto:user@example.com'],
+        ];
+    }
+
+    public function testCreateFromUrlRejectsInvalidUri(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Client::createFromUrl('https://[invalid]/');
+    }
+
     public function testCreateFromUrlSetsBasePath(): void
     {
         $client = Client::createFromUrl('https://example.co/api/v1');
@@ -1176,7 +1361,7 @@ class ClientTest extends TestCase
     public function testCreateFromUrlThrowsInvalidExceptionWhenUrlCannotBeParsed(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The URL does not contain a host');
+        $this->expectExceptionMessage('String `htps://` did not parse.');
         Client::createFromUrl('htps://');
     }
 
@@ -1194,8 +1379,8 @@ class ClientTest extends TestCase
      */
     public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoSchemeProvided(): void
     {
-        $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('The specified URI is malformed');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `example.co` did not parse.');
         Client::createFromUrl('example.co');
     }
 
@@ -1204,8 +1389,8 @@ class ClientTest extends TestCase
      */
     public function testCreateFromUrlThrowsInvalidUrlExceptionWhenNoDomainProvided(): void
     {
-        $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('The specified URI is malformed');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('String `/api/v1` did not parse.');
         Client::createFromUrl('/api/v1');
     }
 
@@ -1225,6 +1410,7 @@ class ClientTest extends TestCase
             'scheme' => 'http',
             'basePath' => '/some/uri/',
             'timeout' => 30,
+            'stream' => false,
             'ssl_verify_peer' => true,
             'ssl_verify_peer_name' => true,
             'ssl_verify_depth' => 5,

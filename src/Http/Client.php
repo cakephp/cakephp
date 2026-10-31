@@ -24,17 +24,20 @@ use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Mock as MockAdapter;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Auth\AuthenticationInterface;
+use Cake\Http\Client\Auth\ProxyAuthenticationInterface;
 use Cake\Http\Client\ClientEvent;
+use Cake\Http\Client\Exception\ClientException;
+use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Uri\WhatWg\InvalidUrlException;
 use Uri\WhatWg\Url;
 
 /**
@@ -98,6 +101,32 @@ use Uri\WhatWg\Url;
  * - Digest
  * - Oauth
  *
+ * ### Reading a live response
+ *
+ * ```
+ * $client = new Client(['adapter' => \Cake\Http\Client\Adapter\Stream::class]);
+ * $response = $client->post($url, $json, [
+ *     'stream' => true,
+ *     'readTimeout' => 60,
+ *     'headers' => ['Content-Type' => 'application/json'],
+ * ]);
+ * $body = $response->getBody();
+ * try {
+ *     while (!$body->eof()) {
+ *         $chunk = $body->read(8192);
+ *         // Process bytes incrementally. Chunks need not contain complete SSE events.
+ *     }
+ * } finally {
+ *     $body->close();
+ * }
+ * ```
+ *
+ * To relay bytes to a browser, attach the body to a server response using
+ * `withBody()`. Set the appropriate Content-Type (e.g. text/event-stream),
+ * Cache-Control and X-Accel-Buffering headers. The emitter reads and flushes
+ * non-seekable bodies incrementally and closes them after emission. Server and
+ * proxy buffering must also be configured to allow streaming.
+ *
  * ### Using proxies
  *
  * By using the `proxy` key you can set authentication credentials for
@@ -123,6 +152,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         'scheme' => 'http',
         'basePath' => '',
         'timeout' => 30,
+        'stream' => false,
         'ssl_verify_peer' => true,
         'ssl_verify_peer_name' => true,
         'ssl_verify_depth' => 5,
@@ -175,6 +205,12 @@ class Client implements EventDispatcherInterface, ClientInterface
      *   Defaults to 5.
      * - ssl_verify_host - Verify that the certificate and hostname match.
      *   Defaults to true.
+     * - stream - Return a live body after headers arrive. Defaults to false.
+     *   Requires the Stream adapter. Read the body incrementally and close it when done.
+     *   HttpClient.afterSend runs before the live body is consumed; listeners must
+     *   not read the body for logging or monitoring.
+     * - readTimeout - Timeout in seconds for each live body read. Defaults to timeout.
+     *   A value of 0 disables the read timeout. Read failures occur during body consumption.
      * - redirect - Number of redirects to follow. Defaults to false.
      * - adapter - The adapter class name or instance. Defaults to
      *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
@@ -229,19 +265,26 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function createFromUrl(string $url): static
     {
-        $uri = new Url($url);
-        $host = $uri->getUnicodeHost();
+        $uri = Url::parse($url);
+        if ($uri === null || $uri->getUnicodeHost() === '') {
+            throw new InvalidArgumentException(sprintf(
+                'String `%s` did not parse.',
+                $url,
+            ));
+        }
 
-        if ($host === '') {
-            throw new InvalidArgumentException('The URL does not contain a host');
+        if (!in_array($uri->getScheme(), ['http', 'https'], true) || !$uri->getUnicodeHost()) {
+            throw new InvalidArgumentException('The URL must use http or https and contain a host');
         }
 
         $config = [
             'scheme' => $uri->getScheme(),
-            'host' => $host,
-            'port' => $uri->getPort(),
+            'host' => $uri->getUnicodeHost(),
             'basePath' => $uri->getPath(),
         ];
+        if ($uri->getPort() !== null) {
+            $config['port'] = $uri->getPort();
+        }
 
         return new static($config);
     }
@@ -308,11 +351,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do a POST request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The post data you want to send.
+     * @param array|string|null $data The post data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function post(string $url, mixed $data = [], array $options = []): Response
+    public function post(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -324,11 +367,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do a PUT request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The request data you want to send.
+     * @param array|string|null $data The request data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function put(string $url, mixed $data = [], array $options = []): Response
+    public function put(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -340,11 +383,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do a PATCH request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The request data you want to send.
+     * @param array|string|null $data The request data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function patch(string $url, mixed $data = [], array $options = []): Response
+    public function patch(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -356,11 +399,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do an OPTIONS request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The request data you want to send.
+     * @param array|string|null $data The request data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function options(string $url, mixed $data = [], array $options = []): Response
+    public function options(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -372,11 +415,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do a TRACE request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The request data you want to send.
+     * @param array|string|null $data The request data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function trace(string $url, mixed $data = [], array $options = []): Response
+    public function trace(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -388,11 +431,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Do a DELETE request.
      *
      * @param string $url The url or path you want to request.
-     * @param mixed $data The request data you want to send.
+     * @param array|string|null $data The request data you want to send.
      * @param array<string, mixed> $options Additional options for the request.
      * @return \Cake\Http\Client\Response
      */
-    public function delete(string $url, mixed $data = [], array $options = []): Response
+    public function delete(string $url, array|string|null $data = [], array $options = []): Response
     {
         $options = $this->mergeOptions($options);
         $url = $this->buildUrl($url, [], $options);
@@ -421,11 +464,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $method HTTP method.
      * @param string $url URL to request.
-     * @param mixed $data The request body.
+     * @param array|string|null $data The request body.
      * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Response
      */
-    protected function doRequest(string $method, string $url, mixed $data, array $options): Response
+    protected function doRequest(string $method, string $url, array|string|null $data, array $options): Response
     {
         $request = $this->createRequest(
             $method,
@@ -441,7 +484,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Does a recursive merge of the parameter with the scope config.
      *
      * @param array<string, mixed> $options Options to merge.
-     * @return array Options merged with set config.
+     * @return array<string, mixed> Options merged with set config.
      */
     protected function mergeOptions(array $options): array
     {
@@ -452,12 +495,16 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Sends a PSR-7 request and returns a PSR-7 response.
      *
      * @param \Psr\Http\Message\RequestInterface $request Request instance.
-     * @return \Psr\Http\Message\ResponseInterface Response instance.
+     * @return \Cake\Http\Client\Response Response instance.
      * @throws \Psr\Http\Client\ClientExceptionInterface If an error happens while processing the request.
      */
-    public function sendRequest(RequestInterface $request): ResponseInterface
+    public function sendRequest(RequestInterface $request): Response
     {
-        return $this->send($request, $this->config);
+        try {
+            return $this->send($request, $this->config);
+        } catch (InvalidArgumentException $error) {
+            throw new ClientException($error->getMessage(), 0, $error);
+        }
     }
 
     /**
@@ -509,17 +556,21 @@ class Client implements EventDispatcherInterface, ClientInterface
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {
+                if (!$response->getBody()->isSeekable()) {
+                    $response->getBody()->close();
+                }
                 $url = $request->getUri();
 
                 $location = $response->getHeaderLine('Location');
-                $locationUrl = $this->buildUrl($location, [], [
-                    'host' => $url->getHost(),
-                    'port' => $url->getPort(),
-                    'scheme' => $url->getScheme(),
-                    'protocolRelative' => true,
-                ]);
-
-                $locationUri = new Uri($locationUrl);
+                try {
+                    $locationUrl = new Url((string)$url)->resolve($location);
+                } catch (InvalidUrlException $error) {
+                    throw new InvalidArgumentException($error->getMessage(), 0, $error);
+                }
+                if (!in_array($locationUrl->getScheme(), ['http', 'https'], true) || !$locationUrl->getUnicodeHost()) {
+                    throw new InvalidArgumentException('The redirect URL must use http or https and contain a host');
+                }
+                $locationUri = new Uri($locationUrl->toUnicodeString());
                 if (
                     $locationUri->getScheme() !== $url->getScheme() ||
                     strtolower($locationUri->getHost()) !== strtolower($url->getHost()) ||
@@ -574,7 +625,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param string $method The HTTP method being mocked.
      * @param string $url The URL being matched. See above for examples.
      * @param \Cake\Http\Client\Response $response The response that matches the request.
-     * @param array<string, mixed> $options See above.
+     * @param array{match?: \Closure(\Psr\Http\Message\RequestInterface, array<string, mixed>): bool} $options See above.
      * @return void
      */
     public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
@@ -606,7 +657,10 @@ class Client implements EventDispatcherInterface, ClientInterface
             $this->cookies = $this->cookies->addFromResponse($response, $request);
         }
 
-        /** @var \Cake\Http\Client\Response */
+        if ($responses === []) {
+            throw new RequestException('No HTTP response received.', $request);
+        }
+
         return array_last($responses);
     }
 
@@ -615,7 +669,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $url Either a full URL or just the path.
      * @param array|string $query The query data for the URL.
-     * @param array<string, mixed> $options The config options stored with Client::config()
+     * @param array<string, mixed> $options The URL options.
      * @return string A complete url with scheme, port, host, and path.
      */
     public function buildUrl(string $url, array|string $query = [], array $options = []): string
@@ -654,7 +708,10 @@ class Client implements EventDispatcherInterface, ClientInterface
             $out .= ':' . $options['port'];
         }
         if (!empty($options['basePath'])) {
-            $out .= '/' . trim($options['basePath'], '/');
+            $basePath = trim($options['basePath'], '/');
+            if ($basePath !== '') {
+                $out .= '/' . $basePath;
+            }
         }
         $out .= '/' . ltrim($url, '/');
 
@@ -666,13 +723,13 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @param string $method HTTP method name.
      * @param string $url The url including query string.
-     * @param mixed $data The request body.
+     * @param array|string|null $data The request body.
      * @param array<string, mixed> $options The options to use. Contains auth, proxy, etc.
      * @return \Cake\Http\Client\Request
      */
-    protected function createRequest(string $method, string $url, mixed $data, array $options): Request
+    protected function createRequest(string $method, string $url, array|string|null $data, array $options): Request
     {
-        /** @var array<non-empty-string, non-empty-string> $headers */
+        /** @var array<non-empty-string, string|array<string>> $headers */
         $headers = (array)($options['headers'] ?? []);
         if (isset($options['type'])) {
             $headers = array_merge($headers, $this->typeHeaders($options['type']));
@@ -741,11 +798,10 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     protected function addAuthentication(Request $request, array $options): Request
     {
-        $auth = $options['auth'];
-        /** @var \Cake\Http\Client\Auth\Basic $adapter */
+        $auth = $options['auth'] ?? [];
         $adapter = $this->createAuth($auth);
 
-        return $adapter->authentication($request, $options['auth']);
+        return $adapter->authentication($request, $auth);
     }
 
     /**
@@ -760,11 +816,13 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     protected function addProxy(Request $request, array $options): Request
     {
-        $auth = $options['proxy'];
-        /** @var \Cake\Http\Client\Auth\Basic $adapter */
+        $auth = $options['proxy'] ?? [];
         $adapter = $this->createAuth($auth);
+        if (!$adapter instanceof ProxyAuthenticationInterface) {
+            throw new CakeException('Authentication strategy does not support proxy authentication.');
+        }
 
-        return $adapter->proxyAuthentication($request, $options['proxy']);
+        return $adapter->proxyAuthentication($request, $auth);
     }
 
     /**
@@ -773,11 +831,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Use the configuration options to create the correct
      * authentication strategy handler.
      *
-     * @param array $auth The authentication options to use.
-     * @return object Authentication strategy instance.
+     * @param array<string, mixed> $auth The authentication options to use.
+     * @return \Cake\Http\Client\Auth\AuthenticationInterface Authentication strategy instance.
      * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */
-    protected function createAuth(array $auth): object
+    protected function createAuth(array $auth): AuthenticationInterface
     {
         if (empty($auth['type'])) {
             $auth['type'] = 'basic';
@@ -788,6 +846,14 @@ class Client implements EventDispatcherInterface, ClientInterface
             throw new CakeException(
                 sprintf('Invalid authentication type `%s`.', $name),
             );
+        }
+
+        if (!is_a($class, AuthenticationInterface::class, true)) {
+            throw new CakeException(sprintf(
+                'Authentication strategy `%s` must implement `%s`.',
+                $class,
+                AuthenticationInterface::class,
+            ));
         }
 
         return new $class($this);

@@ -17,14 +17,108 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Stream;
 use Cake\TestSuite\TestCase;
+use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use UnexpectedValueException;
 
 /**
  * HTTP response test.
  */
 class ResponseTest extends TestCase
 {
+    /**
+     * Cached JSON must survive a second read of a non-seekable body.
+     *
+     * @param string $json The encoded response body.
+     * @param array|null $expected The decoded value.
+     */
+    #[DataProvider('cachedJsonProvider')]
+    public function testJsonIsCachedForLiveBody(string $json, ?array $expected): void
+    {
+        $domain = PHP_OS_FAMILY === 'Windows' ? STREAM_PF_INET : STREAM_PF_UNIX;
+        $pair = stream_socket_pair($domain, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $this->assertIsArray($pair);
+        fwrite($pair[0], $json);
+        fclose($pair[0]);
+        $body = new Stream($pair[1]);
+        try {
+            $response = new Response([], $body);
+            $this->assertSame($expected, $response->getJson());
+            $this->assertSame($expected, $response->getJsonArray());
+        } finally {
+            $body->close();
+        }
+    }
+
+    /**
+     * @return array<string, array{string, array|null}>
+     */
+    public static function cachedJsonProvider(): array
+    {
+        return [
+            'empty array' => ['[]', []],
+            'null' => ['null', null],
+            'empty object' => ['{}', []],
+            'object' => ['{"id":42}', ['id' => 42]],
+        ];
+    }
+
+    public function testWithBodyDiscardsDecodedValues(): void
+    {
+        $response = new Response([], '{"id":1}');
+        $this->assertSame(['id' => 1], $response->getJson());
+        $replacement = $response->withBody(new Stream('data://text/plain,{"id":2}'));
+
+        $this->assertSame(['id' => 2], $replacement->getJson());
+        $this->assertSame(['id' => 1], $response->getJson());
+
+        $response = new Response([], '<item>first</item>');
+        $this->assertSame('first', (string)$response->getXml());
+        $replacement = $response->withBody(new Stream('data://text/plain,<item>second</item>'));
+        $this->assertSame('second', (string)$replacement->getXml());
+        $this->assertSame('first', (string)$response->getXml());
+    }
+
+    public function testGetJsonAsUsesDecoder(): void
+    {
+        $response = new Response([], '{"id":42}');
+        $decoder = static fn(?array $data): int => $data['id'];
+
+        $this->assertSame(42, $response->getJsonAs($decoder));
+        $this->assertSame(['id' => 42], $response->getJson());
+    }
+
+    public function testParsedHeadersAreNormalizedCaseInsensitively(): void
+    {
+        $response = new Response(['X-Tag: first', 'x-tag: second']);
+
+        $this->assertSame(['first', 'second'], $response->getHeader('X-Tag'));
+        $this->assertSame(['x-tag' => ['first', 'second']], $response->getHeaders());
+    }
+
+    /**
+     * Stream bodies are preserved and non-seekable string reads consume only remaining bytes.
+     */
+    public function testLiveBody(): void
+    {
+        $domain = PHP_OS_FAMILY === 'Windows' ? STREAM_PF_INET : STREAM_PF_UNIX;
+        $pair = stream_socket_pair($domain, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+        $this->assertIsArray($pair);
+        fwrite($pair[0], 'first second');
+        fclose($pair[0]);
+        $body = new Stream($pair[1]);
+        $response = new Response(['HTTP/1.1 200 OK'], $body);
+
+        $this->assertSame($body, $response->getBody());
+        $this->assertFalse($body->isSeekable());
+        $this->assertSame('first ', $body->read(6));
+        $this->assertSame('second', $response->getStringBody());
+        $this->assertSame('', $response->getStringBody());
+        $body->close();
+    }
+
     /**
      * A response built without a status line still has a usable reason phrase.
      *
@@ -118,32 +212,123 @@ class ResponseTest extends TestCase
      */
     public function testBodyJson(): void
     {
-        $data = [
-            'property' => 'value',
+        $data = ['property' => 'value'];
+        $response = new Response([], json_encode($data));
+        $this->assertSame($data, $response->getJson());
+
+        $response = new Response([], '[]');
+        $this->assertSame([], $response->getJson());
+
+        $response = new Response([], 'null');
+        $this->assertNull($response->getJson());
+    }
+
+    /**
+     * @param string $json Invalid JSON body.
+     */
+    #[DataProvider('invalidJsonProvider')]
+    public function testInvalidJsonThrows(string $json): void
+    {
+        $response = new Response([], $json);
+        $this->expectException(JsonException::class);
+        $response->getJsonArray();
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function invalidJsonProvider(): array
+    {
+        return [
+            'empty body' => [''],
+            'malformed JSON' => ['invalid'],
+            'truncated object' => ['{"id":'],
+            'invalid UTF-8' => ["\"\xFF\""],
         ];
-        $encoded = json_encode($data);
-        $response = new Response([], $encoded);
-        $this->assertSame($data['property'], $response->getJson()['property']);
+    }
 
-        $data = '';
-        $response = new Response([], $data);
+    /**
+     * @param string $json A scalar JSON value.
+     */
+    #[DataProvider('scalarJsonProvider')]
+    public function testScalarJsonThrows(string $json): void
+    {
+        $response = new Response([], $json);
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('JSON response body must decode to an array or null.');
+        $response->getJsonArray();
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function scalarJsonProvider(): array
+    {
+        return [
+            'false' => ['false'],
+            'true' => ['true'],
+            'zero' => ['0'],
+            'integer' => ['42'],
+            'float' => ['1.5'],
+            'empty string' => ['""'],
+            'string' => ['"value"'],
+        ];
+    }
+
+    public function testGetJsonAsRejectsInvalidJsonBeforeCallingDecoder(): void
+    {
+        $response = new Response([], 'invalid');
+        $decoder = function (): never {
+            $this->fail('Decoder must not be called for invalid JSON.');
+        };
+        $this->expectException(JsonException::class);
+        $response->getJsonAs($decoder);
+    }
+
+    #[DataProvider('scalarJsonProvider')]
+    public function testGetJsonAcceptsScalars(string $json): void
+    {
+        $response = new Response([], $json);
+        $this->assertSame(json_decode($json, true), $response->getJson());
+        $this->assertSame(json_decode($json, true), $response->getJson());
+    }
+
+    #[DataProvider('invalidJsonProvider')]
+    public function testGetJsonReturnsNullForInvalidJson(string $json): void
+    {
+        $response = new Response([], $json);
         $this->assertNull($response->getJson());
-
-        $data = json_encode([]);
-        $response = new Response([], $data);
-        $this->assertIsArray($response->getJson());
-
-        $data = json_encode(null);
-        $response = new Response([], $data);
         $this->assertNull($response->getJson());
+        $this->expectException(JsonException::class);
+        $response->getJsonArray();
+    }
 
-        $data = json_encode(false);
-        $response = new Response([], $data);
-        $this->assertFalse($response->getJson());
+    #[DataProvider('scalarJsonProvider')]
+    public function testGetJsonArrayRejectsCachedScalars(string $json): void
+    {
+        $response = new Response([], $json);
+        $response->getJson();
+        $this->expectException(UnexpectedValueException::class);
+        $response->getJsonArray();
+    }
 
-        $data = json_encode('');
-        $response = new Response([], $data);
-        $this->assertSame('', $response->getJson());
+    public function testWithBodyDiscardsJsonError(): void
+    {
+        $response = new Response([], 'invalid');
+        $this->assertNull($response->getJson());
+        $replacement = $response->withBody(new Stream('data://text/plain,{"id":2}'));
+        $this->assertSame(['id' => 2], $replacement->getJsonArray());
+        $this->expectException(JsonException::class);
+        $response->getJsonArray();
+    }
+
+    #[DataProvider('cachedJsonProvider')]
+    public function testGetJsonArraySharesDecodedData(string $json, ?array $expected): void
+    {
+        $response = new Response([], $json);
+        $this->assertSame($expected, $response->getJsonArray());
+        $this->assertSame($expected, $response->getJson());
+        $this->assertSame($expected, $response->getJsonArray());
     }
 
     /**

@@ -17,11 +17,14 @@ namespace Cake\Http\Client;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
+use Cake\Http\MessageTrait;
+use Cake\Http\Stream;
+use JsonException;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
+use UnexpectedValueException;
 
 /**
  * Implements methods for HTTP responses.
@@ -121,14 +124,33 @@ class Response extends Message implements ResponseInterface
     protected mixed $json = null;
 
     /**
+     * Whether the response JSON has been decoded, including null and empty arrays.
+     *
+     * @var bool
+     */
+    protected bool $jsonDecoded = false;
+
+    /**
+     * Cached JSON decoding error for strict access after permissive access.
+     *
+     * @var \JsonException|null
+     */
+    protected ?JsonException $jsonError = null;
+
+    /**
      * Constructor
      *
-     * @param array<string> $headers Unparsed headers.
-     * @param string $body The response body.
+     * @param list<string> $headers Unparsed headers.
+     * @param \Psr\Http\Message\StreamInterface|string $body The response body. Stream bodies are used as-is.
      */
-    public function __construct(array $headers = [], string $body = '')
+    public function __construct(array $headers = [], string|StreamInterface $body = '')
     {
         $this->parseHeaders($headers);
+        if ($body instanceof StreamInterface) {
+            $this->stream = $body;
+
+            return;
+        }
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
             $body = $this->decodeGzipBody($body);
         }
@@ -172,7 +194,7 @@ class Response extends Message implements ResponseInterface
      * - Decodes the status code and reason phrase.
      * - Parses and normalizes header names and values.
      *
-     * @param array<string> $headers Headers to parse.
+     * @param list<string> $headers Headers to parse.
      * @return void
      */
     protected function parseHeaders(array $headers): void
@@ -189,17 +211,10 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @var non-empty-string $name */
             $name = trim($name);
-
-            $normalized = strtolower($name);
-
-            if (isset($this->headers[$name])) {
-                $this->headers[$name][] = $value;
-            } else {
-                $this->headers[$name] = (array)$value;
-                $this->headerNames[$normalized] = $name;
-            }
+            $this->assertHeaderName($name);
+            $values = array_merge($this->getHeader($name), $this->filterHeaderValue($value));
+            $this->replaceHeader($name, $values);
         }
     }
 
@@ -371,11 +386,16 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as string.
      *
+     * Non-seekable bodies are consumed from their current position. For live
+     * responses this waits until EOF and should not be used by monitoring.
+     *
      * @return string
      */
     public function getStringBody(): string
     {
-        $this->stream->rewind();
+        if ($this->stream->isSeekable()) {
+            $this->stream->rewind();
+        }
 
         return $this->stream->getContents();
     }
@@ -383,15 +403,72 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return mixed Decoded JSON, or null when the body is not valid JSON.
      */
     public function getJson(): mixed
     {
-        if ($this->json) {
-            return $this->json;
+        if (!$this->jsonDecoded) {
+            $this->json = json_decode($this->getStringBody(), true);
+            $this->jsonDecoded = true;
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->jsonError = new JsonException(json_last_error_msg(), json_last_error());
+            }
         }
 
-        return $this->json = json_decode($this->getStringBody(), true);
+        return $this->json;
+    }
+
+    /**
+     * Get the response body as a JSON decoded array.
+     *
+     * JSON objects and arrays are returned as arrays. JSON null is returned as null.
+     *
+     * @return array|null
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
+     */
+    public function getJsonArray(): ?array
+    {
+        $this->getJson();
+        if ($this->jsonError !== null) {
+            throw $this->jsonError;
+        }
+        if ($this->json !== null && !is_array($this->json)) {
+            throw new UnexpectedValueException('JSON response body must decode to an array or null.');
+        }
+
+        return $this->json;
+    }
+
+    /**
+     * Decode JSON into an application type using a validating decoder.
+     *
+     * @template T
+     * @param callable(array|null): T $decoder Decoder responsible for validating the JSON value.
+     * @return T
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
+     */
+    public function getJsonAs(callable $decoder): mixed
+    {
+        return $decoder($this->getJsonArray());
+    }
+
+    /**
+     * Replace the body and discard decoded values from the previous body.
+     *
+     * @param \Psr\Http\Message\StreamInterface $body The new body.
+     * @return static
+     */
+    public function withBody(StreamInterface $body): static
+    {
+        return clone($this, [
+            'stream' => $body,
+            'json' => null,
+            'jsonDecoded' => false,
+            'jsonError' => null,
+            'xml' => null,
+        ]);
     }
 
     /**

@@ -22,7 +22,6 @@ namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
-use Laminas\Diactoros\RelativeStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Link\LinkInterface;
 use function Cake\Core\triggerWarning;
@@ -87,15 +86,30 @@ class ResponseEmitter
         }
         $body = $response->getBody();
 
-        if (!$body->isSeekable()) {
+        if (!$body->isReadable()) {
             echo $body;
 
             return;
         }
 
-        $body->rewind();
-        while (!$body->eof()) {
-            echo $body->read($this->maxBufferLength);
+        $live = !$body->isSeekable();
+        if (!$live) {
+            $body->rewind();
+        }
+        try {
+            while (!$body->eof()) {
+                echo $body->read($this->maxBufferLength);
+                if ($live && ob_get_level() <= 1) {
+                    if (ob_get_level() === 1) {
+                        ob_flush();
+                    }
+                    flush();
+                }
+            }
+        } finally {
+            if ($live) {
+                $body->close();
+            }
         }
     }
 
@@ -119,19 +133,18 @@ class ResponseEmitter
             return;
         }
 
-        $body = new RelativeStream($body, $first);
-        $body->rewind();
+        $body->seek($first);
         $pos = 0;
         /** @var int $length */
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
-            if ($pos + $this->maxBufferLength > $length) {
-                echo $body->read($length - $pos);
+            $chunk = $body->read(min($this->maxBufferLength, $length - $pos));
+            if ($chunk === '') {
                 break;
             }
 
-            echo $body->read($this->maxBufferLength);
-            $pos = $body->tell();
+            echo $chunk;
+            $pos += strlen($chunk);
         }
     }
 
