@@ -695,15 +695,18 @@ class ClientTest extends TestCase
      */
     public function testAddCookieWithoutDomain(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '/', '');
 
         $this->assertFalse($client->cookies()->has('foo'));
 
-        $client->addCookie($cookie);
-        $this->assertTrue($client->cookies()->has('foo'));
+        try {
+            $client->addCookie($cookie);
+            $this->fail('A cookie without a domain and a path should be rejected.');
+        } catch (InvalidArgumentException $e) {
+            $this->assertSame('Cookie must have a domain and a path set.', $e->getMessage());
+        }
+        $this->assertFalse($client->cookies()->has('foo'));
     }
 
     /**
@@ -711,15 +714,18 @@ class ClientTest extends TestCase
      */
     public function testAddCookieWithoutPath(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cookie must have a domain and a path set.');
         $client = new Client();
         $cookie = new Cookie('foo', '', null, '', 'example.com');
 
         $this->assertFalse($client->cookies()->has('foo'));
 
-        $client->addCookie($cookie);
-        $this->assertTrue($client->cookies()->has('foo'));
+        try {
+            $client->addCookie($cookie);
+            $this->fail('A cookie without a domain and a path should be rejected.');
+        } catch (InvalidArgumentException $e) {
+            $this->assertSame('Cookie must have a domain and a path set.', $e->getMessage());
+        }
+        $this->assertFalse($client->cookies()->has('foo'));
     }
 
     /**
