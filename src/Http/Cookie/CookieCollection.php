@@ -27,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Traversable;
 use TypeError;
+use Uri\WhatWg\Url;
 use function Cake\Core\triggerWarning;
 
 /**
@@ -72,13 +73,19 @@ class CookieCollection implements IteratorAggregate, Countable
     public static function createFromHeader(array $header, array $defaults = []): static
     {
         $cookies = [];
-        $sourceDomain = $defaults['domain'] ?? null;
+        $sourceDomain = isset($defaults['domain']) ? static::normalizeDomain($defaults['domain']) : null;
+        if ($sourceDomain !== null) {
+            $defaults['domain'] = $sourceDomain;
+        }
         foreach ($header as $value) {
             try {
                 $cookie = Cookie::createFromHeaderString($value, $defaults);
                 $domainMatch = true;
                 if ($sourceDomain) {
-                    $cookieDomain = $cookie->getDomain();
+                    $cookieDomain = static::normalizeDomain($cookie->getDomain());
+                    $cookie = $cookie->withDomain(
+                        (str_starts_with($cookie->getDomain(), '.') ? '.' : '') . $cookieDomain,
+                    );
                     $domainMatch = (
                         $cookieDomain === $sourceDomain ||
                         str_ends_with($sourceDomain, ".{$cookieDomain}") ||
@@ -310,6 +317,7 @@ class CookieCollection implements IteratorAggregate, Countable
     protected function findMatchingCookies(string $scheme, string $host, string $path): array
     {
         $out = [];
+        $host = static::normalizeDomain($host);
         $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         foreach ($this->cookies as $cookie) {
             if ($scheme === 'http' && $cookie->isSecure()) {
@@ -321,7 +329,7 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($cookie->isExpired($now)) {
                 continue;
             }
-            $domain = $cookie->getDomain();
+            $domain = static::normalizeDomain($cookie->getDomain());
             // Trim leading dot from cookie domain value.
             if (str_starts_with($domain, '.')) {
                 $domain = ltrim($domain, '.');
@@ -347,7 +355,7 @@ class CookieCollection implements IteratorAggregate, Countable
     public function addFromResponse(ResponseInterface $response, RequestInterface $request): static
     {
         $uri = $request->getUri();
-        $host = $uri->getHost();
+        $host = static::normalizeDomain($uri->getHost());
         $path = $uri->getPath() ?: '/';
 
         $cookies = static::createFromHeader(
@@ -380,10 +388,23 @@ class CookieCollection implements IteratorAggregate, Countable
                 continue;
             }
             $pathMatches = str_starts_with($path, $cookie->getPath());
-            $hostMatches = preg_match($hostPattern, $cookie->getDomain());
+            $hostMatches = preg_match($hostPattern, static::normalizeDomain($cookie->getDomain()));
             if ($pathMatches && $hostMatches) {
                 unset($this->cookies[$i]);
             }
         }
+    }
+
+    /**
+     * Use the same ASCII representation for cookie storage and lookup.
+     *
+     * @param string $domain The URI host or cookie domain.
+     * @return string
+     */
+    protected static function normalizeDomain(string $domain): string
+    {
+        $domain = ltrim(strtolower($domain), '.');
+
+        return Url::parse('http://' . $domain)?->getAsciiHost() ?? $domain;
     }
 }

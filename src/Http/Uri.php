@@ -139,6 +139,9 @@ class Uri implements UriInterface, Stringable
         if ($path !== '' && $authority !== '' && !str_starts_with($path, '/')) {
             $path = '/' . $path;
         }
+        if ($authority === '' && str_starts_with($path, '//')) {
+            $path = '/' . ltrim($path, '/');
+        }
         $uri .= $path;
 
         if ($this->getQuery() !== '') {
@@ -218,11 +221,6 @@ class Uri implements UriInterface, Stringable
      */
     public function getPath(): string
     {
-        // Collapse multiple leading slashes so the path can't be mistaken for an authority.
-        if (str_starts_with($this->path, '//')) {
-            return '/' . ltrim($this->path, '/');
-        }
-
         return $this->path;
     }
 
@@ -310,13 +308,6 @@ class Uri implements UriInterface, Stringable
      */
     public function withPath(string $path): static
     {
-        if (str_contains($path, '?')) {
-            throw new InvalidArgumentException('Invalid path provided; must not contain a query string.');
-        }
-        if (str_contains($path, '#')) {
-            throw new InvalidArgumentException('Invalid path provided; must not contain a URI fragment.');
-        }
-
         $path = $this->filterPath($path);
         if ($path === $this->path) {
             return $this;
@@ -330,10 +321,6 @@ class Uri implements UriInterface, Stringable
      */
     public function withQuery(string $query): static
     {
-        if (str_contains($query, '#')) {
-            throw new InvalidArgumentException('Query string must not include a URI fragment.');
-        }
-
         $query = $this->filterQuery($query);
         if ($query === $this->getQuery()) {
             return $this;
@@ -399,7 +386,10 @@ class Uri implements UriInterface, Stringable
      */
     protected function filterPath(string $path): string
     {
-        return $this->encode($path, '/(?:[^' . static::CHAR_UNRESERVED . ')(:@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/');
+        return $this->encode(
+            $path,
+            '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . ':@\/%]+|%(?![A-Fa-f0-9]{2}))/',
+        );
     }
 
     /**
@@ -410,10 +400,6 @@ class Uri implements UriInterface, Stringable
      */
     protected function filterQuery(string $query): string
     {
-        if (str_starts_with($query, '?')) {
-            $query = substr($query, 1);
-        }
-
         // Both `&` and `=` are allowed by the query/fragment filter, so keys
         // and values can be encoded together without splitting the query.
         return $this->filterQueryOrFragment($query);

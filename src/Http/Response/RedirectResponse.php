@@ -16,15 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Response;
 
-use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
 use Psr\Http\Message\UriInterface;
 
 /**
  * A response redirecting the client to another location.
  *
- * The response has an empty body and no `Content-Type` header. `Set-Cookie`
- * headers are added to the response's cookie collection.
+ * The response has an empty body and no `Content-Type` header.
  *
  * ### Usage
  *
@@ -46,16 +44,16 @@ class RedirectResponse extends Response
         parent::__construct(['status' => $status]);
         $this->clearHeader('Content-Type');
 
-        $headers['Location'] = (string)$uri;
         foreach ($headers as $name => $value) {
-            if (strtolower($name) === 'set-cookie') {
-                foreach (CookieCollection::createFromHeader((array)$value) as $cookie) {
-                    $this->cookies = $this->cookies->add($cookie);
-                }
+            if (strtolower($name) === 'location') {
                 continue;
             }
             $this->assertHeaderName($name);
+            if (strtolower($name) === 'set-cookie') {
+                $value = array_merge($this->getHeader($name), (array)$value);
+            }
             $this->replaceHeader($name, $this->filterHeaderValue($value));
         }
+        $this->replaceHeader('Location', $this->filterHeaderValue((string)$uri));
     }
 }

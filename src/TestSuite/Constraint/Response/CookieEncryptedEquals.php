@@ -54,7 +54,7 @@ class CookieEncryptedEquals extends CookieEquals
      */
     public function matches(mixed $other): bool
     {
-        $cookie = $this->response->getCookie($this->cookieName);
+        $cookie = $this->readCookie($this->cookieName);
 
         return $cookie !== null && $this->decrypt($cookie['value'], $this->mode) === $other;
     }

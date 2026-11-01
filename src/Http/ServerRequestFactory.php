@@ -194,13 +194,26 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function normalizeServer(array $server): array
     {
-        if (isset($server['HTTP_AUTHORIZATION']) || !function_exists('apache_request_headers')) {
-            return $server;
+        if (!isset($server['HTTP_AUTHORIZATION']) && isset($server['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $server['HTTP_AUTHORIZATION'] = $server['REDIRECT_HTTP_AUTHORIZATION'];
         }
-
-        $headers = array_change_key_case((array)apache_request_headers());
-        if (isset($headers['authorization'])) {
-            $server['HTTP_AUTHORIZATION'] = $headers['authorization'];
+        if (!isset($server['HTTP_AUTHORIZATION']) && function_exists('apache_request_headers')) {
+            $headers = array_change_key_case((array)apache_request_headers());
+            if (isset($headers['authorization'])) {
+                $server['HTTP_AUTHORIZATION'] = $headers['authorization'];
+            }
+        }
+        if (!isset($server['HTTP_AUTHORIZATION'])) {
+            if (isset($server['PHP_AUTH_DIGEST'])) {
+                $digest = $server['PHP_AUTH_DIGEST'];
+                $server['HTTP_AUTHORIZATION'] = str_starts_with(strtolower($digest), 'digest ')
+                    ? $digest
+                    : 'Digest ' . $digest;
+            } elseif (isset($server['PHP_AUTH_USER'])) {
+                $server['HTTP_AUTHORIZATION'] = 'Basic ' . base64_encode(
+                    $server['PHP_AUTH_USER'] . ':' . ($server['PHP_AUTH_PW'] ?? ''),
+                );
+            }
         }
 
         return $server;
@@ -219,7 +232,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (is_array($value) && isset($value['tmp_name'])) {
+            } elseif (is_array($value) && static::isFileSpecification($value)) {
                 $normalized[$key] = static::createUploadedFiles(
                     $value['tmp_name'],
                     $value['size'] ?? null,
@@ -235,6 +248,44 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         return $normalized;
+    }
+
+    /**
+     * Recognize parallel PHP upload attributes by their leaf types, not form field names.
+     *
+     * @param array $files Candidate file specification or nested form group.
+     * @return bool
+     */
+    protected static function isFileSpecification(array $files): bool
+    {
+        return isset($files['tmp_name'], $files['size'], $files['error']) &&
+            static::isFileAttributeTree($files['tmp_name'], $files['size'], $files['error']);
+    }
+
+    /**
+     * Validate corresponding filename, size, and error leaves before transposing a tree.
+     *
+     * @param mixed $tmpName Filename or filename tree.
+     * @param mixed $size Size or size tree.
+     * @param mixed $error Error code or error tree.
+     * @return bool
+     */
+    protected static function isFileAttributeTree(mixed $tmpName, mixed $size, mixed $error): bool
+    {
+        if (!is_array($tmpName)) {
+            return is_string($tmpName) &&
+                (is_int($size) || (is_string($size) && ctype_digit($size))) &&
+                (is_int($error) || (is_string($error) && ctype_digit($error)));
+        }
+        if (!is_array($size) || !is_array($error)) {
+            return false;
+        }
+
+        return array_all(
+            $tmpName,
+            static fn($value, $key): bool => array_key_exists($key, $size) && array_key_exists($key, $error) &&
+                static::isFileAttributeTree($value, $size[$key], $error[$key]),
+        );
     }
 
     /**

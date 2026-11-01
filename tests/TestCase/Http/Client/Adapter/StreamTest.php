@@ -143,10 +143,11 @@ class StreamTest extends TestCase
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
         $expected = [
+            'Connection: close',
             'User-Agent: CakePHP TestSuite',
             'Content-Type: application/json',
             'Cookie: a=b; c=do%20it',
-            'Connection: close',
+            'Host: localhost',
         ];
         $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertSame(0, $result['max_redirects']);
@@ -173,9 +174,10 @@ class StreamTest extends TestCase
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
         $expected = [
-            'Content-Type: application/json',
             'Connection: close',
             'User-Agent: CakePHP',
+            'Content-Type: application/json',
+            'Host: localhost',
         ];
         $this->assertSame(implode("\r\n", $expected), $result['header']);
         $this->assertEquals($content, $result['content']);
@@ -198,6 +200,7 @@ class StreamTest extends TestCase
         $expected = [
             'Connection: close',
             'User-Agent: CakePHP',
+            'Host: localhost',
             'Content-Type: application/x-www-form-urlencoded',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
@@ -385,5 +388,21 @@ class StreamTest extends TestCase
         $this->expectExceptionMessage('Connection timed out http://dummy/?sleep');
 
         $stream->send($request, $options);
+    }
+
+    public function testSslPeerNameUsesAsciiHostname(): void
+    {
+        $this->stream->send(new Request('https://bücher.example/'), ['ssl_verify_host' => true]);
+        $this->assertSame('xn--bcher-kva.example', $this->stream->contextOptions()['peer_name']);
+    }
+
+    public function testDecodedTransferCodingIsRemoved(): void
+    {
+        $responses = $this->stream->createResponses([
+            'HTTP/1.1 200 OK',
+            'Transfer-Encoding: gzip, Chunked',
+        ], 'compressed body');
+        $this->assertSame('gzip', $responses[0]->getHeaderLine('Transfer-Encoding'));
+        $this->assertSame('compressed body', $responses[0]->getStringBody());
     }
 }

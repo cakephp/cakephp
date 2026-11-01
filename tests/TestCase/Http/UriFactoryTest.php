@@ -253,7 +253,7 @@ class UriFactoryTest extends TestCase
         $this->assertSame(8000, $uri->getPort());
     }
 
-    public function testMarshalHostAndPortWillDetectPortInIpv6StyleHost(): void
+    public function testMarshalHostAndPortPreservesIpv6ServerName(): void
     {
         $server = [
             'SERVER_ADDR' => 'FE80::0202:B3FF:FE1E:8329',
@@ -262,7 +262,7 @@ class UriFactoryTest extends TestCase
 
         $uri = UriFactory::marshalUriAndBaseFromSapi($server)['uri'];
 
-        $this->assertSame('[fe80::0202:b3ff:fe1e:8329]', $uri->getHost());
+        $this->assertSame('[fe80::0202:b3ff:fe1e:8329:80]', $uri->getHost());
         $this->assertNull($uri->getPort());
     }
 
@@ -376,7 +376,7 @@ class UriFactoryTest extends TestCase
         $this->assertSame('http://example.com/foo/bar?bar=baz', (string)$uri);
     }
 
-    public function testMarshalUriStripsLeadingQuestionMarkFromQueryString(): void
+    public function testMarshalUriPreservesLeadingQuestionMarkInQueryString(): void
     {
         $server = [
             'REQUEST_URI' => '/foo/bar',
@@ -385,7 +385,7 @@ class UriFactoryTest extends TestCase
 
         $uri = UriFactory::marshalUriAndBaseFromSapi($server)['uri'];
 
-        $this->assertSame('bar=baz', $uri->getQuery());
+        $this->assertSame('?bar=baz', $uri->getQuery());
     }
 
     public function testMarshalUriInjectsFragmentFromServer(): void
@@ -479,5 +479,55 @@ class UriFactoryTest extends TestCase
         $this->assertSame('/app/', $result['webroot']);
         $this->assertSame('/articles', $result['uri']->getPath());
         $this->assertSame('page=2', $result['uri']->getQuery());
+    }
+
+    public function testHttpsNumericStringUsesSecureSchemeAndDefaultPort(): void
+    {
+        $result = UriFactory::marshalUriAndBaseFromSapi([
+            'HTTPS' => '1',
+            'HTTP_HOST' => 'example.com:443',
+        ]);
+        $this->assertSame('https://example.com/', (string)$result['uri']);
+        $this->assertNull($result['uri']->getPort());
+    }
+
+    public function testIpv6AddressDoesNotDetermineServerPort(): void
+    {
+        $server = ['HTTPS' => 'on', 'SERVER_NAME' => '[::8443]', 'SERVER_ADDR' => '::8443'];
+        $uri = UriFactory::marshalUriAndBaseFromSapi($server)['uri'];
+        $this->assertSame('https://[::8443]/', (string)$uri);
+        $server['SERVER_PORT'] = '8443';
+        $uri = UriFactory::marshalUriAndBaseFromSapi($server)['uri'];
+        $this->assertSame(8443, $uri->getPort());
+        $this->assertSame('https://[::8443]:8443/', (string)$uri);
+    }
+
+    public static function enabledHttpsValues(): array
+    {
+        return ['yes' => ['yes', 'https'], 'true' => ['true', 'https'], 'off' => ['off', 'http'],
+            'empty' => ['', 'http'], 'zero' => ['0', 'http'], 'false' => [false, 'http']];
+    }
+
+    #[DataProvider('enabledHttpsValues')]
+    public function testHttpsUsesEnabledSapiValues(string|bool $https, string $scheme): void
+    {
+        $uri = UriFactory::marshalUriAndBaseFromSapi(['HTTPS' => $https])['uri'];
+        $this->assertSame($scheme, $uri->getScheme());
+    }
+
+    public function testServerAddressDoesNotReplaceValidIpv6ServerName(): void
+    {
+        foreach (['127.0.0.1', '2001:db8::2'] as $address) {
+            $uri = UriFactory::marshalUriAndBaseFromSapi([
+                'SERVER_NAME' => '[2001:db8::1]', 'SERVER_ADDR' => $address,
+            ])['uri'];
+            $this->assertSame('[2001:db8::1]', $uri->getHost());
+        }
+    }
+
+    public function testBareIpv6ServerNameIsBracketed(): void
+    {
+        $uri = UriFactory::marshalUriAndBaseFromSapi(['SERVER_NAME' => '::1', 'SERVER_PORT' => 8080])['uri'];
+        $this->assertSame('http://[::1]:8080/', (string)$uri);
     }
 }

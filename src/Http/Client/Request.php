@@ -22,6 +22,7 @@ use Cake\Utility\Xml;
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
+use Uri\WhatWg\Url;
 
 /**
  * Implements methods for HTTP requests.
@@ -72,11 +73,15 @@ class Request extends Message implements RequestInterface
     ) {
         $this->setMethod($method);
         $this->uri = $url instanceof UriInterface ? $url : new Uri($url);
-        $headers += [
+        $this->addHeaders([
             'Connection' => 'close',
             'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
-        ];
+        ]);
         $this->addHeaders($headers);
+        if (!$this->hasHeader('Host') && $this->uri->getHost() !== '') {
+            $host = $this->getHostHeader($this->uri);
+            $this->replaceHeader('Host', [$host]);
+        }
         if (in_array($data, [null, '', []], true)) {
             $this->stream = new Stream('php://memory', 'rw');
         } else {
@@ -145,11 +150,14 @@ class Request extends Message implements RequestInterface
         }
 
         $target = $this->uri->getPath();
+        if (!str_starts_with($target, '/')) {
+            $target = '/' . $target;
+        }
         if ($this->uri->getQuery() !== '') {
             $target .= '?' . $this->uri->getQuery();
         }
 
-        return $target === '' ? '/' : $target;
+        return $target;
     }
 
     /**
@@ -197,19 +205,35 @@ class Request extends Message implements RequestInterface
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $new = clone($this, ['uri' => $uri]);
-        if (($preserveHost && $this->hasHeader('Host')) || $uri->getHost() === '') {
+        if (($preserveHost && $this->getHeaderLine('Host') !== '') || $uri->getHost() === '') {
             return $new;
         }
 
-        $host = $uri->getHost();
-        if ($uri->getPort() !== null) {
-            $host .= ':' . $uri->getPort();
-        }
+        $host = $this->getHostHeader($uri);
         $new->removeHeader('Host');
         $new->headerNames['host'] = 'Host';
         $new->headers['Host'] = [$host];
 
         return $new;
+    }
+
+    /**
+     * Build a Host header, using IDNA for HTTP hostnames.
+     *
+     * @param \Psr\Http\Message\UriInterface $uri Request URI.
+     * @return string
+     */
+    protected function getHostHeader(UriInterface $uri): string
+    {
+        $host = $uri->getHost();
+        if (in_array(strtolower($uri->getScheme()), ['http', 'https'], true)) {
+            $host = new Url((string)$uri)->getAsciiHost() ?? $host;
+        }
+        if ($uri->getPort() !== null) {
+            $host .= ':' . $uri->getPort();
+        }
+
+        return $host;
     }
 
     /**

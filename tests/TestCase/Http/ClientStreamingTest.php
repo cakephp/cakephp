@@ -20,6 +20,7 @@ use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\NetworkException;
+use Cake\Http\Client\Request;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
@@ -66,6 +67,7 @@ class ClientStreamingTest extends TestCase
             $this->assertTrue($afterSend);
             $this->assertSame('text/event-stream', $response->getHeaderLine('Content-Type'));
             $this->assertFalse($response->hasHeader('Content-Encoding'));
+            $this->assertFalse($response->hasHeader('Transfer-Encoding'));
             $body = $response->getBody();
             $this->assertFalse($body->isSeekable());
             $this->assertNull($body->getSize());
@@ -232,5 +234,32 @@ class ClientStreamingTest extends TestCase
             fclose($pipe);
         }
         proc_close($process);
+    }
+
+    public static function encodedRepresentationResponses(): array
+    {
+        return [['GET', '/gzip-range', 206], ['HEAD', '/gzip-head', 200], ['GET', '/gzip-not-modified', 304]];
+    }
+
+    #[DataProvider('encodedRepresentationResponses')]
+    public function testRangedAndBodylessGzipResponsesRetainMetadata(string $method, string $path, int $status): void
+    {
+        [$process, $pipes, $url] = $this->startServer();
+        $body = null;
+        try {
+            $client = new Client(['adapter' => Stream::class]);
+            $response = $client->send(new Request($url . $path, $method), [
+                'stream' => true, 'timeout' => 2, 'readTimeout' => 2,
+            ]);
+            $body = $response->getBody();
+            $representation = gzencode('representation');
+            $this->assertSame($status, $response->getStatusCode());
+            $this->assertSame('gzip', $response->getHeaderLine('Content-Encoding'));
+            $this->assertSame((string)($status === 206 ? 10 : strlen($representation)), $response->getHeaderLine('Content-Length'));
+            $this->assertSame($status === 206 ? substr($representation, 5, 10) : '', $body->getContents());
+        } finally {
+            $body?->close();
+            $this->stopServer($process, $pipes);
+        }
     }
 }

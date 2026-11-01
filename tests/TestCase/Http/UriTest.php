@@ -297,23 +297,21 @@ class UriTest extends TestCase
     /**
      * @return array<string, array{string}>
      */
-    public static function invalidPaths(): array
+    public static function pathsContainingDelimiters(): array
     {
         return [
-            'query' => ['/bar/baz?bat=quz'],
-            'fragment' => ['/bar/baz#bat'],
+            'query' => ['/bar/baz?bat=quz', '/bar/baz%3Fbat=quz'],
+            'fragment' => ['/bar/baz#bat', '/bar/baz%23bat'],
         ];
     }
 
-    #[DataProvider('invalidPaths')]
-    public function testWithPathRaisesExceptionForInvalidPaths(string $path): void
+    #[DataProvider('pathsContainingDelimiters')]
+    public function testWithPathEncodesDelimiters(string $path, string $expected): void
     {
-        $uri = new Uri(static::URI);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid path');
-
-        $uri->withPath($path);
+        $uri = new Uri(static::URI)->withPath($path);
+        $this->assertSame($expected, $uri->getPath());
+        $this->assertSame('bar=baz', $uri->getQuery());
+        $this->assertSame('quz', $uri->getFragment());
     }
 
     public function testWithQueryReturnsNewInstanceWithProvidedQuery(): void
@@ -332,14 +330,11 @@ class UriTest extends TestCase
         $this->assertSame($uri, $new);
     }
 
-    public function testWithQueryRaisesExceptionForQueryStringWithFragment(): void
+    public function testWithQueryEncodesLiteralFragmentDelimiter(): void
     {
-        $uri = new Uri(static::URI);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Query string');
-
-        $uri->withQuery('baz=bat#quz');
+        $uri = new Uri(static::URI)->withQuery('baz=bat#quz');
+        $this->assertSame('baz=bat%23quz', $uri->getQuery());
+        $this->assertSame('quz', $uri->getFragment());
     }
 
     public function testWithFragmentReturnsNewInstanceWithProvidedFragment(): void
@@ -506,19 +501,19 @@ class UriTest extends TestCase
         $this->assertSame('http://example.com/foo/bar', $new->__toString());
     }
 
-    public function testMultipleLeadingSlashesInPathAreCollapsed(): void
+    public function testMultipleLeadingSlashesInPathArePreserved(): void
     {
         $uri = new Uri('http://example.com');
         $new = $uri->withPath('//evil.com/foo');
-        $this->assertSame('/evil.com/foo', $new->getPath());
-        $this->assertSame('http://example.com/evil.com/foo', (string)$new);
+        $this->assertSame('//evil.com/foo', $new->getPath());
+        $this->assertSame('http://example.com//evil.com/foo', (string)$new);
     }
 
-    public function testStripsQueryPrefixIfPresent(): void
+    public function testPreservesLeadingQuestionMarkInQuery(): void
     {
         $uri = new Uri('http://example.com');
         $new = $uri->withQuery('?foo=bar');
-        $this->assertSame('foo=bar', $new->getQuery());
+        $this->assertSame('?foo=bar', $new->getQuery());
     }
 
     public function testEncodeFragmentPrefixIfPresent(): void
@@ -686,8 +681,8 @@ class UriTest extends TestCase
         return [
             ['http://example.com/тестовый_путь/', '/' . rawurlencode('тестовый_путь') . '/'],
             ['http://example.com/ουτοπία/', '/' . rawurlencode('ουτοπία') . '/'],
-            ["http://example.com/\x21\x92", '/%21%92'],
-            ['http://example.com/!?', '/%21'],
+            ["http://example.com/\x21\x92", '/!%92'],
+            ['http://example.com/!?', '/!'],
         ];
     }
 
@@ -761,5 +756,22 @@ class UriTest extends TestCase
         $expected = 'https://0:0@0:1/0?0#0';
         $uri = new Uri($expected);
         $this->assertSame($expected, (string)$uri);
+    }
+
+    public function testRawQueryAndPathCharactersArePreserved(): void
+    {
+        $uri = new Uri("https://example.com//files/a!b'c*d??x");
+        $this->assertSame('?x', $uri->getQuery());
+        $this->assertSame("//files/a!b'c*d", $uri->getPath());
+        $this->assertSame("https://example.com//files/a!b'c*d??x", (string)$uri);
+        $native = new Rfc3986Uri('https://example.com/??x');
+        $this->assertSame('?x', new Uri($native)->getQuery());
+    }
+
+    public function testPathWithoutAuthorityIsUnambiguousWhenSerialized(): void
+    {
+        $uri = new Uri()->withPath('//example.com/path');
+        $this->assertSame('//example.com/path', $uri->getPath());
+        $this->assertSame('/example.com/path', (string)$uri);
     }
 }

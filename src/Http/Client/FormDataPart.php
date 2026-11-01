@@ -185,7 +185,7 @@ class FormDataPart implements Stringable
      */
     public function __toString(): string
     {
-        $removeNewlines = fn(string $in): string => str_replace(["\r", "\n"], '', $in);
+        $removeNewlines = static fn(string $in): string => str_replace(["\r", "\n"], '', $in);
         $out = '';
         if ($this->disposition) {
             $out .= 'Content-Disposition: ' . $removeNewlines($this->disposition);

@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Request;
+use Cake\Http\RequestFactory;
 use Cake\Http\Stream;
 use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
@@ -452,13 +453,13 @@ class RequestTest extends TestCase
         $this->assertSame('/bar/baz', $newRequest->getRequestTarget());
     }
 
-    public function testConstructorDoesNotSetHostHeaderFromUri(): void
+    public function testConstructorSetsHostHeaderFromUri(): void
     {
         $request = new Request('http://example.com');
-        $this->assertFalse($request->hasHeader('Host'));
-        $this->assertSame([], $request->getHeader('host'));
-        $this->assertSame('', $request->getHeaderLine('host'));
-        $this->assertArrayNotHasKey('Host', $request->getHeaders());
+        $this->assertTrue($request->hasHeader('Host'));
+        $this->assertSame(['example.com'], $request->getHeader('host'));
+        $this->assertSame('example.com', $request->getHeaderLine('host'));
+        $this->assertSame(['example.com'], $request->getHeaders()['Host']);
     }
 
     public function testConstructorKeepsExplicitHostHeader(): void
@@ -584,5 +585,55 @@ class RequestTest extends TestCase
         $new = $request->withUri(new Uri('http://example.org/foo/bar'), true);
         $this->assertSame('example.com', $new->getHeaderLine('host'));
         $this->assertSame([$hostKey => ['example.com']], array_intersect_key($new->getHeaders(), [$hostKey => true]));
+    }
+
+    public function testCallerHeadersOverrideDefaultsRegardlessOfCase(): void
+    {
+        $request = new Request('https://example.com?x=1', 'GET', [
+            'user-agent' => 'Custom Agent',
+            'connection' => 'keep-alive',
+        ]);
+
+        $this->assertSame('Custom Agent', $request->getHeaderLine('User-Agent'));
+        $this->assertSame('keep-alive', $request->getHeaderLine('Connection'));
+        $this->assertSame('/?x=1', $request->getRequestTarget());
+    }
+
+    public function testConstructorDerivesHostFromUri(): void
+    {
+        $request = new Request('https://example.com:8443/path');
+        $this->assertSame('example.com:8443', $request->getHeaderLine('Host'));
+        $factory = new RequestFactory();
+        $this->assertSame('example.com', $factory->createRequest('GET', 'https://example.com:443')->getHeaderLine('Host'));
+        $request = new Request('https://example.com:8443', headers: ['host' => 'override.example']);
+        $this->assertSame('override.example', $request->getHeaderLine('Host'));
+    }
+
+    public function testPreserveHostReplacesEmptyHeader(): void
+    {
+        $request = new Request('https://old.example')->withHeader('Host', '');
+        $uri = new Uri('https://new.example:8443');
+        $this->assertSame('new.example:8443', $request->withUri($uri, true)->getHeaderLine('Host'));
+        $this->assertSame('', $request->getHeaderLine('Host'));
+        $this->assertSame('explicit.example', $request->withHeader('Host', 'explicit.example')
+            ->withUri($uri, true)->getHeaderLine('Host'));
+    }
+
+    public function testDerivedHostUsesIdnaAndPreservesExplicitHeader(): void
+    {
+        $uri = new Uri('https://bücher.example:8443/');
+        $request = new Request($uri);
+        $this->assertSame('xn--bcher-kva.example:8443', $request->getHeaderLine('Host'));
+        $this->assertSame('xn--bcher-kva.example:8443', new Request()->withUri($uri)->getHeaderLine('Host'));
+        $request = new Request($uri, headers: ['Host' => 'custom.example']);
+        $this->assertSame('custom.example', $request->getHeaderLine('Host'));
+        $this->assertSame('custom.example', $request->withUri($uri, true)->getHeaderLine('Host'));
+    }
+
+    public function testRelativeUriUsesOriginFormRequestTarget(): void
+    {
+        $this->assertSame('/articles?page=1', new Request('articles?page=1')->getRequestTarget());
+        $this->assertSame('/0', new Request('0')->getRequestTarget());
+        $this->assertSame('/?x=1', new Request('?x=1')->getRequestTarget());
     }
 }

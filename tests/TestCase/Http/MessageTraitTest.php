@@ -509,7 +509,7 @@ class MessageTraitTest extends TestCase
             ["This is a \r\r\n test", false],
             ["This is a \r\n\r\ntest", false],
             ["This is a \r\n\n\r\n test", false],
-            ["This is a \xFF test", false],
+            ["This is a \xFF test", true],
             ["This is a \x7F test", false],
             ["This is a \x00 test", false],
             ["This is a \x7E test", true],

@@ -229,7 +229,7 @@ class Stream implements AdapterInterface
             $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
-            $this->sslContextOptions['peer_name'] = $request->getUri()->getHost();
+            $this->sslContextOptions['peer_name'] = new Url((string)$request->getUri())->getAsciiHost();
         }
         foreach ($sslOptions as $key) {
             if (isset($options[$key])) {
@@ -312,7 +312,14 @@ class Stream implements AdapterInterface
             $responses = $this->createResponses($headers, $body);
             $last = array_key_last($responses);
             $response = $responses[$last];
-            if (strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip') {
+            if (
+                strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip' &&
+                strtoupper($request->getMethod()) !== 'HEAD' &&
+                $response->getStatusCode() >= 200 &&
+                !in_array($response->getStatusCode(), [204, 205, 206, 304], true) &&
+                !$response->hasHeader('Content-Range') &&
+                !$response->hasHeader('Transfer-Encoding')
+            ) {
                 $body->decodeGzip();
                 $responses[$last] = $response
                     ->withoutHeader('Content-Encoding')
@@ -339,7 +346,18 @@ class Stream implements AdapterInterface
      */
     protected function buildResponse(array $headers, string|StreamInterface $body): Response
     {
-        return new Response($headers, $body);
+        $response = new Response($headers, $body);
+        // The HTTP wrapper removes chunk framing, but leaves other transfer codings applied.
+        $codings = array_map('trim', explode(',', $response->getHeaderLine('Transfer-Encoding')));
+        if (strtolower(end($codings)) === 'chunked') {
+            array_pop($codings);
+            $response = $response->withoutHeader('Transfer-Encoding')->withoutHeader('Content-Length');
+            if ($codings !== []) {
+                $response = $response->withHeader('Transfer-Encoding', implode(', ', $codings));
+            }
+        }
+
+        return $response;
     }
 
     /**

@@ -1728,4 +1728,80 @@ class ServerRequestFactoryTest extends TestCase
         $expected = ['foo' => 'bar', 'REQUEST_METHOD' => 'GET'];
         $this->assertEquals($expected, $request->getServerParams());
     }
+
+    public function testRedirectedAuthorizationIsNormalizedWithoutOverridingDirectHeader(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REDIRECT_HTTP_AUTHORIZATION' => 'Bearer redirected']);
+        $this->assertSame('Bearer redirected', $request->getHeaderLine('Authorization'));
+        $request = ServerRequestFactory::fromGlobals([
+            'REDIRECT_HTTP_AUTHORIZATION' => 'Bearer redirected',
+            'HTTP_AUTHORIZATION' => 'Bearer direct',
+        ]);
+        $this->assertSame('Bearer direct', $request->getHeaderLine('Authorization'));
+    }
+
+    public function testNormalizedUploadsMayUseSpecificationAttributeNames(): void
+    {
+        $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK);
+        $files = ['form' => ['tmp_name' => $file, 'size' => $file, 'error' => $file]];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $this->assertSame($files, $request->getUploadedFiles());
+    }
+
+    public static function sapiAuthorizationValues(): array
+    {
+        return [
+            'basic' => [['PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'pass'], 'Basic dXNlcjpwYXNz'],
+            'empty password' => [['PHP_AUTH_USER' => 'user'], 'Basic dXNlcjo='],
+            'digest' => [['PHP_AUTH_DIGEST' => 'username="user"'], 'Digest username="user"'],
+            'prefixed digest' => [['PHP_AUTH_DIGEST' => 'Digest username="user"'], 'Digest username="user"'],
+            'direct priority' => [['HTTP_AUTHORIZATION' => 'Bearer direct', 'PHP_AUTH_USER' => 'user'], 'Bearer direct'],
+        ];
+    }
+
+    #[DataProvider('sapiAuthorizationValues')]
+    public function testAuthorizationFromSapiCredentials(array $server, string $expected): void
+    {
+        $request = ServerRequestFactory::fromGlobals($server);
+        $this->assertSame($expected, $request->getHeaderLine('Authorization'));
+    }
+
+    public function testRecursivelyNormalizedUploadAttributesArePreserved(): void
+    {
+        $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK);
+        $files = ['form' => [
+            'tmp_name' => ['a' => ['b' => $file]],
+            'size' => ['a' => ['b' => $file]],
+            'error' => ['a' => ['b' => $file]],
+        ]];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $this->assertSame($files, $request->getUploadedFiles());
+    }
+
+    public function testNestedRawSpecificationsMayUseAttributeNamesAsFields(): void
+    {
+        $spec = ['tmp_name' => 'php://temp', 'size' => 5, 'error' => UPLOAD_ERR_OK];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], [
+            'form' => ['tmp_name' => $spec, 'size' => $spec, 'error' => $spec],
+        ]);
+        foreach (['tmp_name', 'size', 'error'] as $field) {
+            $file = $request->getUploadedFiles()['form'][$field];
+            $this->assertInstanceOf(UploadedFileInterface::class, $file);
+            $this->assertSame(5, $file->getSize());
+            $this->assertSame(UPLOAD_ERR_OK, $file->getError());
+        }
+    }
+
+    public function testParallelAttributesWithReservedFieldNamesRemainSpecifications(): void
+    {
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], ['form' => [
+            'tmp_name' => ['tmp_name' => 'php://temp', 'size' => 'php://temp', 'error' => 'php://temp'],
+            'size' => ['tmp_name' => 1, 'size' => 2, 'error' => 3],
+            'error' => ['tmp_name' => 0, 'size' => 0, 'error' => 0],
+        ]]);
+        $files = $request->getUploadedFiles()['form'];
+        $this->assertSame(1, $files['tmp_name']->getSize());
+        $this->assertSame(2, $files['size']->getSize());
+        $this->assertSame(3, $files['error']->getSize());
+    }
 }

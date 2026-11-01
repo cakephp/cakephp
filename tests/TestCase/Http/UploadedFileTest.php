@@ -24,8 +24,11 @@ use Cake\Http\Stream;
 use Cake\Http\UploadedFile;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Message\StreamInterface;
 use RuntimeException;
+use TestApp\Http\Client\Adapter\UploadTargetStream;
 
 /**
  * UploadedFile test case
@@ -366,5 +369,198 @@ class UploadedFileTest extends TestCase
         $this->assertFileDoesNotExist($this->orgFile);
         $this->assertFileExists($to);
         $this->assertSame('Hello', file_get_contents($to));
+    }
+
+    public function testMovingToSamePathPreservesSource(): void
+    {
+        $this->orgFile = $this->createTempFile();
+        file_put_contents($this->orgFile, 'original contents');
+        $upload = new UploadedFile($this->orgFile, null, UPLOAD_ERR_OK);
+        try {
+            $upload->moveTo(dirname($this->orgFile) . DS . '.' . DS . basename($this->orgFile));
+            $this->fail('Moving an upload over itself must fail.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('paths must differ', $exception->getMessage());
+            $this->assertSame('original contents', file_get_contents($this->orgFile));
+            $this->assertSame('original contents', (string)$upload->getStream());
+        } finally {
+            $upload->getStream()->close();
+        }
+    }
+
+    public static function uploadTargetCapacities(): array
+    {
+        return ['partial writes' => [null], 'full destination' => [3]];
+    }
+
+    #[DataProvider('uploadTargetCapacities')]
+    public function testCopyChecksDestinationWrites(?int $capacity): void
+    {
+        $this->orgFile = $this->createTempFile();
+        file_put_contents($this->orgFile, 'original contents');
+        $upload = new class ($this->orgFile, null, UPLOAD_ERR_OK) extends UploadedFile {
+            public function copyTo(string $path): void
+            {
+                $handle = fopen($path, 'wb');
+                try {
+                    $this->copyStream($this->getStream(), $handle, $path);
+                } finally {
+                    fclose($handle);
+                }
+            }
+        };
+        stream_wrapper_register('uploadtarget', UploadTargetStream::class);
+        UploadTargetStream::$capacity = $capacity;
+        try {
+            try {
+                $upload->copyTo('uploadtarget://destination/file');
+                $this->assertNull($capacity, 'A full destination must fail.');
+                $this->assertSame('original contents', UploadTargetStream::$contents);
+                $this->assertFileExists($this->orgFile);
+            } catch (RuntimeException $exception) {
+                $this->assertSame(3, $capacity);
+                $this->assertStringContainsString('Unable to write', $exception->getMessage());
+                $this->assertSame('original contents', file_get_contents($this->orgFile));
+                $this->tmpFile = $this->createTempFile();
+                $upload->moveTo($this->tmpFile);
+                $this->assertSame('original contents', file_get_contents($this->tmpFile));
+            }
+        } finally {
+            stream_wrapper_unregister('uploadtarget');
+            if ($capacity === null) {
+                $upload->getStream()->close();
+            }
+        }
+    }
+
+    public static function selfMoveSources(): array
+    {
+        $cases = [];
+        foreach (['file', 'stream', 'resource'] as $source) {
+            foreach (['same', 'relative', 'hardlink', 'symlink'] as $target) {
+                $cases[$source . '-' . $target] = [$source, $target];
+            }
+        }
+
+        return $cases;
+    }
+
+    #[DataProvider('selfMoveSources')]
+    public function testSelfMoveChecksFileIdentity(string $sourceType, string $targetType): void
+    {
+        $this->orgFile = $this->createTempFile();
+        file_put_contents($this->orgFile, 'preserve this upload');
+        $source = match ($sourceType) {
+            'stream' => new Stream($this->orgFile),
+            'resource' => fopen($this->orgFile, 'rb'),
+            default => $this->orgFile,
+        };
+        $upload = new UploadedFile($source, null, UPLOAD_ERR_OK);
+        try {
+            $target = $this->orgFile;
+            if ($targetType === 'relative') {
+                $target = dirname($target) . DS . '.' . DS . basename($target);
+            } elseif (in_array($targetType, ['hardlink', 'symlink'], true)) {
+                $this->tmpFile = $this->createTempFile();
+                unlink($this->tmpFile);
+                $link = $targetType === 'hardlink' ? 'link' : 'symlink';
+                // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged -- Skip systems without link permissions.
+                if (!@$link($this->orgFile, $this->tmpFile)) {
+                    $this->markTestSkipped('Cannot create a file link.');
+                }
+                $target = $this->tmpFile;
+            }
+            try {
+                $upload->moveTo($target);
+                $this->fail('A move onto the upload source must fail.');
+            } catch (RuntimeException $exception) {
+                $this->assertStringContainsString('paths must differ', $exception->getMessage());
+                $this->assertSame('preserve this upload', file_get_contents($target));
+                $this->assertSame('preserve this upload', (string)$upload->getStream());
+            }
+        } finally {
+            $upload->getStream()->close();
+        }
+    }
+
+    public function testEmptyNonEofReadFailsWithoutSpinning(): void
+    {
+        $this->tmpFile = $this->createTempFile();
+        $stream = Mockery::mock(StreamInterface::class);
+        $stream->shouldReceive('getMetadata')->with('uri')->andReturn(null);
+        $stream->shouldReceive('isReadable')->andReturn(true);
+        $stream->shouldReceive('isSeekable')->andReturn(false);
+        $stream->shouldReceive('read')->with(4096)->once()->andReturn('');
+        $stream->shouldReceive('eof')->once()->andReturn(false);
+        $upload = new UploadedFile($stream, null, UPLOAD_ERR_OK);
+
+        try {
+            $upload->moveTo($this->tmpFile);
+            $this->fail('An empty read before EOF must fail.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('returns no data before EOF', $exception->getMessage());
+            $this->assertSame($stream, $upload->getStream());
+        }
+    }
+
+    public static function failedUploadSources(): array
+    {
+        return ['missing source' => ['missing'], 'closed source' => ['closed'], 'read failure' => ['read']];
+    }
+
+    #[DataProvider('failedUploadSources')]
+    public function testFailedCopyPreservesExistingDestination(string $failure): void
+    {
+        $this->orgFile = $this->createTempFile();
+        $this->tmpFile = $this->createTempFile();
+        file_put_contents($this->tmpFile, 'existing destination');
+        $source = $this->orgFile;
+        if ($failure === 'missing') {
+            unlink($this->orgFile);
+        } elseif ($failure === 'closed') {
+            $source = new Stream($this->orgFile);
+            $source->close();
+        } else {
+            $source = Mockery::mock(StreamInterface::class);
+            $source->shouldReceive('getMetadata')->with('uri')->andReturn(null);
+            $source->shouldReceive('isReadable')->andReturn(true);
+            $source->shouldReceive('isSeekable')->andReturn(false);
+            $source->shouldReceive('read')->once()->ordered()->andReturn('partial copy');
+            $source->shouldReceive('eof')->once()->ordered()->andReturn(false);
+            $source->shouldReceive('read')->once()->ordered()->andThrow(new RuntimeException('read failed'));
+        }
+        $upload = new UploadedFile($source, null, UPLOAD_ERR_OK);
+        $temporaryFiles = glob(dirname($this->tmpFile) . DS . '.cake-upload-*');
+        try {
+            $upload->moveTo($this->tmpFile);
+            $this->fail('Copying an unreadable upload must fail.');
+        } catch (RuntimeException) {
+            $this->assertSame('existing destination', file_get_contents($this->tmpFile));
+            $this->assertSame($temporaryFiles, glob(dirname($this->tmpFile) . DS . '.cake-upload-*'));
+        }
+    }
+
+    public function testMovePreservesDestinationPermissionsAndUsesUmaskForNewFiles(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Unix file permissions are required.');
+        }
+        $this->tmpFile = $this->createTempFile();
+        chmod($this->tmpFile, 0o640);
+        $upload = new UploadedFile(new Stream('data://text/plain,existing'), null, UPLOAD_ERR_OK);
+        $upload->moveTo($this->tmpFile);
+        clearstatcache(true, $this->tmpFile);
+        $this->assertSame(0o640, fileperms($this->tmpFile) & 0o777);
+
+        unlink($this->tmpFile);
+        $mask = umask(0o027);
+        try {
+            $upload = new UploadedFile(new Stream('data://text/plain,new'), null, UPLOAD_ERR_OK);
+            $upload->moveTo($this->tmpFile);
+            clearstatcache(true, $this->tmpFile);
+            $this->assertSame(0o640, fileperms($this->tmpFile) & 0o777);
+        } finally {
+            umask($mask);
+        }
     }
 }

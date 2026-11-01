@@ -694,4 +694,42 @@ class StreamTest extends TestCase
     {
         $this->assertNull($this->stream->getMetadata('TOTALLY_MADE_UP'));
     }
+
+    public function testExternallyClosedResourceBehavesAsDetached(): void
+    {
+        $resource = fopen('php://temp', 'w+');
+        $stream = new Stream($resource);
+        $this->assertTrue($stream->isReadable());
+        $this->assertTrue($stream->isWritable());
+        $this->assertTrue($stream->isSeekable());
+        fclose($resource);
+
+        $this->assertFalse($stream->isReadable());
+        $this->assertFalse($stream->isWritable());
+        $this->assertFalse($stream->isSeekable());
+        $this->assertTrue($stream->eof());
+        $this->assertNull($stream->getSize());
+        $this->assertSame([], $stream->getMetadata());
+        $this->assertNull($stream->getMetadata('mode'));
+        $this->assertSame('', (string)$stream);
+        $this->assertNull($stream->detach());
+        $stream->close();
+        $stream->close();
+    }
+
+    public static function externallyClosedOperations(): array
+    {
+        return [['read', [1]], ['write', ['data']], ['tell', []], ['seek', [0]], ['rewind', []], ['getContents', []]];
+    }
+
+    #[DataProvider('externallyClosedOperations')]
+    public function testClosedResourceOperationsThrowStreamException(string $method, array $arguments): void
+    {
+        $resource = fopen('php://temp', 'w+');
+        $stream = new Stream($resource);
+        fclose($resource);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('stream is detached');
+        $stream->{$method}(...$arguments);
+    }
 }

@@ -67,7 +67,7 @@ class RedirectResponseTest extends TestCase
 
     public function testLocationOverridesHeaderOption(): void
     {
-        $response = new RedirectResponse('/articles', 302, ['location' => '/other']);
+        $response = new RedirectResponse('/articles', 302, ['Location' => '/ignored', 'location' => '/other']);
 
         $this->assertSame(['/articles'], $response->getHeader('Location'));
         $this->assertArrayNotHasKey('location', $response->getHeaders());
@@ -82,7 +82,7 @@ class RedirectResponseTest extends TestCase
         $this->assertArrayNotHasKey('Content-Type', $response->getHeaders());
     }
 
-    public function testSetCookieHeadersAddedToCookieCollection(): void
+    public function testSetCookieHeadersArePreserved(): void
     {
         $response = new RedirectResponse('/articles', 302, [
             'Set-Cookie' => [
@@ -92,12 +92,13 @@ class RedirectResponseTest extends TestCase
             'set-cookie' => 'third=three',
         ]);
 
-        $this->assertSame('one', $response->getCookie('first')['value']);
-        $this->assertTrue($response->getCookie('first')['httponly']);
-        $this->assertSame('two', $response->getCookie('second')['value']);
-        $this->assertSame('/admin', $response->getCookie('second')['path']);
-        $this->assertSame('three', $response->getCookie('third')['value']);
-        $this->assertFalse($response->hasHeader('Set-Cookie'));
+        $this->assertSame([
+            'first=one; Path=/; HttpOnly',
+            'second=two; Path=/admin',
+            'third=three',
+        ], $response->getHeader('Set-Cookie'));
+        $this->assertSame($response->getHeader('Set-Cookie'), $response->getHeaders()['set-cookie']);
+        $this->assertCount(0, $response->getCookieCollection());
     }
 
     public static function invalidHeaderNames(): array

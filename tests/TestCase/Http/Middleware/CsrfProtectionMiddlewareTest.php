@@ -192,7 +192,9 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
         $response = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertNotEmpty($response->getCookie('csrfToken'));
+        $this->assertStringContainsString('csrfToken=', $response->getHeaderLine('Set-Cookie'));
+        $this->assertSame($response->getHeader('Set-Cookie'), $response->getHeaders()['Set-Cookie']);
+        $this->assertCount(0, $response->getCookieCollection());
     }
 
     /**

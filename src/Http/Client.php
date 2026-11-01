@@ -35,8 +35,10 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 use Uri\WhatWg\InvalidUrlException;
 use Uri\WhatWg\Url;
 
@@ -125,7 +127,10 @@ use Uri\WhatWg\Url;
  * `withBody()`. Set the appropriate Content-Type (e.g. text/event-stream),
  * Cache-Control and X-Accel-Buffering headers. The emitter reads and flushes
  * non-seekable bodies incrementally and closes them after emission. Server and
- * proxy buffering must also be configured to allow streaming.
+ * proxy buffering must also be configured to allow streaming. For nested PHP
+ * output buffers, use `new \Cake\Http\ResponseEmitter(flushOutputBuffers: true)`.
+ * This removes inner buffers before emission, discarding empty compression handlers.
+ * Nonempty custom handlers must be drained before calling the emitter.
  *
  * ### Using proxies
  *
@@ -502,8 +507,15 @@ class Client implements EventDispatcherInterface, ClientInterface
     {
         try {
             return $this->send($request, $this->config);
-        } catch (InvalidArgumentException $error) {
-            throw new ClientException($error->getMessage(), 0, $error);
+        } catch (InvalidArgumentException | RuntimeException $error) {
+            if ($error instanceof ClientExceptionInterface) {
+                throw $error;
+            }
+            if ($error instanceof InvalidArgumentException) {
+                throw new ClientException($error->getMessage(), 0, $error);
+            }
+
+            throw new RequestException($error->getMessage(), $request, $error);
         }
     }
 
@@ -570,10 +582,10 @@ class Client implements EventDispatcherInterface, ClientInterface
                 if (!in_array($locationUrl->getScheme(), ['http', 'https'], true) || !$locationUrl->getUnicodeHost()) {
                     throw new InvalidArgumentException('The redirect URL must use http or https and contain a host');
                 }
-                $locationUri = new Uri($locationUrl->toUnicodeString());
+                $locationUri = new Uri($locationUrl);
                 if (
                     $locationUri->getScheme() !== $url->getScheme() ||
-                    strtolower($locationUri->getHost()) !== strtolower($url->getHost()) ||
+                    strtolower($locationUri->getHost()) !== strtolower(new Url((string)$url)->getAsciiHost() ?? '') ||
                     $locationUri->getPort() !== $url->getPort()
                 ) {
                     $request = $request

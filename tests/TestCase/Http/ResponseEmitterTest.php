@@ -17,10 +17,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\CallbackStream;
+use Cake\Http\Client\Request;
+use Cake\Http\Client\Response as ClientResponse;
+use Cake\Http\Client\ResponseStream;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Link\Link;
 use Cake\Http\Response;
+use Cake\Http\Response\RedirectResponse;
 use Cake\Http\ResponseEmitter;
+use Cake\Http\Stream;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\StreamInterface;
@@ -85,7 +90,7 @@ class ResponseEmitterTest extends TestCase
         $body = Mockery::mock(StreamInterface::class);
         $body->shouldReceive('isReadable')->once()->andReturn(true);
         $body->shouldReceive('isSeekable')->once()->andReturn(false);
-        $body->shouldReceive('eof')->times(3)->andReturn(false, false, true);
+        $body->shouldReceive('eof')->twice()->andReturn(false, true);
         $body->shouldReceive('read')->with(8192)->twice()->andReturn('first ', 'second');
         $body->shouldReceive('close')->once();
         $response = new Response()->withBody($body);
@@ -109,7 +114,6 @@ class ResponseEmitterTest extends TestCase
         $body = Mockery::mock(StreamInterface::class);
         $body->shouldReceive('isReadable')->once()->andReturn(true);
         $body->shouldReceive('isSeekable')->once()->andReturn(false);
-        $body->shouldReceive('eof')->once()->andReturn(false);
         $body->shouldReceive('read')->with(8192)->once()->andThrow(RuntimeException::class);
         $body->shouldReceive('close')->once();
 
@@ -551,5 +555,109 @@ class ResponseEmitterTest extends TestCase
             'Content-Type: text/html',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
+    }
+
+    public function testEmptyReadBeforeEofDoesNotSpin(): void
+    {
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('isReadable')->andReturn(true);
+        $body->shouldReceive('isSeekable')->andReturn(false);
+        $body->shouldReceive('eof')->once()->andReturn(false);
+        $body->shouldReceive('read')->once()->andReturn('');
+        $body->shouldReceive('close')->once();
+        $response = new Response()->withBody($body);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('use a blocking stream');
+        $this->emitter->emitBody($response);
+    }
+
+    public function testRedirectCookieHeadersAreEmittedOnceWithOriginalScope(): void
+    {
+        $response = new RedirectResponse('/', 302, ['Set-Cookie' => 'token=value']);
+        $this->emitter->emitHeaders($response);
+        $this->assertCount(1, $GLOBALS['mockedCookies']);
+        $this->assertSame('', $GLOBALS['mockedCookies'][0]['path']);
+    }
+
+    public function testAlreadyRangedUpstreamBodyIsForwardedWithoutSlicing(): void
+    {
+        $resource = fopen('php://temp', 'w+');
+        fwrite($resource, str_repeat('R', 100));
+        rewind($resource);
+        $body = new ResponseStream($resource, new Request('https://example.com'));
+        $response = new Response()->withStatus(206)
+            ->withHeader('Content-Range', 'bytes 100-199/1000')
+            ->withHeader('Content-Length', '100')->withBody($body);
+        ob_start();
+        ob_start();
+        try {
+            $this->emitter->emit($response);
+            $this->assertSame(str_repeat('R', 100), ob_get_contents());
+        } finally {
+            ob_end_clean();
+            ob_end_clean();
+        }
+    }
+
+    public function testNestedBuffersCanBeDrainedForLiveEmission(): void
+    {
+        $process = proc_open([PHP_BINARY, TEST_APP . 'TestApp/Http/live_emitter.php'], [
+            0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w'],
+        ], $pipes);
+        $this->assertIsResource($process);
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        $error = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $this->assertSame(0, proc_close($process), $error . $output);
+        $this->assertSame('first second', $output);
+    }
+
+    public function testBufferedClientPartialResponseIsNotSlicedAgain(): void
+    {
+        $response = new ClientResponse([
+            'HTTP/1.1 206 Partial Content', 'Content-Range: bytes 100-199/1000',
+        ], str_repeat('R', 100));
+        ob_start();
+        try {
+            $this->emitter->emit($response);
+            $this->assertSame(str_repeat('R', 100), ob_get_contents());
+        } finally {
+            ob_end_clean();
+        }
+    }
+
+    public function testPartialBodyCopiedIntoServerResponseIsNotSlicedAgain(): void
+    {
+        $response = new Response()->withStatus(206)
+            ->withHeader('Content-Range', 'bytes 100-199/1000')
+            ->withBody(new Stream('data://text/plain,' . str_repeat('R', 100)));
+        ob_start();
+        try {
+            $this->emitter->emit($response);
+            $this->assertSame(str_repeat('R', 100), ob_get_contents());
+        } finally {
+            ob_end_clean();
+        }
+    }
+
+    public function testExplicitRangeStateHandlesUnknownSizeFullBody(): void
+    {
+        $stream = new class ('data://text/plain,0123456789') extends Stream {
+            public function getSize(): ?int
+            {
+                return null;
+            }
+        };
+        $response = new Response()->withHeader('Content-Range', 'bytes 2-4/10')->withBody($stream);
+        ob_start();
+        try {
+            $this->emitter->emit($response, bodyIsRange: false);
+            $this->assertSame('234', ob_get_contents());
+        } finally {
+            ob_end_clean();
+        }
     }
 }

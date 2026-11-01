@@ -136,6 +136,21 @@ class UploadedFile implements UploadedFileInterface
             ));
         }
 
+        $sourcePath = $this->file ?? $this->stream?->getMetadata('uri');
+        if (is_string($sourcePath) && is_file($sourcePath) && is_file($targetPath)) {
+            $sourceStat = stat($sourcePath);
+            $targetStat = stat($targetPath);
+            $sameFile = realpath($sourcePath) === realpath($targetPath);
+            if ($sourceStat !== false && $targetStat !== false && $sourceStat['ino'] !== 0) {
+                $sameFile = $sameFile || (
+                    $sourceStat['dev'] === $targetStat['dev'] && $sourceStat['ino'] === $targetStat['ino']
+                );
+            }
+            if ($sameFile) {
+                throw new RuntimeException('The upload source and target paths must differ.');
+            }
+        }
+
         $isCli = str_starts_with(PHP_SAPI, 'cli') || str_starts_with(PHP_SAPI, 'phpdbg');
         if ($this->file !== null && !$isCli) {
             if (!move_uploaded_file($this->file, $targetPath)) {
@@ -214,18 +229,79 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function writeFile(string $path): void
     {
-        $handle = fopen($path, 'wb+');
-        if ($handle === false) {
-            throw new RuntimeException(sprintf('Unable to write to designated path `%s`.', $path));
+        if (preg_match('#^[a-z][a-z0-9+.-]*://#i', $path)) {
+            throw new RuntimeException('Upload destinations must be local filesystem paths.');
         }
-
         $stream = $this->getStream();
+        if (!$stream->isReadable()) {
+            throw new RuntimeException('The upload source is not readable.');
+        }
         if ($stream->isSeekable()) {
             $stream->rewind();
         }
-        while (!$stream->eof()) {
-            fwrite($handle, $stream->read(4096));
+
+        $temporary = tempnam(dirname($path), '.cake-upload-');
+        if ($temporary === false) {
+            throw new RuntimeException('Unable to create a temporary upload file.');
         }
-        fclose($handle);
+        try {
+            $handle = fopen($temporary, 'wb');
+            if ($handle === false) {
+                throw new RuntimeException('Unable to open the temporary upload file.');
+            }
+            try {
+                $this->copyStream($stream, $handle, $path);
+            } finally {
+                fclose($handle);
+            }
+            $mode = is_file($path) ? fileperms($path) : false;
+            $mode = $mode === false ? 0o666 & ~umask() : ($mode & 0o777);
+            set_error_handler(static function (int $severity, string $message): never {
+                throw new RuntimeException($message);
+            });
+            try {
+                if (!chmod($temporary, $mode)) {
+                    throw new RuntimeException('Unable to set upload destination permissions.');
+                }
+                if (!rename($temporary, $path)) {
+                    throw new RuntimeException(sprintf('Unable to replace designated path `%s`.', $path));
+                }
+            } finally {
+                restore_error_handler();
+            }
+        } finally {
+            if (file_exists($temporary)) {
+                unlink($temporary);
+            }
+        }
+    }
+
+    /**
+     * Copy a readable upload into an open destination, checking every write.
+     *
+     * @param \Psr\Http\Message\StreamInterface $stream The upload source.
+     * @param resource $handle The destination handle.
+     * @param string $path The destination path for error messages.
+     * @return void
+     */
+    protected function copyStream(StreamInterface $stream, mixed $handle, string $path): void
+    {
+        do {
+            $chunk = $stream->read(4096);
+            $eof = $stream->eof();
+            if ($chunk === '' && !$eof) {
+                throw new RuntimeException('Cannot copy an upload that returns no data before EOF.');
+            }
+            while ($chunk !== '') {
+                $written = fwrite($handle, $chunk);
+                if ($written === false || $written === 0) {
+                    throw new RuntimeException(sprintf('Unable to write to designated path `%s`.', $path));
+                }
+                $chunk = substr($chunk, $written);
+            }
+        } while (!$eof);
+        if (!fflush($handle)) {
+            throw new RuntimeException(sprintf('Unable to flush designated path `%s`.', $path));
+        }
     }
 }

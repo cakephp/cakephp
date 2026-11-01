@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
+use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Adapter\Mock;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\ClientEvent;
@@ -32,6 +34,8 @@ use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * HTTP client test.
@@ -866,8 +870,8 @@ class ClientTest extends TestCase
             'encoded path' => ['../a%2Fb', 'https://example.com/a%2Fb'],
             'normalized absolute' => ['HTTPS://OTHER.example:443/a/../b', 'https://other.example/b'],
             'space' => ['next page', 'https://example.com/a/next%20page'],
-            'unicode' => ['https://bücher.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
-            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://b%c3%bccher.example/%C3%A4'],
+            'unicode' => ['https://bücher.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
+            'punycode' => ['https://xn--bcher-kva.example/ä', 'https://xn--bcher-kva.example/%C3%A4'],
         ];
     }
 
@@ -1587,5 +1591,111 @@ class ClientTest extends TestCase
         $this->expectExceptionMessage('Match callback must');
 
         $client->post('http://example.com/path');
+    }
+
+    public function testIdnRedirectPreservesSameOriginCredentials(): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: /next']),
+        ]);
+        $adapter->shouldReceive('send')->once()->ordered()
+            ->withArgs(function (RequestInterface $request, array $options): bool {
+                $this->assertSame('https://xn--bcher-kva.example/next', (string)$request->getUri());
+                $this->assertSame('Bearer secret', $request->getHeaderLine('Authorization'));
+                $this->assertSame('session=secret', $request->getHeaderLine('Cookie'));
+
+                return true;
+            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+        $client = new Client(['adapter' => $adapter]);
+        $client->send(new Request('https://xn--bcher-kva.example/start', 'GET', [
+            'Authorization' => 'Bearer secret',
+            'Cookie' => 'session=secret',
+        ]), ['redirect' => 1]);
+    }
+
+    public static function requestBodyAdapters(): array
+    {
+        return ['stream' => [Stream::class], 'curl' => [Curl::class]];
+    }
+
+    #[DataProvider('requestBodyAdapters')]
+    public function testSendRequestWrapsBodyFailures(string $adapter): void
+    {
+        if (str_ends_with($adapter, 'Curl') && !extension_loaded('curl')) {
+            $this->markTestSkipped('cURL is not available.');
+        }
+        $failure = new RuntimeException('Cannot rewind this body');
+        $body = Mockery::mock(StreamInterface::class);
+        $body->shouldReceive('rewind')->once()->andThrow($failure);
+        $request = new Request('https://example.com', 'POST')->withBody($body);
+        try {
+            new Client(['adapter' => $adapter])->sendRequest($request);
+            $this->fail('A body error must be a request exception.');
+        } catch (RequestException $exception) {
+            $this->assertSame($request, $exception->getRequest());
+            $this->assertSame($failure, $exception->getPrevious());
+        }
+    }
+
+    public function testSendRequestPreservesClientException(): void
+    {
+        $request = new Request('https://example.com');
+        $failure = new RequestException('request failed', $request);
+        $adapter = Mockery::mock(AdapterInterface::class);
+        $adapter->shouldReceive('send')->once()->andThrow($failure);
+        try {
+            new Client(['adapter' => $adapter])->sendRequest($request);
+            $this->fail('The adapter failure must propagate.');
+        } catch (ClientExceptionInterface $exception) {
+            $this->assertSame($failure, $exception);
+        }
+    }
+
+    public static function mockWildcardBoundaries(): array
+    {
+        return [
+            'sibling path' => ['https://example.com/api/*', 'https://example.com/api/item', 'https://example.com/api2'],
+            'sibling domain' => ['https://example.com/*', 'https://example.com/item', 'https://example.com.evil/'],
+            'encoded wildcard' => ['https://example.com/api/%2A', 'https://example.com/api/item', 'https://example.com/api2'],
+        ];
+    }
+
+    #[DataProvider('mockWildcardBoundaries')]
+    public function testMockWildcardDoesNotMatchSiblingPathsOrDomains(string $pattern, string $match, string $miss): void
+    {
+        $adapter = new Mock();
+        $response = new Response(['HTTP/1.1 200 OK']);
+        $adapter->addResponse(new Request($pattern), $response, []);
+        $this->assertSame([$response], $adapter->send(new Request($match), []));
+        $this->expectException(MissingResponseException::class);
+        $adapter->send(new Request($miss), []);
+    }
+
+    public static function idnRedirectCookies(): array
+    {
+        return [
+            'unicode origin' => ['https://bücher.example/start', 'session=abc; Path=/'],
+            'punycode origin' => ['https://xn--bcher-kva.example/start', 'session=abc; Path=/'],
+            'unicode domain' => ['https://bücher.example/start', 'session=abc; Path=/; Domain=bücher.example'],
+            'punycode domain' => ['https://bücher.example/start', 'session=abc; Path=/; Domain=xn--bcher-kva.example'],
+        ];
+    }
+
+    #[DataProvider('idnRedirectCookies')]
+    public function testIdnRedirectRetainsResponseCookies(string $url, string $cookie): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
+            new Response(['HTTP/1.1 302 Found', 'Location: /next', 'Set-Cookie: ' . $cookie]),
+        ]);
+        $adapter->shouldReceive('send')->once()->ordered()
+            ->withArgs(function (RequestInterface $request, array $options): bool {
+                $this->assertSame('session=abc', $request->getHeaderLine('Cookie'));
+                $this->assertSame('https://xn--bcher-kva.example/next', (string)$request->getUri());
+
+                return true;
+            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+        new Client(['adapter' => $adapter])->send(new Request($url), ['redirect' => 1]);
     }
 }

@@ -147,8 +147,11 @@ class Stream implements StreamInterface, Stringable
      */
     public function detach(): mixed
     {
-        $resource = $this->resource;
+        $resource = is_resource($this->resource) ? $this->resource : null;
         $this->resource = null;
+        $this->readable = null;
+        $this->writable = null;
+        $this->seekable = null;
 
         return $resource;
     }
@@ -158,11 +161,11 @@ class Stream implements StreamInterface, Stringable
      */
     public function getSize(): ?int
     {
-        if ($this->resource === null) {
+        if (!$this->hasResource()) {
             return null;
         }
 
-        $stats = fstat($this->resource);
+        $stats = fstat($this->getResource());
 
         return $stats === false ? null : $stats['size'];
     }
@@ -185,7 +188,7 @@ class Stream implements StreamInterface, Stringable
      */
     public function eof(): bool
     {
-        return $this->resource === null || feof($this->resource);
+        return !$this->hasResource() || feof($this->getResource());
     }
 
     /**
@@ -193,11 +196,11 @@ class Stream implements StreamInterface, Stringable
      */
     public function isSeekable(): bool
     {
-        if ($this->resource === null) {
+        if (!$this->hasResource()) {
             return false;
         }
 
-        return $this->seekable ??= (bool)stream_get_meta_data($this->resource)['seekable'];
+        return $this->seekable ??= (bool)stream_get_meta_data($this->getResource())['seekable'];
     }
 
     /**
@@ -227,11 +230,11 @@ class Stream implements StreamInterface, Stringable
      */
     public function isWritable(): bool
     {
-        if ($this->resource === null) {
+        if (!$this->hasResource()) {
             return false;
         }
 
-        return $this->writable ??= strpbrk(stream_get_meta_data($this->resource)['mode'], 'xwca+') !== false;
+        return $this->writable ??= strpbrk(stream_get_meta_data($this->getResource())['mode'], 'xwca+') !== false;
     }
 
     /**
@@ -257,11 +260,11 @@ class Stream implements StreamInterface, Stringable
      */
     public function isReadable(): bool
     {
-        if ($this->resource === null) {
+        if (!$this->hasResource()) {
             return false;
         }
 
-        return $this->readable ??= strpbrk(stream_get_meta_data($this->resource)['mode'], 'r+') !== false;
+        return $this->readable ??= strpbrk(stream_get_meta_data($this->getResource())['mode'], 'r+') !== false;
     }
 
     /**
@@ -309,12 +312,28 @@ class Stream implements StreamInterface, Stringable
      */
     public function getMetadata(?string $key = null): mixed
     {
-        $metadata = $this->resource === null ? [] : stream_get_meta_data($this->resource);
+        $metadata = $this->hasResource() ? stream_get_meta_data($this->getResource()) : [];
         if ($key === null) {
             return $metadata;
         }
 
         return $metadata[$key] ?? null;
+    }
+
+    /**
+     * Treat a resource closed by its owner as detached and discard cached capabilities.
+     *
+     * @return bool
+     */
+    protected function hasResource(): bool
+    {
+        if (!is_resource($this->resource)) {
+            $this->detach();
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -325,7 +344,8 @@ class Stream implements StreamInterface, Stringable
      */
     protected function getResource()
     {
-        if ($this->resource === null) {
+        if (!is_resource($this->resource)) {
+            $this->detach();
             throw new RuntimeException('No resource available; stream is detached.');
         }
 

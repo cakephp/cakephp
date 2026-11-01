@@ -30,6 +30,22 @@ if (preg_match('/Content-Length: (\d+)/i', $headers, $matches)) {
         $remaining -= strlen($data);
     }
 }
+if (preg_match('# /(gzip-range|gzip-head|gzip-not-modified) #', $headers, $matches)) {
+    $representation = gzencode('representation');
+    $ranged = $matches[1] === 'gzip-range';
+    $notModified = $matches[1] === 'gzip-not-modified';
+    $status = $ranged ? '206 Partial Content' : ($notModified ? '304 Not Modified' : '200 OK');
+    $body = $ranged ? substr($representation, 5, 10) : '';
+    $length = $ranged ? strlen($body) : strlen($representation);
+    fwrite($connection, "HTTP/1.1 {$status}\r\nContent-Encoding: gzip\r\nContent-Length: {$length}\r\n");
+    if ($ranged) {
+        fwrite($connection, 'Content-Range: bytes 5-14/' . strlen($representation) . "\r\n");
+    }
+    fwrite($connection, "Connection: close\r\n\r\n" . $body);
+    fclose($connection);
+    fclose($server);
+    exit(0);
+}
 $isGzip = str_contains($headers, '/gzip');
 $isRedirect = str_contains($headers, '/redirect');
 $isTimeout = str_contains($headers, '/timeout');

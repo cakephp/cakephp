@@ -79,7 +79,7 @@ class UriFactory implements UriFactoryInterface
                 get_debug_type($https),
             ));
         }
-        $isHttps = is_bool($https) ? $https : strtolower($https) === 'on';
+        $isHttps = is_bool($https) ? $https : !in_array(strtolower($https), ['', 'off', '0'], true);
         $uri = new Uri()->withScheme($isHttps ? 'https' : 'http');
 
         [$host, $port] = static::marshalHostAndPort($server);
@@ -98,7 +98,7 @@ class UriFactory implements UriFactoryInterface
 
         $query = '';
         if (isset($server['QUERY_STRING']) && is_scalar($server['QUERY_STRING'])) {
-            $query = ltrim((string)$server['QUERY_STRING'], '?');
+            $query = (string)$server['QUERY_STRING'];
         }
 
         return $uri
@@ -134,19 +134,10 @@ class UriFactory implements UriFactoryInterface
         }
 
         $host = (string)$server['SERVER_NAME'];
+        if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
+            $host = '[' . $host . ']';
+        }
         $port = isset($server['SERVER_PORT']) ? (int)$server['SERVER_PORT'] : null;
-        if (!isset($server['SERVER_ADDR']) || !preg_match('/^\[[0-9a-fA-F:]+\]$/', $host)) {
-            return [$host, $port];
-        }
-
-        // Some clients send an IPv6 address in SERVER_NAME where the last
-        // segment could be misinterpreted as the port.
-        $host = '[' . $server['SERVER_ADDR'] . ']';
-        $port ??= 80;
-        $separator = strrpos($host, ':');
-        if ($separator !== false && $port . ']' === substr($host, $separator + 1)) {
-            $port = null;
-        }
 
         return [$host, $port];
     }
