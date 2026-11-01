@@ -34,11 +34,17 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
     public const BEHAVIOR_NULL = 'NULL';
     public const BEHAVIOR_ERROR = 'ERROR';
     public const BEHAVIOR_DEFAULT = 'DEFAULT';
+    public const BEHAVIOR_UNKNOWN = 'UNKNOWN';
+    public const BEHAVIOR_TRUE = 'TRUE';
+    public const BEHAVIOR_FALSE = 'FALSE';
 
     protected const ALLOWED_BEHAVIORS = [
         self::BEHAVIOR_NULL,
         self::BEHAVIOR_ERROR,
         self::BEHAVIOR_DEFAULT,
+        self::BEHAVIOR_UNKNOWN,
+        self::BEHAVIOR_TRUE,
+        self::BEHAVIOR_FALSE,
     ];
 
     /**
@@ -79,7 +85,7 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
     /**
      * Sets the RETURNING clause.
      *
-     * Caution: returning types are not sanitized before use.
+     * SQL Injection Warning: RETURNING type is not sanitized before use.
      *
      * Not all database engines support every clause. Check for support before using.
      *
@@ -96,7 +102,7 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
     /**
      * Sets the PASSING clause.
      *
-     * Caution: variables names are not sanitized before use.
+     * SQL Injection Warning: PASSING names are not sanitized before use.
      *
      * Not all database engines support every clause. Check for support before using.
      *
@@ -219,9 +225,11 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
     {
         switch ($config['behavior']) {
             case self::BEHAVIOR_NULL:
-                return sprintf('NULL %s', $origin);
             case self::BEHAVIOR_ERROR:
-                return sprintf('ERROR %s', $origin);
+            case self::BEHAVIOR_TRUE:
+            case self::BEHAVIOR_FALSE:
+            case self::BEHAVIOR_UNKNOWN:
+                return sprintf('%s %s', $config['behavior'], $origin);
             case self::BEHAVIOR_DEFAULT:
                 $value = $config['value'];
                 if ($value instanceof ExpressionInterface) {
@@ -238,7 +246,7 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
                 return sprintf('DEFAULT %s %s', $value, $origin);
         }
 
-        return '';
+        throw new InvalidArgumentException(sprintf('Unknown behavior: %s', $config['behavior']));
     }
 
     /**

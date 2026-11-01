@@ -576,7 +576,9 @@ class Sqlserver extends Driver
                         })
                         ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);
                 }
-
+                break;
+            case 'JSON_EXISTS':
+                $expression->setName('JSON_PATH_EXISTS');
                 break;
         }
     }

@@ -94,6 +94,35 @@ class JsonPathExpressionTest extends TestCase
         $this->assertSame('int', $expr->getReturnType());
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function behaviorProvider(): array
+    {
+        return [
+            'null' => [JsonPathExpression::BEHAVIOR_NULL],
+            'error' => [JsonPathExpression::BEHAVIOR_ERROR],
+            'default' => [JsonPathExpression::BEHAVIOR_DEFAULT],
+            'unknown' => [JsonPathExpression::BEHAVIOR_UNKNOWN],
+            'true' => [JsonPathExpression::BEHAVIOR_TRUE],
+            'false' => [JsonPathExpression::BEHAVIOR_FALSE],
+        ];
+    }
+
+    #[DataProvider('behaviorProvider')]
+    public function testValidBehaviors(string $behavior): void
+    {
+        $expr = (new JsonPathExpression('$.id'))->onEmpty($behavior);
+        $this->assertStringContainsString($behavior, $expr->sql(new ValueBinder()));
+    }
+
+    public function testInvalidBehavior(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported json path behavior');
+        (new JsonPathExpression('$.id'))->onEmpty('MISSING');
+    }
+
     public function testOnEmpty(): void
     {
         // Test behavior without value
