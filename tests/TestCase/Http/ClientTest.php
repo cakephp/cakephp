@@ -1698,4 +1698,30 @@ class ClientTest extends TestCase
             })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
         new Client(['adapter' => $adapter])->send(new Request($url), ['redirect' => 1]);
     }
+
+    public static function redirectRetrievalMethods(): array
+    {
+        return [[303, 'GET', ''], [307, 'POST', 'payload'], [308, 'POST', 'payload'], [302, 'POST', 'payload']];
+    }
+
+    #[DataProvider('redirectRetrievalMethods')]
+    public function testRedirectMethodAndBodySemantics(int $status, string $method, string $body): void
+    {
+        $adapter = Mockery::mock(Stream::class);
+        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
+            new Response(['HTTP/1.1 ' . $status . ' Redirect', 'Location: /next']),
+        ]);
+        $adapter->shouldReceive('send')->once()->ordered()
+            ->withArgs(function (RequestInterface $request, array $options) use ($method, $body, $status): bool {
+                $this->assertSame($method, $request->getMethod());
+                $this->assertSame($body, (string)$request->getBody());
+                $this->assertSame($status !== 303, $request->hasHeader('Content-Type'));
+                $this->assertSame($status !== 303, $request->hasHeader('Content-Length'));
+
+                return true;
+            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+        new Client(['adapter' => $adapter])->send(new Request('https://example.com/start', 'POST', [
+            'Content-Type' => 'text/plain', 'Content-Length' => '7',
+        ], 'payload'), ['redirect' => 1]);
+    }
 }

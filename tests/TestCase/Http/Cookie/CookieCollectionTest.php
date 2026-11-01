@@ -216,7 +216,7 @@ class CookieCollectionTest extends TestCase
         $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Mon, 09-Jun-2031 10:18:14 GMT; Path=/; HttpOnly; Secure;')
-            ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com')
+            ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=example.com')
             ->withAddedHeader('Set-Cookie', 'maxage=value; Max-Age=60; Expires=Mon, 09-Jun-2031 10:18:14 GMT;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertNotSame($new, $collection, 'Should clone collection');
@@ -229,7 +229,7 @@ class CookieCollectionTest extends TestCase
         $this->assertSame('soon', $new->get('expiring')->getValue());
         $this->assertSame('value', $new->get('maxage')->getValue());
 
-        $this->assertSame('/app', $new->get('test')->getPath(), 'cookies should inherit request path');
+        $this->assertSame('/', $new->get('test')->getPath(), 'cookies should inherit the request directory');
         $this->assertSame('/', $new->get('expiring')->getPath(), 'path attribute should be used.');
 
         $this->assertNull($new->get('test')->getExpiry(), 'No expiry');
@@ -240,7 +240,7 @@ class CookieCollectionTest extends TestCase
         );
         $session = $new->get('session');
         $this->assertNull($session->getExpiry(), 'No expiry');
-        $this->assertSame('www.example.com', $session->getDomain(), 'Has domain');
+        $this->assertSame('example.com', $session->getDomain(), 'Has domain');
 
         $maxage = $new->get('maxage');
         $this->assertLessThanOrEqual(
@@ -395,7 +395,7 @@ class CookieCollectionTest extends TestCase
         $new = $collection->addFromResponse($response, $request);
         $this->assertNotSame($new, $collection, 'Should clone collection');
 
-        $this->assertTrue($new->has('match'), 'should contain matching domain');
+        $this->assertFalse($new->has('match'), 'parent hosts cannot set child-domain cookies');
         $this->assertFalse($new->has('nope'), 'should not contain cookie from badexample.com');
     }
 
@@ -577,5 +577,69 @@ class CookieCollectionTest extends TestCase
 
         $cookie = $cookies->get('123');
         $this->assertSame('a integer key cookie', $cookie->getValue());
+    }
+
+    public function testHostOnlyCookiesStayOnTheirOriginalHost(): void
+    {
+        $source = new ClientRequest('https://example.com/');
+        $jar = new CookieCollection()->addFromResponse(
+            new Response()->withHeader('Set-Cookie', 'session=secret; Path=/'),
+            $source,
+        );
+        $this->assertSame('session=secret', $jar->addToRequest($source, [])->getHeaderLine('Cookie'));
+        $child = new ClientRequest('https://child.example.com/');
+        $this->assertSame('', $jar->addToRequest($child, [])->getHeaderLine('Cookie'));
+        $jar = $jar->addFromResponse(
+            new Response()->withHeader('Set-Cookie', 'session=shared; Domain=example.com; Path=/'),
+            $source,
+        );
+        $this->assertSame('session=shared', $jar->addToRequest($child, [])->getHeaderLine('Cookie'));
+        $jar = $jar->addFromResponse(new Response()->withHeader('Set-Cookie', 'session=private; Path=/'), $source);
+        $this->assertSame('', $jar->addToRequest($child, [])->getHeaderLine('Cookie'));
+        $this->assertSame('', $jar->remove('session')->addToRequest($source, [])->getHeaderLine('Cookie'));
+    }
+
+    public function testCookiePathsRespectDirectoryBoundaries(): void
+    {
+        $jar = new CookieCollection()->addFromResponse(
+            new Response()->withHeader('Set-Cookie', 'session=secret; Path=/account'),
+            new ClientRequest('https://example.com/'),
+        );
+        foreach (['/account', '/account/item'] as $path) {
+            $this->assertSame('session=secret', $jar->addToRequest(new ClientRequest('https://example.com' . $path), [])
+                ->getHeaderLine('Cookie'));
+        }
+        $this->assertSame('', $jar->addToRequest(new ClientRequest('https://example.com/accounting'), [])
+            ->getHeaderLine('Cookie'));
+    }
+
+    public function testDefaultCookiePathUsesRequestDirectory(): void
+    {
+        $jar = new CookieCollection()->addFromResponse(
+            new Response()->withHeader('Set-Cookie', ['session=secret', 'other=value; Path=relative']),
+            new ClientRequest('https://example.com/folder/page'),
+        );
+        $this->assertSame('/folder', $jar->get('session')->getPath());
+        $this->assertSame('/folder', $jar->get('other')->getPath());
+        $this->assertSame('session=secret; other=value', $jar->addToRequest(new ClientRequest('https://example.com/folder/next'), [])
+            ->getHeaderLine('Cookie'));
+        $this->assertSame('', $jar->addToRequest(new ClientRequest('https://example.com/other'), [])->getHeaderLine('Cookie'));
+    }
+
+    public function testClientCookieParsingDoesNotInheritServerCookieDomainDefaults(): void
+    {
+        $domain = new Cookie('default')->getDomain();
+        Cookie::setDefaults(['domain' => 'global.example']);
+        try {
+            $jar = new CookieCollection()->addFromResponse(
+                new Response()->withHeader('Set-Cookie', 'session=secret; Path=/'),
+                new ClientRequest('https://example.com/'),
+            );
+            $this->assertTrue($jar->has('session'));
+            $this->assertSame('example.com', $jar->get('session')->getDomain());
+            $this->assertSame('', $jar->addToRequest(new ClientRequest('https://child.example.com/'), [])->getHeaderLine('Cookie'));
+        } finally {
+            Cookie::setDefaults(['domain' => $domain]);
+        }
     }
 }

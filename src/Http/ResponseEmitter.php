@@ -73,7 +73,9 @@ class ResponseEmitter
         $this->emitStatusLine($response);
         $this->emitHeaders($response);
 
-        $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
+        $range = $response->getStatusCode() >= 200 && !in_array($response->getStatusCode(), [204, 205, 304], true)
+            ? $this->parseContentRange($response->getHeaderLine('Content-Range'))
+            : null;
         if (is_array($range) && $bodyIsRange === null) {
             $body = $response->getBody();
             $size = $body->getSize();
@@ -98,10 +100,14 @@ class ResponseEmitter
      */
     protected function emitBody(ResponseInterface $response): void
     {
-        if (in_array($response->getStatusCode(), [204, 304], true)) {
+        $body = $response->getBody();
+        if ($response->getStatusCode() < 200 || in_array($response->getStatusCode(), [204, 205, 304], true)) {
+            if (!$body->isSeekable()) {
+                $body->close();
+            }
+
             return;
         }
-        $body = $response->getBody();
 
         if (!$body->isReadable()) {
             echo $body;

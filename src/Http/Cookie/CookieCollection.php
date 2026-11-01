@@ -48,6 +48,13 @@ class CookieCollection implements IteratorAggregate, Countable
     protected array $cookies = [];
 
     /**
+     * Domains of cookies received without an explicit Domain attribute, indexed by cookie ID.
+     *
+     * @var array<string, string>
+     */
+    protected array $hostOnlyDomains = [];
+
+    /**
      * Constructor
      *
      * @param array<\Cake\Http\Cookie\CookieInterface> $cookies Array of cookie objects
@@ -73,34 +80,45 @@ class CookieCollection implements IteratorAggregate, Countable
     public static function createFromHeader(array $header, array $defaults = []): static
     {
         $cookies = [];
+        $hostOnlyDomains = [];
         $sourceDomain = isset($defaults['domain']) ? static::normalizeDomain($defaults['domain']) : null;
         if ($sourceDomain !== null) {
-            $defaults['domain'] = $sourceDomain;
+            $defaults['domain'] = '';
         }
         foreach ($header as $value) {
             try {
                 $cookie = Cookie::createFromHeaderString($value, $defaults);
                 $domainMatch = true;
+                $hostOnly = false;
                 if ($sourceDomain) {
-                    $cookieDomain = static::normalizeDomain($cookie->getDomain());
-                    $cookie = $cookie->withDomain(
-                        (str_starts_with($cookie->getDomain(), '.') ? '.' : '') . $cookieDomain,
+                    $hostOnly = $cookie->getDomain() === '';
+                    $cookieDomain = $hostOnly ? $sourceDomain : static::normalizeDomain($cookie->getDomain());
+                    $cookie = $cookie->withDomain($cookieDomain);
+                    $domainMatch = $cookieDomain === $sourceDomain || (
+                        filter_var(trim($sourceDomain, '[]'), FILTER_VALIDATE_IP) === false &&
+                        str_ends_with($sourceDomain, ".{$cookieDomain}")
                     );
-                    $domainMatch = (
-                        $cookieDomain === $sourceDomain ||
-                        str_ends_with($sourceDomain, ".{$cookieDomain}") ||
-                        str_ends_with($cookieDomain, ".{$sourceDomain}")
-                    );
+                    if (!str_starts_with($cookie->getPath(), '/')) {
+                        $cookie = $cookie->withPath($defaults['path'] ?? '/');
+                    }
                 }
                 if ($domainMatch) {
                     $cookies[] = $cookie;
+                    if ($hostOnly) {
+                        $hostOnlyDomains[$cookie->getId()] = $sourceDomain;
+                    } else {
+                        unset($hostOnlyDomains[$cookie->getId()]);
+                    }
                 }
             } catch (Exception | TypeError) {
                 // @mago-expect lint:no-empty-catch-clause Don't blow up on invalid cookies
             }
         }
 
-        return new static($cookies);
+        $collection = new static($cookies);
+        $collection->hostOnlyDomains = $hostOnlyDomains;
+
+        return $collection;
     }
 
     /**
@@ -144,6 +162,7 @@ class CookieCollection implements IteratorAggregate, Countable
     {
         $new = clone $this;
         $new->cookies[$cookie->getId()] = $cookie;
+        unset($new->hostOnlyDomains[$cookie->getId()]);
 
         return $new;
     }
@@ -225,7 +244,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $key = mb_strtolower($name);
         foreach ($new->cookies as $i => $cookie) {
             if (mb_strtolower($cookie->getName()) === $key) {
-                unset($new->cookies[$i]);
+                unset($new->cookies[$i], $new->hostOnlyDomains[$i]);
             }
         }
 
@@ -323,20 +342,19 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($scheme === 'http' && $cookie->isSecure()) {
                 continue;
             }
-            if (!str_starts_with($path, $cookie->getPath())) {
+            $cookiePath = $cookie->getPath();
+            $prefix = str_ends_with($cookiePath, '/') ? $cookiePath : $cookiePath . '/';
+            if ($path !== $cookiePath && !str_starts_with($path, $prefix)) {
                 continue;
             }
             if ($cookie->isExpired($now)) {
                 continue;
             }
             $domain = static::normalizeDomain($cookie->getDomain());
-            // Trim leading dot from cookie domain value.
-            if (str_starts_with($domain, '.')) {
-                $domain = ltrim($domain, '.');
+            if (isset($this->hostOnlyDomains[$cookie->getId()]) && $host !== $this->hostOnlyDomains[$cookie->getId()]) {
+                continue;
             }
 
-            // Cookie domains with a leading `.` match all subdomains.
-            // And cookies on domains match all subdomains.
             if ($host === $domain || str_ends_with($host, ".{$domain}")) {
                 $out[$cookie->getName()] = $cookie->getValue();
             }
@@ -357,14 +375,20 @@ class CookieCollection implements IteratorAggregate, Countable
         $uri = $request->getUri();
         $host = static::normalizeDomain($uri->getHost());
         $path = $uri->getPath() ?: '/';
+        $separator = strrpos($path, '/');
+        $defaultPath = $separator === false || $separator === 0 ? '/' : substr($path, 0, $separator);
 
         $cookies = static::createFromHeader(
             $response->getHeader('Set-Cookie'),
-            ['domain' => $host, 'path' => $path],
+            ['domain' => $host, 'path' => $defaultPath],
         );
         $new = clone $this;
         foreach ($cookies as $cookie) {
             $new->cookies[$cookie->getId()] = $cookie;
+            unset($new->hostOnlyDomains[$cookie->getId()]);
+            if (isset($cookies->hostOnlyDomains[$cookie->getId()])) {
+                $new->hostOnlyDomains[$cookie->getId()] = $cookies->hostOnlyDomains[$cookie->getId()];
+            }
         }
         $new->removeExpiredCookies($host, $path);
 
@@ -390,7 +414,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $pathMatches = str_starts_with($path, $cookie->getPath());
             $hostMatches = preg_match($hostPattern, static::normalizeDomain($cookie->getDomain()));
             if ($pathMatches && $hostMatches) {
-                unset($this->cookies[$i]);
+                unset($this->cookies[$i], $this->hostOnlyDomains[$i]);
             }
         }
     }

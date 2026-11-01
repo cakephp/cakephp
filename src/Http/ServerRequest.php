@@ -37,6 +37,8 @@ use function Cake\Core\env;
  */
 class ServerRequest implements ServerRequestInterface
 {
+    use HeaderValidationTrait;
+
     /**
      * Array of parameters parsed from the URL.
      *
@@ -874,6 +876,9 @@ class ServerRequest implements ServerRequestInterface
     #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withHeader(string $name, $value): static
     {
+        $this->assertHeaderName($name);
+        $filtered = $this->filterHeaderValue($value);
+        $value = is_array($value) ? $filtered : $filtered[0];
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
         $new->environment[$name] = $value;
@@ -896,13 +901,15 @@ class ServerRequest implements ServerRequestInterface
     #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withAddedHeader(string $name, $value): static
     {
+        $this->assertHeaderName($name);
+        $value = $this->filterHeaderValue($value);
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
         $existing = [];
         if (isset($new->environment[$name])) {
-            $existing = (array)$new->environment[$name];
+            $existing = $this->filterHeaderValue($new->environment[$name]);
         }
-        $existing = array_merge($existing, (array)$value);
+        $existing = array_merge($existing, $value);
         $new->environment[$name] = $existing;
 
         return $new;
@@ -1782,7 +1789,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone($this, ['uri' => $uri]);
 
-        if ($preserveHost && $this->hasHeader('Host')) {
+        if ($preserveHost && $this->getHeaderLine('Host') !== '') {
             return $new;
         }
 
@@ -1834,12 +1841,11 @@ class ServerRequest implements ServerRequestInterface
         }
 
         $target = $this->uri->getPath();
-        if ($this->uri->getQuery()) {
-            $target .= '?' . $this->uri->getQuery();
+        if (!str_starts_with($target, '/')) {
+            $target = '/' . $target;
         }
-
-        if (!$target) {
-            return '/';
+        if ($this->uri->getQuery() !== '') {
+            $target .= '?' . $this->uri->getQuery();
         }
 
         return $target;

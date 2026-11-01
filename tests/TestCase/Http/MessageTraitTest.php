@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Client\Request;
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\MessageTrait;
+use Cake\Http\Response;
 use Cake\Http\Stream;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -610,5 +612,24 @@ class MessageTraitTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $request->withHeader('X-Foo', "bar\r\ninjection");
+    }
+
+    public static function invalidStatusLines(): array
+    {
+        $cases = [];
+        foreach ([Response::class, ClientResponse::class] as $class) {
+            foreach ([[0, ''], [600, ''], [200, "bad\r\nInjected: value"]] as [$code, $reason]) {
+                $cases[] = [$class, $code, $reason];
+            }
+        }
+
+        return $cases;
+    }
+
+    #[DataProvider('invalidStatusLines')]
+    public function testResponseStatusLinesAreValidated(string $class, int $code, string $reason): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new $class()->withStatus($code, $reason);
     }
 }

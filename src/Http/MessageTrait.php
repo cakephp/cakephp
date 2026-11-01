@@ -28,6 +28,8 @@ use Psr\Http\Message\StreamInterface;
  */
 trait MessageTrait
 {
+    use HeaderValidationTrait;
+
     /**
      * List of all registered headers, as original name => list of values.
      *
@@ -244,61 +246,22 @@ trait MessageTrait
     }
 
     /**
-     * Validate a header name.
+     * Validate status line components before they reach an emitter.
      *
-     * @param string $name The header name.
+     * @param int $code HTTP status code.
+     * @param string $reasonPhrase Optional reason phrase.
      * @return void
-     * @phpstan-assert non-empty-string $name
-     * @throws \InvalidArgumentException When the name isn't a valid RFC 7230 token.
      */
-    protected function assertHeaderName(string $name): void
+    protected function assertStatus(int $code, string $reasonPhrase): void
     {
-        if (!preg_match('/^[a-zA-Z0-9\'`#$%&*+.^_|~!-]+$/D', $name)) {
-            throw new InvalidArgumentException(sprintf('`%s` is not a valid header name.', $name));
+        if ($code < 100 || $code > 599) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
+                $code,
+            ));
         }
-    }
-
-    /**
-     * Validate and normalize header values.
-     *
-     * @param mixed $values A header value or list of header values.
-     * @return non-empty-list<string>
-     * @throws \InvalidArgumentException When a value is invalid.
-     */
-    protected function filterHeaderValue(mixed $values): array
-    {
-        if (!is_array($values)) {
-            $values = [$values];
+        if (preg_match('/[^\x09\x20-\x7E\x80-\xFF]/', $reasonPhrase)) {
+            throw new InvalidArgumentException('Invalid HTTP reason phrase.');
         }
-        if ($values === []) {
-            throw new InvalidArgumentException(
-                'Invalid header value: must be a string or array of strings; cannot be an empty array.',
-            );
-        }
-
-        $result = [];
-        foreach ($values as $value) {
-            if (!is_string($value) && !is_int($value) && !is_float($value)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid header value type; must be a string or numeric; received `%s`.',
-                    get_debug_type($value),
-                ));
-            }
-            $value = (string)$value;
-
-            // Reject CRLF injection and non-visible characters. Only obsolete line
-            // folding (CRLF followed by space or tab) is accepted (RFC 7230 section 3.2).
-            if (
-                preg_match("#(?:(?<!\r)\n|\r(?!\n)|\r\n(?![ \t]))#", $value) ||
-                preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFF]/', $value)
-            ) {
-                throw new InvalidArgumentException(sprintf('`%s` is not a valid header value.', $value));
-            }
-
-            // Normalize line folding to a single space and trim optional whitespace.
-            $result[] = trim(str_replace(["\r\n\t", "\r\n "], ' ', $value), "\t ");
-        }
-
-        return $result;
     }
 }

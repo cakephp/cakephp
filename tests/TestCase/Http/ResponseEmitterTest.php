@@ -660,4 +660,27 @@ class ResponseEmitterTest extends TestCase
             ob_end_clean();
         }
     }
+
+    public function testBodylessStatusesDoNotInvokeCallbacks(): void
+    {
+        foreach ([101, 204, 205, 304] as $code) {
+            $invoked = false;
+            $body = new CallbackStream(function () use (&$invoked): string {
+                $invoked = true;
+
+                return 'must not be emitted';
+            });
+            $response = new Response()->withStatus($code)->withBody($body)
+                ->withHeader('Content-Range', 'bytes 1-4/20');
+            ob_start();
+            try {
+                $this->emitter->emit($response);
+                $this->assertSame('', ob_get_contents());
+                $this->assertFalse($invoked);
+                $this->assertTrue($body->eof());
+            } finally {
+                ob_end_clean();
+            }
+        }
+    }
 }

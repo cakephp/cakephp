@@ -33,6 +33,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Stream as BodyStream;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -591,6 +592,12 @@ class Client implements EventDispatcherInterface, ClientInterface
                     $request = $request
                         ->withoutHeader('Authorization')
                         ->withoutHeader('Cookie');
+                }
+                if ($response->getStatusCode() === 303 && strtoupper($request->getMethod()) !== 'HEAD') {
+                    $request = $request->withMethod('GET')->withBody(new BodyStream('php://memory', 'w+'));
+                    foreach (['Content-Length', 'Content-Type', 'Content-Encoding', 'Transfer-Encoding'] as $header) {
+                        $request = $request->withoutHeader($header);
+                    }
                 }
                 $request = $request->withUri($locationUri);
                 $request = $this->cookies->addToRequest($request, []);

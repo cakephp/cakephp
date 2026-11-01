@@ -15,10 +15,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\Client;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Stream;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use UnexpectedValueException;
@@ -649,5 +651,48 @@ XML;
         $body = base64_decode('H4sIAAAAAAAAA/NIzcnJVyjPL8pJUQQAlRmFGwwAAAA=');
         $response = new Response($headers, $body);
         $this->assertSame('Hello world!', $response->getBody()->getContents());
+    }
+
+    public function testBufferedGzipDecodingHandlesOptionalHeadersAndClearsWireMetadata(): void
+    {
+        $gzip = gzencode('hello');
+        $gzip[3] = chr(ord($gzip[3]) | 8);
+        $gzip = substr($gzip, 0, 10) . "filename.txt\0" . substr($gzip, 10);
+        $response = new Response(['Content-Encoding: GZip', 'Content-Length: ' . strlen($gzip)], $gzip);
+        $this->assertSame('hello', $response->getStringBody());
+        $this->assertFalse($response->hasHeader('Content-Encoding'));
+        $this->assertFalse($response->hasHeader('Content-Length'));
+    }
+
+    public function testInvalidBufferedGzipFailsInsteadOfReturningAnEmptyBody(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Invalid gzip response');
+        new Response(['Content-Encoding: gzip'], "\x1f\x8b\x08broken");
+    }
+
+    public function testPartialAndBodylessBufferedGzipPreservesRepresentation(): void
+    {
+        $bytes = substr(gzencode('representation'), 5, 10);
+        $response = new Response([
+            'HTTP/1.1 206 Partial Content', 'Content-Encoding: gzip', 'Content-Length: 10',
+            'Content-Range: bytes 5-14/100',
+        ], $bytes);
+        $this->assertSame($bytes, $response->getStringBody());
+        $this->assertSame('gzip', $response->getHeaderLine('Content-Encoding'));
+        $response = new Response(['HTTP/1.1 304 Not Modified', 'Content-Encoding: gzip', 'Content-Length: 100']);
+        $this->assertSame('', $response->getStringBody());
+        $this->assertSame('100', $response->getHeaderLine('Content-Length'));
+    }
+
+    public function testZeroLocationIsAValidRedirect(): void
+    {
+        $this->assertTrue(new Response(['HTTP/1.1 302 Found', 'Location: 0'])->isRedirect());
+    }
+
+    public function testResponseParserRejectsInvalidStatus(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Response(['HTTP/1.1 999 Invalid']);
     }
 }

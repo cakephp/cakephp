@@ -93,7 +93,7 @@ class Response extends Message implements ResponseInterface
      *
      * @var int
      */
-    protected int $code = 0;
+    protected int $code = 200;
 
     /**
      * Cookie Collection instance
@@ -151,8 +151,14 @@ class Response extends Message implements ResponseInterface
 
             return;
         }
-        if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
+        if (
+            $body !== '' && strtolower($this->getHeaderLine('Content-Encoding')) === 'gzip' &&
+            $this->code >= 200 && !in_array($this->code, [204, 205, 206, 304], true) &&
+            !$this->hasHeader('Content-Range') && !$this->hasHeader('Transfer-Encoding')
+        ) {
             $body = $this->decodeGzipBody($body);
+            $this->removeHeader('Content-Encoding');
+            $this->removeHeader('Content-Length');
         }
         $stream = new Stream('php://memory', 'wb+');
         $stream->write($body);
@@ -163,29 +169,28 @@ class Response extends Message implements ResponseInterface
     /**
      * Uncompress a gzip response.
      *
-     * Looks for gzip signatures, and if gzinflate() exists,
-     * the body will be decompressed.
+     * Validates the complete gzip container, including optional headers and the checksum.
      *
      * @param string $body Gzip encoded body.
      * @return string
-     * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzinflate.
+     * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzdecode.
      */
     protected function decodeGzipBody(string $body): string
     {
-        if (!function_exists('gzinflate')) {
-            throw new CakeException('Cannot decompress gzip response body without gzinflate()');
+        if (!function_exists('gzdecode')) {
+            throw new CakeException('Cannot decompress gzip response body without gzdecode()');
         }
-        $offset = 0;
-        // Look for gzip 'signature'
-        if (str_starts_with($body, "\x1f\x8b")) {
-            $offset = 2;
+        set_error_handler(static fn(): bool => true);
+        try {
+            $decoded = gzdecode($body);
+        } finally {
+            restore_error_handler();
         }
-        // Check the format byte
-        if (substr($body, $offset, 1) === "\x08") {
-            return (string)gzinflate(substr($body, $offset + 8));
+        if ($decoded === false) {
+            throw new CakeException('Invalid gzip response');
         }
 
-        throw new CakeException('Invalid gzip response');
+        return $decoded;
     }
 
     /**
@@ -203,6 +208,7 @@ class Response extends Message implements ResponseInterface
             if (preg_match('/^HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches)) {
                 $this->protocol = $matches[1];
                 $this->code = (int)$matches[2];
+                $this->assertStatus($this->code, trim($matches[3]));
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
@@ -254,7 +260,7 @@ class Response extends Message implements ResponseInterface
         ];
 
         return in_array($this->code, $codes, true) &&
-            $this->getHeaderLine('Location');
+        $this->getHeaderLine('Location') !== '';
     }
 
     /**
@@ -277,6 +283,8 @@ class Response extends Message implements ResponseInterface
     #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
+        $this->assertStatus($code, $reasonPhrase);
+
         return clone($this, ['code' => $code, 'reasonPhrase' => $reasonPhrase]);
     }
 
