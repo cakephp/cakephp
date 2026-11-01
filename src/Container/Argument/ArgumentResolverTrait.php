@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Cake\Container\Argument;
 
 use Cake\Container\Attribute\AttributeInterface;
+use Cake\Container\Attribute\ContextualAttributeInterface;
 use Cake\Container\ContainerAwareInterface;
 use Cake\Container\ContainerInterface;
 use Cake\Container\Exception\ContainerException;
@@ -13,6 +14,7 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionAttribute;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
+use ReflectionParameter;
 
 trait ArgumentResolverTrait
 {
@@ -89,7 +91,10 @@ trait ArgumentResolverTrait
 
             // next we see if we have an attribute that can resolve the argument
             foreach ($param->getAttributes() as $attribute) {
-                $argument = $this->resolveArgumentFromAttribute($attribute);
+                $argument = $this->resolveContextualArgumentFromAttribute($attribute, $param);
+                if ($argument === false) {
+                    $argument = $this->resolveArgumentFromAttribute($attribute);
+                }
                 if ($argument !== false) {
                     $arguments[] = $argument;
                     continue 2;
@@ -124,6 +129,45 @@ trait ArgumentResolverTrait
         }
 
         return $this->resolveArguments($arguments);
+    }
+
+    /**
+     * Attempt to resolve a parameter's value from a contextual PHP attribute.
+     *
+     * Contextual attributes receive the parameter being resolved alongside
+     * the container, enabling resolution by parameter name/type. Attributes
+     * not implementing {@see ContextualAttributeInterface} return false here
+     * and fall through to {@see resolveArgumentFromAttribute()}.
+     *
+     * The container is deliberately passed as an argument instead of using
+     * {@see ContainerAwareInterface}: with a standalone ReflectionContainer
+     * there is no parent container to inject, while the resolving instance
+     * itself always satisfies the PSR interface expected here.
+     *
+     * @param \ReflectionAttribute<object> $attribute The attribute to attempt to resolve.
+     * @param \ReflectionParameter $parameter The parameter being resolved.
+     * @return \Cake\Container\Argument\LiteralArgumentInterface|false
+     */
+    protected function resolveContextualArgumentFromAttribute(
+        ReflectionAttribute $attribute,
+        ReflectionParameter $parameter,
+    ): LiteralArgumentInterface|false {
+        if (!is_subclass_of($attribute->getName(), ContextualAttributeInterface::class)) {
+            return false;
+        }
+
+        try {
+            $container = $this->getContainer();
+        } catch (ContainerException) {
+            $container = $this instanceof PsrContainerInterface ? $this : throw new ContainerException(
+                'No container implementation has been set.',
+            );
+        }
+
+        /** @var \Cake\Container\Attribute\ContextualAttributeInterface $instance */
+        $instance = $attribute->newInstance();
+
+        return new LiteralArgument($instance->resolve($parameter, $container));
     }
 
     /**
