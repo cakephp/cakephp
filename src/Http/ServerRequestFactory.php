@@ -232,7 +232,12 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (is_array($value) && static::isFileSpecification($value)) {
+                continue;
+            }
+            if (!is_array($value)) {
+                throw new InvalidArgumentException('Invalid value in files specification');
+            }
+            if (static::isFileSpecification($value)) {
                 $normalized[$key] = static::createUploadedFiles(
                     $value['tmp_name'],
                     $value['size'] ?? null,
@@ -240,11 +245,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
                     $value['name'] ?? null,
                     $value['type'] ?? null,
                 );
-            } elseif (is_array($value)) {
-                $normalized[$key] = static::normalizeUploadedFiles($value);
-            } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
+                continue;
             }
+            $normalized[$key] = static::normalizeUploadedFiles($value);
         }
 
         return $normalized;

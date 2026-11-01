@@ -100,18 +100,23 @@ class FormData implements Countable, Stringable
      */
     public function add(FormDataPart|string $name, mixed $value = null): static
     {
-        if (is_string($name)) {
-            if (is_array($value)) {
-                $this->addRecursive($name, $value);
-            } elseif (is_resource($value) || $value instanceof UploadedFileInterface) {
-                $this->addFile($name, $value);
-            } else {
-                $this->parts[] = $this->newPart($name, (string)$value);
-            }
-        } else {
+        if ($name instanceof FormDataPart) {
             $this->hasComplexPart = true;
             $this->parts[] = $name;
+
+            return $this;
         }
+        if (is_array($value)) {
+            $this->addRecursive($name, $value);
+
+            return $this;
+        }
+        if (is_resource($value) || $value instanceof UploadedFileInterface) {
+            $this->addFile($name, $value);
+
+            return $this;
+        }
+        $this->parts[] = $this->newPart($name, (string)$value);
 
         return $this;
     }

@@ -96,13 +96,21 @@ class UploadedFile implements UploadedFileInterface
 
         if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
-        } elseif (is_resource($streamOrFile)) {
-            $this->stream = new Stream($streamOrFile);
-        } elseif ($streamOrFile instanceof StreamInterface) {
-            $this->stream = $streamOrFile;
-        } else {
-            throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile.');
+
+            return;
         }
+        if (is_resource($streamOrFile)) {
+            $this->stream = new Stream($streamOrFile);
+
+            return;
+        }
+        if ($streamOrFile instanceof StreamInterface) {
+            $this->stream = $streamOrFile;
+
+            return;
+        }
+
+        throw new InvalidArgumentException('Invalid stream or file provided for UploadedFile.');
     }
 
     /**
