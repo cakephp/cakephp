@@ -25,6 +25,7 @@ use Cake\Database\Expression\JsonPathExpression;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests FunctionExpression queries
@@ -45,56 +46,81 @@ class FunctionsQueryTest extends TestCase
     /**
      * Skip queries unsupported by the current database type or server version.
      *
-     * @param array<class-string<\Cake\Database\Driver>|'mariadb', string> $versions Minimum versions by database type.
+     * @param array<class-string<\Cake\Database\Driver>, string> $versions Minimum versions by database type.
      */
     protected function requireVersion(array $versions): void
     {
         $driver = $this->connection->getDriver();
         $driverVersion = $driver->version();
-        $isMariadb = $driver instanceof Mariadb
-            || ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB'));
 
-        foreach ($versions as $className => $version) {
-            $mariadb = $className === 'mariadb';
-            $className = $mariadb ? Mysql::class : $className;
-
-            if ($driver instanceof $className) {
-                if ($driver instanceof Mysql && $mariadb !== $isMariadb) {
-                    continue;
-                }
-
-                $this->skipIf(version_compare($driverVersion, $version, '<'), sprintf('The current database backend does not support the required function. Requires version %s.', $version));
-
-                return;
-            }
+        $driverClass = $driver::class;
+        if ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB')) {
+            $driverClass = Mariadb::class;
         }
 
-        $this->markTestSkipped('The current database backend does not support the required function.');
+        $version = $versions[$driverClass] ?? null;
+        if ($version === null) {
+            $this->skipIf(true, 'Driver does not support the SQL function or behavior.');
+
+            return;
+        }
+
+        $this->skipIf(
+            version_compare($driverVersion, $version, '<'),
+            sprintf('Driver does not support the SQL function or behavior. Requires version %s.', $version),
+        );
     }
 
-    public function testJsonValue(): void
+    /**
+     * @return array<string, array{string, string, mixed, string}>
+     */
+    public static function jsonValueProvider(): array
+    {
+        return [
+            'string' => ['{"a":"hello"}', '$.a', 'hello', 'string'],
+            'integer' => ['{"a":42}', '$.a', 42, 'integer'],
+            'float' => ['{"a":1.5}', '$.a', 1.5, 'float'],
+            'true' => ['{"a":true}', '$.a', true, 'boolean'],
+            'false' => ['{"a":false}', '$.a', false, 'boolean'],
+            'null' => ['{"a":null}', '$.a', null, 'string'],
+        ];
+    }
+
+    #[DataProvider('jsonValueProvider')]
+    public function testJsonValue(string $json, string $path, mixed $expected, string $returnType): void
     {
         $this->requireVersion([
-            'mariadb' => '10.2.3',
+            Mariadb::class => '10.2.3',
             Mysql::class => '8.0.21',
-            Postgres::class => '12',
+            Postgres::class => '17',
             Sqlserver::class => '13',
             Sqlite::class => '3.19',
         ]);
 
+        // Test with $returnType parameter
         $query = new SelectQuery($this->connection);
+        $expression = $query->func()->jsonValue($this->quoteString($json), $path, returnType: $returnType);
+        $this->assertSame($returnType, $expression->getReturnType());
+
         $result = $query
-            ->select([
-                'value' => $query->func()->jsonValue(
-                    $this->quoteString(json_encode(['a' => 1])),
-                    '$.a',
-                ),
-            ])
-            // Set type because drivers like sqlite use non-standard functions that return the sqlite type not json string
-            ->setSelectTypeMap(['value' => 'integer'])
+            ->select(['value' => $expression])
+            ->setSelectTypeMap(['value' => $expression->getReturnType()])
             ->execute()->fetchAll('assoc');
 
-        $this->assertSame(1, $result[0]['value']);
+        $this->assertSame($expected, $result[0]['value']);
+
+        // Test with setReturnType on path expression
+        $query = new SelectQuery($this->connection);
+        $path = (new JsonPathExpression($path))->setReturnType($returnType);
+        $expression = $query->func()->jsonValue($this->quoteString($json), $path);
+        $this->assertSame($returnType, $expression->getReturnType());
+
+        $result = $query
+            ->select(['value' => $expression])
+            ->setSelectTypeMap(['value' => $expression->getReturnType()])
+            ->execute()->fetchAll('assoc');
+
+        $this->assertSame($expected, $result[0]['value']);
     }
 
     public function testJsonValuePassing(): void
@@ -196,7 +222,7 @@ class FunctionsQueryTest extends TestCase
     public function testJsonExists(): void
     {
         $this->requireVersion([
-            'mariadb' => '10.2',
+            Mariadb::class => '10.2',
             Mysql::class => '5.7',
             Postgres::class => '17',
             Sqlserver::class => '16',
