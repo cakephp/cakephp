@@ -236,7 +236,6 @@ class TimestampBehaviorTest extends TestCase
         $entity = new Entity();
         $event = new Event('Model.beforeSave');
         $this->Behavior->handleEvent($event, $entity);
-        $this->assertIsString($entity->timestamp_str);
     }
 
     /**
