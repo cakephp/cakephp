@@ -24,6 +24,7 @@ use Cake\Http\RateLimit\RateLimiterInterface;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
 use Cake\Http\RateLimit\TokenBucketRateLimiter;
 use Closure;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -161,6 +162,14 @@ class RateLimitMiddleware implements MiddlewareInterface
         $limit = $limiterConfig['limit'] ?? $this->getLimit($request, $identifier);
         $window = $limiterConfig['window'] ?? $this->config['window'];
         $cost = $this->getCost($request);
+        if ($window < 1) {
+            throw new InvalidArgumentException(
+                sprintf('Rate limit window must be at least 1 second, `%s` given.', $window),
+            );
+        }
+        if ($cost < 0) {
+            throw new InvalidArgumentException(sprintf('Rate limit cost must not be negative, `%s` given.', $cost));
+        }
         $key = $this->generateKey($identifier, $request);
 
         $rateLimiter = $this->getRateLimiter($limiterConfig);
