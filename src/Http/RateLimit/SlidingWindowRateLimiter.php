@@ -23,6 +23,11 @@ use Psr\SimpleCache\CacheInterface;
  *
  * Counts requests per fixed window and estimates the sliding window by adding
  * the previous window's count, weighted by how much of it still overlaps.
+ *
+ * The weighting assumes the previous window's requests were spread evenly, so
+ * the estimate is an approximation. A burst at the end of the previous window
+ * is undercounted, a burst at its start is overcounted. Any span of one window
+ * length can still see up to twice the limit, as with the fixed window strategy.
  */
 class SlidingWindowRateLimiter implements RateLimiterInterface
 {
