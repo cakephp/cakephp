@@ -1042,13 +1042,13 @@ count = 1
 file = "src/ORM/Association/BelongsToMany.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
-count = 4
+count = 2
 
 [[issues]]
 file = "src/ORM/Association/BelongsToMany.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
-count = 3
+count = 1
 
 [[issues]]
 file = "src/ORM/Association/HasMany.php"
@@ -1199,12 +1199,6 @@ file = "src/ORM/ResultSetFactory.php"
 code = "prefer-arrow-function"
 message = "This closure can be simplified to a more concise arrow function."
 count = 3
-
-[[issues]]
-file = "src/ORM/Rule/ExistsIn.php"
-code = "prefer-static-closure"
-message = "This arrow function does not use `$this` and should be declared static."
-count = 1
 
 [[issues]]
 file = "src/ORM/Table.php"

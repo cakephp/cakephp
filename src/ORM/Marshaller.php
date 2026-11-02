@@ -26,6 +26,7 @@ use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use function Cake\Database\Expression\in;
 
 /**
  * Contains logic to convert array data into entities.
@@ -515,7 +516,7 @@ class Marshaller
             }
             $filter = new TupleComparison($primaryKey, $ids, $type, 'IN');
         } else {
-            $filter = [$primaryKey[0] . ' IN' => $ids];
+            $filter = [$primaryKey[0] => in($ids)];
         }
 
         /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $query */

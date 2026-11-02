@@ -34,6 +34,8 @@ use Cake\TestSuite\TestCase;
 use DateTime;
 use Mockery;
 
+use function Cake\Database\Expression\{equals, notEquals, notIn};
+
 /**
  * Tests UpdateQuery class
  */
@@ -305,10 +307,10 @@ class UpdateQueryTest extends TestCase
             ->where([
                 'OR' => [
                     'a.id' => 1,
-                    'a.name IS' => null,
-                    'a.email IS NOT' => null,
+                    'a.name' => equals(null),
+                    'a.email' => notEquals(null),
                     'AND' => [
-                        'b.name NOT IN' => ['foo', 'bar'],
+                        'b.name' => notIn(['foo', 'bar']),
                         'OR' => [
                             $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',

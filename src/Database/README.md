@@ -144,7 +144,7 @@ to specify what types should be used:
 $connection->update(
 	'articles',
 	['title' => 'New title'],
-	['created >=' => new DateTime('-3 day'), 'created <' => new DateTime('now')],
+	[['created' => greaterThanOrEquals(new DateTime('-3 day'))], ['created' => lessThan(new DateTime('now'))]],
 	['created' => 'datetime']
 );
 ```
@@ -162,7 +162,7 @@ More on creating complex where conditions or more complex update queries later.
 Similarly, the `delete()` method is used to delete rows from the database:
 
 ```php
-$connection->delete('articles', ['created <' => DateTime('now')], ['created' => 'date']);
+$connection->delete('articles', ['created' => lessThan(DateTime('now'))], ['created' => 'date']);
 ```
 
 Will generate the following SQL
@@ -212,30 +212,39 @@ $query->select(function ($query) {
 
 ### Where Conditions
 
-Generating conditions:
+Generating conditions with namespaced predicates:
 
 ```php
+use function Cake\Database\Expression\{between, comparison, equals, greaterThan, greaterThanOrEquals, lessThan, like};
+
 // WHERE id = 1
 $query->where(['id' => 1]);
 
 // WHERE id > 1
-$query->where(['id >' => 1]);
+$query->where(['id' => greaterThan(1)]);
+
+// WHERE id BETWEEN 1 AND 100
+$query->where(['id' => between(1, 100)]);
 ```
 
-As you can see you can use any operator by placing it with a space after the field name.
+Predicate functions supply the operator while the array key supplies the field.
+They infer binding types from the query; an explicit type such as
+`between($start, $end, 'datetime')` takes precedence. Values are bound as data.
+Field expressions and the operator passed to `comparison()` remain trusted SQL.
+
 Adding multiple conditions is easy as well:
 
 ```php
-$query->where(['id >' => 1])->andWhere(['title' => 'My Title']);
+$query->where(['id' => greaterThan(1)])->andWhere(['title' => 'My Title']);
 
 // Equivalent to
-$query->where(['id >' => 1, 'title' => 'My title']);
+$query->where(['id' => greaterThan(1), 'title' => 'My title']);
 ```
 
 It is possible to generate `OR` conditions as well
 
 ```php
-$query->where(['OR' => ['id >' => 1, 'title' => 'My title']]);
+$query->where(['OR' => ['id' => greaterThan(1), 'title' => 'My title']]);
 ```
 
 For even more complex conditions you can use closures and expression objects:
@@ -285,16 +294,16 @@ WHERE
 
 When using the expression objects you can use the following methods to create conditions:
 
-* `eq()` Creates an equality condition.
-* `notEq()` Create an inequality condition
+* `equals()` Creates an equality condition.
+* `notEquals()` Create an inequality condition
 * `like()` Create a condition using the LIKE operator.
 * `notLike()` Create a negated LIKE condition.
 * `in()` Create a condition using IN.
 * `notIn()` Create a negated condition using IN.
-* `gt()` Create a > condition.
-* `gte()` Create a >= condition.
-* `lt()` Create a < condition.
-* `lte()` Create a <= condition.
+* `greaterThan()` Create a > condition.
+* `greaterThanOrEquals()` Create a >= condition.
+* `lessThan()` Create a < condition.
+* `lessThanOrEquals()` Create a <= condition.
 * `isNull()` Create an IS NULL condition.
 * `isNotNull()` Create a negated IS NULL condition.
 
