@@ -89,6 +89,16 @@ Configure::write('App', [
     ],
 ]);
 
+// Remove this in 6.x alongside isMariadb()
+Configure::write('Error.ignoredDeprecationPaths', [
+    'src/Database/Driver/Mysql.php',
+    'src/Database/Schema/MysqlSchemaDialect.php',
+    'tests/TestCase/Database/Driver/MysqlTest.php',
+    'tests/TestCase/Database/Schema/MysqlSchemaDialectTest.php',
+    'tests/TestCase/Database/QueryTests/CommonTableExpressionQueryTest.php',
+    'tests/TestCase/ORM/Query/QueryRegressionTest.php',
+]);
+
 Cache::setConfig([
     '_cake_translations_' => [
         'engine' => 'File',

@@ -20,6 +20,7 @@ use Cake\Database\Driver;
 use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\DistinctComparisonExpression;
+use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
@@ -28,6 +29,7 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\StatementInterface;
 use PDO;
 use Pdo\Mysql as PdoMysql;
+use function Cake\Core\deprecationWarning;
 
 /**
  * MySQL Driver
@@ -42,6 +44,7 @@ class Mysql extends Driver
         return [
             StringAggExpression::class => 'transformStringAggExpression',
             DistinctComparisonExpression::class => 'transformDistinctComparisonExpression',
+            FunctionExpression::class => 'transformFunctionExpression',
         ];
     }
 
@@ -63,7 +66,7 @@ class Mysql extends Driver
     }
 
     /**
-     * Translates portable string aggregation to MySQL/MariaDB specific syntax.
+     * Translates portable string aggregation to MySQL specific syntax.
      *
      * @param \Cake\Database\Expression\StringAggExpression $expression The expression to translate.
      * @return void
@@ -84,6 +87,40 @@ class Mysql extends Driver
     }
 
     /**
+     * Receives a FunctionExpression and changes it so that it conforms to this
+     * SQL dialect.
+     *
+     * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert.
+     * @return void
+     */
+    protected function transformFunctionExpression(FunctionExpression $expression): void
+    {
+        switch ($expression->getName()) {
+            case 'JSON_EXISTS':
+                // MariaDB supports JSON_EXISTS natively
+                if ($this->isMariadb()) {
+                    break;
+                }
+
+                $path = null;
+                $expression->iterateParts(function ($p, $key) use (&$path) {
+                    if ($key === 1) {
+                        $path = $p;
+
+                        return null;
+                    }
+
+                    return $p;
+                });
+
+                $expression
+                    ->setName('JSON_CONTAINS_PATH')
+                    ->add(["'one'" => 'literal', $path]);
+                break;
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     protected const int MAX_ALIAS_LENGTH = 256;
@@ -91,6 +128,7 @@ class Mysql extends Driver
     /**
      * Server type MySQL
      *
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      * @var string
      */
     protected const string SERVER_TYPE_MYSQL = 'mysql';
@@ -98,6 +136,7 @@ class Mysql extends Driver
     /**
      * Server type MariaDB
      *
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      * @var string
      */
     protected const string SERVER_TYPE_MARIADB = 'mariadb';
@@ -141,6 +180,7 @@ class Mysql extends Driver
      * after `version()` method is called.
      *
      * @var string
+     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
      */
     protected string $serverType = self::SERVER_TYPE_MYSQL;
 
@@ -148,6 +188,7 @@ class Mysql extends Driver
      * Mapping of feature to db server version for feature availability checks.
      *
      * @var array<string, array<string, string>>
+     * @todo Simplify this in 6.x when MySQL and Maria separation is completed.
      */
     protected array $featureVersions = [
         'mysql' => [
@@ -340,7 +381,17 @@ class Mysql extends Driver
     {
         $this->version();
 
-        return $this->serverType === static::SERVER_TYPE_MARIADB;
+        $isMaria = $this->serverType === static::SERVER_TYPE_MARIADB;
+        if ($isMaria) {
+            deprecationWarning(
+                '5.5.0',
+                'MySQL and Mariadb now have separate drivers.' .
+                'Use `instanceof Mariadb` instead for runtime checks, ' .
+                'and set `"driver" => Mariadb::class` in your connection configuration.',
+            );
+        }
+
+        return $isMaria;
     }
 
     /**
@@ -354,6 +405,7 @@ class Mysql extends Driver
             $this->version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
             if (preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->version, $matches)) {
+                // TODO remove this in 6.x when mysql and mariadb separation is complete.
                 $this->serverType = static::SERVER_TYPE_MARIADB;
                 $this->version = $matches[1];
             }

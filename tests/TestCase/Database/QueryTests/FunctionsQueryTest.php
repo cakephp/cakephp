@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\QueryTests;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -41,17 +42,24 @@ class FunctionsQueryTest extends TestCase
         $this->connection = ConnectionManager::get('test');
     }
 
+    /**
+     * Skip queries unsupported by the current database type or server version.
+     *
+     * @param array<class-string<\Cake\Database\Driver>|'mariadb', string> $versions Minimum versions by database type.
+     */
     protected function requireVersion(array $versions): void
     {
         $driver = $this->connection->getDriver();
         $driverVersion = $driver->version();
+        $isMariadb = $driver instanceof Mariadb
+            || ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB'));
 
         foreach ($versions as $className => $version) {
             $mariadb = $className === 'mariadb';
             $className = $mariadb ? Mysql::class : $className;
 
             if ($driver instanceof $className) {
-                if ($driver instanceof Mysql && $mariadb !== $driver->isMariadb()) {
+                if ($driver instanceof Mysql && $mariadb !== $isMariadb) {
                     continue;
                 }
 
@@ -183,6 +191,59 @@ class FunctionsQueryTest extends TestCase
             ->execute()->fetchAll('assoc');
 
         $this->assertSame(7, $result[0]['value']);
+    }
+
+    public function testJsonExists(): void
+    {
+        $this->requireVersion([
+            'mariadb' => '10.2',
+            Mysql::class => '5.7',
+            Postgres::class => '17',
+            Sqlserver::class => '16',
+        ]);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    new JsonPathExpression('$.a'),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(true, $result[0]['value']);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    new JsonPathExpression('$.b'),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(false, $result[0]['value']);
+    }
+
+    public function testJsonExistsOnError(): void
+    {
+        $this->requireVersion([
+            Postgres::class => '17',
+        ]);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query
+            ->select([
+                'value' => $query->func()->jsonExists(
+                    $this->quoteString(json_encode(['a' => 1])),
+                    (new JsonPathExpression('strict $.b'))->onError(JsonPathExpression::BEHAVIOR_TRUE),
+                ),
+            ])
+            ->setSelectTypeMap(['value' => 'boolean'])
+            ->execute()->fetchAll('assoc');
+        $this->assertSame(true, $result[0]['value']);
     }
 
     private function quoteString(string $value): string

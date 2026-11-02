@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Exception\DatabaseException;
@@ -164,7 +165,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * @param string $table The table name.
      * @return array<string, array{name: string, srid: int}> The column information.
      */
-    private function describeGeometryColumns(string $table): array
+    protected function describeGeometryColumns(string $table): array
     {
         /** @var \Cake\Database\Driver\Mysql $driver */
         $driver = $this->driver;
@@ -178,6 +179,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
                 SQL;
         } else {
+            // TODO remove this entire branch when isMariaDb is removed
             return [];
         }
 
@@ -230,9 +232,11 @@ class MysqlSchemaDialect extends SchemaDialect
 
         if (
             $this->driver instanceof Mysql &&
+            !($this->driver instanceof Mariadb) &&
             $this->driver->isMariaDb() &&
             $default === 'current_timestamp()'
         ) {
+            // TODO remove in 6.x when mysql driver drops support for mariadb
             return 'CURRENT_TIMESTAMP';
         }
 
