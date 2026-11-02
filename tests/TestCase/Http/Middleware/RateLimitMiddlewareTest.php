@@ -22,6 +22,7 @@ use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Mockery;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
@@ -217,6 +218,46 @@ class RateLimitMiddlewareTest extends TestCase
         // POST request costs 5
         $response = $middleware->process($postRequest, $this->handler);
         $this->assertEquals('4', $response->getHeaderLine('X-RateLimit-Remaining'));
+    }
+
+    /**
+     * Test a window below one second is rejected
+     *
+     * @return void
+     */
+    public function testInvalidWindow(): void
+    {
+        $middleware = new RateLimitMiddleware([
+            'window' => 0,
+            'cache' => 'rate_limit_test',
+        ]);
+        $request = new ServerRequest([
+            'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Rate limit window must be at least 1 second, `0` given.');
+        $middleware->process($request, $this->handler);
+    }
+
+    /**
+     * Test a negative cost is rejected instead of refunding the counter
+     *
+     * @return void
+     */
+    public function testNegativeCost(): void
+    {
+        $middleware = new RateLimitMiddleware([
+            'cache' => 'rate_limit_test',
+            'costCallback' => fn($request) => -1,
+        ]);
+        $request = new ServerRequest([
+            'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Rate limit cost must not be negative, `-1` given.');
+        $middleware->process($request, $this->handler);
     }
 
     /**
