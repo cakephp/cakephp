@@ -169,7 +169,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertSame(302, $result->getStatusCode());
         $this->assertEmpty((string)$result->getBody());
         $expected = [
-            'location' => ['http://example.org/login'],
+            'Location' => ['http://example.org/login'],
         ];
         $this->assertSame($expected, $result->getHeaders());
     }
@@ -191,7 +191,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertSame(301, $result->getStatusCode());
         $this->assertEmpty('' . $result->getBody());
         $expected = [
-            'location' => ['http://example.org/login'],
+            'Location' => ['http://example.org/login'],
             'Constructor' => ['yes'],
             'Method' => ['yes'],
         ];

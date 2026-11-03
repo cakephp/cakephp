@@ -22,6 +22,7 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
+use Cake\Http\Response\RedirectResponse;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Closure;
@@ -305,7 +306,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         ResponseInterface $response,
     ): ResponseInterface {
         $cookie = $this->createCookie($token, $request);
-        if ($response instanceof Response) {
+        // Redirects expose cookies through PSR headers so header-only middleware can forward them.
+        if ($response instanceof Response && !$response instanceof RedirectResponse) {
             return $response->withCookie($cookie);
         }
 

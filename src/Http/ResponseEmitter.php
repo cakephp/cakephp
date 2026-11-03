@@ -22,9 +22,9 @@ namespace Cake\Http;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
-use Laminas\Diactoros\RelativeStream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Link\LinkInterface;
+use RuntimeException;
 use function Cake\Core\triggerWarning;
 
 /**
@@ -36,9 +36,13 @@ class ResponseEmitter
      * Constructor
      *
      * @param int $maxBufferLength Maximum output buffering size for each iteration.
+     * @param bool $flushOutputBuffers Remove nested output buffers before emitting live bodies.
+     *   Empty inner compression buffers are discarded. Nonempty custom handlers must be drained by the caller.
      */
-    public function __construct(protected int $maxBufferLength = 8192)
-    {
+    public function __construct(
+        protected int $maxBufferLength = 8192,
+        protected bool $flushOutputBuffers = false,
+    ) {
     }
 
     /**
@@ -48,10 +52,17 @@ class ResponseEmitter
      * according to the environment.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit.
+     * @param bool|null $bodyIsRange Whether Content-Range is already applied to the body.
+     *   Null detects partial readable bodies by size; bodies of unknown size are assumed already ranged.
+     *   Pass false to slice a full stream of unknown size, or true to forward an already ranged body.
      * @return void
      */
-    public function emit(ResponseInterface $response): void
+    public function emit(ResponseInterface $response, ?bool $bodyIsRange = null): void
     {
+        if ($this->flushOutputBuffers && !$response->getBody()->isSeekable()) {
+            $this->drainOutputBuffers();
+        }
+
         $file = '';
         $line = 0;
         if (headers_sent($file, $line)) {
@@ -62,8 +73,15 @@ class ResponseEmitter
         $this->emitStatusLine($response);
         $this->emitHeaders($response);
 
-        $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
-        if (is_array($range)) {
+        $range = $response->getStatusCode() >= 200 && !in_array($response->getStatusCode(), [204, 205, 304], true)
+            ? $this->parseContentRange($response->getHeaderLine('Content-Range'))
+            : null;
+        if (is_array($range) && $bodyIsRange === null) {
+            $body = $response->getBody();
+            $size = $body->getSize();
+            $bodyIsRange = $body->isReadable() && ($size === null || $size === $range[2] - $range[1] + 1);
+        }
+        if (is_array($range) && !$bodyIsRange) {
             $this->emitBodyRange($range, $response);
         } else {
             $this->emitBody($response);
@@ -82,20 +100,75 @@ class ResponseEmitter
      */
     protected function emitBody(ResponseInterface $response): void
     {
-        if (in_array($response->getStatusCode(), [204, 304], true)) {
+        $body = $response->getBody();
+        if ($response->getStatusCode() < 200 || in_array($response->getStatusCode(), [204, 205, 304], true)) {
+            if (!$body->isSeekable()) {
+                $body->close();
+            }
+
             return;
         }
-        $body = $response->getBody();
 
-        if (!$body->isSeekable()) {
+        if (!$body->isReadable()) {
             echo $body;
 
             return;
         }
 
-        $body->rewind();
-        while (!$body->eof()) {
-            echo $body->read($this->maxBufferLength);
+        $live = !$body->isSeekable();
+        if (!$live) {
+            $body->rewind();
+        }
+        try {
+            do {
+                $chunk = $body->read($this->maxBufferLength);
+                $eof = $body->eof();
+                if ($chunk === '' && !$eof) {
+                    throw new RuntimeException(
+                        'Cannot emit a stream that returns no data before EOF; use a blocking stream.',
+                    );
+                }
+                echo $chunk;
+                if ($live && ob_get_level() <= 1) {
+                    if (ob_get_level() === 1) {
+                        ob_flush();
+                    }
+                    flush();
+                }
+            } while (!$eof);
+        } finally {
+            if ($live) {
+                $body->close();
+            }
+        }
+    }
+
+    /**
+     * Drain nested buffers before streaming, retaining the outer buffer for incremental flushing.
+     *
+     * @return void
+     */
+    protected function drainOutputBuffers(): void
+    {
+        $buffers = ob_get_status(true);
+        foreach (array_slice($buffers, 1) as $buffer) {
+            if (!($buffer['flags'] & PHP_OUTPUT_HANDLER_REMOVABLE)) {
+                throw new RuntimeException('Cannot drain a non-removable output buffer.');
+            }
+        }
+        if (isset($buffers[0]) && !($buffers[0]['flags'] & PHP_OUTPUT_HANDLER_FLUSHABLE)) {
+            throw new RuntimeException('Cannot flush the outer output buffer.');
+        }
+        while (ob_get_level() > 1) {
+            $buffer = ob_get_status();
+            if ($buffer['buffer_used'] > 0 && $buffer['name'] !== 'default output handler') {
+                throw new RuntimeException('Drain nonempty custom output handlers before emitting a live response.');
+            }
+            if (ob_get_length() === 0) {
+                ob_end_clean();
+            } else {
+                ob_end_flush();
+            }
         }
     }
 
@@ -119,19 +192,18 @@ class ResponseEmitter
             return;
         }
 
-        $body = new RelativeStream($body, $first);
-        $body->rewind();
+        $body->seek($first);
         $pos = 0;
         /** @var int $length */
         $length = $last - $first + 1;
         while (!$body->eof() && $pos < $length) {
-            if ($pos + $this->maxBufferLength > $length) {
-                echo $body->read($length - $pos);
+            $chunk = $body->read(min($this->maxBufferLength, $length - $pos));
+            if ($chunk === '') {
                 break;
             }
 
-            echo $body->read($this->maxBufferLength);
-            $pos = $body->tell();
+            echo $chunk;
+            $pos += strlen($chunk);
         }
     }
 

@@ -48,6 +48,8 @@ use InvalidArgumentException;
  * the charset suffix) and {@see self::streamData()} (the actual write loop).
  * They may override {@see self::normalizeStreamOptions()} to validate
  * format-specific options on top of the base validation.
+ *
+ * @template TItem
  */
 abstract class AbstractStreamResponse extends Response
 {
@@ -74,7 +76,7 @@ abstract class AbstractStreamResponse extends Response
     /**
      * Constructor.
      *
-     * @param iterable $data The iterable data to stream (array, generator, ResultSet, etc.).
+     * @param iterable<mixed, TItem> $data The iterable data to stream (array, generator, ResultSet, etc.).
      * @param array<string, mixed> $options Streaming options. The base accepts
      *   `flushEvery` (int >= 1) controlling how many items are buffered before
      *   flushing. Subclasses add their own keys.
@@ -96,7 +98,7 @@ abstract class AbstractStreamResponse extends Response
     /**
      * Create the streaming callback installed on the response body.
      *
-     * @return \Closure
+     * @return \Closure(): void
      */
     protected function createStreamCallback(): Closure
     {
@@ -244,7 +246,7 @@ abstract class AbstractStreamResponse extends Response
      */
     public function getStreamOptions(): array
     {
-        return $this->getConfig();
+        return $this->getConfig() + $this->defaultConfig;
     }
 
     /**
@@ -260,7 +262,7 @@ abstract class AbstractStreamResponse extends Response
     {
         $new = clone $this;
         $new->setConfig(
-            $this->normalizeStreamOptions($options + $this->getConfig(), $options),
+            $this->normalizeStreamOptions($options + $this->getStreamOptions(), $options),
             null,
             false,
         );

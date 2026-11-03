@@ -21,6 +21,7 @@ use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
+use Cake\Http\Client\Response as ClientResponse;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
@@ -29,8 +30,6 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\Response as LaminasResponse;
-use Laminas\Diactoros\ServerRequest as LaminasServerRequest;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -216,7 +215,8 @@ class ServerTest extends TestCase
      */
     public function testRunDoesNotCloseSessionIfServerRequestNotUsed(): void
     {
-        $request = new LaminasServerRequest();
+        $request = Mockery::mock(ServerRequestInterface::class);
+        $request->shouldReceive('hasHeader')->andReturn(false);
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -261,7 +261,7 @@ class ServerTest extends TestCase
     public function testEmitCallbackStream(): void
     {
         $GLOBALS['mockedHeadersSent'] = false;
-        $response = new LaminasResponse('php://memory', 200, ['x-testing' => 'source header']);
+        $response = new ClientResponse(['HTTP/1.1 200 OK', 'x-testing: source header']);
         $response = $response->withBody(new CallbackStream(function (): void {
             echo 'body content';
         }));

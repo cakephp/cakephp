@@ -811,6 +811,12 @@ message = "Avoid assignments in conditions."
 count = 1
 
 [[issues]]
+file = "src/Http/Client/Request.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
 file = "src/Http/Cookie/CookieInterface.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."

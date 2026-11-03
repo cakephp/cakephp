@@ -16,10 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
-use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Factory class for creating uploaded file instances.
@@ -48,7 +46,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         int $error = UPLOAD_ERR_OK,
         ?string $clientFilename = null,
         ?string $clientMediaType = null,
-    ): UploadedFileInterface {
+    ): UploadedFile {
         $size ??= $stream->getSize() ?? 0;
 
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
