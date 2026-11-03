@@ -18,6 +18,7 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\App;
+use Cake\Core\AttributeDeclarationsTrait;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\PaginatedInterface;
@@ -96,6 +97,7 @@ use function Cake\Core\triggerWarning;
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
 {
+    use AttributeDeclarationsTrait;
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use LogTrait;
@@ -232,6 +234,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $this->initialize();
+
+        foreach ($this->attributeDeclarations()['component'] ?? [] as $alias => $declaration) {
+            if (!$this->components()->has($alias)) {
+                $this->loadComponent($alias, $declaration->getOptions());
+            }
+        }
 
         $this->getEventManager()->on($this);
     }
