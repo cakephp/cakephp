@@ -6272,10 +6272,18 @@ class TableTest extends TestCase
      */
     public function testValidateUnique(): void
     {
-        $table = $this->getTableLocator()->get('Users');
-        $validator = new Validator();
-        $validator->setProvider('table', $table);
-        $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+        $table = new class () extends Table {
+            public function __construct()
+            {
+                parent::__construct(['alias' => 'Users', 'table' => 'users']);
+            }
+
+            public function validationDefault(Validator $validator): Validator
+            {
+                return $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            }
+        };
+        $validator = $table->getValidator('default');
 
         $data = ['username' => ['larry', 'notthere']];
         $this->assertNotEmpty($validator->validate($data));
