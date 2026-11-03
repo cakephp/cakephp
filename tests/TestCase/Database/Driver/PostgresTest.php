@@ -249,6 +249,33 @@ class PostgresTest extends TestCase
         );
     }
 
+    public function testJsonValueLegacyTranslation(): void
+    {
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'score' => $query->func()->jsonValue('comment', '$.scores[1]'),
+        ])->from('comments');
+
+        $this->assertSame(
+            'SELECT (JSONB_PATH_QUERY(comment::jsonb, :param0)) AS "score" FROM comments',
+            $query->sql(),
+        );
+        $this->assertSame(
+            ['value' => '$.scores[1]', 'type' => 'string', 'placeholder' => 'param0'],
+            $query->getValueBinder()->bindings()[':param0'],
+        );
+    }
+
     public function testConcatCastsBoundParams(): void
     {
         $connection = ConnectionManager::get('test');
