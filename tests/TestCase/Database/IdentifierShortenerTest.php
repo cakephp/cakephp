@@ -30,6 +30,8 @@ class IdentifierShortenerTest extends TestCase
 {
     protected IdentifierShortener $shortener;
 
+    protected bool $autoQuoting;
+
     /**
      * An alias 1 character over the limit of 63.
      */
@@ -39,6 +41,17 @@ class IdentifierShortenerTest extends TestCase
     {
         parent::setUp();
         $this->shortener = new IdentifierShortener(63);
+
+        // The assertions compare against unquoted SQL.
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->autoQuoting = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting(false);
+    }
+
+    protected function tearDown(): void
+    {
+        ConnectionManager::get('test')->getDriver()->enableAutoQuoting($this->autoQuoting);
+        parent::tearDown();
     }
 
     public function testInvalidMaxLength(): void

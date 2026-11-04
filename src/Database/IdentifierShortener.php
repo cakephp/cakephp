@@ -223,7 +223,11 @@ class IdentifierShortener
     public function aliasMap(SelectQuery $query): array
     {
         $map = [];
-        foreach (array_keys($query->clause('select')) as $alias) {
+        $select = $query->clause('select');
+        if (!is_array($select)) {
+            return $map;
+        }
+        foreach ($select as $alias => $field) {
             if (!is_string($alias)) {
                 continue;
             }
