@@ -99,6 +99,14 @@ abstract class Driver implements LoggerAwareInterface
     protected bool $_autoQuoting = false;
 
     /**
+     * Indicates whether table and column aliases longer than the maximum alias length
+     * are shortened when queries are compiled.
+     *
+     * @var bool
+     */
+    protected bool $_identifierShortening = false;
+
+    /**
      * String used to start a database identifier quoting to make it safe
      *
      * @var string
@@ -118,6 +126,13 @@ abstract class Driver implements LoggerAwareInterface
      * @var \Cake\Database\IdentifierQuoter|null
      */
     protected ?IdentifierQuoter $quoter = null;
+
+    /**
+     * Identifier shortener instance, false when the driver has no alias length limit.
+     *
+     * @var \Cake\Database\IdentifierShortener|false|null
+     */
+    protected IdentifierShortener|false|null $shortener = null;
 
     /**
      * The server version
@@ -164,6 +179,9 @@ abstract class Driver implements LoggerAwareInterface
         $this->_config = $config;
         if (!empty($config['quoteIdentifiers'])) {
             $this->enableAutoQuoting();
+        }
+        if (!empty($config['shortenIdentifiers'])) {
+            $this->enableIdentifierShortening();
         }
         if ($config['log'] !== false) {
             $this->logQueries = true;
@@ -425,6 +443,12 @@ abstract class Driver implements LoggerAwareInterface
             if ($query->isResultsCastingEnabled()) {
                 $typeConverter = new FieldTypeConverter($query->getSelectTypeMap(), $this);
                 array_unshift($decorators, $typeConverter(...));
+            }
+
+            // Restore the shortened column aliases before anything else uses the row.
+            $restore = $this->shortener()?->resultDecorator($query);
+            if ($restore !== null) {
+                array_unshift($decorators, $restore);
             }
 
             return $decorators;
@@ -776,6 +800,29 @@ abstract class Driver implements LoggerAwareInterface
     }
 
     /**
+     * Get the identifier shortener instance, which keeps generated aliases within
+     * the maximum alias length of the database.
+     *
+     * Returns null when identifier shortening is disabled or the database has
+     * no alias length limit.
+     *
+     * @return \Cake\Database\IdentifierShortener|null
+     * @internal
+     */
+    public function shortener(): ?IdentifierShortener
+    {
+        if (!$this->_identifierShortening) {
+            return null;
+        }
+        if ($this->shortener === null) {
+            $maxLength = $this->getMaxAliasLength();
+            $this->shortener = $maxLength === null ? false : new IdentifierShortener($maxLength);
+        }
+
+        return $this->shortener ?: null;
+    }
+
+    /**
      * Get identifier quoter instance.
      *
      * @return \Cake\Database\IdentifierQuoter
@@ -903,6 +950,56 @@ abstract class Driver implements LoggerAwareInterface
     }
 
     /**
+     * Sets whether table and column aliases longer than the maximum alias length
+     * of the database are shortened when queries are compiled.
+     *
+     * Some databases truncate identifiers that are too long (Postgres truncates
+     * them to 63 bytes), which makes ORM column aliases like `Alias__column` go
+     * missing from the results or collide with each other. When enabled, these
+     * aliases are replaced in the generated SQL with a shortened version and the
+     * original column aliases are restored in the fetched rows. Queries keep
+     * using the original aliases.
+     *
+     * This can also be enabled with the `shortenIdentifiers` connection option.
+     *
+     * Identifiers in plain SQL strings are only shortened when they are followed by
+     * a dot (`Alias.column`). Real table and column names longer than the limit
+     * are shortened as well, use their truncated name instead.
+     *
+     * @param bool $enable Whether to enable identifier shortening.
+     * @return $this
+     */
+    public function enableIdentifierShortening(bool $enable = true)
+    {
+        $this->_identifierShortening = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Disables the shortening of aliases longer than the maximum alias length.
+     *
+     * @return $this
+     */
+    public function disableIdentifierShortening()
+    {
+        $this->_identifierShortening = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether aliases longer than the maximum alias length are shortened
+     * when queries are compiled.
+     *
+     * @return bool
+     */
+    public function isIdentifierShorteningEnabled(): bool
+    {
+        return $this->_identifierShortening;
+    }
+
+    /**
      * Returns whether the driver supports the feature.
      *
      * Should return false for unknown features.
@@ -923,6 +1020,12 @@ abstract class Driver implements LoggerAwareInterface
     public function compileQuery(Query $query, ValueBinder $binder): string
     {
         $processor = $this->newCompiler();
+        $shortener = $this->shortener();
+        if ($shortener !== null && $query instanceof SelectQuery && $shortener->needsShortening($query)) {
+            // Shorten identifiers on a copy so the query keeps the original aliases,
+            // which are used to restore the column aliases in the results.
+            $query = $shortener->shortenQuery(clone $query);
+        }
         $query = $this->transformQuery($query);
 
         return $processor->compile($query, $binder);

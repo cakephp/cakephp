@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\QueryException;
@@ -184,6 +185,30 @@ class DriverTest extends TestCase
 
         $this->driver->disableAutoQuoting();
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
+    }
+
+    /**
+     * Test identifier shortening toggles.
+     */
+    public function testIdentifierShortening(): void
+    {
+        $this->assertFalse($this->driver->isIdentifierShorteningEnabled());
+        $this->assertNull($this->driver->shortener());
+
+        $this->assertSame($this->driver, $this->driver->enableIdentifierShortening());
+        $this->assertTrue($this->driver->isIdentifierShorteningEnabled());
+
+        $this->driver->disableIdentifierShortening();
+        $this->assertFalse($this->driver->isIdentifierShorteningEnabled());
+
+        $driver = new StubDriver(['shortenIdentifiers' => true]);
+        $this->assertTrue($driver->isIdentifierShorteningEnabled());
+        $this->assertNull($driver->shortener(), 'No shortener without an alias length limit');
+
+        $driver = new Postgres(['shortenIdentifiers' => true]);
+        $this->assertSame(63, $driver->shortener()?->getMaxLength());
+        $driver->disableIdentifierShortening();
+        $this->assertNull($driver->shortener());
     }
 
     /**
