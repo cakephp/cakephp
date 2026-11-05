@@ -1566,6 +1566,101 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Project query results into DTO instances and return them as a list.
+     *
+     * Type-honest terminal counterpart to the fluent
+     * {@see \Cake\ORM\Query\SelectQuery::projectAs()}: the query stays typed as
+     * entities, while this method returns `list<T>`. Stack finders on `$query`
+     * first when needed, then hand it here to execute the projection.
+     *
+     * Rows are mapped from the raw selected columns, so entity visibility and
+     * accessors do not affect the DTO data.
+     *
+     * ```
+     * $dtos = $articles->projectAs(ArticleDto::class);
+     *
+     * $dtos = $articles->projectAs(
+     *     ArticleDto::class,
+     *     $articles->find()->where(['published' => true])->contain('Authors'),
+     * );
+     * ```
+     *
+     * @template T of object
+     * @param class-string<T> $class The DTO class to map each row into.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @return list<T>
+     * @throws \Cake\Core\Exception\CakeException When a row does not map to an instance of `$class`,
+     *   for example a `createFromArray()` factory returning another type.
+     * @since 5.5.0
+     */
+    public function projectAs(string $class, ?SelectQuery $query = null): array
+    {
+        $query ??= $this->find();
+
+        $results = [];
+        foreach ($query->projectAs($class)->all() as $dto) {
+            $results[] = $this->assertProjected($dto, $class);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Project the first query result into a DTO instance.
+     *
+     * Single-row counterpart to {@see \Cake\ORM\Table::projectAs()}. Like
+     * `SelectQuery::first()`, it limits the query to one row if not executed yet.
+     *
+     * ```
+     * $dto = $articles->projectOne(
+     *     ArticleDto::class,
+     *     $articles->find()->where(['Articles.id' => $id]),
+     * );
+     * ```
+     *
+     * @template T of object
+     * @param class-string<T> $class The DTO class to map the row into.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @return T|null The DTO, or null when the query has no result.
+     * @throws \Cake\Core\Exception\CakeException When the row does not map to an instance of `$class`.
+     * @since 5.5.0
+     */
+    public function projectOne(string $class, ?SelectQuery $query = null): ?object
+    {
+        $query ??= $this->find();
+
+        $dto = $query->projectAs($class)->first();
+        if ($dto === null) {
+            return null;
+        }
+
+        return $this->assertProjected($dto, $class);
+    }
+
+    /**
+     * @template T of object
+     * @param mixed $result The projected row.
+     * @param class-string<T> $class The expected DTO class.
+     * @return T
+     * @throws \Cake\Core\Exception\CakeException
+     */
+    protected function assertProjected(mixed $result, string $class): object
+    {
+        if ($result instanceof $class) {
+            return $result;
+        }
+
+        throw new CakeException(sprintf(
+            'Projected result for `%s` is `%s`, expected an instance of `%s`.',
+            static::class,
+            get_debug_type($result),
+            $class,
+        ));
+    }
+
+    /**
      * Out of an options array, check if the keys described in `$keys` are arrays
      * and change the values for closures that will concatenate the each of the
      * properties in the value array when passed a row.
