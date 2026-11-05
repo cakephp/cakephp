@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\AggregateExpression;
@@ -312,17 +313,12 @@ class LongIdentifiersTest extends TestCase
 
     /**
      * Common table expressions whose long names only differ after the identifier limit,
-     * referenced from joins and from update queries.
+     * referenced from joins.
      */
     public function testCommonTableExpressionsWithTheSamePrefix(): void
     {
+        [$first, $second] = $this->commonTableExpressionsWithTheSamePrefix();
         $articles = $this->articles;
-        $first = fn($cte) => $cte
-            ->name("{$articles}_first")
-            ->query((new SelectQuery($this->connection))->select(['id', 'title'])->from('articles')->where(['id' => 1]));
-        $second = fn($cte) => $cte
-            ->name("{$articles}_second")
-            ->query((new SelectQuery($this->connection))->select(['id', 'title'])->from('articles')->where(['id' => 2]));
 
         $query = (new SelectQuery($this->connection))
             ->with($first)
@@ -333,6 +329,21 @@ class LongIdentifiersTest extends TestCase
 
         $this->assertLongIdentifiersAreShortened($query);
         $this->assertSame([['title' => 'Second Article']], $query->execute()->fetchAll('assoc'));
+    }
+
+    /**
+     * Common table expressions whose long names only differ after the identifier limit,
+     * in update queries.
+     */
+    public function testCommonTableExpressionsInUpdateQuery(): void
+    {
+        $driver = $this->connection->getDriver();
+        $this->skipIf(
+            $driver instanceof Mysql && str_contains($driver->version(), 'MariaDB'),
+            'MariaDB does not support CTEs in UPDATE query.',
+        );
+        [$first, $second] = $this->commonTableExpressionsWithTheSamePrefix();
+        $articles = $this->articles;
 
         $update = $this->connection->updateQuery('comments', ['published' => 'N'])
             ->with($first)
@@ -342,6 +353,25 @@ class LongIdentifiersTest extends TestCase
                 (new SelectQuery($this->connection))->select(['id'])->from("{$articles}_second"),
             ));
         $this->assertSame(2, $update->execute()->rowCount());
+    }
+
+    /**
+     * Returns two common table expression builders whose long names have the same first 64 bytes.
+     *
+     * @return array<\Closure>
+     */
+    protected function commonTableExpressionsWithTheSamePrefix(): array
+    {
+        $articles = $this->articles;
+
+        return [
+            fn($cte) => $cte
+                ->name("{$articles}_first")
+                ->query((new SelectQuery($this->connection))->select(['id', 'title'])->from('articles')->where(['id' => 1])),
+            fn($cte) => $cte
+                ->name("{$articles}_second")
+                ->query((new SelectQuery($this->connection))->select(['id', 'title'])->from('articles')->where(['id' => 2])),
+        ];
     }
 
     /**
@@ -382,7 +412,7 @@ class LongIdentifiersTest extends TestCase
      */
     protected function assertLongIdentifiersAreShortened(SelectQuery $query, ?string $literal = null): void
     {
-        $maxLength = $this->connection->getDriver()->getMaxAliasLength();
+        $maxLength = $this->connection->getDriver()->shortener()?->getMaxLength();
         if ($maxLength === null) {
             return;
         }

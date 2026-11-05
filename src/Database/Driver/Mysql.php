@@ -126,6 +126,13 @@ class Mysql extends Driver
     protected const MAX_ALIAS_LENGTH = 256;
 
     /**
+     * Maximum length of table, column and common table expression names.
+     *
+     * @var int
+     */
+    protected const MAX_IDENTIFIER_LENGTH = 64;
+
+    /**
      * Server type MySQL
      *
      * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
@@ -455,7 +462,10 @@ class Mysql extends Driver
      */
     protected function createIdentifierShortener(int $maxLength): IdentifierShortener
     {
+        // Aliases can be 256 characters long, but common table expression names are limited
+        // to 64 like table names. Shortening everything over 64 characters keeps references
+        // to them consistent, and real table and column names can not be longer than that.
         // MySQL strings use backslash escapes and can be double quoted.
-        return new IdentifierShortener($maxLength, true);
+        return new IdentifierShortener(min($maxLength, static::MAX_IDENTIFIER_LENGTH), true);
     }
 }

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Database\Driver\Mariadb;
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
@@ -209,6 +211,15 @@ class DriverTest extends TestCase
         $this->assertSame(63, $driver->shortener()?->getMaxLength());
         $driver->disableIdentifierShortening();
         $this->assertNull($driver->shortener());
+
+        $driver = new Sqlserver(['shortenIdentifiers' => true]);
+        $this->assertSame(128, $driver->shortener()?->getMaxLength());
+
+        // Common table expression names are limited to 64 characters, aliases to 256.
+        $driver = new Mysql(['shortenIdentifiers' => true]);
+        $this->assertSame(64, $driver->shortener()?->getMaxLength());
+        $driver = new Mariadb(['shortenIdentifiers' => true]);
+        $this->assertSame(64, $driver->shortener()?->getMaxLength());
     }
 
     /**
