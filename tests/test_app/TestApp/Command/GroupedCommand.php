@@ -14,7 +14,7 @@ class GroupedCommand extends Command
         return 'custom_group';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): void
     {
         $io->out('Grouped Command!');
     }

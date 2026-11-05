@@ -978,7 +978,6 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalWithException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
         $driver = $this->getDriver();
         $connection = new class (['driver' => $driver]) extends Connection {
             public bool $beginIsCalled = false;
@@ -1001,10 +1000,14 @@ class ConnectionTest extends TestCase
                 return true;
             }
         };
-        $connection->transactional(function ($conn) use ($connection): void {
-            $this->assertSame($connection, $conn);
-            throw new InvalidArgumentException();
-        });
+        try {
+            $connection->transactional(function ($conn) use ($connection): void {
+                $this->assertSame($connection, $conn);
+                throw new InvalidArgumentException();
+            });
+            $this->fail('The exception from the callback should propagate.');
+        } catch (InvalidArgumentException) {
+        }
         $this->assertTrue($connection->beginIsCalled);
         $this->assertTrue($connection->rollbackIsCalled);
     }
