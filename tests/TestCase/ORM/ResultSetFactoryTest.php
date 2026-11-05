@@ -362,7 +362,7 @@ class ResultSetFactoryTest extends TestCase
     protected function mismatchedDtoClass(): string
     {
         $dto = new class {
-            public static function createFromArray(array $data, bool $nested): object
+            public static function createFromArray(array $data, bool $nested): stdClass
             {
                 return new stdClass();
             }
