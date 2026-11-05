@@ -371,7 +371,7 @@ class ServerRequestTest extends TestCase
             'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
             'HTTP_X_REAL_IP' => '192.168.1.1',
             'HTTP_CLIENT_IP' => '192.168.1.2',
-            'REMOTE_ADDR' => '192.168.1.4',
+            'REMOTE_ADDR' => '192.168.1.2',
         ]]);
 
         $request->setTrustedProxies([
@@ -379,21 +379,52 @@ class ServerRequestTest extends TestCase
             '192.168.1.1',
             '192.168.1.2',
             '192.168.1.3',
+            '192.168.1.4',
         ]);
-
         $this->assertSame('real.ip', $request->clientIp());
 
         $request = $request->withEnv(
             'HTTP_X_FORWARDED_FOR',
-            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
+            'spoof.ip, client.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
         );
-        $this->assertSame('192.168.1.3', $request->clientIp());
+        // Trusted proxies are skipped and the right most untrusted IP is the client IP
+        $this->assertSame('client.ip', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
-        $this->assertSame('192.168.1.1', $request->clientIp());
+        $this->assertSame('192.168.1.1', $request->clientIp(), 'Uses x-real-ip');
 
         $request->trustProxy = false;
-        $this->assertSame('192.168.1.4', $request->clientIp());
+        $this->assertSame('192.168.1.2', $request->clientIp(), 'Uses remote_addr when proxy is not trusted');
+    }
+
+    /**
+     * test clientIp method with trusted proxies but an untrusted remote_addr
+     */
+    public function testClientIpWithTrustedProxiesUntrustedRemoteAddr(): void
+    {
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => '8.8.8.8, 192.168.1.0, 192.168.1.1',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.10',
+        ]]);
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+        ]);
+        $this->assertSame('192.168.1.10', $request->clientIp(), 'No proxy trusted as remote_addr was not trusted');
+
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => '8.8.8.8, 192.168.1.0, 192.168.1.1',
+            'HTTP_X_REAL_IP' => '192.168.1.2',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.1',
+        ]]);
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+        ]);
+        $this->assertSame('8.8.8.8', $request->clientIp(), 'remote_addr is from a trusted proxy');
     }
 
     /**
@@ -592,14 +623,33 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test withProtocolVersion()
+     *
+     * @param string $version Protocol version.
      */
-    public function testWithProtocolVersion(): void
+    #[DataProvider('protocolVersionProvider')]
+    public function testWithProtocolVersion(string $version): void
     {
         $request = new ServerRequest();
-        $new = $request->withProtocolVersion('1.0');
+        $new = $request->withProtocolVersion($version);
+
         $this->assertNotSame($new, $request);
         $this->assertSame('1.1', $request->getProtocolVersion());
-        $this->assertSame('1.0', $new->getProtocolVersion());
+        $this->assertSame($version, $new->getProtocolVersion());
+    }
+
+    /**
+     * Data provider for testWithProtocolVersion().
+     *
+     * @return array<string, array{string}>
+     */
+    public static function protocolVersionProvider(): array
+    {
+        return [
+            'HTTP 1.0' => ['1.0'],
+            'HTTP 1.1' => ['1.1'],
+            'HTTP 2' => ['2'],
+            'HTTP 3' => ['3'],
+        ];
     }
 
     /**
@@ -659,6 +709,24 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test that domain() leaves out the port and keeps IP addresses whole.
+     */
+    public function testDomainWithPortOrIpAddress(): void
+    {
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com:8765']]);
+        $this->assertSame('example.com', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1');
+        $this->assertSame('127.0.0.1', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1:8765');
+        $this->assertSame('127.0.0.1', $request->domain());
+
+        $request = $request->withEnv('HTTP_HOST', '[::1]:8765');
+        $this->assertSame('[::1]', $request->domain());
+    }
+
+    /**
      * Test scheme() method.
      */
     public function testScheme(): void
@@ -692,6 +760,24 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_HOST', 'example.co.uk');
         $this->assertEquals([], $request->subdomains(2));
+    }
+
+    /**
+     * Test that subdomains() leaves out the port and finds none in IP addresses.
+     */
+    public function testSubdomainWithPortOrIpAddress(): void
+    {
+        $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'www.something.example.com:8765']]);
+        $this->assertEquals(['www', 'something'], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '127.0.0.1:8765');
+        $this->assertEquals([], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '192.168.0.10');
+        $this->assertEquals([], $request->subdomains());
+
+        $request = $request->withEnv('HTTP_HOST', '[2001:db8::1]:8765');
+        $this->assertEquals([], $request->subdomains());
     }
 
     /**
@@ -1968,9 +2054,10 @@ class ServerRequestTest extends TestCase
             'REMOTE_ADDR' => '127.0.0.1',
         ]]);
         $request->trustProxy = true;
-        $request = $request->withAddedHeader('X-Forwarded-For', '192.168.1.1');
-        $request = $request->withAddedHeader('X-Forwarded-For', '10.0.1.1');
-        $this->assertSame('10.0.1.1', $request->clientIp());
+        $request = $request
+            ->withAddedHeader('X-Forwarded-For', '10.0.1.1')
+            ->withAddedHeader('X-Forwarded-For', '192.168.1.1');
+        $this->assertSame('192.168.1.1', $request->clientIp(), 'Takes the most trusted IP');
     }
 
     /**

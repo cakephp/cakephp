@@ -41,6 +41,7 @@ use InvalidArgumentException;
 use ReflectionObject;
 use ReflectionProperty;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\h;
 use function Cake\Core\pr;
 
@@ -62,7 +63,14 @@ class Debugger
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
-        'outputMask' => [],
+        'outputMask' => [
+            'password' => '********',
+            'login' => '********',
+            'host' => '********',
+            'database' => '********',
+            'port' => '********',
+            'schema' => '********',
+        ],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
         'editorBasePath' => null,
@@ -105,6 +113,9 @@ class Debugger
         }
 
         $config = array_intersect_key((array)Configure::read('Debugger'), $this->_defaultConfig);
+        if (isset($config['outputMask']) && $config['outputMask'] !== $this->_defaultConfig['outputMask']) {
+            deprecationWarning('5.5.0', 'output masking will be removed in 6.x');
+        }
         $this->setConfig($config);
     }
 
@@ -174,6 +185,7 @@ class Debugger
      */
     public static function setOutputMask(array $value, bool $merge = true): void
     {
+        deprecationWarning('5.5.0', 'setOutputMask() will be removed in 6.0');
         static::configInstance('outputMask', $value, $merge);
     }
 
@@ -661,14 +673,13 @@ class Debugger
     /**
      * Export an array type object. Filters out keys used in datasource configuration.
      *
-     * The following keys are replaced with ***'s
+     * By default the following keys are replaced with ***'s
      *
      * - password
      * - login
      * - host
      * - database
      * - port
-     * - prefix
      * - schema
      *
      * @param array $var The array to export.

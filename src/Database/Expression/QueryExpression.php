@@ -57,6 +57,9 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
+     * The string form of `$conditions` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
+     *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions Tree like array structure
      * containing all the conditions to be added or nested inside this expression object.
      * @param \Cake\Database\TypeMap|array $types Associative array of types to be associated with the values
@@ -110,6 +113,9 @@ class QueryExpression implements ExpressionInterface, Countable
      * If the type passed for any of the fields is expressed "type[]" (note braces)
      * then it will cause the placeholder to be re-written dynamically so if the
      * value is an array, it will create as many placeholders as values are in it.
+     *
+     * The string form of `$conditions` is not suitable for use with user supplied data as it is
+     * not sanitized by the query builder.
      *
      * @param \Cake\Database\ExpressionInterface|array|string $conditions single or multiple conditions to
      * be added. When using an array and the key is 'OR' or 'AND' a new expression
@@ -499,7 +505,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with AND
+     * @param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions to be joined with AND
      * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return static
@@ -517,7 +523,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions to be joined with OR
+     * @param \Cake\Database\ExpressionInterface|(\Closure(static): static)|array<mixed>|string $conditions to be joined with OR
      * @param array<string, string> $types Associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return static
@@ -826,13 +832,12 @@ class QueryExpression implements ExpressionInterface, Countable
             $value === null &&
             $this->_conjunction !== ','
         ) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Expression `%s` has invalid `null` value.'
-                    . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing.',
-                    $expression,
-                ),
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Expression `%s` has invalid `null` value.'
+                . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
+                . ' is missing.',
+                $expression,
+            ));
         }
 
         return new ComparisonExpression($expression, $value, $type, $operator);
@@ -864,5 +869,21 @@ class QueryExpression implements ExpressionInterface, Countable
                 $this->_conditions[$i] = clone $condition;
             }
         }
+    }
+
+    /**
+     * Ensures that string values are simple ascii values with no whitespace
+     *
+     * @param string $parameterName The name of the parameter being checked.
+     * @param string $value The value to check
+     * @return void
+     * @internal
+     */
+    public static function ensureSimpleString(string $parameterName, string $value): void
+    {
+        if (preg_match('/^(?:[\'"])?[a-zA-Z0-9_\.]+(?:[\'"])?$/', $value)) {
+            return;
+        }
+        throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
     }
 }

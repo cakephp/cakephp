@@ -78,11 +78,16 @@ class IdentifierQuoter
 
         // Functions
         if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
+            if (preg_match('/^DISTINCT\s+(.+)$/i', $matches[2], $distinct)) {
+                return $matches[1] . '(DISTINCT ' . $this->quoteIdentifier($distinct[1]) . ')';
+            }
+
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
-        // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
+        // Alias.field AS thing, the alias may already be quoted when a query is compiled again
+        $alias = '[\w-]+|' . preg_quote($this->startQuote, '/') . '[\w-]+' . preg_quote($this->endQuote, '/');
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*(' . $alias . ')$/ui', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 

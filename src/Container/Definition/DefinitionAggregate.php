@@ -12,7 +12,7 @@ class DefinitionAggregate implements DefinitionAggregateInterface
     use ContainerAwareTrait;
 
     /**
-     * @var array<\Cake\Container\Definition\DefinitionInterface>
+     * @var array<string, \Cake\Container\Definition\DefinitionInterface>
      */
     protected array $definitions = [];
 
@@ -21,9 +21,11 @@ class DefinitionAggregate implements DefinitionAggregateInterface
      */
     public function __construct(array $definitions = [])
     {
-        $this->definitions = array_filter($definitions, static function ($definition) {
-            return $definition instanceof DefinitionInterface;
-        });
+        foreach ($definitions as $definition) {
+            if ($definition instanceof DefinitionInterface) {
+                $this->definitions[$definition->getAlias()] = $definition;
+            }
+        }
     }
 
     /**
@@ -35,7 +37,8 @@ class DefinitionAggregate implements DefinitionAggregateInterface
             $definition = new Definition($id, $definition);
         }
 
-        $this->definitions[] = $definition->setAlias($id);
+        $definition = $definition->setAlias($id);
+        $this->definitions[$definition->getAlias()] = $definition;
 
         return $definition;
     }
@@ -55,15 +58,7 @@ class DefinitionAggregate implements DefinitionAggregateInterface
      */
     public function has(string $id): bool
     {
-        $id = Definition::normaliseAlias($id);
-
-        foreach ($this->getIterator() as $definition) {
-            if ($id === $definition->getAlias()) {
-                return true;
-            }
-        }
-
-        return false;
+        return isset($this->definitions[Definition::normaliseAlias($id)]);
     }
 
     /**
@@ -87,13 +82,11 @@ class DefinitionAggregate implements DefinitionAggregateInterface
     {
         $id = Definition::normaliseAlias($id);
 
-        foreach ($this->getIterator() as $definition) {
-            if ($id === $definition->getAlias()) {
-                return $definition->setContainer($this->getContainer());
-            }
+        if (!isset($this->definitions[$id])) {
+            throw new NotFoundException(sprintf('Alias (%s) is not being handled as a definition.', $id));
         }
 
-        throw new NotFoundException(sprintf('Alias (%s) is not being handled as a definition.', $id));
+        return $this->definitions[$id]->setContainer($this->getContainer());
     }
 
     /**
@@ -145,7 +138,7 @@ class DefinitionAggregate implements DefinitionAggregateInterface
     }
 
     /**
-     * @inheritDoc
+     * @return \Generator<string, \Cake\Container\Definition\DefinitionInterface>
      */
     public function getIterator(): Generator
     {

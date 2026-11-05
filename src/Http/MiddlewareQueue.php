@@ -184,7 +184,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
                     is_string($object)
                     && $object === $class
                 )
-                || is_a($object, $class)
+                || $object instanceof $class
             ) {
                 $found = true;
                 break;
@@ -217,7 +217,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
                     is_string($object)
                     && $object === $class
                 )
-                || is_a($object, $class)
+                || $object instanceof $class
             ) {
                 $found = true;
                 break;

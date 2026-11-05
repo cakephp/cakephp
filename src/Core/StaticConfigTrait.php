@@ -312,9 +312,8 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array<string, string> $map Additions/edits to the class map to apply.
+     * @param array<string, class-string> $map Additions/edits to the class map to apply.
      * @return void
-     * @phpstan-param array<string, class-string> $map
      */
     public static function setDsnClassMap(array $map): void
     {

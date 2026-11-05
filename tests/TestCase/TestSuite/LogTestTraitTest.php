@@ -18,9 +18,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Log\Log;
+use Cake\Test\Fixture\StateChangingTestCase;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Log\Engine\TestAppLog;
 
 /**
@@ -29,6 +31,21 @@ use TestApp\Log\Engine\TestAppLog;
 class LogTestTraitTest extends TestCase
 {
     use LogTestTrait;
+
+    /**
+     * Test that the log configs existing before a test are restored after it.
+     */
+    #[WithoutErrorHandler]
+    public function testLogConfigsAreRestoredAfterTest(): void
+    {
+        $before = Log::configured();
+
+        $test = new StateChangingTestCase('testLoadPluginAndLogger');
+        $test->run();
+
+        $this->assertTrue($test->status()->isSuccess(), $test->status()->message());
+        $this->assertSame($before, Log::configured());
+    }
 
     /**
      * Test expecting log messages
@@ -95,12 +112,47 @@ class LogTestTraitTest extends TestCase
     }
 
     /**
+     * Test expecting log messages contains with a partial match in the middle of the message
+     */
+    public function testExpectLogContainsPartial(): void
+    {
+        $this->setupLog('error');
+        Log::error('This message contains 42, which is the only relevant value to the test.');
+        $this->assertLogMessageContains('error', '42');
+        $this->assertLogMessageContains('error', 'relevant value to the test.');
+    }
+
+    /**
+     * Test that partial matches still require the expected level
+     */
+    public function testExpectLogContainsWrongLevelFails(): void
+    {
+        $this->setupLog(['debug', 'error']);
+        Log::error('This message contains 42.');
+
+        $this->expectException(AssertionFailedError::class);
+        $this->assertLogMessageContains('debug', '42');
+    }
+
+    /**
+     * Test that the expected message does not match inside the level prefix
+     */
+    public function testExpectLogContainsDoesNotMatchLevelPrefix(): void
+    {
+        $this->setupLog('error');
+        Log::error('Some message');
+
+        $this->expectException(AssertionFailedError::class);
+        $this->assertLogMessageContains('error', 'error');
+    }
+
+    /**
      * Test expecting log message without setup
      */
     public function testExpectLogWithoutSetup(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Could not find the message `debug: ` in logs.');
+        $this->expectExceptionMessage('Could not find the message `` for level `debug` in logs.');
         $this->assertLogMessage('debug', '');
     }
 
@@ -180,6 +232,8 @@ class LogTestTraitTest extends TestCase
 
     public function testAbsentLogWithoutSetup(): void
     {
+        // The bootstrap `debug` logger is still configured; cleanupLog() restores it afterwards
+        Log::drop('debug');
         Log::setConfig([
             'debug' => [
                 'className' => TestAppLog::class,

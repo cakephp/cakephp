@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Cache\Engine;
 
+use __PHP_Incomplete_Class;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
 use Mockery;
 use Redis;
+use stdClass;
 use function Cake\Core\env;
 
 /**
@@ -60,7 +62,12 @@ class RedisEngineTest extends TestCase
             }
         }
 
-        $this->skipIf($this->skipTest, 'Redis is not running.');
+        if ($this->skipTest) {
+            if (env('REDIS_PORT')) {
+                $this->fail('REDIS_PORT is set, but Redis is not reachable.');
+            }
+            $this->markTestSkipped('Redis is not running.');
+        }
 
         Cache::enable();
         $this->_configCache();
@@ -123,6 +130,7 @@ class RedisEngineTest extends TestCase
             'nodes' => [],
             'clearUsesFlushDb' => false,
             'failover' => null,
+            'allowedClasses' => true,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -157,6 +165,7 @@ class RedisEngineTest extends TestCase
             'nodes' => [],
             'clearUsesFlushDb' => false,
             'failover' => null,
+            'allowedClasses' => true,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -198,6 +207,7 @@ class RedisEngineTest extends TestCase
             'nodes' => [],
             'clearUsesFlushDb' => false,
             'failover' => null,
+            'allowedClasses' => true,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -288,8 +298,42 @@ class RedisEngineTest extends TestCase
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
 
+        $phpredis->shouldReceive('select')
+            ->once()
+            ->with((int)$Redis->getConfig('database'))
+            ->andReturn(true);
+
+        $phpredis->shouldReceive('connect')
+            ->once()
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->andReturn(true);
+
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'ssl_ca' => $cafile, // Will not be used since TLS is not true
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    public function testConnectTransientContextWithTLS(): void
+    {
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
         $context = [
-            'ssl' => [
+            'stream' => [
                 'cafile' => $cafile,
             ],
         ];
@@ -302,7 +346,7 @@ class RedisEngineTest extends TestCase
         $phpredis->shouldReceive('connect')
             ->once()
             ->with(
-                $Redis->getConfig('server'),
+                'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 null,
@@ -320,8 +364,8 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
             'persistent' => false,
             'ssl_ca' => $cafile,
+            'tls' => true,
         ];
-
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
 
@@ -406,8 +450,45 @@ class RedisEngineTest extends TestCase
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
 
+        $phpredis->shouldReceive('select')
+            ->once()
+            ->with((int)$Redis->getConfig('database'))
+            ->andReturn(true);
+
+        $phpredis->shouldReceive('pconnect')
+            ->once()
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+            )
+            ->andReturn(true);
+
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => true,
+            'ssl_ca' => $cafile, // Will not be used since TLS is not true
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    public function testConnectPersistentContextWithTLS(): void
+    {
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
         $context = [
-            'ssl' => [
+            'stream' => [
                 'cafile' => $cafile,
             ],
         ];
@@ -420,7 +501,7 @@ class RedisEngineTest extends TestCase
         $phpredis->shouldReceive('pconnect')
             ->once()
             ->with(
-                $Redis->getConfig('server'),
+                'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 $expectedPersistentId,
@@ -438,6 +519,7 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
             'persistent' => true,
             'ssl_ca' => $cafile,
+            'tls' => true,
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
@@ -537,6 +619,80 @@ class RedisEngineTest extends TestCase
         $this->assertNull($result);
 
         Cache::delete('test', 'redis');
+    }
+
+    /**
+     * Objects are unserialized normally with the default `allowedClasses` of `true`.
+     */
+    public function testAllowedClassesDefaultAllowsObjects(): void
+    {
+        $this->_configCache();
+
+        $data = new stdClass();
+        $data->foo = 'bar';
+        $this->assertTrue(Cache::write('object', $data, 'redis'));
+
+        $result = Cache::read('object', 'redis');
+        $this->assertInstanceOf(stdClass::class, $result);
+        $this->assertSame('bar', $result->foo);
+
+        Cache::delete('object', 'redis');
+    }
+
+    /**
+     * Setting `allowedClasses` to `false` blocks object unserialization,
+     * yielding an incomplete class instance instead of the original object.
+     */
+    public function testAllowedClassesFalseBlocksObjects(): void
+    {
+        $this->_configCache(['allowedClasses' => false]);
+
+        $data = new stdClass();
+        $data->foo = 'bar';
+        $this->assertTrue(Cache::write('object', $data, 'redis'));
+
+        $result = Cache::read('object', 'redis');
+        $this->assertInstanceOf(__PHP_Incomplete_Class::class, $result);
+
+        Cache::delete('object', 'redis');
+    }
+
+    /**
+     * An array of `allowedClasses` permits only the listed classes; others
+     * are returned as incomplete class instances.
+     */
+    public function testAllowedClassesWhitelist(): void
+    {
+        $this->_configCache(['allowedClasses' => [stdClass::class]]);
+
+        $allowed = new stdClass();
+        $allowed->foo = 'bar';
+        $this->assertTrue(Cache::write('allowed', $allowed, 'redis'));
+        $this->assertInstanceOf(stdClass::class, Cache::read('allowed', 'redis'));
+
+        $blocked = new DateInterval('PT1S');
+        $this->assertTrue(Cache::write('blocked', $blocked, 'redis'));
+        $this->assertInstanceOf(__PHP_Incomplete_Class::class, Cache::read('blocked', 'redis'));
+
+        Cache::delete('allowed', 'redis');
+        Cache::delete('blocked', 'redis');
+    }
+
+    /**
+     * Integers keep round-tripping correctly regardless of `allowedClasses`.
+     */
+    public function testAllowedClassesPreservesScalars(): void
+    {
+        $this->_configCache(['allowedClasses' => false]);
+
+        $this->assertTrue(Cache::write('int', 42, 'redis'));
+        $this->assertSame(42, Cache::read('int', 'redis'));
+
+        $this->assertTrue(Cache::write('array', ['a' => 1, 'b' => 2], 'redis'));
+        $this->assertSame(['a' => 1, 'b' => 2], Cache::read('array', 'redis'));
+
+        Cache::delete('int', 'redis');
+        Cache::delete('array', 'redis');
     }
 
     /**

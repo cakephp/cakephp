@@ -939,6 +939,19 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test that a path of `'0'` is not treated as an empty path.
+     */
+    public function testExtractZeroPath(): void
+    {
+        $data = [['a' => 1], ['a' => 2]];
+        $this->assertSame(['a' => 1], Hash::extract($data, '0'));
+
+        $data = ['x' => 1];
+        $this->assertSame([], Hash::extract($data, '0'));
+        $this->assertFalse(Hash::check($data, '0'));
+    }
+
+    /**
      * Test the {n} selector
      *
      * @param \ArrayAccess|array $data

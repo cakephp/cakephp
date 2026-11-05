@@ -1182,6 +1182,28 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that segments are urldecoded into parsed route, but not %2f
+     * as applications use %2f for encoded data that path prefix matching
+     * doesn't treat as /
+     */
+    public function testParseUrlDecodeButNot2f(): void
+    {
+        $route = new Route(
+            '/{controller}/{slug}',
+            ['action' => 'view'],
+        );
+        $route->compile();
+        $result = $route->parse('/posts/foo', 'GET');
+        $this->assertSame('foo', $result['slug']);
+
+        $result = $route->parse('/posts/foo%20bar', 'GET');
+        $this->assertSame('foo bar', $result['slug']);
+
+        $result = $route->parse('/posts%2ffoo', 'GET');
+        $this->assertNull($result, 'encoded / should not count as real / ');
+    }
+
+    /**
      * Test numerically indexed defaults, get appended to pass
      */
     public function testParseWithPassDefaults(): void

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
@@ -323,6 +324,47 @@ class HasManyTest extends TestCase
 
         $expected = new OrderByExpression(['id' => 'ASC']);
         $this->assertOrderClause($expected, $query);
+    }
+
+    /**
+     * Test that subquery joins quote PostgreSQL select aliases when auto quoting is disabled.
+     */
+    public function testSubqueryEagerLoaderQuotesPostgresSelectAliasInJoin(): void
+    {
+        $driver = new class (['quoteIdentifiers' => false]) extends Postgres {
+            public function enabled(): bool
+            {
+                return true;
+            }
+        };
+        $connection = new Connection(['driver' => $driver]);
+        $this->author->setConnection($connection);
+        $this->article->setConnection($connection);
+
+        $config = [
+            'sourceTable' => $this->author,
+            'targetTable' => $this->article,
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ];
+        $association = new HasMany('Articles', $config);
+
+        $query = $this->author->selectQuery();
+        $fetchQuery = new class ($this->article) extends SelectQuery {
+            public function all(): ResultSetInterface
+            {
+                return new ResultSet([]);
+            }
+        };
+        $this->article->shouldReceive('find')
+            ->with('all')
+            ->andReturn($fetchQuery);
+
+        $association->eagerLoader(['keys' => [], 'query' => $query]);
+        $sql = $fetchQuery->sql();
+
+        $this->assertStringContainsString('AS "Authors__id"', $sql);
+        $this->assertStringContainsString('Authors."Authors__id"', $sql);
+        $this->assertStringNotContainsString('Authors.Authors__id', $sql);
     }
 
     /**

@@ -133,16 +133,13 @@ interface WindowInterface
      *  - `0` - 'CURRENT ROW'
      *  - `null` - 'UNBOUNDED'
      *
-     * @param string $type Frame type
+     * @param self::RANGE|self::ROWS|self::GROUPS $type Frame type
      * @param \Cake\Database\ExpressionInterface|string|int|null $startOffset Frame start offset
-     * @param string $startDirection Frame start direction
+     * @param self::PRECEDING|self::FOLLOWING $startDirection Frame start direction
      * @param \Cake\Database\ExpressionInterface|string|int|null $endOffset Frame end offset
-     * @param string $endDirection Frame end direction
+     * @param self::PRECEDING|self::FOLLOWING $endDirection Frame end direction
      * @return $this
      * @throws \InvalidArgumentException WHen offsets are negative.
-     * @phpstan-param self::RANGE|self::ROWS|self::GROUPS $type
-     * @phpstan-param self::PRECEDING|self::FOLLOWING $startDirection
-     * @phpstan-param self::PRECEDING|self::FOLLOWING $endDirection
      */
     public function frame(
         string $type,

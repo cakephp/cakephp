@@ -293,6 +293,7 @@ class ConsoleOutputTest extends TestCase
             // rather than throwing a fwrite() TypeError.
             $this->assertSame(0, $output->write('after-close', 0));
         } finally {
+            // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
             @unlink($tmpfile);
         }
     }
@@ -336,6 +337,7 @@ class ConsoleOutputTest extends TestCase
             if (is_resource($stream)) {
                 fclose($stream);
             }
+            // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
             @unlink($tmpfile);
         }
     }

@@ -18,7 +18,6 @@ namespace Cake\ORM\Behavior\Translate;
 
 use ArrayObject;
 use Cake\Collection\CollectionInterface;
-use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
@@ -35,7 +34,6 @@ use function Cake\Core\pluginSplit;
  */
 class ShadowTableStrategy implements TranslateStrategyInterface
 {
-    use InstanceConfigTrait;
     use LocatorAwareTrait;
     use TranslateStrategyTrait {
         buildMarshalMap as private _buildMarshalMap;

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
@@ -37,10 +38,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function listTablesSql(array $config): array
     {
-        return [
-            'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
-            . " WHERE TABLE_TYPE IN ('BASE TABLE', 'VIEW')"
-            , []];
+        $sql = 'SELECT TABLE_NAME FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = ? AND TABLE_TYPE IN (\'BASE TABLE\', \'VIEW\') ORDER BY TABLE_NAME';
+
+        return [$sql, [$config['database']]];
     }
 
     /**
@@ -52,10 +53,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function listTablesWithoutViewsSql(array $config): array
     {
-        return [
-            'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
-            . ' WHERE TABLE_TYPE = "BASE TABLE"'
-        , []];
+        $sql = 'SELECT TABLE_NAME FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = \'BASE TABLE\' ORDER BY TABLE_NAME';
+
+        return [$sql, [$config['database']]];
     }
 
     /**
@@ -174,7 +175,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * @param string $table The table name.
      * @return array<string, array{name: string, srid: int}> The column information.
      */
-    private function describeGeometryColumns(string $table): array
+    protected function describeGeometryColumns(string $table): array
     {
         /** @var \Cake\Database\Driver\Mysql $driver */
         $driver = $this->_driver;
@@ -188,6 +189,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
                 SQL;
         } else {
+            // TODO remove this entire branch when isMariaDb is removed
             return [];
         }
 
@@ -235,9 +237,11 @@ class MysqlSchemaDialect extends SchemaDialect
 
         if (
             $this->_driver instanceof Mysql &&
+            !($this->_driver instanceof Mariadb) &&
             $this->_driver->isMariaDb() &&
             $default === 'current_timestamp()'
         ) {
+            // TODO remove in 6.x when mysql driver drops support for mariadb
             return 'CURRENT_TIMESTAMP';
         }
 
@@ -800,9 +804,18 @@ SQL;
             TableSchemaInterface::TYPE_BINARY,
             TableSchemaInterface::TYPE_BIT,
         ];
+        $hasUnsigned = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+            TableSchemaInterface::TYPE_FLOAT,
+            TableSchemaInterface::TYPE_DECIMAL,
+        ];
         if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
             $out .= ' ' . strtoupper($column['type']);
             $hasLength[] = $column['type'];
+            $hasUnsigned[] = $column['type'];
         }
         if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
             $out .= '(' . $column['length'] . ')';
@@ -828,14 +841,6 @@ SQL;
             $out .= '(' . (int)$column['precision'] . ')';
         }
 
-        $hasUnsigned = [
-            TableSchemaInterface::TYPE_TINYINTEGER,
-            TableSchemaInterface::TYPE_SMALLINTEGER,
-            TableSchemaInterface::TYPE_INTEGER,
-            TableSchemaInterface::TYPE_BIGINTEGER,
-            TableSchemaInterface::TYPE_FLOAT,
-            TableSchemaInterface::TYPE_DECIMAL,
-        ];
         if (
             in_array($column['type'], $hasUnsigned, true) &&
             isset($column['unsigned']) &&
@@ -850,8 +855,13 @@ SQL;
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_UUID,
         ];
-        if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
-            $out .= ' COLLATE ' . $column['collate'];
+        if (in_array($column['type'], $hasCollate, true)) {
+            if (isset($column['charset']) && $column['charset'] !== '') {
+                $out .= ' CHARACTER SET ' . $column['charset'];
+            }
+            if (isset($column['collate']) && $column['collate'] !== '') {
+                $out .= ' COLLATE ' . $column['collate'];
+            }
         }
 
         if (isset($column['null']) && $column['null'] === false) {
@@ -884,6 +894,15 @@ SQL;
             // Geospatial, blob and text types need to be wrapped in () to create an expression.
             $out .= ' DEFAULT (' . $this->_driver->schemaValue($column['default']) . ')';
             unset($column['default']);
+        }
+
+        if (isset(static::CURRENT_DATE_TIME_DEFAULTS[$column['type']])) {
+            $currentDefault = $this->currentDateTimeDefault($column);
+            if ($currentDefault !== null) {
+                // MySQL only accepts these as expression defaults, which need parentheses.
+                $out .= ' DEFAULT (' . $currentDefault . ')';
+                unset($column['default']);
+            }
         }
 
         $dateTimeTypes = [
@@ -919,6 +938,20 @@ SQL;
         }
 
         return $out;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function currentDateTimeDefault(array $column): ?string
+    {
+        // Reflection reports these defaults as curdate() and curtime().
+        $aliases = ['curdate()' => static::CURRENT_DATE, 'curtime()' => static::CURRENT_TIME];
+        if (is_string($column['default'] ?? null)) {
+            $column['default'] = $aliases[strtolower($column['default'])] ?? $column['default'];
+        }
+
+        return parent::currentDateTimeDefault($column);
     }
 
     /**

@@ -114,4 +114,50 @@ class MailTransportTest extends TestCase
         $this->assertStringContainsString('Subject: ', $result['headers']);
         $this->assertStringContainsString('To: ', $result['headers']);
     }
+
+    /**
+     * test send strips newlines from headers
+     */
+    public function testSendHeadersStripNewlines(): void
+    {
+        $eol = "\r\n";
+        $date = date(DATE_RFC2822);
+
+        $message = new Message();
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setSubject('injected headers');
+        $message->setMessageId('<abc0123@example.com>');
+
+        $message->setHeaders([
+            'X-crlf' => "line one\r\nline two",
+            'X-lf' => "line one\nline two",
+            'X-cr' => "line one\rline two",
+            'Date' => $date,
+        ]);
+        $message->setBody(['text' => "First Line\nSecond Line"]);
+
+        $data = "From: CakePHP Test <noreply@cakephp.org>{$eol}";
+        $data .= 'X-crlf: line oneline two' . $eol;
+        $data .= 'X-lf: line oneline two' . $eol;
+        $data .= 'X-cr: line oneline two' . $eol;
+        $data .= 'Date: ' . $date . $eol;
+        $data .= 'Message-ID: <abc0123@example.com>' . $eol;
+        $data .= "MIME-Version: 1.0{$eol}";
+        $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
+        $data .= 'Content-Transfer-Encoding: 8bit';
+
+        $this->MailTransport->expects($this->once())->method('_mail')
+            ->with(
+                'CakePHP <cake@cakephp.org>',
+                'injected headers',
+                implode($eol, ['First Line', 'Second Line', '', '']),
+                $data,
+                '-f',
+            );
+
+        $result = $this->MailTransport->send($message);
+        $this->assertStringContainsString('Subject: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
+    }
 }

@@ -89,7 +89,7 @@ interface PaginatedInterface extends Countable, Traversable
     /**
      * Get all paging params.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function pagingParams(): array;
 }

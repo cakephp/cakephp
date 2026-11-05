@@ -18,7 +18,6 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\Exception\MissingPropertyException;
-use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -482,7 +481,7 @@ trait EntityTrait
     /**
      * Gets all original values of the entity.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getOriginalValues(): array
     {
@@ -803,7 +802,7 @@ trait EntityTrait
             return static::$_accessors[$class][$type][$property] = '';
         }
 
-        if (static::class === Entity::class) {
+        if (static::class === self::class) {
             return '';
         }
 
@@ -1405,7 +1404,7 @@ trait EntityTrait
      * Returns the raw accessible configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
-     * @return array<bool>
+     * @return array<string, bool>
      */
     public function getAccessible(): array
     {

@@ -142,7 +142,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper<\Cake\View\View> The constructed helper class.
      */
-    /** @phpstan-ignore-next-line missingType.generics */
     protected function _create(object|string $class, string $alias, array $config): Helper
     {
         if (is_object($class)) {

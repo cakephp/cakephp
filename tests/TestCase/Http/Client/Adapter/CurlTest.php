@@ -43,7 +43,9 @@ class CurlTest extends TestCase
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
 
         $this->curl = new Curl();
-        $this->caFile = CaBundle::getBundledCaBundlePath();
+        // Mirror the adapter default: an explicit `curl.cainfo` (php.ini) wins,
+        // otherwise the bundled CA file is used.
+        $this->caFile = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
     }
 
     /**
@@ -120,6 +122,21 @@ class CurlTest extends TestCase
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * An explicitly passed `ssl_cafile` must take precedence over both the
+     * `curl.cainfo` php.ini setting and the bundled CA file.
+     */
+    public function testBuildOptionsExplicitCafileWins(): void
+    {
+        $options = [
+            'ssl_cafile' => '/custom/ca-bundle.pem',
+        ];
+        $request = new Request('http://localhost/things', 'GET');
+        $result = $this->curl->buildOptions($request, $options);
+
+        $this->assertSame('/custom/ca-bundle.pem', $result[CURLOPT_CAINFO]);
     }
 
     /**
@@ -396,5 +413,33 @@ class CurlTest extends TestCase
 
         $result = $this->curl->buildOptions($request, $options);
         $this->assertSame(CURL_HTTP_VERSION_2TLS, $result[CURLOPT_HTTP_VERSION]);
+    }
+
+    /**
+     * Test converting HTTP/3 protocol version into curl options.
+     */
+    public function testBuildOptionsHttp3ProtocolVersion(): void
+    {
+        $this->skipIf(
+            !defined('CURL_HTTP_VERSION_3'),
+            'Requires PHP 8.4 and libcurl 7.66',
+        );
+
+        $request = $this->getMockBuilder(Request::class)
+            ->setConstructorArgs(['https://localhost/things', 'GET'])
+            ->onlyMethods(['getProtocolVersion'])
+            ->getMock();
+
+        $request
+            ->expects($this->once())
+            ->method('getProtocolVersion')
+            ->willReturn('3');
+
+        $result = $this->curl->buildOptions($request, []);
+
+        $this->assertSame(
+            CURL_HTTP_VERSION_3,
+            $result[CURLOPT_HTTP_VERSION],
+        );
     }
 }

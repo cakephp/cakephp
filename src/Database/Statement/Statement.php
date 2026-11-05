@@ -101,8 +101,7 @@ class Statement implements StatementInterface
      *
      * @param mixed $value The value to cast.
      * @param \Cake\Database\TypeInterface|string|int $type The type name or type instance to use.
-     * @return array List containing converted value and internal type.
-     * @phpstan-return array{0:mixed, 1:int}
+     * @return array{0:mixed, 1:int} List containing converted value and internal type.
      */
     protected function cast(mixed $value, TypeInterface|string|int $type = 'string'): array
     {

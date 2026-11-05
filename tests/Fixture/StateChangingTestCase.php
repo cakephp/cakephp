@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -11,24 +9,27 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         1.2.0
+ * @since         5.4.4
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\Core\Plugin;
+use Cake\TestSuite\LogTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
- * ExampleShell
+ * Test case that loads a plugin and configures test loggers, for checking that TestCase restores them.
  */
-namespace TestPlugin\Shell;
-
-use Cake\Console\Shell;
-
-class ExampleShell extends Shell
+class StateChangingTestCase extends TestCase
 {
-    /**
-     * main method
-     */
-    public function main(): void
+    use LogTestTrait;
+
+    public function testLoadPluginAndLogger(): void
     {
-        $this->out('This is the main method called from TestPlugin.ExampleShell');
+        $this->loadPlugins(['TestPlugin']);
+        $this->setupLog('debug');
+
+        $this->assertTrue(Plugin::isLoaded('TestPlugin'));
     }
 }

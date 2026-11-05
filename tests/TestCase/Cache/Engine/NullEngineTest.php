@@ -41,6 +41,12 @@ class NullEngineTest extends TestCase
         ]);
     }
 
+    public function testAdd(): void
+    {
+        $result = Cache::add('test_key', 'test_value', 'null');
+        $this->assertTrue($result);
+    }
+
     public function testReadMany(): void
     {
         $keys = [

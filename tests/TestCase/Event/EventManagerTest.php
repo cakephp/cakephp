@@ -22,8 +22,10 @@ use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 use Mockery;
+use ReflectionFunction;
 use TestApp\TestCase\Event\CustomTestEventListenerInterface;
 use TestApp\TestCase\Event\EventTestListener;
 
@@ -32,6 +34,23 @@ use TestApp\TestCase\Event\EventTestListener;
  */
 class EventManagerTest extends TestCase
 {
+    /**
+     * @param array<array{callable: \Closure}> $expected
+     * @param array<array{callable: \Closure}> $actual
+     */
+    private function assertListeners(array $expected, array $actual): void
+    {
+        $this->assertSame(array_keys($expected), array_keys($actual));
+        foreach ($expected as $key => $listener) {
+            $this->assertSame(array_keys($listener), array_keys($actual[$key]));
+            $this->assertInstanceOf(Closure::class, $actual[$key]['callable']);
+            $expectedCallback = new ReflectionFunction($listener['callable']);
+            $actualCallback = new ReflectionFunction($actual[$key]['callable']);
+            $this->assertSame($expectedCallback->getName(), $actualCallback->getName());
+            $this->assertSame($expectedCallback->getClosureThis(), $actualCallback->getClosureThis());
+        }
+    }
+
     /**
      * Test attach() with a listener interface.
      */
@@ -43,12 +62,12 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => $listener->listenerFunction(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+        $this->assertListeners($expected, $manager->listeners('fake.event'));
 
         $expected = [
             ['callable' => $listener->thirdListenerFunction(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('closure.event'));
+        $this->assertListeners($expected, $manager->listeners('closure.event'));
     }
 
     /**
@@ -128,21 +147,21 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => substr(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('my.event'));
+        $this->assertListeners($expected, $manager->listeners('my.event'));
 
         $manager->on('my.event', ['priority' => 1], 'strpos');
         $expected = [
             ['callable' => strpos(...)],
             ['callable' => substr(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('my.event'));
+        $this->assertListeners($expected, $manager->listeners('my.event'));
 
         $listener = new CustomTestEventListenerInterface();
         $manager->on($listener);
         $expected = [
             ['callable' => $listener->listenerFunction(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+        $this->assertListeners($expected, $manager->listeners('fake.event'));
     }
 
     public function testOnInvalidCall(): void
@@ -170,7 +189,7 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => substr(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+        $this->assertListeners($expected, $manager->listeners('another.event'));
 
         $manager->off('another.event', 'substr');
         $this->assertEquals([], $manager->listeners('another.event'));
@@ -192,7 +211,7 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => substr(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+        $this->assertListeners($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));
     }
 
@@ -211,7 +230,7 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => substr(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+        $this->assertListeners($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));
     }
 
@@ -472,11 +491,11 @@ class EventManagerTest extends TestCase
         $expected = [
             ['callable' => $listener->secondListenerFunction(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('another.event'));
+        $this->assertListeners($expected, $manager->listeners('another.event'));
         $expected = [
             ['callable' => $listener->listenerFunction(...)],
         ];
-        $this->assertEquals($expected, $manager->listeners('fake.event'));
+        $this->assertListeners($expected, $manager->listeners('fake.event'));
         $manager->off($listener);
         $this->assertEquals([], $manager->listeners('fake.event'));
         $this->assertEquals([], $manager->listeners('another.event'));

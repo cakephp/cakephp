@@ -69,8 +69,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Schema class.
      *
-     * @var string
-     * @phpstan-var class-string<\Cake\Form\Schema>
+     * @var class-string<\Cake\Form\Schema>
      */
     protected string $_schemaClass = Schema::class;
 
@@ -336,7 +335,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @param string|null $field The field name or null to get data array with
      *   all fields.
-     * @return mixed
+     * @return ($field is null ? array : mixed)
      */
     public function getData(?string $field = null): mixed
     {

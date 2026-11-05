@@ -155,6 +155,7 @@ class FileLockEngine extends LockEngine
 
         $mtime = filemtime($file);
         if ($mtime !== false && (time() - $mtime) > $ttl) {
+            // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
             @unlink($file);
         }
     }
@@ -194,6 +195,7 @@ class FileLockEngine extends LockEngine
 
         // Remove lock file
         $file = $this->getLockFile($resource);
+        // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
         @unlink($file);
 
         return true;
@@ -281,6 +283,8 @@ class FileLockEngine extends LockEngine
 
         // Remove lock file
         if (file_exists($file)) {
+            // phpcs:disable Generic.PHP.NoSilencedErrors.Discouraged
+
             return @unlink($file);
         }
 

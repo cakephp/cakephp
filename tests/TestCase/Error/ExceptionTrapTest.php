@@ -258,8 +258,7 @@ class ExceptionTrapTest extends TestCase
         ob_get_clean();
 
         $logs = Log::engine('test_error')->read();
-        $this->assertCount(1, $logs);
-        $this->assertStringContainsString('MissingTemplateException - Failed to render', $logs[0]);
+        $this->assertSame([], $logs);
         $this->assertTrue($this->triggered, 'Should have triggered event when skipping logging.');
     }
 
@@ -348,6 +347,47 @@ class ExceptionTrapTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertSame('', $out);
+    }
+
+    public function testHandleLastErrorIncludesFatalErrorTrace(): void
+    {
+        $trap = new class extends ExceptionTrap {
+            public ?array $fatalError = null;
+
+            public function processLastError(?array $error): void
+            {
+                $this->handleLastError($error);
+            }
+
+            public function handleFatalError(int $code, string $description, string $file, int $line): void
+            {
+                $this->fatalError = compact('code', 'description', 'file', 'line');
+            }
+        };
+
+        $trap->processLastError([
+            'type' => E_ERROR,
+            'message' => 'Allowed memory size exhausted',
+            'file' => '/app/query.php',
+            'line' => 42,
+            'trace' => [
+                [
+                    'file' => '/app/query.php',
+                    'line' => 42,
+                    'class' => 'App\\Service\\ReportService',
+                    'type' => '->',
+                    'function' => 'generate',
+                    'args' => ['secret value'],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(E_ERROR, $trap->fatalError['code']);
+        $this->assertSame('/app/query.php', $trap->fatalError['file']);
+        $this->assertSame(42, $trap->fatalError['line']);
+        $this->assertStringContainsString('Stack Trace:', $trap->fatalError['description']);
+        $this->assertStringContainsString('App\\Service\\ReportService->generate()', $trap->fatalError['description']);
+        $this->assertStringNotContainsString('secret value', $trap->fatalError['description']);
     }
 
     public function testHandleFatalErrorText(): void

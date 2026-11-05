@@ -65,6 +65,9 @@ class DebuggerTest extends TestCase
         Log::drop('stderr');
         Log::drop('stdout');
         Debugger::configInstance('exportFormatter', TextFormatter::class);
+        // The instances need to be initialized for the tests to pass
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
     }
 
     /**
@@ -658,12 +661,19 @@ eos;
      */
     public function testSetOutputMask(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
-        $this->assertEquals(['password' => '[**********]'], Debugger::outputMask());
-        Debugger::setOutputMask(['serial' => 'XXXXXX']);
-        $this->assertEquals(['password' => '[**********]', 'serial' => 'XXXXXX'], Debugger::outputMask());
-        Debugger::setOutputMask([], false);
-        $this->assertSame([], Debugger::outputMask());
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $result = Debugger::outputMask();
+            $this->assertEquals('[**********]', $result['password']);
+            $this->assertEquals('********', $result['login']);
+            $this->assertEquals('********', $result['host']);
+            Debugger::setOutputMask(['serial' => 'XXXXXX']);
+            $result = Debugger::outputMask();
+            $this->assertEquals('[**********]', $result['password']);
+            $this->assertEquals('XXXXXX', $result['serial']);
+            Debugger::setOutputMask([], false);
+            $this->assertSame([], Debugger::outputMask());
+        });
     }
 
     /**
@@ -671,13 +681,15 @@ eos;
      */
     public function testConfigureOutputMask(): void
     {
-        Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
-        Debugger::getInstance(TestDebugger::class);
-        Debugger::getInstance(Debugger::class);
+        $this->deprecated(function (): void {
+            Configure::write('Debugger.outputMask', ['wow' => 'xxx']);
+            Debugger::getInstance(TestDebugger::class);
+            Debugger::getInstance(Debugger::class);
 
-        $result = Debugger::exportVar(['wow' => 'pass1234']);
-        $this->assertStringContainsString('xxx', $result);
-        $this->assertStringNotContainsString('pass1234', $result);
+            $result = Debugger::exportVar(['wow' => 'pass1234']);
+            $this->assertStringContainsString('xxx', $result);
+            $this->assertStringNotContainsString('pass1234', $result);
+        });
     }
 
     /**
@@ -685,10 +697,12 @@ eos;
      */
     public function testMaskArray(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
-        $result = Debugger::exportVar(['password' => 'pass1234']);
-        $expected = "['password'=>'[**********]']";
-        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $result = Debugger::exportVar(['password' => 'pass1234']);
+            $expected = "['password'=>'[**********]']";
+            $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        });
     }
 
     /**
@@ -696,11 +710,78 @@ eos;
      */
     public function testMaskObject(): void
     {
-        Debugger::setOutputMask(['password' => '[**********]']);
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['password' => '[**********]']);
+            $object = new SecurityThing();
+            $result = Debugger::exportVar($object);
+            $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
+            $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        });
+    }
+
+    /**
+     * Tests that default outputMask keys are masked by default.
+     */
+    public function testDefaultOutputMaskMasksPassword(): void
+    {
+        $result = Debugger::exportVar(['password' => 'supersecret']);
+        $this->assertStringContainsString('********', $result);
+        $this->assertStringNotContainsString('supersecret', $result);
+    }
+
+    /**
+     * Tests that all default outputMask keys are present.
+     */
+    public function testDefaultOutputMaskContainsAllKeys(): void
+    {
+        $mask = Debugger::outputMask();
+        $this->assertArrayHasKey('password', $mask);
+        $this->assertArrayHasKey('login', $mask);
+        $this->assertArrayHasKey('host', $mask);
+        $this->assertArrayHasKey('database', $mask);
+        $this->assertArrayHasKey('port', $mask);
+        $this->assertArrayHasKey('schema', $mask);
+        $this->assertSame('********', $mask['password']);
+        $this->assertSame('********', $mask['login']);
+        $this->assertSame('********', $mask['host']);
+        $this->assertSame('********', $mask['database']);
+        $this->assertSame('********', $mask['port']);
+        $this->assertSame('********', $mask['schema']);
+    }
+
+    /**
+     * Tests that custom masks merge with defaults.
+     */
+    public function testCustomMaskMergesWithDefaults(): void
+    {
+        $this->deprecated(function (): void {
+            Debugger::setOutputMask(['api_key' => 'SECRET']);
+            $mask = Debugger::outputMask();
+            $this->assertSame('SECRET', $mask['api_key']);
+            $this->assertSame('********', $mask['password']);
+            $this->assertSame('********', $mask['host']);
+        });
+    }
+
+    /**
+     * Tests that non-default array keys are not masked.
+     */
+    public function testNonDefaultKeysAreNotMasked(): void
+    {
+        $result = Debugger::exportVar(['username' => 'admin', 'email' => 'test@example.com']);
+        $this->assertStringContainsString('admin', $result);
+        $this->assertStringContainsString('test@example.com', $result);
+    }
+
+    /**
+     * Tests that default mask works on object properties.
+     */
+    public function testDefaultMaskOnObjectProperties(): void
+    {
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = "object(TestApp\\Error\\Thing\\SecurityThing)id:0{password=>'[**********]'}";
-        $this->assertSame($expected, preg_replace('/\s+/', '', $result));
+        $this->assertStringContainsString('********', $result);
+        $this->assertStringNotContainsString('pass1234', $result);
     }
 
     /**

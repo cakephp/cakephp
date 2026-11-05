@@ -23,8 +23,8 @@
     },
     "require": {
         "php": ">=8.2",
-        "cakephp/core": "5.4.*@dev",
-        "cakephp/event": "5.4.*@dev",
+        "cakephp/core": "5.5.*@dev",
+        "cakephp/event": "5.5.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "provide": {
@@ -35,11 +35,11 @@
             "Cake\\Cache\\": "."
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.4.x-dev"
+            "dev-5.next": "5.5.x-dev"
         }
     }
 }

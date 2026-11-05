@@ -19,6 +19,8 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests IdentifierExpression class
@@ -52,5 +54,23 @@ class IdentifierExpressionTest extends TestCase
     {
         $expresssion = new IdentifierExpression('test', 'utf8_general_ci');
         $this->assertSame('test COLLATE utf8_general_ci', $expresssion->sql(new ValueBinder()));
+    }
+
+    public static function invalidCollationProvider(): array
+    {
+        return [
+            ['spaces are not simple'],
+            ["\ttabs"],
+            ["\nnewline"],
+            ["\rcarriagereturn"],
+            ['dash-es'],
+        ];
+    }
+
+    #[DataProvider('invalidCollationProvider')]
+    public function testCollationRejectNonSimpleCollation(string $collate): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new IdentifierExpression('1=1', $collate);
     }
 }

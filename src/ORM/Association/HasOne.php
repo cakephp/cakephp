@@ -32,6 +32,7 @@ use function Cake\Core\pluginSplit;
  *
  * @template T of \Cake\ORM\Table
  * @mixin T
+ * @method T getTarget() Gets the table instance for the target side of the association.
  */
 class HasOne extends Association
 {

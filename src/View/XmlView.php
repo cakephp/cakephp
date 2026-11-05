@@ -133,12 +133,9 @@ class XmlView extends SerializedView
                 }
             }
         } else {
-            /** @var array<mixed>|string|int|bool|null $data */
+            /** @var array<mixed>|string|int|bool $data */
             $data = $this->viewVars[$serialize] ?? [];
-            if (
-                $data !== null &&
-                (!is_array($data) || Hash::numeric(array_keys($data)))
-            ) {
+            if (!is_array($data) || $data === [] || Hash::numeric(array_keys($data))) {
                 $data = [$rootNode => [$serialize => $data]];
             }
         }
@@ -148,10 +145,7 @@ class XmlView extends SerializedView
             $options['pretty'] = true;
         }
 
-        /**
-         * @var array<mixed> $data
-         * @var string|false $result
-         */
+        /** @var string|false $result */
         $result = Xml::fromArray($data, $options)->saveXML();
         if ($result === false) {
             throw new SerializationFailureException(

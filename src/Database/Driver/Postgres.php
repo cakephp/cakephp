@@ -130,8 +130,7 @@ class Postgres extends Driver
         }
 
         foreach ($config['init'] as $command) {
-            /** @phpstan-ignore-next-line */
-            $this->pdo->exec($command);
+            $this->getPdo()->exec($command);
         }
     }
 
@@ -217,6 +216,8 @@ class Postgres extends Driver
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
             DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
             DriverFeatureEnum::CHECK_CONSTRAINTS => true,
+            DriverFeatureEnum::CASE_SENSITIVE_QUOTED_IDENTIFIERS => true,
+            DriverFeatureEnum::SUBQUERY_FILTER_DISTINCT => false,
         };
     }
 
@@ -294,8 +295,15 @@ class Postgres extends Driver
     {
         switch ($expression->getName()) {
             case 'CONCAT':
-                // CONCAT function is expressed as exp1 || exp2
-                $expression->setName('')->setConjunction(' ||');
+                $expression->iterateParts(function ($p) {
+                    if (is_array($p)) {
+                        return (new FunctionExpression('CAST', [$p['value']], array_filter([$p['type']]), 'string'))
+                            ->setConjunction(' AS')
+                            ->add(['text' => 'literal']);
+                    }
+
+                    return $p;
+                });
                 break;
             case 'DATEDIFF':
                 $expression
@@ -345,16 +353,16 @@ class Postgres extends Driver
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
             case 'JSON_VALUE':
-                $expression->setName('JSONB_PATH_QUERY')
-                    ->iterateParts(function ($p, $key) {
-                        if ($key === 0) {
-                            $p = sprintf('%s::jsonb', $p);
-                        } elseif ($key === 1) {
-                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
-                        }
+                if (version_compare($this->version(), '17.0', '<')) {
+                    $expression->setName('JSONB_PATH_QUERY')
+                        ->iterateParts(function ($p, $key) {
+                            if ($key === 0) {
+                                return sprintf('%s::jsonb', $p);
+                            }
 
-                        return $p;
-                    });
+                            return $p;
+                        });
+                }
                 break;
         }
     }

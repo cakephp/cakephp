@@ -46,11 +46,6 @@ class AggregatesQueryTest extends TestCase
         $this->connection = ConnectionManager::get('test');
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     /**
      * Tests filtering aggregate function rows.
      */

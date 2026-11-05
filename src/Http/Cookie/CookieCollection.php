@@ -62,6 +62,9 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
+     * Only cookies with matching domains will be retained.
+     * Protection for public suffixes is not implemented.
+     *
      * @param array<string> $header The array of set-cookie header values.
      * @param array<string, mixed> $defaults The defaults attributes.
      * @return static
@@ -69,9 +72,22 @@ class CookieCollection implements IteratorAggregate, Countable
     public static function createFromHeader(array $header, array $defaults = []): static
     {
         $cookies = [];
+        $sourceDomain = $defaults['domain'] ?? null;
         foreach ($header as $value) {
             try {
-                $cookies[] = Cookie::createFromHeaderString($value, $defaults);
+                $cookie = Cookie::createFromHeaderString($value, $defaults);
+                $domainMatch = true;
+                if ($sourceDomain) {
+                    $cookieDomain = $cookie->getDomain();
+                    $domainMatch = (
+                        $cookieDomain === $sourceDomain ||
+                        str_ends_with($sourceDomain, ".{$cookieDomain}") ||
+                        str_ends_with($cookieDomain, ".{$sourceDomain}")
+                    );
+                }
+                if ($domainMatch) {
+                    $cookies[] = $cookie;
+                }
             } catch (Exception | TypeError) {
                 // Don't blow up on invalid cookies
             }
@@ -302,22 +318,20 @@ class CookieCollection implements IteratorAggregate, Countable
             if (!str_starts_with($path, $cookie->getPath())) {
                 continue;
             }
-            $domain = $cookie->getDomain();
-            $leadingDot = str_starts_with($domain, '.');
-            if ($leadingDot) {
-                $domain = ltrim($domain, '.');
-            }
-
             if ($cookie->isExpired($now)) {
                 continue;
             }
-
-            $pattern = '/' . preg_quote($domain, '/') . '$/';
-            if (!preg_match($pattern, $host)) {
-                continue;
+            $domain = $cookie->getDomain();
+            // Trim leading dot from cookie domain value.
+            if (str_starts_with($domain, '.')) {
+                $domain = ltrim($domain, '.');
             }
 
-            $out[$cookie->getName()] = $cookie->getValue();
+            // Cookie domains with a leading `.` match all subdomains.
+            // And cookies on domains match all subdomains.
+            if ($host === $domain || str_ends_with($host, ".{$domain}")) {
+                $out[$cookie->getName()] = $cookie->getValue();
+            }
         }
 
         return $out;

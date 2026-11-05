@@ -70,6 +70,7 @@ class SelectQueryTest extends TestCase
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
+        'core.Users',
     ];
 
     /**
@@ -1722,6 +1723,36 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that counting a query with buffered results disabled does not leave the
+     * connection busy for the queries that follow it.
+     */
+    public function testCountWithBufferedResultsDisabled(): void
+    {
+        $this->skipIf(!$this->connection->getDriver() instanceof Mysql);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        // Behaviors such as TranslateBehavior configure associations with closures that
+        // reference the query they are given. That reference cycle keeps the query used
+        // for counting, and its statement, alive until the cycle collector runs.
+        $table->getEventManager()
+            ->on('Model.beforeFind', function (EventInterface $event, SelectQuery $query): void {
+                $query->contain([
+                    'Authors' => [
+                        'queryBuilder' => function (SelectQuery $q) use ($query): SelectQuery {
+                            return $q->where([$query->getRepository()->aliasField('id') . ' IS NOT' => null]);
+                        },
+                    ],
+                ]);
+            });
+
+        $query = $table->find()->disableBufferedResults();
+        $this->assertSame(3, $query->count());
+        $this->assertCount(3, $query->all()->toArray());
+    }
+
+    /**
      * Tests that beforeFind is only ever called once, even if you trigger it again in the beforeFind
      */
     public function testBeforeFindCalledOnce(): void
@@ -1752,6 +1783,97 @@ class SelectQueryTest extends TestCase
             ->groupBy(['author_id']);
         $result = $query->count();
         $this->assertEquals(2, $result);
+    }
+
+    /**
+     * Data provider for testCountUsesConnectionRole
+     *
+     * @return array
+     */
+    public static function countConnectionRoleProvider(): array
+    {
+        return [
+            'simple' => ['simple', 3],
+            'group' => ['group', 2],
+            'distinct' => ['distinct', 2],
+            'having' => ['having', 1],
+            'union' => ['union', 2],
+            'intersect' => ['intersect', 1],
+            'expression field' => ['expression field', 3],
+            'nested order' => ['nested order', 3],
+        ];
+    }
+
+    /**
+     * Test that count() uses the connection role of the query, including
+     * complex queries that are counted through a wrapping query.
+     */
+    #[DataProvider('countConnectionRoleProvider')]
+    public function testCountUsesConnectionRole(string $type, int $expected): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        ConnectionManager::setConfig('test_read_write', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'write' => [
+                'database' => ':memory:',
+                'cached' => 'shared', // used so role configs are unique
+            ],
+            'read' => [
+                'database' => ':memory:',
+            ],
+        ]);
+
+        try {
+            $connection = ConnectionManager::get('test_read_write');
+            $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+
+            // Only the read connection has rows, so counting on the write connection returns 0.
+            $connection->getDriver(Connection::ROLE_WRITE)->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
+            $read = $connection->getDriver(Connection::ROLE_READ);
+            $read->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
+            $read->execute('INSERT INTO role_items (id, grp) VALUES (1, 1), (2, 1), (3, 2)');
+
+            $table = $this->getTableLocator()->get('RoleItems', [
+                'table' => 'role_items',
+                'connection' => $connection,
+            ]);
+
+            $factory = function () use ($table, $type): SelectQuery {
+                $query = $table->find();
+
+                $query = match ($type) {
+                    'simple' => $query,
+                    'group' => $query->select(['grp'])->groupBy(['grp']),
+                    'distinct' => $query->select(['grp'])->distinct(),
+                    'having' => $query->select(['grp'])
+                        ->groupBy(['grp'])
+                        ->having(['COUNT(*) >' => 1], ['COUNT(*)' => 'integer']),
+                    'union' => $query->select(['grp'])
+                        ->where(['id' => 1])
+                        ->union($table->find()->select(['grp'])->where(['id' => 3])),
+                    'intersect' => $query->select(['grp'])
+                        ->intersect($table->find()->select(['grp'])->where(['id' => 3])),
+                    'expression field' => $query->select(['next' => $query->expr('grp + 1')]),
+                    'nested order' => $query->orderBy(fn(QueryExpression $exp) => $exp->add(['grp' => 1])),
+                };
+                if ($type === 'nested order') {
+                    // A compiled query with a nested order expression is counted
+                    // through a wrapping query as well.
+                    $query->sql();
+                }
+
+                return $query;
+            };
+
+            $this->assertSame($expected, $factory()->useReadRole()->count());
+            $this->assertSame(0, $factory()->count(), 'Queries default to the write role');
+            $this->assertSame(0, $factory()->useReadRole()->useWriteRole()->count());
+        } finally {
+            $this->getTableLocator()->remove('RoleItems');
+            ConnectionManager::drop('test_read_write');
+        }
     }
 
     /**
@@ -1979,6 +2101,27 @@ class SelectQueryTest extends TestCase
 
         $query->contain(['Comments', 'Authors'], true);
         $this->assertEquals(['Comments', 'Authors'], array_keys($query->getContain()));
+    }
+
+    /**
+     * Test that joined associations whose name differs from the target table alias
+     * are typed using the association name, which is what the select fields are aliased with.
+     */
+    public function testContainBelongsToWithDifferentTargetAliasCastsFields(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->belongsTo('Commenters', [
+            'targetTable' => $this->getTableLocator()->get('Users'),
+            'foreignKey' => 'user_id',
+        ]);
+
+        $query = $comments->find()
+            ->contain('Commenters')
+            ->where(['Comments.id' => 1]);
+        $comment = $query->firstOrFail();
+
+        $this->assertNotNull($query->getTypeMap()->type('Commenters.created'));
+        $this->assertInstanceOf(DateTime::class, $comment->commenter->created);
     }
 
     /**
@@ -2978,7 +3121,9 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame($copy, $query);
         $copyLoader = $copy->getEagerLoader();
         $loader = $query->getEagerLoader();
-        $this->assertEquals($copyLoader, $loader, 'should be equal');
+        $this->assertSame($loader->getContain(), $copyLoader->getContain());
+        $this->assertSame($loader->getMatching(), $copyLoader->getMatching());
+        $this->assertSame($loader->isAutoFieldsEnabled(), $copyLoader->isAutoFieldsEnabled());
         $this->assertNotSame($copyLoader, $loader, 'should be clones');
 
         $reflect = new ReflectionProperty($loader, '_matching');

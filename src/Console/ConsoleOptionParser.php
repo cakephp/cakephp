@@ -821,8 +821,8 @@ class ConsoleOptionParser
      * and that the argument is a valid choice.
      *
      * @param string $argument The argument to append
-     * @param array $args The array of parsed args to append to.
-     * @return array<string> Args
+     * @param array<int, array<string>|string> $args The array of parsed args to append to.
+     * @return array<int, array<string>|string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseArg(string $argument, array $args): array

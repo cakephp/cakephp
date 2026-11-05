@@ -213,7 +213,9 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, mixed>
+     * @template TExtracted
+     * @param (callable(mixed): TExtracted)|string $path
+     * @return ($path is string ? \Cake\Collection\CollectionInterface<TKey, mixed> : \Cake\Collection\CollectionInterface<TKey, TExtracted>)
      */
     public function extract(callable|string $path): CollectionInterface
     {
@@ -344,7 +346,7 @@ trait CollectionTrait
      *   or a function returning the grouping key out of the provided element
      * @param bool $preserveKeys Whether to preserve the keys of the existing
      *   collection when the values are grouped. Defaults to false.
-     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
+     * @return \Cake\Collection\CollectionInterface<array-key, array<TValue>>
      */
     public function groupBy(callable|string $path, bool $preserveKeys = false): CollectionInterface
     {
@@ -372,13 +374,16 @@ trait CollectionTrait
             $group[$pathValue][] = $value;
         }
 
-        return $this->newCollection($group);
+        /** @var \Cake\Collection\CollectionInterface<array-key, array<TValue>> $result */
+        $result = $this->newCollection($group);
+
+        return $result;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<mixed, TValue>
+     * @return \Cake\Collection\CollectionInterface<array-key, TValue>
      */
     public function indexBy(callable|string $path): CollectionInterface
     {
@@ -407,7 +412,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<mixed, int>
+     * @return \Cake\Collection\CollectionInterface<array-key, int>
      */
     public function countBy(callable|string $path): CollectionInterface
     {
@@ -655,7 +660,9 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @template TNewValue
+     * @param TNewValue $item
+     * @return \Cake\Collection\CollectionInterface<mixed, TValue|TNewValue>
      */
     public function appendItem(mixed $item, mixed $key = null): CollectionInterface
     {
@@ -681,7 +688,9 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @template TNewValue
+     * @param TNewValue $item
+     * @return \Cake\Collection\CollectionInterface<mixed, TValue|TNewValue>
      */
     public function prependItem(mixed $item, mixed $key = null): CollectionInterface
     {
@@ -868,7 +877,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return ($keepKeys is true ? \Cake\Collection\CollectionInterface<TKey, TValue> : \Cake\Collection\CollectionInterface<int, TValue>)
      */
     public function compile(bool $keepKeys = true): CollectionInterface
     {
@@ -1227,7 +1236,7 @@ trait CollectionTrait
     /**
      * Returns a new collection containing only the keys of the elements.
      *
-     * @return \Cake\Collection\CollectionInterface<int, TValue>
+     * @return \Cake\Collection\CollectionInterface<int, TKey>
      */
     public function keys(): CollectionInterface
     {

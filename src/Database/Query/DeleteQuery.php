@@ -55,6 +55,8 @@ class DeleteQuery extends Query
      * Can be combined with from(), where() and other methods to
      * create delete queries with specific conditions.
      *
+     * Parameters to this method should never be include user supplied data.
+     *
      * @param string|null $table The table to use when deleting.
      * @return $this
      */

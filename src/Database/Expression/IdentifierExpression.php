@@ -51,7 +51,9 @@ class IdentifierExpression implements ExpressionInterface
     public function __construct(string $identifier, ?string $collation = null)
     {
         $this->_identifier = $identifier;
-        $this->collation = $collation;
+        if ($collation !== null) {
+            $this->setCollation($collation);
+        }
     }
 
     /**
@@ -83,6 +85,7 @@ class IdentifierExpression implements ExpressionInterface
      */
     public function setCollation(string $collation): void
     {
+        QueryExpression::ensureSimpleString('collation', $collation);
         $this->collation = $collation;
     }
 

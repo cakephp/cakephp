@@ -666,7 +666,9 @@ class RouteCollectionTest extends TestCase
     public function testMatchNamedError(): void
     {
         $this->expectException(MissingRouteException::class);
-        $this->expectExceptionMessage('A named route was found for `fail`, but matching failed');
+        $this->expectExceptionMessage(
+            'A named route was found for `fail`, but matching failed. Passed parameters: `{"controller":"Articles"}`.',
+        );
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -675,7 +677,7 @@ class RouteCollectionTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/b');
         $routes->connect('/{lang}/articles', ['controller' => 'Articles'], ['_name' => 'fail']);
 
-        $this->collection->match(['_name' => 'fail'], $context);
+        $this->collection->match(['_name' => 'fail', 'controller' => 'Articles'], $context);
     }
 
     /**

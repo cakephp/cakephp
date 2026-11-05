@@ -89,6 +89,16 @@ Configure::write('App', [
     ],
 ]);
 
+// Remove this in 6.x alongside isMariadb()
+Configure::write('Error.ignoredDeprecationPaths', [
+    'src/Database/Driver/Mysql.php',
+    'src/Database/Schema/MysqlSchemaDialect.php',
+    'tests/TestCase/Database/Driver/MysqlTest.php',
+    'tests/TestCase/Database/Schema/MysqlSchemaDialectTest.php',
+    'tests/TestCase/Database/QueryTests/CommonTableExpressionQueryTest.php',
+    'tests/TestCase/ORM/Query/QueryRegressionTest.php',
+]);
+
 Cache::setConfig([
     '_cake_translations_' => [
         'engine' => 'File',
@@ -107,7 +117,9 @@ if (!getenv('DB_URL')) {
     putenv('DB_URL=sqlite:///:memory:');
 }
 
-ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
+// Persistent connections share one server session between PDO handles with the same DSN.
+// Freeing a second handle (e.g. one built by a test) would roll back the fixture transaction.
+ConnectionManager::setConfig('test', ['url' => getenv('DB_URL'), 'persistent' => false]);
 
 if (env('CAKE_TEST_AUTOQUOTE')) {
     /** @var \Cake\Database\Connection $connection */

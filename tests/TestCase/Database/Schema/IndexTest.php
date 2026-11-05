@@ -5,6 +5,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\Index;
 use Cake\TestSuite\TestCase;
+use Closure;
 
 /**
  * Tests for the Index class.
@@ -123,6 +124,30 @@ class IndexTest extends TestCase
         $index->setAccessMethod(Index::GIN);
         $result = $index->toArray();
         $this->assertSame(Index::GIN, $result['accessMethod']);
+    }
+
+    /**
+     * Unserializing index data created by an older CakePHP version (where a
+     * nullable property such as `accessMethod` did not yet exist) must not throw
+     * "must not be accessed before initialization" when the property is read.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19562
+     * @return void
+     */
+    public function testUnserializeLegacyDataWithoutAccessMethod(): void
+    {
+        $index = new Index('title_idx', ['title']);
+        // Simulate a legacy serialized payload: remove the property so it is
+        // absent from the serialized data, exactly like a pre-5.4 dump.
+        Closure::bind(function (): void {
+            unset($this->accessMethod);
+        }, $index, Index::class)();
+
+        $restored = unserialize(serialize($index));
+
+        $this->assertInstanceOf(Index::class, $restored);
+        $this->assertNull($restored->getAccessMethod());
+        $this->assertArrayNotHasKey('accessMethod', $restored->toArray());
     }
 
     public function testSetAttributes(): void

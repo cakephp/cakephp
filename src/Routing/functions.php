@@ -57,3 +57,20 @@ function url(UriInterface|array|string|null $url = null, bool $full = false): st
 {
     return Router::url($url, $full);
 }
+
+/**
+ * urldecode all of the segments in a path, but skip over %2f
+ * because applications can use %2f in a segment.
+ *
+ * @internal
+ */
+function urldecodeSegments(string $url): string
+{
+    $parts = explode('/', $url);
+    $parts = array_map(
+        fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+        $parts,
+    );
+
+    return implode('/', $parts);
+}

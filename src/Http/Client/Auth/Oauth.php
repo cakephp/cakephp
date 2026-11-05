@@ -19,6 +19,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
+use SensitiveParameter;
 
 /**
  * Oauth 1 authentication strategy for Cake\Http\Client
@@ -40,7 +41,7 @@ class Oauth
      * @return \Cake\Http\Client\Request The updated request.
      * @throws \Cake\Core\Exception\CakeException On invalid signature types.
      */
-    public function authentication(Request $request, array $credentials): Request
+    public function authentication(Request $request, #[SensitiveParameter] array $credentials): Request
     {
         if (!isset($credentials['consumerKey'])) {
             return $request;
@@ -101,7 +102,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string Authorization header.
      */
-    protected function _plaintext(Request $request, array $credentials): string
+    protected function _plaintext(Request $request, #[SensitiveParameter] array $credentials): string
     {
         $values = [
             'oauth_version' => '1.0',
@@ -130,7 +131,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string
      */
-    protected function _hmacSha1(Request $request, array $credentials): string
+    protected function _hmacSha1(Request $request, #[SensitiveParameter] array $credentials): string
     {
         $nonce = $credentials['nonce'] ?? uniqid();
         $timestamp = $credentials['timestamp'] ?? time();
@@ -171,7 +172,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string
      */
-    protected function _rsaSha1(Request $request, array $credentials): string
+    protected function _rsaSha1(Request $request, #[SensitiveParameter] array $credentials): string
     {
         if (!function_exists('openssl_pkey_get_private')) {
             throw new CakeException('RSA-SHA1 signature method requires the OpenSSL extension.');

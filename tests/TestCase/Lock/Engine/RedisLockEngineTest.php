@@ -58,6 +58,9 @@ class RedisLockEngineTest extends TestCase
         ]);
 
         if (!$result) {
+            if (env('REDIS_PORT')) {
+                $this->fail('REDIS_PORT is set, but Redis is not reachable.');
+            }
             $this->markTestSkipped('Could not connect to Redis server.');
         }
 
@@ -67,6 +70,9 @@ class RedisLockEngineTest extends TestCase
             (int)env('REDIS_PORT', 6379),
         );
         if (!$connected || !$this->redis->select(15)) {
+            if (env('REDIS_PORT')) {
+                $this->fail('REDIS_PORT is set, but the Redis test database is not reachable.');
+            }
             $this->markTestSkipped('Could not connect to Redis test database.');
         }
 

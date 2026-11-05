@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Driver;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
@@ -248,6 +249,54 @@ class PostgresTest extends TestCase
         );
     }
 
+    public function testJsonValueLegacyTranslation(): void
+    {
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'score' => $query->func()->jsonValue('comment', '$.scores[1]'),
+        ])->from('comments');
+
+        $this->assertSame(
+            'SELECT (JSONB_PATH_QUERY(comment::jsonb, :param0)) AS "score" FROM comments',
+            $query->sql(),
+        );
+        $this->assertSame(
+            ['value' => '$.scores[1]', 'type' => 'string', 'placeholder' => 'param0'],
+            $query->getValueBinder()->bindings()[':param0'],
+        );
+    }
+
+    public function testConcatCastsBoundParams(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select([
+                'title' => $query->func()->concat(['title' => 'identifier', "' string'" => 'literal', ' is ', 1]),
+            ])
+            ->from('articles')
+            ->where(['id' => 1]);
+
+        $this->assertEqualsSql(
+            <<<'SQL'
+            SELECT (CONCAT(title, ' string', CAST(:param0 AS text), CAST(:param1 AS text))) AS title FROM articles WHERE id = :c2
+            SQL,
+            $query->sql(),
+        );
+    }
+
     /**
      * Tests driver-specific feature support check.
      */
@@ -299,5 +348,44 @@ class PostgresTest extends TestCase
         $result = $driver->quote("O\slash");
         $expected = "'O\slash'";
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * test jsonValue expression tranformation and parameter binding
+     *
+     * @return void
+     */
+    public function testJsonValueParameterBinding(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!$connection->getDriver() instanceof Postgres);
+
+        $stmt = $connection->insert(
+            'comments',
+            ['article_id' => 1, 'user_id' => 1, 'comment' => ['scores' => [25, 36]]],
+            ['comment' => 'json'],
+        );
+        $this->assertEquals(1, $stmt->rowCount());
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc');
+        $result->closeCursor();
+        $this->assertSame('36', $comment[0]['score']);
+
+        $query = new SelectQuery($connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
+            ->from('comments')
+            ->where(['id' => 1]);
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('syntax error at end of jsonpath input');
+        $query->execute();
     }
 }

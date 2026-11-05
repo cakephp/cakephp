@@ -72,8 +72,7 @@ class Cache
      * An array mapping URL schemes to fully qualified caching engine
      * class names.
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,
@@ -90,6 +89,14 @@ class Cache
      * @var bool
      */
     protected static bool $_enabled = true;
+
+    /**
+     * Names of the pools currently being constructed, used to detect reentrant calls.
+     *
+     * @see \Cake\Cache\Cache::pool()
+     * @var array<string, true>
+     */
+    protected static array $building = [];
 
     /**
      * Group to Config mapping
@@ -212,7 +219,21 @@ class Cache
             return $registry->get($config);
         }
 
-        static::_buildEngine($config);
+        if (isset(static::$building[$config])) {
+            // Reentered while this pool is still being constructed. An engine that cannot reach
+            // its backend may log that failure, and the logger may in turn ask for a cache pool -
+            // for example one that stores database schema metadata. Nothing is registered yet at
+            // that point, so without this check the two would call each other until the process
+            // runs out of memory. Degrade to a null engine instead.
+            return new NullEngine();
+        }
+
+        static::$building[$config] = true;
+        try {
+            static::_buildEngine($config);
+        } finally {
+            unset(static::$building[$config]);
+        }
 
         return $registry->get($config);
     }
@@ -276,7 +297,7 @@ class Cache
      * Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'], 'long_term');
      * ```
      *
-     * @param iterable $data An array or Traversable of data to be stored in the cache
+     * @param iterable<string, mixed> $data An array or Traversable of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True on success, false on failure
      * @throws \Cake\Cache\Exception\InvalidArgumentException
@@ -332,7 +353,7 @@ class Cache
      *
      * @param iterable<string> $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return iterable An array containing, for each of the given $keys,
+     * @return iterable<string, mixed> An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
@@ -484,7 +505,7 @@ class Cache
      * Calling this method will load all the configured engines.
      *
      * @param string|null $group Group name or null to retrieve all group mappings
-     * @return array<string, array> Map of group and all configuration that has the same group
+     * @return array<string, array<string>> Map of group and all configuration that has the same group
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      */
     public static function groupConfigs(?string $group = null): array

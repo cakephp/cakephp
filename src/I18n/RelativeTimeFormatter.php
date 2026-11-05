@@ -413,9 +413,8 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * Build the options for relative date formatting.
      *
      * @param array<string, mixed> $options The options provided by the user.
-     * @param string $class The class name to use for defaults.
+     * @param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class The class name to use for defaults.
      * @return array<string, mixed> Options with defaults applied.
-     * @phpstan-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class
      */
     protected function _options(array $options, string $class): array
     {

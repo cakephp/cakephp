@@ -52,11 +52,26 @@ class MemcachedLockEngineTest extends TestCase
         ]);
 
         if (!$result) {
+            if (env('MEMCACHED_PORT')) {
+                $this->fail('MEMCACHED_PORT is set, but Memcached is not reachable.');
+            }
             $this->markTestSkipped('Could not connect to Memcached server.');
         }
 
         // Clean up any existing test locks
         $this->cleanupTestLocks();
+    }
+
+    /**
+     * Test that configured servers replace the default instead of being merged into it.
+     */
+    public function testInitReplacesDefaultServers(): void
+    {
+        $servers = [[env('MEMCACHED_HOST', '127.0.0.1'), (int)env('MEMCACHED_PORT', 11211)]];
+
+        $engine = new MemcachedLockEngine();
+        $this->assertTrue($engine->init(['servers' => $servers]));
+        $this->assertSame($servers, $engine->getConfig('servers'));
     }
 
     /**

@@ -16,11 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility\Fs;
 
+use Cake\TestSuite\FsFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Fs\Enum\DepthOperator;
 use Cake\Utility\Fs\Finder;
 use Iterator;
-use org\bovigo\vfs\vfsStream;
 use SplFileInfo;
 
 /**
@@ -31,9 +31,9 @@ class FinderTest extends TestCase
     /**
      * Test virtual filesystem
      *
-     * @var \org\bovigo\vfs\vfsStreamDirectory
+     * @var string
      */
-    protected $root;
+    protected string $root;
 
     /**
      * Setup test
@@ -44,7 +44,7 @@ class FinderTest extends TestCase
     {
         parent::setUp();
 
-        $this->root = vfsStream::setup('root', null, [
+        $this->root = FsFixture::setup('root', [
             'src' => [
                 'Controller' => [
                     'AppController.php' => '<?php',
@@ -82,10 +82,16 @@ class FinderTest extends TestCase
         ]);
     }
 
+    protected function tearDown(): void
+    {
+        FsFixture::tearDown();
+        parent::tearDown();
+    }
+
     public function testBasicFind(): void
     {
         $finder = new Finder();
-        $files = $finder->in(vfsStream::url('root/src'))->files();
+        $files = $finder->in(FsFixture::path('root/src'))->files();
 
         $this->assertInstanceOf(Iterator::class, $files);
 
@@ -104,8 +110,8 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
-            ->in(vfsStream::url('root/tests'))
+            ->in(FsFixture::path('root/src'))
+            ->in(FsFixture::path('root/tests'))
             ->files();
 
         $count = 0;
@@ -120,7 +126,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->files();
 
@@ -138,7 +144,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->exclude('tests')
             ->exclude('webroot')
             ->files();
@@ -157,7 +163,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(3, DepthOperator::LESS_THAN)
             ->files();
 
@@ -171,7 +177,7 @@ class FinderTest extends TestCase
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(1)
             ->files();
 
@@ -188,7 +194,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->path('Controller')
             ->files();
 
@@ -205,7 +211,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->notPath('Controller')
             ->files();
 
@@ -222,7 +228,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->ignoreHiddenFiles(false)
             ->files();
 
@@ -238,7 +244,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->files();
 
         $paths = [];
@@ -256,7 +262,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $result = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->exclude('View')
             ->depth(3, DepthOperator::LESS_THAN);
@@ -268,7 +274,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->name('*.css')
             ->files();
 
@@ -285,7 +291,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->files();
 
@@ -302,7 +308,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('User*.php')
             ->files();
 
@@ -323,7 +329,7 @@ class FinderTest extends TestCase
 
         // Test .js files
         $jsFiles = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->name('*.js')
             ->files();
 
@@ -337,7 +343,7 @@ class FinderTest extends TestCase
         // Test .css files
         $finder2 = new Finder();
         $cssFiles = $finder2
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->name('*.css')
             ->files();
 
@@ -353,7 +359,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->exclude('Controller')
             ->files();
@@ -372,7 +378,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->path('Controller')
             ->name('*Controller.php')
             ->files();
@@ -391,7 +397,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('src/**/*.php')
             ->files();
 
@@ -408,7 +414,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('src/Controller/*.php')
             ->files();
 
@@ -426,7 +432,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('src/**/*Controller.php')
             ->files();
 
@@ -444,7 +450,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('webroot/**/*.css')
             ->files();
 
@@ -461,7 +467,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('src/**/*.php')
             ->exclude('Controller')
             ->files();
@@ -480,7 +486,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->pattern('**/*.php')
             ->depth(1)
             ->files();
@@ -500,7 +506,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('**/*.css')
             ->pattern('**/*.js')
             ->files();
@@ -519,7 +525,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->path('Model')
             ->notPath('Entity')
@@ -540,8 +546,8 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src/Controller'))
-            ->in(vfsStream::url('root/src/View'))
+            ->in(FsFixture::path('root/src/Controller'))
+            ->in(FsFixture::path('root/src/View'))
             ->name('*.php')
             ->files();
 
@@ -558,8 +564,8 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
-            ->in(vfsStream::url('root/tests'))
+            ->in(FsFixture::path('root/src'))
+            ->in(FsFixture::path('root/tests'))
             ->pattern('**/*Controller*.php')
             ->files();
 
@@ -577,7 +583,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->pattern('**/*.nonexistent')
             ->files();
 
@@ -593,7 +599,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->name('User*.php')
             ->path('Table')
             ->files();
@@ -612,7 +618,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->depth(0)
             ->files();
 
@@ -629,7 +635,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->name('*.php')
             ->exclude('tests')
             ->exclude('webroot')
@@ -652,7 +658,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->notName('*Controller.php')
             ->files();
@@ -673,7 +679,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->name('*.*')
             ->notName('*.php')
             ->notName('.htaccess')
@@ -694,7 +700,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('User*.php')
             ->notName('*Table.php')
             ->files();
@@ -715,7 +721,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->recursive(false)
             ->files();
 
@@ -732,7 +738,7 @@ class FinderTest extends TestCase
     public function testNonRecursiveWithFiles(): void
     {
         // Create structure with files at top level
-        vfsStream::setup('test', null, [
+        FsFixture::setup('test', [
             'top.php' => '<?php',
             'another.php' => '<?php',
             'subdir' => [
@@ -742,7 +748,7 @@ class FinderTest extends TestCase
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('test'))
+            ->in(FsFixture::path('test'))
             ->recursive(false)
             ->files();
 
@@ -759,7 +765,7 @@ class FinderTest extends TestCase
 
     public function testNonRecursiveWithNameFilter(): void
     {
-        vfsStream::setup('test', null, [
+        FsFixture::setup('test', [
             'match.php' => '<?php',
             'ignore.txt' => 'text',
             'another.php' => '<?php',
@@ -767,7 +773,7 @@ class FinderTest extends TestCase
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('test'))
+            ->in(FsFixture::path('test'))
             ->recursive(false)
             ->name('*.php')
             ->files();
@@ -785,14 +791,14 @@ class FinderTest extends TestCase
 
     public function testNonRecursiveIgnoresHiddenFiles(): void
     {
-        vfsStream::setup('test', null, [
+        FsFixture::setup('test', [
             'visible.txt' => 'content',
             '.hidden' => 'hidden content',
         ]);
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('test'))
+            ->in(FsFixture::path('test'))
             ->recursive(false)
             ->files();
 
@@ -808,7 +814,7 @@ class FinderTest extends TestCase
 
     public function testNonRecursiveMultipleDirectories(): void
     {
-        vfsStream::setup('test', null, [
+        FsFixture::setup('test', [
             'dir1' => [
                 'a.txt' => 'content',
             ],
@@ -819,8 +825,8 @@ class FinderTest extends TestCase
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('test/dir1'))
-            ->in(vfsStream::url('test/dir2'))
+            ->in(FsFixture::path('test/dir1'))
+            ->in(FsFixture::path('test/dir2'))
             ->recursive(false)
             ->files();
 
@@ -856,11 +862,11 @@ class FinderTest extends TestCase
             ],
         ];
 
-        vfsStream::setup('exclude_test', null, $structure);
+        FsFixture::setup('exclude_test', $structure);
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('exclude_test/project'))
+            ->in(FsFixture::path('exclude_test/project'))
             ->exclude('vendor')
             ->files();
 
@@ -881,7 +887,7 @@ class FinderTest extends TestCase
     public function testDirectories(): void
     {
         $finder = new Finder();
-        $directories = $finder->in(vfsStream::url('root/src'))->directories();
+        $directories = $finder->in(FsFixture::path('root/src'))->directories();
 
         $this->assertInstanceOf(Iterator::class, $directories);
 
@@ -906,7 +912,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $directories = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->recursive(false)
             ->directories();
 
@@ -930,7 +936,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $directories = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->exclude('Model')
             ->directories();
 
@@ -952,7 +958,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $directories = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(0)
             ->directories();
 
@@ -972,7 +978,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $directories = $finder
-            ->in(vfsStream::url('root/tests'))
+            ->in(FsFixture::path('root/tests'))
             ->name('*Case')
             ->recursive(false)
             ->directories();
@@ -991,7 +997,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $items = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(0)
             ->all();
 
@@ -1017,7 +1023,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $items = $finder
-            ->in(vfsStream::url('root/src/Model'))
+            ->in(FsFixture::path('root/src/Model'))
             ->all();
 
         $files = [];
@@ -1042,7 +1048,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->path('/Controller/')
             ->files();
 
@@ -1061,7 +1067,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->path('#Model/(Entity|Table)#')
             ->files();
 
@@ -1080,7 +1086,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->name('*.css')
             ->name('*.js')
             ->files();
@@ -1100,7 +1106,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::NOT_EQUAL)
             ->files();
 
@@ -1112,9 +1118,10 @@ class FinderTest extends TestCase
         // Should exclude depth 0 files, only get nested files
         $this->assertGreaterThan(0, $paths);
         // All paths should have at least one subdirectory
+        $basePath = FsFixture::path('root/src') . DIRECTORY_SEPARATOR;
         foreach ($paths as $path) {
-            $relativePath = str_replace(vfsStream::url('root/src') . '/', '', $path);
-            $this->assertStringContainsString('/', $relativePath);
+            $relativePath = str_replace($basePath, '', $path);
+            $this->assertStringContainsString(DIRECTORY_SEPARATOR, $relativePath);
         }
     }
 
@@ -1122,7 +1129,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::GREATER_THAN)
             ->files();
 
@@ -1133,9 +1140,10 @@ class FinderTest extends TestCase
 
         // Should only get files deeper than depth 0
         $this->assertGreaterThan(0, $paths);
+        $basePath = FsFixture::path('root/src') . DIRECTORY_SEPARATOR;
         foreach ($paths as $path) {
-            $relativePath = str_replace(vfsStream::url('root/src') . '/', '', $path);
-            $this->assertStringContainsString('/', $relativePath);
+            $relativePath = str_replace($basePath, '', $path);
+            $this->assertStringContainsString(DIRECTORY_SEPARATOR, $relativePath);
         }
     }
 
@@ -1143,7 +1151,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(1, DepthOperator::LESS_THAN_OR_EQUAL)
             ->files();
 
@@ -1164,7 +1172,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(1, DepthOperator::GREATER_THAN_OR_EQUAL)
             ->files();
 
@@ -1184,7 +1192,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::GREATER_THAN) // Greater than 0
             ->depth(2, DepthOperator::LESS_THAN) // Less than 2
             ->files();
@@ -1205,7 +1213,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/webroot'))
+            ->in(FsFixture::path('root/webroot'))
             ->ignoreHiddenFiles(false)
             ->recursive(false)
             ->files();
@@ -1223,11 +1231,11 @@ class FinderTest extends TestCase
     public function testEmptyDirectory(): void
     {
         // Create an empty directory
-        vfsStream::create(['empty' => []], $this->root);
+        FsFixture::create(['empty' => []], $this->root);
 
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/empty'))
+            ->in(FsFixture::path('root/empty'))
             ->files();
 
         $count = 0;
@@ -1243,7 +1251,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->notName('*Controller.php')
             ->files();
@@ -1261,7 +1269,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->path('Controller')
             ->path('Entity')
             ->files();
@@ -1286,7 +1294,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->filter(function (SplFileInfo $file) {
                 // Only files with "Controller" in name
                 return str_contains($file->getFilename(), 'Controller');
@@ -1310,7 +1318,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->filter(fn(SplFileInfo $file) => str_contains($file->getFilename(), 'User'))
             ->filter(fn(SplFileInfo $file) => !str_contains($file->getFilename(), 'Table'))
             ->files();
@@ -1334,7 +1342,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root'))
+            ->in(FsFixture::path('root'))
             ->filter(function (SplFileInfo $file, string $relativePath) {
                 // Only files in src directory
                 return str_starts_with($relativePath, 'src');
@@ -1357,7 +1365,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->filter(fn(SplFileInfo $file) => strlen($file->getFilename()) > 18)
             ->files();
@@ -1380,7 +1388,7 @@ class FinderTest extends TestCase
     {
         $finder = new Finder();
         $files = $finder
-            ->in(vfsStream::url('root/src'))
+            ->in(FsFixture::path('root/src'))
             ->filter(fn(SplFileInfo $file) => str_contains($file->getFilename(), 'NonExistent'))
             ->files();
 

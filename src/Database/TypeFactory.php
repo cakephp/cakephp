@@ -26,8 +26,7 @@ class TypeFactory
      * identifier is used as key and a complete namespaced class name as value
      * representing the class that will do actual type conversions.
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
+     * @var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $_types = [
         'biginteger' => Type\IntegerType::class,
@@ -66,7 +65,7 @@ class TypeFactory
     /**
      * Contains a map of type object instances to be reused if needed.
      *
-     * @var array<\Cake\Database\TypeInterface>
+     * @var array<string, \Cake\Database\TypeInterface>
      */
     protected static array $_builtTypes = [];
 
@@ -91,7 +90,7 @@ class TypeFactory
     /**
      * Returns an arrays with all the mapped type objects, indexed by name.
      *
-     * @return array<\Cake\Database\TypeInterface>
+     * @return array<string, \Cake\Database\TypeInterface>
      */
     public static function buildAll(): array
     {
@@ -118,9 +117,8 @@ class TypeFactory
      * Registers a new type identifier and maps it to a fully namespaced classname.
      *
      * @param string $type Name of type to map.
-     * @param string $className The classname to register.
+     * @param class-string<\Cake\Database\TypeInterface> $className The classname to register.
      * @return void
-     * @phpstan-param class-string<\Cake\Database\TypeInterface> $className
      */
     public static function map(string $type, string $className): void
     {
@@ -131,9 +129,8 @@ class TypeFactory
     /**
      * Set type to classname mapping.
      *
-     * @param array<string, string> $map List of types to be mapped.
+     * @param array<string, class-string<\Cake\Database\TypeInterface>> $map List of types to be mapped.
      * @return void
-     * @phpstan-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
     public static function setMap(array $map): void
     {
@@ -148,7 +145,7 @@ class TypeFactory
      * Use getMap() without arguments to get the full map, or getMapped($type) to get a specific type mapping.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
+     * @return ($type is null ? array<string, class-string<\Cake\Database\TypeInterface>> : class-string<\Cake\Database\TypeInterface>|null) Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null): array|string|null
     {
@@ -168,8 +165,7 @@ class TypeFactory
      * Get mapped class name for a specific type.
      *
      * @param string $type Type name to get mapped class for.
-     * @return string|null Configured class name for given $type or null if not found.
-     * @phpstan-return class-string<\Cake\Database\TypeInterface>|null
+     * @return class-string<\Cake\Database\TypeInterface>|null Configured class name for given $type or null if not found.
      */
     public static function getMapped(string $type): ?string
     {

@@ -11,21 +11,30 @@ on:
       - '*'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
+    continue-on-error: ${{ matrix.php-version == '8.6' }}
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.5']
+        php-version: ['8.2', '8.5', '8.6']
         db-type: [sqlite, pgsql]
         dependencies: ['highest']
         include:
           - php-version: '8.2'
             db-type: 'mariadb'
+            dependencies: highest
+
+          - php-version: '8.2'
+            db-type: 'mariadb-mysql'
             dependencies: highest
 
           - php-version: '8.2'
@@ -45,6 +54,10 @@ jobs:
             dependencies: highest
 
           - php-version: '8.5'
+            db-type: 'mysql'
+            dependencies: highest
+
+          - php-version: '8.6'
             db-type: 'mysql'
             dependencies: highest
 
@@ -83,12 +96,16 @@ jobs:
       if: matrix.db-type == 'mysql' && matrix.dependencies == 'lowest'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-    - name: Setup PostgreSQL with PostGIS
-      if: matrix.db-type == 'pgsql'
+    - name: Setup PostgreSQL 16 with PostGIS # Test before PostgreSQL 17 introduced standard json path functions
+      if: matrix.db-type == 'pgsql' && matrix.php-version == '8.2'
+      run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:16-3.5
+
+    - name: Setup PostgreSQL 18 with PostGIS
+      if: matrix.db-type == 'pgsql' && matrix.php-version != '8.2'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8
-      if: matrix.db-type == 'mariadb'
+      if: matrix.db-type == 'mariadb' || matrix.db-type == 'mariadb-mysql'
       run: |
         docker run -d --name=mariadb \
           -e MARIADB_ROOT_PASSWORD=root \
@@ -110,12 +127,12 @@ jobs:
           sleep 2
         done
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, intl, apcu, memcached, redis, pdo_${{ matrix.db-type }}
@@ -128,10 +145,10 @@ jobs:
         sudo locale-gen de_DE.UTF-8
 
     - name: Composer install
-      uses: ramsey/composer-install@v4
+      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
       with:
         dependency-versions: ${{ matrix.dependencies }}
-        composer-options: "${{ matrix.composer-options }}"
+        composer-options: "${{ matrix.php-version == '8.6' && '--ignore-platform-req=php' || matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.2' && matrix.db-type == 'mysql'
@@ -145,14 +162,15 @@ jobs:
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mariadb://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb-mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database-autoquote.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         elif [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'lowest' ]]; then
           vendor/bin/phpunit
@@ -164,9 +182,9 @@ jobs:
 
     - name: Submit code coverage
       if: matrix.php-version == '8.2'
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
       with:
-        files: coverage.xml,coverage-database.xml,coverage-functions.xml
+        files: coverage.xml,coverage-database.xml,coverage-database-autoquote.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}
 
   testsuite-windows:
@@ -178,7 +196,7 @@ jobs:
       PHP_VERSION: '8.2'
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
 
@@ -188,26 +206,26 @@ jobs:
 
     - name: Setup PHP extensions cache
       id: php-ext-cache
-      uses: shivammathur/cache-extensions@v1
+      uses: shivammathur/cache-extensions@38b47b5568926cb949d3c946e30cf8eab5326c39 # 1.15.5
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         key: ${{ steps.key-date.outputs.date }}
 
     - name: Cache PHP extensions
-      uses: actions/cache@v5
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ${{ steps.php-ext-cache.outputs.dir }}
         key: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
         restore-keys: ${{ runner.os }}-php-ext-${{ steps.php-ext-cache.outputs.key }}
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}
         ini-values: apc.enable_cli = 1, zend.assertions = 1, extension = php_fileinfo.dll
-        coverage: none
+        coverage: pcov
 
     - name: Setup SQLServer
       run: |
@@ -217,14 +235,14 @@ jobs:
         sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "create database cakephp;"
 
     - name: Composer install
-      uses: ramsey/composer-install@v4
+      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
     - name: Run PHPUnit
       env:
         DB_URL: 'sqlserver://@(localdb)\MSSQLLocalDB/cakephp'
       run: |
           set CAKE_DISABLE_GLOBAL_FUNCS=1
-          vendor/bin/phpunit --display-incomplete
+          vendor/bin/phpunit --display-incomplete --coverage-clover=coverage-sqlserver.xml
 
     - name: Run PHPUnit (autoquote enabled)
       env:
@@ -232,6 +250,12 @@ jobs:
       run: |
           set CAKE_TEST_AUTOQUOTE=1
           vendor/bin/phpunit --display-incomplete --testsuite=database
+
+    - name: Submit code coverage
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      with:
+        files: coverage-sqlserver.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   cs-stan:
     name: Coding Standard & Static Analysis
@@ -242,12 +266,12 @@ jobs:
       PHPSTAN_TESTS: 1
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.2'
           extensions: mbstring, intl, pcntl
@@ -257,10 +281,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Composer install
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.phive
@@ -283,7 +307,7 @@ jobs:
 
       - name: Setup phpcs cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/phpcs.cache
           key: ${{ runner.os }}-phpcs-${{ hashFiles('phpcs.xml', 'composer.lock') }}
@@ -311,7 +335,7 @@ jobs:
 
       - name: Setup rector cache
         if: always()
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/rector
           key: ${{ runner.os }}-rector-${{ hashFiles('rector.php', 'composer.lock') }}
@@ -327,6 +351,10 @@ jobs:
           RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
         run: composer rector-setup && composer rector-check
 
+      - name: Run StructArmed
+        if: always()
+        run: vendor/bin/structarmed analyze
+
   split-packages-stan:
     name: Static Analysis for Split Packages
     runs-on: ubuntu-24.04
@@ -335,12 +363,12 @@ jobs:
       PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5,99BF4D9A33D65E1E'
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: '8.2'
           extensions: mbstring, intl
@@ -350,10 +378,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Composer install
-        uses: ramsey/composer-install@v4
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Cache phive tools
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             ~/.phive

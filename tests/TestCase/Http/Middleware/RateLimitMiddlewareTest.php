@@ -316,33 +316,88 @@ class RateLimitMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testProxyHeaders(): void
+    public function testProxyHeadersWithTrustProxy(): void
+    {
+        $middleware = new RateLimitMiddleware([
+            'limit' => 1,
+            'window' => 60,
+            'cache' => 'rate_limit_test',
+            'ipHeader' => 'x-forwarded-for',
+        ]);
+        // Prime the ratelimiter for the client (left-most entry of the chain).
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.0.0.1',
+            ],
+        ]);
+        $resp = $middleware->process($request, $this->handler);
+        $this->assertSame(200, $resp->getStatusCode());
+
+        // Same client IP, different downstream proxy hop must resolve to the same
+        // identifier and exceed the limit. Guards against keying on the full chain,
+        // which an attacker could vary to bypass the limit.
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.9.9.9',
+            ],
+        ]);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test proxy headers for IP detection
+     *
+     * @return void
+     */
+    public function testProxyHeadersNoTrustProxy(): void
     {
         $middleware = new RateLimitMiddleware([
             'limit' => 1,
             'window' => 60,
             'cache' => 'rate_limit_test',
         ]);
-
-        // Test Cloudflare header
+        // Prime the ratelimiter
         $request = new ServerRequest([
             'environment' => [
                 'REMOTE_ADDR' => '127.0.0.1',
-                'HTTP_CF_CONNECTING_IP' => '192.168.1.100',
             ],
         ]);
-        $middleware->process($request, $this->handler);
+        $resp = $middleware->process($request, $this->handler);
+        $this->assertSame(200, $resp->getStatusCode());
 
-        // Test X-Forwarded-For
-        $request2 = new ServerRequest([
+        // X-Forwarded-For is not considered by default as it can be spoofed trivially.
+        $request = new ServerRequest([
             'environment' => [
                 'REMOTE_ADDR' => '127.0.0.1',
                 'HTTP_X_FORWARDED_FOR' => '192.168.1.101, 10.0.0.1',
             ],
         ]);
-        $middleware->process($request2, $this->handler);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
 
-        // Different IPs should work
-        $this->assertTrue(true);
+        // Remote-Addr as a header is also ignored.
+        $request = new ServerRequest([
+            'environment' => [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'HTTP_REMOTE_ADDR' => '192.168.1.101',
+            ],
+        ]);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
     }
 }

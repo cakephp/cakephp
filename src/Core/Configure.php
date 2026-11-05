@@ -112,7 +112,7 @@ class Configure
      *
      * @param string|null $var Variable to obtain. Use '.' to access array elements.
      * @param mixed $default The return value when the configure does not exist
-     * @return mixed Value stored in configure, or null.
+     * @return ($var is null ? array<string, mixed> : mixed) Value stored in configure, or null.
      * @link https://book.cakephp.org/5/en/development/configuration.html#reading-configuration-data
      */
     public static function read(?string $var = null, mixed $default = null): mixed

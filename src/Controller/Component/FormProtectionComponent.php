@@ -33,7 +33,7 @@ use Closure;
  * - Existing fields have not been removed from the form.
  * - Values of hidden inputs have not been changed.
  *
- * @phpstan-property array{validate:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?\Closure} $_config
+ * @property array{validate:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?\Closure} $_config
  */
 class FormProtectionComponent extends Component
 {
@@ -145,7 +145,7 @@ class FormProtectionComponent extends Component
     /**
      * Unlock actions from validation.
      *
-     * @param string|array<string> $actions Action or list of actions to unlock.
+     * @param array<string>|string $actions Action or list of actions to unlock.
      * @param bool $merge Whether to merge with existing unlocked actions or replace them.
      * @return $this
      */
@@ -160,7 +160,7 @@ class FormProtectionComponent extends Component
      * Dot notation can be used to unlock nested fields. For example, `user.name`
      * will unlock the `name` field in the `user` array.
      *
-     * @param string|array<string> $fields Field or list of fields to unlock.
+     * @param array<string>|string $fields Field or list of fields to unlock.
      * @param bool $merge Whether to merge with existing unlocked fields or replace them.
      * @return $this
      */

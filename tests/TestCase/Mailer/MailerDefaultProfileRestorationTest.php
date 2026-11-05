@@ -24,7 +24,7 @@ class MailerDefaultProfileRestorationTest extends TestCase
         $mailer = new class (['template' => 'cakephp']) extends Mailer {
             public bool $testIsCalled = false;
 
-            public function test($to, $subject)
+            public function test($to, $subject): void
             {
                 $this->testIsCalled = true;
             }

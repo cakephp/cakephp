@@ -580,7 +580,7 @@ abstract class Association
             && in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)
         ) {
             $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
+                ' You should specify an alternate name using the `propertyName` option or `setProperty()` method.';
             trigger_error(
                 sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
                 E_USER_WARNING,
@@ -785,9 +785,7 @@ abstract class Association
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
             $query->andWhere(function ($exp) use ($primaryKey) {
-                /** @var callable $callable */
-                $callable = [$exp, 'isNull'];
-                array_map($callable, $primaryKey);
+                array_map($exp->isNull(...), $primaryKey);
 
                 return $exp;
             });
@@ -996,7 +994,7 @@ abstract class Association
         }
 
         $query->select($query->aliasFields($fields, $this->_name));
-        $query->addDefaultTypes($this->getTarget());
+        $query->addDefaultTypes($this->getTarget(), $this->_name);
     }
 
     /**

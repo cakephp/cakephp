@@ -46,7 +46,14 @@ foreach ($phivePharsXml->phar as $phar) {
         break;
     }
 }
-$composerCommand = 'composer require --dev phpstan/phpstan:' . $phpstanVersion;
+// Prefer the dev branches of sibling cakephp packages over the latest tagged
+// release. The split packages require siblings as `5.4.*@dev`, which also matches
+// already-published RC/stable tags; composer prefers those tags, so it would
+// validate against released code that can lag behind the monorepo. Forcing dev
+// stability makes it resolve the `dev-<branch>` mirror instead, matching local src.
+$composerCommand = 'composer config minimum-stability dev'
+    . ' && composer config prefer-stable false'
+    . ' && composer require --dev phpstan/phpstan:' . $phpstanVersion;
 
 $issues = [];
 foreach ($packages as $path => $package) {

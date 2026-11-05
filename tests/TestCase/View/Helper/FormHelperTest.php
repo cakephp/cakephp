@@ -7804,6 +7804,24 @@ class FormHelperTest extends TestCase
             '/div',
         ];
         $this->assertHtml($expected, $result);
+
+        foreach (['jxl', 'webp', 'avif', 'avifs'] as $extension) {
+            $result = $this->Form->submit('submit.' . $extension);
+            $expected = [
+                'div' => ['class' => 'submit'],
+                'input' => ['type' => 'image', 'src' => 'img/submit.' . $extension],
+                '/div',
+            ];
+            $this->assertHtml($expected, $result);
+
+            $result = $this->Form->submit('/images/submit.' . $extension);
+            $expected = [
+                'div' => ['class' => 'submit'],
+                'input' => ['type' => 'image', 'src' => 'images/submit.' . $extension],
+                '/div',
+            ];
+            $this->assertHtml($expected, $result);
+        }
     }
 
     /**

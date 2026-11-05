@@ -260,8 +260,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the class that represent a single row for this table
      *
-     * @var string|null
-     * @phpstan-var class-string<TEntity>|null
+     * @var class-string<TEntity>|null
      */
     protected ?string $_entityClass = null;
 
@@ -926,11 +925,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Get a behavior from the registry.
      *
-     * @param string $name The behavior alias to get from the registry.
-     * @return \Cake\ORM\Behavior
+     * @param TName $name The behavior alias to get from the registry.
+     * @return (TName is key-of<TBehaviors> ? TBehaviors[TName] : \Cake\ORM\Behavior)
      * @template TName of string
-     * @phpstan-param TName $name The behavior alias to get from the registry.
-     * @phpstan-return (TName is key-of<TBehaviors> ? TBehaviors[TName] : \Cake\ORM\Behavior)
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior
@@ -1400,7 +1397,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new CakeException(sprintf(
                 'The `%s` finder must return the query it was given when called via unhydratedFind(); '
                 . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
-                . 'non-hydrating contract — use find() for those.',
+                . 'non-hydrating contract - use find() for those.',
                 $type,
                 get_debug_type($result),
             ));
@@ -2076,11 +2073,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
-            $this->find('all')
+            $this->unhydratedFind()
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
-            ->disableHydration()
             ->toArray(),
         );
     }
@@ -2514,7 +2510,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TSavedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TSavedEntity> $entities Entities to save.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TSavedEntity>|false False on failure, entities list on success.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>)|false False on failure, entities list on success.
      * @throws \Exception
      */
     public function saveMany(
@@ -2538,7 +2534,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TSavedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TSavedEntity> $entities Entities to save.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TSavedEntity> Entities list.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>) Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
@@ -2553,7 +2549,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
      * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      * @throws \Exception If an entity couldn't be saved.
-     * @return iterable<TSavedEntity> Entities list.
+     * @return ($entities is array ? array<TSavedEntity> : iterable<TSavedEntity>) Entities list.
      */
     protected function _saveMany(
         iterable $entities,
@@ -2700,7 +2696,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TDeletedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TDeletedEntity> $entities Entities to delete.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TDeletedEntity>|false Entities list
+     * @return ($entities is array ? array<TDeletedEntity> : iterable<TDeletedEntity>)|false Entities list
      *   on success, false on failure.
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -2725,7 +2721,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TDeletedEntity of \Cake\Datasource\EntityInterface
      * @param iterable<TDeletedEntity> $entities Entities to delete.
      * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
-     * @return iterable<TDeletedEntity> Entities list.
+     * @return ($entities is array ? array<TDeletedEntity> : iterable<TDeletedEntity>) Entities list.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete() for options and events related to this method.
      */
@@ -2881,9 +2877,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery<TSubject>
      * @throws \BadMethodCallException
-     * @uses findAll()
-     * @uses findList()
-     * @uses findThreaded()
+     * @uses \Cake\ORM\Table::findAll()
+     * @uses \Cake\ORM\Table::findList()
+     * @uses \Cake\ORM\Table::findThreaded()
      */
     public function callFinder(string $type, SelectQuery $query, mixed ...$args): SelectQuery
     {
@@ -3517,7 +3513,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param TEntity|array<TEntity> $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query\SelectQuery::contain()
-     * @return TEntity|array<TEntity>
+     * @return ($entities is array ? array<TEntity> : TEntity)
      */
     public function loadInto(EntityInterface|array $entities, array $contain): EntityInterface|array
     {

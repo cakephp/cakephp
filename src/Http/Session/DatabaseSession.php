@@ -20,12 +20,11 @@ namespace Cake\Http\Session;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
-use SessionHandlerInterface;
 
 /**
  * DatabaseSession provides methods to be used with Session.
  */
-class DatabaseSession implements SessionHandlerInterface
+class DatabaseSession extends AbstractSession
 {
     use LocatorAwareTrait;
 
@@ -83,28 +82,6 @@ class DatabaseSession implements SessionHandlerInterface
     }
 
     /**
-     * Method called on open of a database session.
-     *
-     * @param string $path The path where to store/retrieve the session.
-     * @param string $name The session name.
-     * @return bool Success
-     */
-    public function open(string $path, string $name): bool
-    {
-        return true;
-    }
-
-    /**
-     * Method called on close of a database session.
-     *
-     * @return bool Success
-     */
-    public function close(): bool
-    {
-        return true;
-    }
-
-    /**
      * Method used to read from a database session.
      *
      * @param string $id ID that uniquely identifies session in database.
@@ -115,10 +92,9 @@ class DatabaseSession implements SessionHandlerInterface
         $pkField = $this->_table->getPrimaryKey();
         assert(is_string($pkField));
         $result = $this->_table
-            ->find('all')
+            ->unhydratedFind()
             ->select(['data'])
             ->where([$pkField => $id])
-            ->disableHydration()
             ->first();
 
         if (!$result) {

@@ -44,6 +44,7 @@ phpunit.xml.dist export-ignore
 psalm.xml export-ignore
 psalm-baseline.xml export-ignore
 rector.php export-ignore
+structarmed.php export-ignore
 
 tests/composer.lock export-ignore
 tests/phpstan.neon export-ignore

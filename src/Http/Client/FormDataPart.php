@@ -185,9 +185,10 @@ class FormDataPart implements Stringable
      */
     public function __toString(): string
     {
+        $removeNewlines = fn(string $in): string => str_replace(["\r", "\n"], '', $in);
         $out = '';
         if ($this->disposition) {
-            $out .= 'Content-Disposition: ' . $this->disposition;
+            $out .= 'Content-Disposition: ' . $removeNewlines($this->disposition);
             if ($this->name) {
                 $out .= '; ' . $this->_headerParameterToString('name', $this->name);
             }
@@ -197,13 +198,13 @@ class FormDataPart implements Stringable
             $out .= "\r\n";
         }
         if ($this->type) {
-            $out .= 'Content-Type: ' . $this->type . "\r\n";
+            $out .= 'Content-Type: ' . $removeNewlines($this->type) . "\r\n";
         }
         if ($this->transferEncoding) {
-            $out .= 'Content-Transfer-Encoding: ' . $this->transferEncoding . "\r\n";
+            $out .= 'Content-Transfer-Encoding: ' . $removeNewlines($this->transferEncoding) . "\r\n";
         }
         if ($this->contentId) {
-            $out .= 'Content-ID: <' . $this->contentId . ">\r\n";
+            $out .= 'Content-ID: <' . $removeNewlines($this->contentId) . ">\r\n";
         }
         $out .= "\r\n";
         $out .= $this->value;
@@ -223,7 +224,7 @@ class FormDataPart implements Stringable
      */
     protected function _headerParameterToString(string $name, string $value): string
     {
-        $transliterated = Text::transliterate(str_replace('"', '', $value));
+        $transliterated = Text::transliterate(str_replace(['"', "\r", "\n"], '', $value));
         $return = sprintf('%s="%s"', $name, $transliterated);
         if ($this->charset !== null && $value !== $transliterated) {
             $return .= sprintf("; %s*=%s''%s", $name, strtolower($this->charset), rawurlencode($value));

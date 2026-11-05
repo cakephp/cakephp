@@ -82,6 +82,13 @@ abstract class TestCase extends BaseTestCase
     protected array $appPluginsToLoad = [];
 
     /**
+     * Plugins loaded before the test, restored at end of test.
+     *
+     * @var array<string, \Cake\Core\PluginInterface>
+     */
+    private array $pluginsBeforeTest = [];
+
+    /**
      * @var \Cake\Error\PhpError|null
      */
     private ?PhpError $_capturedError = null;
@@ -247,6 +254,7 @@ abstract class TestCase extends BaseTestCase
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
+        $this->pluginsBeforeTest = iterator_to_array(Plugin::getCollection());
         if (class_exists(Router::class, false)) {
             Router::reload();
         }
@@ -274,6 +282,7 @@ abstract class TestCase extends BaseTestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
+        $this->restorePlugins();
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
@@ -475,6 +484,23 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Restore the plugins that were loaded before the test, if the test changed them.
+     *
+     * @return void
+     */
+    private function restorePlugins(): void
+    {
+        $collection = Plugin::getCollection();
+        if (array_keys(iterator_to_array($collection)) === array_keys($this->pluginsBeforeTest)) {
+            return;
+        }
+        $collection->clear();
+        foreach ($this->pluginsBeforeTest as $plugin) {
+            $collection->add($plugin);
+        }
+    }
+
+    /**
      * Clear all plugins from the global plugin collection.
      *
      * Useful in test case teardown methods.
@@ -563,11 +589,10 @@ abstract class TestCase extends BaseTestCase
      * Asserts that a string starts with a given prefix, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
-     * @param string $prefix The prefix to check for.
+     * @param non-empty-string $prefix The prefix to check for.
      * @param string $string The string to search in.
      * @param string $message The message to use for failure.
      * @return void
-     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsWith(string $prefix, string $string, string $message = ''): void
     {
@@ -581,11 +606,10 @@ abstract class TestCase extends BaseTestCase
      * Asserts that a string starts not with a given prefix, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
-     * @param string $prefix The prefix to not find.
+     * @param non-empty-string $prefix The prefix to not find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
-     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsNotWith(string $prefix, string $string, string $message = ''): void
     {
@@ -599,11 +623,10 @@ abstract class TestCase extends BaseTestCase
      * Asserts that a string ends with a given prefix, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
-     * @param string $suffix The suffix to find.
+     * @param non-empty-string $suffix The suffix to find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
-     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsWith(string $suffix, string $string, string $message = ''): void
     {
@@ -617,11 +640,10 @@ abstract class TestCase extends BaseTestCase
      * Asserts that a string ends not with a given prefix, ignoring differences in newlines.
      * Helpful for doing cross platform tests of blocks of text.
      *
-     * @param string $suffix The suffix to not find.
+     * @param non-empty-string $suffix The suffix to not find.
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
-     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsNotWith(string $suffix, string $string, string $message = ''): void
     {
@@ -1038,11 +1060,12 @@ abstract class TestCase extends BaseTestCase
     /**
      * Mock a model with PHPUnit mocks, maintain fixtures and table association
      *
-     * @param string $alias The model to get a mock for.
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T>|string $alias The model to get a mock for.
      * @param array<string> $methods The list of methods to mock
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @return ($alias is class-string<T> ? T&\PHPUnit\Framework\MockObject\MockObject : \Cake\ORM\Table&\PHPUnit\Framework\MockObject\MockObject)
      */
     public function getMockForModel(string $alias, array $methods = [], array $options = []): Table|MockObject
     {
@@ -1110,9 +1133,9 @@ abstract class TestCase extends BaseTestCase
      * Mock a model with Mockery mocks, maintain fixtures and table association
      *
      * @template T of \Cake\ORM\Table
-     * @param string|class-string<T> $alias The alias or the FQCN of the model to get a mock for.
+     * @param class-string<T>|string $alias The alias or the FQCN of the model to get a mock for.
      * @param array<string, mixed> $options The config data for the mock's constructor.
-     * @return (T|\Cake\ORM\Table)&\Mockery\LegacyMockInterface
+     * @return ($alias is class-string<T> ? T&\Mockery\LegacyMockInterface : \Cake\ORM\Table&\Mockery\LegacyMockInterface)
      */
     public function mockModel(string $alias, array $options = []): Table&LegacyMockInterface
     {

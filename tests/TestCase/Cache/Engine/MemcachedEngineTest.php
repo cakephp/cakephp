@@ -50,7 +50,12 @@ class MemcachedEngineTest extends TestCase
         // phpcs:disable
         $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
         // phpcs:enable
-        $this->skipIf(!$socket, 'Memcached is not running.');
+        if (!$socket) {
+            if (env('MEMCACHED_PORT')) {
+                $this->fail('MEMCACHED_PORT is set, but Memcached is not reachable.');
+            }
+            $this->markTestSkipped('Memcached is not running.');
+        }
         fclose($socket);
 
         $this->_configCache();

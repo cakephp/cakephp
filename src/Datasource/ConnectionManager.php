@@ -18,6 +18,7 @@ namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
 use Cake\Database\Connection;
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -51,10 +52,10 @@ class ConnectionManager
     /**
      * An array mapping url schemes to fully qualified driver class names
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
+        'mariadb' => Mariadb::class,
         'mysql' => Mysql::class,
         'postgres' => Postgres::class,
         'sqlite' => Sqlite::class,

@@ -20,6 +20,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
+use InvalidArgumentException;
 
 /**
  * Tests FunctionExpression class
@@ -30,6 +31,12 @@ class AggregateExpressionTest extends FunctionExpressionTest
      * @var string The expression class to test with
      */
     protected $expressionClass = AggregateExpression::class;
+
+    public function testInvalidName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new AggregateExpression('OR 1 = 1');
+    }
 
     /**
      * Tests annotating an aggregate with an empty window expression

@@ -16,10 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
-use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\TranslateBehavior;
@@ -768,11 +766,6 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
      */
     public function testUsingFunctionExpression(): void
     {
-        $this->skipIf(
-            ConnectionManager::get('test')->getDriver() instanceof Postgres,
-            'Test needs to be adjusted to not fail on Postgres',
-        );
-
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
 
@@ -780,7 +773,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $query = $table->find()->select();
         $query->select([
             'title',
-            'function_expression' => $query->func()->concat(['ArticlesTranslation.title' => 'literal', ' with a suffix']),
+            'function_expression' => $query->func()->concat(['ArticlesTranslation.title' => 'identifier', ' with a suffix']),
             'body',
         ]);
         $result = array_intersect_key(

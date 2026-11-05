@@ -355,8 +355,7 @@ class Asset
      * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot.
      *
      * @param string $name The name you want to plugin split.
-     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
-     * @phpstan-return array{string|null, string}
+     * @return array{0: string|null, 1: string} Array with 2 indexes. 0 => plugin name, 1 => filename.
      */
     protected static function pluginSplit(string $name): array
     {

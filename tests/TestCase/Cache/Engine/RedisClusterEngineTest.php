@@ -9,6 +9,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use function Cake\Core\env;
 
 /**
  * RedisClusterEngineTest class
@@ -54,7 +55,12 @@ class RedisClusterEngineTest extends TestCase
                 }
             }
         }
-        $this->skipIf($this->skipTest !== false, $this->skipTest === false ? 'Not skipping' : $this->skipTest);
+        if ($this->skipTest !== false) {
+            if (env('REDIS_CLUSTER_NODES')) {
+                $this->fail('REDIS_CLUSTER_NODES is set, but the Redis cluster is not reachable.');
+            }
+            $this->markTestSkipped($this->skipTest);
+        }
 
         Cache::enable();
         $this->configCache();
@@ -136,6 +142,7 @@ class RedisClusterEngineTest extends TestCase
             'unix_socket' => false,
             'clearUsesFlushDb' => false,
             'failover' => null,
+            'allowedClasses' => true,
         ];
         $this->assertEquals($expecting, $config);
     }

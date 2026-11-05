@@ -896,6 +896,7 @@ class I18nExtractCommand extends Command
         $namespace = '';
         $waitingForNamespace = false;
         $waitingForName = false;
+        $previous = null;
 
         foreach ($tokens as $token) {
             if (!is_array($token)) {
@@ -921,7 +922,7 @@ class I18nExtractCommand extends Command
                 continue;
             }
 
-            if ($type === T_ENUM || $type === T_CLASS) {
+            if (($type === T_ENUM || $type === T_CLASS) && $previous !== T_DOUBLE_COLON) {
                 $waitingForName = true;
                 continue;
             }
@@ -933,6 +934,8 @@ class I18nExtractCommand extends Command
             if ($waitingForName) {
                 $waitingForName = false;
             }
+
+            $previous = $type;
         }
 
         return null;

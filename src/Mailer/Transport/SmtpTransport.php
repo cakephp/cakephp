@@ -22,6 +22,8 @@ use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
+use SensitiveParameter;
+use Throwable;
 use function Cake\Core\env;
 
 /**
@@ -202,23 +204,28 @@ class SmtpTransport extends AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Message instance
-     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
-     * @phpstan-return array{headers: string, message: string, ...}
+     * @return array{headers: string, message: string, ...} Contains 'headers' and 'message' keys. Additional keys allowed.
      * @throws \Cake\Network\Exception\SocketException
      */
     public function send(Message $message): array
     {
         $this->checkRecipient($message);
 
-        if (!$this->connected()) {
-            $this->_connect();
-            $this->_auth();
-        } else {
-            $this->_smtpSend('RSET');
-        }
+        try {
+            if (!$this->connected()) {
+                $this->_connect();
+                $this->_auth();
+            } else {
+                $this->_smtpSend('RSET');
+            }
 
-        $this->_sendRcpt($message);
-        $this->_sendData($message);
+            $this->_sendRcpt($message);
+            $this->_sendData($message);
+        } catch (Throwable $e) {
+            $this->abortConnection();
+
+            throw $e;
+        }
 
         if (!$this->_config['keepAlive']) {
             $this->_disconnect();
@@ -394,7 +401,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return string|null Response code for the command.
      */
-    protected function _authPlain(string $username, string $password): ?string
+    protected function _authPlain(string $username, #[SensitiveParameter] string $password): ?string
     {
         return $this->_smtpSend(
             sprintf(
@@ -412,7 +419,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return void
      */
-    protected function _authLogin(string $username, string $password): void
+    protected function _authLogin(string $username, #[SensitiveParameter] string $password): void
     {
         $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
@@ -444,7 +451,7 @@ class SmtpTransport extends AbstractTransport
      * @see https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#smtp-protocol-exchange
      * @see https://developers.google.com/gmail/imap/xoauth2-protocol#smtp_protocol_exchange
      */
-    protected function _authXoauth2(string $username, string $token): void
+    protected function _authXoauth2(string $username, #[SensitiveParameter] string $token): void
     {
         $authString = base64_encode(sprintf(
             "user=%s\1auth=Bearer %s\1\1",
@@ -558,16 +565,22 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('DATA', '354');
 
-        $headers = $message->getHeadersString([
-            'from',
-            'sender',
-            'replyTo',
-            'readReceipt',
-            'to',
-            'cc',
-            'subject',
-            'returnPath',
-        ]);
+        $headers = $message->getHeadersString(
+            [
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'to',
+                'cc',
+                'subject',
+                'returnPath',
+            ],
+            "\r\n",
+            function (string $val): string {
+                return str_replace(["\r", "\n"], '', $val);
+            },
+        );
         $message = $this->_prepareMessage($message);
 
         $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
@@ -584,6 +597,23 @@ class SmtpTransport extends AbstractTransport
     {
         $this->_smtpSend('QUIT', false);
         $this->_socket->disconnect();
+        $this->authType = null;
+    }
+
+    /**
+     * Close the socket after a failed exchange, without QUIT.
+     *
+     * The session is in an unknown state: the peer may be gone, or still reading
+     * the message body, which a QUIT would be appended to. Closing makes the next
+     * send open a fresh connection instead of issuing RSET on this one.
+     *
+     * @return void
+     */
+    protected function abortConnection(): void
+    {
+        if (isset($this->_socket)) {
+            $this->_socket->disconnect();
+        }
         $this->authType = null;
     }
 

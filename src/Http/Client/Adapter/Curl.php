@@ -126,7 +126,7 @@ class Curl implements AdapterInterface
         }
 
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
+            $options['ssl_cafile'] = ini_get('curl.cainfo') ?: CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
@@ -178,6 +178,11 @@ class Curl implements AdapterInterface
                 : (defined('CURL_HTTP_VERSION_2_0')
                     ? CURL_HTTP_VERSION_2_0
                     : throw new HttpException('libcurl 7.33 or greater required for HTTP/2 support')
+                ),
+            '3', '3.0' => defined('CURL_HTTP_VERSION_3')
+                ? CURL_HTTP_VERSION_3
+                : throw new HttpException(
+                    'PHP 8.4 or greater with libcurl 7.66 or greater is required for HTTP/3 support',
                 ),
             default => CURL_HTTP_VERSION_NONE,
         };

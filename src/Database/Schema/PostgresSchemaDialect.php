@@ -33,6 +33,11 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @const string
      */
+    final protected const DEFAULT_SCHEMA = 'public';
+
+    /**
+     * @const string
+     */
     public const GENERATED_BY_DEFAULT = 'BY DEFAULT';
 
     /**
@@ -46,7 +51,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? ORDER BY name';
-        $schema = $config['schema'] ?? 'public';
+        $schema = $config['schema'] ?? self::DEFAULT_SCHEMA;
 
         return [$sql, [$schema]];
     }
@@ -62,7 +67,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
-        $schema = $config['schema'] ?? 'public';
+        $schema = $config['schema'] ?? self::DEFAULT_SCHEMA;
 
         return [$sql, [$schema]];
     }
@@ -73,7 +78,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery();
-        $schema = $config['schema'] ?? 'public';
+        $schema = $config['schema'] ?? self::DEFAULT_SCHEMA;
 
         return [$sql, [$tableName, $schema, $config['database']]];
     }
@@ -123,7 +128,7 @@ class PostgresSchemaDialect extends SchemaDialect
                 f_{$postgisType}_column AS name,
                 type,
                 srid
-            FROM public.{$postgisType}_columns
+            FROM {$postgisType}_columns
             WHERE f_table_name = ? AND f_table_schema = ? AND f_table_catalog = ?
             SQL;
 
@@ -286,7 +291,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return explode('.', $tableName);
         }
         $driverConfig = $this->_driver->config();
-        $schema = $config['schema'] ?? $driverConfig['schema'] ?? 'public';
+        $schema = $config['schema'] ?? $driverConfig['schema'] ?? self::DEFAULT_SCHEMA;
 
         return [$schema, $tableName];
     }
@@ -894,6 +899,10 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
+        $currentDefault = null;
+        if (isset(static::CURRENT_DATE_TIME_DEFAULTS[$column['type']])) {
+            $currentDefault = $this->currentDateTimeDefault($column);
+        }
         if (
             isset($column['default']) &&
             in_array($column['type'], $datetimeTypes) &&
@@ -901,6 +910,8 @@ class PostgresSchemaDialect extends SchemaDialect
             strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
+        } elseif ($currentDefault !== null) {
+            $out .= ' DEFAULT ' . $currentDefault;
         } elseif (isset($column['default'])) {
             $defaultValue = $column['default'];
             if ($column['type'] === 'boolean') {
@@ -974,10 +985,11 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         $include = '';
-        if ($index->getInclude()) {
+        $includes = $index->getInclude();
+        if ($includes) {
             $included = array_map(
                 $this->_driver->quoteIdentifier(...),
-                $index->getInclude(),
+                $includes,
             );
             $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
         }
@@ -1049,7 +1061,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $dbSchema = $this->_driver->schema();
-        if ($dbSchema !== 'public') {
+        if ($dbSchema !== self::DEFAULT_SCHEMA) {
             $tableName = $this->_driver->quoteIdentifier($dbSchema) . '.' . $tableName;
         }
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';

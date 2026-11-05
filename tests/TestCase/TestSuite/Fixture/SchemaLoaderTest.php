@@ -16,14 +16,17 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite\Fixture;
 
 use Cake\Database\Connection;
+use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Engine\ArrayLog;
 use Cake\TestSuite\ConnectionHelper;
 use Cake\TestSuite\Fixture\SchemaLoader;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 
 class SchemaLoaderTest extends TestCase
@@ -125,6 +128,50 @@ class SchemaLoaderTest extends TestCase
         $this->assertCount(0, $result, 'Table should be empty.');
     }
 
+    /**
+     * loadInternalFile() must disable constraints via
+     * ConnectionHelper::runWithoutConstraints() rather than calling
+     * Connection::disableConstraints() directly, so that drivers requiring
+     * a transaction wrapper (e.g. Postgres) don't emit a warning.
+     *
+     * loadInternalFile() drops every table on the given connection, so it
+     * can't safely run against the shared `test` connection (it would wipe
+     * every fixture table for the rest of the suite) - it needs an isolated
+     * connection, same as the other tests in this file. That means this
+     * test can only exercise the "driver supports it directly" branch for
+     * real; the "driver requires a transaction" branch (Postgres) is
+     * already proven against a real Postgres connection by
+     * ConnectionHelperTest::testRunWithoutConstraintsWrapsInTransactionWhenDriverRequiresIt(),
+     * since loadInternalFile() delegates straight to
+     * ConnectionHelper::runWithoutConstraints() for this.
+     *
+     * @link https://github.com/cakephp/cakephp/issues/19474
+     */
+    public function testLoadInternalFileDisablesConstraintsViaConnectionHelper(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        ConnectionManager::setConfig('test_schema_loader', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'database' => $this->truncateDbFile,
+        ]);
+        $connection = ConnectionManager::get('test_schema_loader');
+        assert($connection instanceof Connection);
+        $driver = $connection->getWriteDriver();
+
+        $queries = $this->captureQueries($driver, function (): void {
+            $this->loader->loadInternalFile(__DIR__ . '/test_schema.php', 'test_schema_loader');
+        });
+
+        $tables = $connection->getSchemaCollection()->listTables();
+        $this->assertContains('schema_generator', $tables);
+        $this->assertSame(
+            [$driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()],
+            $this->filterQueries($queries, $driver),
+            'Constraint disabling must go through ConnectionHelper::runWithoutConstraints().',
+        );
+    }
+
     public function testLoadInternalFiles(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
@@ -171,5 +218,44 @@ class SchemaLoaderTest extends TestCase
         file_put_contents($tmpFile, $query);
 
         return $tmpFile;
+    }
+
+    /**
+     * Runs $callback while capturing the SQL statements $driver logs, in order.
+     *
+     * @return array<string>
+     */
+    private function captureQueries(Driver $driver, Closure $callback): array
+    {
+        $logger = new ArrayLog();
+        $driver->setLogger($logger);
+
+        try {
+            $callback();
+        } finally {
+            $driver->disableQueryLogging();
+        }
+
+        return array_map(
+            static fn(string $message): string => str_starts_with($message, 'debug: ') ? substr($message, 7) : $message,
+            $logger->read(),
+        );
+    }
+
+    /**
+     * Narrows a captured query log down to the statements relevant to
+     * constraint disabling and transaction boundaries, preserving order.
+     *
+     * @param array<string> $queries
+     * @return array<string>
+     */
+    private function filterQueries(array $queries, Driver $driver): array
+    {
+        $relevant = ['BEGIN', 'COMMIT', $driver->disableForeignKeySQL(), $driver->enableForeignKeySQL()];
+
+        return array_values(array_filter(
+            $queries,
+            fn(string $query): bool => in_array($query, $relevant, true),
+        ));
     }
 }

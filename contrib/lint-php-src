@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -u
+
+target="${1:-src}"
+php_bin="${PHP_BIN:-php}"
+
+if [[ ! -d "$target" ]]; then
+	echo "PHP syntax check target does not exist: $target"
+	exit 1
+fi
+
+if ! php_version="$("$php_bin" -r 'echo PHP_VERSION;' 2>/dev/null)"; then
+	echo "Could not determine PHP version using $php_bin."
+	exit 1
+fi
+
+echo "Checking PHP syntax in $target/ with PHP $php_version"
+
+while IFS= read -r -d '' file; do
+	if ! output="$("$php_bin" -l "$file" 2>&1)"; then
+		echo "$output"
+		echo "Fix the errors above before continuing."
+		exit 1
+	fi
+done < <(find "$target" -type f -name '*.php' -print0)
+
+echo "No obvious PHP errors found"

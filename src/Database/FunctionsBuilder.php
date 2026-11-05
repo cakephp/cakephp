@@ -18,18 +18,28 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\JsonPathExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use InvalidArgumentException;
 
 /**
  * Contains methods related to generating FunctionExpression objects
  * with most commonly used SQL functions.
+ *
  * This acts as a factory for FunctionExpression objects.
+ *
+ * Supplying user-controlled data to parameters with the `ExpressionInterface|string`
+ * type is **unsafe**. These parameters are included in the final query without escaping.
  */
 class FunctionsBuilder
 {
     /**
      * Returns a FunctionExpression representing a call to SQL RAND function.
+     *
+     * Driver transformations:
+     *  - **Postgres**: random()
+     *  - **Sqlite**: abs(random() % 1)
      *
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -41,7 +51,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL SUM function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the sum() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -58,7 +68,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL AVG function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the avg() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -70,7 +80,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL MAX function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the max() function
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -82,7 +92,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL MIN function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the min() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -94,7 +104,7 @@ class FunctionsBuilder
     /**
      * Returns a AggregateExpression representing a call to SQL COUNT function.
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression the function argument
+     * @param \Cake\Database\ExpressionInterface|string $expression the expression for the count() function.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\AggregateExpression
      */
@@ -127,6 +137,10 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a string concatenation
      *
+     * Driver transformations:
+     *  - **Sqlite**: expression1 || expression2 || expression3 ...
+     *  - **SqlServer**: expression1 + expression2 + expression3 ...
+     *
      * @param array $args List of strings or expressions to concatenate
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -155,11 +169,12 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $dataType The SQL data type
+     * @param string $dataType The SQL data type. Must be a simple alphanumeric string.
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
+        QueryExpression::ensureSimpleString('dataType', $dataType);
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
 
         return $expression->setConjunction(' AS')->add([$dataType => 'literal']);
@@ -168,6 +183,11 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing the difference in days between
      * two dates.
+     *
+     * Driver transformations:
+     *  - **Postgres**: expression1 - expression2
+     *  - **Sqlite**: ROUND(JULIANDAY(expression1) - JULIANDAY(expression2))
+     *  - **SqlServer**: datediff(day, expression1, expression2)
      *
      * @param array $args List of expressions to obtain the difference in days.
      * @param array $types list of types to bind to the arguments
@@ -181,7 +201,7 @@ class FunctionsBuilder
     /**
      * Returns the specified date part from the SQL expression.
      *
-     * @param string $part Part of the date to return.
+     * @param string $part Part of the date to return. Must be a simple alphanumeric string.
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
@@ -197,13 +217,19 @@ class FunctionsBuilder
     /**
      * Returns the specified date part from the SQL expression.
      *
-     * @param string $part Part of the date to return.
+     * Driver transformations:
+     *  - **Postgres**: extract(part FROM expression)
+     *  - **Sqlite**: strftime('%part', expression)
+     *  - **SqlServer**: datepart(part, expression)
+     *
+     * @param string $part Part of the date to return. Must be a simple alphanumeric string.
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
+        QueryExpression::ensureSimpleString('part', $part);
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
 
         return $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
@@ -212,9 +238,14 @@ class FunctionsBuilder
     /**
      * Add the time unit to the date expression
      *
+     * Driver transformations:
+     *  - **Postgres**: expression + interval 'value unit'
+     *  - **Sqlite**: datetime(expression, 'value unit')
+     *  - **SqlServer**: dateadd(unit, value, expression)
+     *
      * @param \Cake\Database\ExpressionInterface|string $expression Expression to obtain the date part from.
      * @param string|int $value Value to be added. Use negative to subtract.
-     * @param string $unit Unit of the value e.g. hour or day.
+     * @param string $unit Unit of the value e.g. hour or day. Must be a simple alphanumeric string.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression
      */
@@ -227,6 +258,7 @@ class FunctionsBuilder
         if (!is_numeric($value)) {
             $value = 0;
         }
+        QueryExpression::ensureSimpleString('unit', $unit);
         $interval = $value . ' ' . $unit;
         $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
 
@@ -236,6 +268,11 @@ class FunctionsBuilder
     /**
      * Returns a FunctionExpression representing a call to SQL WEEKDAY function.
      * 1 - Sunday, 2 - Monday, 3 - Tuesday...
+     *
+     * Driver transformations:
+     *  - **Postgres**: extract(DOW FROM expression) + 1
+     *  - **Sqlite**: strftime('%w', expression) + 1
+     *  - **SqlServer**: datepart(WEEKDAY, expression)
      *
      * @param \Cake\Database\ExpressionInterface|string $expression the function argument
      * @param array $types list of types to bind to the arguments
@@ -263,6 +300,20 @@ class FunctionsBuilder
      * Returns a FunctionExpression representing a call that will return the current
      * date and time. By default it returns both date and time, but you can also
      * make it generate only the date or only the time.
+     *
+     * Driver transformations:
+     *  - **Postgres**:
+     *    - datetime: localtimestamp(0)
+     *    - date: cast(localtimestamp(0) AS date)
+     *    - time: cast(localtimestamp(0) AS time)
+     *  - **Sqlite**:
+     *    - datetime: datetime('now')
+     *    - date: date('now')
+     *    - time: time('now')
+     *  - **SqlServer**:
+     *    - datetime: getutcdate()
+     *    - date: convert(date, getutcdate())
+     *    - time: convert(time, getutcdate())
      *
      * @param string $type (datetime|date|time)
      * @return \Cake\Database\Expression\FunctionExpression
@@ -344,21 +395,59 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing the Json Value
+     * Returns a FunctionExpression representing JSON_EXISTS().
      *
-     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
-     * @param string $jsonPath A valid JSON PATH Query
-     * @param array $types list of types to bind to the arguments
+     * SQL Injection Warning: json expressions is not sanitized before use.
+     *
+     * Driver transformations:
+     *  - **Mysql**: json_contains_path(expression, 'one', path) (MariaDB uses JSON_EXISTS natively)
+     *  - **Sqlserver**: json_path_exists(expression, path)
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The json expression
+     * @param \Cake\Database\Expression\JsonPathExpression|string $path The json path
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonExists(
+        ExpressionInterface|string $expression,
+        JsonPathExpression|string $path,
+    ): FunctionExpression {
+        if (is_string($path)) {
+            $path = new JsonPathExpression($path);
+        }
+
+        $params = $this->toLiteralParam($expression) + [$path];
+
+        return new FunctionExpression('JSON_EXISTS', $params, [], 'boolean');
+    }
+
+    /**
+     * Returns a FunctionExpression representing JSON_VALUE().
+     *
+     * SQL Injection Warning: json expression is not sanitized before use.
+     *
+     * Driver transformations:
+     *  - **Postgres**: jsonb_path_query (version: <17)
+     *  - **Sqlite**: json_extract(expression, path)
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The json expression
+     * @param \Cake\Database\Expression\JsonPathExpression|string $path The json path
+     * @param array $types List of types to bind to the arguments
+     * @param string|null $returnType The return type of the function, if not specified it will use the path's return type
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function jsonValue(
         ExpressionInterface|string $expression,
-        string $jsonPath,
+        JsonPathExpression|string $path,
         array $types = [],
+        ?string $returnType = null,
     ): FunctionExpression {
-        $params = $this->toLiteralParam($expression) + [$jsonPath];
+        if (is_string($path)) {
+            $path = new JsonPathExpression($path);
+        }
 
-        return new FunctionExpression('JSON_VALUE', $params, $types);
+        $params = $this->toLiteralParam($expression) + [$path];
+
+        return new FunctionExpression('JSON_VALUE', $params, $types, $returnType ?? $path->getReturnType());
     }
 
     /**
@@ -367,7 +456,7 @@ class FunctionsBuilder
      * @param string $name The SQL aggregate function name
      * @param array $params Array of arguments to be passed to the function.
      *     Can be an associative array with the literal value or identifier:
-     *     `['value' => 'literal']` or `['value' => 'identifier']
+     *     `['value' => 'literal']` or `['value' => 'identifier']`
      * @param array $types Array of types that match the names used in `$params`:
      *     `['name' => 'type']`
      * @param string $return Return type of the entire expression. Defaults to float.

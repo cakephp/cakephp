@@ -30,18 +30,16 @@ interface ControllerFactoryInterface
      * Create a controller for a given request
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
-     * @return mixed
+     * @return TController
      * @throws \Cake\Http\Exception\MissingControllerException
-     * @phpstan-return TController
      */
     public function create(ServerRequestInterface $request): mixed;
 
     /**
      * Invoke a controller's action and wrapping methods.
      *
-     * @param mixed $controller The controller to invoke.
+     * @param TController $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
-     * @phpstan-param TController $controller
      */
     public function invoke(mixed $controller): ResponseInterface;
 }

@@ -378,19 +378,17 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
+            if (count($this->trustedProxies) > 0) {
+                // Skip trusted proxies and use the right-most IP that isn't
+                // from a trusted proxy.
+                $untrusted = array_diff($addresses, $this->trustedProxies);
 
-            if ($trusted) {
-                $trusted = array_diff($addresses, $this->trustedProxies);
-                $trusted = (count($trusted) === 1);
+                return $untrusted[count($untrusted) - 1];
             }
-
-            if ($trusted) {
-                return $addresses[0];
+            if ($n > 0) {
+                return $addresses[$n - 1];
             }
-
-            return $addresses[$n - 1];
         }
 
         if ($this->trustProxy && $this->getEnv('HTTP_X_REAL_IP')) {
@@ -405,15 +403,21 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * register trusted proxies
+     * Set the IP addresses of trusted proxies
      *
-     * @param array<string> $proxies ips list of trusted proxies
+     * If the request's REMOTE_ADDR is from a trusted proxy,
+     * then `trustProxy` will be set to true as well.
+     *
+     * @param array<string> $proxies List of trusted proxy IPs
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
     {
         $this->trustedProxies = $proxies;
-        $this->trustProxy = true;
+        $remoteAddr = $this->getEnv('REMOTE_ADDR');
+        if (in_array($remoteAddr, $proxies, true)) {
+            $this->trustProxy = true;
+        }
         $this->uri = $this->uri->withScheme($this->scheme());
     }
 
@@ -430,8 +434,10 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Returns the referer that referred this request.
      *
-     * @param bool $local Attempt to return a local address.
-     *   Local addresses do not contain hostnames.
+     * @param bool $local When true, return the referer as a host-stripped local path,
+     *   or null if the referer is not on the same origin as this application.
+     *   When false, return the raw referer URL as-is. In both cases null is returned
+     *   when no referer is available.
      * @return string|null The referring address for this request or null.
      */
     public function referer(bool $local = true): ?string
@@ -1091,9 +1097,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function domain(int $tldLength = 1): string
     {
-        $host = $this->host();
+        $host = $this->hostName();
         if (!$host) {
             return '';
+        }
+        if ($this->isIpHost($host)) {
+            return $host;
         }
 
         $segments = explode('.', $host);
@@ -1111,14 +1120,48 @@ class ServerRequest implements ServerRequestInterface
      */
     public function subdomains(int $tldLength = 1): array
     {
-        $host = $this->host();
-        if (!$host) {
+        $host = $this->hostName();
+        if (!$host || $this->isIpHost($host)) {
             return [];
         }
 
         $segments = explode('.', $host);
 
         return array_slice($segments, 0, -1 * ($tldLength + 1));
+    }
+
+    /**
+     * Get the host without its port, for domain() and subdomains().
+     *
+     * @return string|null
+     */
+    protected function hostName(): ?string
+    {
+        $host = $this->host();
+        if (!$host) {
+            return $host;
+        }
+
+        if (str_starts_with($host, '[')) {
+            $end = strpos($host, ']');
+
+            return $end === false ? $host : substr($host, 0, $end + 1);
+        }
+
+        $colon = strrpos($host, ':');
+
+        return $colon === false ? $host : substr($host, 0, $colon);
+    }
+
+    /**
+     * Check whether a host name is an IP address, which has no domain or subdomains.
+     *
+     * @param string $host The host name, without a port.
+     * @return bool
+     */
+    protected function isIpHost(string $host): bool
+    {
+        return str_starts_with($host, '[') || filter_var($host, FILTER_VALIDATE_IP) !== false;
     }
 
     /**
@@ -1141,8 +1184,8 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
-     *   provided type.
+     * @return ($type is non-falsy-string ? bool : array<string>) Either an array of all the types the client
+     *   accepts or a boolean if they accept the provided type.
      */
     public function accepts(?string $type = null): array|bool
     {
@@ -1171,7 +1214,8 @@ class ServerRequest implements ServerRequestInterface
      * ```$request->acceptLanguage('es-es');```
      *
      * @param string|null $language The language to test.
-     * @return array|bool If a $language is provided, a boolean. Otherwise, the array of accepted languages.
+     * @return ($language is null ? array<string> : bool) If a $language is provided, a boolean.
+     *   Otherwise, the array of accepted languages.
      */
     public function acceptLanguage(?string $language = null): array|bool
     {
@@ -1197,7 +1241,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string|null $name The name or dotted path to the query param or null to read all.
      * @param mixed $default The default value if the named parameter is not set, and $name is not null.
-     * @return mixed Query data.
+     * @return ($name is null ? array : mixed) Query data.
      * @see ServerRequest::getQueryParams()
      */
     public function getQuery(?string $name = null, mixed $default = null): mixed
@@ -1393,7 +1437,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withProtocolVersion(string $version): static
     {
-        if (!preg_match('/^(1\.[01]|2)$/', $version)) {
+        if (!preg_match('/^(1\.[01]|[23])\z/', $version)) {
             throw new InvalidArgumentException(sprintf('Unsupported protocol version `%s` provided.', $version));
         }
         $new = clone $this;
@@ -1409,7 +1453,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $key The key you want to read from.
      * @param string|null $default Default value when trying to retrieve an environment
      *   variable's value that does not exist.
-     * @return string|null Either the environment value, or null if the value doesn't exist.
+     * @return ($default is string ? string : string|null) Either the environment value, or null if the value doesn't exist.
      */
     public function getEnv(string $key, ?string $default = null): ?string
     {
@@ -1603,7 +1647,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
-     * @return mixed
+     * @return ($name is 'params' ? array : ($name is 'webroot'|'base'|'here' ? string : ($name is 'session' ? \Cake\Http\Session : mixed)))
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {

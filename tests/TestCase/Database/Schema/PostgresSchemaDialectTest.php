@@ -408,6 +408,7 @@ SQL;
                 'length' => 20,
                 'precision' => null,
                 'comment' => 'a title',
+                'charset' => null,
                 'collate' => null,
             ],
             'body' => [
@@ -417,6 +418,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'author_id' => [
@@ -673,6 +675,7 @@ SQL;
                 'length' => 50,
                 'precision' => null,
                 'comment' => null,
+                'charset' => null,
                 'collate' => null,
             ],
             'bio' => [
@@ -1435,6 +1438,16 @@ SQL;
                 'network',
                 ['type' => 'macaddr', 'null' => false],
                 '"network" MACADDR NOT NULL',
+            ],
+            [
+                'start_date',
+                ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'],
+                '"start_date" DATE NOT NULL DEFAULT CURRENT_DATE',
+            ],
+            [
+                'start_time',
+                ['type' => 'time', 'null' => false, 'default' => 'current_time'],
+                '"start_time" TIME NOT NULL DEFAULT CURRENT_TIME',
             ],
         ];
     }

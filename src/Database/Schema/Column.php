@@ -49,6 +49,7 @@ class Column
      * @param string|null $geometryType Geometry type for geometry fields (e.g., Point, Polygon)
      * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
      * @param bool|null $fixed Whether the column is fixed-length (BINARY vs VARBINARY)
+     * @param string|null $charset Character set for the column
      */
     public function __construct(
         protected string $name,
@@ -69,7 +70,41 @@ class Column
         protected ?string $geometryType = null,
         protected ?string $baseType = null,
         protected ?bool $fixed = null,
+        protected ?string $charset = null,
     ) {
+    }
+
+    /**
+     * Re-initializes nullable properties that may be absent when unserializing
+     * column data produced by an older CakePHP version.
+     *
+     * Nullable column attributes were added incrementally (e.g. `geometryType`
+     * and `fixed` after `Column` first shipped). A serialized payload created
+     * before a given promoted property existed does not contain it, and PHP does
+     * not apply the promoted default on the unserialize path. Reading such a
+     * property would otherwise fail with "Typed property ...::$fixed must not be
+     * accessed before initialization". This surfaces via the schema metadata
+     * cache and the Migrations plugin's `schema-dump-*.lock` files.
+     *
+     * @return void
+     */
+    public function __wakeup(): void
+    {
+        $this->null ??= null;
+        $this->length ??= null;
+        $this->generated ??= null;
+        $this->precision ??= null;
+        $this->increment ??= null;
+        $this->after ??= null;
+        $this->onUpdate ??= null;
+        $this->comment ??= null;
+        $this->unsigned ??= null;
+        $this->collate ??= null;
+        $this->srid ??= null;
+        $this->geometryType ??= null;
+        $this->baseType ??= null;
+        $this->fixed ??= null;
+        $this->charset ??= null;
     }
 
     /**
@@ -411,7 +446,7 @@ class Column
     /**
      * Gets the column comment.
      *
-     * @return string
+     * @return string|null
      */
     public function getComment(): ?string
     {
@@ -482,6 +517,29 @@ class Column
     public function getCollate(): ?string
     {
         return $this->collate;
+    }
+
+    /**
+     * Sets the column character set.
+     *
+     * @param string $charset Character set
+     * @return $this
+     */
+    public function setCharset(string $charset)
+    {
+        $this->charset = $charset;
+
+        return $this;
+    }
+
+    /**
+     * Gets the column character set.
+     *
+     * @return string|null
+     */
+    public function getCharset(): ?string
+    {
+        return $this->charset;
     }
 
     /**
@@ -585,6 +643,7 @@ class Column
             'unsigned',
             'type',
             'properties',
+            'charset',
             'collate',
             'srid',
             'geometryType',
@@ -623,7 +682,7 @@ class Column
     /**
      * Convert an index into an array that is compatible with the Column constructor.
      *
-     * @return array
+     * @return array{name: ?string, baseType: ?string, type: string, length: ?int, null: ?bool, default: mixed, generated: ?string, unsigned: ?bool, onUpdate: ?string, charset: ?string, collate: ?string, precision: ?int, srid: ?int, comment: ?string, autoIncrement: bool, identity: bool, fixed: ?bool, geometryType?: ?string}
      */
     public function toArray(): array
     {
@@ -648,6 +707,7 @@ class Column
             'generated' => $this->getGenerated(),
             'unsigned' => $this->getUnsigned(),
             'onUpdate' => $this->getOnUpdate(),
+            'charset' => $this->getCharset(),
             'collate' => $this->getCollate(),
             'precision' => $precision,
             'srid' => $this->getSrid(),

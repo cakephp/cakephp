@@ -18,10 +18,14 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\JsonPathExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\StringAggExpression;
 use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests FunctionsBuilder class
@@ -150,6 +154,25 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
+     * Tests generating a portable STRING_AGG() function
+     */
+    public function testStringAggInvalidOrder(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->functions->stringAgg('name', ',', 'OR 1=1');
+    }
+
+    /**
+     * Tests generating a portable STRING_AGG() function
+     */
+    public function testStringAggLiteralOrder(): void
+    {
+        $function = $this->functions->stringAgg('name', ',', new QueryExpression('1=1'));
+        $this->assertInstanceOf(StringAggExpression::class, $function);
+        $this->assertSame('STRING_AGG(name, :param0 ORDER BY 1=1)', $function->sql(new ValueBinder()));
+    }
+
+    /**
      * Tests generating a CONCAT() function
      */
     public function testConcat(): void
@@ -185,6 +208,26 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
+    }
+
+    public static function invalidValues(): array
+    {
+        return [
+            ['words with spaces'],
+            ["' drop table users --"],
+            [' word '],
+        ];
+    }
+
+    /**
+     * Ensure that only alphanumeric values are accepted for types.
+     */
+    #[DataProvider('invalidValues')]
+    public function testCastInvalidValue(string $type): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`dataType` must be an alphanumeric string');
+        $this->functions->cast('field', $type);
     }
 
     /**
@@ -224,6 +267,22 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
+    #[DataProvider('invalidValues')]
+    public function testExtractInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->extract($part, 'created');
+    }
+
+    #[DataProvider('invalidValues')]
+    public function testDatePartInvalidValue(string $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`part` must be an alphanumeric string');
+        $this->functions->datePart($part, 'created');
+    }
+
     /**
      * Tests generating a DATE_ADD() function
      */
@@ -237,6 +296,14 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->dateAdd(new IdentifierExpression('created'), -3, 'day');
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('DATE_ADD(created, INTERVAL -3 day)', $function->sql(new ValueBinder()));
+    }
+
+    #[DataProvider('invalidValues')]
+    public function testDateAddInvalidValue(string $unit): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`unit` must be an alphanumeric string');
+        $this->functions->dateAdd('created', -3, $unit);
     }
 
     /**
@@ -309,6 +376,14 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('integer', $function->getReturnType());
     }
 
+    public function testJsonExists(): void
+    {
+        $function = $this->functions->jsonExists('field', '$');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('JSON_EXISTS(field, :param0)', $function->sql(new ValueBinder()));
+        $this->assertSame('boolean', $function->getReturnType());
+    }
+
     /**
      * Tests generating a JSON_VALUE() function
      */
@@ -318,5 +393,15 @@ class FunctionsBuilderTest extends TestCase
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('JSON_VALUE(field, :param0)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
+    }
+
+    /**
+     * Tests JSON_VALUE() uses the return type of the path expression
+     */
+    public function testJsonValueReturnType(): void
+    {
+        $path = (new JsonPathExpression('$'))->setReturnType('integer');
+        $function = $this->functions->jsonValue('field', $path);
+        $this->assertSame('integer', $function->getReturnType());
     }
 }

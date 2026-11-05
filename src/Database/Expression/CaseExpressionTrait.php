@@ -16,13 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Expression;
 
-use Cake\Chronos\ChronosDate;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\TypedResultInterface;
 use Cake\Database\ValueBinder;
-use DateTimeInterface;
-use Stringable;
 
 /**
  * Trait that holds shared functionality for case related expressions.
@@ -31,43 +27,7 @@ use Stringable;
  */
 trait CaseExpressionTrait
 {
-    /**
-     * Infers the abstract type for the given value.
-     *
-     * @param mixed $value The value for which to infer the type.
-     * @return string|null The abstract type, or `null` if it could not be inferred.
-     */
-    protected function inferType(mixed $value): ?string
-    {
-        $type = null;
-
-        if (is_string($value)) {
-            $type = 'string';
-        } elseif (is_int($value)) {
-            $type = 'integer';
-        } elseif (is_float($value)) {
-            $type = 'float';
-        } elseif (is_bool($value)) {
-            $type = 'boolean';
-        } elseif ($value instanceof ChronosDate) {
-            $type = 'date';
-        } elseif ($value instanceof DateTimeInterface) {
-            $type = 'datetime';
-        } elseif (
-            $value instanceof Stringable
-        ) {
-            $type = 'string';
-        } elseif (
-            $this->_typeMap !== null &&
-            $value instanceof IdentifierExpression
-        ) {
-            $type = $this->_typeMap->type($value->getIdentifier());
-        } elseif ($value instanceof TypedResultInterface) {
-            $type = $value->getReturnType();
-        }
-
-        return $type;
-    }
+    use TypeInferenceTrait;
 
     /**
      * Compiles a nullable value to SQL.

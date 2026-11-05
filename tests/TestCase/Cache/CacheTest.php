@@ -29,6 +29,7 @@ use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use stdClass;
+use TestApp\Cache\Engine\ReentrantCacheEngine;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 use TestPlugin\Cache\Engine\TestPluginCacheEngine;
 
@@ -900,5 +901,63 @@ class CacheTest extends TestCase
         Cache::disable();
         $pool = Cache::pool('tests');
         $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
+    }
+
+    /**
+     * A pool asked for again while it is still being constructed must not recurse.
+     *
+     * An engine that cannot reach its backend may log that failure, and the logger may in turn
+     * ask for a cache pool - a database schema metadata cache, for instance. Nothing is
+     * registered for the pool at that point, so the two would otherwise call each other until
+     * the process runs out of memory.
+     */
+    public function testPoolReentrantBuildDoesNotRecurse(): void
+    {
+        ReentrantCacheEngine::reset();
+        Cache::setConfig('reentrant', [
+            'className' => ReentrantCacheEngine::class,
+            'reentrantTarget' => 'reentrant',
+        ]);
+
+        $pool = Cache::pool('reentrant');
+
+        $this->assertSame(1, ReentrantCacheEngine::$initCount, 'The engine should be built once.');
+        $this->assertInstanceOf(ReentrantCacheEngine::class, $pool);
+        $this->assertInstanceOf(
+            NullEngine::class,
+            ReentrantCacheEngine::$reentrantPool,
+            'The reentrant call should degrade to a null engine.',
+        );
+
+        ReentrantCacheEngine::reset();
+        Cache::drop('reentrant');
+    }
+
+    /**
+     * The in-flight marker must be cleared once construction finishes, so a later call to the
+     * same pool still builds normally rather than being treated as reentrant forever.
+     */
+    public function testPoolIsBuildableAgainAfterReentrantBuild(): void
+    {
+        ReentrantCacheEngine::reset();
+        Cache::setConfig('reentrant', [
+            'className' => ReentrantCacheEngine::class,
+            'reentrantTarget' => 'reentrant',
+        ]);
+
+        Cache::pool('reentrant');
+        Cache::drop('reentrant');
+
+        Cache::setConfig('reentrant', [
+            'className' => ReentrantCacheEngine::class,
+            'reentrantTarget' => 'reentrant',
+        ]);
+        $pool = Cache::pool('reentrant');
+
+        $this->assertInstanceOf(ReentrantCacheEngine::class, $pool);
+        $this->assertSame(2, ReentrantCacheEngine::$initCount);
+
+        ReentrantCacheEngine::reset();
+        Cache::drop('reentrant');
     }
 }

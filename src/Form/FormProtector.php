@@ -270,8 +270,7 @@ class FormProtector
      * Return hash parts for the token generation
      *
      * @param array<string, array> $formData Form data.
-     * @return array<string, array> Contains 'fields' and 'unlockedFields' keys. Additional keys allowed.
-     * @phpstan-return array{fields: array, unlockedFields: array<string>, ...}
+     * @return array{fields: array, unlockedFields: array<string>, ...} Contains 'fields' and 'unlockedFields' keys. Additional keys allowed.
      */
     protected function extractHashParts(array $formData): array
     {
@@ -380,8 +379,7 @@ class FormProtector
      *
      * @param string $url Form URL.
      * @param string $sessionId Session ID.
-     * @return array<string, string> The token data. Contains 'fields', 'unlocked', and 'debug' keys. Additional keys allowed.
-     * @phpstan-return array{fields: string, unlocked: string, debug: string, ...}
+     * @return array{fields: string, unlocked: string, debug: string, ...} The token data. Contains 'fields', 'unlocked', and 'debug' keys. Additional keys allowed.
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
     {

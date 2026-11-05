@@ -150,8 +150,7 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      * Creates read and write drivers.
      *
      * @param array<string, mixed> $config Connection config
-     * @return array<string, \Cake\Database\Driver>
-     * @phpstan-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
+     * @return array{self::ROLE_READ: \Cake\Database\Driver, self::ROLE_WRITE: \Cake\Database\Driver}
      */
     protected function createDrivers(array $config): array
     {
@@ -706,8 +705,9 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      * });
      * ```
      *
-     * @param \Closure $callback The callback to execute within a transaction.
-     * @return mixed The return value of the callback.
+     * @template TResult
+     * @param \Closure(\Cake\Database\Connection): TResult $callback The callback to execute within a transaction.
+     * @return TResult The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */
@@ -725,7 +725,7 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
         if ($result === false) {
             $this->rollback(false);
 
-            return false;
+            return $result;
         }
 
         try {
@@ -761,8 +761,9 @@ class Connection implements ConnectionInterface, EventDispatcherInterface
      * });
      * ```
      *
-     * @param \Closure $callback Callback to run with constraints disabled
-     * @return mixed The return value of the callback.
+     * @template TResult
+     * @param \Closure(\Cake\Database\Connection): TResult $callback Callback to run with constraints disabled
+     * @return TResult The return value of the callback.
      * @throws \Exception Will re-throw any exception raised in $callback after
      *   rolling back the transaction.
      */

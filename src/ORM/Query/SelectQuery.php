@@ -1081,8 +1081,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $association = $table->getAssociation($name);
             $target = $association->getTarget();
             $primary = (array)$target->getPrimaryKey();
-            if (!$primary || $typeMap->type($target->aliasField($primary[0])) === null) {
-                $this->addDefaultTypes($target);
+            if (!$primary || $typeMap->type($association->getName() . '.' . $primary[0]) === null) {
+                $this->addDefaultTypes($target, $association->getName());
             }
             if ($nested) {
                 $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
@@ -1136,7 +1136,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -1208,7 +1208,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to join with
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -1256,7 +1256,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * will select no fields from the association.
      *
      * @param string $assoc The association to join with
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      * @see \Cake\ORM\Query\SelectQuery::matching()
@@ -1321,7 +1321,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * add more complex clauses you can do it directly in the main query.
      *
      * @param string $assoc The association to filter by
-     * @param \Closure|null $builder a function that will receive a pre-made query object
+     * @param (\Closure(\Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>): \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>)|null $builder a function that will receive a pre-made query object
      * that can be used to add custom conditions or selecting some fields
      * @return $this
      */
@@ -1458,6 +1458,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $statement = $this->getConnection()->selectQuery()
                 ->select($count)
                 ->from(['count_source' => $query])
+                ->setConnectionRole($query->getConnectionRole())
                 ->execute();
         } else {
             $query->getEagerLoader()->disableAutoFields();
@@ -1467,7 +1468,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 ->execute();
         }
 
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        try {
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+        } finally {
+            // A count always returns a single row, and leaving an unbuffered statement
+            // open would keep the connection busy until the statement is garbage
+            // collected.
+            $statement->closeCursor();
+        }
 
         return $result === false ? 0 : (int)$result['count'];
     }

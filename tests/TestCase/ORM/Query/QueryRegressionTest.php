@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\ComparisonExpression;
@@ -23,6 +24,8 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
+use Cake\Log\Engine\ArrayLog;
+use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
@@ -51,6 +54,7 @@ class QueryRegressionTest extends TestCase
         'core.AuthorsTags',
         'core.Comments',
         'core.FeaturedTags',
+        'core.Profiles',
         'core.SpecialTags',
         'core.TagsTranslations',
         'core.Translates',
@@ -1054,7 +1058,7 @@ class QueryRegressionTest extends TestCase
 
         $rows = $table->find()
             ->matching('Tags', function ($q) {
-                return $q->where(null);
+                return $q->where();
             })
             ->all();
         $this->assertNotEmpty($rows);
@@ -1848,5 +1852,260 @@ class QueryRegressionTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertEquals('First Article', $result[0]->title);
         $this->assertNotEmpty($result[0]->user);
+    }
+
+    /**
+     * The subquery strategy must not strip the ORDER BY from the query it is given.
+     *
+     * The loader for the first association would otherwise leave the caller's query without an
+     * ORDER BY, so every subsequent loader builds its filtering subquery unordered, pages on the
+     * wrong rows and returns no results at all.
+     */
+    public function testSubqueryStrategyDoesNotMutateOrder(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $query = $authors->find()
+            ->contain(['Articles'])
+            ->orderBy(['Authors.id' => 'DESC'])
+            ->limit(2);
+
+        $this->assertCount(1, $query->clause('order'));
+        $query->all()->toArray();
+        $this->assertCount(1, $query->clause('order'), 'The ORDER BY was removed from the query.');
+    }
+
+    /**
+     * Every hasMany in the contain list must be loaded, not just the first one.
+     *
+     * Ordering by id DESC with a limit of 2 pages onto authors 4 and 3. An unordered subquery
+     * would instead filter on authors 1 and 2, so author 4's comment goes missing.
+     */
+    public function testSubqueryStrategyWithMultipleHasMany(): void
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['strategy' => Association::STRATEGY_SUBQUERY]);
+        $authors->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+            'strategy' => Association::STRATEGY_SUBQUERY,
+        ]);
+
+        $results = $this->getTableLocator()->get('Authors')->find()
+            ->contain(['Articles', 'Comments'])
+            ->orderBy(['Authors.id' => 'DESC'])
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertCount(2, $results);
+        $this->assertSame([4, 3], array_map(fn(EntityInterface $author) => $author->id, $results));
+
+        // Second hasMany in the contain list: empty before the fix.
+        $this->assertCount(1, $results[0]->comments);
+        $this->assertSame(4, $results[0]->comments[0]->user_id);
+        $this->assertEmpty($results[0]->articles);
+
+        // First hasMany in the contain list: loaded correctly either way.
+        $this->assertCount(1, $results[1]->articles);
+        $this->assertSame('Second Article', $results[1]->articles[0]->title);
+        $this->assertEmpty($results[1]->comments);
+    }
+
+    /**
+     * Ordering on a column other than the binding key must not produce an invalid subquery.
+     *
+     * The filtering subquery reduces its SELECT to the binding key and groups by it. Sorting it by
+     * a column that takes part in neither is rejected by Postgres with a grouping error, so the
+     * ordered columns have to join the GROUP BY.
+     */
+    public function testSubqueryStrategyOrderedByNonKeyColumn(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+        $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $results = $articles->find()
+            ->contain(['Comments'])
+            ->innerJoinWith('Authors')
+            ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertSame([2, 1], array_map(fn(EntityInterface $article) => $article->id, $results));
+
+        // Only reachable when the subquery kept the same ordered window as the parent query.
+        $this->assertCount(2, $results[0]->comments);
+        $this->assertCount(4, $results[1]->comments);
+    }
+
+    /**
+     * orderByAsc()/orderByDesc() store the column inside an OrderClauseExpression under a numeric
+     * key instead of using the column as the key, and have to reach the GROUP BY just the same.
+     */
+    public function testSubqueryStrategyOrderedByExpression(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+        $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $results = $articles->find()
+            ->contain(['Comments'])
+            ->innerJoinWith('Authors')
+            ->orderByAsc('Authors.name')
+            ->orderByAsc('Articles.id')
+            ->limit(2)
+            ->all()
+            ->toArray();
+
+        $this->assertSame([2, 1], array_map(fn(EntityInterface $article) => $article->id, $results));
+        $this->assertCount(2, $results[0]->comments);
+        $this->assertCount(4, $results[1]->comments);
+    }
+
+    /**
+     * MariaDB filtering subqueries should use DISTINCT for deduplication.
+     *
+     * A GROUP BY combined with ORDER BY, LIMIT, and OFFSET triggers MariaDB's lateral-derived
+     * optimization, which can apply the page window per joined row and return incorrect associations.
+     * Other drivers retain the existing GROUP BY behavior.
+     */
+    public function testSubqueryStrategyDeduplicatesPaginatedResults(): void
+    {
+        $logger = new ArrayLog();
+        $articles = $this->getTableLocator()->get('Articles');
+        $driver = $articles->getConnection()->getDriver();
+        $previousLogger = $driver->getLogger();
+        $driver->setLogger($logger);
+
+        try {
+            $articles->belongsTo('Authors');
+            $articles->hasMany('Comments', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+            $results = $articles->find()
+                ->contain(['Comments'])
+                ->innerJoinWith('Authors')
+                ->orderBy(['Authors.name' => 'ASC', 'Articles.id' => 'ASC'])
+                ->limit(1)
+                ->offset(1)
+                ->all()
+                ->toArray();
+        } finally {
+            if ($previousLogger) {
+                $driver->setLogger($previousLogger);
+            } else {
+                $driver->disableQueryLogging();
+            }
+        }
+
+        $this->assertCount(1, $results);
+        $this->assertSame(1, $results[0]->id);
+        $this->assertCount(4, $results[0]->comments);
+
+        $subqueries = array_filter(
+            $logger->read(),
+            fn(string $message): bool => str_contains($message, 'INNER JOIN (SELECT'),
+        );
+        $this->assertCount(1, $subqueries, implode("\n", $logger->read()));
+
+        $sql = array_pop($subqueries);
+        if ($driver instanceof Mysql && $driver->isMariadb()) {
+            $this->assertStringContainsString('INNER JOIN (SELECT DISTINCT', $sql);
+            $this->assertStringNotContainsString('GROUP BY', $sql);
+            $this->assertMatchesRegularExpression('/SELECT DISTINCT .+name.+ FROM/', $sql);
+
+            return;
+        }
+
+        $this->assertStringNotContainsString('SELECT DISTINCT', $sql);
+        $this->assertMatchesRegularExpression('/GROUP BY .+name/', $sql);
+    }
+
+    /**
+     * Test for https://github.com/cakephp/cakephp/issues/19608
+     *
+     * The conditions of a nested innerJoinWith() belong to that association's join only.
+     * Databases that do not resolve the ON clause strictly, such as SQLite, accept the
+     * misplaced reference, so the condition has to be counted in the generated SQL.
+     */
+    public function testNestedMatchingConditionsStayOnTheirOwnJoin(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+        $articles->Comments->getTarget()->belongsTo('Profiles', ['foreignKey' => 'user_id']);
+        $articles->belongsToMany('Tags', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $driver = $articles->getConnection()->getDriver();
+        $previousLogger = $driver->getLogger();
+        $logger = new ArrayLog();
+        $driver->setLogger($logger);
+
+        try {
+            $articles->find()
+                ->contain(['Tags'])
+                ->innerJoinWith('Comments', fn(SelectQuery $q): SelectQuery => $q->innerJoinWith(
+                    'Profiles',
+                    fn(SelectQuery $q): SelectQuery => $q->where(['Profiles.last_name' => 'iglesias']),
+                ))
+                ->all()
+                ->toArray();
+        } finally {
+            if ($previousLogger) {
+                $driver->setLogger($previousLogger);
+            } else {
+                $driver->disableQueryLogging();
+            }
+        }
+
+        $logs = $logger->read();
+        if ($driver instanceof Mysql && $driver->isMariadb()) {
+            // Mariadb requires a specific query optimization that replaces GROUP BY with DISTINCT
+            $distinct = array_filter(
+                $logs,
+                fn(string $message): bool => str_contains($message, 'SELECT DISTINCT'),
+            );
+            $this->assertCount(1, $distinct, implode("\n", $logs));
+            $sql = array_pop($distinct);
+            $this->assertSame(1, substr_count($sql, 'last_name'), $sql);
+
+            return;
+        }
+
+        // The filtering subquery built for Tags is the only grouped statement the query above runs.
+        $grouped = array_filter(
+            $logs,
+            fn(string $message): bool => str_contains($message, 'GROUP BY'),
+        );
+        $this->assertCount(1, $grouped, implode("\n", $logs));
+
+        $sql = array_pop($grouped);
+        $this->assertSame(1, substr_count($sql, 'last_name'), $sql);
+    }
+
+    /**
+     * Test for https://github.com/cakephp/cakephp/issues/19609
+     *
+     * The subquery filter groups by the source binding key and inherits the query's LIMIT,
+     * so for an association that hangs off another association it describes a different set
+     * of keys than the rows the query returned.
+     */
+    public function testLimitedQueryLoadsNestedAssociationOfJoinedTable(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->belongsTo('Articles');
+        $comments->Articles->getTarget()
+            ->belongsToMany('Tags', ['strategy' => Association::STRATEGY_SUBQUERY]);
+
+        $comment = $comments->find()
+            ->contain(['Articles' => ['Tags']])
+            ->orderBy(['Articles.id' => 'ASC'])
+            ->limit(1)
+            ->offset(1)
+            ->all()
+            ->first();
+
+        $this->assertSame(1, $comment->article->id);
+        $this->assertCount(2, $comment->article->tags);
     }
 }
