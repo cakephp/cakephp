@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\AggregateExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -298,6 +299,7 @@ class LongIdentifiersTest extends TestCase
      */
     public function testCommonTableExpression(): void
     {
+        $this->skipIfNoCommonTableExpressions();
         $articles = $this->articles;
         $query = (new SelectQuery($this->connection))
             ->with(fn($cte) => $cte
@@ -317,6 +319,7 @@ class LongIdentifiersTest extends TestCase
      */
     public function testCommonTableExpressionsWithTheSamePrefix(): void
     {
+        $this->skipIfNoCommonTableExpressions();
         [$first, $second] = $this->commonTableExpressionsWithTheSamePrefix();
         $articles = $this->articles;
 
@@ -337,6 +340,7 @@ class LongIdentifiersTest extends TestCase
      */
     public function testCommonTableExpressionsInUpdateQuery(): void
     {
+        $this->skipIfNoCommonTableExpressions();
         $driver = $this->connection->getDriver();
         $this->skipIf(
             $driver instanceof Mysql && str_contains($driver->version(), 'MariaDB'),
@@ -353,6 +357,17 @@ class LongIdentifiersTest extends TestCase
                 (new SelectQuery($this->connection))->select(['id'])->from("{$articles}_second"),
             ));
         $this->assertSame(2, $update->execute()->rowCount());
+    }
+
+    /**
+     * Skips the test when the database does not support common table expressions.
+     */
+    protected function skipIfNoCommonTableExpressions(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Common table expressions are not supported.',
+        );
     }
 
     /**
@@ -379,9 +394,10 @@ class LongIdentifiersTest extends TestCase
      */
     public function testNamedWindowsWithTheSamePrefix(): void
     {
+        $driver = $this->connection->getDriver();
         $this->skipIf(
-            !$this->connection->getDriver()->supports(DriverFeatureEnum::WINDOW),
-            'Window functions are not supported.',
+            !$driver->supports(DriverFeatureEnum::WINDOW) || $driver instanceof Sqlserver,
+            'Named windows are not supported.',
         );
         $articles = $this->articles;
         $query = (new SelectQuery($this->connection))
