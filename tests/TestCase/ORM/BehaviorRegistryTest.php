@@ -367,8 +367,9 @@ class BehaviorRegistryTest extends TestCase
         $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
         $this->Behaviors->unload('Sluggable');
 
-        $this->Behaviors->callFinder('noSlug', new SelectQuery($this->Table));
         $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
+
+        $this->Behaviors->callFinder('noSlug', new SelectQuery($this->Table));
     }
 
     /**

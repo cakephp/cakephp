@@ -375,13 +375,6 @@ class EagerLoaderTest extends TestCase
         };
         $loader = new EagerLoader();
         $loader->contain(['clients'], $builder);
-
-        $expected = [
-            'clients' => [
-                'queryBuilder' => $builder,
-            ],
-        ];
-        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
