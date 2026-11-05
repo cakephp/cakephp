@@ -24,6 +24,7 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query\SelectQuery;
 use Closure;
+use stdClass;
 
 /**
  * Keeps the table and column aliases of a query within the maximum identifier
@@ -331,17 +332,32 @@ class IdentifierShortener
         }
 
         return static function (mixed $row) use ($map): mixed {
+            if ($row instanceof stdClass) {
+                return (object)static::renameKeys(get_object_vars($row), $map);
+            }
             if (!is_array($row)) {
                 return $row;
             }
 
-            $renamed = [];
-            foreach ($row as $key => $value) {
-                $renamed[$map[$key] ?? $key] = $value;
-            }
-
-            return $renamed;
+            return static::renameKeys($row, $map);
         };
+    }
+
+    /**
+     * Renames the keys of a row using a map of shortened to original column aliases.
+     *
+     * @param array<string|int, mixed> $row The row to rename the keys of.
+     * @param array<string, string> $map Shortened column aliases mapped to the original ones.
+     * @return array<string|int, mixed>
+     */
+    protected static function renameKeys(array $row, array $map): array
+    {
+        $renamed = [];
+        foreach ($row as $key => $value) {
+            $renamed[$map[$key] ?? $key] = $value;
+        }
+
+        return $renamed;
     }
 
     /**

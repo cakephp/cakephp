@@ -324,6 +324,10 @@ class IdentifierShortenerTest extends TestCase
             ['id' => 1, 'title' => 'First', $this->long . '__name' => 'mariano'],
             $decorator($row),
         );
+        $this->assertEquals(
+            (object)['id' => 1, 'title' => 'First', $this->long . '__name' => 'mariano'],
+            $decorator((object)$row),
+        );
         $this->assertSame([1, 'First', 'mariano'], $decorator([1, 'First', 'mariano']));
         $this->assertFalse($decorator(false));
     }

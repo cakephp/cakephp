@@ -26,6 +26,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -76,6 +77,63 @@ class LongIdentifiersTest extends TestCase
     public static function autoQuotingProvider(): array
     {
         return [[false], [true]];
+    }
+
+    /**
+     * Shortened column aliases are restored whichever way the rows are fetched,
+     * and the restored aliases are type cast.
+     */
+    public function testFetchModes(): void
+    {
+        $id = "{$this->articles}__id";
+        $created = "{$this->articles}__created";
+        $query = fn() => (new SelectQuery($this->connection))
+            ->select([$id => 'id', $created => 'created', 'comment'])
+            ->from('comments')
+            ->where(['comment' => 'First Comment for First Article'])
+            ->setSelectTypeMap(new TypeMap([$id => 'integer', $created => 'datetime']));
+
+        $this->assertLongIdentifiersAreShortened($query());
+
+        // Ids are not compared, a test without fixtures can leave rows in the table.
+        $expected = [$id => 0, $created => '2007-03-18 10:45:23', 'comment' => 'First Comment for First Article'];
+        $assertRow = function (mixed $row) use ($expected, $id, $created): void {
+            $this->assertIsArray($row);
+            $this->assertIsInt($row[$id]);
+            $row[$id] = 0;
+            $this->assertInstanceOf(DateTime::class, $row[$created]);
+            $row[$created] = $row[$created]->format('Y-m-d H:i:s');
+            $this->assertSame($expected, $row);
+        };
+
+        $rows = $query()->execute()->fetchAll('assoc');
+        $this->assertCount(1, $rows);
+        $assertRow($rows[0]);
+        $assertRow($query()->execute()->fetch('assoc'));
+        $assertRow($query()->execute()->fetchAssoc());
+        foreach ($query()->execute() as $row) {
+            $assertRow($row);
+        }
+        foreach ($query() as $row) {
+            $assertRow($row);
+        }
+
+        $row = $query()->execute()->fetch('num');
+        $this->assertIsArray($row);
+        $this->assertSame([0, 1, 2], array_keys($row));
+        $this->assertSame('First Comment for First Article', $row[2]);
+        $this->assertSame(
+            [[0, 1, 2]],
+            array_map(array_keys(...), $query()->execute()->fetchAll('num')),
+        );
+
+        // Rows fetched as objects are not type cast, but their aliases are restored.
+        $object = $query()->execute()->fetch('obj');
+        $this->assertSame(array_keys($expected), array_keys(get_object_vars($object)));
+        $this->assertSame('First Comment for First Article', $object->comment);
+        $objects = $query()->execute()->fetchAll('obj');
+        $this->assertCount(1, $objects);
+        $this->assertSame(array_keys($expected), array_keys(get_object_vars($objects[0])));
     }
 
     /**

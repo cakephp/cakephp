@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\I18n\DateTime;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -118,6 +119,11 @@ class LongAliasesTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertSame(1, $results[0]->_matchingData[static::COMMENTS]->article_id);
         $this->assertSame('First Comment for First Article', $results[0]->_matchingData[static::COMMENTS]->comment);
+        $this->assertInstanceOf(DateTime::class, $results[0]->_matchingData[static::COMMENTS]->created);
+        $this->assertSame(
+            '2007-03-18 10:45:23',
+            $results[0]->_matchingData[static::COMMENTS]->created->format('Y-m-d H:i:s'),
+        );
         $this->assertSame(2, $results[1]->_matchingData[static::COMMENTS]->article_id);
     }
 
