@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http\RateLimit;
 
+use AssertionError;
 use Cake\Cache\Cache;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
 use Cake\TestSuite\TestCase;
@@ -341,5 +342,18 @@ class SlidingWindowRateLimiterTest extends TestCase
 
         $this->assertGreaterThanOrEqual($startTime + $window, $result['reset']);
         $this->assertLessThanOrEqual($startTime + $window + 1, $result['reset']);
+    }
+
+    /**
+     * Test that a zero window is rejected
+     *
+     * @return void
+     */
+    public function testZeroWindow(): void
+    {
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('Window must be greater than 0');
+
+        $this->limiter->attempt('test_zero_window', 5, 0);
     }
 }

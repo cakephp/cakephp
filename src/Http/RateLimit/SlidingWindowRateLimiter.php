@@ -53,6 +53,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
      */
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
+        assert($window > 0, 'Window must be greater than 0');
         $now = time();
 
         $data = $this->cache->get($identifier);
