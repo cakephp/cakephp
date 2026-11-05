@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -55,12 +56,47 @@ class IdentifierShortener
     protected const SUFFIX_LENGTH = 9;
 
     /**
+     * Pattern matching the parts of plain SQL that are not shortened with standard SQL strings:
+     * line and block comments, `'...'` string literals, and Postgres `E'...'` and
+     * dollar quoted string literals.
+     *
+     * @var string
+     */
+    protected const SKIP_STANDARD = '--[^\n]*|/\*.*?\*/|' .
+        '\b[Ee]\'(?:[^\'\\\\]|\\\\.|\'\')*\'|\$(\w*)\$.*?\$\1\$|\'(?:[^\']|\'\')*\'';
+
+    /**
+     * Pattern matching the parts of plain SQL that are not shortened with MySQL strings:
+     * `-- `, `#` and block comments, and `'...'` and `"..."` string literals,
+     * which use backslash escapes.
+     *
+     * @var string
+     */
+    protected const SKIP_MYSQL = '--\s[^\n]*|#[^\n]*|/\*.*?\*/|' .
+        '\'(?:[^\'\\\\]|\\\\.|\'\')*\'|"(?:[^"\\\\]|\\\\.|"")*"';
+
+    /**
+     * Pattern matching the words to shorten, skipping comments and string literals.
+     *
+     * Outside of comments and string literals, a word longer than the identifier
+     * limit can only be an identifier.
+     *
+     * @var string
+     */
+    protected string $wordPattern;
+
+    /**
      * Constructor
      *
      * @param int $maxLength The maximum identifier length in bytes.
+     * @param bool $mysqlStrings Whether string literals follow MySQL rules: backslash escapes
+     *   and double quoted strings.
      */
-    public function __construct(protected int $maxLength)
+    public function __construct(protected int $maxLength, bool $mysqlStrings = false)
     {
+        $skip = $mysqlStrings ? static::SKIP_MYSQL : static::SKIP_STANDARD;
+        $this->wordPattern = '~(?:' . $skip . ')(*SKIP)(*FAIL)|\w+~su';
+
         if ($maxLength <= static::SUFFIX_LENGTH) {
             throw new DatabaseException(sprintf(
                 'The maximum identifier length must be greater than %d, `%d` given.',
@@ -101,7 +137,10 @@ class IdentifierShortener
 
     /**
      * Shortens all the identifiers longer than the maximum length found in a string
-     * such as `Alias.field`, `Alias__field`, `"Alias"."field"` or `COUNT(Alias.field)`.
+     * such as `Alias.field`, `Alias__field`, `"Alias"."field"`, `COUNT(Alias.field)`
+     * or `Alias.field > 1`.
+     *
+     * Comments and string literals are kept as they are.
      *
      * @param string $identifier The string to process.
      * @return string
@@ -113,7 +152,7 @@ class IdentifierShortener
         }
 
         return (string)preg_replace_callback(
-            '/\w+/u',
+            $this->wordPattern,
             fn(array $matches): string => $this->shorten($matches[0]),
             $identifier,
         );
@@ -123,23 +162,36 @@ class IdentifierShortener
      * Returns whether the query defines or references identifiers that are too long.
      *
      * Only the parts of the query that define table and column aliases are checked
-     * (select, from and join) along with group and distinct, which can only hold
-     * identifiers. Long identifiers referenced elsewhere are always defined
-     * in one of those parts, either in this query or in an outer one which will
-     * shorten them when it is compiled.
+     * (common table expressions, select, from, join and window) along with group and distinct,
+     * which can only hold identifiers. Long identifiers referenced elsewhere are
+     * always defined in one of those parts, either in this query or in an outer one
+     * which will shorten them when it is compiled.
      *
      * @param \Cake\Database\Query $query The query to check.
      * @return bool
      */
     public function needsShortening(Query $query): bool
     {
+        foreach ($query->clause('with') as $cte) {
+            if ($cte instanceof CommonTableExpression && $this->hasLongName($cte)) {
+                return true;
+            }
+        }
+
         if (!$query instanceof SelectQuery) {
+            // Update and delete queries do not support table aliases or joins.
             return false;
         }
 
         foreach (['select', 'distinct', 'group', 'from'] as $part) {
             $contents = $query->clause($part);
             if (is_array($contents) && $this->hasLongIdentifier($contents)) {
+                return true;
+            }
+        }
+
+        foreach ($query->clause('window') as $window) {
+            if (strlen($window['name']->getIdentifier()) > $this->maxLength) {
                 return true;
             }
         }
@@ -151,7 +203,11 @@ class IdentifierShortener
             if (isset($join['alias']) && strlen($join['alias']) > $this->maxLength) {
                 return true;
             }
-            if (($join['table'] ?? null) instanceof Query && $this->needsShortening($join['table'])) {
+            $table = $join['table'] ?? null;
+            if (is_string($table) && $this->shortenIdentifier($table) !== $table) {
+                return true;
+            }
+            if ($table instanceof Query && $this->needsShortening($table)) {
                 return true;
             }
         }
@@ -165,11 +221,18 @@ class IdentifierShortener
      * The query is modified in place, callers are expected to pass a copy of the
      * query that is only used to generate SQL.
      *
-     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to shorten identifiers in.
-     * @return \Cake\Database\Query\SelectQuery<mixed>
+     * @template T of \Cake\Database\Query
+     * @param T $query The query to shorten identifiers in.
+     * @return T
      */
-    public function shortenQuery(SelectQuery $query): SelectQuery
+    public function shortenQuery(Query $query): Query
     {
+        if (!$query instanceof SelectQuery) {
+            $query->traverseExpressions($this->shortenExpression(...));
+
+            return $query;
+        }
+
         $binder = $query->getValueBinder();
         $query->setValueBinder(null);
 
@@ -199,6 +262,9 @@ class IdentifierShortener
             foreach ($joins as $alias => $join) {
                 if (isset($join['alias'])) {
                     $join['alias'] = $this->shortenIdentifier($join['alias']);
+                }
+                if (is_string($join['table'] ?? null)) {
+                    $join['table'] = $this->shortenIdentifier($join['table']);
                 }
                 $result[is_string($alias) ? $this->shortenIdentifier($alias) : $alias] = $join;
             }
@@ -322,19 +388,9 @@ class IdentifierShortener
         }
 
         if ($expression instanceof QueryExpression) {
-            // Plain SQL conditions like `Alias.field = 1` can reference long table aliases.
-            // Only identifiers followed by a dot are shortened, as anything else could
-            // be part of a value.
+            // Plain SQL conditions like `Alias.field = 1` can reference long aliases.
             $expression->iterateParts(function ($part) {
-                if (!is_string($part) || strlen($part) <= $this->maxLength) {
-                    return $part;
-                }
-
-                return (string)preg_replace_callback(
-                    '/\b\w+(?=\.)/u',
-                    fn(array $matches): string => $this->shorten($matches[0]),
-                    $part,
-                );
+                return is_string($part) ? $this->shortenIdentifier($part) : $part;
             });
         }
     }
@@ -382,6 +438,33 @@ class IdentifierShortener
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the name or the column names of a common table expression are too long.
+     *
+     * @param \Cake\Database\Expression\CommonTableExpression $cte The common table expression.
+     * @return bool
+     */
+    protected function hasLongName(CommonTableExpression $cte): bool
+    {
+        $found = false;
+        $inQuery = false;
+        // The name and the columns are traversed before the query of the expression.
+        $cte->traverse(function (mixed $expression) use (&$found, &$inQuery): void {
+            if ($expression instanceof Query) {
+                $inQuery = true;
+            }
+            if (
+                !$inQuery &&
+                $expression instanceof IdentifierExpression &&
+                strlen($expression->getIdentifier()) > $this->maxLength
+            ) {
+                $found = true;
+            }
+        });
+
+        return $found;
     }
 
     /**

@@ -112,6 +112,68 @@ class IdentifierShortenerTest extends TestCase
         );
     }
 
+    /**
+     * Words inside string literals are values, they must be kept as they are.
+     */
+    public function testShortenIdentifierKeepsStringLiterals(): void
+    {
+        $long = $this->long;
+        $short = $this->shortener->shorten($long);
+
+        $this->assertSame(
+            "{$short}.title <> '{$long}.title'",
+            $this->shortener->shortenIdentifier("{$long}.title <> '{$long}.title'"),
+        );
+        $this->assertSame(
+            "{$short}.title IN ('it''s {$long}', '') AND {$short}.id > 0",
+            $this->shortener->shortenIdentifier("{$long}.title IN ('it''s {$long}', '') AND {$long}.id > 0"),
+        );
+    }
+
+    /**
+     * Comments and Postgres string literals must be skipped, otherwise a quote inside
+     * them shifts the following string literals.
+     */
+    public function testShortenIdentifierKeepsCommentsAndPostgresStrings(): void
+    {
+        $long = $this->long;
+        $short = $this->shortener->shorten($long);
+
+        $sql = "{$long}.id > 0 -- don't {$long}\n AND {$long}.title <> '{$long}'";
+        $expected = "{$short}.id > 0 -- don't {$long}\n AND {$short}.title <> '{$long}'";
+        $this->assertSame($expected, $this->shortener->shortenIdentifier($sql));
+
+        $sql = "/* don't {$long} */ {$long}.title <> '{$long}'";
+        $expected = "/* don't {$long} */ {$short}.title <> '{$long}'";
+        $this->assertSame($expected, $this->shortener->shortenIdentifier($sql));
+
+        $sql = "{$long}.title <> E'it\\'s {$long}' AND {$long}.title <> e'{$long}'";
+        $expected = "{$short}.title <> E'it\\'s {$long}' AND {$short}.title <> e'{$long}'";
+        $this->assertSame($expected, $this->shortener->shortenIdentifier($sql));
+
+        $sql = "{$long}.title <> \$\$it's {$long}\$\$ AND {$long}.title <> \$tag\$'{$long}\$tag\$";
+        $expected = "{$short}.title <> \$\$it's {$long}\$\$ AND {$short}.title <> \$tag\$'{$long}\$tag\$";
+        $this->assertSame($expected, $this->shortener->shortenIdentifier($sql));
+    }
+
+    /**
+     * MySQL string literals use backslash escapes and can be double quoted.
+     */
+    public function testShortenIdentifierKeepsMysqlStrings(): void
+    {
+        $shortener = new IdentifierShortener(63, true);
+        $long = $this->long;
+        $short = $shortener->shorten($long);
+
+        $sql = "{$long}.title <> 'it\\'s {$long}' AND {$long}.title <> \"{$long}\" # don't {$long}";
+        $expected = "{$short}.title <> 'it\\'s {$long}' AND {$short}.title <> \"{$long}\" # don't {$long}";
+        $this->assertSame($expected, $shortener->shortenIdentifier($sql));
+
+        $sql = "{$long}.id > 0 -- don't {$long}\n AND {$long}.id--1 > 0";
+        $expected = "{$short}.id > 0 -- don't {$long}\n AND {$short}.id--1 > 0";
+        $this->assertSame($expected, $shortener->shortenIdentifier($sql));
+    }
+
     public function testNeedsShortening(): void
     {
         $connection = ConnectionManager::get('test');
@@ -134,6 +196,31 @@ class IdentifierShortenerTest extends TestCase
         $derived = (new SelectQuery($connection))->select(['id'])->from([$this->long => 'articles']);
         $query = (new SelectQuery($connection))->select(['id'])->from(['derived' => $derived]);
         $this->assertTrue($this->shortener->needsShortening($query));
+
+        $query = (new SelectQuery($connection))
+            ->select(['id'])
+            ->from('articles')
+            ->join(['T' => ['table' => $this->long, 'conditions' => []]]);
+        $this->assertTrue($this->shortener->needsShortening($query));
+
+        $cte = fn($cte) => $cte->name($this->long)->query((new SelectQuery($connection))->select(['id'])->from('articles'));
+        $query = (new SelectQuery($connection))->with($cte)->select(['id'])->from('articles');
+        $this->assertTrue($this->shortener->needsShortening($query));
+
+        $query = $connection->updateQuery('articles', ['title' => 'x'])->with($cte);
+        $this->assertTrue($this->shortener->needsShortening($query));
+
+        $query = $connection->updateQuery('articles', ['title' => 'x'], ['id' => 1]);
+        $this->assertFalse($this->shortener->needsShortening($query));
+
+        $short = fn($cte) => $cte
+            ->name('Short')
+            ->query((new SelectQuery($connection))->select([$this->long . '__id' => 'id'])->from('articles'));
+        $query = (new SelectQuery($connection))->with($short)->select(['id'])->from('articles');
+        $this->assertFalse(
+            $this->shortener->needsShortening($query),
+            'Common table expression queries are compiled, and shortened, on their own',
+        );
     }
 
     public function testShortenQuery(): void
@@ -190,6 +277,31 @@ class IdentifierShortenerTest extends TestCase
         $sql = $this->shortener->shortenQuery(clone $query)->sql();
         $this->assertStringNotContainsString($long, $sql);
         $this->assertStringContainsString("Comments.article_id = {$short}.id", $sql);
+    }
+
+    /**
+     * Plain SQL in conditions, having and order clauses can reference long column aliases
+     * without a table alias, and contain string literals that must not be modified.
+     */
+    public function testShortenQueryPlainSql(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $long = $this->long;
+        $short = $this->shortener->shorten($long);
+        $shortTotal = $this->shortener->shorten($long . '__total');
+
+        $query = (new SelectQuery($connection))
+            ->select([$long . '__total' => 'COUNT(*)'])
+            ->from([$long => 'articles'])
+            ->where("{$long}.title <> '{$long}.title'")
+            ->groupBy(["{$long}.author_id"])
+            ->having("{$long}__total > 1")
+            ->orderBy("{$long}__total DESC");
+
+        $sql = $this->shortener->shortenQuery(clone $query)->sql();
+        $this->assertStringContainsString("WHERE {$short}.title <> '{$long}.title'", $sql);
+        $this->assertStringContainsString("HAVING {$shortTotal} > 1", $sql);
+        $this->assertStringContainsString("ORDER BY {$shortTotal} DESC", $sql);
     }
 
     public function testAliasMap(): void

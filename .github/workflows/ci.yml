@@ -171,6 +171,9 @@ jobs:
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database-autoquote.xml
+          if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then
+            CAKE_TEST_SHORTEN_IDENTIFIERS=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database-shorten.xml
+          fi
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         elif [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'lowest' ]]; then
           vendor/bin/phpunit
@@ -178,13 +181,16 @@ jobs:
         else
           vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
+          if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then
+            CAKE_TEST_SHORTEN_IDENTIFIERS=1 vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
+          fi
         fi
 
     - name: Submit code coverage
       if: matrix.php-version == '8.2'
       uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
       with:
-        files: coverage.xml,coverage-database.xml,coverage-database-autoquote.xml,coverage-functions.xml
+        files: coverage.xml,coverage-database.xml,coverage-database-autoquote.xml,coverage-database-shorten.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}
 
   testsuite-windows:

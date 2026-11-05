@@ -816,10 +816,21 @@ abstract class Driver implements LoggerAwareInterface
         }
         if ($this->shortener === null) {
             $maxLength = $this->getMaxAliasLength();
-            $this->shortener = $maxLength === null ? false : new IdentifierShortener($maxLength);
+            $this->shortener = $maxLength === null ? false : $this->createIdentifierShortener($maxLength);
         }
 
         return $this->shortener ?: null;
+    }
+
+    /**
+     * Creates the identifier shortener for the maximum alias length of the database.
+     *
+     * @param int $maxLength The maximum alias length.
+     * @return \Cake\Database\IdentifierShortener
+     */
+    protected function createIdentifierShortener(int $maxLength): IdentifierShortener
+    {
+        return new IdentifierShortener($maxLength);
     }
 
     /**
@@ -962,9 +973,9 @@ abstract class Driver implements LoggerAwareInterface
      *
      * This can also be enabled with the `shortenIdentifiers` connection option.
      *
-     * Identifiers in plain SQL strings are only shortened when they are followed by
-     * a dot (`Alias.column`). Real table and column names longer than the limit
-     * are shortened as well, use their truncated name instead.
+     * Plain SQL strings are shortened as well, except for the contents of single
+     * quoted string literals. Real table and column names longer than the limit
+     * are shortened too, use their truncated name instead.
      *
      * @param bool $enable Whether to enable identifier shortening.
      * @return $this
@@ -1021,7 +1032,7 @@ abstract class Driver implements LoggerAwareInterface
     {
         $processor = $this->newCompiler();
         $shortener = $this->shortener();
-        if ($shortener !== null && $query instanceof SelectQuery && $shortener->needsShortening($query)) {
+        if ($shortener !== null && $shortener->needsShortening($query)) {
             // Shorten identifiers on a copy so the query keeps the original aliases,
             // which are used to restore the column aliases in the results.
             $query = $shortener->shortenQuery(clone $query);
