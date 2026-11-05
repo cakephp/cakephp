@@ -1566,6 +1566,53 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Execute a key/value list query and return the resulting array.
+     *
+     * Terminal counterpart to the `list` finder ({@see \Cake\ORM\Table::findList()}).
+     * Returns the combined array directly instead of a query whose static type
+     * still claims to be a collection of entities. Build and stack finders on
+     * `$query` first when needed.
+     *
+     * ```
+     * $options = $articles->list();
+     *
+     * $options = $articles->list(
+     *     $articles->find()->where(['published' => true]),
+     *     valueField: 'title',
+     * );
+     * ```
+     *
+     * @param \Cake\ORM\Query\SelectQuery<TEntity|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @param \Closure|array<string>|string|null $keyField The path to the key field, defaults to the primary key.
+     * @param \Closure|array<string>|string|null $valueField The path to the value field, defaults to the display field.
+     * @param \Closure|array<string>|string|null $groupField The path to the field to group on.
+     * @param string $valueSeparator The separator used to join composite value fields.
+     * @return array<array-key, mixed>
+     * @since 5.5.0
+     */
+    public function list(
+        ?SelectQuery $query = null,
+        Closure|array|string|null $keyField = null,
+        Closure|array|string|null $valueField = null,
+        Closure|array|string|null $groupField = null,
+        string $valueSeparator = ' ',
+    ): array {
+        $query ??= $this->find();
+
+        return $query
+            ->find(
+                'list',
+                keyField: $keyField,
+                valueField: $valueField,
+                groupField: $groupField,
+                valueSeparator: $valueSeparator,
+            )
+            ->all()
+            ->toArray();
+    }
+
+    /**
      * Out of an options array, check if the keys described in `$keys` are arrays
      * and change the values for closures that will concatenate the each of the
      * properties in the value array when passed a row.
