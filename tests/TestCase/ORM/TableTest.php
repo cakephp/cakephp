@@ -596,17 +596,43 @@ class TableTest extends TestCase
         ]);
 
         $maxAlias = $this->connection->getDriver()->getMaxAliasLength();
-        if ($maxAlias && $maxAlias < 72) {
+        if ($maxAlias && $maxAlias < 72 && !$this->connection->getDriver()->isIdentifierShorteningEnabled()) {
             $nameLength = $maxAlias - 2;
             $this->expectException(DatabaseException::class);
             $this->expectExceptionMessage(
                 'ORM queries generate field aliases using the table name/alias and column name. ' .
                 "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
                 'You must change the table schema in the database and shorten either the table or column ' .
-                'identifier so they fit within the database alias limits.',
+                'identifier so they fit within the database alias limits, or enable the `shortenIdentifiers` ' .
+                'connection option.',
             );
         }
         $this->assertNotNull($table->setSchema($schema));
+    }
+
+    /**
+     * Long identifiers are allowed when the connection shortens them.
+     */
+    public function testSetSchemaLongIdentifiersWithShortening(): void
+    {
+        $schema = new TableSchema('long_identifiers', [
+            'this_is_invalid_because_it_is_very_very_very_long' => [
+                'type' => 'string',
+            ],
+        ]);
+        $table = new Table([
+            'table' => 'very_long_alias_name',
+            'connection' => $this->connection,
+        ]);
+
+        $driver = $this->connection->getDriver();
+        $enabled = $driver->isIdentifierShorteningEnabled();
+        $driver->enableIdentifierShortening();
+        try {
+            $this->assertSame($table, $table->setSchema($schema));
+        } finally {
+            $driver->enableIdentifierShortening($enabled);
+        }
     }
 
     public function testSchemaTypeOverrideInInitialize(): void
