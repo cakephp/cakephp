@@ -29,6 +29,7 @@ use Cake\Utility\Inflector;
 use Cake\View\Form\ContextFactory;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper;
+use Cake\View\HtmlStringable;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
@@ -761,13 +762,13 @@ class FormHelper extends Helper
      * - `escape` boolean - Whether to HTML escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
-     * @param array|string|null $text Error message as string or array of messages. If an array,
+     * @param \Cake\View\HtmlStringable|array|string|null $text Error message as string or array of messages. If an array,
      *   it should be a hash of key names => messages.
      * @param array<string, mixed> $options See above.
      * @return string Formatted errors or ''.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#displaying-and-checking-errors
      */
-    public function error(string $field, array|string|null $text = null, array $options = []): string
+    public function error(string $field, HtmlStringable|array|string|null $text = null, array $options = []): string
     {
         if (str_ends_with($field, '._ids')) {
             $field = substr($field, 0, -5);
@@ -785,10 +786,10 @@ class FormHelper extends Helper
             foreach ($error as $k => $e) {
                 if (isset($text[$k])) {
                     $tmp[] = $text[$k];
-                } elseif (isset($text[$e])) {
+                } elseif (!($e instanceof HtmlStringable) && isset($text[$e])) {
                     $tmp[] = $text[$e];
                 } else {
-                    $tmp[] = $e;
+                    $tmp[] = $e instanceof HtmlStringable ? (string)$e : $e;
                 }
             }
             $text = $tmp;
@@ -799,7 +800,10 @@ class FormHelper extends Helper
         }
 
         if ($options['escape']) {
-            $error = h($error);
+            $escape = static fn(mixed $message): mixed => $text !== null && $message instanceof HtmlStringable
+                ? (string)$message
+                : h($message);
+            $error = is_array($error) ? array_map($escape, $error) : $escape($error);
             unset($options['escape']);
         }
 
@@ -874,14 +878,14 @@ class FormHelper extends Helper
      * If you want to nest inputs in the labels, you will need to modify the default templates.
      *
      * @param string $fieldName This should be "modelname.fieldname"
-     * @param string|null $text Text that will appear in the label field. If
+     * @param \Cake\View\HtmlStringable|string|null $text Text that will appear in the label field. If
      *   $text is left undefined the text will be inflected from the
      *   fieldName.
      * @param array<string, mixed> $options An array of HTML attributes.
      * @return string The formatted LABEL element
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-labels
      */
-    public function label(string $fieldName, ?string $text = null, array $options = []): string
+    public function label(string $fieldName, HtmlStringable|string|null $text = null, array $options = []): string
     {
         if ($text === null) {
             $text = $fieldName;
@@ -1552,12 +1556,15 @@ class FormHelper extends Helper
      * used instead of the generated values if present.
      *
      * @param string $fieldName The name of the field to generate label for.
-     * @param array<string, mixed>|string|null $label Label text or array with label attributes.
+     * @param \Cake\View\HtmlStringable|array<string, mixed>|string|null $label Label text or array with label attributes.
      * @param array<string, mixed> $options Options for the label element.
      * @return string Generated label element
      */
-    protected function inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
-    {
+    protected function inputLabel(
+        string $fieldName,
+        HtmlStringable|array|string|null $label = null,
+        array $options = [],
+    ): string {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelOptions = ['templateVars' => $options['templateVars']];
         if (is_array($label)) {
@@ -1814,12 +1821,12 @@ class FormHelper extends Helper
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      * - Any other key is used as an HTML attribute on the generated `<button>` element.
      *
-     * @param string $content The button's caption. Not automatically HTML encoded
+     * @param \Cake\View\HtmlStringable|string $content The button's caption.
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-button-elements
      */
-    public function button(string $content, array $options = []): string
+    public function button(HtmlStringable|string $content, array $options = []): string
     {
         $options += [
             'type' => 'submit',
@@ -1859,13 +1866,13 @@ class FormHelper extends Helper
      * - Other options are the same as for button(). HTML attributes are applied to the generated `<button>` element.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
-     * @param string $content The button's caption. Not automatically HTML encoded
+     * @param \Cake\View\HtmlStringable|string $content The button's caption.
      * @param array|string $url URL as string or array
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postButton(string $content, array|string $url, array $options = []): string
+    public function postButton(HtmlStringable|string $content, array|string $url, array $options = []): string
     {
         $formOptions = ['url' => $url];
         if (isset($options['method'])) {
@@ -1912,14 +1919,14 @@ class FormHelper extends Helper
      *   element.
      * - The option `onclick` will be replaced.
      *
-     * @param string $content The content to be wrapped by <a> tags.
+     * @param \Cake\View\HtmlStringable|string $content The content to be wrapped by <a> tags.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A form based `<a>` element.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postLink(string $content, array|string|null $url = null, array $options = []): string
+    public function postLink(HtmlStringable|string $content, array|string|null $url = null, array $options = []): string
     {
         $options += ['block' => $this->getConfig('defaultPostLinkBlock'), 'confirm' => null];
 
@@ -2034,7 +2041,7 @@ class FormHelper extends Helper
      * Creates an HTML link, that submits a form to the given URL using the DELETE method.
      *  Requires javascript to be enabled in browser.
      *
-     * @param string $content The content to be wrapped by <a> tags.
+     * @param \Cake\View\HtmlStringable|string $content The content to be wrapped by <a> tags.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *    external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
@@ -2043,8 +2050,11 @@ class FormHelper extends Helper
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      * @since 5.2.0
      */
-    public function deleteLink(string $content, array|string|null $url = null, array $options = []): string
-    {
+    public function deleteLink(
+        HtmlStringable|string $content,
+        array|string|null $url = null,
+        array $options = [],
+    ): string {
         $options['method'] = 'delete';
 
         return $this->postLink($content, $url, $options);

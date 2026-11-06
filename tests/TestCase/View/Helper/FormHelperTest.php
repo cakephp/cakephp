@@ -39,6 +39,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\FormContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
+use Cake\View\HtmlString;
 use Cake\View\View;
 use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\WidgetInterface;
@@ -148,6 +149,129 @@ class FormHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Form, $this->View);
+    }
+
+    /**
+     * Render trusted captions throughout button and form-link delegation.
+     */
+    public function testActionsTrustedHtml(): void
+    {
+        $content = new HtmlString('<strong>Save</strong>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Save" & continue')];
+        $results = [
+            $this->Form->button($content, $options),
+            $this->Form->postButton($content, '/save', $options),
+            $this->Form->postLink($content, '/save', $options + ['block' => false]),
+            $this->Form->deleteLink($content, '/save', $options + ['block' => false]),
+        ];
+        foreach ($results as $result) {
+            $this->assertStringContainsString('<strong>Save</strong>', $result);
+            $this->assertStringContainsString('title="&quot;Save&quot; &amp; continue"', $result);
+        }
+    }
+
+    /**
+     * Preserve markers in direct labels, label arrays, and nested checkboxes.
+     */
+    public function testLabelsTrustedHtml(): void
+    {
+        $content = new HtmlString('<strong>Name</strong>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Name" & more')];
+        $this->assertSame(
+            '<label title="&quot;Name&quot; &amp; more" for="name"><strong>Name</strong></label>',
+            $this->Form->label('name', $content, $options),
+        );
+        foreach (['text', 'checkbox'] as $type) {
+            foreach ([$content, ['text' => $content, 'title' => new HtmlString('"Name" & more')]] as $label) {
+                $result = $this->Form->control('name', ['type' => $type, 'label' => $label]);
+                $this->assertStringContainsString('<strong>Name</strong></label>', $result);
+                $this->assertStringContainsString('<input', $result);
+            }
+        }
+    }
+
+    /**
+     * Render marked option labels while escaping neighboring text and values.
+     */
+    public function testChoiceLabelsTrustedHtml(): void
+    {
+        $options = [
+            ['value' => '"value"', 'text' => new HtmlString('<strong>Choice</strong>')],
+            ['value' => 'other', 'text' => '<em>Other</em>'],
+        ];
+        foreach (['radio', 'multiCheckbox'] as $method) {
+            $result = $this->Form->{$method}('choice', $options);
+            $this->assertStringContainsString('<strong>Choice</strong></label>', $result);
+            $this->assertStringContainsString('&lt;em&gt;Other&lt;/em&gt;</label>', $result);
+            $this->assertStringContainsString('value="&quot;value&quot;"', $result);
+        }
+        $result = $this->Form->radio('choice', [new HtmlString('<strong>Choice</strong>')]);
+        $this->assertStringContainsString('<strong>Choice</strong></label>', $result);
+    }
+
+    /**
+     * Trust explicit error overrides while escaping ordinary and fallback messages.
+     */
+    public function testErrorsTrustedHtml(): void
+    {
+        $this->article['errors'] = [
+            'name' => ['required' => 'Required', 'invalid' => '<em>Invalid</em>', 'length' => '<em>Too long</em>'],
+        ];
+        $this->Form->create($this->article);
+        $content = new HtmlString('<strong>Required</strong>');
+        $this->assertStringContainsString('<strong>Required</strong>', $this->Form->error('name', $content));
+        $errors = ['required' => $content, 'invalid' => '<em>Override</em>'];
+        foreach (
+            [
+            $this->Form->error('name', $errors),
+            $this->Form->control('name', ['error' => $errors]),
+            ] as $result
+        ) {
+            $this->assertStringContainsString('<strong>Required</strong>', $result);
+            $this->assertStringContainsString('&lt;em&gt;Override&lt;/em&gt;', $result);
+            $this->assertStringContainsString('&lt;em&gt;Too long&lt;/em&gt;', $result);
+        }
+        $this->assertStringContainsString(
+            '<strong>Required</strong>',
+            $this->Form->control('name', ['error' => $content]),
+        );
+        $this->assertStringContainsString('&lt;em&gt;Invalid&lt;/em&gt;', $this->Form->error('name'));
+    }
+
+    /**
+     * Escape context-provided HTML even when another error is explicitly overridden.
+     */
+    public function testContextErrorsRemainEscaped(): void
+    {
+        $this->article['errors'] = [
+            'name' => ['required' => 'Required', 'invalid' => new HtmlString('<em>Invalid</em>')],
+        ];
+        $this->Form->create($this->article);
+        $this->assertStringContainsString('&lt;em&gt;Invalid&lt;/em&gt;', $this->Form->error('name'));
+
+        $result = $this->Form->error('name', ['required' => new HtmlString('<strong>Required</strong>')]);
+        $this->assertStringContainsString('<strong>Required</strong>', $result);
+        $this->assertStringContainsString('&lt;em&gt;Invalid&lt;/em&gt;', $result);
+    }
+
+    /**
+     * Treat trusted HTML as text in attributes, textarea values, and select options.
+     */
+    public function testHtmlInTextOnlyPositions(): void
+    {
+        $html = new HtmlString('<strong>Value</strong>');
+        $this->assertStringContainsString(
+            'value="&lt;strong&gt;Value&lt;/strong&gt;"',
+            $this->Form->text('name', ['value' => $html]),
+        );
+        $this->assertStringContainsString(
+            '&lt;strong&gt;Value&lt;/strong&gt;</textarea>',
+            $this->Form->textarea('name', ['value' => $html]),
+        );
+        $this->assertStringContainsString(
+            '&lt;strong&gt;Value&lt;/strong&gt;</option>',
+            $this->Form->select('name', [$html]),
+        );
     }
 
     /**
