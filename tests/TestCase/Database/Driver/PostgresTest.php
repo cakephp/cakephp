@@ -31,6 +31,8 @@ use PDO;
  */
 class PostgresTest extends TestCase
 {
+    protected array $fixtures = ['core.Comments'];
+
     /**
      * Test connecting to Postgres with default configuration
      */
@@ -318,12 +320,13 @@ class PostgresTest extends TestCase
             ['comment' => 'json'],
         );
         $this->assertEquals(1, $stmt->rowCount());
+        $id = $stmt->fetch('assoc')['id'];
 
         $query = new SelectQuery($connection);
         $query
             ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
             ->from('comments')
-            ->where(['id' => 1]);
+            ->where(['id' => $id]);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc');
@@ -334,7 +337,7 @@ class PostgresTest extends TestCase
         $query
             ->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
             ->from('comments')
-            ->where(['id' => 1]);
+            ->where(['id' => $id]);
 
         $this->expectException(QueryException::class);
         $this->expectExceptionMessage('syntax error at end of jsonpath input');

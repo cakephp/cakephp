@@ -22,6 +22,7 @@ use Cake\Utility\Text;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
+use ReflectionProperty;
 use Transliterator;
 
 /**
@@ -29,6 +30,13 @@ use Transliterator;
  */
 class TextTest extends TestCase
 {
+    /**
+     * The default transliterator and its id before the test, restored after it.
+     *
+     * @var array{0: \Transliterator|null, 1: string}
+     */
+    protected array $transliterator;
+
     /**
      * @var \Cake\Utility\Text
      */
@@ -42,6 +50,10 @@ class TextTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->transliterator = [
+            (new ReflectionProperty(Text::class, '_defaultTransliterator'))->getValue(),
+            (new ReflectionProperty(Text::class, '_defaultTransliteratorId'))->getValue(),
+        ];
         $this->encoding = mb_internal_encoding();
         $this->Text = new Text();
     }
@@ -49,6 +61,8 @@ class TextTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        (new ReflectionProperty(Text::class, '_defaultTransliterator'))->setValue(null, $this->transliterator[0]);
+        (new ReflectionProperty(Text::class, '_defaultTransliteratorId'))->setValue(null, $this->transliterator[1]);
         mb_internal_encoding($this->encoding);
         unset($this->Text);
     }
