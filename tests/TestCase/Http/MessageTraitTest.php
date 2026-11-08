@@ -630,6 +630,6 @@ class MessageTraitTest extends TestCase
     public function testResponseStatusLinesAreValidated(string $class, int $code, string $reason): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new $class()->withStatus($code, $reason);
+        (void)new $class()->withStatus($code, $reason);
     }
 }
