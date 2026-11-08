@@ -13,16 +13,20 @@ declare(strict_types=1);
  * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
+ *
+ * Parts of this file are derived from laminas-diactoros
+ * @copyright Copyright (c) 2020 Laminas Project a Series of LF Projects, LLC. (https://getlaminas.org/)
+ * @license   https://github.com/laminas/laminas-diactoros/blob/3.9.x/LICENSE.md New BSD License
  */
 namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use function Laminas\Diactoros\normalizeServer;
-use function Laminas\Diactoros\normalizeUploadedFiles;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Factory for making ServerRequest instances.
@@ -54,7 +58,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $cookies = null,
         ?array $files = null,
     ): ServerRequest {
-        $server = normalizeServer($server ?? $_SERVER);
+        $server = static::normalizeServer($server ?? $_SERVER);
         ['uri' => $uri, 'base' => $base, 'webroot' => $webroot] = UriFactory::marshalUriAndBaseFromSapi($server);
 
         $sessionConfig = (array)Configure::read('Session') + [
@@ -166,7 +170,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function marshalFiles(array $files, ServerRequest $request): ServerRequest
     {
-        $files = normalizeUploadedFiles($files);
+        $files = static::normalizeUploadedFiles($files);
         $request = $request->withUploadedFiles($files);
 
         $parsedBody = $request->getParsedBody();
@@ -177,6 +181,164 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $parsedBody = Hash::merge($parsedBody, $files);
 
         return $request->withParsedBody($parsedBody);
+    }
+
+    /**
+     * Populate `HTTP_AUTHORIZATION` from the Apache request headers.
+     *
+     * Some SAPI/httpd combinations don't expose the Authorization header
+     * in `$_SERVER`.
+     *
+     * @param array $server The SERVER data to normalize.
+     * @return array
+     */
+    protected static function normalizeServer(array $server): array
+    {
+        if (!isset($server['HTTP_AUTHORIZATION']) && isset($server['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $server['HTTP_AUTHORIZATION'] = $server['REDIRECT_HTTP_AUTHORIZATION'];
+        }
+        if (!isset($server['HTTP_AUTHORIZATION']) && function_exists('apache_request_headers')) {
+            $headers = array_change_key_case((array)apache_request_headers());
+            if (isset($headers['authorization'])) {
+                $server['HTTP_AUTHORIZATION'] = $headers['authorization'];
+            }
+        }
+        if (!isset($server['HTTP_AUTHORIZATION'])) {
+            if (isset($server['PHP_AUTH_DIGEST'])) {
+                $digest = $server['PHP_AUTH_DIGEST'];
+                $server['HTTP_AUTHORIZATION'] = str_starts_with(strtolower($digest), 'digest ')
+                    ? $digest
+                    : 'Digest ' . $digest;
+            } elseif (isset($server['PHP_AUTH_USER'])) {
+                $server['HTTP_AUTHORIZATION'] = 'Basic ' . base64_encode(
+                    $server['PHP_AUTH_USER'] . ':' . ($server['PHP_AUTH_PW'] ?? ''),
+                );
+            }
+        }
+
+        return $server;
+    }
+
+    /**
+     * Normalize a `$_FILES` structure into a tree of UploadedFileInterface instances.
+     *
+     * @param array $files The files data to normalize.
+     * @return array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>>
+     * @throws \InvalidArgumentException For invalid file values.
+     */
+    protected static function normalizeUploadedFiles(array $files): array
+    {
+        $normalized = [];
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+                continue;
+            }
+            if (!is_array($value)) {
+                throw new InvalidArgumentException('Invalid value in files specification');
+            }
+            if (static::isFileSpecification($value)) {
+                $normalized[$key] = static::createUploadedFiles(
+                    $value['tmp_name'],
+                    $value['size'] ?? null,
+                    $value['error'] ?? null,
+                    $value['name'] ?? null,
+                    $value['type'] ?? null,
+                );
+                continue;
+            }
+            $normalized[$key] = static::normalizeUploadedFiles($value);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Recognize parallel PHP upload attributes by their leaf types, not form field names.
+     *
+     * @param array $files Candidate file specification or nested form group.
+     * @return bool
+     */
+    protected static function isFileSpecification(array $files): bool
+    {
+        return isset($files['tmp_name'], $files['size'], $files['error']) &&
+            static::isFileAttributeTree($files['tmp_name'], $files['size'], $files['error']);
+    }
+
+    /**
+     * Validate corresponding filename, size, and error leaves before transposing a tree.
+     *
+     * @param mixed $tmpName Filename or filename tree.
+     * @param mixed $size Size or size tree.
+     * @param mixed $error Error code or error tree.
+     * @return bool
+     */
+    protected static function isFileAttributeTree(mixed $tmpName, mixed $size, mixed $error): bool
+    {
+        if (!is_array($tmpName)) {
+            return is_string($tmpName) &&
+                (is_int($size) || (is_string($size) && ctype_digit($size))) &&
+                (is_int($error) || (is_string($error) && ctype_digit($error)));
+        }
+        if (!is_array($size) || !is_array($error)) {
+            return false;
+        }
+
+        return array_all(
+            $tmpName,
+            static fn($value, $key): bool => array_key_exists($key, $size) && array_key_exists($key, $error) &&
+                static::isFileAttributeTree($value, $size[$key], $error[$key]),
+        );
+    }
+
+    /**
+     * Create uploaded file instances from a (possibly nested) `$_FILES` specification.
+     *
+     * PHP stores nested uploads as separate trees per attribute, e.g.
+     * `['tmp_name' => ['a' => ...], 'size' => ['a' => ...]]`.
+     *
+     * @param mixed $tmpName The `tmp_name` value or tree.
+     * @param mixed $size The `size` value or tree.
+     * @param mixed $error The `error` value or tree.
+     * @param mixed $name The `name` value or tree.
+     * @param mixed $type The `type` value or tree.
+     * @return \Psr\Http\Message\UploadedFileInterface|array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>>
+     * @throws \InvalidArgumentException When the specification is incomplete.
+     */
+    protected static function createUploadedFiles(
+        mixed $tmpName,
+        mixed $size,
+        mixed $error,
+        mixed $name,
+        mixed $type,
+    ): UploadedFileInterface|array {
+        if (!is_array($tmpName)) {
+            if ($size === null || $error === null) {
+                throw new InvalidArgumentException(
+                    'Uploaded file specifications must contain each of the keys `tmp_name`, `size`, and `error`.',
+                );
+            }
+
+            return new UploadedFile($tmpName, (int)$size, (int)$error, $name, $type);
+        }
+        if (!is_array($size) || !is_array($error)) {
+            throw new InvalidArgumentException(
+                'Nested uploaded file specifications must contain `tmp_name`, `size`, and `error` arrays.',
+            );
+        }
+
+        $normalized = [];
+        foreach ($tmpName as $key => $value) {
+            $normalized[$key] = static::createUploadedFiles(
+                $value,
+                $size[$key] ?? null,
+                $error[$key] ?? null,
+                is_array($name) ? $name[$key] ?? null : null,
+                is_array($type) ? $type[$key] ?? null : null,
+            );
+        }
+
+        return $normalized;
     }
 
     /**
@@ -192,15 +354,15 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      *     instance based on it.
      * @param array $serverParams Array of SAPI parameters with which to seed
      *     the generated request instance.
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return \Cake\Http\ServerRequest
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
+    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequest
     {
         $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];
 
-        if (is_string($uri)) {
+        if (!$uri instanceof UriInterface) {
             $uri = new UriFactory()->createUri($uri);
         }
         $options['uri'] = $uri;

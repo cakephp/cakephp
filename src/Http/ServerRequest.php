@@ -24,8 +24,6 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Utility\Hash;
 use Closure;
 use InvalidArgumentException;
-use Laminas\Diactoros\Stream;
-use Laminas\Diactoros\UploadedFile;
 use NoDiscard;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -39,6 +37,8 @@ use function Cake\Core\env;
  */
 class ServerRequest implements ServerRequestInterface
 {
+    use HeaderValidationTrait;
+
     /**
      * Array of parameters parsed from the URL.
      *
@@ -876,6 +876,9 @@ class ServerRequest implements ServerRequestInterface
     #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withHeader(string $name, $value): static
     {
+        $this->assertHeaderName($name);
+        $filtered = $this->filterHeaderValue($value);
+        $value = is_array($value) ? $filtered : $filtered[0];
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
         $new->environment[$name] = $value;
@@ -898,13 +901,15 @@ class ServerRequest implements ServerRequestInterface
     #[NoDiscard('HTTP requests are immutable. You must consume the returned instance.')]
     public function withAddedHeader(string $name, $value): static
     {
+        $this->assertHeaderName($name);
+        $value = $this->filterHeaderValue($value);
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
         $existing = [];
         if (isset($new->environment[$name])) {
-            $existing = (array)$new->environment[$name];
+            $existing = $this->filterHeaderValue($new->environment[$name]);
         }
-        $existing = array_merge($existing, (array)$value);
+        $existing = array_merge($existing, $value);
         $new->environment[$name] = $existing;
 
         return $new;
@@ -1174,13 +1179,13 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return ($type is non-falsy-string ? bool : array<string>) Either an array of all the types the client
+     * @return ($type is null ? array<string> : bool) Either an array of all the types the client
      *   accepts or a boolean if they accept the provided type.
      */
     public function accepts(?string $type = null): array|bool
     {
         $content = new ContentTypeNegotiation();
-        if ($type) {
+        if ($type !== null) {
             return $content->preferredType($this, [$type]) !== null;
         }
 
@@ -1682,7 +1687,7 @@ class ServerRequest implements ServerRequestInterface
     public function getUploadedFile(string $path): ?UploadedFileInterface
     {
         $file = Hash::get($this->uploadedFiles, $path);
-        if (!$file instanceof UploadedFile) {
+        if (!$file instanceof UploadedFileInterface) {
             return null;
         }
 
@@ -1692,7 +1697,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get the array of uploaded files from the request.
      *
-     * @return array
+     * @return array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>>
      */
     public function getUploadedFiles(): array
     {
@@ -1702,7 +1707,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the request replacing the files, and creating a new instance.
      *
-     * @param array $uploadedFiles An array of uploaded file objects.
+     * @param array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>> $uploadedFiles An array of uploaded file objects.
      * @return static
      * @throws \InvalidArgumentException when $files contains an invalid object.
      */
@@ -1717,7 +1722,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Recursively validate uploaded file data.
      *
-     * @param array $uploadedFiles The new files array to validate.
+     * @param array<array-key, \Psr\Http\Message\UploadedFileInterface|array<array-key, mixed>> $uploadedFiles The new files array to validate.
      * @param string $path The path thus far.
      * @return void
      * @throws \InvalidArgumentException If any leaf elements are not valid files.
@@ -1784,7 +1789,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone($this, ['uri' => $uri]);
 
-        if ($preserveHost && $this->hasHeader('Host')) {
+        if ($preserveHost && $this->getHeaderLine('Host') !== '') {
             return $new;
         }
 
@@ -1836,12 +1841,11 @@ class ServerRequest implements ServerRequestInterface
         }
 
         $target = $this->uri->getPath();
-        if ($this->uri->getQuery()) {
-            $target .= '?' . $this->uri->getQuery();
+        if (!str_starts_with($target, '/')) {
+            $target = '/' . $target;
         }
-
-        if (!$target) {
-            return '/';
+        if ($this->uri->getQuery() !== '') {
+            $target .= '?' . $this->uri->getQuery();
         }
 
         return $target;

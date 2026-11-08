@@ -26,6 +26,7 @@ use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
+use Cake\Http\UploadedFile;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -33,7 +34,6 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
-use Laminas\Diactoros\UploadedFile;
 use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
@@ -829,6 +829,26 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get('/posts/redirectWithCookie');
         $this->assertCookieIsSet('remember');
+    }
+
+    public function testCookieAssertionsReadHeadersAlongsideCookieCollection(): void
+    {
+        $encrypted = $this->encrypt('secret', 'aes', $this->key);
+        $this->response = new Response()
+            ->withHeader('Set-Cookie', [
+                'remember=1',
+                'duplicate=header; Path=/',
+                'expired=',
+                new Cookie('encrypted', $encrypted)->toHeaderValue(),
+            ])
+            ->withCookie(new Cookie('duplicate', 'collection'));
+
+        $this->assertCookieIsSet('remember');
+        $this->assertCookie('1', 'remember');
+        $this->assertCookie('header', 'duplicate');
+        $this->assertCookieNotSet('expired');
+        $this->assertCookieNotSet('missing');
+        $this->assertCookieEncrypted('secret', 'encrypted', 'aes', $this->key);
     }
 
     /**

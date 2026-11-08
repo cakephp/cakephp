@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Http\Stream;
 use Cake\Http\UploadedFileFactory;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Stream;
 
 /**
  * Test case for the uploaded file factory.

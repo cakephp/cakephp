@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n\Middleware;
 
+use Cake\Http\ServerRequestFactory;
 use Cake\I18n\I18n;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\ServerRequestFactory;
 use Locale;
 use TestApp\Http\TestRequestHandler;
 

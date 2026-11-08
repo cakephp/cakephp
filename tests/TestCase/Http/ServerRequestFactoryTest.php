@@ -21,19 +21,27 @@ use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Http\Session;
+use Cake\Http\UploadedFile;
+use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Exception\InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Psr\Http\Message\UploadedFileInterface;
+use Uri\Rfc3986\Uri as Rfc3986Uri;
 
 /**
  * Test case for the server factory.
  */
 class ServerRequestFactoryTest extends TestCase
 {
+    public function testCreateServerRequestWithAdaptedNativeUri(): void
+    {
+        $request = new ServerRequestFactory()->createServerRequest('GET', new Uri(new Rfc3986Uri('https://example.com/a%2fb')));
+        $this->assertSame('https://example.com/a%2fb', (string)$request->getUri());
+    }
+
     /**
      * Test fromGlobals reads super globals
      */
@@ -1194,7 +1202,7 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $request = ServerRequestFactory::fromGlobals(null, null, null, null, $files);
 
-        /** @var \Laminas\Diactoros\UploadedFile $expected */
+        /** @var \Cake\Http\UploadedFile $expected */
         $expected = $request->getData('file');
         $this->assertSame($files['file']['size'], $expected->getSize());
         $this->assertSame($files['file']['error'], $expected->getError());
@@ -1508,6 +1516,191 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
+     * Test that already normalized file specifications nested under plain
+     * (non-file) keys are traversed.
+     */
+    public function testFilesNestedUnderPlainKeys(): void
+    {
+        $files = [
+            'my-form' => [
+                'details' => [
+                    'avatar' => [
+                        'tmp_name' => 'phpUxcOty',
+                        'name' => 'my-avatar.png',
+                        'size' => 90996,
+                        'type' => 'image/png',
+                        'error' => 0,
+                    ],
+                ],
+            ],
+        ];
+
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $uploads = $request->getUploadedFiles();
+
+        $this->assertCount(1, $uploads);
+        $avatar = $uploads['my-form']['details']['avatar'];
+        $this->assertInstanceOf(UploadedFileInterface::class, $avatar);
+        $this->assertSame('my-avatar.png', $avatar->getClientFilename());
+        $this->assertSame('image/png', $avatar->getClientMediaType());
+        $this->assertSame(90996, $avatar->getSize());
+        $this->assertSame(0, $avatar->getError());
+    }
+
+    /**
+     * Test multiple files with numeric indices nested under plain keys.
+     */
+    public function testFilesNestedUnderPlainKeysWithNumericIndices(): void
+    {
+        $files = [
+            'my-form' => [
+                'details' => [
+                    'avatars' => [
+                        'tmp_name' => [
+                            0 => 'abc123',
+                            1 => 'duck123',
+                            2 => 'goose123',
+                        ],
+                        'name' => [
+                            0 => 'file1.txt',
+                            1 => 'file2.txt',
+                            2 => 'file3.txt',
+                        ],
+                        'size' => [
+                            0 => 100,
+                            1 => 240,
+                            2 => 750,
+                        ],
+                        'type' => [
+                            0 => 'plain/txt',
+                            1 => 'image/jpg',
+                            2 => 'image/png',
+                        ],
+                        'error' => [
+                            0 => 0,
+                            1 => 0,
+                            2 => 0,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $avatars = $request->getUploadedFiles()['my-form']['details']['avatars'];
+
+        $this->assertCount(3, $avatars);
+        $this->assertSame('file1.txt', $avatars[0]->getClientFilename());
+        $this->assertSame('file2.txt', $avatars[1]->getClientFilename());
+        $this->assertSame('file3.txt', $avatars[2]->getClientFilename());
+        $this->assertSame(240, $avatars[1]->getSize());
+        $this->assertSame('image/png', $avatars[2]->getClientMediaType());
+    }
+
+    /**
+     * Test a leading numeric index which moves the tmp_name/size/etc fields
+     * further up the array tree, with additional nesting below.
+     */
+    public function testFilesDenormalizedNestedTreeOfIndices(): void
+    {
+        $files = [
+            'slide-shows' => [
+                'tmp_name' => [
+                    0 => [
+                        'slides' => [
+                            0 => '/tmp/phpYzdqkD',
+                            1 => '/tmp/phpYzdfgh',
+                        ],
+                    ],
+                ],
+                'error' => [
+                    0 => [
+                        'slides' => [
+                            0 => 0,
+                            1 => 0,
+                        ],
+                    ],
+                ],
+                'name' => [
+                    0 => [
+                        'slides' => [
+                            0 => 'foo.txt',
+                            1 => 'bar.txt',
+                        ],
+                    ],
+                ],
+                'size' => [
+                    0 => [
+                        'slides' => [
+                            0 => 123,
+                            1 => 200,
+                        ],
+                    ],
+                ],
+                'type' => [
+                    0 => [
+                        'slides' => [
+                            0 => 'text/plain',
+                            1 => 'text/plain',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $slides = $request->getUploadedFiles()['slide-shows'][0]['slides'];
+
+        $this->assertCount(2, $slides);
+        $this->assertSame('foo.txt', $slides[0]->getClientFilename());
+        $this->assertSame('bar.txt', $slides[1]->getClientFilename());
+        $this->assertSame(200, $slides[1]->getSize());
+    }
+
+    /**
+     * Test that nested associative file specifications only yield the actual files.
+     */
+    public function testFilesNestedAssociativeReturnsOnlyActualFiles(): void
+    {
+        $files = [
+            'fooFiles' => [
+                'tmp_name' => ['file' => 'php://temp'],
+                'size' => ['file' => 0],
+                'error' => ['file' => 0],
+                'name' => ['file' => 'foo.bar'],
+                'type' => ['file' => 'text/plain'],
+            ],
+        ];
+
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $uploads = $request->getUploadedFiles();
+
+        $this->assertCount(1, $uploads['fooFiles']);
+        $this->assertEquals(
+            ['fooFiles' => ['file' => new UploadedFile('php://temp', 0, 0, 'foo.bar', 'text/plain')]],
+            $uploads,
+        );
+    }
+
+    /**
+     * Test that UploadedFileInterface instances in the files array are kept as is.
+     */
+    public function testFilesWithUploadedFileInstances(): void
+    {
+        $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK, 'file.txt', 'text/plain');
+        $nested = new UploadedFile(__FILE__, 456, UPLOAD_ERR_OK, 'nested.txt', 'text/plain');
+
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], [
+            'file' => $file,
+            'form' => ['nested' => $nested],
+        ]);
+        $uploads = $request->getUploadedFiles();
+
+        $this->assertSame($file, $uploads['file']);
+        $this->assertSame($nested, $uploads['form']['nested']);
+    }
+
+    /**
      * Test passing invalid files list structure.
      */
     public function testFilesWithInvalidStructure(): void
@@ -1534,5 +1727,81 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('/team', $request->getRequestTarget());
         $expected = ['foo' => 'bar', 'REQUEST_METHOD' => 'GET'];
         $this->assertEquals($expected, $request->getServerParams());
+    }
+
+    public function testRedirectedAuthorizationIsNormalizedWithoutOverridingDirectHeader(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REDIRECT_HTTP_AUTHORIZATION' => 'Bearer redirected']);
+        $this->assertSame('Bearer redirected', $request->getHeaderLine('Authorization'));
+        $request = ServerRequestFactory::fromGlobals([
+            'REDIRECT_HTTP_AUTHORIZATION' => 'Bearer redirected',
+            'HTTP_AUTHORIZATION' => 'Bearer direct',
+        ]);
+        $this->assertSame('Bearer direct', $request->getHeaderLine('Authorization'));
+    }
+
+    public function testNormalizedUploadsMayUseSpecificationAttributeNames(): void
+    {
+        $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK);
+        $files = ['form' => ['tmp_name' => $file, 'size' => $file, 'error' => $file]];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $this->assertSame($files, $request->getUploadedFiles());
+    }
+
+    public static function sapiAuthorizationValues(): array
+    {
+        return [
+            'basic' => [['PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'pass'], 'Basic dXNlcjpwYXNz'],
+            'empty password' => [['PHP_AUTH_USER' => 'user'], 'Basic dXNlcjo='],
+            'digest' => [['PHP_AUTH_DIGEST' => 'username="user"'], 'Digest username="user"'],
+            'prefixed digest' => [['PHP_AUTH_DIGEST' => 'Digest username="user"'], 'Digest username="user"'],
+            'direct priority' => [['HTTP_AUTHORIZATION' => 'Bearer direct', 'PHP_AUTH_USER' => 'user'], 'Bearer direct'],
+        ];
+    }
+
+    #[DataProvider('sapiAuthorizationValues')]
+    public function testAuthorizationFromSapiCredentials(array $server, string $expected): void
+    {
+        $request = ServerRequestFactory::fromGlobals($server);
+        $this->assertSame($expected, $request->getHeaderLine('Authorization'));
+    }
+
+    public function testRecursivelyNormalizedUploadAttributesArePreserved(): void
+    {
+        $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK);
+        $files = ['form' => [
+            'tmp_name' => ['a' => ['b' => $file]],
+            'size' => ['a' => ['b' => $file]],
+            'error' => ['a' => ['b' => $file]],
+        ]];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
+        $this->assertSame($files, $request->getUploadedFiles());
+    }
+
+    public function testNestedRawSpecificationsMayUseAttributeNamesAsFields(): void
+    {
+        $spec = ['tmp_name' => 'php://temp', 'size' => 5, 'error' => UPLOAD_ERR_OK];
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], [
+            'form' => ['tmp_name' => $spec, 'size' => $spec, 'error' => $spec],
+        ]);
+        foreach (['tmp_name', 'size', 'error'] as $field) {
+            $file = $request->getUploadedFiles()['form'][$field];
+            $this->assertInstanceOf(UploadedFileInterface::class, $file);
+            $this->assertSame(5, $file->getSize());
+            $this->assertSame(UPLOAD_ERR_OK, $file->getError());
+        }
+    }
+
+    public function testParallelAttributesWithReservedFieldNamesRemainSpecifications(): void
+    {
+        $request = ServerRequestFactory::fromGlobals([], [], [], [], ['form' => [
+            'tmp_name' => ['tmp_name' => 'php://temp', 'size' => 'php://temp', 'error' => 'php://temp'],
+            'size' => ['tmp_name' => 1, 'size' => 2, 'error' => 3],
+            'error' => ['tmp_name' => 0, 'size' => 0, 'error' => 0],
+        ]]);
+        $files = $request->getUploadedFiles()['form'];
+        $this->assertSame(1, $files['tmp_name']->getSize());
+        $this->assertSame(2, $files['size']->getSize());
+        $this->assertSame(3, $files['error']->getSize());
     }
 }

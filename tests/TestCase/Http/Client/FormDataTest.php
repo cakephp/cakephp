@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\FormData;
+use Cake\Http\UploadedFile;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\UploadedFile;
 
 /**
  * Test case for FormData.

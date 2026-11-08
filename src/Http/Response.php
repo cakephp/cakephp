@@ -26,8 +26,6 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -405,12 +403,7 @@ class Response implements ResponseInterface, Stringable
      */
     protected function setStatus(int $code, string $reasonPhrase = ''): void
     {
-        if ($code < static::STATUS_CODE_MIN || $code > static::STATUS_CODE_MAX) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid status code: %s. Use a valid HTTP status code in range 1xx - 5xx.',
-                $code,
-            ));
-        }
+        $this->assertStatus($code, $reasonPhrase);
 
         $this->status = $code;
         if ($reasonPhrase === '' && isset($this->statusCodes[$code])) {
@@ -983,7 +976,10 @@ class Response implements ResponseInterface, Stringable
         $etagMatches = null;
         if ($responseTag && $etags) {
             // If-None-Match uses the weak comparison, which ignores the W/ prefix.
-            $opaqueTags = array_map(fn(string $etag): string => (string)preg_replace('#^W/#', '', $etag), $etags);
+            $opaqueTags = array_map(
+                static fn(string $etag): string => (string)preg_replace('#^W/#', '', $etag),
+                $etags,
+            );
             $etagMatches = in_array('*', $etags, true) ||
                 in_array(preg_replace('#^W/#', '', $responseTag), $opaqueTags, true);
         }

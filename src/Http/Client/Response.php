@@ -17,11 +17,14 @@ namespace Cake\Http\Client;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Cookie\CookieCollection;
-use Laminas\Diactoros\MessageTrait;
-use Laminas\Diactoros\Stream;
+use Cake\Http\MessageTrait;
+use Cake\Http\Stream;
+use JsonException;
 use NoDiscard;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
+use UnexpectedValueException;
 
 /**
  * Implements methods for HTTP responses.
@@ -90,7 +93,7 @@ class Response extends Message implements ResponseInterface
      *
      * @var int
      */
-    protected int $code = 0;
+    protected int $code = 200;
 
     /**
      * Cookie Collection instance
@@ -121,16 +124,41 @@ class Response extends Message implements ResponseInterface
     protected mixed $json = null;
 
     /**
+     * Whether the response JSON has been decoded, including null and empty arrays.
+     *
+     * @var bool
+     */
+    protected bool $jsonDecoded = false;
+
+    /**
+     * Cached JSON decoding error for strict access after permissive access.
+     *
+     * @var \JsonException|null
+     */
+    protected ?JsonException $jsonError = null;
+
+    /**
      * Constructor
      *
-     * @param array<string> $headers Unparsed headers.
-     * @param string $body The response body.
+     * @param list<string> $headers Unparsed headers.
+     * @param \Psr\Http\Message\StreamInterface|string $body The response body. Stream bodies are used as-is.
      */
-    public function __construct(array $headers = [], string $body = '')
+    public function __construct(array $headers = [], string|StreamInterface $body = '')
     {
         $this->parseHeaders($headers);
-        if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
+        if ($body instanceof StreamInterface) {
+            $this->stream = $body;
+
+            return;
+        }
+        if (
+            $body !== '' && strtolower($this->getHeaderLine('Content-Encoding')) === 'gzip' &&
+            $this->code >= 200 && !in_array($this->code, [204, 205, 206, 304], true) &&
+            !$this->hasHeader('Content-Range') && !$this->hasHeader('Transfer-Encoding')
+        ) {
             $body = $this->decodeGzipBody($body);
+            $this->removeHeader('Content-Encoding');
+            $this->removeHeader('Content-Length');
         }
         $stream = new Stream('php://memory', 'wb+');
         $stream->write($body);
@@ -141,29 +169,28 @@ class Response extends Message implements ResponseInterface
     /**
      * Uncompress a gzip response.
      *
-     * Looks for gzip signatures, and if gzinflate() exists,
-     * the body will be decompressed.
+     * Validates the complete gzip container, including optional headers and the checksum.
      *
      * @param string $body Gzip encoded body.
      * @return string
-     * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzinflate.
+     * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzdecode.
      */
     protected function decodeGzipBody(string $body): string
     {
-        if (!function_exists('gzinflate')) {
-            throw new CakeException('Cannot decompress gzip response body without gzinflate()');
+        if (!function_exists('gzdecode')) {
+            throw new CakeException('Cannot decompress gzip response body without gzdecode()');
         }
-        $offset = 0;
-        // Look for gzip 'signature'
-        if (str_starts_with($body, "\x1f\x8b")) {
-            $offset = 2;
+        set_error_handler(static fn(): bool => true);
+        try {
+            $decoded = gzdecode($body);
+        } finally {
+            restore_error_handler();
         }
-        // Check the format byte
-        if (substr($body, $offset, 1) === "\x08") {
-            return (string)gzinflate(substr($body, $offset + 8));
+        if ($decoded === false) {
+            throw new CakeException('Invalid gzip response');
         }
 
-        throw new CakeException('Invalid gzip response');
+        return $decoded;
     }
 
     /**
@@ -172,7 +199,7 @@ class Response extends Message implements ResponseInterface
      * - Decodes the status code and reason phrase.
      * - Parses and normalizes header names and values.
      *
-     * @param array<string> $headers Headers to parse.
+     * @param list<string> $headers Headers to parse.
      * @return void
      */
     protected function parseHeaders(array $headers): void
@@ -181,6 +208,7 @@ class Response extends Message implements ResponseInterface
             if (preg_match('/^HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches)) {
                 $this->protocol = $matches[1];
                 $this->code = (int)$matches[2];
+                $this->assertStatus($this->code, trim($matches[3]));
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
@@ -189,17 +217,10 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @var non-empty-string $name */
             $name = trim($name);
-
-            $normalized = strtolower($name);
-
-            if (isset($this->headers[$name])) {
-                $this->headers[$name][] = $value;
-            } else {
-                $this->headers[$name] = (array)$value;
-                $this->headerNames[$normalized] = $name;
-            }
+            $this->assertHeaderName($name);
+            $values = array_merge($this->getHeader($name), $this->filterHeaderValue($value));
+            $this->replaceHeader($name, $values);
         }
     }
 
@@ -239,7 +260,7 @@ class Response extends Message implements ResponseInterface
         ];
 
         return in_array($this->code, $codes, true) &&
-            $this->getHeaderLine('Location');
+        $this->getHeaderLine('Location') !== '';
     }
 
     /**
@@ -262,6 +283,8 @@ class Response extends Message implements ResponseInterface
     #[NoDiscard('HTTP responses are immutable. You must consume the returned instance.')]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
+        $this->assertStatus($code, $reasonPhrase);
+
         return clone($this, ['code' => $code, 'reasonPhrase' => $reasonPhrase]);
     }
 
@@ -371,11 +394,16 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as string.
      *
+     * Non-seekable bodies are consumed from their current position. For live
+     * responses this waits until EOF and should not be used by monitoring.
+     *
      * @return string
      */
     public function getStringBody(): string
     {
-        $this->stream->rewind();
+        if ($this->stream->isSeekable()) {
+            $this->stream->rewind();
+        }
 
         return $this->stream->getContents();
     }
@@ -383,15 +411,72 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return mixed
+     * @return mixed Decoded JSON, or null when the body is not valid JSON.
      */
     public function getJson(): mixed
     {
-        if ($this->json) {
-            return $this->json;
+        if (!$this->jsonDecoded) {
+            $this->json = json_decode($this->getStringBody(), true);
+            $this->jsonDecoded = true;
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->jsonError = new JsonException(json_last_error_msg(), json_last_error());
+            }
         }
 
-        return $this->json = json_decode($this->getStringBody(), true);
+        return $this->json;
+    }
+
+    /**
+     * Get the response body as a JSON decoded array.
+     *
+     * JSON objects and arrays are returned as arrays. JSON null is returned as null.
+     *
+     * @return array|null
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
+     */
+    public function getJsonArray(): ?array
+    {
+        $this->getJson();
+        if ($this->jsonError !== null) {
+            throw $this->jsonError;
+        }
+        if ($this->json !== null && !is_array($this->json)) {
+            throw new UnexpectedValueException('JSON response body must decode to an array or null.');
+        }
+
+        return $this->json;
+    }
+
+    /**
+     * Decode JSON into an application type using a validating decoder.
+     *
+     * @template T
+     * @param callable(array|null): T $decoder Decoder responsible for validating the JSON value.
+     * @return T
+     * @throws \JsonException When the body is not valid JSON.
+     * @throws \UnexpectedValueException When the JSON value is neither an array nor null.
+     */
+    public function getJsonAs(callable $decoder): mixed
+    {
+        return $decoder($this->getJsonArray());
+    }
+
+    /**
+     * Replace the body and discard decoded values from the previous body.
+     *
+     * @param \Psr\Http\Message\StreamInterface $body The new body.
+     * @return static
+     */
+    public function withBody(StreamInterface $body): static
+    {
+        return clone($this, [
+            'stream' => $body,
+            'json' => null,
+            'jsonDecoded' => false,
+            'jsonError' => null,
+            'xml' => null,
+        ]);
     }
 
     /**

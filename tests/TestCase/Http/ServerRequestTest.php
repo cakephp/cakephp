@@ -24,10 +24,10 @@ use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\FlashMessage;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
+use Cake\Http\UploadedFile;
+use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
-use Laminas\Diactoros\Uri;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
@@ -2055,5 +2055,31 @@ class ServerRequestTest extends TestCase
             ['webroot'],
             ['session'],
         ];
+    }
+
+    public function testUriReplacementRepairsEmptyPreservedHostAndKeepsZeroQuery(): void
+    {
+        $request = new ServerRequest()->withHeader('Host', '');
+        $request = $request->withUri(new Uri('https://example.com?0'), true);
+        $this->assertSame('example.com', $request->getHeaderLine('Host'));
+        $this->assertSame('/?0', $request->getRequestTarget());
+        $this->assertSame('/articles?0', $request->withUri(new Uri('articles?0'))->getRequestTarget());
+    }
+
+    public static function invalidHeaderMutations(): array
+    {
+        return [
+            ['withHeader', 'Bad Name', 'value'],
+            ['withAddedHeader', 'Bad:Name', 'value'],
+            ['withHeader', 'X-Test', "safe\r\nInjected: value"],
+            ['withAddedHeader', 'X-Test', "bad\0value"],
+        ];
+    }
+
+    #[DataProvider('invalidHeaderMutations')]
+    public function testHeaderMutationsRejectInvalidNamesAndValues(string $method, string $name, string $value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (void)new ServerRequest()->{$method}($name, $value);
     }
 }

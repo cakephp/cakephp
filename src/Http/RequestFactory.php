@@ -18,7 +18,6 @@ namespace Cake\Http;
 
 use Cake\Http\Client\Request;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Factory for creating request instances.
@@ -30,10 +29,10 @@ class RequestFactory implements RequestFactoryInterface
      *
      * @param string $method The HTTP method associated with the request.
      * @param \Psr\Http\Message\UriInterface|string $uri The URI associated with the request.
-     * @return \Psr\Http\Message\RequestInterface
+     * @return \Cake\Http\Client\Request
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function createRequest(string $method, $uri): RequestInterface
+    public function createRequest(string $method, $uri): Request
     {
         return new Request($uri, $method);
     }

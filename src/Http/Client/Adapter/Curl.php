@@ -41,6 +41,12 @@ class Curl implements AdapterInterface
      */
     public function send(RequestInterface $request, array $options): array
     {
+        if (!empty($options['stream'])) {
+            throw new ClientException(
+                'Live response streaming requires ' . Stream::class . '.',
+            );
+        }
+
         if (!extension_loaded('curl')) {
             throw new ClientException('curl extension is not loaded.');
         }
@@ -193,7 +199,7 @@ class Curl implements AdapterInterface
      *
      * @param \CurlHandle $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return array<\Cake\Http\Client\Response>
+     * @return non-empty-list<\Cake\Http\Client\Response>
      */
     protected function createResponse(CurlHandle $handle, string $responseData): array
     {
