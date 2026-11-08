@@ -289,7 +289,8 @@ class Finder
         return $this;
     }
 
-    /** Set whether to search recursively into subdirectories.
+    /**
+     * Set whether to search recursively into subdirectories.
      *
      * @param bool $recursive Whether to search recursively (default: true)
      * @return $this

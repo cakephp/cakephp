@@ -432,12 +432,14 @@ class FunctionsBuilder
      * @param \Cake\Database\ExpressionInterface|string $expression The json expression
      * @param \Cake\Database\Expression\JsonPathExpression|string $path The json path
      * @param array $types List of types to bind to the arguments
+     * @param string|null $returnType The return type of the function, if not specified it will use the path's return type
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function jsonValue(
         ExpressionInterface|string $expression,
         JsonPathExpression|string $path,
         array $types = [],
+        ?string $returnType = null,
     ): FunctionExpression {
         if (is_string($path)) {
             $path = new JsonPathExpression($path);
@@ -445,7 +447,7 @@ class FunctionsBuilder
 
         $params = $this->toLiteralParam($expression) + [$path];
 
-        return new FunctionExpression('JSON_VALUE', $params, $types, $path->getReturnType());
+        return new FunctionExpression('JSON_VALUE', $params, $types, $returnType ?? $path->getReturnType());
     }
 
     /**

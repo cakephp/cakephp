@@ -1194,6 +1194,49 @@ class TranslateBehaviorEavTest extends TestCase
     }
 
     /**
+     * Tests that updating an existing translation only touches rows of the
+     * current model, even when another model has a translation with the same
+     * locale, field and foreign key.
+     */
+    public function testSaveExistingTranslationDoesNotUpdateOtherModels(): void
+    {
+        $i18n = $this->getTableLocator()->get('I18n', ['table' => 'i18n']);
+        $other = $i18n->newEntity([
+            'locale' => 'eng',
+            'model' => 'Comments',
+            'foreign_key' => 1,
+            'field' => 'body',
+            'content' => 'Comment body eng',
+        ]);
+        $i18n->saveOrFail($other);
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $article = $table->find('translations')
+            ->where(['Articles.id' => 1])
+            ->firstOrFail();
+
+        $translations = $article->get('_translations');
+        $translations['deu']->set('title', 'Another title');
+        $translations['eng']->set('body', 'Another body');
+        $article->set('_translations', $translations);
+        $table->saveOrFail($article);
+
+        $this->assertSame(
+            'Comment body eng',
+            $i18n->get($other->id)->get('content'),
+            'Translation of another model must not be modified',
+        );
+
+        $article = $table->find('translations')
+            ->where(['Articles.id' => 1])
+            ->firstOrFail();
+        $translations = $article->get('_translations');
+        $this->assertSame('Another title', $translations['deu']->get('title'));
+        $this->assertSame('Another body', $translations['eng']->get('body'));
+    }
+
+    /**
      * Tests saving multiple existing translations and adding new ones
      */
     public function testSaveMultipleNewTranslations(): void

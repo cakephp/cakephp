@@ -163,12 +163,6 @@ parameters:
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/ORM/Table.php
-
-		-
 			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
