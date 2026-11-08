@@ -536,7 +536,7 @@ SQL;
         $driver = Mockery::mock(Mariadb::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct(['database' => 'cake', 'username' => 'root', 'password' => '']);
 
         $driver->shouldReceive('createPdo')
             ->andReturn($this->pdo);
