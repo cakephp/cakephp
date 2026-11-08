@@ -112,7 +112,7 @@ class JsonPathExpressionTest extends TestCase
     #[DataProvider('behaviorProvider')]
     public function testValidBehaviors(string $behavior): void
     {
-        $expr = (new JsonPathExpression('$.id'))->onEmpty($behavior);
+        $expr = new JsonPathExpression('$.id')->onEmpty($behavior);
         $this->assertStringContainsString($behavior, $expr->sql(new ValueBinder()));
     }
 
@@ -120,7 +120,7 @@ class JsonPathExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported json path behavior');
-        (new JsonPathExpression('$.id'))->onEmpty('MISSING');
+        new JsonPathExpression('$.id')->onEmpty('MISSING');
     }
 
     public function testOnEmpty(): void

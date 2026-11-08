@@ -111,7 +111,7 @@ class FunctionsQueryTest extends TestCase
 
         // Test with setReturnType on path expression
         $query = new SelectQuery($this->connection);
-        $path = (new JsonPathExpression($path))->setReturnType($returnType);
+        $path = new JsonPathExpression($path)->setReturnType($returnType);
         $expression = $query->func()->jsonValue($this->quoteString($json), $path);
         $this->assertSame($returnType, $expression->getReturnType());
 
@@ -264,7 +264,7 @@ class FunctionsQueryTest extends TestCase
             ->select([
                 'value' => $query->func()->jsonExists(
                     $this->quoteString(json_encode(['a' => 1])),
-                    (new JsonPathExpression('strict $.b'))->onError(JsonPathExpression::BEHAVIOR_TRUE),
+                    new JsonPathExpression('strict $.b')->onError(JsonPathExpression::BEHAVIOR_TRUE),
                 ),
             ])
             ->setSelectTypeMap(['value' => 'boolean'])

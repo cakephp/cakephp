@@ -249,7 +249,7 @@ class SchemaDialectTest extends TestCase
             'Expression defaults need MySQL 8.0.13 or newer.',
         );
 
-        $schema = (new TableSchema('current_defaults'))
+        $schema = new TableSchema('current_defaults')
             ->addColumn('id', ['type' => 'integer', 'null' => false])
             ->addColumn('start_date', ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'])
             ->addColumn('start_time', ['type' => 'time', 'null' => false, 'default' => 'CURRENT_TIME']);
