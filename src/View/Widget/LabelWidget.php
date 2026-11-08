@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use Cake\View\HtmlStringable;
 use Cake\View\StringTemplate;
 use function Cake\Core\h;
 
@@ -75,7 +76,7 @@ class LabelWidget implements WidgetInterface
         ];
 
         return $this->templates->format($this->labelTemplate, [
-            'text' => $data['escape'] ? h($data['text']) : $data['text'],
+            'text' => $data['escape'] && !($data['text'] instanceof HtmlStringable) ? h($data['text']) : $data['text'],
             'input' => $data['input'],
             'hidden' => $data['hidden'],
             'templateVars' => $data['templateVars'],

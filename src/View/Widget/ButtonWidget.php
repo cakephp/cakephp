@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use Cake\View\HtmlStringable;
 use Cake\View\StringTemplate;
 use function Cake\Core\h;
 
@@ -66,7 +67,7 @@ class ButtonWidget implements WidgetInterface
         ];
 
         return $this->templates->format('button', [
-            'text' => $data['escape'] ? h($data['text']) : $data['text'],
+            'text' => $data['escape'] && !($data['text'] instanceof HtmlStringable) ? h($data['text']) : $data['text'],
             'templateVars' => $data['templateVars'],
             'attrs' => $this->templates->formatAttributes($data, ['text', 'escapeAttributes']),
         ]);

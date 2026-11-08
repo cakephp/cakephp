@@ -102,7 +102,8 @@
             "src/I18n/functions.php",
             "src/ORM/bootstrap.php",
             "src/Routing/functions.php",
-            "src/Utility/bootstrap.php"
+            "src/Utility/bootstrap.php",
+            "src/View/functions.php"
         ]
     },
     "autoload-dev": {

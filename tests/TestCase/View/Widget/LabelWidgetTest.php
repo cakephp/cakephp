@@ -18,8 +18,11 @@ namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\NullContext;
+use Cake\View\HtmlString;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\LabelWidget;
+use Mockery;
+use Stringable;
 
 /**
  * Label test case.
@@ -47,6 +50,26 @@ class LabelWidgetTest extends TestCase
         ];
         $this->templates = new StringTemplate($templates);
         $this->context = new NullContext([]);
+    }
+
+    /**
+     * Trust marked content while retaining escaping for attributes and other objects.
+     */
+    public function testTrustedHtmlContent(): void
+    {
+        $widget = new LabelWidget($this->templates);
+        $result = $widget->render([
+            'text' => new HtmlString('<strong>Content</strong>'),
+            'title' => new HtmlString('"Title" & more'),
+            'escape' => true,
+        ], $this->context);
+        $this->assertStringContainsString('<strong>Content</strong>', $result);
+        $this->assertStringContainsString('title="&quot;Title&quot; &amp; more"', $result);
+
+        $text = Mockery::mock(Stringable::class);
+        $text->shouldReceive('__toString')->andReturn('<em>Ordinary</em>');
+        $result = $widget->render(['text' => $text], $this->context);
+        $this->assertStringContainsString('&lt;em&gt;Ordinary&lt;/em&gt;', $result);
     }
 
     /**
