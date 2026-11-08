@@ -1846,7 +1846,7 @@ class SelectQueryTest extends TestCase
                     'distinct' => $query->select(['grp'])->distinct(),
                     'having' => $query->select(['grp'])
                         ->groupBy(['grp'])
-                        ->having(['COUNT(*) >' => 1], ['COUNT(*)' => 'integer']),
+                        ->having(['COUNT(*)' => greaterThan(1)], ['COUNT(*)' => 'integer']),
                     'union' => $query->select(['grp'])
                         ->where(['id' => 1])
                         ->union($table->find()->select(['grp'])->where(['id' => 3])),
