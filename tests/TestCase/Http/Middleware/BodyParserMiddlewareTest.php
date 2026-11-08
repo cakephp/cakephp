@@ -52,7 +52,7 @@ class BodyParserMiddlewareTest extends TestCase
     public static function httpMethodProvider(): array
     {
         return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
+            ['QUERY'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
         ];
     }
 

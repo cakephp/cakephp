@@ -45,7 +45,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * @var array<string>
      */
-    protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
+    protected array $methods = ['QUERY', 'PUT', 'POST', 'PATCH', 'DELETE'];
 
     /**
      * Constructor

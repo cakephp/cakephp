@@ -103,7 +103,7 @@ class Route
      *
      * @var array<string>
      */
-    public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+    public const VALID_METHODS = ['GET', 'QUERY', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
      * Regex for matching braced placeholders in route template.

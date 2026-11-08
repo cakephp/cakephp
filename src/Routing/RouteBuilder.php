@@ -52,7 +52,7 @@ class RouteBuilder
      * @var array<string, array>
      */
     protected static array $_resourceMap = [
-        'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
+        'index' => ['action' => 'index', 'method' => ['GET', 'QUERY'], 'path' => ''],
         'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
         'view' => ['action' => 'view', 'method' => 'GET', 'path' => '{id}'],
         'update' => ['action' => 'edit', 'method' => ['PUT', 'PATCH'], 'path' => '{id}'],
@@ -478,6 +478,20 @@ class RouteBuilder
     public function get(string $template, array|string $target, ?string $name = null): Route
     {
         return $this->_methodRoute('GET', $template, $target, $name);
+    }
+
+    /**
+     * Create a route that only responds to QUERY requests.
+     *
+     * @param string $template The URL template to use.
+     * @param array|string $target An array describing the target route parameters. These parameters
+     *   should indicate the plugin, prefix, controller, and action that this route points to.
+     * @param string|null $name The name of the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function query(string $template, array|string $target, ?string $name = null): Route
+    {
+        return $this->_methodRoute('QUERY', $template, $target, $name);
     }
 
     /**
