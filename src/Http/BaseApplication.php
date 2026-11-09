@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Cake\Http;
 
-use Cake\Command\CoreCommands;
 use Cake\Console\CommandCollection;
+use Cake\Console\CoreCommands;
 use Cake\Container\ContainerInterface;
 use Cake\Controller\ControllerFactory;
 use Cake\Core\ConsoleApplicationInterface;
@@ -252,7 +252,7 @@ abstract class BaseApplication implements
      */
     public function console(CommandCollection $commands): CommandCollection
     {
-        return class_exists(CoreCommands::class) ? CoreCommands::addTo($commands) : $commands;
+        return CoreCommands::addTo($commands);
     }
 
     /**

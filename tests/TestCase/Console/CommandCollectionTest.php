@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\AttributeResolver\AttributeResolver;
-use Cake\Command\CoreCommands;
 use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
+use Cake\Console\CoreCommands;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;

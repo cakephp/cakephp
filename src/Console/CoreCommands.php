@@ -14,9 +14,34 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Command;
+namespace Cake\Console;
 
-use Cake\Console\CommandCollection;
+use Cake\Command\AttributesInspectCommand;
+use Cake\Command\AttributesListCommand;
+use Cake\Command\AttributesWarmCommand;
+use Cake\Command\CacheClearallCommand;
+use Cake\Command\CacheClearCommand;
+use Cake\Command\CacheClearGroupCommand;
+use Cake\Command\CacheListCommand;
+use Cake\Command\CompletionCommand;
+use Cake\Command\CounterCacheCommand;
+use Cake\Command\I18nCommand;
+use Cake\Command\I18nExtractCommand;
+use Cake\Command\I18nInitCommand;
+use Cake\Command\PluginAssetsCopyCommand;
+use Cake\Command\PluginAssetsRemoveCommand;
+use Cake\Command\PluginAssetsSymlinkCommand;
+use Cake\Command\PluginListCommand;
+use Cake\Command\PluginLoadCommand;
+use Cake\Command\PluginLoadedCommand;
+use Cake\Command\PluginUnloadCommand;
+use Cake\Command\RoutesCheckCommand;
+use Cake\Command\RoutesCommand;
+use Cake\Command\RoutesGenerateCommand;
+use Cake\Command\SchemacacheBuildCommand;
+use Cake\Command\SchemacacheClearCommand;
+use Cake\Command\ServerCommand;
+use Cake\Command\VersionCommand;
 
 /**
  * Registers built-in framework commands without filesystem discovery.
@@ -68,6 +93,9 @@ class CoreCommands
     public static function addTo(CommandCollection $commands): CommandCollection
     {
         foreach (static::CLASSES as $class) {
+            if (!class_exists($class)) {
+                continue;
+            }
             $name = $class::defaultName();
             if (!$commands->has($name)) {
                 $commands->add($name, $class);
