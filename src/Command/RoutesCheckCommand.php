@@ -29,7 +29,7 @@ use Cake\Routing\Router;
 #[AsCommand(
     'routes check',
     description: 'Check a URL string against the routes.',
-    help: ['Will output the routing parameters the route resolves to.'],
+    help: 'Will output the routing parameters the route resolves to.',
 )]
 #[Argument('url', help: 'The URL to check.', required: true)]
 class RoutesCheckCommand extends Command

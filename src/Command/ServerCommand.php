@@ -28,9 +28,7 @@ use function Cake\Core\env;
 #[AsCommand(
     'server',
     description: "Start PHP's built-in server or FrankenPHP for CakePHP",
-    help: [
-            "<warning>[WARN] Don't use this in a production environment</warning>",
-        ],
+    help: "<warning>[WARN] Don't use this in a production environment</warning>",
 )]
 #[Option('host', short: 'H', help: 'ServerHost')]
 #[Option('port', short: 'p', help: 'ListenPort')]

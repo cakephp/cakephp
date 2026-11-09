@@ -36,10 +36,8 @@ use Throwable;
 #[AsCommand(
     'i18n extract',
     description: 'Extract i18n POT files from application source files.',
-    help: [
-            'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
-        ],
+    help: 'Source files are parsed and string literal format strings ' .
+        'provided to the <info>__</info> family of functions are extracted.',
 )]
 #[Option('app', help: 'Directory where your application is located.')]
 #[Option('paths', help: 'Comma separated list of paths that are searched for source files.')]

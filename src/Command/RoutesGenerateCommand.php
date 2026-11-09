@@ -27,11 +27,11 @@ use Cake\Routing\Router;
     'routes generate',
     description: 'Check a routing array against the routes.',
     help: [
-            'Will output the URL if there is a match.' .
-            "\n\n" .
-            'Routing parameters should be supplied in a key:value format. ' .
+        'Will output the URL if there is a match.',
+        '',
+        'Routing parameters should be supplied in a key:value format. ' .
             'For example `controller:Articles action:view 2`',
-        ],
+    ],
 )]
 class RoutesGenerateCommand extends Command
 {

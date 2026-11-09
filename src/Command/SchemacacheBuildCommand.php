@@ -30,7 +30,7 @@ use RuntimeException;
 #[AsCommand(
     'schema_cache build',
     description: 'Build all metadata caches for the connection.',
-    help: [' If a table name is provided, only that table will be cached.'],
+    help: ' If a table name is provided, only that table will be cached.',
 )]
 #[Option('connection', short: 'c', help: 'The connection to build/clear metadata cache data for.', default: 'default')]
 #[Argument('name', help: 'A specific table you want to refresh cached data for.', required: false)]
