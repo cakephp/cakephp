@@ -17,13 +17,26 @@ declare(strict_types=1);
 
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Core\Configure;
 use function Cake\Core\env;
 
 /**
  * built-in Server command
  */
+#[AsCommand(
+    'server',
+    description: "Start PHP's built-in server or FrankenPHP for CakePHP",
+    help: [
+            "<warning>[WARN] Don't use this in a production environment</warning>",
+        ],
+)]
+#[Option('host', short: 'H', help: 'ServerHost')]
+#[Option('port', short: 'p', help: 'ListenPort')]
+#[Option('ini_path', short: 'I', help: 'php.ini path')]
+#[Option('document_root', short: 'd', help: 'DocumentRoot')]
+#[Option('frankenphp', short: 'f', help: "Use frankenphp instead of PHP's built-in server", boolean: true)]
 class ServerCommand extends Command
 {
     /**
@@ -74,14 +87,6 @@ class ServerCommand extends Command
      * @var string
      */
     protected string $server = 'php';
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return "Start PHP's built-in server or FrankenPHP for CakePHP";
-    }
 
     /**
      * Starts up the Command and displays the welcome message.
@@ -202,37 +207,5 @@ class ServerCommand extends Command
             $this->port,
             escapeshellarg($this->documentRoot),
         );
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription([
-            static::getDescription(),
-            "<warning>[WARN] Don't use this in a production environment</warning>",
-        ])->addOption('host', [
-            'short' => 'H',
-            'help' => 'ServerHost',
-        ])->addOption('port', [
-            'short' => 'p',
-            'help' => 'ListenPort',
-        ])->addOption('ini_path', [
-            'short' => 'I',
-            'help' => 'php.ini path',
-        ])->addOption('document_root', [
-            'short' => 'd',
-            'help' => 'DocumentRoot',
-        ])->addOption('frankenphp', [
-            'boolean' => true,
-            'short' => 'f',
-            'help' => "Use frankenphp instead of PHP's built-in server",
-        ]);
-
-        return $parser;
     }
 }

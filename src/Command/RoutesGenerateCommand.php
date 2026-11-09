@@ -16,31 +16,25 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 
 /**
  * Provides interactive CLI tools for URL generation
  */
+#[AsCommand(
+    'routes generate',
+    description: 'Check a routing array against the routes.',
+    help: [
+            'Will output the URL if there is a match.' .
+            "\n\n" .
+            'Routing parameters should be supplied in a key:value format. ' .
+            'For example `controller:Articles action:view 2`',
+        ],
+)]
 class RoutesGenerateCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'routes generate';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Check a routing array against the routes.';
-    }
-
     /**
      * Display all routes in an application
      *
@@ -84,24 +78,5 @@ class RoutesGenerateCommand extends Command
         }
 
         return $out;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription([
-            static::getDescription(),
-            'Will output the URL if there is a match.' .
-            "\n\n" .
-            'Routing parameters should be supplied in a key:value format. ' .
-            'For example `controller:Articles action:view 2`',
-        ]);
-
-        return $parser;
     }
 }

@@ -17,44 +17,14 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Cache\Cache;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
 
 /**
  * CacheList command.
  */
+#[AsCommand('cache list', description: 'Show a list of configured caches.')]
 class CacheListCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'cache list';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Show a list of configured caches.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @link https://book.cakephp.org/5/en/console-commands/option-parsers.html
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser->setDescription(static::getDescription());
-
-        return $parser;
-    }
-
     /**
      * Get the list of cache prefixes
      *

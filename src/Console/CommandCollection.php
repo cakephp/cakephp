@@ -182,121 +182,19 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Auto-discover commands from the named plugin.
+     * Register attributed commands from a named AttributeResolver configuration.
      *
-     * Discovered commands will have their names de-duplicated with
-     * existing commands in the collection. If a command is already
-     * defined in the collection and discovered in a plugin, only
-     * the long name (`plugin.command`) will be returned.
+     * Configure resolver paths and caching, then call this from Application::console().
+     * Unannotated commands can be registered explicitly with add().
      *
-     * @param string $plugin The plugin to scan.
-     * @return array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>> Discovered plugin commands.
+     * @param string $config Attribute resolver configuration name.
+     * @return $this
      */
-    public function discoverPlugin(string $plugin): array
+    public function addFromAttributes(string $config = 'default'): static
     {
-        $scanner = new CommandScanner();
-        $shells = $scanner->scanPlugin($plugin);
+        new AttributeCommandConnector($this)->connect($config);
 
-        return $this->resolveNames($shells);
-    }
-
-    /**
-     * Auto-discover commands in a filesystem directory.
-     *
-     * Useful for registering commands that live in a subdirectory and
-     * namespace of the application (e.g. `src/Command/Maintenance/`)
-     * without listing each command individually, typically from
-     * `Application::console()`:
-     *
-     * ```
-     * $commands->addMany($commands->discoverDirectory(
-     *     ROOT . '/src/Command/Maintenance',
-     *     'App\\Command\\Maintenance',
-     *     'maintenance ',
-     * ));
-     * ```
-     *
-     * The directory is scanned non-recursively. A non-empty `$prefix` is
-     * required. The prefix produces a `prefix.command` long name so discovered
-     * commands whose short name collides with an existing command is exposed
-     * only under its prefixed name, and does not replace an existing command.
-     * The prefixed long name itself follows the same last-wins
-     * precedence as `discoverPlugin()` / `autoDiscover()`. The path and
-     * namespace are normalized, so a trailing separator is optional.
-     *
-     * @param string $path The directory to scan.
-     * @param string $namespace The namespace the commands live in.
-     * @param string $prefix Prefix applied to each command's full name.
-     * @return array<string, class-string<\Cake\Console\CommandInterface>> Discovered commands.
-     * @throws \InvalidArgumentException When `$prefix` is empty.
-     */
-    public function discoverDirectory(string $path, string $namespace, string $prefix): array
-    {
-        if ($prefix === '') {
-            throw new InvalidArgumentException(
-                'A non-empty `$prefix` is required so discovered commands ' .
-                'de-duplicate against existing ones instead of overwriting them.',
-            );
-        }
-        $namespace = rtrim($namespace, '\\') . '\\';
-        $scanner = new CommandScanner();
-
-        return $this->resolveNames($scanner->scanDir($path, $namespace, $prefix));
-    }
-
-    /**
-     * Resolve names based on existing commands
-     *
-     * @param array<array<string, string>> $input The results of a CommandScanner operation.
-     * @return array<string, class-string<\Cake\Console\CommandInterface>> A flat map of command names => class names.
-     */
-    protected function resolveNames(array $input): array
-    {
-        $out = [];
-        foreach ($input as $info) {
-            $name = $info['name'];
-            $addLong = $name !== $info['fullName'];
-
-            // If the short name has been used, use the full name.
-            // This allows app shells to have name preference.
-            // and app shells to overwrite core shells.
-            if ($this->has($name) && $addLong) {
-                $name = $info['fullName'];
-            }
-
-            /** @var class-string<\Cake\Console\CommandInterface> $class */
-            $class = $info['class'];
-            $out[$name] = $class;
-            if ($addLong) {
-                $out[$info['fullName']] = $class;
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Automatically discover commands in CakePHP, the application and all plugins.
-     *
-     * Commands will be located using filesystem conventions. Commands are
-     * discovered in the following order:
-     *
-     * - CakePHP provided commands
-     * - Application commands
-     *
-     * Commands defined in the application will overwrite commands with
-     * the same name provided by CakePHP.
-     *
-     * @return array<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>> An array of command names and their classes.
-     */
-    public function autoDiscover(): array
-    {
-        $scanner = new CommandScanner();
-
-        $core = $this->resolveNames($scanner->scanCore());
-        $app = $this->resolveNames($scanner->scanApp());
-
-        return $app + $core;
+        return $this;
     }
 
     /**

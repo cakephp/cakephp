@@ -16,18 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\AttributeResolver\AttributeResolver;
+use Cake\Command\CoreCommands;
 use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
-use TestPlugin\Command\ExampleCommand;
-use TestPlugin\Command\SampleCommand as PluginSampleCommand;
 
 /**
  * Test case for the CommandCollection
@@ -256,174 +255,48 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
-     * test autodiscovering app shells
+     * Register attributed application commands through a configured resolver.
      */
-    public function testAutoDiscoverApp(): void
+    public function testAddFromAttributes(): void
     {
-        $collection = new CommandCollection();
-        $collection->addMany($collection->autoDiscover());
-
-        $this->assertTrue($collection->has('demo'));
-        $this->assertTrue($collection->has('sample'));
-
-        $this->assertSame(DemoCommand::class, $collection->get('demo'));
-        $this->assertSame(SampleCommand::class, $collection->get('sample'));
+        AttributeResolver::setConfig('commands', [
+            'basePath' => APP,
+            'paths' => ['Command/*Command.php'],
+            'cache' => false,
+        ]);
+        try {
+            $collection = new CommandCollection();
+            $this->assertSame($collection, $collection->addFromAttributes('commands'));
+            $this->assertSame(DemoCommand::class, $collection->get('demo'));
+            $this->assertSame(SampleCommand::class, $collection->get('sample'));
+            $this->assertFalse($collection->has('abstract'));
+        } finally {
+            AttributeResolver::drop('commands');
+        }
     }
 
     /**
-     * test autodiscovering core shells
+     * Core commands are available without configuring attribute discovery.
      */
-    public function testAutoDiscoverCore(): void
+    public function testCoreCommands(): void
     {
-        $collection = new CommandCollection();
-        $collection->addMany($collection->autoDiscover());
-
-        $this->assertTrue($collection->has('version'));
-        $this->assertTrue($collection->has('routes'));
-        $this->assertTrue($collection->has('sample'));
-        $this->assertTrue($collection->has('schema_cache build'));
-        $this->assertTrue($collection->has('schema_cache clear'));
-        $this->assertTrue($collection->has('server'));
-        $this->assertTrue($collection->has('cache clear'));
-        $this->assertFalse($collection->has('command_list'), 'Hidden commands should stay hidden');
-
-        // These have to be strings as ::class uses the local namespace.
-        $this->assertSame(RoutesCommand::class, $collection->get('routes'));
-        $this->assertSame(SampleCommand::class, $collection->get('sample'));
+        $collection = CoreCommands::addTo(new CommandCollection());
         $this->assertSame(VersionCommand::class, $collection->get('version'));
+        $this->assertSame(RoutesCommand::class, $collection->get('routes'));
+        $this->assertTrue($collection->has('schema_cache build'));
+        $this->assertTrue($collection->has('attributes warm'));
+        $this->assertFalse($collection->has('sample'));
+        $this->assertFalse($collection->has('command_list'));
     }
 
     /**
-     * test missing plugin discovery
+     * Core registration preserves explicit application overrides.
      */
-    public function testDiscoverPluginUnknown(): void
+    public function testCoreCommandsPreserveExplicitRegistration(): void
     {
-        $collection = new CommandCollection();
-        $this->assertSame([], $collection->discoverPlugin('Nope'));
-    }
-
-    /**
-     * test autodiscovering plugin shells
-     */
-    public function testDiscoverPlugin(): void
-    {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
-
-        $collection = new CommandCollection();
-        // Add a dupe to test de-duping
-        $collection->add('sample', DemoCommand::class);
-
-        $result = $collection->discoverPlugin('TestPlugin');
-
-        $this->assertArrayHasKey(
-            'example',
-            $result,
-            'Used short name for unique plugin shell',
-        );
-        $this->assertArrayHasKey(
-            'test_plugin.example',
-            $result,
-            'Long names are stored for unique shells',
-        );
-        $this->assertArrayNotHasKey('sample', $result, 'Existing command not output');
-        $this->assertArrayHasKey(
-            'test_plugin.sample',
-            $result,
-            'Duplicate shell was given a full alias',
-        );
-        $this->assertSame(ExampleCommand::class, $result['example']);
-        $this->assertSame($result['example'], $result['test_plugin.example']);
-        $this->assertSame(PluginSampleCommand::class, $result['test_plugin.sample']);
-
-        $result = $collection->discoverPlugin('Company/TestPluginThree');
-        $this->assertArrayHasKey(
-            'company',
-            $result,
-            'Used short name for unique plugin shell',
-        );
-        $this->assertArrayHasKey(
-            'company/test_plugin_three.company',
-            $result,
-            'Long names are stored as well',
-        );
-        $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
-        $this->clearPlugins();
-    }
-
-    /**
-     * Discovering commands in an arbitrary directory + namespace.
-     */
-    public function testDiscoverDirectory(): void
-    {
-        $this->loadPlugins(['Company/TestPluginThree']);
-        $path = Plugin::classPath('Company/TestPluginThree') . 'Command' . DIRECTORY_SEPARATOR;
-        $class = 'Company\TestPluginThree\Command\CompanyCommand';
-
-        $collection = new CommandCollection();
-        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command\\', 'maint.');
-
-        $this->assertSame(
-            ['company' => $class, 'maint.company' => $class],
-            $result,
-        );
-        $this->clearPlugins();
-    }
-
-    /**
-     * A non-empty prefix gives a long name to fall back on, so a
-     * colliding short name does not silently overwrite an existing
-     * command (it is exposed only under the prefixed name).
-     */
-    public function testDiscoverDirectoryDeduplicates(): void
-    {
-        $this->loadPlugins(['Company/TestPluginThree']);
-        $path = Plugin::classPath('Company/TestPluginThree') . 'Command' . DIRECTORY_SEPARATOR;
-        $class = 'Company\TestPluginThree\Command\CompanyCommand';
-
-        $collection = new CommandCollection();
-        $collection->add('company', DemoCommand::class);
-        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command\\', 'maint.');
-
-        $this->assertArrayNotHasKey('company', $result, 'Existing command not overwritten');
-        $this->assertSame(['maint.company' => $class], $result);
-        $this->clearPlugins();
-    }
-
-    /**
-     * A missing trailing separator on either the path or the namespace
-     * must not break discovery (both are normalized), so a new public
-     * caller cannot trip the malformed `file` path / empty-result issues.
-     */
-    public function testDiscoverDirectoryWithoutTrailingSeparators(): void
-    {
-        $this->loadPlugins(['Company/TestPluginThree']);
-        $path = Plugin::classPath('Company/TestPluginThree') . 'Command';
-
-        $collection = new CommandCollection();
-        $result = $collection->discoverDirectory($path, 'Company\TestPluginThree\Command', 'maint.');
-
-        $this->assertArrayHasKey('company', $result);
-        $this->assertArrayHasKey('maint.company', $result);
-        $this->clearPlugins();
-    }
-
-    /**
-     * A non-existent directory yields no commands.
-     */
-    public function testDiscoverDirectoryUnknown(): void
-    {
-        $collection = new CommandCollection();
-        $this->assertSame([], $collection->discoverDirectory('/no/such/dir', 'App\Command\\', 'x.'));
-    }
-
-    /**
-     * An empty prefix is rejected because it would defeat de-duplication.
-     */
-    public function testDiscoverDirectoryEmptyPrefix(): void
-    {
-        $collection = new CommandCollection();
-        $this->expectException(InvalidArgumentException::class);
-        $collection->discoverDirectory('/no/such/dir', 'App\Command\\', '');
+        $collection = new CommandCollection(['version' => SampleCommand::class]);
+        CoreCommands::addTo($collection);
+        $this->assertSame(SampleCommand::class, $collection->get('version'));
     }
 
     /**

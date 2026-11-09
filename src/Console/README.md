@@ -17,109 +17,144 @@ composer require cakephp/console
 
 # Getting Started
 
-To start, define an entry point script and Application class which defines
-bootstrap logic, and binds your commands. Lets put our entrypoint script in
-`bin/tool.php`:
+Create an entry point that loads your application and runs its command registry:
 
 ```php
 #!/usr/bin/php -q
 <?php
-// Check platform requirements
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Application;
 use Cake\Console\CommandRunner;
 
-// Build the runner with an application and root executable name.
-$runner = new CommandRunner(new Application(), 'tool');
-exit($runner->run($argv));
-````
+exit(new CommandRunner(new Application(), 'tool')->run($argv));
+```
 
-For our `Application` class we can start with:
+Use the shared attribute resolver to discover commands, as with attribute routes
+and event listeners. Configure a collection during bootstrap, then explicitly
+register its commands in `Application::console()`:
 
 ```php
 <?php
 namespace App;
 
-use App\Command\HelloCommand;
-use Cake\Core\ConsoleApplicationInterface;
+use Cake\AttributeResolver\AttributeResolver;
 use Cake\Console\CommandCollection;
+use Cake\Core\ConsoleApplicationInterface;
 
 class Application implements ConsoleApplicationInterface
 {
     /**
-     * Load all the application configuration and bootstrap logic.
-     *
-     * @return void
+     * Configure discovery for application and loaded plugin commands.
      */
     public function bootstrap(): void
     {
-        // Load configuration here. This is the first
-        // method Cake\Console\CommandRunner will call on your application.
+        AttributeResolver::setConfig('commands', [
+            'paths' => ['src/Command/*.php', 'src/Command/**/*.php'],
+            'cache' => false,
+        ]);
     }
 
-
     /**
-     * Define the console commands for an application.
+     * Register commands from the configured attribute collection.
      *
-     * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
-     * @return \Cake\Console\CommandCollection The updated collection.
+     * @param \Cake\Console\CommandCollection $commands Command registry.
+     * @return \Cake\Console\CommandCollection
      */
     public function console(CommandCollection $commands): CommandCollection
     {
-        $commands->add('hello', HelloCommand::class);
-
-        return $commands;
+        return $commands->addFromAttributes('commands');
     }
 }
 ```
 
-Next we'll build a very simple `HelloCommand`:
+Paths are relative to the application root and loaded plugin roots. They can
+cover any directory; command class names do not need a `Command` suffix.
+Use an existing resolver configuration shared with routes and events if desired.
+For production, replace `cache => false` with a configured cache name, such as
+`_cake_attributes_`, and warm that collection with
+`bin/cake attributes warm --config commands`.
+
+Define a command using class-level attributes:
 
 ```php
 <?php
 namespace App\Command;
 
-use Cake\Console\Arguments;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Console\BaseCommand;
-use Cake\Console\ConsoleIoInterface;
-use Cake\Console\ConsoleOptionParser;
 
+/**
+ * Greet a named person.
+ */
+#[AsCommand('hello', description: 'Greet someone.', epilog: 'Example: tool hello Syd --color green')]
+#[Argument('name', required: true, help: 'The name to say hello to.')]
+#[Option('color', choices: ['none', 'green'], default: 'none', help: 'The color to use.')]
 class HelloCommand extends BaseCommand
 {
-    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    /**
+     * Print a greeting using the parsed argument and option.
+     *
+     * @return int
+     */
+    public function execute(): int
     {
-        $parser
-            ->addArgument('name', [
-                'required' => true,
-                'help' => 'The name to say hello to',
-            ])
-            ->addOption('color', [
-                'choices' => ['none', 'green'],
-                'default' => 'none',
-                'help' => 'The color to use.'
-            ]);
-
-        return $parser;
-    }
-
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
-    {
-        $color = $args->getOption('color');
-        if ($color === 'none') {
-            $io->out("Hello {$args->getArgument('name')}");
-        } elseif ($color == 'green') {
-            $io->out("<success>Hello {$args->getArgument('name')}</success>");
+        $message = 'Hello ' . $this->args->getArgument('name');
+        if ($this->args->getOption('color') === 'green') {
+            $message = '<success>' . $message . '</success>';
         }
+        $this->io->out($message);
 
         return static::CODE_SUCCESS;
     }
 }
 ```
 
-Next we can run our command with `php bin/tool.php hello Syd`. To learn more
-about the various features we've used in this example read the docs:
+Run `php bin/tool.php hello Syd`, or add `--help` to see the generated help.
+`description` supplies the command-listing summary. `help` adds lines to that
+summary in command help, and `epilog` appears after arguments and options.
+
+## Parser customization and inheritance
+
+`Argument` and `Option` expose the existing console parser settings, including
+choices, defaults, separators, required values, repeated option values, and
+interactive prompts. Positional arguments follow declaration order unless an
+explicit `index` is supplied.
+
+Parent argument and option declarations are inherited. A child declaration with
+the same name replaces the parent definition; arguments retain their position
+unless an explicit index changes it. Duplicate declarations within one class are
+errors. `AsCommand` identity and help metadata belong to the concrete class.
+
+Attributes populate the parser before `buildOptionParser()`. The hook can add
+runtime configuration or explicitly replace options with `removeOption()` and
+`addOption()`. Existing lifecycle hooks, `$this->args`, `$this->io`, constructor
+injection, and command execution remain available. Explicit overrides of
+`defaultName()` and `getDescription()` retain normal PHP method precedence;
+attribute discovery registers the name declared by `AsCommand`.
+
+## Migrating to CakePHP 6
+
+Convention-based directory discovery and `CommandScanner` have been removed,
+along with `autoDiscover()`, `discoverPlugin()`, and `discoverDirectory()`.
+
+Add `AsCommand` to discoverable command classes, include their paths in a resolver
+configuration, and call `addFromAttributes()` from your application console hook.
+For full-stack applications, call `parent::console($commands)` to retain the
+built-in framework commands. These remain available without resolver configuration,
+including the attribute inspection and cache-warming commands.
+
+Unannotated commands can still be registered using
+`$commands->add('hello', HelloCommand::class)`. Parser attributes also work on
+explicitly registered commands and do not require a discovery configuration.
+
+Discovery registers class names without constructing commands. Loaded plugins
+with console support enabled receive qualified names such as `my_plugin.hello`,
+plus short names when available. Application commands take preference over plugin
+short names. Default plugin console hooks no longer scan command directories;
+custom plugin hooks can still explicitly register commands.
 
 * [Option Parsing](https://book.cakephp.org/5/en/console-commands/option-parsers.html)
 * [Input & Output](https://book.cakephp.org/5/en/console-commands/input-output.html)
-

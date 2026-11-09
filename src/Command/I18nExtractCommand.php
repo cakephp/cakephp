@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Console\Helper\ProgressHelper;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -32,6 +33,45 @@ use Throwable;
 /**
  * Language string extractor
  */
+#[AsCommand(
+    'i18n extract',
+    description: 'Extract i18n POT files from application source files.',
+    help: [
+            'Source files are parsed and string literal format strings ' .
+            'provided to the <info>__</info> family of functions are extracted.',
+        ],
+)]
+#[Option('app', help: 'Directory where your application is located.')]
+#[Option('paths', help: 'Comma separated list of paths that are searched for source files.')]
+#[Option(
+    'merge',
+    help: 'Merge all domain strings into a single default.po file.',
+    default: 'no',
+    choices: ['yes', 'no'],
+)]
+#[Option('output', help: 'Full path to output directory.')]
+#[Option('files', help: 'Comma separated list of files to parse.')]
+#[Option(
+    'exclude-plugins',
+    help: 'Ignores all files in plugins if this command is run inside from the same app directory.',
+    boolean: true,
+    default: true,
+)]
+#[Option(
+    'plugin',
+    short: 'p',
+    help: 'Extracts tokens only from the plugin specified and ' .
+        "puts the result in the plugin's `locales` directory.",
+)]
+#[Option(
+    'exclude',
+    help: 'Comma separated list of directories to exclude.' .
+        ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
+)]
+#[Option('overwrite', help: 'Always overwrite existing .pot files.', boolean: true, default: false)]
+#[Option('extract-core', help: 'Extract messages from the CakePHP core libraries.', choices: ['yes', 'no'])]
+#[Option('no-location', help: 'Do not write file locations for each extracted message.', boolean: true, default: false)]
+#[Option('marker-error', help: 'Do not display marker error.', boolean: true, default: false)]
 class I18nExtractCommand extends Command
 {
     /**
@@ -117,22 +157,6 @@ class I18nExtractCommand extends Command
      * @var int
      */
     protected int $countMarkerError = 0;
-
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'i18n extract';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Extract i18n POT files from application source files.';
-    }
 
     /**
      * Method to interact with the user and get path selections.
@@ -350,61 +374,6 @@ class I18nExtractCommand extends Command
         }
 
         $this->io->out('Done.');
-    }
-
-    /**
-     * Gets the option parser instance and configures it.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to configure
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription([
-            static::getDescription(),
-            'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.',
-        ])->addOption('app', [
-            'help' => 'Directory where your application is located.',
-        ])->addOption('paths', [
-            'help' => 'Comma separated list of paths that are searched for source files.',
-        ])->addOption('merge', [
-            'help' => 'Merge all domain strings into a single default.po file.',
-            'default' => 'no',
-            'choices' => ['yes', 'no'],
-        ])->addOption('output', [
-            'help' => 'Full path to output directory.',
-        ])->addOption('files', [
-            'help' => 'Comma separated list of files to parse.',
-        ])->addOption('exclude-plugins', [
-            'boolean' => true,
-            'default' => true,
-            'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
-        ])->addOption('plugin', [
-            'help' => 'Extracts tokens only from the plugin specified and '
-                . "puts the result in the plugin's `locales` directory.",
-            'short' => 'p',
-        ])->addOption('exclude', [
-            'help' => 'Comma separated list of directories to exclude.' .
-                ' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors',
-        ])->addOption('overwrite', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Always overwrite existing .pot files.',
-        ])->addOption('extract-core', [
-            'help' => 'Extract messages from the CakePHP core libraries.',
-            'choices' => ['yes', 'no'],
-        ])->addOption('no-location', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Do not write file locations for each extracted message.',
-        ])->addOption('marker-error', [
-            'boolean' => true,
-            'default' => false,
-            'help' => 'Do not display marker error.',
-        ]);
-
-        return $parser;
     }
 
     /**

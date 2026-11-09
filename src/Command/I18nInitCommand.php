@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
@@ -26,24 +28,11 @@ use DirectoryIterator;
 /**
  * Command for interactive I18N management.
  */
+#[AsCommand('i18n init', description: 'Initialize a language PO file from the POT file.')]
+#[Option('plugin', short: 'p', help: 'The plugin to create a PO file in.')]
+#[Argument('language', help: 'Two-letter language code to create PO files for.')]
 class I18nInitCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'i18n init';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Initialize a language PO file from the POT file.';
-    }
-
     /**
      * Execute the command
      *
@@ -95,25 +84,5 @@ class I18nInitCommand extends Command
         $this->io->out('Generated ' . $count . ' PO files in ' . $targetFolder);
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Gets the option parser instance and configures it.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(static::getDescription())
-           ->addOption('plugin', [
-               'help' => 'The plugin to create a PO file in.',
-               'short' => 'p',
-           ])
-           ->addArgument('language', [
-               'help' => 'Two-letter language code to create PO files for.',
-           ]);
-
-        return $parser;
     }
 }

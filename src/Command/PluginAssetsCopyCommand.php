@@ -16,30 +16,19 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 
 /**
  * Command for copying plugin assets to app's webroot.
  */
+#[AsCommand('plugin assets copy', description: "Copy plugin assets to app's webroot.")]
+#[Argument('name', help: 'A specific plugin you want to copy assets for.', required: false)]
+#[Option('overwrite', help: 'Overwrite existing symlink / folder / files.', boolean: true, default: false)]
 class PluginAssetsCopyCommand extends Command
 {
     use PluginAssetsTrait;
-
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin assets copy';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return "Copy plugin assets to app's webroot.";
-    }
 
     /**
      * Execute the command
@@ -56,27 +45,5 @@ class PluginAssetsCopyCommand extends Command
         $this->process($this->list($name), true, $overwrite);
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(
-            static::getDescription(),
-        )->addArgument('name', [
-            'help' => 'A specific plugin you want to copy assets for.',
-            'required' => false,
-        ])->addOption('overwrite', [
-            'help' => 'Overwrite existing symlink / folder / files.',
-            'default' => false,
-            'boolean' => true,
-        ]);
-
-        return $parser;
     }
 }

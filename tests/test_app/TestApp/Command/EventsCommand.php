@@ -5,9 +5,14 @@ namespace TestApp\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Event\EventInterface;
 
+/**
+ * Command fixture for console integration tests.
+ */
+#[AsCommand('events')]
 class EventsCommand extends Command
 {
     public static function getDescription(): string

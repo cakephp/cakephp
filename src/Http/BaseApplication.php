@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Cake\Http;
 
+use Cake\Command\CoreCommands;
 use Cake\Console\CommandCollection;
 use Cake\Container\ContainerInterface;
 use Cake\Controller\ControllerFactory;
@@ -243,15 +244,15 @@ abstract class BaseApplication implements
     /**
      * Define the console commands for an application.
      *
-     * By default, all commands in CakePHP, plugins and the application will be
-     * loaded using conventions based names.
+     * Registers built-in framework commands. Applications can register commands
+     * explicitly or call $commands->addFromAttributes() with a configured resolver.
      *
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
     public function console(CommandCollection $commands): CommandCollection
     {
-        return $commands->addMany($commands->autoDiscover());
+        return class_exists(CoreCommands::class) ? CoreCommands::addTo($commands) : $commands;
     }
 
     /**

@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
@@ -25,24 +26,14 @@ use Cake\Routing\Router;
 /**
  * Provides interactive CLI tool for testing routes.
  */
+#[AsCommand(
+    'routes check',
+    description: 'Check a URL string against the routes.',
+    help: ['Will output the routing parameters the route resolves to.'],
+)]
+#[Argument('url', help: 'The URL to check.', required: true)]
 class RoutesCheckCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'routes check';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Check a URL string against the routes.';
-    }
-
     /**
      * Display all routes in an application
      *
@@ -80,25 +71,5 @@ class RoutesCheckCommand extends Command
         }
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription([
-            static::getDescription(),
-            'Will output the routing parameters the route resolves to.',
-        ])
-        ->addArgument('url', [
-            'help' => 'The URL to check.',
-            'required' => true,
-        ]);
-
-        return $parser;
     }
 }

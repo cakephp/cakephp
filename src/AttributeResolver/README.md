@@ -14,7 +14,7 @@ Configure the resolver with paths to scan and optional caching. Paths support gl
 
 ```php
 // In config/bootstrap.php or Application::bootstrap()
-use AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\AttributeResolver;
 
 AttributeResolver::setConfig('default', [
     'paths' => [
@@ -58,7 +58,7 @@ Cache::setConfig('_cake_attributes_', [
 ## Usage
 
 ```php
-use AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\AttributeResolver;
 
 // Get all attributes from default configuration
 $collection = AttributeResolver::collection();
@@ -85,6 +85,19 @@ $commands = AttributeResolver::collection('commands')
 // Clear cache
 AttributeResolver::clear('default');
 ```
+
+### Known-class lookup
+
+Resolve declarations for a known class without configuring paths or scanning directories:
+
+```php
+$attributes = AttributeResolver::forClass(MyCommand::class);
+```
+
+The collection contains declarations on the class and its reflected members.
+Class-level attributes are not inherited. Results are cached in memory for the
+process, independently of configured file collections, exclusions, and persistent
+caches. Invalid class lookups propagate reflection errors.
 
 ## CLI Commands
 

@@ -20,78 +20,23 @@ use Cake\AttributeResolver\AttributeCollection;
 use Cake\AttributeResolver\AttributeResolver;
 use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 
 /**
  * Command to list discovered attributes.
  */
+#[AsCommand('attributes list', description: 'List discovered PHP attributes in a table format.')]
+#[Option('attribute', short: 'a', help: 'Filter by attribute class name (partial match supported).')]
+#[Option('class', short: 'c', help: 'Filter by target class name (partial match supported).')]
+#[Option('namespace', short: 'n', help: 'Filter by namespace pattern (supports wildcards).')]
+#[Option('type', short: 't', help: 'Filter by target type (class, method, property, parameter, constant).')]
+#[Option('plugin', short: 'p', help: 'Filter by plugin name.')]
+#[Option('verbose', help: 'Display full class names without truncation.', boolean: true)]
+#[Option('format', short: 'f', help: 'Output format (text, json).', default: 'text', choices: ['text', 'json'])]
+#[Option('config', help: 'The Resolver configuration to use.', default: 'default')]
 class AttributesListCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'attributes list';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'List discovered PHP attributes in a table format.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
-            ->addOption('attribute', [
-                'short' => 'a',
-                'help' => 'Filter by attribute class name (partial match supported).',
-            ])
-            ->addOption('class', [
-                'short' => 'c',
-                'help' => 'Filter by target class name (partial match supported).',
-            ])
-            ->addOption('namespace', [
-                'short' => 'n',
-                'help' => 'Filter by namespace pattern (supports wildcards).',
-            ])
-            ->addOption('type', [
-                'short' => 't',
-                'help' => 'Filter by target type (class, method, property, parameter, constant).',
-            ])
-            ->addOption('plugin', [
-                'short' => 'p',
-                'help' => 'Filter by plugin name.',
-            ])
-            ->addOption('verbose', [
-                'help' => 'Display full class names without truncation.',
-                'boolean' => true,
-            ])
-            ->addOption('format', [
-                'short' => 'f',
-                'help' => 'Output format (text, json).',
-                'default' => 'text',
-                'choices' => ['text', 'json'],
-            ])
-            ->addOption('config', [
-                'default' => 'default',
-                'help' => 'The Resolver configuration to use.',
-            ]);
-
-        return $parser;
-    }
-
     /**
      * Implement this method with your command's logic.
      *
