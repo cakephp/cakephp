@@ -17,16 +17,22 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\AttributeResolver\AttributeResolver;
+use Cake\Command\Command;
 use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandInterface;
 use Cake\Console\CoreCommands;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
+use TestApp\Console\Attribute\LegacyCommand;
+use TestApp\Console\Attribute\Nested\Export;
 
 /**
  * Test case for the CommandCollection
@@ -63,6 +69,121 @@ class CommandCollectionTest extends TestCase
         $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
         $this->assertTrue($collection->has('routes'));
         $this->assertSame(RoutesCommand::class, $collection->get('routes'));
+    }
+
+    /**
+     * Infer an attributed command name without constructing its required dependencies.
+     */
+    public function testAddClassUsesAttributeName(): void
+    {
+        $collection = new CommandCollection();
+        $this->assertSame($collection, $collection->add(Export::class));
+        $this->assertSame(['attribute export' => Export::class], iterator_to_array($collection));
+    }
+
+    /**
+     * Unannotated classes can use their existing conventional default name.
+     */
+    public function testAddClassWithoutAttributes(): void
+    {
+        $collection = new CommandCollection();
+        $collection->add(LegacyCommand::class);
+        $this->assertSame(LegacyCommand::class, $collection->get('legacy'));
+    }
+
+    /**
+     * Existing defaultName overrides determine the inferred registration name.
+     */
+    public function testAddClassUsesDefaultNameOverride(): void
+    {
+        $command = new #[AsCommand('attribute name')] class extends Command {
+            /**
+             * Provide a programmatic name in preference to attribute metadata.
+             *
+             * @return string
+             */
+            public static function defaultName(): string
+            {
+                return 'method name';
+            }
+        };
+        $collection = new CommandCollection();
+        $collection->add($command::class);
+        $this->assertSame(['method name' => $command::class], iterator_to_array($collection));
+    }
+
+    /**
+     * Explicit registration names retain precedence and named argument compatibility.
+     */
+    public function testExplicitNameOverridesAttributeName(): void
+    {
+        $collection = new CommandCollection();
+        $collection->add(name: 'custom export', command: Export::class);
+        $this->assertSame(['custom export' => Export::class], iterator_to_array($collection));
+    }
+
+    /**
+     * Inferred names pass through the same validation as explicit names.
+     */
+    public function testAddClassRejectsInvalidDefaultName(): void
+    {
+        $command = new class extends Command {
+            /**
+             * Return an invalid name to exercise collection validation.
+             *
+             * @return string
+             */
+            public static function defaultName(): string
+            {
+                return 'too many command words';
+            }
+        };
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The command name `too many command words` is invalid.');
+        new CommandCollection()->add($command::class);
+    }
+
+    /**
+     * Classes without the command naming API require an explicit mapping.
+     */
+    public function testInterfaceCommandRequiresExplicitName(): void
+    {
+        $command = Mockery::mock(CommandInterface::class);
+        $collection = new CommandCollection();
+        $collection->add('custom', $command);
+        $this->assertSame($command, $collection->get('custom'));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('provide an explicit name and command');
+        $collection->add($command::class);
+    }
+
+    /**
+     * Invalid class-only registrations fail with an actionable diagnostic.
+     *
+     * @param string $className Invalid class or registration name.
+     */
+    #[DataProvider('invalidCommandClassProvider')]
+    public function testAddRejectsInvalidClass(string $className): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot infer a command name');
+        new CommandCollection()->add($className);
+    }
+
+    /**
+     * Supply unknown classes, unrelated classes, and names without a command.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function invalidCommandClassProvider(): array
+    {
+        return [
+            'unknown class' => ['UnknownCommandClass'],
+            'unrelated class' => [CommandCollection::class],
+            'command interface' => [CommandInterface::class],
+            'registration name only' => ['users export'],
+        ];
     }
 
     /**

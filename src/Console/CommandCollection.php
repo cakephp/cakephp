@@ -53,16 +53,32 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Add a command to the collection
+     * Add a command under an explicit name or its class's default name.
      *
-     * @param string $name The name of the command you want to map.
-     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> $command The command to map.
-     *   Can be a FQCN or CommandInterface instance.
+     * When only a BaseCommand class name is supplied, its defaultName() is used
+     * without constructing the command. An explicit name takes precedence.
+     *
+     * @param string $name The registration name, or a BaseCommand class name when $command is omitted.
+     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>|null $command The command
+     *   class or instance to map, or null to use $name as the command class.
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function add(string $name, CommandInterface|string $command): static
+    public function add(string $name, CommandInterface|string|null $command = null): static
     {
+        if ($command === null) {
+            if (!is_subclass_of($name, BaseCommand::class)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot infer a command name for `%s`. ' .
+                    'Pass a BaseCommand subclass or provide an explicit name and command.',
+                    $name,
+                ));
+            }
+
+            $command = $name;
+            $name = $command::defaultName();
+        }
+
         if (is_string($command)) {
             assert(
                 is_subclass_of($command, CommandInterface::class),

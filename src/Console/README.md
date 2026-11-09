@@ -146,9 +146,23 @@ For full-stack applications, call `parent::console($commands)` to retain the
 built-in framework commands. These remain available without resolver configuration,
 including the attribute inspection and cache-warming commands.
 
-Unannotated commands can still be registered using
-`$commands->add('hello', HelloCommand::class)`. Parser attributes also work on
-explicitly registered commands and do not require a discovery configuration.
+Commands can also be registered manually without configuring discovery:
+
+```php
+$commands->add(HelloCommand::class);
+$commands->add('greet', HelloCommand::class);
+```
+
+The single-argument form uses the class's `defaultName()`, including `AsCommand`
+metadata, existing method overrides, or the conventional class-derived name.
+Supplying both arguments registers the command under the explicit name instead.
+Registration stores the class name without constructing the command, so constructor
+injection continues to work through the command factory.
+
+Neither form requires attributes. Parser attributes also work on manually registered
+commands without a discovery configuration. Commands implementing only
+`CommandInterface` require an explicit name because the interface has no default-name
+method. Explicit registration also continues to accept command instances.
 
 Discovery registers class names without constructing commands. Loaded plugins
 with console support enabled receive qualified names such as `my_plugin.hello`,
