@@ -1391,7 +1391,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Example
      *
      * ```
-     * $query->expr()->lte('count', $query->identifier('total'));
+     * $query->expr()->lessThanOrEquals('count', $query->identifier('total'));
      * ```
      *
      * @param string $identifier The identifier for an expression

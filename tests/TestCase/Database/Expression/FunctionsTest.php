@@ -40,19 +40,19 @@ class FunctionsTest extends TestCase
         $cases = [];
         foreach (
             [
-            'equals' => 'eq',
-            'notEquals' => 'notEq',
-            'greaterThan' => 'gt',
-            'greaterThanOrEquals' => 'gte',
-            'lessThan' => 'lt',
-            'lessThanOrEquals' => 'lte',
-            'like' => 'like',
-            'notLike' => 'notLike',
-            'isDistinctFrom' => 'isDistinctFrom',
-            'isNotDistinctFrom' => 'isNotDistinctFrom',
-            ] as $helper => $method
+            'equals',
+            'notEquals',
+            'greaterThan',
+            'greaterThanOrEquals',
+            'lessThan',
+            'lessThanOrEquals',
+            'like',
+            'notLike',
+            'isDistinctFrom',
+            'isNotDistinctFrom',
+            ] as $method
         ) {
-            $cases[$helper] = [$helper, $method, [7]];
+            $cases[$method] = [$method, $method, [7]];
         }
         foreach (['in', 'notIn', 'inOrNull', 'notInOrNull'] as $method) {
             $cases[$method] = [$method, $method, [[1, 2]]];

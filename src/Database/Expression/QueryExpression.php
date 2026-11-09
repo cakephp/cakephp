@@ -149,7 +149,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function eq(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function equals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -166,7 +166,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function notEq(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function notEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -181,7 +181,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function gt(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function greaterThan(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -196,7 +196,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function lt(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function lessThan(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -211,7 +211,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function gte(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function greaterThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -226,7 +226,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function lte(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function lessThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -582,7 +582,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new IdentifierExpression($field);
         };
 
-        return $this->eq($wrapIdentifier($leftField), $wrapIdentifier($rightField));
+        return $this->equals($wrapIdentifier($leftField), $wrapIdentifier($rightField));
     }
 
     /**
