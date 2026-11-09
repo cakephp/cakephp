@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Query;
 use Cake\Database\Driver\Postgres;
 use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
+use function Cake\Database\Expression\lessThan;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -36,7 +37,7 @@ class CaseExpressionQueryTest extends TestCase
                     'price',
                     'is_cheap' => $query->expr()
                         ->case()
-                        ->when(['price <' => 20])
+                        ->when(['price' => lessThan(20)])
                         ->then(1)
                         ->else(0)
                         ->setReturnType('boolean'),
@@ -72,7 +73,7 @@ class CaseExpressionQueryTest extends TestCase
             ->select(function (SelectQuery $query) {
                 $expression = $query->expr()
                     ->case()
-                    ->when(['Products.price <' => 20])
+                    ->when(['Products.price' => lessThan(20)])
                     ->then(true)
                     ->else(false);
 

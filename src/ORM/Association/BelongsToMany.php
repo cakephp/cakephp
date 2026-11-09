@@ -30,6 +30,7 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use SplObjectStorage;
+use function Cake\Database\Expression\equals;
 
 /**
  * Represents an M - N relationship where there exists a junction - or join - table
@@ -1440,22 +1441,16 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function (string $key) {
-            return $key . ' IS';
-        }, $foreignKey);
         /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function (string $key) {
-            return $key . ' IS';
-        }, $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
         $unions = [];
         foreach ($missing as $key) {
             /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $unionQuery */
             $unionQuery = $hasMany->find()
-                ->where(array_combine($foreignKey, $sourceKey))
-                ->where(array_combine($assocForeignKey, $key));
+                ->where(array_combine($foreignKey, array_map(equals(...), $sourceKey)))
+                ->where(array_combine($assocForeignKey, array_map(equals(...), $key)));
 
             $unions[] = $unionQuery;
         }

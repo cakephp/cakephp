@@ -35,6 +35,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
+use function Cake\Database\Expression\{greaterThan, greaterThanOrEquals, in, lessThan, like, notEquals, notIn};
 
 /**
  * Contains regression test for the Query builder
@@ -80,7 +81,7 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('ArticlesTags');
-        $results = $table->find()->where(['id >' => 100])->contain('ArticlesTags')->toArray();
+        $results = $table->find()->where(['id' => greaterThan(100)])->contain('ArticlesTags')->toArray();
         $this->assertEmpty($results);
     }
 
@@ -295,7 +296,7 @@ class QueryRegressionTest extends TestCase
             return $q->where(['Articles.id' => 1]);
         });
 
-        $query = $articles->Tags->find()->where(['Tags.id NOT IN' => $sub]);
+        $query = $articles->Tags->find()->where(['Tags.id' => notIn($sub)]);
         $this->assertSame(1, $query->count());
     }
 
@@ -578,7 +579,7 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsTo('Authors');
 
         $result = $table->Articles->find()
-            ->where(['Authors.id >' => 1])
+            ->where(['Authors.id' => greaterThan(1)])
             ->contain(['Authors.Tags'])
             ->toArray();
         $this->assertEquals(
@@ -705,7 +706,7 @@ class QueryRegressionTest extends TestCase
         $query = $table
             ->find()
             ->select(['title'])
-            ->where(['id NOT IN' => $sub]);
+            ->where(['id' => notIn($sub)]);
         $result = $query->toArray();
         $this->assertCount(2, $result);
         $this->assertSame('First Article', $result[0]->title);
@@ -941,10 +942,10 @@ class QueryRegressionTest extends TestCase
         $result = $comments->find()
             ->contain(['Articles', 'Users'])
             ->matching('Articles', function ($q) {
-                return $q->where(['Articles.id >=' => 1]);
+                return $q->where(['Articles.id' => greaterThanOrEquals(1)]);
             })
             ->matching('Users', function ($q) {
-                return $q->where(['Users.id >=' => 1]);
+                return $q->where(['Users.id' => greaterThanOrEquals(1)]);
             })
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
@@ -1180,7 +1181,7 @@ class QueryRegressionTest extends TestCase
         ]);
         $query = $table->find()
             ->contain(['Tags' => function ($q) {
-                return $q->where(['SpecialTags.highlighted_time >' => new DateTime('2014-06-01 00:00:00')]);
+                return $q->where(['SpecialTags.highlighted_time' => greaterThan(new DateTime('2014-06-01 00:00:00'))]);
             }])
             ->where(['Articles.id' => 2]);
 
@@ -1200,7 +1201,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->contain('Comments')
             ->where([
-                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
+                'Comments.updated' => greaterThan(new NativeDateTime('2007-03-18 10:55:00')),
             ]);
 
         $result = $query->first();
@@ -1223,7 +1224,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->contain('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
+                'Authors.created' => greaterThan(new NativeDateTime('2007-03-17 01:16:00')),
             ]);
 
         $result = $query->first();
@@ -1246,7 +1247,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->matching('Comments')
             ->where([
-                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
+                'Comments.updated' => greaterThan(new NativeDateTime('2007-03-18 10:55:00')),
             ]);
 
         $result = $query->first();
@@ -1256,7 +1257,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->matching('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
+                'Authors.created' => greaterThan(new NativeDateTime('2007-03-17 01:16:00')),
             ]);
 
         $result = $query->first();
@@ -1274,10 +1275,10 @@ class QueryRegressionTest extends TestCase
 
         $query = $Tags->find()
             ->notMatching('Articles', function ($q) {
-                return $q ->where(['ArticlesTags.tag_id !=' => 3 ]);
+                return $q ->where(['ArticlesTags.tag_id' => notEquals(3) ]);
             })
             ->where([
-                'Tags.created <' => new NativeDateTime('2016-01-02 00:00:00'),
+                'Tags.created' => lessThan(new NativeDateTime('2016-01-02 00:00:00')),
             ]);
 
         $result = $query->first();
@@ -1301,7 +1302,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->innerJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
+                'Comments.updated' => greaterThan(new NativeDateTime('2007-03-18 10:55:00')),
             ]);
 
         $result = $query->first();
@@ -1311,7 +1312,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->innerJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
+                'Authors.created' => greaterThan(new NativeDateTime('2007-03-17 01:16:00')),
             ]);
 
         $result = $query->first();
@@ -1334,7 +1335,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->leftJoinWith('Comments')
             ->where([
-                'Comments.updated >' => new NativeDateTime('2007-03-18 10:55:00'),
+                'Comments.updated' => greaterThan(new NativeDateTime('2007-03-18 10:55:00')),
             ]);
 
         $result = $query->first();
@@ -1344,7 +1345,7 @@ class QueryRegressionTest extends TestCase
         $query = $table->find()
             ->leftJoinWith('Comments.Articles.Authors')
             ->where([
-                'Authors.created >' => new NativeDateTime('2007-03-17 01:16:00'),
+                'Authors.created' => greaterThan(new NativeDateTime('2007-03-17 01:16:00')),
             ]);
 
         $result = $query->first();
@@ -1417,10 +1418,10 @@ class QueryRegressionTest extends TestCase
         $query = $table->find();
         $inner = $table->find()
             ->select(['content' => 'comment'])
-            ->where(['id >' => 3]);
+            ->where(['id' => greaterThan(3)]);
         $inner2 = $table->find()
             ->select(['content' => 'comment'])
-            ->where(['id <' => 3]);
+            ->where(['id' => lessThan(3)]);
 
         $order = $query->func()->concat(['content' => 'literal', 'test']);
 
@@ -1489,7 +1490,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Comments');
         $table->updateAll(['updated' => DateTime::now()->addDays(2)], ['id' => 6]);
         $query = $table->find();
-        $result = $query->where(['updated >' => $query->func()->now('datetime')])->first();
+        $result = $query->where(['updated' => greaterThan($query->func()->now('datetime'))])->first();
         $this->assertSame(6, $result->id);
     }
 
@@ -1831,7 +1832,7 @@ class QueryRegressionTest extends TestCase
 
         $subquery1 = $articles->find()
             ->select(['id'])
-            ->where(['title LIKE' => '%First%', 'id >=' => 1]);
+            ->where(['title' => like('%First%'), 'id' => greaterThanOrEquals(1)]);
 
         $subquery2 = $users->find()
             ->select(['id'])
@@ -1843,8 +1844,8 @@ class QueryRegressionTest extends TestCase
         $query = $articles->find()
             ->contain('Users')
             ->where([
-                'Users.id IN' => $subquery2,
-                'Articles.id IN' => $subquery1,
+                'Users.id' => in($subquery2),
+                'Articles.id' => in($subquery1),
             ]);
         $result = $query->all()->toArray();
 

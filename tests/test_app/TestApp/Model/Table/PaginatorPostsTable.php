@@ -17,6 +17,7 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
+use function Cake\Database\Expression\greaterThan;
 
 /**
  * PaginatorPostsTable class
@@ -37,10 +38,10 @@ class PaginatorPostsTable extends Table
     /**
      * Finder method for find('popular');
      */
-    public function findPopular(SelectQuery $query): Select
+    public function findPopular(SelectQuery $query): SelectQuery
     {
         $field = $this->getAlias() . '.' . $this->getPrimaryKey();
-        $query->where([$field . ' >' => '1']);
+        $query->where([$field => greaterThan('1')]);
 
         return $query;
     }
