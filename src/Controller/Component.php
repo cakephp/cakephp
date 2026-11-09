@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Core\AttributeDeclarationsTrait;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Log\LogTrait;
@@ -60,6 +61,7 @@ use Cake\Log\LogTrait;
  */
 class Component implements EventListenerInterface
 {
+    use AttributeDeclarationsTrait;
     use InstanceConfigTrait;
     use LogTrait;
 
@@ -102,6 +104,10 @@ class Component implements EventListenerInterface
         if ($this->components) {
             $this->components = $this->registry->normalizeArray($this->components);
         }
+        foreach ($this->attributeDeclarations()['component'] ?? [] as $alias => $declaration) {
+            $this->components[$alias] ??= $declaration->getOptions();
+        }
+
         $this->initialize($config);
     }
 

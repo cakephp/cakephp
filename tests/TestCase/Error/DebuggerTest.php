@@ -217,6 +217,7 @@ object(Cake\View\View) id:0 {
   [protected] currentType => ''
   [protected] stack => []
   [protected] viewBlockClass => 'Cake\View\ViewBlock'
+  [protected] attributeDeclarationsEnabled => null
   [protected] eventManager => object(Cake\Event\EventManager) id:5 {}
   [protected] eventClass => 'Cake\Event\Event'
   [protected] config => []
