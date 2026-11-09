@@ -31,6 +31,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Datasource\RulesAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -1566,16 +1567,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Execute a key/value list query and return the resulting array.
+     * Execute a key/value list query and return the resulting set.
      *
      * Terminal counterpart to the `list` finder ({@see \Cake\ORM\Table::findList()}).
-     * Returns the combined array directly instead of a query whose static type
+     * Returns the executed key/value result set instead of a query whose static type
      * still claims to be a collection of entities. Build and stack finders on
      * `$query` first when needed.
      *
      * ```
+     * // Get an options list of all id -> displayField
      * $options = $articles->list();
      *
+     * // Get an options list based on the provided SelectQuery,
+     * // using `title` as the valueField.
      * $options = $articles->list(
      *     $articles->find()->where(['published' => true]),
      *     valueField: 'title',
@@ -1588,7 +1592,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Closure|array<string>|string|null $valueField The path to the value field, defaults to the display field.
      * @param \Closure|array<string>|string|null $groupField The path to the field to group on.
      * @param string $valueSeparator The separator used to join composite value fields.
-     * @return array<array-key, mixed>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, mixed>
      * @since 5.5.0
      */
     public function list(
@@ -1597,7 +1601,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         Closure|array|string|null $valueField = null,
         Closure|array|string|null $groupField = null,
         string $valueSeparator = ' ',
-    ): array {
+    ): ResultSetInterface {
         $query ??= $this->find();
 
         return $query
@@ -1608,8 +1612,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 groupField: $groupField,
                 valueSeparator: $valueSeparator,
             )
-            ->all()
-            ->toArray();
+            ->all();
     }
 
     /**

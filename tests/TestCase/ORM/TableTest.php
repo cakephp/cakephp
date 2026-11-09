@@ -33,6 +33,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
@@ -1428,7 +1429,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests the terminal list() repository method returns the combined array directly.
+     * Tests the terminal list() repository method returns the executed key/value result set.
      */
     public function testList(): void
     {
@@ -1444,7 +1445,9 @@ class TableTest extends TestCase
             3 => 'larry',
             4 => 'garrett',
         ];
-        $this->assertSame($expected, $table->list($table->find()->orderBy('id')));
+        $result = $table->list($table->find()->orderBy('id'));
+        $this->assertInstanceOf(ResultSetInterface::class, $result);
+        $this->assertSame($expected, $result->toArray());
     }
 
     /**
@@ -1458,7 +1461,7 @@ class TableTest extends TestCase
         ]);
         $table->setDisplayField('username');
 
-        $result = $table->list();
+        $result = $table->list()->toArray();
         ksort($result);
         $expected = [
             1 => 'mariano',
@@ -1474,7 +1477,7 @@ class TableTest extends TestCase
                 ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
                 ->orderBy('id'),
             groupField: 'odd',
-        );
+        )->toArray();
         $this->assertSame(['mariano', 'larry'], array_values($grouped[1]));
         $this->assertSame(['nate', 'garrett'], array_values($grouped[0]));
     }
