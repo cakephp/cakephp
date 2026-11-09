@@ -33,6 +33,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
@@ -1425,6 +1426,60 @@ class TableTest extends TestCase
             ],
         ];
         $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * Tests the terminal list() repository method returns the executed key/value result set.
+     */
+    public function testList(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+
+        $expected = [
+            1 => 'mariano',
+            2 => 'nate',
+            3 => 'larry',
+            4 => 'garrett',
+        ];
+        $result = $table->list($table->find()->orderBy('id'));
+        $this->assertInstanceOf(ResultSetInterface::class, $result);
+        $this->assertSame($expected, $result->toArray());
+    }
+
+    /**
+     * Tests list() builds a default query when none is passed and honors field options.
+     */
+    public function testListDefaultQueryAndOptions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $table->setDisplayField('username');
+
+        $result = $table->list()->toArray();
+        ksort($result);
+        $expected = [
+            1 => 'mariano',
+            2 => 'nate',
+            3 => 'larry',
+            4 => 'garrett',
+        ];
+        ksort($expected);
+        $this->assertSame($expected, $result);
+
+        $grouped = $table->list(
+            $table->find()
+                ->select(['id', 'username', 'odd' => new QueryExpression('id % 2')])
+                ->orderBy('id'),
+            groupField: 'odd',
+        )->toArray();
+        $this->assertSame(['mariano', 'larry'], array_values($grouped[1]));
+        $this->assertSame(['nate', 'garrett'], array_values($grouped[0]));
     }
 
     /**
