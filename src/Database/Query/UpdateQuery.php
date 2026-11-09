@@ -92,7 +92,7 @@ class UpdateQuery extends Query
      *
      * ```
      * $query->update('articles')->set(function (ExpressionInterface $exp) {
-     *   return $exp->eq('title', 'The title', 'string');
+     *   return $exp->equals('title', 'The title', 'string');
      * });
      * ```
      *
@@ -148,7 +148,7 @@ class UpdateQuery extends Query
         }
         /** @var \Cake\Database\Expression\QueryExpression $setExpr */
         $setExpr = $this->parts['set'];
-        $setExpr->eq($key, $value, $types);
+        $setExpr->equals($key, $value, $types);
 
         return $this;
     }

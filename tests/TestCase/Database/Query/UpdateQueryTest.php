@@ -259,8 +259,8 @@ class UpdateQueryTest extends TestCase
         $query->update('comments')
             ->set(function ($exp) use ($date) {
                 return $exp
-                    ->eq('comment', 'mark')
-                    ->eq('created', $date, 'date');
+                    ->equals('comment', 'mark')
+                    ->equals('created', $date, 'date');
             })
             ->where(['id' => 1]);
         $result = $query->sql();
@@ -312,7 +312,7 @@ class UpdateQueryTest extends TestCase
                     'AND' => [
                         'b.name' => notIn(['foo', 'bar']),
                         'OR' => [
-                            $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            $query->expr()->equals(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
                             new SelectQuery($this->connection)->select(['e.name'])->where(['e.name' => 'oof']),
                         ],

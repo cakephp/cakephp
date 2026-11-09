@@ -202,7 +202,7 @@ class QueryExpressionTest extends TestCase
     public static function methodsProvider(): array
     {
         return [
-            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
+            ['equals'], ['notEquals'], ['greaterThan'], ['lessThan'], ['greaterThanOrEquals'], ['lessThanOrEquals'], ['like'],
             ['notLike'], ['in'], ['notIn'], ['inOrNull'], ['notInOrNull'], ['isDistinctFrom'], ['isNotDistinctFrom'],
         ];
     }

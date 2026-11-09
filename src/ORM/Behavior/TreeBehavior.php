@@ -231,8 +231,8 @@ class TreeBehavior extends Behavior
                 $query = $this->scope($this->table->query())
                     ->where(
                         fn(QueryExpression $exp) => $exp
-                            ->gte($config['leftField'], $left + 1)
-                            ->lte($config['leftField'], $right - 1),
+                            ->greaterThanOrEquals($config['leftField'], $left + 1)
+                            ->lessThanOrEquals($config['leftField'], $right - 1),
                     );
 
                 $entities = $query->toArray();
@@ -243,8 +243,8 @@ class TreeBehavior extends Behavior
                 $this->scope($this->table->deleteQuery())
                     ->where(
                         fn(QueryExpression $exp) => $exp
-                            ->gte($config['leftField'], $left + 1)
-                            ->lte($config['leftField'], $right - 1),
+                            ->greaterThanOrEquals($config['leftField'], $left + 1)
+                            ->lessThanOrEquals($config['leftField'], $right - 1),
                     )
                     ->execute();
             }
@@ -366,10 +366,10 @@ class TreeBehavior extends Behavior
                 $rightInverse = clone $leftInverse;
 
                 return $exp
-                    ->eq($config['leftField'], $leftInverse->add($config['leftField']))
-                    ->eq($config['rightField'], $rightInverse->add($config['rightField']));
+                    ->equals($config['leftField'], $leftInverse->add($config['leftField']))
+                    ->equals($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn(QueryExpression $exp) => $exp->lt($config['leftField'], 0),
+            fn(QueryExpression $exp) => $exp->lessThan($config['leftField'], 0),
         );
     }
 
@@ -628,7 +628,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
                 ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn(QueryExpression $exp) => $exp->lessThan($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -639,7 +639,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
                 ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn(QueryExpression $exp) => $exp->lessThan($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -717,7 +717,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
                 ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn(QueryExpression $exp) => $exp->greaterThan($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -728,7 +728,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->scope($this->table->find())
                 ->select([$left, $right])
                 ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn(QueryExpression $exp) => $exp->greaterThan($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -894,7 +894,7 @@ class TreeBehavior extends Behavior
             $where->add($field)->add($conditions)->setConjunction('');
 
             $query
-                ->set($exp->eq($field, $movement))
+                ->set($exp->equals($field, $movement))
                 ->where($where)
                 ->execute();
         }

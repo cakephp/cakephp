@@ -1923,7 +1923,7 @@ class MarshallerTest extends TestCase
         $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
-            $query->leftJoin(['a' => 'tags'], $query->expr()->eq($left, $right));
+            $query->leftJoin(['a' => 'tags'], $query->expr()->equals($left, $right));
         });
 
         $marshall = new Marshaller($this->articles);
