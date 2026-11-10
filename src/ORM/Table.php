@@ -1821,8 +1821,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $entity = $this->newEmptyEntity();
         if ($options['defaults'] && is_array($data)) {
-            $accessibleFields = array_combine(array_keys($data), array_fill(0, count($data), true));
-            $entity = $this->patchEntity($entity, $data, ['accessibleFields' => $accessibleFields]);
+            $patchableFields = array_combine(array_keys($data), array_fill(0, count($data), true));
+            $entity = $this->patchEntity($entity, $data, ['patchableFields' => $patchableFields]);
         }
         if ($callback !== null) {
             /** @var TEntity $entity */
@@ -3092,12 +3092,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * The `fields` option lets remove or restrict input data from ending up in
      * the entity. If you'd like to relax the entity's default accessible fields,
-     * you can use the `accessibleFields` option:
+     * you can use the `patchableFields` option:
      *
      * ```
      * $article = $this->Articles->newEntity(
      *   $this->request->getData(),
-     *   ['accessibleFields' => ['protected_field' => true]]
+     *   ['patchableFields' => ['protected_field' => true]]
      * );
      * ```
      *
@@ -3191,7 +3191,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
      *   'associated' => [
-     *     'Tags' => ['accessibleFields' => ['*' => true]]
+     *     'Tags' => ['patchableFields' => ['*' => true]]
      *   ]
      * ]);
      * ```

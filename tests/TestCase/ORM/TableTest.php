@@ -2984,7 +2984,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $entity = $table->get(1);
 
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
         $entity->patch($entity->toArray());
         $this->assertSame($entity, $table->save($entity));
     }
