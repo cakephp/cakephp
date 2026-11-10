@@ -75,6 +75,10 @@ use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\UsersTable;
 use TestPlugin\Model\Table\CommentsTable;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\lessThan;
 
 /**
  * Tests Table class
@@ -270,7 +274,7 @@ class TableTest extends TestCase
             ->where(['Authors.name' => 'mariano']);
 
         $query = $this->getTableLocator()->get('Articles')->find()
-            ->where(['Articles.author_id IN' => $subquery])
+            ->where(['Articles.author_id' => in($subquery)])
             ->orderBy(['Articles.id' => 'ASC']);
 
         $results = $query->all()->toList();
@@ -653,7 +657,7 @@ class TableTest extends TestCase
         ]);
         $results = $table
             ->find('all')
-            ->where(['id IN' => [1, 2]])
+            ->where(['id' => in([1, 2])])
             ->orderBy('id')
             ->enableHydration(false)
             ->toArray();
@@ -723,7 +727,7 @@ class TableTest extends TestCase
         ]);
         $query = $table->find('all')
             ->select(['id', 'username'])
-            ->where(['created >=' => new DateTime('2010-01-22 00:00')])
+            ->where(['created' => greaterThanOrEquals(new DateTime('2010-01-22 00:00'))])
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
@@ -736,7 +740,7 @@ class TableTest extends TestCase
             ->enableHydration(false)
             ->select(['id', 'username'])
             ->where(['OR' => [
-                'created >=' => new DateTime('2010-01-22 00:00'),
+                'created' => greaterThanOrEquals(new DateTime('2010-01-22 00:00')),
                 'users.created' => new DateTime('2008-03-17 01:18:23'),
             ]])
             ->orderBy('id');
@@ -1158,7 +1162,7 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $fields = ['username' => 'mark'];
-        $result = $table->updateAll($fields, ['id <' => 4]);
+        $result = $table->updateAll($fields, ['id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')
@@ -1223,7 +1227,7 @@ class TableTest extends TestCase
             'table' => 'users',
             'connection' => $this->connection,
         ]);
-        $result = $table->deleteAll(['id <' => 4]);
+        $result = $table->deleteAll(['id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')->toArray();
@@ -1241,7 +1245,7 @@ class TableTest extends TestCase
             'alias' => 'Managers',
             'connection' => $this->connection,
         ]);
-        $result = $table->deleteAll(['Managers.id <' => 4]);
+        $result = $table->deleteAll(['Managers.id' => lessThan(4)]);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')->toArray();
@@ -1271,7 +1275,7 @@ class TableTest extends TestCase
             ->method('execute')
             ->will($this->throwException(new DatabaseException('Not good')));
 
-        $table->deleteAll(['id >' => 4]);
+        $table->deleteAll(['id' => greaterThan(4)]);
     }
 
     /**
@@ -3614,7 +3618,7 @@ class TableTest extends TestCase
         $result = $table->deleteMany($entities);
         $this->assertSame($entities, $result);
 
-        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $count = $table->find()->where(['id' => in(Hash::extract($entities, '{n}.id'))])->count();
         $this->assertSame(0, $count, 'Find should not return > 0.');
     }
 
@@ -3630,7 +3634,7 @@ class TableTest extends TestCase
         $result = $table->deleteManyOrFail($entities);
         $this->assertSame($entities, $result);
 
-        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $count = $table->find()->where(['id' => in(Hash::extract($entities, '{n}.id'))])->count();
         $this->assertSame(0, $count, 'Find should not return > 0.');
     }
 

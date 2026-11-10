@@ -24,6 +24,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests Query class
@@ -249,7 +250,7 @@ class QueryCompilerTest extends TestCase
         $query = $this->newQuery(Query::TYPE_DELETE);
         $query = $query->delete()
             ->from('articles')
-            ->where(['id !=' => 1]);
+            ->where(['id' => notEquals(1)]);
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
 
@@ -264,7 +265,7 @@ class QueryCompilerTest extends TestCase
         $query = $this->newQuery(Query::TYPE_DELETE);
         $query = $query->delete()
             ->from('articles')
-            ->where(['id !=' => 1])
+            ->where(['id' => notEquals(1)])
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
@@ -280,7 +281,7 @@ class QueryCompilerTest extends TestCase
         $query = $this->newQuery(Query::TYPE_DELETE);
         $query = $query->delete()
             ->from('articles')
-            ->where(['id !=' => 1])
+            ->where(['id' => notEquals(1)])
             ->optimizerHint(['TEST_HINT1(param)', 'TEST_HINT2(param)']);
         $result = $this->compiler->compile($query, $this->binder);
 

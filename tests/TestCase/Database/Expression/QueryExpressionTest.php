@@ -20,6 +20,13 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\isDistinctFrom;
+use function Cake\Database\Expression\isNotDistinctFrom;
+use function Cake\Database\Expression\lessThanOrEquals;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests QueryExpression class
@@ -48,10 +55,10 @@ class QueryExpressionTest extends TestCase
      */
     public function testMultiWordOperators(): void
     {
-        $expr = new QueryExpression(['FUNC(Users.first + Users.last) is not' => 'me']);
+        $expr = new QueryExpression(['FUNC(Users.first + Users.last)' => notEquals('me')]);
         $this->assertSame('FUNC(Users.first + Users.last) != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern']);
+        $expr = new QueryExpression(['FUNC(Users.name + Users.id)' => comparison('NOT SIMILAR TO', 'pattern')]);
         $this->assertSame('FUNC(Users.name + Users.id) NOT SIMILAR TO :c0', $expr->sql(new ValueBinder()));
     }
 
@@ -62,34 +69,34 @@ class QueryExpressionTest extends TestCase
      */
     public function testSymbolOperators(): void
     {
-        $expr = new QueryExpression(['Users.name =' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => equals('pattern')]);
         $this->assertSame('Users.name = :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name !=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
         $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name <>' => 'pattern']);
-        $this->assertSame('Users.name <> :c0', $expr->sql(new ValueBinder()));
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
+        $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name >=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => greaterThanOrEquals('pattern')]);
         $this->assertSame('Users.name >= :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name <=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => lessThanOrEquals('pattern')]);
         $this->assertSame('Users.name <= :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name !~' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('!~', 'pattern')]);
         $this->assertSame('Users.name !~ :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name *' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('*', 'pattern')]);
         $this->assertSame('Users.name * :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name -' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('-', 'pattern')]);
         $this->assertSame('Users.name - :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name \\' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('\\', 'pattern')]);
         $this->assertSame('Users.name \\ :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name @>' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('@>', 'pattern')]);
         $this->assertSame('Users.name @> :c0', $expr->sql(new ValueBinder()));
     }
 
@@ -199,7 +206,7 @@ class QueryExpressionTest extends TestCase
     public static function methodsProvider(): array
     {
         return [
-            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
+            ['equals'], ['notEquals'], ['greaterThan'], ['lessThan'], ['greaterThanOrEquals'], ['lessThanOrEquals'], ['like'],
             ['notLike'], ['in'], ['notIn'], ['inOrNull'], ['notInOrNull'], ['isDistinctFrom'], ['isNotDistinctFrom'],
         ];
     }
@@ -337,13 +344,13 @@ class QueryExpressionTest extends TestCase
      */
     public function testParseIsDistinctFrom(): void
     {
-        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => '2021-01-01']);
+        $expr = new QueryExpression(['deleted_at' => isDistinctFrom('2021-01-01')]);
         $this->assertEqualsSql(
             'deleted_at IS DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
         );
 
-        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => null]);
+        $expr = new QueryExpression(['deleted_at' => isDistinctFrom(null)]);
         $this->assertEqualsSql(
             'deleted_at IS DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
@@ -355,13 +362,13 @@ class QueryExpressionTest extends TestCase
      */
     public function testParseIsNotDistinctFrom(): void
     {
-        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => '2021-01-01']);
+        $expr = new QueryExpression(['deleted_at' => isNotDistinctFrom('2021-01-01')]);
         $this->assertEqualsSql(
             'deleted_at IS NOT DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
         );
 
-        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => null]);
+        $expr = new QueryExpression(['deleted_at' => isNotDistinctFrom(null)]);
         $this->assertEqualsSql(
             'deleted_at IS NOT DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),

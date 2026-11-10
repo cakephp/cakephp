@@ -618,7 +618,7 @@ class LinkConstraintTest extends TestCase
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
+                        return $exp->equals(
                             new IdentifierExpression('Articles.id'),
                             new IdentifierExpression('RecentComments.article_id'),
                         );
@@ -654,7 +654,7 @@ class LinkConstraintTest extends TestCase
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
                     ->where(function (QueryExpression $exp) {
-                        return $exp->eq(
+                        return $exp->equals(
                             new IdentifierExpression('Articles.id'),
                             new IdentifierExpression('RecentComments.article_id'),
                         );
@@ -748,7 +748,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'conditions' => function (QueryExpression $exp) {
-                return $exp->notEq(
+                return $exp->notEquals(
                     new IdentifierExpression('Comments.published'),
                     new IdentifierExpression('Articles.published'),
                 );
@@ -784,7 +784,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'conditions' => function (QueryExpression $exp) {
-                return $exp->eq(
+                return $exp->equals(
                     new IdentifierExpression('Comments.published'),
                     new IdentifierExpression('Articles.published'),
                 );

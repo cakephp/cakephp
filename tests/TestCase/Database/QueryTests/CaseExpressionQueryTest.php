@@ -29,6 +29,8 @@ use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\lessThan;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -113,9 +115,9 @@ class CaseExpressionQueryTest extends TestCase
                     'price',
                     'price_range' => $query->expr()
                         ->case()
-                        ->when(['price <' => 20])
+                        ->when(['price' => lessThan(20)])
                         ->then('Under $20')
-                        ->when(['price >=' => 20, 'price <' => 30])
+                        ->when([['price' => greaterThanOrEquals(20)], ['price' => lessThan(30)]])
                         ->then('Under $30')
                         ->else('$30 and above'),
                 ];
@@ -216,7 +218,7 @@ class CaseExpressionQueryTest extends TestCase
                     $expression = $query->func()->cast($expression, 'integer');
                 }
 
-                return $exp->gt(
+                return $exp->greaterThan(
                     $query->func()->sum($expression),
                     2,
                     'integer',

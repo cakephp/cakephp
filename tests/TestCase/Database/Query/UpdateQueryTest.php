@@ -33,6 +33,9 @@ use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use Mockery;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\notEquals;
+use function Cake\Database\Expression\notIn;
 
 /**
  * Tests UpdateQuery class
@@ -257,8 +260,8 @@ class UpdateQueryTest extends TestCase
         $query->update('comments')
             ->set(function ($exp) use ($date) {
                 return $exp
-                    ->eq('comment', 'mark')
-                    ->eq('created', $date, 'date');
+                    ->equals('comment', 'mark')
+                    ->equals('created', $date, 'date');
             })
             ->where(['id' => 1]);
         $result = $query->sql();
@@ -305,12 +308,12 @@ class UpdateQueryTest extends TestCase
             ->where([
                 'OR' => [
                     'a.id' => 1,
-                    'a.name IS' => null,
-                    'a.email IS NOT' => null,
+                    'a.name' => equals(null),
+                    'a.email' => notEquals(null),
                     'AND' => [
-                        'b.name NOT IN' => ['foo', 'bar'],
+                        'b.name' => notIn(['foo', 'bar']),
                         'OR' => [
-                            $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            $query->expr()->equals(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
                             (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
                         ],

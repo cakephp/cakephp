@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use function Cake\Database\Expression\greaterThan;
 
 /**
  * Integration tests for using the bindingKey in associations
@@ -120,7 +121,7 @@ class BindingKeyTest extends TestCase
             'strategy' => $strategy,
         ]);
 
-        $authors->updateAll(['name' => 'garrett'], ['id >' => 2]);
+        $authors->updateAll(['name' => 'garrett'], ['id' => greaterThan(2)]);
         $result = $users->find()
             ->contain(['SiteAuthors'])
             ->where(['username' => 'garrett']);

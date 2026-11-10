@@ -661,7 +661,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * $query->applyOptions([
      *   'fields' => ['id', 'name'],
      *   'conditions' => [
-     *     'created >=' => '2013-01-01'
+     *     'created' => greaterThanOrEquals('2013-01-01')
      *   ],
      *   'limit' => 10,
      * ]);
@@ -672,7 +672,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * ```
      * $query
      *   ->select(['id', 'name'])
-     *   ->where(['created >=' => '2013-01-01'])
+     *   ->where(['created' => greaterThanOrEquals('2013-01-01')])
      *   ->limit(10)
      * ```
      *
@@ -1174,7 +1174,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * $usersQuery
      *     ->select(['total_articles' => $query->func()->count('Articles.id')])
      *     ->leftJoinWith('Articles', function ($q) {
-     *         return $q->where(['Articles.votes >=' => 5]);
+     *         return $q->where(['Articles.votes' => greaterThanOrEquals(5)]);
      *     })
      *     ->groupBy(['Users.id'])
      *     ->enableAutoFields();

@@ -41,6 +41,9 @@ use stdClass;
 use TestApp\Database\Type\CustomExpressionType;
 use TestApp\View\Object\TestObjectWithToString;
 use TypeError;
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\notEquals;
 
 class CaseStatementExpressionTest extends TestCase
 {
@@ -769,7 +772,7 @@ class CaseStatementExpressionTest extends TestCase
         );
 
         (new CaseStatementExpression())
-            ->when(['1 THEN 1 END; DELETE * FROM foo; --' => '123'], 'integer')
+            ->when(['1 THEN 1 END; DELETE * FROM foo;' => comparison('--', '123')], 'integer')
             ->then(1);
     }
 
@@ -1066,9 +1069,9 @@ class CaseStatementExpressionTest extends TestCase
     public function testWhenThenElse(): void
     {
         $expression = (new CaseStatementExpression())
-            ->when(['Table.column_a' => true, 'Table.column_b IS' => null])
+            ->when(['Table.column_a' => true, 'Table.column_b' => equals(null)])
             ->then(1)
-            ->when(['Table.column_c' => true, 'Table.column_d IS NOT' => null])
+            ->when(['Table.column_c' => true, 'Table.column_d' => notEquals(null)])
             ->then(2)
             ->else(3);
 
@@ -1124,7 +1127,7 @@ class CaseStatementExpressionTest extends TestCase
                 return $whenThen
                     ->when([
                         'Table.column_a' => true,
-                        'Table.column_b IS' => null,
+                        'Table.column_b' => equals(null),
                     ])
                     ->then(1);
             })
@@ -1132,7 +1135,7 @@ class CaseStatementExpressionTest extends TestCase
                 return $whenThen
                     ->when([
                         'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
+                        'Table.column_d' => notEquals(null),
                     ])
                     ->then(2);
             })
@@ -1157,7 +1160,7 @@ class CaseStatementExpressionTest extends TestCase
                 return (new CustomWhenThenExpression())
                     ->when([
                         'Table.column_a' => true,
-                        'Table.column_b IS' => null,
+                        'Table.column_b' => equals(null),
                     ])
                     ->then(1);
             })
@@ -1165,7 +1168,7 @@ class CaseStatementExpressionTest extends TestCase
                 return (new CustomWhenThenExpression())
                     ->when([
                         'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
+                        'Table.column_d' => notEquals(null),
                     ])
                     ->then(2);
             })
@@ -1210,7 +1213,7 @@ class CaseStatementExpressionTest extends TestCase
                 (new WhenThenExpression())
                     ->when([
                         'Table.column_a' => true,
-                        'Table.column_b IS' => null,
+                        'Table.column_b' => equals(null),
                     ])
                     ->then(1),
             )
@@ -1218,7 +1221,7 @@ class CaseStatementExpressionTest extends TestCase
                 (new WhenThenExpression())
                     ->when([
                         'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
+                        'Table.column_d' => notEquals(null),
                     ])
                     ->then(2),
             )
@@ -1243,7 +1246,7 @@ class CaseStatementExpressionTest extends TestCase
                 (new CustomWhenThenExpression())
                     ->when([
                         'Table.column_a' => true,
-                        'Table.column_b IS' => null,
+                        'Table.column_b' => equals(null),
                     ])
                     ->then(1),
             )
@@ -1251,7 +1254,7 @@ class CaseStatementExpressionTest extends TestCase
                 (new CustomWhenThenExpression())
                     ->when([
                         'Table.column_c' => true,
-                        'Table.column_d IS NOT' => null,
+                        'Table.column_d' => notEquals(null),
                     ])
                     ->then(2),
             )
@@ -2023,9 +2026,9 @@ class CaseStatementExpressionTest extends TestCase
     public function testTraverse(): void
     {
         $value = new IdentifierExpression('Table.column');
-        $conditionsA = ['Table.column_a' => true, 'Table.column_b IS' => null];
+        $conditionsA = ['Table.column_a' => true, 'Table.column_b' => equals(null)];
         $resultA = new QueryExpression('1');
-        $conditionsB = ['Table.column_c' => true, 'Table.column_d IS NOT' => null];
+        $conditionsB = ['Table.column_c' => true, 'Table.column_d' => notEquals(null)];
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
@@ -2078,9 +2081,9 @@ class CaseStatementExpressionTest extends TestCase
     public function testClone(): void
     {
         $value = new IdentifierExpression('Table.column');
-        $conditionsA = ['Table.column_a' => true, 'Table.column_b IS' => null];
+        $conditionsA = ['Table.column_a' => true, 'Table.column_b' => equals(null)];
         $resultA = new QueryExpression('1');
-        $conditionsB = ['Table.column_c' => true, 'Table.column_d IS NOT' => null];
+        $conditionsB = ['Table.column_c' => true, 'Table.column_d' => notEquals(null)];
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
