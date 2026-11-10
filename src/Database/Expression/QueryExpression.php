@@ -24,6 +24,7 @@ use Cake\Database\ValueBinder;
 use Closure;
 use Countable;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Represents a SQL Query expression. Internally it stores a tree of
@@ -147,13 +148,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
+     * @deprecated 5.5.0 Use equals() instead.
      * @return $this
      */
     public function eq(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::eq() is deprecated. Use equals() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '='));
+        return $this->equals($field, $value, $type);
     }
 
     /**
@@ -164,13 +166,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * If it is suffixed with "[]" and the value is an array then multiple placeholders
      * will be created, one per each value in the array.
+     * @deprecated 5.5.0 Use notEquals() instead.
      * @return $this
      */
     public function notEq(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::notEq() is deprecated. Use notEquals() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '!='));
+        return $this->notEquals($field, $value, $type);
     }
 
     /**
@@ -179,13 +182,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
+     * @deprecated 5.5.0 Use greaterThan() instead.
      * @return $this
      */
     public function gt(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::gt() is deprecated. Use greaterThan() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '>'));
+        return $this->greaterThan($field, $value, $type);
     }
 
     /**
@@ -194,13 +198,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
+     * @deprecated 5.5.0 Use lessThan() instead.
      * @return $this
      */
     public function lt(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::lt() is deprecated. Use lessThan() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '<'));
+        return $this->lessThan($field, $value, $type);
     }
 
     /**
@@ -209,13 +214,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
+     * @deprecated 5.5.0 Use greaterThanOrEquals() instead.
      * @return $this
      */
     public function gte(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::gte() is deprecated. Use greaterThanOrEquals() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '>='));
+        return $this->greaterThanOrEquals($field, $value, $type);
     }
 
     /**
@@ -224,13 +230,14 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
      * @param mixed $value The value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
+     * @deprecated 5.5.0 Use lessThanOrEquals() instead.
      * @return $this
      */
     public function lte(ExpressionInterface|string $field, mixed $value, ?string $type = null)
     {
-        $type ??= $this->_calculateType($field);
+        deprecationWarning('5.5.0', 'QueryExpression::lte() is deprecated. Use lessThanOrEquals() instead.');
 
-        return $this->add(new ComparisonExpression($field, $value, $type, '<='));
+        return $this->lessThanOrEquals($field, $value, $type);
     }
 
     /**
@@ -582,7 +589,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new IdentifierExpression($field);
         };
 
-        return $this->eq($wrapIdentifier($leftField), $wrapIdentifier($rightField));
+        return $this->equals($wrapIdentifier($leftField), $wrapIdentifier($rightField));
     }
 
     /**
@@ -885,5 +892,99 @@ class QueryExpression implements ExpressionInterface, Countable
             return;
         }
         throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field = value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * If it is suffixed with "[]" and the value is an array then multiple placeholders
+     * will be created, one per each value in the array.
+     * @return $this
+     */
+    public function equals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '='));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field != value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * If it is suffixed with "[]" and the value is an array then multiple placeholders
+     * will be created, one per each value in the array.
+     * @return $this
+     */
+    public function notEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '!='));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field > value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function greaterThan(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '>'));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field >= value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function greaterThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '>='));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field < value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function lessThan(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '<'));
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field <= value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function lessThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        $type ??= $this->_calculateType($field);
+
+        return $this->add(new ComparisonExpression($field, $value, $type, '<='));
     }
 }

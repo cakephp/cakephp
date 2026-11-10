@@ -199,7 +199,7 @@ class QueryExpressionTest extends TestCase
     public static function methodsProvider(): array
     {
         return [
-            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
+            ['equals'], ['notEquals'], ['greaterThan'], ['lessThan'], ['greaterThanOrEquals'], ['lessThanOrEquals'], ['like'],
             ['notLike'], ['in'], ['notIn'], ['inOrNull'], ['notInOrNull'], ['isDistinctFrom'], ['isNotDistinctFrom'],
         ];
     }
@@ -416,5 +416,41 @@ class QueryExpressionTest extends TestCase
             ],
             $valueBinder->bindings()[':c0'],
         );
+    }
+
+    /**
+     * Full comparison names produce the same SQL and bindings as their 5.x aliases.
+     */
+    public function testFullComparisonNames(): void
+    {
+        foreach (
+            [
+            'eq' => 'equals',
+            'notEq' => 'notEquals',
+            'gt' => 'greaterThan',
+            'gte' => 'greaterThanOrEquals',
+            'lt' => 'lessThan',
+            'lte' => 'lessThanOrEquals',
+            ] as $old => $new
+        ) {
+            $this->deprecated(function () use ($old, $new): void {
+                $legacy = (new QueryExpression())->$old('price', 12, 'integer');
+                $modern = (new QueryExpression())->$new('price', 12, 'integer');
+                $legacyBinder = new ValueBinder();
+                $modernBinder = new ValueBinder();
+                $this->assertSame($legacy->sql($legacyBinder), $modern->sql($modernBinder));
+                $this->assertSame($legacyBinder->bindings(), $modernBinder->bindings());
+            });
+        }
+    }
+
+    /**
+     * The deprecation identifies the replacement API.
+     */
+    public function testComparisonDeprecationMessage(): void
+    {
+        $this->expectDeprecationMessageMatches('/eq\(\) is deprecated.*equals\(\)/', function (): void {
+            (new QueryExpression())->eq('id', 1);
+        });
     }
 }

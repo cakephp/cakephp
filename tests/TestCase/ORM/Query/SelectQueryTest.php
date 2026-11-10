@@ -4073,7 +4073,7 @@ class SelectQueryTest extends TestCase
                 'post_count' => $query->func()->count('posts.id'),
             ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('post_count', 2, 'integer')])
+            ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')])
             ->enableHydration(false)
             ->toArray();
 
