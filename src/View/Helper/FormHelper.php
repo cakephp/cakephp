@@ -1520,7 +1520,7 @@ class FormHelper extends Helper
 
         $label = $options['label'] ?? null;
 
-        if ($label === false && $options['type'] === 'checkbox') {
+        if ($label === false && $options['type'] === 'checkbox' && !empty($options['nestedInput'])) {
             return $options['input'];
         }
         if ($label === false) {
@@ -2270,6 +2270,8 @@ class FormHelper extends Helper
      */
     public function multiCheckbox(string $fieldName, iterable $options, array $attributes = []): string
     {
+        $attributes['nestedInput'] ??= $this->getConfig('nestedCheckboxAndRadio');
+
         $attributes += [
             'disabled' => null,
             'escape' => true,

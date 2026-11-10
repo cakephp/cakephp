@@ -9675,4 +9675,26 @@ class FormHelperTest extends TestCase
 
         $this->Form->setConfig('nestedCheckboxAndRadio', true);
     }
+
+    /**
+     * The 6.x label layout can be selected without changing the 5.x default.
+     */
+    public function testDirectMultiCheckboxHonorsNestingConfig(): void
+    {
+        $this->Form->setConfig('nestedCheckboxAndRadio', false);
+        $result = $this->Form->multiCheckbox('tags', [1 => 'First'], ['hiddenField' => false]);
+        $this->assertMatchesRegularExpression('/<input[^>]+><label[^>]+>First<\/label>/', $result);
+        $result = $this->Form->multiCheckbox('tags', [1 => 'First'], [
+            'hiddenField' => false,
+            'nestedInput' => true,
+        ]);
+        $this->assertMatchesRegularExpression('/<label[^>]+><input[^>]+>First<\/label>/', $result);
+    }
+
+    public function testUnnestedCheckboxWithoutLabelRendersOnce(): void
+    {
+        $this->Form->setConfig('nestedCheckboxAndRadio', false);
+        $result = $this->Form->control('active', ['type' => 'checkbox', 'label' => false]);
+        $this->assertSame(1, substr_count($result, 'type="checkbox"'));
+    }
 }
