@@ -26,6 +26,7 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Provides features for building routes and parsing/matching URLs to routes.
@@ -622,6 +623,33 @@ class RouteBuilder
     }
 
     /**
+     * Add a route object to the collection.
+     *
+     * Use this method when you have a pre-built Route object that you want to add
+     * to the route collection. The Route object's settings will be used as-is.
+     *
+     * ### Options:
+     *
+     * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
+     * - `_middleware` is an array of middleware names to apply to the route.
+     *
+     * @param \Cake\Routing\Route\Route $route The route object to add.
+     * @param array<string, mixed> $options An array of additional options for the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function add(Route $route, array $options = []): Route
+    {
+        $options += $this->defaultOptions;
+
+        $options['_ext'] ??= $this->_extensions;
+        $options['_middleware'] ??= $this->middleware;
+
+        $this->_collection->add($route, $options);
+
+        return $route;
+    }
+
+    /**
      * Connects a new Route.
      *
      * Routes are a way of connecting request URLs to objects in your application.
@@ -692,6 +720,8 @@ class RouteBuilder
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
+     * Passing a Route object is deprecated since 5.5.0. Use add() for prebuilt routes.
+     *
      * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
@@ -705,6 +735,13 @@ class RouteBuilder
      */
     public function connect(Route|string $route, array|string $defaults = [], array $options = []): Route
     {
+        if ($route instanceof Route) {
+            deprecationWarning(
+                '5.5.0',
+                'Passing a Route object to RouteBuilder::connect() is deprecated. Use add() instead.',
+            );
+        }
+
         $defaults = $this->parseDefaults($defaults);
         $options += $this->defaultOptions;
 
