@@ -692,6 +692,10 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
+            if ($c instanceof Predicate && ($numericKey || in_array(strtolower($k), [...$operators, 'not'], true))) {
+                throw new InvalidArgumentException('Predicate functions require a field-keyed condition.');
+            }
+
             if ($c instanceof Closure) {
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
@@ -756,6 +760,22 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function _parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
         $expression = trim($condition);
+        if ($value instanceof Predicate) {
+            $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
+            $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
+            $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
+            $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
+            if (preg_match($operatorPattern, $expression)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Operator-bearing condition key `%s` cannot be combined with a predicate. '
+                    . 'Use a Cake\\Database\\Expression predicate function, without an operator in the condition key.',
+                    $condition,
+                ));
+            }
+
+            return $value->resolve($expression, $this->getTypeMap()->type($expression));
+        }
+
         $operator = '=';
 
         $spaces = substr_count($expression, ' ');
@@ -885,5 +905,87 @@ class QueryExpression implements ExpressionInterface, Countable
             return;
         }
         throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field = value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * If it is suffixed with "[]" and the value is an array then multiple placeholders
+     * will be created, one per each value in the array.
+     * @return $this
+     */
+    public function equals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->eq($field, $value, $type);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field != value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * If it is suffixed with "[]" and the value is an array then multiple placeholders
+     * will be created, one per each value in the array.
+     * @return $this
+     */
+    public function notEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->notEq($field, $value, $type);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field > value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function greaterThan(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->gt($field, $value, $type);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field >= value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function greaterThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->gte($field, $value, $type);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field < value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function lessThan(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->lt($field, $value, $type);
+    }
+
+    /**
+     * Adds a new condition to the expression object in the form "field <= value".
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field Database field to be compared against value
+     * @param mixed $value The value to be bound to $field for comparison
+     * @param string|null $type the type name for $value as configured using the Type map.
+     * @return $this
+     */
+    public function lessThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null)
+    {
+        return $this->lte($field, $value, $type);
     }
 }
