@@ -25,6 +25,7 @@ use Cake\View\Helper;
 use Closure;
 use RuntimeException;
 use UnitEnum;
+use function Cake\Core\h;
 
 /**
  * Helper to generate tree representations of MPTT or recursively nested data.
@@ -317,7 +318,7 @@ class TreeHelper extends Helper
                 $itemAttributes = $this->attributes($itemType, $elementData, true, true);
                 $return .= '<' . $itemType . $itemAttributes . '>';
             }
-            $return .= ($element || $callback) ? $content : \Cake\Core\h($content);
+            $return .= $element || $callback ? $content : h($content);
 
             // Suffix
             $addType = false;
@@ -552,7 +553,7 @@ class TreeHelper extends Helper
                     $attributes[$type][$key] = $key . ':' . $val . ';';
                 }
             }
-            $attributes[$type] = $type . '="' . \Cake\Core\h(implode(' ', $attributes[$type])) . '"';
+            $attributes[$type] = $type . '="' . h(implode(' ', $attributes[$type])) . '"';
         }
 
         return ' ' . implode(' ', $attributes);
