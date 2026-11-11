@@ -124,7 +124,7 @@ class TreeHelper extends Helper
         array $config,
         EntityInterface|iterable|null $parent = null,
     ): string {
-        $dataArray = iterator_to_array($data);
+        $dataArray = iterator_to_array($data, false);
         if ($dataArray === []) {
             return '';
         }
@@ -160,7 +160,9 @@ class TreeHelper extends Helper
             $indent = true;
         }
 
-        $this->itemAttributes = $this->typeAttributes = $this->typeAttributesNext = [];
+        if ($parent === null) {
+            $this->itemAttributes = $this->typeAttributes = $this->typeAttributesNext = [];
+        }
         $stack = [];
         if ($depth == 0) {
             if ($class) {
@@ -178,7 +180,7 @@ class TreeHelper extends Helper
         if ($hideUnrelated === true || is_numeric($hideUnrelated)) {
             $this->markUnrelatedAsHidden($dataArray, $treePath);
         } elseif ($hideUnrelated && is_callable($hideUnrelated)) {
-            call_user_func($hideUnrelated, $data, $treePath);
+            $hideUnrelated($dataArray, $treePath);
         }
 
         $whiteSpace = '';
@@ -210,13 +212,8 @@ class TreeHelper extends Helper
                     $numberOfDirectChildren = count($result['children']);
                 }
 
-                $key = array_search($i, $keys);
-                if ($key === 0) {
-                    $firstChild = true;
-                }
-                if ($key === count($keys) - 1) {
-                    $lastChild = true;
-                }
+                $firstChild = $i === $keys[0];
+                $lastChild = $i === $keys[count($keys) - 1];
             } elseif (isset($row[$left])) {
                 if ($row[$left] != ($row[$right] - 1) && $depth < $maxDepth) {
                     $hasChildren = true;
@@ -280,7 +277,7 @@ class TreeHelper extends Helper
                 $content = $row[$alias];
             }
 
-            if (!$content) {
+            if ($content === null || $content === false || $content === '') {
                 continue;
             }
 
@@ -320,7 +317,7 @@ class TreeHelper extends Helper
                 $itemAttributes = $this->attributes($itemType, $elementData, true, true);
                 $return .= '<' . $itemType . $itemAttributes . '>';
             }
-            $return .= $content;
+            $return .= ($element || $callback) ? $content : \Cake\Core\h($content);
 
             // Suffix
             $addType = false;
@@ -544,17 +541,18 @@ class TreeHelper extends Helper
         foreach ($attributes as $type => $values) {
             foreach ($values as $key => $val) {
                 if (is_array($val)) {
-                    $attributes[$type][$key] = '';
+                    $parts = [];
                     foreach ($val as $vKey => $v) {
-                        $attributes[$type][$key][$vKey] .= $vKey . ':' . $v;
+                        $parts[] = $vKey . ':' . $v;
                     }
-                    $attributes[$type][$key] = implode(';', $attributes[$type][$key]);
+                    $val = implode(';', $parts);
+                    $attributes[$type][$key] = $val;
                 }
                 if (is_string($key)) {
                     $attributes[$type][$key] = $key . ':' . $val . ';';
                 }
             }
-            $attributes[$type] = $type . '="' . implode(' ', $attributes[$type]) . '"';
+            $attributes[$type] = $type . '="' . \Cake\Core\h(implode(' ', $attributes[$type])) . '"';
         }
 
         return ' ' . implode(' ', $attributes);
