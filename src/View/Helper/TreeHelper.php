@@ -162,7 +162,9 @@ class TreeHelper extends Helper
         }
 
         if ($parent === null) {
-            $this->itemAttributes = $this->typeAttributes = $this->typeAttributesNext = [];
+            $this->itemAttributes = [];
+            $this->typeAttributes = [];
+            $this->typeAttributesNext = [];
         }
         $stack = [];
         if ($depth == 0) {
@@ -203,13 +205,17 @@ class TreeHelper extends Helper
                     $return .= '</' . $itemType . '>';
                 }
             }
-
-            $hasChildren = $firstChild = $lastChild = $hasVisibleChildren = false;
-            $numberOfDirectChildren = $numberOfTotalChildren = null;
+            $hasChildren = false;
+            $firstChild = false;
+            $lastChild = false;
+            $hasVisibleChildren = false;
+            $numberOfDirectChildren = null;
+            $numberOfTotalChildren = null;
 
             if (isset($result['children'])) {
                 if ($result['children'] && $depth < $maxDepth) {
-                    $hasChildren = $hasVisibleChildren = true;
+                    $hasChildren = true;
+                    $hasVisibleChildren = true;
                     $numberOfDirectChildren = count($result['children']);
                 }
 
@@ -278,7 +284,7 @@ class TreeHelper extends Helper
                 $content = $row[$alias];
             }
 
-            if ($content === null || $content === false || $content === '') {
+            if (in_array($content, [null, false, ''], true)) {
                 continue;
             }
 

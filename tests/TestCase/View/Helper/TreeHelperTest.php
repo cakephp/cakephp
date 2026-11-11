@@ -110,7 +110,7 @@ class TreeHelperTest extends TestCase
     /**
      * @return void
      */
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -154,7 +154,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithFindAll()
+    public function testGenerateWithFindAll(): void
     {
         $tree = $this->table->find('all', ...['order' => ['lft' => 'ASC']])->toArray();
 
@@ -197,7 +197,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithDepth()
+    public function testGenerateWithDepth(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -238,7 +238,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithSettings()
+    public function testGenerateWithSettings(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -279,7 +279,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithSameTypeAndItemType()
+    public function testGenerateWithSameTypeAndItemType(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -320,7 +320,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithMaxDepth()
+    public function testGenerateWithMaxDepth(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -357,7 +357,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithAutoPath()
+    public function testGenerateWithAutoPath(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -431,7 +431,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithAutoPathAsEntity()
+    public function testGenerateWithAutoPathAsEntity(): void
     {
         $tree = $this->table->find('threaded')->toArray();
         $entity = new Entity();
@@ -487,7 +487,7 @@ TEXT;
      *
      * @return void
      */
-    public function testGenerateWithAutoPathAndHideUnrelated()
+    public function testGenerateWithAutoPathAndHideUnrelated(): void
     {
         $data = [
             ['name' => 'Two-SubB', 'parent_id' => 2],
@@ -545,7 +545,7 @@ TEXT;
      *
      * @return void
      */
-    public function testGenerateWithAutoPathAndHideUnrelatedAndSiblings()
+    public function testGenerateWithAutoPathAndHideUnrelatedAndSiblings(): void
     {
         $data = [
             ['name' => 'Two-SubB', 'parent_id' => 2],
@@ -598,7 +598,7 @@ TEXT;
      * @param array $data
      * @return string|null
      */
-    protected function myCallback(array $data)
+    protected function myCallback(array $data): ?string
     {
         /** @var \Cake\ORM\Entity $entity */
         $entity = $data['data'];
@@ -613,7 +613,7 @@ TEXT;
      * @param array $data
      * @return string|null
      */
-    protected function myCallbackSiblings(array $data)
+    protected function myCallbackSiblings(array $data): ?string
     {
         /** @var \Cake\ORM\Entity $entity */
         $entity = $data['data'];
@@ -631,7 +631,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateProductive()
+    public function testGenerateProductive(): void
     {
         $tree = $this->table->find('threaded')->toArray();
 
@@ -644,7 +644,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithEntityUsage()
+    public function testGenerateWithEntityUsage(): void
     {
         $data = [
             ['name' => 'Two-SubB', 'parent_id' => 2],
@@ -787,7 +787,7 @@ TEXT;
     /**
      * @return void
      */
-    public function testGenerateWithSpecialStringable()
+    public function testGenerateWithSpecialStringable(): void
     {
         $treeData = [
             [
@@ -837,9 +837,9 @@ TEXT;
 
     /**
      * @param array $data
-     * @return string|null
+     * @return string
      */
-    protected function myCallbackEntity(array $data): ?string
+    protected function myCallbackEntity(array $data): string
     {
         /** @var \Cake\ORM\Entity $entity */
         $entity = $data['data'];
