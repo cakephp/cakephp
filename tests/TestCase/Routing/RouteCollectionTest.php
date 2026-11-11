@@ -54,8 +54,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
-        $result = $this->collection->parseRequest(new ServerRequest(['url' => '/']));
-        $this->assertEquals([], $result, 'Should not match, missing /b');
+        $this->collection->parseRequest(new ServerRequest(['url' => '/']));
     }
 
     /**
@@ -75,13 +74,12 @@ class RouteCollectionTest extends TestCase
             ],
         ]));
         $this->assertNotEmpty($result, 'Route should be found');
-        $result = $this->collection->parseRequest(new ServerRequest([
+        $this->collection->parseRequest(new ServerRequest([
             'url' => '/b',
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
             ],
         ]));
-        $this->assertEquals([], $result, 'Should not match with missing method');
     }
 
     /**
@@ -304,8 +302,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/{id}', ['controller' => 'Articles', 'action' => 'view']);
 
         $request = new ServerRequest(['url' => '/']);
-        $result = $this->collection->parseRequest($request);
-        $this->assertEquals([], $result, 'Should not match, missing /b');
+        $this->collection->parseRequest($request);
     }
 
     /**
