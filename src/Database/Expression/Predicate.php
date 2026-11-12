@@ -87,12 +87,12 @@ final readonly class Predicate
 
         $builder = new QueryExpression();
         $expression = match ($operation) {
-            PredicateOperation::EQUALS => $builder->equals($field, $values[0], $type),
-            PredicateOperation::NOT_EQUALS => $builder->notEquals($field, $values[0], $type),
-            PredicateOperation::GREATER_THAN => $builder->greaterThan($field, $values[0], $type),
-            PredicateOperation::GREATER_THAN_OR_EQUALS => $builder->greaterThanOrEquals($field, $values[0], $type),
-            PredicateOperation::LESS_THAN => $builder->lessThan($field, $values[0], $type),
-            PredicateOperation::LESS_THAN_OR_EQUALS => $builder->lessThanOrEquals($field, $values[0], $type),
+            PredicateOperation::EQUALS => $builder->eq($field, $values[0], $type),
+            PredicateOperation::NOT_EQUALS => $builder->notEq($field, $values[0], $type),
+            PredicateOperation::GREATER_THAN => $builder->gt($field, $values[0], $type),
+            PredicateOperation::GREATER_THAN_OR_EQUALS => $builder->gte($field, $values[0], $type),
+            PredicateOperation::LESS_THAN => $builder->lt($field, $values[0], $type),
+            PredicateOperation::LESS_THAN_OR_EQUALS => $builder->lte($field, $values[0], $type),
             PredicateOperation::LIKE => $builder->like($field, $values[0], $type),
             PredicateOperation::NOT_LIKE => $builder->notLike($field, $values[0], $type),
             PredicateOperation::IN => $builder->in($field, $values[0], $type),

@@ -29,11 +29,6 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Closure;
-use function Cake\Database\Expression\equals;
-use function Cake\Database\Expression\greaterThan;
-use function Cake\Database\Expression\greaterThanOrEquals;
-use function Cake\Database\Expression\lessThan;
-use function Cake\Database\Expression\lessThanOrEquals;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -243,8 +238,8 @@ class TreeBehavior extends Behavior
                 $query = $this->_scope($this->_table->query())
                     ->where(
                         fn(QueryExpression $exp) => $exp
-                            ->greaterThanOrEquals($config['leftField'], $left + 1)
-                            ->lessThanOrEquals($config['leftField'], $right - 1),
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1),
                     );
 
                 $entities = $query->toArray();
@@ -255,8 +250,8 @@ class TreeBehavior extends Behavior
                 $this->_scope($this->_table->deleteQuery())
                     ->where(
                         fn(QueryExpression $exp) => $exp
-                            ->greaterThanOrEquals($config['leftField'], $left + 1)
-                            ->lessThanOrEquals($config['leftField'], $right - 1),
+                            ->gte($config['leftField'], $left + 1)
+                            ->lte($config['leftField'], $right - 1),
                     )
                     ->execute();
             }
@@ -378,10 +373,10 @@ class TreeBehavior extends Behavior
                 $rightInverse = clone $leftInverse;
 
                 return $exp
-                    ->equals($config['leftField'], $leftInverse->add($config['leftField']))
-                    ->equals($config['rightField'], $rightInverse->add($config['rightField']));
+                    ->eq($config['leftField'], $leftInverse->add($config['leftField']))
+                    ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn(QueryExpression $exp) => $exp->lessThan($config['leftField'], 0),
+            fn(QueryExpression $exp) => $exp->lt($config['leftField'], 0),
         );
     }
 
@@ -407,8 +402,8 @@ class TreeBehavior extends Behavior
 
         return $this->_scope($query)
             ->where([
-                "{$left}" => lessThanOrEquals($node->get($config['left'])),
-                "{$right}" => greaterThanOrEquals($node->get($config['right'])),
+                "{$left} <=" => $node->get($config['left']),
+                "{$right} >=" => $node->get($config['right']),
             ])
             ->orderBy([$left => 'ASC']);
     }
@@ -469,8 +464,8 @@ class TreeBehavior extends Behavior
 
         return $this->_scope($query)
             ->where([
-                "{$right}" => lessThan($node->get($config['right'])),
-                "{$left}" => greaterThan($node->get($config['left'])),
+                "{$right} <" => $node->get($config['right']),
+                "{$left} >" => $node->get($config['left']),
             ]);
     }
 
@@ -639,8 +634,8 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->lessThan($config['rightField'], $nodeLeft))
+                ->where(["{$parent} IS" => $nodeParent])
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -650,8 +645,8 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->lessThan($config['rightField'], $nodeLeft))
+                ->where(["{$parent} IS" => $nodeParent])
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -728,8 +723,8 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->greaterThan($config['leftField'], $nodeRight))
+                ->where(["{$parent} IS" => $nodeParent])
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -739,8 +734,8 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["{$parent}" => equals($nodeParent)])
-                ->where(fn(QueryExpression $exp) => $exp->greaterThan($config['leftField'], $nodeRight))
+                ->where(["{$parent} IS" => $nodeParent])
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -830,7 +825,7 @@ class TreeBehavior extends Behavior
 
         $nodes = $this->_scope($this->_table->unhydratedSelectQuery())
             ->select($primaryKey)
-            ->where([$parent => equals($parentId)])
+            ->where([$parent . ' IS' => $parentId])
             ->orderBy($order)
             ->all();
 
@@ -906,7 +901,7 @@ class TreeBehavior extends Behavior
             $where->add($field)->add($conditions)->setConjunction('');
 
             $query
-                ->set($exp->equals($field, $movement))
+                ->set($exp->eq($field, $movement))
                 ->where($where)
                 ->execute();
         }
@@ -998,8 +993,8 @@ class TreeBehavior extends Behavior
         }
 
         $query = $this->_table->find('all')->where([
-            $config['left'] => lessThan($entity[$config['left']]),
-            $config['right'] => greaterThan($entity[$config['right']]),
+            $config['left'] . ' <' => $entity[$config['left']],
+            $config['right'] . ' >' => $entity[$config['right']],
         ]);
 
         return $this->_scope($query)->count();

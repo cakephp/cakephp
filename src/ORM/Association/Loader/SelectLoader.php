@@ -28,7 +28,6 @@ use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
-use function Cake\Database\Expression\in;
 
 /**
  * Implements the logic for loading an association using a SELECT query
@@ -386,7 +385,7 @@ class SelectLoader
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
         } else {
-            $conditions = [$key => in($filter)];
+            $conditions = [$key . ' IN' => $filter];
         }
 
         return $query->andWhere($conditions);

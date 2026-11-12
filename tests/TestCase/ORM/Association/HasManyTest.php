@@ -41,10 +41,6 @@ use Closure;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use function Cake\Database\Expression\greaterThan;
-use function Cake\Database\Expression\greaterThanOrEquals;
-use function Cake\Database\Expression\in;
-use function Cake\Database\Expression\notEquals;
 use function Cake\I18n\__;
 
 /**
@@ -321,7 +317,7 @@ class HasManyTest extends TestCase
         $association->eagerLoader(compact('keys', 'query'));
 
         $expected = new QueryExpression(
-            ['Articles.published' => 'Y', 'Articles.author_id' => in($keys)],
+            ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
             $this->articlesTypeMap,
         );
         $this->assertWhereClause($expected, $query);
@@ -396,7 +392,7 @@ class HasManyTest extends TestCase
             ->andReturn($query);
 
         $association->eagerLoader([
-            'conditions' => ['Articles.id' => notEquals(3)],
+            'conditions' => ['Articles.id !=' => 3],
             'sort' => ['title' => 'DESC'],
             'fields' => ['id', 'title', 'author_id'],
             'contain' => ['Comments' => ['fields' => ['comment', 'article_id']]],
@@ -413,8 +409,8 @@ class HasManyTest extends TestCase
         $expected = new QueryExpression(
             [
                 'Articles.published' => 'Y',
-                'Articles.id' => notEquals(3),
-                'Articles.author_id' => in($keys),
+                'Articles.id !=' => 3,
+                'Articles.author_id IN' => $keys,
             ],
             $query->getTypeMap(),
         );
@@ -535,7 +531,7 @@ class HasManyTest extends TestCase
 
         $expected = new QueryExpression(
             [
-                'Articles.author_id' => in($keys),
+                'Articles.author_id IN' => $keys,
                 'comments.id' => 1,
             ],
             $query->getTypeMap(),
@@ -901,7 +897,7 @@ class HasManyTest extends TestCase
             ])
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['cnt' => greaterThanOrEquals(1)], ['cnt' => 'integer'])
+            ->having(['cnt >=' => 1], ['cnt' => 'integer'])
             ->toArray();
 
         $this->assertNotEmpty($result);
@@ -930,7 +926,7 @@ class HasManyTest extends TestCase
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['name_length' => greaterThan(4)], ['name_length' => 'integer'])
+            ->having(['name_length >' => 4], ['name_length' => 'integer'])
             ->orderBy(['name_length' => 'DESC'])
             ->toArray();
 
@@ -956,7 +952,7 @@ class HasManyTest extends TestCase
             ->leftJoinWith('Articles')
             ->contain('Articles')
             ->groupBy(['Authors.id', 'Authors.name'])
-            ->having(['article_count' => greaterThan(0)], ['article_count' => 'integer'])
+            ->having(['article_count >' => 0], ['article_count' => 'integer'])
             ->toArray();
 
         $this->assertNotEmpty($result);
@@ -986,7 +982,7 @@ class HasManyTest extends TestCase
             ->enableAutoFields()
             ->contain('Articles')
             ->groupBy(['Authors.id'])
-            ->having(['name_length' => greaterThan(5)], ['name_length' => 'integer'])
+            ->having(['name_length >' => 5], ['name_length' => 'integer'])
             ->toArray();
 
         $names = array_map(fn(EntityInterface $author): string => $author->name, $result);

@@ -27,7 +27,6 @@ use Cake\Database\Query\SelectQuery;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use function Cake\Database\Expression\notEquals;
 
 class CommonTableExpressionQueryTest extends TestCase
 {
@@ -134,7 +133,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->selectQuery(function (Query $query) {
                         return $query->expr('col + 1');
                     }, 'cte')
-                    ->where(['col' => notEquals(3)], ['col' => 'integer']);
+                    ->where(['col !=' => 3], ['col' => 'integer']);
 
                 $cteQuery = $anchorQuery->unionAll($recursiveQuery);
 
@@ -316,7 +315,7 @@ class CommonTableExpressionQueryTest extends TestCase
                 $cteQuery = $query
                     ->select('articles.id')
                     ->from('articles')
-                    ->where(['articles.id' => notEquals(1)]);
+                    ->where(['articles.id !=' => 1]);
 
                 return $cte
                     ->name('cte')
@@ -372,7 +371,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->with(function (CommonTableExpression $cte, SelectQuery $query) {
                 $query->select('articles.id')
                     ->from('articles')
-                    ->where(['articles.id' => notEquals(1)]);
+                    ->where(['articles.id !=' => 1]);
 
                 return $cte
                     ->name('cte')

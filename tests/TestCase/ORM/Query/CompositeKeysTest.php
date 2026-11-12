@@ -28,8 +28,6 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
-use function Cake\Database\Expression\greaterThan;
-use function Cake\Database\Expression\in;
 
 /**
  * Integration tests for table operations involving composite keys
@@ -304,7 +302,7 @@ class CompositeKeysTest extends TestCase
         ]);
         $query = new SelectQuery($table);
         $results = $query->select()
-            ->where(['SiteArticles.id' => in([1, 2])])
+            ->where(['SiteArticles.id IN' => [1, 2]])
             ->contain('SiteAuthors')
             ->enableHydration(false)
             ->toArray();
@@ -447,7 +445,7 @@ class CompositeKeysTest extends TestCase
             ->enableAutoFields()
             ->contain('SiteArticles')
             ->groupBy(['SiteAuthors.id', 'SiteAuthors.site_id'])
-            ->having(['name_length' => greaterThan(3)], ['name_length' => 'integer'])
+            ->having(['name_length >' => 3], ['name_length' => 'integer'])
             ->enableHydration(false)
             ->toArray();
 
@@ -493,7 +491,7 @@ class CompositeKeysTest extends TestCase
             ->enableAutoFields()
             ->contain('SiteTags')
             ->groupBy(['SiteArticles.id', 'SiteArticles.site_id'])
-            ->having(['title_length' => greaterThan(0)], ['title_length' => 'integer'])
+            ->having(['title_length >' => 0], ['title_length' => 'integer'])
             ->enableHydration(false)
             ->toArray();
 
@@ -522,7 +520,7 @@ class CompositeKeysTest extends TestCase
         ]);
         $query = new SelectQuery($table);
         $results = $query->select()
-            ->where(['SiteAuthors.id' => in([1, 3])])
+            ->where(['SiteAuthors.id IN' => [1, 3]])
             ->contain('SiteArticles')
             ->enableHydration(false)
             ->toArray();

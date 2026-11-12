@@ -23,12 +23,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Database\Expression\greaterThan;
 
 /**
- * Verifies legacy conditions remain usable while applications migrate to predicates.
+ * Verifies existing conditions and comparison methods remain compatible with predicates.
  */
-class QueryExpressionLegacyTest extends TestCase
+class QueryExpressionCompatibilityTest extends TestCase
 {
     /**
-     * Supplies each deprecated comparison and its replacement.
+     * Supplies each short comparison method and its equivalent predicate function.
      *
      * @return array<string, array{string, string}>
      */
@@ -45,23 +45,20 @@ class QueryExpressionLegacyTest extends TestCase
     }
 
     /**
-     * Checks deprecated methods preserve chaining, named arguments, SQL, and binding types.
+     * Checks short methods preserve chaining, named arguments, SQL, and binding types.
      *
-     * @param string $legacy The deprecated comparison method.
-     * @param string $replacement The preferred comparison method.
+     * @param string $method The existing comparison method.
+     * @param string $helper The equivalent predicate function.
      * @return void
      */
     #[DataProvider('comparisonNamesProvider')]
-    public function testDeprecatedComparisons(string $legacy, string $replacement): void
+    public function testShortComparisons(string $method, string $helper): void
     {
+        $function = 'Cake\\Database\\Expression\\' . $helper;
         foreach ([null, 'float'] as $type) {
             $actual = new QueryExpression([], ['id' => 'integer']);
-            $expected = new QueryExpression([], ['id' => 'integer']);
-            $expected->$replacement(field: 'id', value: 7, type: $type);
-
-            $this->deprecated(function () use ($actual, $legacy, $type): void {
-                $this->assertSame($actual, $actual->$legacy(field: 'id', value: 7, type: $type));
-            });
+            $expected = new QueryExpression(['id' => $function(7, $type)], ['id' => 'integer']);
+            $this->assertSame($actual, $actual->$method(field: 'id', value: 7, type: $type));
 
             $actualBinder = new ValueBinder();
             $expectedBinder = new ValueBinder();
@@ -71,25 +68,7 @@ class QueryExpressionLegacyTest extends TestCase
     }
 
     /**
-     * Checks method deprecations identify the replacement.
-     *
-     * @param string $legacy The deprecated comparison method.
-     * @param string $replacement The preferred comparison method.
-     * @return void
-     */
-    #[DataProvider('comparisonNamesProvider')]
-    public function testComparisonDeprecationMessage(string $legacy, string $replacement): void
-    {
-        $this->expectDeprecationMessageMatches(
-            '/QueryExpression::' . $legacy . '\(\) is deprecated\. Use ' . $replacement . '\(\) instead\./',
-            static function () use ($legacy): void {
-                (new QueryExpression())->$legacy('id', 7);
-            },
-        );
-    }
-
-    /**
-     * Supplies legacy operators, including custom SQL and multi-word comparisons.
+     * Supplies existing operators, including custom SQL and multi-word comparisons.
      *
      * @return array<string, array{string, mixed, string}>
      */
@@ -121,62 +100,41 @@ class QueryExpressionLegacyTest extends TestCase
     }
 
     /**
-     * Checks legacy keys still compile and bind their values while emitting a deprecation.
+     * Checks operator keys still compile and bind values without deprecations.
      *
-     * @param string $key The legacy field and operator.
+     * @param string $key The field and operator.
      * @param mixed $value The comparison value.
      * @param string $sql The expected SQL.
      * @return void
      */
     #[DataProvider('operatorConditionsProvider')]
-    public function testDeprecatedOperatorConditions(string $key, mixed $value, string $sql): void
+    public function testOperatorConditions(string $key, mixed $value, string $sql): void
     {
-        $this->deprecated(function () use ($key, $value, $sql): void {
-            $expression = new QueryExpression([$key => $value], ['id' => 'integer']);
-            $binder = new ValueBinder();
-            $this->assertSame($sql, $expression->sql($binder));
-            if (!str_ends_with($sql, 'NULL')) {
-                $this->assertSame((array)$value ?: [null], array_column($binder->bindings(), 'value'));
-                $this->assertSame(str_starts_with($key, 'id ') ? 'integer' : 'string', $binder->bindings()[':c0']['type']);
-            } else {
-                $this->assertSame([], $binder->bindings());
-            }
-        });
+        $expression = new QueryExpression([$key => $value], ['id' => 'integer']);
+        $binder = new ValueBinder();
+        $this->assertSame($sql, $expression->sql($binder));
+        if (!str_ends_with($sql, 'NULL')) {
+            $this->assertSame((array)$value ?: [null], array_column($binder->bindings(), 'value'));
+            $this->assertSame(str_starts_with($key, 'id ') ? 'integer' : 'string', $binder->bindings()[':c0']['type']);
+        } else {
+            $this->assertSame([], $binder->bindings());
+        }
     }
 
     /**
-     * Checks warnings identify dynamically assembled operator keys.
-     *
-     * @return void
-     */
-    public function testOperatorDeprecationMessage(): void
-    {
-        $field = 'Articles.score';
-        $operator = '>';
-        $this->expectDeprecationMessageMatches(
-            '/Operator-bearing condition key `Articles.score >` is deprecated\./',
-            static function () use ($field, $operator): void {
-                new QueryExpression([$field . ' ' . $operator => 7]);
-            },
-        );
-    }
-
-    /**
-     * Checks old and new conditions can be migrated independently within boolean groups.
+     * Checks existing and predicate conditions can be combined within boolean groups.
      *
      * @return void
      */
     public function testMixedConditionStyles(): void
     {
-        $this->deprecated(function (): void {
-            $expression = new QueryExpression([
-                'OR' => [['id >' => 1], ['id' => greaterThan(2)]],
-                'active' => true,
-            ], ['id' => 'integer', 'active' => 'boolean']);
-            $binder = new ValueBinder();
-            $this->assertSame('((id > :c0 OR id > :c1) AND active = :c2)', $expression->sql($binder));
-            $this->assertSame([1, 2, true], array_column($binder->bindings(), 'value'));
-            $this->assertSame(['integer', 'integer', 'boolean'], array_column($binder->bindings(), 'type'));
-        });
+        $expression = new QueryExpression([
+            'OR' => [['id >' => 1], ['id' => greaterThan(2)]],
+            'active' => true,
+        ], ['id' => 'integer', 'active' => 'boolean']);
+        $binder = new ValueBinder();
+        $this->assertSame('((id > :c0 OR id > :c1) AND active = :c2)', $expression->sql($binder));
+        $this->assertSame([1, 2, true], array_column($binder->bindings(), 'value'));
+        $this->assertSame(['integer', 'integer', 'boolean'], array_column($binder->bindings(), 'type'));
     }
 }

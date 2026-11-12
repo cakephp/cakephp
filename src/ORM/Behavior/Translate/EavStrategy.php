@@ -24,9 +24,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
-use function Cake\Database\Expression\equals;
-use function Cake\Database\Expression\in;
-use function Cake\Database\Expression\notEquals;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -127,7 +124,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $name . '.field' => $field,
             ];
             if (!$this->_config['allowEmptyTranslations']) {
-                $conditions[$name . '.content'] = notEquals('');
+                $conditions[$name . '.content !='] = '';
             }
 
             if ($this->table->associations()->has($name)) {
@@ -145,7 +142,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $conditions = ["{$targetAlias}.model" => $model];
         if (!$this->_config['allowEmptyTranslations']) {
-            $conditions["{$targetAlias}.content"] = notEquals('');
+            $conditions["{$targetAlias}.content !="] = '';
         }
 
         if ($this->table->associations()->has($targetAlias)) {
@@ -300,7 +297,7 @@ class EavStrategy implements TranslateStrategyInterface
             $preexistent = $this->translationTable->find()
                 ->select(['id', 'field'])
                 ->where([
-                    'field' => in($fields),
+                    'field IN' => $fields,
                     'locale' => $locale,
                     'foreign_key' => $key,
                     'model' => $model,
@@ -489,7 +486,7 @@ class EavStrategy implements TranslateStrategyInterface
                 if (!$translation->isDirty($field)) {
                     continue;
                 }
-                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => equals($key)];
+                $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key IS' => $key];
                 $contents[] = new $entityClass(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);
@@ -508,7 +505,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $contents[$i]->setNew(false);
             } else {
                 $translation['model'] = $this->_config['referenceName'];
-                unset($translation['foreign_key']);
+                unset($translation['foreign_key IS']);
                 if (method_exists($contents[$i], 'patch')) {
                     $contents[$i]->patch($translation, ['setter' => false, 'guard' => false]);
                 } else {

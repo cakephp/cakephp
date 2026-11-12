@@ -20,7 +20,6 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use function Cake\Database\Expression\equals;
 
 /**
  * Checks that the value provided in a field exists as the primary key of another
@@ -140,12 +139,12 @@ class ExistsIn
         }
 
         $primary = array_map(
-            $target->aliasField(...),
+            fn(string $key) => $target->aliasField($key) . ' IS',
             $bindingKey,
         );
         $conditions = array_combine(
             $primary,
-            array_map(equals(...), $entity->extract($fields)),
+            $entity->extract($fields),
         );
 
         return $target->exists($conditions);
