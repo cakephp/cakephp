@@ -22,6 +22,13 @@ namespace Cake\Validation;
 interface ValidatorAwareInterface
 {
     /**
+     * Default validation set name.
+     *
+     * @var string
+     */
+    public const DEFAULT_VALIDATOR = 'default';
+
+    /**
      * Returns the validation rules tagged with $name.
      *
      * If a $name argument has not been provided, the default validator will be returned.
