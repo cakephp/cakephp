@@ -29,6 +29,7 @@ use InvalidArgumentException;
  *
  * Classes using this trait can declare these constants:
  *
+ * - `DEFAULT_VALIDATOR` - Override the interface default validator name if required.
  * - `VALIDATOR_PROVIDER_NAME ` - The provider name the including class is assigned
  *   in validators.
  * - `BUILD_VALIDATOR_EVENT` - The name of the event to be triggered when validators

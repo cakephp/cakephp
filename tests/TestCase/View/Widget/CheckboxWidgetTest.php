@@ -82,6 +82,35 @@ class CheckboxWidgetTest extends TestCase
             ],
         ];
         $this->assertHtml($expected, $result);
+
+        $data = [
+            'name' => 'Comment[spam]',
+            'value' => '<b>html</b>',
+        ];
+        $result = $checkbox->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'checkbox',
+                'name' => 'Comment[spam]',
+                'value' => '&lt;b&gt;html&lt;/b&gt;',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $data = [
+            'name' => 'Comment[spam]',
+            'value' => '<b>html</b>',
+            'escape' => false,
+        ];
+        $result = $checkbox->render($data, $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'checkbox',
+                'name' => 'Comment[spam]',
+                'value' => '<b>html</b>',
+            ],
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
