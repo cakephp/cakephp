@@ -21,6 +21,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\DistinctComparisonExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\StringAggExpression;
+use Cake\Database\IdentifierShortener;
 use Cake\Database\Query;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -123,6 +124,13 @@ class Mysql extends Driver
      * @inheritDoc
      */
     protected const MAX_ALIAS_LENGTH = 256;
+
+    /**
+     * Maximum length of table, column and common table expression names.
+     *
+     * @var int
+     */
+    protected const MAX_IDENTIFIER_LENGTH = 64;
 
     /**
      * Server type MySQL
@@ -447,5 +455,17 @@ class Mysql extends Driver
     private function attrUseBufferedQueryId(): int
     {
         return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_USE_BUFFERED_QUERY : PdoMysql::ATTR_USE_BUFFERED_QUERY;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createIdentifierShortener(int $maxLength): IdentifierShortener
+    {
+        // Aliases can be 256 characters long, but common table expression names are limited
+        // to 64 like table names. Shortening everything over 64 characters keeps references
+        // to them consistent, and real table and column names can not be longer than that.
+        // MySQL strings use backslash escapes and can be double quoted.
+        return new IdentifierShortener(min($maxLength, static::MAX_IDENTIFIER_LENGTH), true);
     }
 }
