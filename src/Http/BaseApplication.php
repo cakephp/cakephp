@@ -223,7 +223,7 @@ abstract class BaseApplication implements
     public function routes(RouteBuilder $routes): void
     {
         // Only load routes if the router is empty
-        if (!Router::routes()) {
+        if (!Router::routes() && file_exists($this->configDir . 'routes.php')) {
             $return = require $this->configDir . 'routes.php';
             if ($return instanceof Closure) {
                 $return($routes);

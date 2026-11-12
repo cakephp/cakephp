@@ -34,6 +34,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
@@ -479,5 +480,23 @@ class BaseApplicationTest extends TestCase
         $app->getEventManager()->dispatch('DynamicPlugin.event');
 
         $this->assertTrue($app->pluginEventFired);
+    }
+
+    /**
+     * Applications may define all routes in code or plugins without a routes.php file.
+     */
+    public function testMissingRoutesFileIsOptional(): void
+    {
+        Router::reload();
+        $app = new class (TMP . 'cake-no-routes-' . uniqid() . DS) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $routes = new RouteBuilder(new RouteCollection(), '/');
+        $app->routes($routes);
+        $this->assertSame([], Router::routes());
     }
 }
