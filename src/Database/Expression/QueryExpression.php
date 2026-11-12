@@ -886,4 +886,28 @@ class QueryExpression implements ExpressionInterface, Countable
         }
         throw new InvalidArgumentException("Argument `{$parameterName}` must be an alphanumeric string");
     }
+
+    /**
+     * Ensures that a value is a SQL data type name, optionally made up of
+     * multiple words (e.g. `character varying`, `double precision`) and
+     * optionally followed by a parenthesised numeric modifier (e.g.
+     * `varchar(255)`, `decimal(10, 2)`).
+     *
+     * Like `ensureSimpleString()` this rejects quotes in the middle of the
+     * value, semicolons, comments and any other characters that could break
+     * out of the type name, so it is safe to embed the value in SQL as a
+     * literal.
+     *
+     * @param string $parameterName The name of the parameter being checked.
+     * @param string $value The value to check
+     * @return void
+     * @internal
+     */
+    public static function ensureDataTypeString(string $parameterName, string $value): void
+    {
+        if (preg_match('/^(?:[\'\"])?[a-zA-Z_][a-zA-Z0-9_.]*(?:\s+[a-zA-Z_][a-zA-Z0-9_.]*)*(?:\s*\(\s*\d+\s*(?:,\s*\d+\s*)?\))?(?:[\'\"])?$/', $value)) {
+            return;
+        }
+        throw new InvalidArgumentException("Argument `{$parameterName}` must be a valid SQL data type");
+    }
 }

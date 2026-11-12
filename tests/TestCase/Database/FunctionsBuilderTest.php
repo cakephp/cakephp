@@ -209,6 +209,46 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('string', $function->getReturnType());
     }
 
+    public static function validDataTypes(): array
+    {
+        return [
+            ['varchar(255)'],
+            ['decimal(10,2)'],
+            ['decimal(10, 2)'],
+            ['numeric(12,4)'],
+            ['character varying'],
+            ['character varying(255)'],
+            ['double precision'],
+        ];
+    }
+
+    /**
+     * Types with modifiers and multi-word types are valid SQL data types
+     * and must be accepted by cast().
+     */
+    #[DataProvider('validDataTypes')]
+    public function testCastValidDataType(string $type): void
+    {
+        $function = $this->functions->cast('field', $type);
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('CAST(field AS ' . $type . ')', $function->sql(new ValueBinder()));
+    }
+
+    public static function invalidDataTypes(): array
+    {
+        return [
+            ["' drop table users --"],
+            [' word '],
+            ['varchar()'],
+            ['varchar(abc)'],
+            ['varchar(255'],
+            ['decimal(10,2,3)'],
+            ['varchar(255) junk'],
+            ['varchar; DROP TABLE users'],
+            ['double precision(10) extra'],
+        ];
+    }
+
     public static function invalidValues(): array
     {
         return [
@@ -219,13 +259,14 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
-     * Ensure that only alphanumeric values are accepted for types.
+     * Ensure that only values matching the SQL data type grammar are
+     * accepted for types.
      */
-    #[DataProvider('invalidValues')]
+    #[DataProvider('invalidDataTypes')]
     public function testCastInvalidValue(string $type): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('`dataType` must be an alphanumeric string');
+        $this->expectExceptionMessage('`dataType` must be a valid SQL data type');
         $this->functions->cast('field', $type);
     }
 
