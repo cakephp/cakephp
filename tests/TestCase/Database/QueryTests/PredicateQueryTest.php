@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Database\Expression\between;
 use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\func;
 use function Cake\Database\Expression\greaterThan;
 use function Cake\Database\Expression\in;
 use function Cake\Database\Expression\like;
@@ -103,11 +104,11 @@ class PredicateQueryTest extends TestCase
         $this->assertCount(3, $query->execute()->fetchAll('assoc'));
 
         $query = $connection->selectQuery();
-        $query->select(['author_id', 'total' => $query->func()->count('*')])->from('articles')
+        $query->select(['author_id', 'total' => func()->count('*')])->from('articles')
             ->groupBy('author_id')->having(['COUNT(*)' => greaterThan(1, 'integer')]);
         $this->assertCount(1, $query->execute()->fetchAll('assoc'));
 
-        $filter = $connection->selectQuery()->func()->count('*')->filter(['id' => greaterThan(1)]);
+        $filter = func()->count('*')->filter(['id' => greaterThan(1)]);
         $binder = new ValueBinder();
         $this->assertStringContainsString('FILTER (WHERE id > :c0)', $filter->sql($binder));
     }

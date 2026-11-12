@@ -18,6 +18,17 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Enum\PredicateOperation;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\FunctionsBuilder;
+
+/**
+ * Creates a SQL functions builder without requiring a query instance.
+ *
+ * @return \Cake\Database\FunctionsBuilder
+ */
+function func(): FunctionsBuilder
+{
+    return new FunctionsBuilder();
+}
 
 /**
  * Creates an equality predicate, using IS NULL when the value is null.

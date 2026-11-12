@@ -25,15 +25,33 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Database\Expression\between;
 use function Cake\Database\Expression\comparison;
 use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\func;
 use function Cake\Database\Expression\greaterThan;
 use function Cake\Database\Expression\in;
 use function Cake\Database\Expression\notEquals;
 
 /**
- * Verifies deferred predicates, field type inference, and independent expression trees.
+ * Verifies SQL function builders, deferred predicates, and independent expression trees.
  */
 class FunctionsTest extends TestCase
 {
+    /**
+     * Checks standalone builders produce typed aggregate and bound function expressions.
+     */
+    public function testFunctionBuilderExpressions(): void
+    {
+        $count = func()->count('*');
+        $this->assertSame('COUNT(*)', $count->sql(new ValueBinder()));
+        $this->assertSame('integer', $count->getReturnType());
+
+        $binder = new ValueBinder();
+        $concat = func()->concat(['title' => 'identifier', ' suffix'], ['string']);
+        $this->assertSame('CONCAT(title, :param0)', $concat->sql($binder));
+        $this->assertSame('string', $concat->getReturnType());
+        $this->assertSame([' suffix'], array_column($binder->bindings(), 'value'));
+        $this->assertSame(['string'], array_column($binder->bindings(), 'type'));
+    }
+
     /**
      * Provides every field-based helper and its equivalent fluent arguments.
      *
