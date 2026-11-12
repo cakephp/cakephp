@@ -23,6 +23,7 @@ use Cake\Http\RateLimit\FixedWindowRateLimiter;
 use Cake\Http\RateLimit\RateLimiterInterface;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
 use Cake\Http\RateLimit\TokenBucketRateLimiter;
+use Cake\I18n\DateTime;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -170,7 +171,7 @@ class RateLimitMiddleware implements MiddlewareInterface
             $message = $limiterConfig['message'] ?? $this->config['message'];
             $exception = new TooManyRequestsException($message);
             if ($this->config['includeRetryAfter'] && isset($result['reset'])) {
-                $retryAfter = max(1, $result['reset'] - time());
+                $retryAfter = max(1, $result['reset'] - DateTime::now()->getTimestamp());
                 $exception->setHeader('Retry-After', (string)$retryAfter);
             }
             throw $exception;

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\RateLimit;
 
+use Cake\I18n\DateTime;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -45,7 +46,7 @@ class TokenBucketRateLimiter implements RateLimiterInterface
      */
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
-        $now = microtime(true);
+        $now = (float)DateTime::now()->format('U.u');
         $key = $identifier;
 
         $data = $this->cache->get($identifier, [

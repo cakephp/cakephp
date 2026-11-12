@@ -21,6 +21,7 @@ use Cake\Http\Exception\TooManyRequestsException;
 use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -37,6 +38,11 @@ class RateLimitMiddlewareTest extends TestCase
     protected $handler;
 
     /**
+     * @var \Cake\Chronos\Chronos|null
+     */
+    protected $testNow;
+
+    /**
      * setUp method
      *
      * @return void
@@ -45,6 +51,7 @@ class RateLimitMiddlewareTest extends TestCase
     {
         parent::setUp();
 
+        $this->testNow = DateTime::getTestNow();
         Cache::setConfig('rate_limit_test', [
             'className' => 'Array',
         ]);
@@ -62,6 +69,7 @@ class RateLimitMiddlewareTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
+        DateTime::setTestNow($this->testNow);
         Cache::drop('rate_limit_test');
     }
 
@@ -398,6 +406,35 @@ class RateLimitMiddlewareTest extends TestCase
             $this->fail('should raise');
         } catch (TooManyRequestsException $e) {
             $this->assertStringContainsString('limit exceeded', $e->getMessage());
+        }
+    }
+
+    /**
+     * Test that Retry-After is computed from the frozen clock
+     *
+     * @return void
+     */
+    public function testRetryAfterUsesTestNow(): void
+    {
+        // A multiple of the window, so the fixed window starts here.
+        DateTime::setTestNow(DateTime::createFromTimestamp(1800000000 + 10));
+
+        $middleware = new RateLimitMiddleware([
+            'limit' => 1,
+            'window' => 120,
+            'strategy' => RateLimitMiddleware::STRATEGY_FIXED_WINDOW,
+            'cache' => 'rate_limit_test',
+        ]);
+        $request = new ServerRequest([
+            'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
+        ]);
+
+        $middleware->process($request, $this->handler);
+        try {
+            $middleware->process($request, $this->handler);
+            $this->fail('should raise');
+        } catch (TooManyRequestsException $e) {
+            $this->assertSame('110', $e->getHeaders()['Retry-After']);
         }
     }
 }
