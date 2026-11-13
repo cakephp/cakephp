@@ -32,6 +32,11 @@ enum PredicateOperation
     case ANY_OF;
 
     /**
+     * Negation of a predicate for the same field.
+     */
+    case NOT;
+
+    /**
      * Equality comparison.
      */
     case EQUALS;
