@@ -25,6 +25,7 @@
     "require": {
         "php": ">=8.2",
         "cakephp/core": "^5.4.0",
+        "cakephp/utility": "^5.4.0",
         "psr/log": "^3.0"
     },
     "autoload": {
