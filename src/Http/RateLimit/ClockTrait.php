@@ -34,10 +34,8 @@ trait ClockTrait
      */
     protected function currentTime(): float
     {
-        if (class_exists(DateTime::class)) {
-            return (float)DateTime::now()->format('U.u');
-        }
-
-        return microtime(true);
+        return class_exists(DateTime::class)
+            ? (float)DateTime::now()->format('U.u')
+            : microtime(true);
     }
 }
