@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\RateLimit;
 
-use Cake\I18n\DateTime;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -32,6 +31,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 class SlidingWindowRateLimiter implements RateLimiterInterface
 {
+    use ClockTrait;
+
     /**
      * Cache instance
      *
@@ -55,7 +56,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
         assert($window > 0, 'Window must be greater than 0');
-        $now = DateTime::now()->getTimestamp();
+        $now = (int)$this->currentTime();
 
         $data = $this->cache->get($identifier);
         $windowStart = (int)($data['window_start'] ?? $now);

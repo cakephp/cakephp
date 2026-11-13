@@ -29,7 +29,6 @@
         "php": ">=8.2",
         "cakephp/core": "^5.4.0",
         "cakephp/event": "^5.4.0",
-        "cakephp/i18n": "^5.4.0",
         "cakephp/utility": "^5.4.0",
         "composer/ca-bundle": "^1.6",
         "psr/http-client": "^1.0.2",
@@ -44,6 +43,7 @@
         "cakephp/cache": "^5.4.0",
         "cakephp/console": "^5.4.0",
         "cakephp/orm": "^5.4.0",
+        "cakephp/i18n": "^5.4.0",
         "paragonie/csp-builder": "^3.0"
     },
     "autoload": {
@@ -60,6 +60,7 @@
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
+        "cakephp/i18n": "To make the rate limiters follow DateTime::setTestNow()",
         "cakephp/orm": "To use database session storage",
         "paragonie/csp-builder": "To use CspMiddleware"
     },

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\RateLimit;
 
-use Cake\I18n\DateTime;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -24,6 +23,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 class FixedWindowRateLimiter implements RateLimiterInterface
 {
+    use ClockTrait;
+
     /**
      * Cache instance
      *
@@ -46,7 +47,7 @@ class FixedWindowRateLimiter implements RateLimiterInterface
      */
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
-        $now = DateTime::now()->getTimestamp();
+        $now = (int)$this->currentTime();
         $windowStart = (int)($now / $window) * $window;
         $key = $identifier . '_' . $windowStart;
 
@@ -72,7 +73,7 @@ class FixedWindowRateLimiter implements RateLimiterInterface
      */
     public function reset(string $identifier): void
     {
-        $now = DateTime::now()->getTimestamp();
+        $now = (int)$this->currentTime();
         $window = 3600; // Assume max window of 1 hour for reset
         $windowStart = (int)($now / $window) * $window;
         $this->cache->delete($identifier . '_' . $windowStart);
