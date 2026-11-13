@@ -18,6 +18,7 @@ namespace Cake\Routing\Middleware;
 
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
@@ -113,6 +114,12 @@ class RoutingMiddleware implements MiddlewareInterface
                 $e->getHeaders(),
             );
         }
+
+        // Handle QUERY method strictness requirements
+        if ($request->getMethod() === 'QUERY' && !$request->hasHeader('Content-Type')) {
+            throw new BadRequestException('QUERY requests must have a Content-Type header.');
+        }
+
         $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {
             return $handler->handle($request);

@@ -1739,8 +1739,8 @@ class RouteTest extends TestCase
         $this->assertSame($result, $route, 'Should return this');
         $this->assertSame(['PUT'], $route->defaults['_method'], 'method is wrong');
 
-        $route->setMethods(['post', 'get', 'patch']);
-        $this->assertSame(['POST', 'GET', 'PATCH'], $route->defaults['_method']);
+        $route->setMethods(['query', 'post', 'get', 'patch']);
+        $this->assertSame(['QUERY','POST', 'GET', 'PATCH'], $route->defaults['_method']);
     }
 
     /**

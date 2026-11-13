@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Core\Configure;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -133,6 +134,33 @@ class RoutingMiddlewareTest extends TestCase
             return new Response();
         });
         $middleware = new RoutingMiddleware($this->app());
+        $middleware->process($request, $handler);
+    }
+
+    public function testQueryMethodWithContentType(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles', 'REQUEST_METHOD' => 'QUERY']);
+        $request = $request->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $handler = new TestRequestHandler(function ($req) {
+            $this->assertSame('QUERY', $req->getMethod());
+
+            return new Response();
+        });
+        $middleware = new RoutingMiddleware($this->app());
+        $middleware->process($request, $handler);
+    }
+
+    public function testQueryMethodWithoutContentType(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles', 'REQUEST_METHOD' => 'QUERY']);
+        $handler = new TestRequestHandler(function ($req) {
+            $this->fail('QUERY method without Content-Type should fail');
+
+            return new Response();
+        });
+        $middleware = new RoutingMiddleware($this->app());
+
+        $this->expectException(BadRequestException::class);
         $middleware->process($request, $handler);
     }
 

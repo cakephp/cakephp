@@ -810,7 +810,7 @@ class RouteBuilderTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertSame('/articles', $result[1]->template);
         $this->assertSame('index', $result[1]->defaults['action']);
-        $this->assertSame('GET', $result[1]->defaults['_method']);
+        $this->assertSame(['GET', 'QUERY'], $result[1]->defaults['_method']);
 
         $this->assertSame('/articles/{id}', $result[0]->template);
         $this->assertSame('delete', $result[0]->defaults['action']);
@@ -1137,6 +1137,7 @@ class RouteBuilderTest extends TestCase
     {
         return [
             ['GET'],
+            ['QUERY'],
             ['POST'],
             ['PUT'],
             ['PATCH'],
