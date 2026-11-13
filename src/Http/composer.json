@@ -60,6 +60,8 @@
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
+        "cakephp/console": "To use BaseApplication",
+        "cakephp/log": "To log errors raised while streaming a response",
         "cakephp/orm": "To use database session storage",
         "paragonie/csp-builder": "To use CspMiddleware"
     },

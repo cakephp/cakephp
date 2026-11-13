@@ -27,6 +27,9 @@
         "cakephp/core": "^5.4.0",
         "psr/log": "^3.0"
     },
+    "suggest": {
+        "cakephp/console": "To use ConsoleLog"
+    },
     "autoload": {
         "psr-4": {
             "Cake\\Log\\": "."

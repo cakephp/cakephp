@@ -27,6 +27,9 @@
         "cakephp/event": "^5.4.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
+    "suggest": {
+        "cakephp/log": "To log RedisEngine connection errors"
+    },
     "provide": {
         "psr/simple-cache-implementation": "^3.0"
     },
