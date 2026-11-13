@@ -34,6 +34,7 @@ class PluginLoadedCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->clearPlugins();
 
         $this->setAppNamespace();
     }
@@ -43,11 +44,13 @@ class PluginLoadedCommandTest extends TestCase
      */
     public function testLoaded(): void
     {
-        $expected = Plugin::loaded();
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->exec('plugin loaded');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
+        $expected = Plugin::loaded();
+        $this->assertSame(['Company/TestPluginThree', 'TestPlugin'], $expected);
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
         }

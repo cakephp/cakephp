@@ -71,6 +71,8 @@ class RedisEngineTest extends TestCase
 
         Cache::enable();
         $this->_configCache();
+        // The server outlives the test, so start without keys an earlier test wrote
+        Cache::clear('redis');
     }
 
     /**

@@ -42,6 +42,10 @@ class PluginListCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // Clearing the plugins loads the installer config, so delete it afterwards
+        $this->clearPlugins();
+        Configure::delete('plugins');
+        PluginConfig::clearCache();
 
         $this->setAppNamespace();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
@@ -57,6 +61,7 @@ class PluginListCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        $this->clearPlugins();
         Configure::delete('plugins');
         PluginConfig::clearCache();
         if (file_exists($this->pluginsListPath)) {

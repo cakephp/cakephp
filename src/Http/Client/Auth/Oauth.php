@@ -177,6 +177,9 @@ class Oauth
         if (!function_exists('openssl_pkey_get_private')) {
             throw new CakeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
+        // The OpenSSL error queue is per process, so drop errors left by earlier unrelated calls
+        while (openssl_error_string() !== false) {
+        }
 
         $nonce = $credentials['nonce'] ?? bin2hex(Security::randomBytes(16));
         $timestamp = $credentials['timestamp'] ?? time();

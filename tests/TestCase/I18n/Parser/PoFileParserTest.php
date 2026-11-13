@@ -44,6 +44,8 @@ class PoFileParserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        I18n::clear();
+        Cache::clear('_cake_translations_');
         $this->path = Configure::read('App.paths.locales.0');
     }
 
