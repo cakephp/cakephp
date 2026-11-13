@@ -23,6 +23,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 class TokenBucketRateLimiter implements RateLimiterInterface
 {
+    use ClockTrait;
+
     /**
      * Cache instance
      *
@@ -45,7 +47,7 @@ class TokenBucketRateLimiter implements RateLimiterInterface
      */
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
-        $now = microtime(true);
+        $now = $this->currentTime();
         $key = $identifier;
 
         $data = $this->cache->get($identifier, [

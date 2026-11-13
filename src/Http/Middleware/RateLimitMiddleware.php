@@ -19,6 +19,7 @@ namespace Cake\Http\Middleware;
 use Authentication\IdentityInterface;
 use Cake\Cache\Cache;
 use Cake\Http\Exception\TooManyRequestsException;
+use Cake\Http\RateLimit\ClockTrait;
 use Cake\Http\RateLimit\FixedWindowRateLimiter;
 use Cake\Http\RateLimit\RateLimiterInterface;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
@@ -37,6 +38,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class RateLimitMiddleware implements MiddlewareInterface
 {
+    use ClockTrait;
+
     /**
      * Identifier type: client IP address
      */
@@ -170,7 +173,7 @@ class RateLimitMiddleware implements MiddlewareInterface
             $message = $limiterConfig['message'] ?? $this->config['message'];
             $exception = new TooManyRequestsException($message);
             if ($this->config['includeRetryAfter'] && isset($result['reset'])) {
-                $retryAfter = max(1, $result['reset'] - time());
+                $retryAfter = max(1, $result['reset'] - (int)$this->currentTime());
                 $exception->setHeader('Retry-After', (string)$retryAfter);
             }
             throw $exception;

@@ -31,6 +31,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 class SlidingWindowRateLimiter implements RateLimiterInterface
 {
+    use ClockTrait;
+
     /**
      * Cache instance
      *
@@ -54,7 +56,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
         assert($window > 0, 'Window must be greater than 0');
-        $now = time();
+        $now = (int)$this->currentTime();
 
         $data = $this->cache->get($identifier);
         $windowStart = (int)($data['window_start'] ?? $now);

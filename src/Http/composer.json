@@ -60,6 +60,7 @@
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
+        "cakephp/i18n": "To make the rate limiters follow DateTime::setTestNow()",
         "cakephp/orm": "To use database session storage",
         "paragonie/csp-builder": "To use CspMiddleware"
     },

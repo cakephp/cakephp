@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http\RateLimit;
 use AssertionError;
 use Cake\Cache\Cache;
 use Cake\Http\RateLimit\SlidingWindowRateLimiter;
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -37,6 +38,11 @@ class SlidingWindowRateLimiterTest extends TestCase
     protected $cache;
 
     /**
+     * @var \Cake\Chronos\Chronos|null
+     */
+    protected $testNow;
+
+    /**
      * setUp method
      *
      * @return void
@@ -45,6 +51,7 @@ class SlidingWindowRateLimiterTest extends TestCase
     {
         parent::setUp();
 
+        $this->testNow = DateTime::getTestNow();
         Cache::setConfig('rate_limiter_test', [
             'className' => 'Array',
         ]);
@@ -61,6 +68,7 @@ class SlidingWindowRateLimiterTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
+        DateTime::setTestNow($this->testNow);
         Cache::drop('rate_limiter_test');
     }
 
@@ -76,7 +84,7 @@ class SlidingWindowRateLimiterTest extends TestCase
         $this->assertTrue($result['allowed']);
         $this->assertEquals(5, $result['limit']);
         $this->assertEquals(4, $result['remaining']);
-        $this->assertGreaterThan(time(), $result['reset']);
+        $this->assertGreaterThan(DateTime::now()->getTimestamp(), $result['reset']);
     }
 
     /**
@@ -195,7 +203,7 @@ class SlidingWindowRateLimiterTest extends TestCase
     {
         $identifier = 'test_sliding';
         $this->cache->set($identifier, [
-            'window_start' => time() - 90,
+            'window_start' => DateTime::now()->getTimestamp() - 90,
             'current' => 10,
             'previous' => 0,
         ]);
@@ -218,7 +226,7 @@ class SlidingWindowRateLimiterTest extends TestCase
             $this->assertTrue($this->limiter->attempt($identifier, 5, 60)['allowed']);
         }
 
-        $start = time() - 12;
+        $start = DateTime::now()->getTimestamp() - 12;
         $this->cache->set($identifier, [
             'window_start' => $start,
             'current' => 5,
@@ -242,7 +250,7 @@ class SlidingWindowRateLimiterTest extends TestCase
     public function testRepeatedAttemptsDoNotCompoundDecay(): void
     {
         $identifier = 'test_compound';
-        $start = time() - 72;
+        $start = DateTime::now()->getTimestamp() - 72;
         $this->cache->set($identifier, [
             'window_start' => $start,
             'current' => 5,
@@ -271,7 +279,7 @@ class SlidingWindowRateLimiterTest extends TestCase
     {
         $identifier = 'test_previous_expires';
         $this->cache->set($identifier, [
-            'window_start' => time() - 130,
+            'window_start' => DateTime::now()->getTimestamp() - 130,
             'current' => 5,
             'previous' => 5,
         ]);
@@ -291,8 +299,8 @@ class SlidingWindowRateLimiterTest extends TestCase
         $identifier = 'test_legacy';
         $this->cache->set($identifier, [
             'count' => 5,
-            'reset' => time() + 50,
-            'window_start' => time() - 10,
+            'reset' => DateTime::now()->getTimestamp() + 50,
+            'window_start' => DateTime::now()->getTimestamp() - 10,
         ]);
 
         $result = $this->limiter->attempt($identifier, 5, 60);
@@ -318,8 +326,8 @@ class SlidingWindowRateLimiterTest extends TestCase
         $result = $this->limiter->attempt($identifier, $limit, $window);
         $this->assertFalse($result['allowed']);
 
-        // Wait for window to expire
-        sleep(2);
+        // Move the clock past the window
+        DateTime::setTestNow(DateTime::now()->addSeconds(2));
 
         // Should be allowed again
         $result = $this->limiter->attempt($identifier, $limit, $window);
@@ -336,7 +344,7 @@ class SlidingWindowRateLimiterTest extends TestCase
         $identifier = 'test_reset_time';
         $limit = 5;
         $window = 60;
-        $startTime = time();
+        $startTime = DateTime::now()->getTimestamp();
 
         $result = $this->limiter->attempt($identifier, $limit, $window);
 
