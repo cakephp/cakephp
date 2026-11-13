@@ -21,12 +21,16 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use function Cake\Database\Expression\allOf;
+use function Cake\Database\Expression\anyOf;
 use function Cake\Database\Expression\between;
 use function Cake\Database\Expression\equals;
 use function Cake\Database\Expression\func;
 use function Cake\Database\Expression\greaterThan;
 use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\lessThan;
 use function Cake\Database\Expression\like;
+use function Cake\Database\Expression\notIn;
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -88,6 +92,44 @@ class PredicateQueryTest extends TestCase
         $query = $connection->selectQuery()->select('id')->from('articles')->where(['id' => $predicate])->orderByAsc('id');
         $this->assertSame([2, 3], array_map('intval', array_column($query->execute()->fetchAll('assoc'), 'id')));
         $this->assertSame($query->sql(), (clone $query)->sql());
+    }
+
+    /**
+     * Checks grouped membership subqueries and nested disjunctions execute in both quoting modes.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testCompositePredicates(bool $quote): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $excluded = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(2)]);
+            $included = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(3)]);
+            $articles = $this->getTableLocator()->get('Articles');
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => allOf(notIn($excluded), in($included)),
+            ]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+            $this->assertSame([2], (clone $query)->all()->extract('id')->toList());
+
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => anyOf(allOf(greaterThan(1), lessThan(3)), equals(3)),
+                'Articles.author_id' => equals(1),
+            ]);
+            $this->assertSame([3], $query->all()->extract('id')->toList());
+            $this->assertSame(
+                ['integer', 'integer', 'integer', 'integer'],
+                array_column($query->getValueBinder()->bindings(), 'type'),
+            );
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
     }
 
     /**

@@ -22,6 +22,16 @@ namespace Cake\Database\Enum;
 enum PredicateOperation
 {
     /**
+     * Conjunction of predicates for the same field.
+     */
+    case ALL_OF;
+
+    /**
+     * Disjunction of predicates for the same field.
+     */
+    case ANY_OF;
+
+    /**
      * Equality comparison.
      */
     case EQUALS;

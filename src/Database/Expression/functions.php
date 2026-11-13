@@ -31,6 +31,30 @@ function func(): FunctionsBuilder
 }
 
 /**
+ * Creates a predicate requiring every child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with AND.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function allOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ALL_OF, [$predicate, ...$predicates]);
+}
+
+/**
+ * Creates a predicate requiring at least one child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with OR.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function anyOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ANY_OF, [$predicate, ...$predicates]);
+}
+
+/**
  * Creates an equality predicate, using IS NULL when the value is null.
  *
  * @param mixed $value The value or expression to compare.
