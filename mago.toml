@@ -51,6 +51,12 @@ ignore = [
     "mixed-array-access",
     "mixed-array-assignment",
     "mixed-assignment",
+    "mixed-method-access",
     "property-type-coercion",
-    "possibly-false-argument"
+    "possibly-false-argument",
+    "missing-magic-method",
+    "less-specific-argument",
+    "less-specific-nested-argument-type",
+    "less-specific-nested-return-statement",
+    "less-specific-return-statement",
 ]

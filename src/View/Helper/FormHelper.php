@@ -942,7 +942,7 @@ class FormHelper extends Helper
      *
      * In the above example, no field would be generated for the title field.
      *
-     * @param array $fields An array of customizations for the fields that will be
+     * @param array<string, array<string, mixed>|false> $fields An array of customizations for the fields that will be
      *   generated. This array allows you to set custom types, labels, or other options.
      * @param array<string, mixed> $options Options array. Valid keys are:
      *
@@ -961,8 +961,8 @@ class FormHelper extends Helper
         $modelFields = $context->fieldNames();
 
         $fields = array_merge(
-            Hash::normalize($modelFields),
-            Hash::normalize($fields),
+            Hash::normalize($modelFields, default: []),
+            $fields,
         );
 
         return $this->controls($fields, $options);
@@ -993,7 +993,8 @@ class FormHelper extends Helper
      */
     public function controls(array $fields, array $options = []): string
     {
-        $fields = Hash::normalize($fields);
+        /** @var array<string, array<string, mixed>|false> $fields */
+        $fields = Hash::normalize($fields, default: []);
 
         $out = '';
         foreach ($fields as $name => $opts) {
@@ -1001,7 +1002,7 @@ class FormHelper extends Helper
                 continue;
             }
 
-            $out .= $this->control($name, (array)$opts);
+            $out .= $this->control($name, $opts);
         }
 
         return $this->fieldset($out, $options);

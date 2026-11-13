@@ -2454,7 +2454,7 @@ class Table implements
 
         /** @var array<bool> $isNew */
         $isNew = [];
-        $cleanupOnFailure = function ($entities) use (&$isNew): void {
+        $cleanupOnFailure = function (iterable $entities) use (&$isNew): void {
             /** @var iterable<\Cake\Datasource\EntityInterface> $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {

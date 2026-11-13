@@ -434,7 +434,7 @@ class TimeHelper extends Helper
      * UNIX timestamp or a valid strtotime() date string.
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string or DateTime object
-     * @param array|string|int|null $format Intl compatible format string.
+     * @param array<int>|string|int|null $format Intl compatible format string.
      * @param string|false $invalid Default value to display on invalid dates
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.

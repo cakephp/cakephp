@@ -54,7 +54,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * The crumb list.
      *
-     * @var array
+     * @var list<array{content: string, url: array|string|null, options: array<string, mixed>}>
      */
     protected array $crumbs = [];
 
