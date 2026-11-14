@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
@@ -26,6 +27,7 @@ use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use stdClass;
 use TestApp\Dto\ArticleArrayDto;
 use TestApp\Dto\ArticleDto;
 use TestApp\Dto\AuthorArrayDto;
@@ -270,6 +272,103 @@ class ResultSetFactoryTest extends TestCase
         $this->assertSame(1, $result->id);
         $this->assertSame('First Article', $result->title);
         $this->assertSame('First Article Body', $result->body);
+    }
+
+    /**
+     * Test Table::projectAs() returns a concrete list of DTOs from a default query.
+     */
+    public function testTableProjectAs(): void
+    {
+        DtoMapper::clearCache();
+
+        $results = $this->table->projectAs(SimpleArticleDto::class);
+
+        $this->assertIsList($results);
+        $this->assertCount(3, $results);
+        $this->assertContainsOnlyInstancesOf(SimpleArticleDto::class, $results);
+        $this->assertSame(1, $results[0]->id);
+    }
+
+    /**
+     * Test Table::projectAs() with a pre-built query.
+     */
+    public function testTableProjectAsWithQuery(): void
+    {
+        DtoMapper::clearCache();
+
+        $query = $this->table->find()->where(['id' => 1]);
+        $results = $this->table->projectAs(SimpleArticleDto::class, $query);
+
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(SimpleArticleDto::class, $results[0]);
+        $this->assertSame('First Article', $results[0]->title);
+    }
+
+    /**
+     * Test Table::projectAs() throws instead of dropping rows that are not of the requested class.
+     */
+    public function testTableProjectAsMismatchedRowThrows(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('is `stdClass`, expected an instance of');
+
+        $this->table->projectAs($this->mismatchedDtoClass());
+    }
+
+    /**
+     * Test Table::projectOne() returns a single DTO.
+     */
+    public function testTableProjectOne(): void
+    {
+        DtoMapper::clearCache();
+
+        $result = $this->table->projectOne(
+            SimpleArticleDto::class,
+            $this->table->find()->where(['id' => 2]),
+        );
+
+        $this->assertInstanceOf(SimpleArticleDto::class, $result);
+        $this->assertSame(2, $result->id);
+        $this->assertSame('Second Article', $result->title);
+    }
+
+    /**
+     * Test Table::projectOne() returns null when there is no row.
+     */
+    public function testTableProjectOneNoResult(): void
+    {
+        $result = $this->table->projectOne(
+            SimpleArticleDto::class,
+            $this->table->find()->where(['id' => 999]),
+        );
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test Table::projectOne() throws when the row is not of the requested class.
+     */
+    public function testTableProjectOneMismatchedRowThrows(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('is `stdClass`, expected an instance of');
+
+        $this->table->projectOne($this->mismatchedDtoClass());
+    }
+
+    /**
+     * @return class-string
+     */
+    protected function mismatchedDtoClass(): string
+    {
+        $dto = new class {
+            public static function createFromArray(array $data, bool $nested): stdClass
+            {
+                return new stdClass();
+            }
+        };
+
+        return $dto::class;
     }
 
     /**

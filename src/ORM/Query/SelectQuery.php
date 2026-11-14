@@ -1559,6 +1559,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When DTO projection is enabled, results will be hydrated into
      * the specified DTO class instead of entity objects.
      *
+     * The query keeps its entity result type. For a statically typed result use
+     * {@see \Cake\ORM\Table::projectAs()} or {@see \Cake\ORM\Table::projectOne()}.
+     *
      * @param class-string $dtoClass The DTO class name
      * @return $this
      */
