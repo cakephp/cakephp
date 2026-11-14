@@ -818,7 +818,8 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this
      * query. Conditions use field keys with literal values for equality or namespaced
-     * predicate functions from Cake\Database\Expression for other comparisons. Finally, conditions can be expressed as a single
+     * predicate functions from Cake\Database\Expression for other comparisons. Operators can also be
+     * placed in the key after the field name. Finally, conditions can be expressed as a single
      * string or an array of strings.
      *
      * When using arrays, each entry will be joined to the rest of the conditions using
@@ -835,6 +836,16 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->where([
      *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
      *     'title' => like('Hello W%'),
+     *     'author_id' => 1,
+     * ], ['posted' => 'datetime']);
+     * ```
+     *
+     * ### Conditions using operators:
+     *
+     * ```
+     * $query->where([
+     *     'posted >=' => new DateTime('3 days ago'),
+     *     'title LIKE' => 'Hello W%',
      *     'author_id' => 1,
      * ], ['posted' => 'datetime']);
      * ```

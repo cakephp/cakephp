@@ -23,7 +23,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{between, comparison, equals, greaterThan, in, notEquals};
+use function Cake\Database\Expression\{between, comparison, equals, greaterThan, in, isNull, notEquals};
 
 /**
  * Verifies deferred predicates, field type inference, and independent expression trees.
@@ -189,7 +189,7 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Supplies invalid placements and removed operator-key syntax.
+     * Supplies invalid predicate placements.
      *
      * @return array<string, array{array<mixed>}>
      */
@@ -198,12 +198,9 @@ class FunctionsTest extends TestCase
         return [
             'standalone predicate' => [[greaterThan(1)]],
             'boolean predicate' => [['OR' => greaterThan(1)]],
-            'legacy greater than' => [['id >' => 1]],
-            'legacy explicit equality' => [['id =' => 1]],
-            'legacy null check' => [['id IS NOT' => null]],
-            'legacy distinct' => [['id IS NOT DISTINCT FROM' => null]],
-            'legacy custom operator' => [['data @>' => '{}']],
             'conflicting predicate key' => [['id >' => greaterThan(1)]],
+            'conflicting keyword predicate key' => [['id NOT IN' => greaterThan(1)]],
+            'conflicting null predicate key' => [['id IS NOT' => isNull()]],
         ];
     }
 
