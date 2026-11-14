@@ -308,7 +308,7 @@ trait EntityTrait
                 throw new InvalidArgumentException('Cannot set an empty field');
             }
 
-            if ($options['guard'] === true && !$this->isAccessible($name)) {
+            if ($options['guard'] === true && !$this->isPatchable($name)) {
                 continue;
             }
 
@@ -1382,33 +1382,28 @@ trait EntityTrait
      * @param array<string>|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
+     * @deprecated 5.5.0 Use setPatchable() instead.
      * @return $this
      */
     public function setAccess(array|string $field, bool $set)
     {
-        if ($field === '*') {
-            $this->_accessible = array_map(fn() => $set, $this->_accessible);
-            $this->_accessible['*'] = $set;
+        deprecationWarning('5.5.0', 'Entity::setAccess() is deprecated. Use setPatchable() instead.');
 
-            return $this;
-        }
-
-        foreach ((array)$field as $prop) {
-            $this->_accessible[$prop] = $set;
-        }
-
-        return $this;
+        return $this->setPatchable($field, $set);
     }
 
     /**
      * Returns the raw accessible configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
+     * @deprecated 5.5.0 Use getPatchable() instead.
      * @return array<string, bool>
      */
     public function getAccessible(): array
     {
-        return $this->_accessible;
+        deprecationWarning('5.5.0', 'Entity::getAccessible() is deprecated. Use getPatchable() instead.');
+
+        return $this->getPatchable();
     }
 
     /**
@@ -1421,13 +1416,14 @@ trait EntityTrait
      * ```
      *
      * @param string $field Field name to check
+     * @deprecated 5.5.0 Use isPatchable() instead.
      * @return bool
      */
     public function isAccessible(string $field): bool
     {
-        $value = $this->_accessible[$field] ?? null;
+        deprecationWarning('5.5.0', 'Entity::isAccessible() is deprecated. Use isPatchable() instead.');
 
-        return ($value === null && !empty($this->_accessible['*'])) || $value;
+        return $this->isPatchable($field);
     }
 
     /**
@@ -1495,5 +1491,75 @@ trait EntityTrait
             '[invalid]' => $this->_invalid,
             '[repository]' => $this->_registryAlias,
         ];
+    }
+
+    /**
+     * Stores whether a field value can be changed or set in this entity.
+     * The special field `*` can also be marked as accessible or protected, meaning
+     * that any other field specified before will take its value. For example
+     * `$entity->setPatchable('*', true)` means that any field not specified already
+     * will be accessible by default.
+     *
+     * You can also call this method with an array of fields, in which case they
+     * will each take the accessibility value specified in the second argument.
+     *
+     * ### Example:
+     *
+     * ```
+     * $entity->setPatchable('id', true); // Mark id as not protected
+     * $entity->setPatchable('author_id', false); // Mark author_id as protected
+     * $entity->setPatchable(['id', 'user_id'], true); // Mark both fields as accessible
+     * $entity->setPatchable('*', false); // Mark all fields as protected
+     * ```
+     *
+     * @param array<string>|string $field Single or list of fields to change its accessibility
+     * @param bool $set True marks the field as accessible, false will
+     * mark it as protected.
+     * @return $this
+     */
+    public function setPatchable(array|string $field, bool $set)
+    {
+        if ($field === '*') {
+            $this->_accessible = array_map(fn() => $set, $this->_accessible);
+            $this->_accessible['*'] = $set;
+
+            return $this;
+        }
+
+        foreach ((array)$field as $prop) {
+            $this->_accessible[$prop] = $set;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the patchable fields stored in the accessible configuration for this entity.
+     * The `*` wildcard refers to all fields.
+     *
+     * @return array<string, bool>
+     */
+    public function getPatchable(): array
+    {
+        return $this->_accessible;
+    }
+
+    /**
+     * Checks if a field is accessible
+     *
+     * ### Example:
+     *
+     * ```
+     * $entity->isPatchable('id'); // Returns whether it can be set or not
+     * ```
+     *
+     * @param string $field Field name to check
+     * @return bool
+     */
+    public function isPatchable(string $field): bool
+    {
+        $value = $this->_accessible[$field] ?? null;
+
+        return ($value === null && !empty($this->_accessible['*'])) || $value;
     }
 }
