@@ -739,10 +739,18 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Resolves a field-keyed predicate or creates an equality condition.
-     * Legacy operator-bearing keys are rejected instead of being interpreted as SQL.
+     * Parses a string conditions by trying to extract the operator inside it if any
+     * and finally returning either an adequate QueryExpression object or a plain
+     * string representation of the condition. This function is responsible for
+     * generating the placeholders and replacing the values by them, while storing
+     * the value elsewhere for future binding.
      *
-     * @param string $condition The field or trusted SQL field expression.
+     * When the value is a predicate created by one of the `Cake\Database\Expression`
+     * predicate functions, the key must only contain the field and the predicate
+     * supplies the operator.
+     *
+     * @param string $condition The value from which the actual field and operator will
+     * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
      * @return \Cake\Database\ExpressionInterface|string
      * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
@@ -750,34 +758,100 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
         $expression = trim($condition);
-        $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
-        $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
-        $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
-        $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
-        if (preg_match($operatorPattern, $expression)) {
-            throw new InvalidArgumentException(sprintf(
-                'Operator-bearing condition key `%s` is no longer supported. '
-                . 'Use a Cake\\Database\\Expression predicate function, or run the CakePHP 6 upgrade rules.',
-                $condition,
-            ));
-        }
 
-        $type = $this->getTypeMap()->type($expression);
         if ($value instanceof Predicate) {
-            return $value->resolve($expression, $type);
+            $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
+            $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
+            $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
+            $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
+            if (preg_match($operatorPattern, $expression)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Condition key `%s` cannot contain an operator when used with a predicate function. '
+                    . 'Use the field name as key and let the predicate supply the operator.',
+                    $condition,
+                ));
+            }
+
+            return $value->resolve($expression, $this->getTypeMap()->type($expression));
         }
 
         $operator = '=';
-        if (is_string($type) && str_contains($type, '[]')) {
-            $operator = 'IN';
+
+        $spaces = substr_count($expression, ' ');
+        // Handle expression values that contain multiple spaces, such as
+        // operators with a space in them like `field IS NOT` and
+        // `field NOT LIKE`, or combinations with function expressions
+        // like `CONCAT(first_name, ' ', last_name) IN`.
+        if ($spaces > 1) {
+            $parts = explode(' ', $expression);
+            if (preg_match('/is not distinct from$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -4));
+                $parts = array_slice($parts, 0, -4);
+            } elseif (preg_match('/is distinct from$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -3));
+                $parts = array_slice($parts, 0, -3);
+            } elseif (preg_match('/(is not|not \w+)$/i', $expression)) {
+                $operator = implode(' ', array_slice($parts, -2));
+                $parts = array_slice($parts, 0, -2);
+            } else {
+                $operator = array_pop($parts);
+            }
+            $expression = implode(' ', $parts);
+        } elseif ($spaces === 1) {
+            $parts = explode(' ', $expression, 2);
+            [$expression, $operator] = $parts;
+        }
+        $operator = strtoupper(trim($operator));
+
+        $type = $this->getTypeMap()->type($expression);
+        $typeMultiple = (is_string($type) && str_contains($type, '[]'));
+        if (in_array($operator, ['IN', 'NOT IN'], true) || $typeMultiple) {
+            $type = $type ?: 'string';
+            if (!$typeMultiple) {
+                $type .= '[]';
+            }
+            $operator = $operator === '=' ? 'IN' : $operator;
+            $operator = $operator === '!=' ? 'NOT IN' : $operator;
+            $typeMultiple = true;
+        }
+
+        if ($typeMultiple) {
             $value = $value instanceof ExpressionInterface ? $value : (array)$value;
+        }
+
+        if ($operator === 'IS' && $value === null) {
+            return new UnaryExpression(
+                'IS NULL',
+                new IdentifierExpression($expression),
+                UnaryExpression::POSTFIX,
+            );
+        }
+
+        if ($operator === 'IS NOT' && $value === null) {
+            return new UnaryExpression(
+                'IS NOT NULL',
+                new IdentifierExpression($expression),
+                UnaryExpression::POSTFIX,
+            );
+        }
+
+        if ($operator === 'IS' && $value !== null) {
+            $operator = '=';
+        }
+
+        if ($operator === 'IS NOT' && $value !== null) {
+            $operator = '!=';
+        }
+
+        if (in_array($operator, ['IS DISTINCT FROM', 'IS NOT DISTINCT FROM'], true)) {
+            return new DistinctComparisonExpression($expression, $value, $type, $operator);
         }
 
         if ($value === null && $this->conjunction !== ',') {
             throw new InvalidArgumentException(sprintf(
                 'Expression `%s` has invalid `null` value.'
-                . ' If `null` is a valid value, a null-aware predicate such as isNull() or equals()'
-                . ' is required.',
+                . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
+                . ' is missing or a null-aware predicate such as isNull() or equals() is required.',
                 $expression,
             ));
         }
