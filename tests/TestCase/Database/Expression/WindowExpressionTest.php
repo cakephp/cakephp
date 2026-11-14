@@ -137,7 +137,7 @@ class WindowExpressionTest extends TestCase
      *
      * @dataProvider invalidPartitionProvider
      */
-    public function testOrderbyInvalid(mixed $part): void
+    public function testOrderInvalid($part): void
     {
         $this->expectException(InvalidArgumentException::class);
         (new WindowExpression())->order($part);
