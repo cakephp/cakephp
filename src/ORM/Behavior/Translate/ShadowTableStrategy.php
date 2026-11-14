@@ -553,6 +553,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             }
 
             $translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+            assert(is_array($translations), 'Expected _i18n property to be an array.');
             if ($translations === []) {
                 if ($row->has('_translations')) {
                     return $row;

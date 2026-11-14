@@ -1694,6 +1694,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected function addDefaultSelectTypes(): void
     {
         $typeMap = $this->getTypeMap()->getDefaults();
+        /** @var array<string, mixed> $select */
         $select = $this->clause('select');
         $types = [];
 

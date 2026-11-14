@@ -391,7 +391,7 @@ class StringTemplate
      * @param array<string, mixed> $input The attribute array to add classes to.
      * @param array<string>|string|false|null $newClass The class(es) to add.
      * @param string $useIndex The array key to use. Defaults to 'class'.
-     * @return array<string, string> The updated attribute array.
+     * @return array<string, mixed> The updated attribute array.
      */
     public function addClass(
         array $input,

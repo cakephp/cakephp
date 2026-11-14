@@ -129,9 +129,10 @@ class CounterCacheBehavior extends Behavior
             return;
         }
 
-        foreach ($this->config as $assoc => $settings) {
+        /** @var array<string, array<string|array>> $behaviorConfig */
+        $behaviorConfig = $this->getConfig();
+        foreach ($behaviorConfig as $assoc => $settings) {
             $assoc = $this->table->getAssociation($assoc);
-            /** @var string|int $field */
             foreach ($settings as $field => $config) {
                 if (is_int($field)) {
                     continue;
@@ -140,7 +141,7 @@ class CounterCacheBehavior extends Behavior
                 $registryAlias = $assoc->getTarget()->getRegistryAlias();
                 $entityAlias = $assoc->getProperty();
                 /** @var \Cake\Datasource\EntityInterface $assocEntity */
-                $assocEntity = $entity->$entityAlias;
+                $assocEntity = $entity->get($entityAlias);
 
                 if (
                     !is_callable($config) &&
@@ -208,7 +209,8 @@ class CounterCacheBehavior extends Behavior
      */
     public function updateCounterCache(?string $assocName = null, int $limit = 100, ?int $page = null): void
     {
-        $config = $this->config;
+        /** @var array<string, array> $config */
+        $config = $this->getConfig();
         if ($assocName !== null) {
             $config = [$assocName => $config[$assocName]];
         }
@@ -224,6 +226,7 @@ class CounterCacheBehavior extends Behavior
                 }
 
                 if (is_int($field)) {
+                    /** @var string $field */
                     $field = $config;
                     $config = [];
                 }

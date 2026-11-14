@@ -85,8 +85,10 @@ trait ViewVarsTrait
     {
         if (is_array($name)) {
             if (is_array($value)) {
+                /** @var array<string> $name */
                 $data = array_combine($name, $value);
             } else {
+                /** @var array<string, mixed> $name */
                 $data = $name;
             }
         } else {

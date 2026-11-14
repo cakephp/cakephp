@@ -798,7 +798,7 @@ class HtmlHelper extends Helper
             ]);
         }
 
-        return $this->tableRow(implode(' ', $out), (array)$trOptions);
+        return $this->tableRow(implode(' ', $out), $trOptions ?? []);
     }
 
     /**
