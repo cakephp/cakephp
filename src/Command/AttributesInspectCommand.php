@@ -19,58 +19,21 @@ namespace Cake\Command;
 use BackedEnum;
 use Cake\AttributeResolver\AttributeResolver;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use JsonException;
 use UnitEnum;
 
 /**
  * Command to inspect detailed information about attributes.
  */
+#[AsCommand('attributes inspect', description: 'Inspect detailed information about specific attributes.')]
+#[Argument('attribute', help: 'Attribute class name to inspect (partial match supported).', required: false)]
+#[Option('class', short: 'c', help: 'Show all attributes on a specific class (partial match supported).')]
+#[Option('config', help: 'The Resolver configuration to use.', default: 'default')]
 class AttributesInspectCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'attributes inspect';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Inspect detailed information about specific attributes.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
-            ->addArgument('attribute', [
-                'help' => 'Attribute class name to inspect (partial match supported).',
-                'required' => false,
-            ])
-            ->addOption('class', [
-                'short' => 'c',
-                'help' => 'Show all attributes on a specific class (partial match supported).',
-            ])
-            ->addOption('config', [
-                'default' => 'default',
-                'help' => 'The Resolver configuration to use.',
-            ]);
-
-        return $parser;
-    }
-
     /**
      * Implement this method with your command's logic.
      *

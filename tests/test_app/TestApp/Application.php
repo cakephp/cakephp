@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace TestApp;
 
+use Cake\AttributeResolver\AttributeResolver;
 use Cake\Console\CommandCollection;
 use Cake\Container\ContainerInterface;
 use Cake\Container\ReflectionContainer;
@@ -49,12 +50,26 @@ class Application extends BaseApplication
         // Check plugins added here
     }
 
+    /**
+     * Register core commands and explicitly discover attributed test commands.
+     *
+     * @param \Cake\Console\CommandCollection $commands Command registry.
+     * @return \Cake\Console\CommandCollection
+     */
     public function console(CommandCollection $commands): CommandCollection
     {
+        parent::console($commands);
+        AttributeResolver::drop('test_app_commands');
+        AttributeResolver::setConfig('test_app_commands', [
+            'basePath' => APP,
+            'paths' => ['Command/*Command.php', 'src/Command/*Command.php'],
+            'cache' => false,
+        ]);
+
         return $commands
             ->add('abort_command', AbortCommand::class)
             ->add('format_specifier_command', FormatSpecifierCommand::class)
-            ->addMany($commands->autoDiscover());
+            ->addFromAttributes('test_app_commands');
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue

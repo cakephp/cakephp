@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Core\Plugin;
 use Cake\Core\PluginConfig;
 use function Cake\I18n\__d;
@@ -24,24 +25,10 @@ use function Cake\I18n\__d;
 /**
  * Displays all currently available plugins.
  */
+#[AsCommand('plugin list', description: 'Displays all currently available plugins.')]
+#[Option('composer-path', help: 'The absolute path to the composer.lock file to retrieve the versions from')]
 class PluginListCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin list';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Displays all currently available plugins.';
-    }
-
     /**
      * Displays all currently available plugins.
      *
@@ -81,21 +68,5 @@ class PluginListCommand extends Command
         $this->io->helper('Table')->output($table);
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(static::getDescription());
-        $parser->addOption('composer-path', [
-            'help' => 'The absolute path to the composer.lock file to retrieve the versions from',
-        ]);
-
-        return $parser;
     }
 }

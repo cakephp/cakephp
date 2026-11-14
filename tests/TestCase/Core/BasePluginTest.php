@@ -118,18 +118,17 @@ class BasePluginTest extends TestCase
         $plugin->services($container);
     }
 
-    public function testConsoleFind(): void
+    /**
+     * Plugin console hooks no longer perform implicit directory discovery.
+     */
+    public function testConsoleDoesNotDiscoverCommands(): void
     {
         $plugin = new TestPlugin();
         Plugin::getCollection()->add($plugin);
+        $commands = new CommandCollection();
 
-        $result = $plugin->console(new CommandCollection());
-
-        $this->assertTrue($result->has('sample'), 'Should have plugin command added');
-        $this->assertTrue($result->has('test_plugin.sample'), 'Should have long plugin name');
-
-        $this->assertTrue($result->has('example'), 'Should have plugin shell added');
-        $this->assertTrue($result->has('test_plugin.example'), 'Should have long plugin name');
+        $this->assertSame($commands, $plugin->console($commands));
+        $this->assertCount(0, $commands);
     }
 
     public function testBootstrap(): void

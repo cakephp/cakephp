@@ -18,12 +18,20 @@ namespace Cake\Test\TestCase\AttributeResolver;
 
 use Cake\AttributeResolver\AttributeCollection;
 use Cake\AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use ReflectionException;
+use SplFileInfo;
+use TestApp\Attribute\Resolver\Fixture\TestController;
 use TestApp\Attribute\Resolver\TestRoute;
 
+/**
+ * Verify configured scans and direct class metadata resolution.
+ */
 class AttributeResolverTest extends TestCase
 {
     public function setUp(): void
@@ -386,5 +394,53 @@ class AttributeResolverTest extends TestCase
 
         $this->assertInstanceOf(AttributeCollection::class, $collection2);
         $this->assertSame($collection1->count(), $collection2->count());
+    }
+
+    /**
+     * Resolve a class without configuration and share metadata with file parsing.
+     */
+    public function testForClassMatchesFileParsing(): void
+    {
+        $collection = AttributeResolver::forClass(TestController::class);
+        $file = new SplFileInfo(APP . 'Attribute/Resolver/Fixture/TestController.php');
+        $expected = iterator_to_array(new Parser()->parseFile($file), false);
+
+        $this->assertEquals($expected, $collection->toArray());
+        $this->assertSame($collection, AttributeResolver::forClass(TestController::class));
+        $this->assertNull(AttributeResolver::getConfig('default'));
+    }
+
+    /**
+     * Known-class lookup supports anonymous classes without token discovery.
+     */
+    public function testForAnonymousClass(): void
+    {
+        $object = new #[TestRoute('/anonymous')] class {
+        };
+        $collection = AttributeResolver::forClass($object::class);
+        $this->assertCount(1, $collection);
+        $this->assertSame('/anonymous', $collection->first()->getInstance()->path);
+    }
+
+    /**
+     * Class-level declarations are not inherited by direct class lookup.
+     */
+    public function testForClassDoesNotInheritClassAttributes(): void
+    {
+        $object = new class extends TestController {
+        };
+        $collection = AttributeResolver::forClass($object::class)
+            ->withTargetType(AttributeTargetType::CLASS_);
+
+        $this->assertCount(0, $collection);
+    }
+
+    /**
+     * Lookup failures propagate instead of becoming an empty scan result.
+     */
+    public function testForMissingClass(): void
+    {
+        $this->expectException(ReflectionException::class);
+        AttributeResolver::forClass('MissingCommandClass');
     }
 }

@@ -4,8 +4,13 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Console\ConsoleOptionParser;
 
+/**
+ * Command fixture for console integration tests.
+ */
+#[AsCommand('integration')]
 class IntegrationCommand extends Command
 {
     public function execute(): void

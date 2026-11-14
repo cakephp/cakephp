@@ -53,6 +53,28 @@ class Parser
     }
 
     /**
+     * Resolve attributes on a known class and its members without scanning files.
+     *
+     * Class-level attributes are not inherited. Member attributes follow PHP reflection semantics.
+     * Unlike file scanning, lookup errors are propagated to the caller.
+     *
+     * @param class-string $className Class to reflect.
+     * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
+     */
+    public function parseClassName(string $className): Generator
+    {
+        $reflection = new ReflectionClass($className);
+        $file = $reflection->getFileName();
+
+        yield from $this->parseClass(
+            $reflection,
+            $file === false ? '' : $file,
+            $file === false || !is_file($file) ? 0 : (int)filemtime($file),
+            null,
+        );
+    }
+
+    /**
      * Parse a PHP file and extract all attributes.
      *
      * @param \SplFileInfo $file File object to parse

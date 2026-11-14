@@ -112,7 +112,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public static function getDescription(): string
     {
-        return '';
+        return CommandAttributeReader::command(static::class)->description ?? '';
     }
 
     /**
@@ -147,6 +147,11 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public static function defaultName(): string
     {
+        $attribute = CommandAttributeReader::command(static::class);
+        if ($attribute !== null) {
+            return $attribute->name;
+        }
+
         $pos = strrpos(static::class, '\\');
         $name = substr(static::class, $pos + 1, -7);
 
@@ -167,6 +172,8 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
         $parser->setDescription(static::getDescription());
+
+        CommandAttributeReader::configure(static::class, $parser);
 
         return $this->buildOptionParser($parser);
     }

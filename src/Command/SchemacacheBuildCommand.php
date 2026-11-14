@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Database\Connection;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
@@ -25,26 +27,15 @@ use RuntimeException;
 /**
  * Provides CLI tool for updating schema cache.
  */
+#[AsCommand(
+    'schema_cache build',
+    description: 'Build all metadata caches for the connection.',
+    help: ' If a table name is provided, only that table will be cached.',
+)]
+#[Option('connection', short: 'c', help: 'The connection to build/clear metadata cache data for.', default: 'default')]
+#[Argument('name', help: 'A specific table you want to refresh cached data for.', required: false)]
 class SchemacacheBuildCommand extends Command
 {
-    /**
-     * Get the command name.
-     *
-     * @return string
-     */
-    public static function defaultName(): string
-    {
-        return 'schema_cache build';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Build all metadata caches for the connection.';
-    }
-
     /**
      * Display all routes in an application
      *
@@ -71,28 +62,5 @@ class SchemacacheBuildCommand extends Command
         $this->io->out('<success>Cache build complete</success>');
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription([
-            static::getDescription(),
-            ' If a table name is provided, only that table will be cached.',
-        ])->addOption('connection', [
-            'help' => 'The connection to build/clear metadata cache data for.',
-            'short' => 'c',
-            'default' => 'default',
-        ])->addArgument('name', [
-            'help' => 'A specific table you want to refresh cached data for.',
-            'required' => false,
-        ]);
-
-        return $parser;
     }
 }
