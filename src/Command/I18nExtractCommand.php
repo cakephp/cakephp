@@ -254,12 +254,12 @@ class I18nExtractCommand extends Command
                     break;
                 }
 
-                $io->err('');
+                $io->error('');
                 $io->error(
                     'The directory path you supplied was ' .
                     'not found. Please try again.',
                 );
-                $io->err('');
+                $io->error('');
             }
         }
 
@@ -353,7 +353,7 @@ class I18nExtractCommand extends Command
         $io->out();
         if ($this->_countMarkerError) {
             $io->error("{$this->_countMarkerError} marker error(s) detected.");
-            $io->err(' => Use the --marker-error option to display errors.');
+            $io->error(' => Use the --marker-error option to display errors.');
         }
 
         $io->out('Done.');
@@ -812,9 +812,9 @@ class I18nExtractCommand extends Command
 
         while (($tokenCount - $count > 0) && $parenthesis) {
             if (is_array($this->_tokens[$count])) {
-                $io->err($this->_tokens[$count][1], 0);
+                $io->error($this->_tokens[$count][1], 0);
             } else {
-                $io->err($this->_tokens[$count], 0);
+                $io->error($this->_tokens[$count], 0);
                 if ($this->_tokens[$count] === '(') {
                     $parenthesis++;
                 }
@@ -825,7 +825,7 @@ class I18nExtractCommand extends Command
             }
             $count++;
         }
-        $io->err("\n");
+        $io->error("\n");
     }
 
     /**
