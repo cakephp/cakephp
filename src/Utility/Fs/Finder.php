@@ -27,6 +27,7 @@ use Cake\Utility\Fs\Iterator\FilenameFilterIterator;
 use Cake\Utility\Fs\Iterator\FileTypeFilterIterator;
 use Cake\Utility\Fs\Iterator\GlobFilterIterator;
 use Cake\Utility\Fs\Iterator\HiddenFileFilterIterator;
+use Cake\Utility\Fs\Iterator\SymlinkLoopFilterIterator;
 use Closure;
 use FilesystemIterator;
 use Iterator;
@@ -133,6 +134,13 @@ class Finder
      * @var bool
      */
     protected bool $recursive = true;
+
+    /**
+     * Whether to follow symbolic links to directories
+     *
+     * @var bool
+     */
+    protected bool $followLinks = false;
 
     /**
      * The iteration mode (files, directories, or all)
@@ -303,6 +311,26 @@ class Finder
     }
 
     /**
+     * Set whether to follow symbolic links to directories.
+     *
+     * By default, symbolic links to directories are returned as entries but are not
+     * descended into. When enabled, linked directories are traversed as well and are
+     * subject to the same filters, including the depth conditions, as any other entry.
+     *
+     * Links that would cause an infinite loop (for example, a link pointing to one of the
+     * directories currently being traversed) are returned as entries but never descended into.
+     *
+     * @param bool $follow Whether to follow symbolic links (default: true)
+     * @return $this
+     */
+    public function followLinks(bool $follow = true)
+    {
+        $this->followLinks = $follow;
+
+        return $this;
+    }
+
+    /**
      * Get files matching the criteria.
      *
      * @return \Iterator<\SplFileInfo>
@@ -371,7 +399,16 @@ class Finder
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
 
+        if ($this->followLinks) {
+            $flags |= RecursiveDirectoryIterator::FOLLOW_SYMLINKS;
+        }
+
         $directory = new RecursiveDirectoryIterator($path, $flags);
+
+        // Avoid infinite recursion through links pointing to a directory already being traversed
+        if ($this->followLinks) {
+            $directory = new SymlinkLoopFilterIterator($directory);
+        }
 
         // Apply hidden file filtering
         if ($this->ignoreHiddenFiles) {

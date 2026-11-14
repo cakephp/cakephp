@@ -80,6 +80,12 @@ class FinderTest extends TestCase
                 ],
             ],
         ]);
+
+        // Link to a directory
+        symlink(FsFixture::path('root/src/Model'), FsFixture::path('root/webroot/model'));
+
+        // Link to a parent directory
+        symlink($this->root, FsFixture::path('root/tests/up'));
     }
 
     protected function tearDown(): void
@@ -1398,5 +1404,116 @@ class FinderTest extends TestCase
         }
 
         $this->assertSame(0, $count);
+    }
+
+    /**
+     * Test that links are not followed by default, nor when they have been enabled and then disabled again
+     */
+    public function testLinksAreNotFollowedByDefault(): void
+    {
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root/webroot'))
+            ->all();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        // The link is returned, but its contents are not
+        $this->assertContains('model', $filenames);
+        $this->assertNotContains('Entity', $filenames);
+        $this->assertNotContains('User.php', $filenames);
+
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root/webroot'))
+            ->followLinks()
+            ->followLinks(false)
+            ->all();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        $this->assertContains('model', $filenames);
+        $this->assertNotContains('Entity', $filenames);
+        $this->assertNotContains('User.php', $filenames);
+    }
+
+    public function testFollowLinks(): void
+    {
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root/webroot'))
+            ->followLinks()
+            ->all();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        // The link is returned, together with everything it contains
+        $this->assertContains('model', $filenames);
+        $this->assertContains('Entity', $filenames);
+        $this->assertContains('Table', $filenames);
+        $this->assertContains('User.php', $filenames);
+        $this->assertContains('UsersTable.php', $filenames);
+    }
+
+    public function testFollowLinksWithDepth(): void
+    {
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root/webroot'))
+            ->followLinks()
+            ->depth(1)
+            ->all();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        // Inside the link, Entity and Table are at depth 1 and their files at depth 2
+        $this->assertContains('Entity', $filenames);
+        $this->assertContains('Table', $filenames);
+        $this->assertNotContains('User.php', $filenames);
+        $this->assertNotContains('UsersTable.php', $filenames);
+        $this->assertNotContains('model', $filenames);
+    }
+
+    public function testFollowLinksDoesNotLoop(): void
+    {
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root'))
+            ->followLinks()
+            ->all();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        // The link to the directory being searched is returned, but it is not descended into
+        $this->assertContains('up', $filenames);
+        $this->assertCount(1, array_keys($filenames, 'webroot'));
+
+        $finder = new Finder();
+        $files = $finder
+            ->in(FsFixture::path('root'))
+            ->followLinks()
+            ->files();
+
+        $filenames = [];
+        foreach ($files as $file) {
+            $filenames[] = $file->getFilename();
+        }
+
+        $this->assertCount(1, array_keys($filenames, 'index.php'));
     }
 }

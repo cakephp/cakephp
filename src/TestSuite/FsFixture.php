@@ -104,6 +104,9 @@ final class FsFixture
         if (!is_dir($path)) {
             return;
         }
+
+        self::removeLinks($path);
+
         foreach (scandir($path) as $item) {
             if ($item === '.' || $item === '..') {
                 continue;
@@ -116,5 +119,33 @@ final class FsFixture
             }
         }
         rmdir($path);
+    }
+
+    /**
+     * Recursively delete the symbolic links found under a path, without following them.
+     *
+     * Links are removed first, so that none of them are left dangling by the removal of their target.
+     *
+     * @param string $path
+     * @return void
+     */
+    private static function removeLinks(string $path): void
+    {
+        foreach (scandir($path) as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $itemPath = $path . DS . $item;
+            if (is_link($itemPath)) {
+                // Links to directories must be removed with rmdir() on Windows
+                if (DS === '\\' && is_dir($itemPath)) {
+                    rmdir($itemPath);
+                } else {
+                    unlink($itemPath);
+                }
+            } elseif (is_dir($itemPath)) {
+                self::removeLinks($itemPath);
+            }
+        }
     }
 }
