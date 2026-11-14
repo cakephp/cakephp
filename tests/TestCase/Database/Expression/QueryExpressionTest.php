@@ -97,6 +97,68 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
+     * Supplies operator-bearing condition keys and their expected SQL.
+     *
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function operatorKeyProvider(): array
+    {
+        return [
+            'multi word is not' => [['FUNC(Users.first + Users.last) is not' => 'me'], 'FUNC(Users.first + Users.last) != :c0'],
+            'multi word not similar to' => [['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern'], 'FUNC(Users.name + Users.id) NOT SIMILAR TO :c0'],
+            'equals' => [['Users.name =' => 'pattern'], 'Users.name = :c0'],
+            'not equals' => [['Users.name !=' => 'pattern'], 'Users.name != :c0'],
+            'not equals ansi' => [['Users.name <>' => 'pattern'], 'Users.name <> :c0'],
+            'greater than or equals' => [['Users.name >=' => 'pattern'], 'Users.name >= :c0'],
+            'less than or equals' => [['Users.name <=' => 'pattern'], 'Users.name <= :c0'],
+            'regex not match' => [['Users.name !~' => 'pattern'], 'Users.name !~ :c0'],
+            'multiply' => [['Users.name *' => 'pattern'], 'Users.name * :c0'],
+            'minus' => [['Users.name -' => 'pattern'], 'Users.name - :c0'],
+            'backslash' => [['Users.name \\' => 'pattern'], 'Users.name \\ :c0'],
+            'contains' => [['Users.name @>' => 'pattern'], 'Users.name @> :c0'],
+            'like' => [['Users.name LIKE' => 'pat%'], 'Users.name LIKE :c0'],
+            'not like' => [['Users.name NOT LIKE' => 'pat%'], 'Users.name NOT LIKE :c0'],
+            'in' => [['Users.id IN' => [1, 2]], 'Users.id IN (:c0,:c1)'],
+            'not in' => [['Users.id NOT IN' => [1, 2]], 'Users.id NOT IN (:c0,:c1)'],
+            'is null' => [['Users.deleted IS' => null], '(Users.deleted) IS NULL'],
+            'is not null' => [['Users.deleted IS NOT' => null], '(Users.deleted) IS NOT NULL'],
+            'is with value' => [['Users.deleted IS' => 1], 'Users.deleted = :c0'],
+            'is not with value' => [['Users.deleted IS NOT' => 1], 'Users.deleted != :c0'],
+            'is distinct from' => [['deleted_at IS DISTINCT FROM' => '2021-01-01'], 'deleted_at IS DISTINCT FROM :c0'],
+            'is not distinct from' => [['deleted_at IS NOT DISTINCT FROM' => null], 'deleted_at IS NOT DISTINCT FROM :c0'],
+        ];
+    }
+
+    /**
+     * Tests conditions with operators inside the condition key.
+     *
+     * @param array<string, mixed> $conditions The conditions.
+     * @param string $expected The expected SQL.
+     */
+    #[DataProvider('operatorKeyProvider')]
+    public function testOperatorKeys(array $conditions, string $expected): void
+    {
+        $expr = new QueryExpression($conditions);
+        $this->assertEqualsSql($expected, $expr->sql(new ValueBinder()));
+    }
+
+    /**
+     * Tests operator keys and predicate functions can be mixed.
+     */
+    public function testOperatorKeysMixedWithPredicates(): void
+    {
+        $expr = new QueryExpression([
+            'Users.id >' => 1,
+            'Users.name' => notEquals('me'),
+            'OR' => ['Users.deleted IS' => null, 'Users.created' => greaterThanOrEquals('2021-01-01')],
+        ]);
+        $this->assertEqualsSql(
+            '(Users.id > :c0 AND Users.name != :c1 AND ((Users.deleted) IS NULL OR Users.created >= :c2))',
+            $expr->sql(new ValueBinder()),
+        );
+    }
+
+    /**
      * Test and() and or() calls work transparently
      */
     public function testAndOrCalls(): void

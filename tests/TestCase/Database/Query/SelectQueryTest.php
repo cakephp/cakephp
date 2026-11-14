@@ -3605,7 +3605,7 @@ class SelectQueryTest extends TestCase
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, a null-aware predicate such as isNull() or equals() is required.');
+        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM) is missing or a null-aware predicate such as isNull() or equals() is required.');
 
         new SelectQuery($this->connection)
             ->select(['name'])
@@ -3618,7 +3618,7 @@ class SelectQueryTest extends TestCase
      * Tests that using the wrong NULL operator will throw meaningful exception instead of
      * cloaking as always-empty result set.
      */
-    public function testLegacyNotEqualsConditionIsRejected(): void
+    public function testIsNotNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
