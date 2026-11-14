@@ -351,11 +351,19 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
         if (!$cookie || !is_string($cookie)) {
-            throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF cookie type.'));
+            throw new InvalidCsrfTokenException(
+                function_exists('Cake\I18n\__d')
+                    ? __d('cake', 'Missing or incorrect CSRF cookie type.')
+                    : 'Missing or incorrect CSRF cookie type.',
+            );
         }
 
         if (!$this->_verifyToken($cookie)) {
-            $exception = new InvalidCsrfTokenException(__d('cake', 'Missing or invalid CSRF cookie.'));
+            $exception = new InvalidCsrfTokenException(
+                function_exists('Cake\I18n\__d')
+                    ? __d('cake', 'Missing or invalid CSRF cookie.')
+                    : 'Missing or invalid CSRF cookie.',
+            );
 
             $expiredCookie = $this->_createCookie('', $request)->withExpired();
             $exception->setHeader('Set-Cookie', $expiredCookie->toHeaderValue());
@@ -378,10 +386,15 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             return;
         }
 
-        throw new InvalidCsrfTokenException(__d(
-            'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.',
-        ));
+        $message = 'CSRF token from either the request body or request headers did not match or is missing.';
+        if (function_exists('Cake\I18n\__d')) {
+            $message = __d(
+                'cake',
+                'CSRF token from either the request body or request headers did not match or is missing.',
+            );
+        }
+
+        throw new InvalidCsrfTokenException($message);
     }
 
     /**
