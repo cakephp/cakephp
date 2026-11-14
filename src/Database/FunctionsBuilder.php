@@ -175,7 +175,10 @@ class FunctionsBuilder
     public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
         if (
-            !preg_match('/^[a-zA-Z][a-zA-Z0-9_.]*(?:\s[a-zA-Z0-9_.]*)?(?:\(\s*\d+\s*(?:,\s*\d+\s*)?\))?$/', $dataType)
+            !preg_match(
+                '/^[a-zA-Z][a-zA-Z0-9_.]*(?:\s[a-zA-Z0-9_.]*)?(?:(?:[\[\]]*?)|(?:\(\s*\d+\s*(?:,\s*\d+\s*)?\)))?$/',
+                $dataType,
+            )
         ) {
             throw new InvalidArgumentException('cast() `dataType` must be a SQL data type');
         }

@@ -202,6 +202,8 @@ class FunctionsBuilderTest extends TestCase
             ['character varying', 'CAST(field AS character varying)'],
             ['decimal(10, 2)', 'CAST(field AS decimal(10, 2))'],
             ['decimal ( 10 , 2 )', 'CAST(field AS decimal ( 10 , 2 ))'],
+            ['int[]', 'CAST(field AS int[])'],
+            ['int[][]', 'CAST(field AS int[][])'],
         ];
     }
 
@@ -236,6 +238,10 @@ class FunctionsBuilderTest extends TestCase
             ['decimal(lol,12)'],
             ['decimal(123,lol)'],
             ['decimal(123,123,123)'],
+            ['decimal[](123,123)'],
+            ['decimal(123,123)[]'],
+            ['decimal[]()[]'],
+            ['decimal()[]'],
         ];
     }
 
