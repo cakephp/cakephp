@@ -138,7 +138,9 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'Api']);
 
         $route = new Route('/{controller}');
-        $this->assertSame($route, $routes->connect($route));
+        $this->deprecated(function () use ($route, $routes): void {
+            $this->assertSame($route, $routes->connect($route));
+        });
 
         $result = $this->collection->routes()[0];
         $this->assertSame($route, $result);
@@ -1389,5 +1391,30 @@ class RouteBuilderTest extends TestCase
         $route = $this->collection->routes()[0];
         $this->assertEquals('plugin.example.com', $route->options['_host']);
         $this->assertEquals('MyPlugin', $route->defaults['plugin']);
+    }
+
+    /**
+     * Register a prebuilt route without changing its template or defaults.
+     */
+    public function testAddPrebuiltRoute(): void
+    {
+        $collection = new RouteCollection();
+        $builder = new RouteBuilder($collection, '/scope');
+        $route = new Route('/outside', ['controller' => 'Articles', 'action' => 'index']);
+        $this->assertSame($route, $builder->add($route));
+        $this->assertSame([$route], $collection->routes());
+        $this->assertSame('/outside', $route->template);
+    }
+
+    /**
+     * The legacy overload points callers to add().
+     */
+    public function testConnectRouteObjectDeprecation(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $route = new Route('/legacy', ['controller' => 'Articles']);
+        $this->expectDeprecationMessageMatches('/RouteBuilder::connect\(\).*deprecated.*add\(\)/', function () use ($routes, $route): void {
+            $routes->connect($route);
+        });
     }
 }
