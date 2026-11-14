@@ -95,16 +95,14 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         if ($partitions instanceof Closure) {
             $partitions = $partitions(new QueryExpression([], [], ''));
-        } elseif (is_string($partitions)) {
-            QueryExpression::ensureSimpleString('partitions', $partitions);
         }
-
         if (!is_array($partitions)) {
             $partitions = [$partitions];
         }
 
         foreach ($partitions as &$partition) {
             if (is_string($partition)) {
+                QueryExpression::ensureSimpleString('partitions', $partition);
                 $partition = new IdentifierExpression($partition);
             }
         }
@@ -129,6 +127,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         if (is_string($fields)) {
             QueryExpression::ensureSimpleString('fields', $fields);
+        } elseif (is_array($fields)) {
+            foreach ($fields as $field) {
+                if (is_string($field)) {
+                    QueryExpression::ensureSimpleString('fields', $field);
+                }
+            }
         } elseif ($fields instanceof Closure) {
             $fields = $fields(new QueryExpression([], [], ''));
         }
