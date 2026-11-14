@@ -58,7 +58,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "boundwize/structarmed": "^0.19",
+        "boundwize/structarmed": "^0.19 || ^0.20",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mockery/mockery": "^1.6",
