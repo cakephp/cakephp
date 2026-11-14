@@ -846,6 +846,19 @@ abstract class Query implements ExpressionInterface, Stringable
      * Second parameter is used to specify what type is expected for each passed
      * key. Valid types can be used from the mapped with Database\Type class.
      *
+     * Predicate functions can also be used with field keys:
+     *
+     * ```
+     * use function Cake\Database\Expression\greaterThanOrEquals;
+     * use function Cake\Database\Expression\like;
+     *
+     * $query->where([
+     *     'posted' => greaterThanOrEquals(new DateTime('3 days ago')),
+     *     'title' => like('Hello W%'),
+     *     'author_id' => 1,
+     * ], ['posted' => 'datetime']);
+     * ```
+     *
      * ### Nesting conditions with conjunctions:
      *
      * ```

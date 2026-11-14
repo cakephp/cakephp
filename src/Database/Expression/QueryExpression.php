@@ -697,6 +697,10 @@ class QueryExpression implements ExpressionInterface, Countable
                 $c = $c($expr, $this);
             }
 
+            if ($c instanceof Predicate && ($numericKey || in_array(strtolower($k), [...$operators, 'not'], true))) {
+                throw new InvalidArgumentException('Predicate functions require a field-keyed condition.');
+            }
+
             if ($numericKey && empty($c)) {
                 continue;
             }
@@ -741,11 +745,9 @@ class QueryExpression implements ExpressionInterface, Countable
     }
 
     /**
-     * Parses a string conditions by trying to extract the operator inside it if any
-     * and finally returning either an adequate QueryExpression object or a plain
-     * string representation of the condition. This function is responsible for
-     * generating the placeholders and replacing the values by them, while storing
-     * the value elsewhere for future binding.
+     * Resolves field-keyed predicates or parses string conditions to extract an operator.
+     * Returns an expression object or a plain string representation of the condition,
+     * generating placeholders and storing values for future binding.
      *
      * @param string $condition The value from which the actual field and operator will
      * be extracted.
@@ -756,6 +758,22 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function _parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
         $expression = trim($condition);
+        if ($value instanceof Predicate) {
+            $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
+            $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
+            $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
+            $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
+            if (preg_match($operatorPattern, $expression)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Operator-bearing condition key `%s` cannot be combined with a predicate. '
+                    . 'Use the field name as the condition key.',
+                    $condition,
+                ));
+            }
+
+            return $value->resolve($expression, $this->getTypeMap()->type($expression));
+        }
+
         $operator = '=';
 
         $spaces = substr_count($expression, ' ');

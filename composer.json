@@ -95,6 +95,7 @@
         },
         "files": [
             "src/Core/functions.php",
+            "src/Database/Expression/functions.php",
             "src/Error/functions.php",
             "src/Collection/functions.php",
             "src/I18n/functions.php",
