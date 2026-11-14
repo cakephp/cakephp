@@ -152,13 +152,22 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('STRING_AGG(name, :param0 ORDER BY sort_order DESC)', $function->sql(new ValueBinder()));
     }
 
+    public static function invalidOrderProvider(): array
+    {
+        return [
+            ['OR 1=1'],
+            [['OR 1=1']],
+        ];
+    }
+
     /**
      * Tests generating a portable STRING_AGG() function
      */
-    public function testStringAggInvalidOrder(): void
+    #[DataProvider('invalidOrderProvider')]
+    public function testStringAggInvalidOrder($value): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->functions->stringAgg('name', ',', 'OR 1=1');
+        $this->functions->stringAgg('name', ',', $value);
     }
 
     /**

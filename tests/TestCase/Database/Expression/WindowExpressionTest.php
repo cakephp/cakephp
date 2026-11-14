@@ -75,6 +75,27 @@ class WindowExpressionTest extends TestCase
         );
     }
 
+    public static function invalidPartitionProvider(): array
+    {
+        return [
+            ['invalid with spaces'],
+            ["invalid\nnewline"],
+            ["invalid\rreturn"],
+            [['invalid array']],
+            [['ok', 'invalid value']],
+        ];
+    }
+
+    /**
+     * Tests windows with invalid partitions
+     */
+    #[DataProvider('invalidPartitionProvider')]
+    public function testPartitionsInvalid(mixed $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new WindowExpression())->partition($part);
+    }
+
     /**
      * Tests windows with order by
      */
@@ -109,6 +130,16 @@ class WindowExpressionTest extends TestCase
             'ORDER BY test, test2, test3 DESC',
             $w->sql(new ValueBinder()),
         );
+    }
+
+    /**
+     * Tests windows with invalid orderBy clauses
+     */
+    #[DataProvider('invalidPartitionProvider')]
+    public function testOrderbyInvalid(mixed $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new WindowExpression())->orderBy($part);
     }
 
     public function testOrderDeprecated(): void
