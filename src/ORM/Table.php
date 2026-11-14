@@ -31,6 +31,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Datasource\RulesAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -1566,12 +1567,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * Project query results into DTO instances and return them as a list.
+     * Project query results into DTO instances.
      *
-     * Type-honest terminal counterpart to the fluent
-     * {@see \Cake\ORM\Query\SelectQuery::projectAs()}: the query stays typed as
-     * entities, while this method returns `list<T>`. Stack finders on `$query`
-     * first when needed, then hand it here to execute the projection.
+     * The query only fetches array rows; the mapping into `$class` happens here,
+     * after all result formatters have run. Stack finders on `$query` first when
+     * needed, then hand it here to execute the projection. The passed query is
+     * not modified.
      *
      * Rows are mapped from the raw selected columns, so entity visibility and
      * accessors do not affect the DTO data.
@@ -1589,28 +1590,30 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param class-string<T> $class The DTO class to map each row into.
      * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query
      *   A pre-built query, or null to start from `find()`.
-     * @return list<T>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, T>
      * @throws \Cake\Core\Exception\CakeException When a row does not map to an instance of `$class`,
      *   for example a `createFromArray()` factory returning another type.
      * @since 5.5.0
      */
-    public function projectAs(string $class, ?SelectQuery $query = null): array
+    public function projectAs(string $class, ?SelectQuery $query = null): ResultSetInterface
     {
-        $query ??= $this->find();
+        $query = $this->projectionQuery($query);
+        $factory = $query->resultSetFactory();
+        $hydrator = $factory->getDtoHydrator($class);
 
         $results = [];
-        foreach ($query->projectAs($class)->all() as $dto) {
-            $results[] = $this->assertProjected($dto, $class);
+        foreach ($query->all() as $key => $row) {
+            $results[$key] = $this->assertProjected(is_array($row) ? $hydrator($row) : $row, $class);
         }
 
-        return $results;
+        return $factory->createResultSet($results);
     }
 
     /**
      * Project the first query result into a DTO instance.
      *
      * Single-row counterpart to {@see \Cake\ORM\Table::projectAs()}. Like
-     * `SelectQuery::first()`, it limits the query to one row if not executed yet.
+     * `SelectQuery::first()`, it limits the query to one row.
      *
      * ```
      * $dto = $articles->projectOne(
@@ -1629,14 +1632,29 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function projectOne(string $class, ?SelectQuery $query = null): ?object
     {
-        $query ??= $this->find();
+        $query = $this->projectionQuery($query);
 
-        $dto = $query->projectAs($class)->first();
-        if ($dto === null) {
+        $row = $query->first();
+        if ($row === null) {
             return null;
         }
+        if (is_array($row)) {
+            $row = $query->resultSetFactory()->getDtoHydrator($class)($row);
+        }
 
-        return $this->assertProjected($dto, $class);
+        return $this->assertProjected($row, $class);
+    }
+
+    /**
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query The query to project.
+     * @return \Cake\ORM\Query\SelectQuery<array> A copy that fetches array rows.
+     */
+    protected function projectionQuery(?SelectQuery $query): SelectQuery
+    {
+        $query = $query === null ? $this->find() : clone $query;
+
+        /** @var \Cake\ORM\Query\SelectQuery<array> */
+        return $query->enableHydration(false);
     }
 
     /**

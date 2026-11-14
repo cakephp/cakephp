@@ -16,17 +16,21 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Cake\ORM\DtoMapper;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Dto\ArticleArrayDto;
 use TestApp\Dto\ArticleDto;
@@ -283,10 +287,11 @@ class ResultSetFactoryTest extends TestCase
 
         $results = $this->table->projectAs(SimpleArticleDto::class);
 
-        $this->assertIsList($results);
+        $this->assertInstanceOf(ResultSetInterface::class, $results);
         $this->assertCount(3, $results);
-        $this->assertContainsOnlyInstancesOf(SimpleArticleDto::class, $results);
-        $this->assertSame(1, $results[0]->id);
+        $this->assertContainsOnlyInstancesOf(SimpleArticleDto::class, $results->toArray());
+        $this->assertSame(1, $results->first()->id);
+        $this->assertSame([1, 2, 3], $results->map(fn(SimpleArticleDto $dto) => $dto->id)->toList());
     }
 
     /**
@@ -300,8 +305,123 @@ class ResultSetFactoryTest extends TestCase
         $results = $this->table->projectAs(SimpleArticleDto::class, $query);
 
         $this->assertCount(1, $results);
-        $this->assertInstanceOf(SimpleArticleDto::class, $results[0]);
-        $this->assertSame('First Article', $results[0]->title);
+        $this->assertInstanceOf(SimpleArticleDto::class, $results->first());
+        $this->assertSame('First Article', $results->first()->title);
+    }
+
+    /**
+     * Test Table::projectAs() leaves the passed query untouched, so it still returns entities.
+     */
+    public function testTableProjectAsDoesNotModifyQuery(): void
+    {
+        DtoMapper::clearCache();
+
+        $query = $this->table->find()->where(['id' => 1]);
+        $this->table->projectAs(SimpleArticleDto::class, $query);
+
+        $this->assertTrue($query->isHydrationEnabled());
+        $this->assertInstanceOf(EntityInterface::class, $query->first());
+    }
+
+    /**
+     * Test Table::projectAs() accepts a query that already projects through the deprecated query method.
+     */
+    public function testTableProjectAsWithQueryLevelProjection(): void
+    {
+        DtoMapper::clearCache();
+
+        $query = $this->table->find()->where(['id' => 1])->projectAs(SimpleArticleDto::class);
+
+        $this->assertInstanceOf(
+            SimpleArticleDto::class,
+            $this->table->projectAs(SimpleArticleDto::class, $query)->first(),
+        );
+        $this->assertInstanceOf(SimpleArticleDto::class, $this->table->projectOne(SimpleArticleDto::class, $query));
+    }
+
+    /**
+     * Test Table::projectAs() maps contained associations into nested DTOs.
+     *
+     * @param class-string $class
+     * @param class-string $authorClass
+     */
+    #[DataProvider('articleDtoProvider')]
+    public function testTableProjectAsWithBelongsTo(string $class, string $authorClass): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $result = $articles->projectOne(
+            $class,
+            $articles->find()->contain(['Authors'])->where(['Articles.id' => 1]),
+        );
+
+        $this->assertInstanceOf($class, $result);
+        $this->assertSame('First Article', $result->title);
+        $this->assertInstanceOf($authorClass, $result->author);
+        $this->assertSame('mariano', $result->author->name);
+    }
+
+    /**
+     * @return array<string, array{class-string, class-string}>
+     */
+    public static function articleDtoProvider(): array
+    {
+        return [
+            'constructor' => [ArticleDto::class, AuthorDto::class],
+            'createFromArray' => [ArticleArrayDto::class, AuthorArrayDto::class],
+        ];
+    }
+
+    /**
+     * Test Table::projectAs() maps a HasMany association into nested DTOs.
+     */
+    public function testTableProjectAsWithHasMany(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+
+        $results = $articles->projectAs(
+            ArticleDto::class,
+            $articles->find()->contain(['Comments'])->orderBy(['Articles.id' => 'ASC']),
+        )->toList();
+
+        $this->assertCount(3, $results);
+        $this->assertNotEmpty($results[0]->comments);
+        $this->assertContainsOnlyInstancesOf(CommentDto::class, $results[0]->comments);
+        $this->assertSame([], $results[2]->comments);
+    }
+
+    /**
+     * Test Table::projectAs() runs after result formatters of contained associations.
+     */
+    public function testTableProjectAsWithAssociationFormatter(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $query = $articles->find()
+            ->contain(['Authors' => function (SelectQuery $q) {
+                return $q->formatResults(function (CollectionInterface $authors) {
+                    return $authors->map(function (array $author) {
+                        $author['name'] = strtoupper($author['name']);
+
+                        return $author;
+                    });
+                });
+            }])
+            ->where(['Articles.id' => 1]);
+
+        $result = $articles->projectOne(ArticleDto::class, $query);
+
+        $this->assertInstanceOf(ArticleDto::class, $result);
+        $this->assertSame('MARIANO', $result->author->name);
     }
 
     /**
