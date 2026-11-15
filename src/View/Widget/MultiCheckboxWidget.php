@@ -142,7 +142,9 @@ class MultiCheckboxWidget extends BasicWidget
             // Grouped inputs in a fieldset.
             if (is_string($key) && is_array($val) && !isset($val['text'], $val['value'])) {
                 $inputs = $this->_renderInputs(['options' => $val] + $data, $context);
-                $title = $this->_templates->format('multicheckboxTitle', ['text' => $key]);
+                $title = $this->_templates->format('multicheckboxTitle', [
+                    'text' => $data['escape'] ? h($key) : $key,
+                ]);
                 $out[] = $this->_templates->format('multicheckboxWrapper', [
                     'content' => $title . implode('', $inputs),
                 ]);

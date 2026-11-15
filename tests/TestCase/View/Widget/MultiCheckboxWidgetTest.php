@@ -486,7 +486,7 @@ class MultiCheckboxWidgetTest extends TestCase
                 'Group 1' => [
                     1 => 'CakePHP',
                 ],
-                'Group 2' => [
+                'Group <b>2</b>' => [
                     2 => 'Development',
                 ],
             ],
@@ -509,7 +509,7 @@ class MultiCheckboxWidgetTest extends TestCase
             '/fieldset',
 
             '<fieldset',
-            '<legend', 'Group 2', '/legend',
+            '<legend', 'Group &lt;b&gt;2&lt;/b&gt;', '/legend',
             ['div' => ['class' => 'checkbox']],
             ['input' => [
                 'type' => 'checkbox',
