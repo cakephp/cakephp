@@ -1992,6 +1992,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a decimal validation rule to a field.
      *
+     * Locale-sensitive input is deprecated since 5.5.0. Use localizedDecimal() for localized values.
+     *
      * @param string $field The field you want to apply the rule to.
      * @param int|null $places The number of decimal places to require.
      * @param string|null $message The error message when the rule fails.
@@ -3243,5 +3245,60 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             '_providers' => array_keys($this->_providers),
             '_fields' => $fields,
         ];
+    }
+
+    /**
+     * Add a localized decimal validation rule to a field.
+     *
+     * @param string $field The field you want to apply the rule to.
+     * @param int|null $places The number of decimal places to require.
+     * @param string|null $message The error message when the rule fails.
+     * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
+     *   true when the validation rule should be applied.
+     * @see \Cake\Validation\Validation::localizedDecimal()
+     * @return $this
+     */
+    public function localizedDecimal(
+        string $field,
+        ?int $places = null,
+        ?string $message = null,
+        Closure|string|null $when = null,
+    ) {
+        $message ??= $this->defaultMessageForDecimal($places);
+        $extra = array_filter(['on' => $when, 'message' => $message]);
+
+        return $this->add($field, 'localizedDecimal', $extra + [
+            'rule' => ['localizedDecimal', $places],
+        ]);
+    }
+
+    /**
+     * Get default validation message for decimal validation methods.
+     *
+     * @param int|null $places The number of decimal places to require.
+     * @return string
+     */
+    protected function defaultMessageForDecimal(?int $places = null): string
+    {
+        if (!$this->_useI18n) {
+            if ($places === null) {
+                return 'The provided value must be decimal with any number of decimal places, including none';
+            }
+
+            return sprintf('The provided value must be decimal with `%s` decimal places', $places);
+        }
+
+        if ($places === null) {
+            return __d(
+                'cake',
+                'The provided value must be decimal with any number of decimal places, including none',
+            );
+        }
+
+        return __d(
+            'cake',
+            'The provided value must be decimal with `{0}` decimal places',
+            $places,
+        );
     }
 }

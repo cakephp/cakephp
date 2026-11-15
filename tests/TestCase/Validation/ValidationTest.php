@@ -1902,19 +1902,19 @@ class ValidationTest extends TestCase
     /**
      * Test localized floats with decimal.
      */
-    public function testDecimalLocaleSet(): void
+    public function testLocalizedDecimalLocaleSet(): void
     {
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
         $this->skipIf(Locale::setDefault('da_DK') === false, "The Danish locale isn't available.");
 
-        $this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid decimal');
-        $this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal(1.54), '1.54 should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('1.54'), '"1.54" should be considered a valid decimal');
 
-        $this->assertTrue(Validation::decimal(12345.67), '12345.67 should be considered a valid decimal');
-        $this->assertTrue(Validation::decimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal(12345.67), '12345.67 should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('12,345.67'), '"12,345.67" should be considered a valid decimal');
 
         $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
-        $this->assertTrue(Validation::decimal('1 200,99'), 'should be considered a valid decimal');
+        $this->assertTrue(Validation::localizedDecimal('1 200,99'), 'should be considered a valid decimal');
     }
 
     /**
@@ -3211,5 +3211,45 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::iban('AD1200012030200359100101'));
         $this->assertFalse(Validation::iban('BE68539007547032'));
         $this->assertFalse(Validation::iban('LC55HEMM000100010012001200023014'));
+    }
+
+    /**
+     * Localized decimals are explicit while legacy decimal validation is unchanged.
+     */
+    public function testLocalizedDecimalOptIn(): void
+    {
+        $locale = ini_get('intl.default_locale');
+        try {
+            ini_set('intl.default_locale', 'de_DE');
+            $this->assertTrue(Validation::localizedDecimal('1.234,56', 2));
+            $this->assertFalse(Validation::localizedDecimal('12,,34', 2));
+            $this->deprecated(function (): void {
+                $this->assertTrue(Validation::decimal('1.234,56', 2));
+            });
+            $this->assertFalse(Validation::localizedDecimal([]));
+            ini_set('intl.default_locale', 'en_US');
+            $this->assertTrue(Validation::localizedDecimal('1,234.56', 2));
+            $this->assertFalse(Validation::localizedDecimal('12,,34.56', 2));
+        } finally {
+            ini_set('intl.default_locale', $locale);
+        }
+    }
+
+    /**
+     * Legacy locale normalization retains its result and announces the replacement.
+     */
+    public function testDecimalLocalizedInputDeprecation(): void
+    {
+        $locale = ini_get('intl.default_locale');
+        try {
+            ini_set('intl.default_locale', 'en_US');
+            $this->deprecated(function (): void {
+                $this->assertTrue(Validation::decimal('1,234.56', 2));
+            });
+            $this->assertTrue(Validation::localizedDecimal('1,234.56', 2));
+            $this->assertTrue(Validation::decimal('1234.56', 2));
+        } finally {
+            ini_set('intl.default_locale', $locale);
+        }
     }
 }

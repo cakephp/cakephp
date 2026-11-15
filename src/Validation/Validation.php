@@ -31,6 +31,7 @@ use ReflectionEnum;
 use ReflectionException;
 use RuntimeException;
 use UnhandledMatchError;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Validation Class. Used for validation of model data
@@ -730,6 +731,9 @@ class Validation
     /**
      * Checks that a value is a valid decimal. Both the sign and exponent are optional.
      *
+     * Locale-sensitive input is deprecated since 5.5.0. Use localizedDecimal() for localized values.
+     * In 6.0, decimal() validates locale-independent decimal values.
+     *
      * Be aware that the currently set locale is being used to determine
      * the decimal and thousands separator of the given number.
      *
@@ -776,11 +780,20 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
+        $original = (string)$check;
+
         // There are two types of non-breaking spaces - we inject a space to account for human input
         if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
             $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
         } else {
             $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
+        }
+
+        if ($check !== $original) {
+            deprecationWarning(
+                '5.5.0',
+                'Locale-sensitive input to Validation::decimal() is deprecated. Use localizedDecimal() instead.',
+            );
         }
 
         return static::_check($check, $regex);
@@ -1975,5 +1988,82 @@ class Validation
     protected static function _reset(): void
     {
         static::$errors = [];
+    }
+
+    /**
+     * Checks that a value is a valid decimal. Both the sign and exponent are optional.
+     *
+     * The currently set locale is used to determine the decimal and thousands separator of the given number.
+     *
+     * Valid Places:
+     *
+     * - null => Any number of decimal places, including none. The '.' is not required.
+     * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
+     * - 1..N => Exactly that many number of decimal places. The '.' is required.
+     *
+     * @param mixed $check The value the test for decimal.
+     * @param int|true|null $places Decimal places.
+     * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
+     * @return bool Success
+     */
+    public static function localizedDecimal(mixed $check, int|bool|null $places = null, ?string $regex = null): bool
+    {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
+        if ($regex === null) {
+            [$check, $regex] = static::getDecimalRegex($check, $places);
+        }
+
+        $check = (string)$check;
+        $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
+        $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+        $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+        $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+
+        // There are two types of non-breaking spaces - we inject a space to account for human input
+        if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
+            $check = str_replace($groupingSep, ' ', $check);
+            $groupingSep = ' ';
+        }
+
+        if (preg_match('/' . preg_quote($groupingSep, '/') . '{2,}/', $check)) {
+            return false;
+        }
+
+        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
+
+        return static::_check($check, $regex);
+    }
+
+    /**
+     * Get the regex for a decimal value and modify check value as needed.
+     *
+     * @param mixed $check Value to check.
+     * @param int|bool|null $places Decimal places.
+     * @return array{0: mixed, 1: string}
+     */
+    protected static function getDecimalRegex(mixed $check, int|bool|null $places = null): array
+    {
+        $lnum = '[0-9]+';
+        $dnum = "[0-9]*[\.]{$lnum}";
+        $sign = '[+-]?';
+        $exp = "(?:[eE]{$sign}{$lnum})?";
+
+        if ($places === null) {
+            $regex = "/^{$sign}(?:{$lnum}|{$dnum}){$exp}$/";
+        } elseif ($places === true) {
+            if (is_float($check) && floor($check) === $check) {
+                $check = sprintf('%.1f', $check);
+            }
+            $regex = "/^{$sign}{$dnum}{$exp}$/";
+        } else {
+            $places = '[0-9]{' . $places . '}';
+            $dnum = "(?:[0-9]*[\.]{$places}|{$lnum}[\.]{$places})";
+            $regex = "/^{$sign}{$dnum}{$exp}$/";
+        }
+
+        return [$check, $regex];
     }
 }
