@@ -364,6 +364,19 @@ class WindowExpressionTest extends TestCase
     }
 
     #[DataProvider('invalidFrameProvider')]
+    public function testFrameInvalidType(string $start, string $end): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new WindowExpression())->frame(
+            $start,
+            1,
+            WindowExpression::PRECEDING,
+            2,
+            WindowExpression::PRECEDING,
+        );
+    }
+
+    #[DataProvider('invalidFrameProvider')]
     public function testFrameInvalidStartEnd(string $start, string $end): void
     {
         $this->expectException(InvalidArgumentException::class);
