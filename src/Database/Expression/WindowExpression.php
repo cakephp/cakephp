@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -183,6 +184,10 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         $endOffset,
         string $endDirection
     ) {
+        $validTypes = [self::ROWS, self::RANGE, self::GROUPS];
+        if (!in_array($type, $validTypes)) {
+            throw new InvalidArgumentException('Invalid type, must be one of ' . implode(', ', $validTypes));
+        }
         if (is_string($startOffset)) {
             QueryExpression::ensureSimpleString('startOffset', $startOffset);
         }
