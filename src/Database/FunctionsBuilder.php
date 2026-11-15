@@ -139,7 +139,7 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $type The SQL data type. Must be a simple alphanumeric string.
+     * @param string $dataType The SQL data type.
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function cast($field, string $type = ''): FunctionExpression
@@ -149,14 +149,18 @@ class FunctionsBuilder
                 'Build cast function by FunctionsBuilder::cast(array $args) is deprecated. ' .
                 'Use FunctionsBuilder::cast($field, string $type) instead.'
             );
-
-            return new FunctionExpression('CAST', $field);
         }
-
+        if (
+            !preg_match(
+                '/^[a-zA-Z][a-zA-Z0-9_.]*(?:\s[a-zA-Z0-9_.]*)?(?:(?:[\[\]]*?)|(?:\(\s*\d+\s*(?:,\s*\d+\s*)?\)))?$/',
+                $type,
+            )
+        ) {
+            throw new InvalidArgumentException('cast() `type` must be a SQL data type');
+        }
         if (empty($type)) {
             throw new InvalidArgumentException('The `$type` in a cast cannot be empty.');
         }
-        QueryExpression::ensureSimpleString('type', $type);
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
         $expression->setConjunction(' AS')->add([$type => 'literal']);
 
