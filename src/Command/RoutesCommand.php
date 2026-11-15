@@ -71,8 +71,9 @@ class RoutesCommand extends Command
                 $item[] = implode(', ', $route->getMiddleware());
             }
             if ($this->args->getOption('verbose')) {
-                ksort($route->defaults);
-                $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
+                $defaults = $route->defaults;
+                ksort($defaults);
+                $item[] = json_encode($defaults, JSON_THROW_ON_ERROR);
             }
 
             $output[] = $item;
