@@ -67,6 +67,7 @@ class TableLocatorTest extends TestCase
     protected function tearDown(): void
     {
         $this->clearPlugins();
+        ConnectionManager::dropAlias('testing');
         parent::tearDown();
     }
 
