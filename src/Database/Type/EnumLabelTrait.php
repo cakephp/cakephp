@@ -25,6 +25,8 @@ use function Cake\I18n\__dx;
  * Trait EnumLabelTrait
  *
  * Provides a method to get the label for an enum case.
+ *
+ * @property-read string $name The enum case name.
  */
 trait EnumLabelTrait
 {

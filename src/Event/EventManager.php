@@ -44,7 +44,7 @@ class EventManager implements EventManagerInterface
     /**
      * List of listener callbacks associated to
      *
-     * @var array
+     * @var array<string, array<int, array<array{callable: callable}>>>
      */
     protected array $listeners = [];
 
@@ -172,7 +172,7 @@ class EventManager implements EventManagerInterface
             return $this;
         }
 
-        if (empty($this->listeners[$eventKey])) {
+        if (!isset($this->listeners[$eventKey])) {
             return $this;
         }
 
@@ -260,6 +260,7 @@ class EventManager implements EventManagerInterface
         $settings = [];
 
         if (is_array($handler)) {
+            assert(isset($handler['callable']), 'Event handler array must contain a `callable` key.');
             $callable = $handler['callable'];
             $settings = $handler;
             unset($settings['callable']);

@@ -777,7 +777,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * or full mime-type.
      *
      * @param string $type short type alias or full mimetype.
-     * @return array{'Accept': non-empty-string, 'Content-Type': non-empty-string} Headers to set on the request.
+     * @return array{'Accept': string, 'Content-Type': string} Headers to set on the request.
      * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
      */
     protected function typeHeaders(string $type): array

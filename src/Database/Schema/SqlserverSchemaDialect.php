@@ -33,7 +33,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array An array of (sql, params) to execute.
+     * @return array{0: string, 1: array<array-key, mixed>} An array of (sql, params) to execute.
      */
     protected function listTablesSql(array $config): array
     {

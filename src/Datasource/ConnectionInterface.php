@@ -23,14 +23,8 @@ use Psr\SimpleCache\CacheInterface;
  */
 interface ConnectionInterface
 {
-    /**
-     * @var string
-     */
     public const string ROLE_WRITE = 'write';
 
-    /**
-     * @var string
-     */
     public const string ROLE_READ = 'read';
 
     /**

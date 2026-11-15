@@ -25,6 +25,8 @@ use Cake\Event\EventDispatcherInterface;
  *
  * @property \Cake\Http\ServerRequest|null $request The request being handled.
  * @property \Cake\Http\Response|null $response The response being built.
+ * @property string|null $name The controller or cell name.
+ * @property string|null $plugin The plugin name.
  */
 trait ViewVarsTrait
 {

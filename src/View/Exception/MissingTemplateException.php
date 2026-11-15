@@ -75,7 +75,7 @@ class MissingTemplateException extends CakeException
     /**
      * Get the passed in attributes
      *
-     * @return array{file: string, paths: array<string>}
+     * @return array{file: string, paths: array<string>, name?: string}
      */
     public function getAttributes(): array
     {

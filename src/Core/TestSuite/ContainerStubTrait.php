@@ -35,6 +35,8 @@ use Psr\Container\NotFoundExceptionInterface;
  * This trait leverages the `Application.buildContainer` event
  * to inject the mocked services into the container that the
  * application uses.
+ *
+ * @property array<array-key, mixed> $appPluginsToLoad Plugins to load before running the application.
  */
 trait ContainerStubTrait
 {

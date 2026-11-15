@@ -59,4 +59,5 @@ ignore = [
     "less-specific-nested-argument-type",
     "less-specific-nested-return-statement",
     "less-specific-return-statement",
+    "avoid-catching-error",
 ]
