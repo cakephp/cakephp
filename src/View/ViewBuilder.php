@@ -38,15 +38,11 @@ class ViewBuilder implements JsonSerializable
 {
     /**
      * Deep merge strategy - recursively merges nested arrays (default for BC).
-     *
-     * @var string
      */
     public const MERGE_DEEP = 'deep';
 
     /**
      * Shallow merge strategy - simple array merge, replaces array values.
-     *
-     * @var string
      */
     public const MERGE_SHALLOW = 'shallow';
 

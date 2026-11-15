@@ -18,6 +18,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -27,6 +28,7 @@ use Cake\Database\ValueBinder;
  */
 trait CaseExpressionTrait
 {
+    use ExpressionTypeCasterTrait;
     use TypeInferenceTrait;
 
     /**

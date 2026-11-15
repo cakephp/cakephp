@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\Response;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * CookieEquals
@@ -25,11 +24,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class CookieEquals extends ResponseBase
 {
-    /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
-
     /**
      * Constructor.
      *

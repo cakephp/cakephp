@@ -24,29 +24,14 @@ use Closure;
  */
 interface WindowInterface
 {
-    /**
-     * @var string
-     */
     public const string PRECEDING = 'PRECEDING';
 
-    /**
-     * @var string
-     */
     public const string FOLLOWING = 'FOLLOWING';
 
-    /**
-     * @var string
-     */
     public const string RANGE = 'RANGE';
 
-    /**
-     * @var string
-     */
     public const string ROWS = 'ROWS';
 
-    /**
-     * @var string
-     */
     public const string GROUPS = 'GROUPS';
 
     /**

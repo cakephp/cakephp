@@ -369,6 +369,9 @@ class Xml
                             // https://www.w3.org/TR/REC-xml/#syntax
                             // https://bugs.php.net/bug.php?id=36795
                             $child = $dom->createElement($key, '');
+                            if ($child === false) {
+                                throw new XmlException(sprintf('Invalid XML element name `%s`', $key));
+                            }
                             if ($value instanceof BackedEnum) {
                                 $value = (string)$value->value;
                             } elseif ($value instanceof UnitEnum) {
@@ -379,6 +382,9 @@ class Xml
                             $child->appendChild(new DOMText($value));
                         } else {
                             $child = $dom->createElement($key, (string)$value);
+                            if ($child === false) {
+                                throw new XmlException(sprintf('Invalid XML element name `%s`', $key));
+                            }
                         }
                         $node->appendChild($child);
                     } else {
@@ -386,6 +392,9 @@ class Xml
                             $key = substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
+                        if ($attribute === false) {
+                            throw new XmlException(sprintf('Invalid XML attribute name `%s`', $key));
+                        }
                         $attribute->appendChild($dom->createTextNode((string)$value));
                         $node->appendChild($attribute);
                     }
@@ -394,14 +403,14 @@ class Xml
                         throw new XmlException('Invalid array');
                     }
                     if (is_numeric(implode('', array_keys($value)))) {
-// List
+                        // List
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
                             static::createChild($itemData);
                         }
                     } else {
-// Struct
+                        // Struct
                         static::createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }
@@ -447,6 +456,7 @@ class Xml
         }
 
         $child = $dom->createElement($key);
+        assert($child instanceof DOMElement);
         if ($childValue !== null) {
             $child->appendChild($dom->createTextNode($childValue));
         }

@@ -17,7 +17,6 @@ namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * CookieEncryptedEquals
@@ -27,11 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 class CookieEncryptedEquals extends CookieEquals
 {
     use CookieCryptTrait;
-
-    /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
 
     /**
      * Constructor.

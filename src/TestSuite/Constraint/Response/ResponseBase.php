@@ -58,6 +58,18 @@ abstract class ResponseBase extends Constraint
     }
 
     /**
+     * Get the response as a Cake response.
+     *
+     * @return \Cake\Http\Response
+     */
+    protected function getResponse(): Response
+    {
+        assert($this->response instanceof Response);
+
+        return $this->response;
+    }
+
+    /**
      * Read a cookie from either the response cookie collection,
      * or headers
      *

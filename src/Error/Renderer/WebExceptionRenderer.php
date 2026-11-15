@@ -361,7 +361,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     protected function getHttpCode(Throwable $exception): int
     {
         if ($exception instanceof HttpErrorCodeInterface) {
-            return $exception->getCode();
+            return (int)$exception->getCode();
         }
 
         return 500;

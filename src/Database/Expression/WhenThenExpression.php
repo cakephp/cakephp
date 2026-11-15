@@ -18,7 +18,6 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Closure;
@@ -31,7 +30,6 @@ use LogicException;
 class WhenThenExpression implements ExpressionInterface
 {
     use CaseExpressionTrait;
-    use ExpressionTypeCasterTrait;
 
     /**
      * The names of the clauses that are valid for use with the

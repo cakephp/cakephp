@@ -15,8 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use Psr\Http\Message\ResponseInterface;
-
 /**
  * CookieSet
  *
@@ -24,11 +22,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class CookieSet extends ResponseBase
 {
-    /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
-
     /**
      * Checks assertion
      *
