@@ -196,7 +196,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         string $endDirection,
     ) {
         $validTypes = [self::ROWS, self::RANGE, self::GROUPS];
-        if (!in_array($type, $validTypes)) {
+        if (!in_array($type, $validTypes, true)) {
             throw new InvalidArgumentException('Invalid type, must be one of ' . implode(', ', $validTypes));
         }
         if (is_string($startOffset)) {
