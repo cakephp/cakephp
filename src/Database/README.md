@@ -243,10 +243,10 @@ For even more complex conditions you can use closures and expression objects:
 ```php
 $query->where(function (ExpressionInterface $exp) {
         return $exp
-            ->eq('author_id', 2)
-            ->eq('published', true)
-            ->notEq('spam', true)
-            ->gt('view_count', 10);
+            ->equals('author_id', 2)
+            ->equals('published', true)
+            ->notEquals('spam', true)
+            ->greaterThan('view_count', 10);
     });
 ```
 
@@ -266,10 +266,10 @@ Combining expressions is also possible:
 ```php
 $query->where(function (ExpressionInterface $exp) {
         $orConditions = $exp->or(['author_id' => 2])
-            ->eq('author_id', 5);
+            ->equals('author_id', 5);
         return $exp
             ->not($orConditions)
-            ->lte('view_count', 10);
+            ->lessThanOrEquals('view_count', 10);
     });
 ```
 

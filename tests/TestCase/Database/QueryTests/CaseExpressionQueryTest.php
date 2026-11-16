@@ -216,7 +216,7 @@ class CaseExpressionQueryTest extends TestCase
                     $expression = $query->func()->cast($expression, 'integer');
                 }
 
-                return $exp->gt(
+                return $exp->greaterThan(
                     $query->func()->sum($expression),
                     2,
                     'integer',
