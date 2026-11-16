@@ -22,7 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{between, equals, greaterThan, in, like};
+use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, exclusiveOr, func, greaterThan, in, lessThan, like, not, notIn};
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -87,6 +87,119 @@ class PredicateQueryTest extends TestCase
     }
 
     /**
+     * Checks grouped membership subqueries and nested disjunctions execute in both quoting modes.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testCompositePredicates(bool $quote): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $excluded = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(2)]);
+            $included = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(3)]);
+            $articles = $this->getTableLocator()->get('Articles');
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => allOf(notIn($excluded), in($included)),
+            ]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+            $this->assertSame([2], (clone $query)->all()->extract('id')->toList());
+
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => anyOf(allOf(greaterThan(1), lessThan(3)), equals(3)),
+                'Articles.author_id' => equals(1),
+            ]);
+            $this->assertSame([3], $query->all()->extract('id')->toList());
+            $this->assertSame(
+                ['integer', 'integer', 'integer', 'integer'],
+                array_column($query->getValueBinder()->bindings(), 'type'),
+            );
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
+    }
+
+    /**
+     * Checks negated groups and XOR subqueries execute with either identifier quoting mode.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testNegationAndExclusiveSubqueries(bool $quote): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $articles = $this->getTableLocator()->get('Articles');
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => not(anyOf(lessThan(2), greaterThan(2))),
+            ]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+
+            $left = $articles->find()->select(['id'])->where(['Articles.id' => lessThan(3)]);
+            $right = $articles->find()->select(['id'])->where(['Articles.id' => greaterThan(1)]);
+            $predicate = exclusiveOr(in($left), in($right));
+            $query = $articles->find()->select(['id'])->where(['Articles.id' => $predicate])->orderByAsc('Articles.id');
+            $this->assertSame([1, 3], $query->all()->extract('id')->toList());
+            $this->assertSame([1, 3], (clone $query)->all()->extract('id')->toList());
+            $this->assertSame(
+                ['integer', 'integer', 'integer', 'integer'],
+                array_column($query->getValueBinder()->bindings(), 'type'),
+            );
+            $query = $articles->find()->select(['id'])->where(['Articles.id' => not($predicate)]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
+    }
+
+    /**
+     * Supplies every pair of true, false, and unknown comparison operands.
+     *
+     * @return array<string, array{int|null, int|null, bool|null}>
+     */
+    public static function exclusiveTruthTableProvider(): array
+    {
+        return [
+            'true, true' => [1, 1, false],
+            'true, false' => [1, 0, true],
+            'true, unknown' => [1, null, null],
+            'false, true' => [0, 1, true],
+            'false, false' => [0, 0, false],
+            'false, unknown' => [0, null, null],
+            'unknown, true' => [null, 1, null],
+            'unknown, false' => [null, 0, null],
+            'unknown, unknown' => [null, null, null],
+        ];
+    }
+
+    /**
+     * Checks XOR and its negation preserve SQL UNKNOWN rather than treating NULL as false.
+     *
+     * @param int|null $left The first operand compared to the author's identifier of 1.
+     * @param int|null $right The second operand compared to the author's identifier of 1.
+     * @param bool|null $expected The expected SQL truth value, with null representing UNKNOWN.
+     */
+    #[DataProvider('exclusiveTruthTableProvider')]
+    public function testExclusiveTruthTable(?int $left, ?int $right, ?bool $expected): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $base = $articles->find()->where(['Articles.id' => 1]);
+        $predicate = exclusiveOr(comparison('=', $left), comparison('=', $right));
+        $positive = (clone $base)->where(['Articles.author_id' => $predicate]);
+        $negative = (clone $base)->where(['Articles.author_id' => not($predicate)]);
+        $this->assertSame($expected === true ? 1 : 0, $positive->all()->count());
+        $this->assertSame($expected === false ? 1 : 0, $negative->all()->count());
+    }
+
+    /**
      * Checks query filters work in aggregate, having, join, and CASE contexts.
      */
     public function testConditionConsumers(): void
@@ -100,11 +213,11 @@ class PredicateQueryTest extends TestCase
         $this->assertCount(3, $query->execute()->fetchAll('assoc'));
 
         $query = $connection->selectQuery();
-        $query->select(['author_id', 'total' => $query->func()->count('*')])->from('articles')
+        $query->select(['author_id', 'total' => func()->count('*')])->from('articles')
             ->groupBy('author_id')->having(['COUNT(*)' => greaterThan(1, 'integer')]);
         $this->assertCount(1, $query->execute()->fetchAll('assoc'));
 
-        $filter = $connection->selectQuery()->func()->count('*')->filter(['id' => greaterThan(1)]);
+        $filter = func()->count('*')->filter(['id' => greaterThan(1)]);
         $binder = new ValueBinder();
         $this->assertStringContainsString('FILTER (WHERE id > :c0)', $filter->sql($binder));
     }

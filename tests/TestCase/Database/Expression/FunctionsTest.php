@@ -16,20 +16,39 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
+use ArgumentCountError;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\Predicate;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{between, comparison, equals, greaterThan, in, isNull, notEquals};
+use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, exclusiveOr, func, greaterThan, in, isNull, lessThan, not, notEquals, notIn};
 
 /**
- * Verifies deferred predicates, field type inference, and independent expression trees.
+ * Verifies SQL function builders, deferred predicates, and independent expression trees.
  */
 class FunctionsTest extends TestCase
 {
+    /**
+     * Checks standalone builders produce typed aggregate and bound function expressions.
+     */
+    public function testFunctionBuilderExpressions(): void
+    {
+        $count = func()->count('*');
+        $this->assertSame('COUNT(*)', $count->sql(new ValueBinder()));
+        $this->assertSame('integer', $count->getReturnType());
+
+        $binder = new ValueBinder();
+        $concat = func()->concat(['title' => 'identifier', ' suffix'], ['string']);
+        $this->assertSame('CONCAT(title, :param0)', $concat->sql($binder));
+        $this->assertSame('string', $concat->getReturnType());
+        $this->assertSame([' suffix'], array_column($binder->bindings(), 'value'));
+        $this->assertSame(['string'], array_column($binder->bindings(), 'type'));
+    }
+
     /**
      * Provides every field-based helper and its equivalent fluent arguments.
      *
@@ -103,6 +122,188 @@ class FunctionsTest extends TestCase
             $expression->sql($binder);
             $this->assertSame([$type, $type], array_column($binder->bindings(), 'type'));
         }
+    }
+
+    /**
+     * Supplies field-scoped groups, including nested and single-child predicates.
+     *
+     * @return array<string, array{\Cake\Database\Expression\Predicate, string, array<mixed>}>
+     */
+    public static function compositePredicatesProvider(): array
+    {
+        return [
+            'all predicates' => [
+                allOf(notIn([1, 2]), in([2, 3])),
+                '(id NOT IN (:c0,:c1) AND id IN (:c2,:c3))',
+                [1, 2, 2, 3],
+            ],
+            'any predicate' => [
+                anyOf(lessThan(10), greaterThan(100)),
+                '(id < :c0 OR id > :c1)',
+                [10, 100],
+            ],
+            'nested disjunction' => [
+                allOf(anyOf(lessThan(10), greaterThan(100)), notEquals(5)),
+                '((id < :c0 OR id > :c1) AND id != :c2)',
+                [10, 100, 5],
+            ],
+            'nested conjunction' => [
+                anyOf(allOf(greaterThan(10), lessThan(20)), isNull()),
+                '((id > :c0 AND id < :c1) OR (id) IS NULL)',
+                [10, 20],
+            ],
+            'single conjunction child' => [allOf(equals(1)), 'id = :c0', [1]],
+            'single disjunction child' => [anyOf(equals(1)), 'id = :c0', [1]],
+            'named variadic predicates' => [
+                allOf(equals(1), lower: greaterThan(0), upper: lessThan(2)),
+                '(id = :c0 AND id > :c1 AND id < :c2)',
+                [1, 0, 2],
+            ],
+            'negated predicate' => [not(equals(1)), 'NOT (id = :c0)', [1]],
+            'negated group' => [
+                not(anyOf(lessThan(10), greaterThan(100))),
+                'NOT ((id < :c0 OR id > :c1))',
+                [10, 100],
+            ],
+            'negated null check' => [not(equals(null)), 'NOT ((id) IS NULL)', []],
+            'double negation' => [not(not(equals(1))), 'NOT (NOT (id = :c0))', [1]],
+            'exclusive predicates' => [
+                exclusiveOr(lessThan(10), greaterThan(5)),
+                '((id < :c0 AND NOT (id > :c1)) OR (NOT (id < :c2) AND id > :c3))',
+                [10, 5, 10, 5],
+            ],
+            'nested exclusive predicates' => [
+                allOf(greaterThan(0), exclusiveOr(lessThan(10), greaterThan(5))),
+                '(id > :c0 AND ((id < :c1 AND NOT (id > :c2)) OR (NOT (id < :c3) AND id > :c4)))',
+                [0, 10, 5, 10, 5],
+            ],
+        ];
+    }
+
+    /**
+     * Checks grouped predicates preserve parentheses, operand order, and inferred types.
+     *
+     * @param \Cake\Database\Expression\Predicate $predicate The field-scoped predicate group.
+     * @param string $sql The expected SQL fragment.
+     * @param array<mixed> $values The expected bound values.
+     */
+    #[DataProvider('compositePredicatesProvider')]
+    public function testCompositePredicates(Predicate $predicate, string $sql, array $values): void
+    {
+        $expression = new QueryExpression(['id' => $predicate], ['id' => 'integer']);
+        $binder = new ValueBinder();
+        $this->assertSame($sql, $expression->sql($binder));
+        $this->assertSame($values, array_column($binder->bindings(), 'value'));
+        $this->assertSame(array_fill(0, count($values), 'integer'), array_column($binder->bindings(), 'type'));
+    }
+
+    /**
+     * Checks groups inherit types afresh on reuse while preserving child type overrides.
+     */
+    public function testCompositeTypePrecedenceAndReuse(): void
+    {
+        $predicate = allOf(greaterThan(1), anyOf(lessThan(10, 'float'), equals(null)));
+        foreach (['id' => 'integer', 'other_id' => 'string'] as $field => $type) {
+            $expression = new QueryExpression([$field => $predicate], [$field => $type]);
+            $binder = new ValueBinder();
+            $this->assertSame(
+                "($field > :c0 AND ($field < :c1 OR ($field) IS NULL))",
+                $expression->sql($binder),
+            );
+            $this->assertSame([$type, 'float'], array_column($binder->bindings(), 'type'));
+        }
+    }
+
+    /**
+     * Checks negated and repeated XOR operands inherit types while preserving explicit child types.
+     */
+    public function testExclusiveTypePrecedenceAndReuse(): void
+    {
+        $predicate = exclusiveOr(not(greaterThan(1)), lessThan(10, 'float'));
+        foreach (['id' => 'integer', 'other_id' => 'string'] as $field => $type) {
+            $expression = new QueryExpression([$field => $predicate], [$field => $type]);
+            $binder = new ValueBinder();
+            $this->assertSame(
+                "((NOT ($field > :c0) AND NOT ($field < :c1)) OR (NOT (NOT ($field > :c2)) AND $field < :c3))",
+                $expression->sql($binder),
+            );
+            $this->assertSame([1, 10, 1, 10], array_column($binder->bindings(), 'value'));
+            $this->assertSame([$type, 'float', $type, 'float'], array_column($binder->bindings(), 'type'));
+        }
+    }
+
+    /**
+     * Checks XOR branches and later resolutions hold independent copies of expression operands.
+     */
+    public function testExclusiveExpressionOperandsAreIndependent(): void
+    {
+        $operand = new IdentifierExpression('other_id');
+        $predicate = exclusiveOr(equals($operand), not(in([$operand])));
+        $first = $predicate->resolve('id', 'integer');
+        $changed = false;
+        $first->traverse(static function ($part) use (&$changed): void {
+            if (!$changed && $part instanceof IdentifierExpression) {
+                $part->setIdentifier('changed');
+                $changed = true;
+            }
+        });
+        $this->assertSame(
+            '((id = changed AND NOT (NOT (id IN (other_id)))) OR (NOT (id = other_id) AND NOT (id IN (other_id))))',
+            $first->sql(new ValueBinder()),
+        );
+        $this->assertSame(
+            '((id = other_id AND NOT (NOT (id IN (other_id)))) OR (NOT (id = other_id) AND NOT (id IN (other_id))))',
+            $predicate->resolve('id', 'integer')->sql(new ValueBinder()),
+        );
+        $this->assertSame('other_id', $operand->getIdentifier());
+    }
+
+    /**
+     * Checks nested groups copy expression operands independently on each resolution.
+     */
+    public function testCompositeExpressionOperandsAreIndependent(): void
+    {
+        $operand = new IdentifierExpression('other_id');
+        $predicate = allOf(equals($operand), anyOf(in([$operand]), isNull()));
+        $first = $predicate->resolve('id', 'integer');
+        $first->traverse(static function ($part): void {
+            if ($part instanceof IdentifierExpression) {
+                $part->setIdentifier('changed');
+            }
+        });
+        $this->assertSame(
+            '(id = other_id AND (id IN (other_id) OR (id) IS NULL))',
+            $predicate->resolve('id', 'integer')->sql(new ValueBinder()),
+        );
+        $this->assertSame('other_id', $operand->getIdentifier());
+    }
+
+    /**
+     * Supplies combinators that require a nonempty group of predicates.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function compositeHelpersProvider(): array
+    {
+        return [
+            'conjunction' => ['allOf'],
+            'disjunction' => ['anyOf'],
+            'negation' => ['not'],
+            'exclusive disjunction' => ['exclusiveOr'],
+        ];
+    }
+
+    /**
+     * Checks an empty composite cannot silently remove a query condition.
+     *
+     * @param string $helper The combinator to invoke without children.
+     */
+    #[DataProvider('compositeHelpersProvider')]
+    public function testEmptyCompositePredicates(string $helper): void
+    {
+        $function = 'Cake\\Database\\Expression\\' . $helper;
+        $this->expectException(ArgumentCountError::class);
+        $function();
     }
 
     /**

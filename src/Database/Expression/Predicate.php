@@ -48,9 +48,28 @@ final readonly class Predicate
      */
     public function resolve(string $field, ?string $type = null): ExpressionInterface
     {
-        $values = array_map($this->cloneValue(...), $this->values);
         $type = $this->type ?? $type;
         $operation = $this->operation;
+        if (
+            in_array($operation, [
+                PredicateOperation::ALL_OF,
+                PredicateOperation::ANY_OF,
+                PredicateOperation::NOT,
+            ], true)
+        ) {
+            $expressions = array_map(
+                static fn(self $predicate): ExpressionInterface => $predicate->resolve($field, $type),
+                array_values($this->values),
+            );
+
+            return match ($operation) {
+                PredicateOperation::ALL_OF => new QueryExpression($expressions),
+                PredicateOperation::ANY_OF => new QueryExpression($expressions, conjunction: 'OR'),
+                PredicateOperation::NOT => new UnaryExpression('NOT', $expressions[0]),
+            };
+        }
+
+        $values = array_map($this->cloneValue(...), $this->values);
         if ($operation === PredicateOperation::EQUALS && $values[0] === null) {
             $operation = PredicateOperation::IS_NULL;
         } elseif ($operation === PredicateOperation::NOT_EQUALS && $values[0] === null) {

@@ -18,6 +18,66 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Enum\PredicateOperation;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\FunctionsBuilder;
+
+/**
+ * Creates a SQL functions builder without requiring a query instance.
+ *
+ * @return \Cake\Database\FunctionsBuilder
+ */
+function func(): FunctionsBuilder
+{
+    return new FunctionsBuilder();
+}
+
+/**
+ * Creates a predicate requiring every child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with AND.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function allOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ALL_OF, [$predicate, ...$predicates]);
+}
+
+/**
+ * Creates a predicate requiring at least one child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with OR.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function anyOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ANY_OF, [$predicate, ...$predicates]);
+}
+
+/**
+ * Creates a predicate negating a single predicate or group for the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The predicate to negate.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function not(Predicate $predicate): Predicate
+{
+    return new Predicate(PredicateOperation::NOT, [$predicate]);
+}
+
+/**
+ * Creates an exclusive OR of two predicates using portable AND, OR, and NOT expressions.
+ *
+ * Matches when exactly one predicate matches, preserving SQL UNKNOWN results.
+ *
+ * @param \Cake\Database\Expression\Predicate $left The first predicate for the field.
+ * @param \Cake\Database\Expression\Predicate $right The second predicate for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function exclusiveOr(Predicate $left, Predicate $right): Predicate
+{
+    return anyOf(allOf($left, not($right)), allOf(not($left), $right));
+}
 
 /**
  * Creates an equality predicate, using IS NULL when the value is null.
