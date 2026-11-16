@@ -16,29 +16,30 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 
 /**
  * Command for updating counter cache.
  */
+#[AsCommand('counter_cache', description: 'Update counter cache for a model.')]
+#[Argument('model', help: 'The model to update the counter cache for.', required: true)]
+#[Option(
+    'assoc',
+    short: 'a',
+    help: 'The association to update the counter cache for. By default all associations are updated.',
+    default: null,
+)]
+#[Option('limit', short: 'l', help: 'The number of records to update per page/iteration', default: null)]
+#[Option(
+    'page',
+    short: 'p',
+    help: 'The page/iteration number. By default all records will be updated one page at a time.',
+    default: null,
+)]
 class CounterCacheCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'counter_cache';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Update counter cache for a model.';
-    }
-
     /**
      * Execute the command.
      *
@@ -74,33 +75,5 @@ class CounterCacheCommand extends Command
         $this->io->success('Counter cache updated successfully.');
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(static::getDescription())
-            ->addArgument('model', [
-                'help' => 'The model to update the counter cache for.',
-                'required' => true,
-            ])->addOption('assoc', [
-                'help' => 'The association to update the counter cache for. By default all associations are updated.',
-                'short' => 'a',
-                'default' => null,
-            ])
-            ->addOption('limit', [
-                'help' => 'The number of records to update per page/iteration',
-                'short' => 'l',
-                'default' => null,
-            ])
-            ->addOption('page', [
-                'help' => 'The page/iteration number. By default all records will be updated one page at a time.',
-                'short' => 'p',
-                'default' => null,
-            ]);
-
-        return $parser;
     }
 }

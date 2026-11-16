@@ -16,31 +16,34 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
+use Cake\Console\CommandFactory;
 use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
-use ReflectionClass;
 
 /**
  * Provide command completion shells such as bash.
  */
+#[AsCommand('completion', description: 'Used by shells like bash to autocomplete command name, options and arguments')]
+#[Argument(
+    'mode',
+    help: 'The type of thing to get completion on.',
+    required: true,
+    choices: ['commands', 'subcommands', 'options'],
+)]
+#[Argument('command', help: 'The command name to get information on.')]
+#[Argument('subcommand', help: 'The sub-command related to command to get information on.')]
 class CompletionCommand extends Command implements CommandCollectionAwareInterface
 {
     /**
      * @var \Cake\Console\CommandCollection
      */
     protected CommandCollection $commands;
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Used by shells like bash to autocomplete command name, options and arguments';
-    }
 
     /**
      * Set the command collection used to get completion data on.
@@ -54,7 +57,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     }
 
     /**
-     * Gets the option parser instance and configures it.
+     * Add the generated completion mode descriptions to the help epilog.
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
      * @return \Cake\Console\ConsoleOptionParser
@@ -71,19 +74,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             $modeHelp .= "- <info>{$key}</info> {$help}\n";
         }
 
-        $parser->setDescription(
-            static::getDescription(),
-        )->addArgument('mode', [
-            'help' => 'The type of thing to get completion on.',
-            'required' => true,
-            'choices' => array_keys($modes),
-        ])->addArgument('command', [
-            'help' => 'The command name to get information on.',
-            'required' => false,
-        ])->addArgument('subcommand', [
-            'help' => 'The sub-command related to command to get information on.',
-            'required' => false,
-        ])->setEpilog([
+        return $parser->setEpilog([
             'The various modes allow you to get help information on commands and their arguments.',
             'The available modes are:',
             '',
@@ -92,8 +83,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             'This command is not intended to be called manually, and should be invoked from a ' .
                 'terminal completion script.',
         ]);
-
-        return $parser;
     }
 
     /**
@@ -219,10 +208,12 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 continue;
             }
 
-            $reflection = new ReflectionClass($value);
-            $value = $reflection->newInstance();
+            if (is_string($value)) {
+                $value = ($this->factory ?? new CommandFactory())->create($value);
+            }
             assert($value instanceof BaseCommand);
 
+            $value->setName($this->getRootName() . ' ' . $key);
             $parser = $value->getOptionParser();
             foreach ($parser->options() as $name => $option) {
                 $options[] = "--{$name}";

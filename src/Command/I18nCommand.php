@@ -16,21 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
 
 /**
  * Command for interactive I18N management.
  */
+#[AsCommand(
+    'i18n',
+    description: 'I18n commands let you generate .pot files to power translations in your application.',
+)]
 class I18nCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'I18n commands let you generate .pot files to power translations in your application.';
-    }
-
     /**
      * Execute interactive mode
      *
@@ -73,18 +69,5 @@ class I18nCommand extends Command
         } while ($choice !== 'q');
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Gets the option parser instance and configures it.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(static::getDescription());
-
-        return $parser;
     }
 }

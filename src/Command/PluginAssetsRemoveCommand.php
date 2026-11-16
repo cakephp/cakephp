@@ -16,30 +16,17 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 
 /**
  * Command for removing plugin assets from app's webroot.
  */
+#[AsCommand('plugin assets remove', description: "Remove plugin assets from app's webroot.")]
+#[Argument('name', help: 'A specific plugin you want to remove.', required: false)]
 class PluginAssetsRemoveCommand extends Command
 {
     use PluginAssetsTrait;
-
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin assets remove';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return "Remove plugin assets from app's webroot.";
-    }
 
     /**
      * Execute the command
@@ -65,23 +52,5 @@ class PluginAssetsRemoveCommand extends Command
         $this->io->out('Done');
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(
-            static::getDescription(),
-        )->addArgument('name', [
-            'help' => 'A specific plugin you want to remove.',
-            'required' => false,
-        ]);
-
-        return $parser;
     }
 }

@@ -16,30 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Core\Plugin;
 
 /**
  * Displays all currently loaded plugins.
  */
+#[AsCommand('plugin loaded', description: 'Displays all currently loaded plugins.')]
 class PluginLoadedCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin loaded';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Displays all currently loaded plugins.';
-    }
-
     /**
      * Displays all currently loaded plugins.
      *
@@ -51,18 +36,5 @@ class PluginLoadedCommand extends Command
         $this->io->out($loaded);
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(static::getDescription());
-
-        return $parser;
     }
 }

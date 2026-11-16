@@ -4,9 +4,14 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Console\CommandFactoryInterface;
 use TestApp\ReflectionDependency;
 
+/**
+ * Command fixture for console integration tests.
+ */
+#[AsCommand('auto_wired')]
 class AutoWiredCommand extends Command
 {
     public function __construct(

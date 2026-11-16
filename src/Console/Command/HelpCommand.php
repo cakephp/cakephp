@@ -17,12 +17,14 @@ declare(strict_types=1);
 namespace Cake\Console\Command;
 
 use ArrayIterator;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleIoInterface;
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -32,6 +34,9 @@ use SimpleXMLElement;
 /**
  * Print out command list
  */
+#[AsCommand('help', description: 'Get the list of available commands for this application.')]
+#[Argument('command', help: 'Filter commands by prefix (e.g., "cache" to show only cache commands).')]
+#[Option('xml', help: 'Get the listing as XML.', boolean: true)]
 class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface, CommandHiddenInterface
 {
     /**
@@ -141,11 +146,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 
         $commandList = [];
         foreach ($invert as $class => $names) {
-            preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
-            // Probably not a useful class
-            if (!$matches) {
-                continue;
-            }
             $shortestName = $this->getShortestName($names);
             if (str_contains($shortestName, '.')) {
                 [, $shortestName] = explode('.', $shortestName, 2);
@@ -215,17 +215,22 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
-            if (!$matches || $names === []) {
+            if ($names === []) {
                 continue;
             }
-            $namespace = str_replace('\\', '/', $matches[1]);
+            $namespace = str_replace('\\', '/', $matches[1] ?? $class);
             $prefix = 'app';
             if ($namespace === 'Cake') {
                 $prefix = 'cakephp';
             } elseif (method_exists($class, 'getGroup')) {
                 $prefix = $class::getGroup();
-            } elseif (in_array($namespace, $plugins, true)) {
-                $prefix = Inflector::underscore($namespace);
+            } else {
+                foreach ($plugins as $plugin) {
+                    if (str_starts_with($class, str_replace('/', '\\', $plugin) . '\\')) {
+                        $prefix = Inflector::underscore($plugin);
+                        break;
+                    }
+                }
             }
             $shortestName = $this->getShortestName($names);
             if (str_contains($shortestName, '.')) {
@@ -521,25 +526,5 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $io->setOutputAs(ConsoleOutput::RAW);
         $io->out((string)$shells->saveXML());
-    }
-
-    /**
-     * Gets the option parser instance and configures it.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(
-            'Get the list of available commands for this application.',
-        )->addArgument('command', [
-            'help' => 'Filter commands by prefix (e.g., "cache" to show only cache commands).',
-        ])->addOption('xml', [
-            'help' => 'Get the listing as XML.',
-            'boolean' => true,
-        ]);
-
-        return $parser;
     }
 }

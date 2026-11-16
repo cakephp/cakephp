@@ -20,6 +20,9 @@ use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;
 
+/**
+ * Verify plugin configuration loading independently of earlier cached lookups.
+ */
 class PluginConfigTest extends TestCase
 {
     protected string $pluginsListPath;
@@ -34,6 +37,7 @@ class PluginConfigTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        PluginConfig::clearCache();
         Configure::delete('plugins');
         $this->clearPlugins();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';

@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Brick\VarExporter\VarExporter;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Core\PluginInterface;
@@ -26,6 +28,20 @@ use Cake\Utility\Hash;
 /**
  * Command for loading plugins.
  */
+#[AsCommand('plugin load', description: 'Command for loading plugins.')]
+#[Argument(
+    'plugin',
+    help: 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
+    required: true,
+)]
+#[Option('only-debug', help: 'Load the plugin only when `debug` is enabled.', boolean: true)]
+#[Option('only-cli', help: 'Load the plugin only for CLI.', boolean: true)]
+#[Option('optional', help: 'Do not throw an error if the plugin is not available.', boolean: true)]
+#[Option('no-bootstrap', help: 'Do not run the `bootstrap()` hook.', boolean: true)]
+#[Option('no-console', help: 'Do not run the `console()` hook.', boolean: true)]
+#[Option('no-middleware', help: 'Do not run the `middleware()` hook.', boolean: true)]
+#[Option('no-routes', help: 'Do not run the `routes()` hook.', boolean: true)]
+#[Option('no-services', help: 'Do not run the `services()` hook.', boolean: true)]
 class PluginLoadCommand extends Command
 {
     /**
@@ -44,22 +60,6 @@ class PluginLoadCommand extends Command
      * @var string
      */
     protected string $configFile = CONFIG . 'plugins.php';
-
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin load';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Command for loading plugins.';
-    }
 
     /**
      * Execute the command
@@ -193,53 +193,5 @@ class PluginLoadCommand extends Command
         }
 
         return $recommendations;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        return $parser
-            ->setDescription(static::getDescription())
-            ->addArgument('plugin', [
-                'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
-                'required' => true,
-            ])
-            ->addOption('only-debug', [
-                'boolean' => true,
-                'help' => 'Load the plugin only when `debug` is enabled.',
-            ])
-            ->addOption('only-cli', [
-                'boolean' => true,
-                'help' => 'Load the plugin only for CLI.',
-            ])
-            ->addOption('optional', [
-                'boolean' => true,
-                'help' => 'Do not throw an error if the plugin is not available.',
-            ])
-            ->addOption('no-bootstrap', [
-                'boolean' => true,
-                'help' => 'Do not run the `bootstrap()` hook.',
-            ])
-            ->addOption('no-console', [
-                'boolean' => true,
-                'help' => 'Do not run the `console()` hook.',
-            ])
-            ->addOption('no-middleware', [
-                'boolean' => true,
-                'help' => 'Do not run the `middleware()` hook.',
-            ])
-            ->addOption('no-routes', [
-                'boolean' => true,
-                'help' => 'Do not run the `routes()` hook.',
-            ])
-            ->addOption('no-services', [
-                'boolean' => true,
-                'help' => 'Do not run the `services()` hook.',
-            ]);
     }
 }

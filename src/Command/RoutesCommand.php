@@ -16,22 +16,18 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 use Cake\Routing\Router;
 
 /**
  * Provides interactive CLI tools for routing.
  */
+#[AsCommand('routes', description: 'Get the list of routes connected in this application.')]
+#[Option('sort', short: 's', help: 'Sorts alphabetically by route name A-Z', boolean: true)]
+#[Option('with-middlewares', short: 'm', help: 'Show route specific middlewares', boolean: true)]
 class RoutesCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Get the list of routes connected in this application.';
-    }
-
     /**
      * Display all routes in an application
      *
@@ -129,29 +125,5 @@ class RoutesCommand extends Command
         }
 
         return static::CODE_SUCCESS;
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser
-            ->setDescription(static::getDescription())
-            ->addOption('sort', [
-                'help' => 'Sorts alphabetically by route name A-Z',
-                'short' => 's',
-                'boolean' => true,
-            ])
-            ->addOption('with-middlewares', [
-                'help' => 'Show route specific middlewares',
-                'short' => 'm',
-                'boolean' => true,
-            ]);
-
-        return $parser;
     }
 }

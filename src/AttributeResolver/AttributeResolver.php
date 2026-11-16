@@ -18,6 +18,7 @@ namespace Cake\AttributeResolver;
 
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
+use ReflectionClass;
 
 /**
  * Attribute Resolver
@@ -40,6 +41,31 @@ class AttributeResolver
      * @var array<string, \Cake\AttributeResolver\AttributeCollection>
      */
     protected static array $collections = [];
+
+    /**
+     * Immutable class declarations cached independently of configured file scans.
+     *
+     * @var array<class-string, \Cake\AttributeResolver\AttributeCollection>
+     */
+    protected static array $classCollections = [];
+
+    /**
+     * Resolve a known class without configuration or directory scanning.
+     *
+     * Returns declarations on the class and its members, without merging parent
+     * class attributes. Scan exclusions and persistent caches do not apply.
+     *
+     * @param class-string $className Class to resolve.
+     * @return \Cake\AttributeResolver\AttributeCollection
+     */
+    public static function forClass(string $className): AttributeCollection
+    {
+        $className = new ReflectionClass($className)->getName();
+
+        return static::$classCollections[$className] ??= new AttributeCollection(
+            new Parser()->parseClassName($className),
+        );
+    }
 
     /**
      * Get attribute collection for configured paths

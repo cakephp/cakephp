@@ -17,12 +17,15 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Brick\VarExporter\VarExporter;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 use Cake\Utility\Hash;
 
 /**
  * Command for unloading plugins.
  */
+#[AsCommand('plugin unload', description: 'Command for unloading plugins.')]
+#[Argument('plugin', help: 'Name of the plugin to unload.', required: true)]
 class PluginUnloadCommand extends Command
 {
     /**
@@ -31,22 +34,6 @@ class PluginUnloadCommand extends Command
      * @var string
      */
     protected string $configFile = CONFIG . 'plugins.php';
-
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'plugin unload';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Command for unloading plugins.';
-    }
 
     /**
      * Execute the command
@@ -102,24 +89,5 @@ class PluginUnloadCommand extends Command
         }
 
         return 'Failed to update `CONFIG/plugins.php`';
-    }
-
-    /**
-     * Get the option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser->setDescription(
-            static::getDescription(),
-        )
-        ->addArgument('plugin', [
-            'help' => 'Name of the plugin to unload.',
-            'required' => true,
-        ]);
-
-        return $parser;
     }
 }

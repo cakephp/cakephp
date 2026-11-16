@@ -16,21 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use Cake\Console\Attribute\AsCommand;
 use Cake\Core\Configure;
 
 /**
  * Print out the version of CakePHP in use.
  */
+#[AsCommand('version', description: 'Show the CakePHP version.')]
 class VersionCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Show the CakePHP version.';
-    }
-
     /**
      * Print out the version of CakePHP in use.
      *

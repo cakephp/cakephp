@@ -4,7 +4,12 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
+use Cake\Console\Attribute\AsCommand;
 
+/**
+ * Command fixture for console integration tests.
+ */
+#[AsCommand('auto_load_model')]
 class AutoLoadModelCommand extends Command
 {
     protected ?string $defaultTable = 'Posts';

@@ -19,51 +19,22 @@ namespace Cake\Command;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Exception\InvalidArgumentException;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 
 /**
  * CacheClear command.
  */
+#[AsCommand('cache clear', description: 'Clear all data in a single cache engine.')]
+#[Argument(
+    'engine',
+    help: 'The cache engine to clear.' .
+        'For example, `cake cache clear _cake_model_` will clear the model cache.' .
+        ' Use `cake cache list` to list available engines.',
+    required: true,
+)]
 class CacheClearCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'cache clear';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Clear all data in a single cache engine.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @link https://book.cakephp.org/5/en/console-commands/option-parsers.html
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
-            ->addArgument('engine', [
-                'help' => 'The cache engine to clear.' .
-                    'For example, `cake cache clear _cake_model_` will clear the model cache.' .
-                    ' Use `cake cache list` to list available engines.',
-                'required' => true,
-            ]);
-
-        return $parser;
-    }
-
     /**
      * Implement this method with your command's logic.
      *

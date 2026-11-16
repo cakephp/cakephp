@@ -18,54 +18,25 @@ namespace Cake\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Exception\InvalidArgumentException;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\Argument;
+use Cake\Console\Attribute\AsCommand;
 
 /**
  * Cache Clear Group command.
  */
+#[AsCommand('cache clear_group', description: 'Clear all data in a single cache group.')]
+#[Argument(
+    'group',
+    help: 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
+        'all cache items belonging to group "mygroup".',
+    required: true,
+)]
+#[Argument(
+    'config',
+    help: 'Name of the configuration to use. Defaults to no value which clears all cache configurations.',
+)]
 class CacheClearGroupCommand extends Command
 {
-    /**
-     * Get the command name.
-     *
-     * @return string
-     */
-    public static function defaultName(): string
-    {
-        return 'cache clear_group';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Clear all data in a single cache group.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @link https://book.cakephp.org/5/en/console-commands/option-parsers.html
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser->setDescription(static::getDescription());
-        $parser->addArgument('group', [
-            'help' => 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
-                'all cache items belonging to group "mygroup".',
-            'required' => true,
-        ]);
-        $parser->addArgument('config', [
-            'help' => 'Name of the configuration to use. Defaults to no value which clears all cache configurations.',
-        ]);
-
-        return $parser;
-    }
-
     /**
      * Clears the cache group
      *

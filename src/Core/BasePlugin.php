@@ -295,7 +295,7 @@ class BasePlugin implements PluginInterface
      */
     public function console(CommandCollection $commands): CommandCollection
     {
-        return $commands->addMany($commands->discoverPlugin($this->getName()));
+        return $commands;
     }
 
     /**

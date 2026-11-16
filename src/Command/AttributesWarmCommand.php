@@ -17,49 +17,16 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\AttributeResolver\AttributeResolver;
-use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Attribute\AsCommand;
+use Cake\Console\Attribute\Option;
 
 /**
  * Command to warm the attribute cache.
  */
+#[AsCommand('attributes warm', description: 'Warm the attribute cache by discovering and caching all attributes.')]
+#[Option('config', short: 'c', help: 'The Resolver configuration to use.', default: 'default')]
 class AttributesWarmCommand extends Command
 {
-    /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'attributes warm';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Warm the attribute cache by discovering and caching all attributes.';
-    }
-
-    /**
-     * Hook method for defining this command's option parser.
-     *
-     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
-     * @return \Cake\Console\ConsoleOptionParser The built parser.
-     */
-    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
-    {
-        $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
-            ->addOption('config', [
-                'short' => 'c',
-                'default' => 'default',
-                'help' => 'The Resolver configuration to use.',
-            ]);
-
-        return $parser;
-    }
-
     /**
      * Implement this method with your command's logic.
      *
