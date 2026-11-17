@@ -232,7 +232,19 @@ class ConsoleIoTest extends TestCase
             ->with($message, $newLines)
             ->once();
 
-        $this->io->err($message, $newLines);
+        $this->deprecated(function () use ($message, $newLines): void {
+            $this->io->err($message, $newLines);
+        });
+    }
+
+    /**
+     * The legacy stderr method names its supported replacement.
+     */
+    public function testErrDeprecationNamesReplacement(): void
+    {
+        $this->expectDeprecationMessageMatches('/ConsoleIo::err\(\).*deprecated.*error\(\)/', function (): void {
+            $this->io->err('Legacy error');
+        });
     }
 
     /**

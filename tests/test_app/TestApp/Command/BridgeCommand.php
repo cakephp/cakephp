@@ -14,7 +14,7 @@ class BridgeCommand extends Command
         $name = $io->ask('What is your name');
 
         if ($name !== 'cake') {
-            $io->err('No!');
+            $io->error('No!');
 
             return static::CODE_ERROR;
         }
@@ -22,7 +22,7 @@ class BridgeCommand extends Command
         $color = $io->ask('What is your favorite color?');
 
         if ($color !== 'blue') {
-            $io->err('Wrong! <blink>Aaaahh</blink>');
+            $io->error('Wrong! <blink>Aaaahh</blink>');
 
             return static::CODE_ERROR;
         }

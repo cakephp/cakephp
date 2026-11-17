@@ -21,6 +21,7 @@ use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Log;
 use RuntimeException;
 use SplFileObject;
+use function Cake\Core\deprecationWarning;
 
 /**
  * A wrapper around the various IO operations shell tasks need to do.
@@ -29,7 +30,7 @@ use SplFileObject;
  * consistent interface for shells to use. This class also makes mocking streams
  * easy to do in unit tests.
  */
-class ConsoleIo
+class ConsoleIo implements ConsoleIoInterface
 {
     /**
      * Output constant making verbose shells.
@@ -244,7 +245,7 @@ class ConsoleIo
     }
 
     /**
-     * Convenience method for err() that wraps message between <warning> tag
+     * Writes messages to stderr wrapped in <warning> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -256,11 +257,11 @@ class ConsoleIo
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
 
-        return $this->err($message, $newlines);
+        return $this->_err->write($message, $newlines);
     }
 
     /**
-     * Convenience method for err() that wraps message between <error> tag
+     * Writes messages to stderr wrapped in <error> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -272,7 +273,7 @@ class ConsoleIo
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
 
-        return $this->err($message, $newlines);
+        return $this->_err->write($message, $newlines);
     }
 
     /**
@@ -374,11 +375,14 @@ class ConsoleIo
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
+     * @deprecated 5.5.0 Use error() instead.
      * @return int The number of bytes returned from writing to stderr.
      * @link https://book.cakephp.org/5/en/console-commands/input-output.html#creating-output
      */
     public function err(array|string $message = '', int $newlines = 1): int
     {
+        deprecationWarning('5.5.0', 'ConsoleIo::err() is deprecated. Use error() instead.');
+
         return $this->_err->write($message, $newlines);
     }
 
