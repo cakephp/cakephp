@@ -20,6 +20,7 @@ use ArrayObject;
 use BadMethodCallException;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
+use Cake\Core\AttributeDeclarationsTrait;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
@@ -41,6 +42,7 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
+use Cake\ORM\Attribute\Association as AssociationAttribute;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
@@ -166,6 +168,7 @@ class Table implements
     RuleProviderResolverInterface,
     ValidatorAwareInterface
 {
+    use AttributeDeclarationsTrait;
     use EventDispatcherTrait;
     use RulesAwareTrait;
     use ValidatorAwareTrait;
@@ -338,6 +341,19 @@ class Table implements
         $this->queryFactory = $config['queryFactory'] ?? new QueryFactory();
 
         $this->initialize($config);
+
+        $declarations = $this->attributeDeclarations();
+        foreach ($declarations['association'] ?? [] as $alias => $declaration) {
+            assert($declaration instanceof AssociationAttribute);
+            if (!$this->associations->has($alias)) {
+                $this->{$declaration->getMethod()}($alias, $declaration->getOptions());
+            }
+        }
+        foreach ($declarations['behavior'] ?? [] as $alias => $declaration) {
+            if (!$this->behaviors->has($alias)) {
+                $this->addBehavior($alias, $declaration->getOptions());
+            }
+        }
 
         $this->getEventManager()->on($this);
         $this->dispatchEvent('Model.initialize');
