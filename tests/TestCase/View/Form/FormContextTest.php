@@ -27,14 +27,6 @@ use Cake\View\Form\FormContext;
 class FormContextTest extends TestCase
 {
     /**
-     * setup method.
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    /**
      * tests getRequiredMessage
      */
     public function testGetRequiredMessage(): void

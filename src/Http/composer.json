@@ -37,8 +37,7 @@
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
         "psr/link": "^2.0",
-        "laminas/laminas-diactoros": "^3.8",
-        "laminas/laminas-httphandlerrunner": "^2.6"
+        "laminas/laminas-diactoros": "^3.8"
     },
     "require-dev": {
         "cakephp/cache": "^5.4.0",
@@ -61,6 +60,8 @@
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
+        "cakephp/console": "To use BaseApplication",
+        "cakephp/log": "To log errors raised while streaming a response",
         "cakephp/orm": "To use database session storage",
         "paragonie/csp-builder": "To use CspMiddleware"
     },

@@ -21,7 +21,6 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
-    continue-on-error: ${{ matrix.php-version == '8.6' }}
     strategy:
       fail-fast: false
       matrix:
@@ -140,7 +139,7 @@ jobs:
       uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
       with:
         dependency-versions: ${{ matrix.dependencies }}
-        composer-options: "${{ matrix.php-version == '8.6' && '--ignore-platform-req=php' || matrix.composer-options }}"
+        composer-options: "${{ matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.2' && matrix.db-type == 'mysql'
@@ -197,7 +196,7 @@ jobs:
 
     - name: Setup PHP extensions cache
       id: php-ext-cache
-      uses: shivammathur/cache-extensions@2abd2f0f7e31e52e198f67f882dea153f87bc11b # 1.15.3
+      uses: shivammathur/cache-extensions@695b1b465eba861efe67cbbc31252c27f5ed253d # 1.15.11
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}

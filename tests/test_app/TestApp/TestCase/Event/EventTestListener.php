@@ -17,7 +17,7 @@ class EventTestListener
      *
      * @return bool|void
      */
-    public function listenerFunction(EventInterface $event)
+    public function listenerFunction(EventInterface $event): void
     {
         $this->callList[] = __FUNCTION__;
     }
@@ -27,7 +27,7 @@ class EventTestListener
      *
      * @return bool|void
      */
-    public function secondListenerFunction(EventInterface $event)
+    public function secondListenerFunction(EventInterface $event): void
     {
         $this->callList[] = __FUNCTION__;
     }
@@ -37,7 +37,7 @@ class EventTestListener
      *
      * @return bool|void
      */
-    public function thirdListenerFunction(EventInterface $event)
+    public function thirdListenerFunction(EventInterface $event): void
     {
         $this->callList[] = __FUNCTION__;
     }
@@ -47,7 +47,7 @@ class EventTestListener
      *
      * @return bool|void
      */
-    public function stopListener(EventInterface $event)
+    public function stopListener(EventInterface $event): void
     {
         $event->stopPropagation();
     }

@@ -29,7 +29,6 @@
         "cakephp/chronos": "^3.3",
         "composer/ca-bundle": "^1.6",
         "laminas/laminas-diactoros": "^3.8",
-        "laminas/laminas-httphandlerrunner": "^2.6",
         "league/container": "^5.1",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
@@ -59,7 +58,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "boundwize/structarmed": "^0.19",
+        "boundwize/structarmed": "^0.19 || ^0.20",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mockery/mockery": "^1.6",
@@ -142,7 +141,7 @@
         "psalm-baseline": "tools/psalm --set-baseline=psalm-baseline.xml",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
-        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.7.0\" && mv composer.backup composer.json",
+        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.8.1\" && mv composer.backup composer.json",
         "rector-check": "vendor/bin/rector process --dry-run",
         "rector-fix": "vendor/bin/rector process",
         "test": "phpunit",
