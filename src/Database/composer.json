@@ -42,9 +42,10 @@
         }
     },
     "suggest": {
+        "cakephp/cache": "If you want to cache schema metadata without providing a cacher yourself.",
         "cakephp/i18n": "If you are using locale-aware datetime formats.",
         "cakephp/log": "If you want to use query logging without providing a logger yourself.",
-        "cakephp/utility": "If you want to use EnumLabelTrait."
+        "cakephp/utility": "If you want to use EnumLabelTrait or the UUID types."
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

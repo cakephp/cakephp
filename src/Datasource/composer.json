@@ -25,13 +25,13 @@
     },
     "require": {
         "php": ">=8.2",
+        "cakephp/collection": "5.5.*@dev",
         "cakephp/core": "5.5.*@dev",
+        "cakephp/utility": "5.5.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "require-dev": {
-        "cakephp/cache": "5.5.*@dev",
-        "cakephp/collection": "5.5.*@dev",
-        "cakephp/utility": "5.5.*@dev"
+        "cakephp/cache": "5.5.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -39,8 +39,6 @@
         }
     },
     "suggest": {
-        "cakephp/utility": "If you decide to use EntityTrait.",
-        "cakephp/collection": "If you decide to use ResultSetInterface.",
         "cakephp/cache": "If you decide to use Query caching."
     },
     "minimum-stability": "stable",
