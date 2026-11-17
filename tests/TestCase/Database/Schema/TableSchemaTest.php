@@ -348,6 +348,21 @@ class TableSchemaTest extends TestCase
     }
 
     /**
+     * Tests that defaults use the current column name after a rename.
+     */
+    public function testDefaultValuesWithRenamedColumn(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('title', [
+            'type' => 'string',
+            'default' => 'A title',
+        ]);
+        $table->column('title')->setName('headline');
+
+        $this->assertSame(['headline' => 'A title'], $table->defaultValues());
+    }
+
+    /**
      * Test adding an constraint.
      */
     public function testAddConstraint(): void

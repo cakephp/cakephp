@@ -66,7 +66,9 @@ use RuntimeException;
  */
 class Cache
 {
-    use StaticConfigTrait;
+    use StaticConfigTrait {
+        drop as protected dropConfig;
+    }
 
     /**
      * An array mapping URL schemes to fully qualified caching engine
@@ -199,6 +201,24 @@ class Cache
                 sort(static::$_groups[$group]);
             }
         }
+    }
+
+    /**
+     * Drops a constructed cache engine and removes it from the group mappings.
+     *
+     * @param string $config An existing configuration you wish to remove.
+     * @return bool Success of the removal, returns false when the config does not exist.
+     */
+    public static function drop(string $config): bool
+    {
+        foreach (static::$_groups as $group => $configs) {
+            static::$_groups[$group] = array_values(array_diff($configs, [$config]));
+            if (static::$_groups[$group] === []) {
+                unset(static::$_groups[$group]);
+            }
+        }
+
+        return static::dropConfig($config);
     }
 
     /**

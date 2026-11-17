@@ -682,10 +682,19 @@ class ConnectionTest extends TestCase
                     && str_contains((string)$args[1], 'The connection is going to be closed');
             });
 
+        $errorConfig = Log::getConfig('error');
+        Log::drop('error');
         Log::setConfig('error', $logger);
 
-        // Destroy the connection
-        unset($connection);
+        try {
+            // Destroy the connection
+            unset($connection);
+        } finally {
+            Log::drop('error');
+            if ($errorConfig !== null) {
+                Log::setConfig('error', $errorConfig);
+            }
+        }
     }
 
     /**
