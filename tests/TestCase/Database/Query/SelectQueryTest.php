@@ -885,7 +885,7 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->eq('id', 1);
+                return $exp->equals('id', 1);
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -899,8 +899,8 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 return $exp
-                    ->eq('id', 1)
-                    ->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
+                    ->equals('id', 1)
+                    ->equals('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -914,8 +914,8 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 return $exp
-                    ->eq('id', 1)
-                    ->eq('created', new DateTime('2021-12-30 15:00'), 'datetime');
+                    ->equals('id', 1)
+                    ->equals('created', new DateTime('2021-12-30 15:00'), 'datetime');
             })
             ->execute();
         $this->assertCount(0, $result->fetchAll());
@@ -934,7 +934,7 @@ class SelectQueryTest extends TestCase
                 'OR' => [
                     'id' => 1,
                     function (ExpressionInterface $exp) {
-                        return $exp->eq('id', 2);
+                        return $exp->equals('id', 2);
                     },
                 ],
             ]);
@@ -959,7 +959,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(['id' => '1'])
             ->andWhere(function (ExpressionInterface $exp) {
-                return $exp->eq('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
+                return $exp->equals('created', new DateTime('2007-03-18 10:45:23'), 'datetime');
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -973,7 +973,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(['id' => '1'])
             ->andWhere(function (ExpressionInterface $exp) {
-                return $exp->eq('created', new DateTime('2022-12-21 12:00'), 'datetime');
+                return $exp->equals('created', new DateTime('2022-12-21 12:00'), 'datetime');
             })
             ->execute();
         $this->assertCount(0, $result->fetchAll());
@@ -995,7 +995,7 @@ class SelectQueryTest extends TestCase
                 $field->add('SELECT min(id) FROM comments');
 
                 return $exp
-                    ->eq($field, 100, 'integer');
+                    ->equals($field, 100, 'integer');
             })
             ->execute();
         $this->assertCount(0, $result->fetchAll());
@@ -1012,7 +1012,7 @@ class SelectQueryTest extends TestCase
             ->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->gt('id', 1);
+                return $exp->greaterThan('id', 1);
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -1024,7 +1024,7 @@ class SelectQueryTest extends TestCase
         $result = $query->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->lt('id', 2);
+                return $exp->lessThan('id', 2);
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -1036,7 +1036,7 @@ class SelectQueryTest extends TestCase
         $result = $query->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->lte('id', 2);
+                return $exp->lessThanOrEquals('id', 2);
             })
             ->execute();
         $this->assertCount(2, $result->fetchAll());
@@ -1047,7 +1047,7 @@ class SelectQueryTest extends TestCase
             ->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->gte('id', 1);
+                return $exp->greaterThanOrEquals('id', 1);
             })
             ->execute();
         $this->assertCount(3, $result->fetchAll());
@@ -1058,7 +1058,7 @@ class SelectQueryTest extends TestCase
             ->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->lte('id', 1);
+                return $exp->lessThanOrEquals('id', 1);
             })
             ->execute();
         $this->assertCount(1, $result->fetchAll());
@@ -1069,7 +1069,7 @@ class SelectQueryTest extends TestCase
             ->select(['title'])
             ->from('articles')
             ->where(function (ExpressionInterface $exp) {
-                return $exp->notEq('id', 2);
+                return $exp->notEquals('id', 2);
             })
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -1468,7 +1468,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 $and = $exp->and(function ($and) {
-                    return $and->eq('id', 1)->gt('id', 0);
+                    return $and->equals('id', 1)->greaterThan('id', 0);
                 });
 
                 return $exp->add($and);
@@ -1502,7 +1502,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 return $exp->or(function ($or) {
-                    return $or->eq('id', 1)->eq('id', 2);
+                    return $or->equals('id', 1)->equals('id', 2);
                 });
             })
             ->execute();

@@ -360,7 +360,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
-            return $exp->lt(new QueryExpression('1'), 50);
+            return $exp->lessThan(new QueryExpression('1'), 50);
         });
 
         $this->assertStringContainsString(

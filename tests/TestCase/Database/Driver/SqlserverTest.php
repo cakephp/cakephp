@@ -495,7 +495,7 @@ class SqlserverTest extends TestCase
                 'post_count' => $query->func()->count('posts.id'),
             ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('post_count', 2, 'integer')]);
+            ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
             'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
@@ -525,7 +525,7 @@ class SqlserverTest extends TestCase
                 'post_count' => $query->func()->count('posts.id'),
             ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('posts.author_id', 2, 'integer')]);
+            ->having([$query->expr()->greaterThanOrEquals('posts.author_id', 2, 'integer')]);
 
         $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS post_count ' .
             'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
