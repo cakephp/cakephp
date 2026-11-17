@@ -1559,6 +1559,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When DTO projection is enabled, results will be hydrated into
      * the specified DTO class instead of entity objects.
      *
+     * @deprecated 5.5.0 Use {@see \Cake\ORM\Table::projectAs()} or
+     *   {@see \Cake\ORM\Table::projectOne()} instead. The query keeps its entity
+     *   result type while returning DTOs; the table methods are typed as the DTO
+     *   class and keep the mapping out of the query. Removed in 6.0.
      * @param class-string $dtoClass The DTO class name
      * @return $this
      */
@@ -1573,6 +1577,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Get the DTO class for projection.
      *
+     * @deprecated 5.5.0 Only set through the deprecated `projectAs()`. Removed in 6.0.
      * @return class-string|null
      */
     public function getDtoClass(): ?string
@@ -1583,6 +1588,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Check if DTO projection is enabled.
      *
+     * @deprecated 5.5.0 Only set through the deprecated `projectAs()`. Removed in 6.0.
      * @return bool
      */
     public function isDtoProjectionEnabled(): bool
