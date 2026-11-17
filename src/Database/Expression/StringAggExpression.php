@@ -74,6 +74,12 @@ class StringAggExpression extends AggregateExpression
     {
         if (is_string($fields)) {
             QueryExpression::ensureSimpleString('fields', $fields);
+        } elseif (is_array($fields)) {
+            foreach ($fields as $field) {
+                if (is_string($field)) {
+                    QueryExpression::ensureSimpleString('fields', $field);
+                }
+            }
         }
         $this->aggregateOrderBy ??= new OrderByExpression();
         $this->aggregateOrderBy->add($fields);

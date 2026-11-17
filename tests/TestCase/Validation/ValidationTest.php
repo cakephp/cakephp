@@ -44,11 +44,27 @@ require_once __DIR__ . '/stubs.php';
 class ValidationTest extends TestCase
 {
     /**
-     * tearDown method
+     * ICU default locale before the test, restored after it.
+     */
+    protected string $locale;
+
+    /**
+     * Saves the locale before each validation test.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->locale = Locale::getDefault();
+    }
+
+    /**
+     * Restores the locale after each validation test.
      */
     protected function tearDown(): void
     {
         parent::tearDown();
+        // Restore ICU first, I18n derives its default locale from it on first use
+        Locale::setDefault($this->locale);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 

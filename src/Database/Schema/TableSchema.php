@@ -558,7 +558,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function defaultValues(): array
     {
         $defaults = [];
-        foreach ($this->columns as $name => $column) {
+        foreach ($this->columns as $column) {
+            $name = $column->getName() ?? '';
             $default = $column->getDefault();
             if ($default === null && $column->getNull() !== true && $name) {
                 continue;

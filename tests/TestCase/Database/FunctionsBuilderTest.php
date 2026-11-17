@@ -155,12 +155,28 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
-     * Tests generating a portable STRING_AGG() function
+     * Provides unsafe scalar and array order expressions.
+     *
+     * @return array<array{string|array<string>}>
      */
-    public function testStringAggInvalidOrder(): void
+    public static function invalidOrderProvider(): array
+    {
+        return [
+            ['OR 1=1'],
+            [['OR 1=1']],
+        ];
+    }
+
+    /**
+     * Rejects unsafe order expressions in STRING_AGG().
+     *
+     * @param string|array<string> $value The unsafe order expression.
+     */
+    #[DataProvider('invalidOrderProvider')]
+    public function testStringAggInvalidOrder(string|array $value): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->functions->stringAgg('name', ',', 'OR 1=1');
+        $this->functions->stringAgg('name', ',', $value);
     }
 
     /**
@@ -196,15 +212,44 @@ class FunctionsBuilderTest extends TestCase
     }
 
     /**
-     * Tests generating a CAST() function
+     * Provides supported SQL types and their expected CAST expressions.
+     *
+     * @return array<array{string, string}>
      */
-    public function testCast(): void
+    public static function castProvider(): array
     {
-        $function = $this->functions->cast('field', 'varchar');
-        $this->assertInstanceOf(CastExpression::class, $function);
-        $this->assertSame('CAST(field AS varchar)', $function->sql(new ValueBinder()));
-        $this->assertSame('string', $function->getReturnType());
+        return [
+            // input, expected
+            ['varchar', 'CAST(field AS varchar)'],
+            ['varchar(255)', 'CAST(field AS varchar(255))'],
+            ['character varying', 'CAST(field AS character varying)'],
+            ['decimal(10, 2)', 'CAST(field AS decimal(10, 2))'],
+            ['decimal ( 10 , 2 )', 'CAST(field AS decimal ( 10 , 2 ))'],
+            ['int[]', 'CAST(field AS int[])'],
+            ['int[][]', 'CAST(field AS int[][])'],
+        ];
+    }
 
+    /**
+     * Tests generating a typed CAST expression for supported SQL types.
+     *
+     * @param string $input The SQL data type.
+     * @param string $expected The expected CAST expression.
+     */
+    #[DataProvider('castProvider')]
+    public function testCast(string $input, string $expected): void
+    {
+        $function = $this->functions->cast('field', $input);
+        $this->assertInstanceOf(CastExpression::class, $function);
+        $this->assertSame($expected, $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+    }
+
+    /**
+     * Casts a function expression while preserving its typed result.
+     */
+    public function testCastWithFunction(): void
+    {
         $function = $this->functions->cast($this->functions->now(), 'varchar');
         $this->assertInstanceOf(CastExpression::class, $function);
         $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
@@ -217,6 +262,15 @@ class FunctionsBuilderTest extends TestCase
             ['words with spaces'],
             ["' drop table users --"],
             [' word '],
+            ['word word word'],
+            ['varchar(lol)'],
+            ['decimal(lol,12)'],
+            ['decimal(123,lol)'],
+            ['decimal(123,123,123)'],
+            ['decimal[](123,123)'],
+            ['decimal(123,123)[]'],
+            ['decimal[]()[]'],
+            ['decimal()[]'],
         ];
     }
 
@@ -227,7 +281,7 @@ class FunctionsBuilderTest extends TestCase
     public function testCastInvalidValue(string $type): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('`dataType` must be an alphanumeric string');
+        $this->expectExceptionMessage('`dataType` must be a SQL data type');
         $this->functions->cast('field', $type);
     }
 
@@ -265,6 +319,11 @@ class FunctionsBuilderTest extends TestCase
         $function = $this->functions->datePart('year', 'modified');
         $this->assertInstanceOf(FunctionExpression::class, $function);
         $this->assertSame('EXTRACT(year FROM modified)', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+
+        $function = $this->functions->datePart('day_minute', 'modified');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('EXTRACT(day_minute FROM modified)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
 

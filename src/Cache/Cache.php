@@ -72,7 +72,9 @@ use function Cake\Core\triggerWarning;
  */
 class Cache
 {
-    use StaticConfigTrait;
+    use StaticConfigTrait {
+        drop as protected dropConfig;
+    }
 
     /**
      * Flag for tracking whether caching is enabled.
@@ -207,6 +209,24 @@ class Cache
                 sort(static::$groups[$group]);
             }
         }
+    }
+
+    /**
+     * Drops a constructed cache engine and removes it from the group mappings.
+     *
+     * @param string $config An existing configuration you wish to remove.
+     * @return bool Success of the removal, returns false when the config does not exist.
+     */
+    public static function drop(string $config): bool
+    {
+        foreach (static::$groups as $group => $configs) {
+            static::$groups[$group] = array_values(array_diff($configs, [$config]));
+            if (static::$groups[$group] === []) {
+                unset(static::$groups[$group]);
+            }
+        }
+
+        return static::dropConfig($config);
     }
 
     /**

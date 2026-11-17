@@ -51,6 +51,15 @@ use function Cake\Core\deprecationWarning;
 #[AllowMockObjectsWithoutExpectations]
 class TestCaseTest extends TestCase
 {
+    /**
+     * Removes connection aliases created by the test.
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::dropAlias('secondary');
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

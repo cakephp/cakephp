@@ -25,7 +25,11 @@
     "require": {
         "php": ">=8.5",
         "cakephp/core": "6.0.*@dev",
+        "cakephp/utility": "6.0.*@dev",
         "psr/log": "^3.0"
+    },
+    "suggest": {
+        "cakephp/console": "To use ConsoleLog"
     },
     "autoload": {
         "psr-4": {
