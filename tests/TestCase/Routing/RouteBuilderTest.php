@@ -575,7 +575,7 @@ class RouteBuilderTest extends TestCase
             ['controller', 'action', '_method', 'prefix', 'plugin'],
             array_keys($all[0]->defaults),
         );
-        $this->assertSame('json', $all[0]->options['_ext']);
+        $this->assertSame(['json'], $all[0]->options['_ext']);
         $this->assertSame('Articles', $all[0]->defaults['controller']);
     }
 

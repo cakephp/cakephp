@@ -37,23 +37,23 @@ class Route
      * An array of named segments in a Route.
      * `/{controller}/{action}/{id}` has 3 key elements
      *
-     * @var array
+     * @var array<string>
      */
-    public array $keys = [];
+    public protected(set) array $keys = [];
 
     /**
      * An array of additional parameters for the Route.
      *
-     * @var array<string, mixed>
+     * @var array{_ext: array<string>, pass?: array<string>, persist?: array<string>, _host?: string, _scheme?: string, _port?:int, multibytePattern?: bool, ...<string, mixed>}
      */
-    public array $options = [];
+    public protected(set) array $options = ['_ext' => []];
 
     /**
      * Default parameters for a Route
      *
-     * @var array<string, mixed>
+     * @var array{_method?: string|array<string>, ...<mixed>}
      */
-    public array $defaults = [];
+    public protected(set) array $defaults = [];
 
     /**
      * Is this route a greedy route? Greedy routes have a `/*` in their
@@ -143,10 +143,19 @@ class Route
 
         assert($checker());
         $this->defaults = $defaults;
-        $this->options = $options + ['_ext' => [], '_middleware' => []];
-        $this->setExtensions((array)$this->options['_ext']);
-        $this->setMiddleware((array)$this->options['_middleware']);
-        unset($this->options['_middleware']);
+
+        if (isset($options['_middleware'])) {
+            $this->setMiddleware((array)$options['_middleware']);
+            unset($options['_middleware']);
+        }
+
+        $ext = isset($options['_ext']) ? (array)$options['_ext'] : [];
+        $options['_ext'] = $ext;
+        if ($options['_ext'] !== []) {
+            $this->setExtensions($options['_ext']);
+        }
+
+        $this->options = $options;
 
         if (isset($this->defaults['_method'])) {
             $this->defaults['_method'] = $this->normalizeAndValidateMethods($this->defaults['_method']);
@@ -156,12 +165,12 @@ class Route
     /**
      * Set the supported extensions for this route.
      *
-     * @param array<string> $extensions The extensions to set.
+     * @param array<string>|string $extensions The extensions to set.
      * @return $this
      */
-    public function setExtensions(array $extensions): static
+    public function setExtensions(array|string $extensions): static
     {
-        $this->extensions = array_map('strtolower', $extensions);
+        $this->extensions = array_map('strtolower', (array)$extensions);
 
         return $this;
     }
@@ -219,7 +228,7 @@ class Route
      * If any of your patterns contain multibyte values, the `multibytePattern`
      * mode will be enabled.
      *
-     * @param array<string, string> $patterns The patterns to apply to routing elements
+     * @param array $patterns The patterns to apply to routing elements
      * @return $this
      */
     public function setPatterns(array $patterns): static
@@ -428,7 +437,7 @@ class Route
     public function parseRequest(ServerRequestInterface $request): ?array
     {
         $uri = $request->getUri();
-        if (isset($this->options['_host']) && !$this->hostMatches($uri->getHost())) {
+        if (isset($this->options['_host']) && !$this->hostMatches($uri->getHost(), $this->options['_host'])) {
             return null;
         }
 
@@ -537,11 +546,12 @@ class Route
      * Check to see if the host matches the route requirements
      *
      * @param string $host The request's host name
+     * @param string $hostPattern The host pattern to match against
      * @return bool Whether the host matches any conditions set in for this route.
      */
-    public function hostMatches(string $host): bool
+    protected function hostMatches(string $host, string $hostPattern): bool
     {
-        $pattern = '@^' . str_replace('\*', '.*', preg_quote($this->options['_host'], '@')) . '$@';
+        $pattern = '@^' . str_replace('\*', '.*', preg_quote($hostPattern, '@')) . '$@';
 
         return preg_match($pattern, $host) !== 0;
     }
@@ -600,11 +610,12 @@ class Route
      *
      * @param array $url The array to apply persistent parameters to.
      * @param array $params An array of persistent values to replace persistent ones.
-     * @return array An array with persistent parameters applied.
+     * @param array $persist An array of keys to persist.
+     * @return array<string, mixed> An array with persistent parameters applied.
      */
-    protected function persistParams(array $url, array $params): array
+    protected function persistParams(array $url, array $params, array $persist): array
     {
-        foreach ($this->options['persist'] as $persistKey) {
+        foreach ($persist as $persistKey) {
             if (array_key_exists((string)$persistKey, $params) && !isset($url[$persistKey])) {
                 $url[$persistKey] = $params[$persistKey];
             }
@@ -634,11 +645,8 @@ class Route
         $defaults = $this->defaults;
         $context += ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 
-        if (
-            !empty($this->options['persist']) &&
-            is_array($this->options['persist'])
-        ) {
-            $url = $this->persistParams($url, $context['params']);
+        if (!empty($this->options['persist'])) {
+            $url = $this->persistParams($url, $context['params'], $this->options['persist']);
         }
         unset($context['params']);
         $hostOptions = array_intersect_key($url, $context);
@@ -651,7 +659,7 @@ class Route
             $hostOptions['_host'] ??= $context['_host'];
 
             // The host did not match the route preferences
-            if (!$this->hostMatches((string)$hostOptions['_host'])) {
+            if (!$this->hostMatches((string)$hostOptions['_host'], $this->options['_host'])) {
                 return null;
             }
         }
