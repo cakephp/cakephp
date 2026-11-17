@@ -37,6 +37,39 @@ use Traversable;
 class ValidatorTest extends TestCase
 {
     /**
+     * Default providers registered before the test, restored after it.
+     *
+     * @var array<string, object|string>
+     */
+    protected array $defaultProviders = [];
+
+    /**
+     * Saves default validation providers before each test.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->defaultProviders = [];
+        foreach (Validator::getDefaultProviders() as $name) {
+            $this->defaultProviders[$name] = Validator::getDefaultProvider($name);
+        }
+    }
+
+    /**
+     * Restores default validation providers after each test.
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        foreach (Validator::getDefaultProviders() as $name) {
+            Validator::removeDefaultProvider($name);
+        }
+        foreach ($this->defaultProviders as $name => $provider) {
+            Validator::addDefaultProvider($name, $provider);
+        }
+    }
+
+    /**
      * tests getRequiredMessage
      */
     public function testGetRequiredMessage(): void
@@ -2395,11 +2428,14 @@ class ValidatorTest extends TestCase
         $this->assertValidationMessage($fieldName, $rule, $expectedMessage, $places);
 
         $this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
+        $originalLocale = Locale::getDefault();
         $this->skipIf(Locale::setDefault('pl_PL') === false, "The Polish locale isn't available.");
 
-        $this->assertEmpty($validator->validate(['username' => '1 200,99']));
-
-        Locale::setDefault(Validation::DEFAULT_LOCALE);
+        try {
+            $this->assertEmpty($validator->validate(['username' => '1 200,99']));
+        } finally {
+            Locale::setDefault($originalLocale);
+        }
     }
 
     /**
@@ -3031,6 +3067,23 @@ class ValidatorTest extends TestCase
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+    }
+
+    /**
+     * Tests removing a default provider
+     */
+    public function testRemoveDefaultProvider(): void
+    {
+        Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
+        $existing = new Validator();
+
+        Validator::removeDefaultProvider('test-provider');
+        $this->assertNull(Validator::getDefaultProvider('test-provider'));
+        $this->assertNotContains('test-provider', Validator::getDefaultProviders());
+        $this->assertNull(new Validator()->getProvider('test-provider'));
+        $this->assertSame('MyNameSpace\Validation\MyProvider', $existing->getProvider('test-provider'));
+
+        Validator::removeDefaultProvider('invalid-provider');
     }
 
     /**

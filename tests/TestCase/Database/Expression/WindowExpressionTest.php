@@ -76,6 +76,32 @@ class WindowExpressionTest extends TestCase
     }
 
     /**
+     * Provides unsafe partition and order expressions.
+     *
+     * @return array<array{string|array<string>}>
+     */
+    public static function invalidPartitionProvider(): array
+    {
+        return [
+            ['invalid with spaces'],
+            ["invalid\nnewline"],
+            ["invalid\rreturn"],
+            [['invalid array']],
+            [['ok', 'invalid value']],
+        ];
+    }
+
+    /**
+     * Tests windows with invalid partitions
+     */
+    #[DataProvider('invalidPartitionProvider')]
+    public function testPartitionsInvalid(mixed $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->partition($part);
+    }
+
+    /**
      * Tests windows with order by
      */
     public function testOrderBy(): void
@@ -109,6 +135,16 @@ class WindowExpressionTest extends TestCase
             'ORDER BY test, test2, test3 DESC',
             $w->sql(new ValueBinder()),
         );
+    }
+
+    /**
+     * Tests windows with invalid orderBy clauses
+     */
+    #[DataProvider('invalidPartitionProvider')]
+    public function testOrderbyInvalid(mixed $part): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->orderBy($part);
     }
 
     /**
@@ -319,6 +355,25 @@ class WindowExpressionTest extends TestCase
             ['DROP TABLE users', ''],
             ['', 'DROP TABLE users'],
         ];
+    }
+
+    /**
+     * Rejects frame types outside the supported SQL keywords.
+     *
+     * @param string $start An invalid frame type.
+     * @param string $end An unused invalid frame direction from the shared provider.
+     */
+    #[DataProvider('invalidFrameProvider')]
+    public function testFrameInvalidType(string $start, string $end): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new WindowExpression()->frame(
+            $start,
+            1,
+            WindowExpression::PRECEDING,
+            2,
+            WindowExpression::PRECEDING,
+        );
     }
 
     #[DataProvider('invalidFrameProvider')]

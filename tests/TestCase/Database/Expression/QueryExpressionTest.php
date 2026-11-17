@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -254,6 +255,64 @@ class QueryExpressionTest extends TestCase
 
         $expr->add(new QueryExpression('1 = 1'));
         $this->assertTrue($expr->hasNestedExpression());
+    }
+
+    /**
+     * Provides comparison methods and their SQL operators.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function comparisonMethodsProvider(): array
+    {
+        return [
+            'equality' => ['equals', '='],
+            'inequality' => ['notEquals', '!='],
+            'greater than' => ['greaterThan', '>'],
+            'less than' => ['lessThan', '<'],
+            'greater than or equal' => ['greaterThanOrEquals', '>='],
+            'less than or equal' => ['lessThanOrEquals', '<='],
+        ];
+    }
+
+    /**
+     * Checks replacement comparisons preserve chaining, inferred types, and explicit type overrides.
+     *
+     * @param string $method The comparison method name.
+     * @param string $operator The SQL comparison operator.
+     */
+    #[DataProvider('comparisonMethodsProvider')]
+    public function testComparisonMethods(string $method, string $operator): void
+    {
+        foreach ([null, 'float'] as $type) {
+            $expr = new QueryExpression([], ['score' => 'integer']);
+            $this->assertSame($expr, $expr->$method('score', 7, $type));
+
+            $binder = new ValueBinder();
+            $this->assertSame('score ' . $operator . ' :c0', $expr->sql($binder));
+            $this->assertSame([7], array_column($binder->bindings(), 'value'));
+            $this->assertSame([$type ?? 'integer'], array_column($binder->bindings(), 'type'));
+        }
+
+        $expr = new QueryExpression();
+        $expr->$method(new IdentifierExpression('score'), new IdentifierExpression('other_score'));
+        $binder = new ValueBinder();
+        $this->assertSame('score ' . $operator . ' other_score', $expr->sql($binder));
+        $this->assertSame([], $binder->bindings());
+    }
+
+    /**
+     * Checks equality replacements retain expansion of array binding types.
+     */
+    public function testComparisonArrayTypes(): void
+    {
+        foreach (['equals' => '=', 'notEquals' => '!='] as $method => $operator) {
+            $expr = new QueryExpression([], ['id' => 'integer[]']);
+            $expr->$method('id', [1, 2]);
+            $binder = new ValueBinder();
+            $this->assertSame('id ' . $operator . ' (:c0,:c1)', $expr->sql($binder));
+            $this->assertSame([1, 2], array_column($binder->bindings(), 'value'));
+            $this->assertSame(['integer', 'integer'], array_column($binder->bindings(), 'type'));
+        }
     }
 
     /**

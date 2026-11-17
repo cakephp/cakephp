@@ -22,7 +22,9 @@
     },
     "require": {
         "php": ">=8.5",
+        "cakephp/core": "6.0.*@dev",
         "cakephp/event": "6.0.*@dev",
+        "cakephp/utility": "6.0.*@dev",
         "cakephp/validation": "6.0.*@dev"
     },
     "autoload": {

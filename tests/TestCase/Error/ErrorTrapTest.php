@@ -40,6 +40,15 @@ class ErrorTrapTest extends TestCase
         Router::reload();
     }
 
+    /**
+     * Restores the error log configuration after each test.
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Log::drop('test_error');
+    }
+
     public function testConfigErrorRendererFallback(): void
     {
         $trap = new ErrorTrap(['errorRenderer' => null]);

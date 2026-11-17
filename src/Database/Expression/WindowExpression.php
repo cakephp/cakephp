@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -95,16 +96,14 @@ class WindowExpression implements ExpressionInterface, WindowInterface
 
         if ($partitions instanceof Closure) {
             $partitions = $partitions(new QueryExpression([], [], ''));
-        } elseif (is_string($partitions)) {
-            QueryExpression::ensureSimpleString('partitions', $partitions);
         }
-
         if (!is_array($partitions)) {
             $partitions = [$partitions];
         }
 
         foreach ($partitions as &$partition) {
             if (is_string($partition)) {
+                QueryExpression::ensureSimpleString('partitions', $partition);
                 $partition = new IdentifierExpression($partition);
             }
         }
@@ -122,11 +121,16 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         if (!$fields) {
             return $this;
         }
-
         $this->order ??= new OrderByExpression();
 
         if (is_string($fields)) {
             QueryExpression::ensureSimpleString('fields', $fields);
+        } elseif (is_array($fields)) {
+            foreach ($fields as $field) {
+                if (is_string($field)) {
+                    QueryExpression::ensureSimpleString('fields', $field);
+                }
+            }
         } elseif ($fields instanceof Closure) {
             $fields = $fields(new QueryExpression([], [], ''));
         }
@@ -179,6 +183,10 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         ExpressionInterface|string|int|null $endOffset,
         string $endDirection,
     ): static {
+        $validTypes = [self::ROWS, self::RANGE, self::GROUPS];
+        if (!in_array($type, $validTypes, true)) {
+            throw new InvalidArgumentException('Invalid type, must be one of ' . implode(', ', $validTypes));
+        }
         if (is_string($startOffset)) {
             QueryExpression::ensureSimpleString('startOffset', $startOffset);
         }
