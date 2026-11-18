@@ -588,8 +588,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        $maxLength = $this->getConnection()->getWriteDriver()->getMaxAliasLength();
-        if ($maxLength === null) {
+        $driver = $this->getConnection()->getWriteDriver();
+        $maxLength = $driver->getMaxAliasLength();
+        if ($maxLength === null || $driver->isIdentifierShorteningEnabled()) {
             return;
         }
 
@@ -601,7 +602,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
                     "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
                     'You must change the table schema in the database and shorten either the table or column ' .
-                    'identifier so they fit within the database alias limits.',
+                    'identifier so they fit within the database alias limits, or enable the `shortenIdentifiers` ' .
+                    'connection option.',
                 );
             }
         }

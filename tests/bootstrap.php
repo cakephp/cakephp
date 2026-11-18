@@ -127,6 +127,12 @@ if (env('CAKE_TEST_AUTOQUOTE')) {
     $connection->getWriteDriver()->enableAutoQuoting(true);
 }
 
+if (env('CAKE_TEST_SHORTEN_IDENTIFIERS')) {
+    /** @var \Cake\Database\Connection $connection */
+    $connection = ConnectionManager::get('test');
+    $connection->getWriteDriver()->enableIdentifierShortening(true);
+}
+
 Configure::write('Session', [
     'defaults' => 'php',
 ]);
