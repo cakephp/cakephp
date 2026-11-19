@@ -16,13 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{between, equals, greaterThan, in, like};
+use function Cake\Database\Expression\{allOf, anyOf, between, caseStatement, equals, func, greaterThan, identifier, in, lessThan, like, not, notIn};
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -47,7 +46,7 @@ class PredicateQueryTest extends TestCase
     }
 
     /**
-     * Checks SQL-shaped values remain data with either identifier quoting mode.
+     * Checks SQL-shaped values remain data and identifier operands reference columns in either quoting mode.
      *
      * @param bool $quote Whether to quote identifiers.
      */
@@ -68,6 +67,11 @@ class PredicateQueryTest extends TestCase
             $query = $connection->selectQuery()->select('id')->from('articles')
                 ->where(['id' => between(1, 2, 'integer')])->orderByAsc('id');
             $this->assertSame([1, 2], array_map('intval', array_column($query->execute()->fetchAll('assoc'), 'id')));
+
+            $query = $this->getTableLocator()->get('Articles')->find()->select(['id'])
+                ->where(['Articles.id' => equals(identifier('Articles.author_id'))]);
+            $this->assertSame([1], $query->all()->extract('id')->toList());
+            $this->assertSame([], $query->getValueBinder()->bindings());
         } finally {
             $driver->enableAutoQuoting($previous);
         }
@@ -87,24 +91,118 @@ class PredicateQueryTest extends TestCase
     }
 
     /**
+     * Checks grouped membership subqueries and nested disjunctions execute in both quoting modes.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testCompositePredicates(bool $quote): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $excluded = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(2)]);
+            $included = $connection->selectQuery()->select('id')->from('articles')
+                ->where(['id' => lessThan(3)]);
+            $articles = $this->getTableLocator()->get('Articles');
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => allOf(notIn($excluded), in($included)),
+            ]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+            $this->assertSame([2], (clone $query)->all()->extract('id')->toList());
+
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => anyOf(allOf(greaterThan(1), lessThan(3)), equals(3)),
+                'Articles.author_id' => equals(1),
+            ]);
+            $this->assertSame([3], $query->all()->extract('id')->toList());
+            $this->assertSame(
+                ['integer', 'integer', 'integer', 'integer'],
+                array_column($query->getValueBinder()->bindings(), 'type'),
+            );
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
+    }
+
+    /**
+     * Checks negated groups execute with either identifier quoting mode.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testNegatedGroups(bool $quote): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $articles = $this->getTableLocator()->get('Articles');
+            $query = $articles->find()->select(['id'])->where([
+                'Articles.id' => not(anyOf(lessThan(2), greaterThan(2))),
+            ]);
+            $this->assertSame([2], $query->all()->extract('id')->toList());
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
+    }
+
+    /**
+     * Checks standalone CASE forms, branch order, and NULL fallbacks with either identifier quoting mode.
+     *
+     * @param bool $quote Whether to quote identifiers.
+     */
+    #[DataProvider('quotingProvider')]
+    public function testCaseStatementExpressions(bool $quote): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $previous = $driver->isAutoQuotingEnabled();
+        $driver->enableAutoQuoting($quote);
+        try {
+            $query = $this->getTableLocator()->get('Articles')->find();
+            $query->select([
+                'id',
+                'simple' => caseStatement(identifier('Articles.id'))
+                    ->when(1, 'integer')->then('first')
+                    ->when(2, 'integer')->then('second'),
+                'searched' => caseStatement()
+                    ->when(['Articles.id' => allOf(greaterThan(1, 'integer'), lessThan(3, 'integer'))])
+                    ->then('second')
+                    ->when(['Articles.id' => greaterThan(1, 'integer')])->then('later')
+                    ->else('first'),
+            ])->orderByAsc('Articles.id');
+
+            $results = $query->all();
+            $this->assertSame(['first', 'second', null], $results->extract('simple')->toList());
+            $this->assertSame(['first', 'second', 'later'], $results->extract('searched')->toList());
+        } finally {
+            $driver->enableAutoQuoting($previous);
+        }
+    }
+
+    /**
      * Checks query filters work in aggregate, having, join, and CASE contexts.
      */
     public function testConditionConsumers(): void
     {
         $connection = ConnectionManager::get('test');
         $query = $connection->selectQuery();
-        $case = new QueryExpression()->case()->when(['a.id' => greaterThan(1)])->then(1)->else(0);
+        $case = caseStatement()->when(['a.id' => greaterThan(1)])->then(1)->else(0);
         $query->select(['id' => 'a.id', 'selected' => $case])->from(['a' => 'articles'])
-            ->innerJoin(['b' => 'articles'], ['b.id' => equals($query->identifier('a.id'))])
+            ->innerJoin(['b' => 'articles'], ['b.id' => equals(identifier('a.id'))])
             ->where(['a.title' => like('%Article')])->orderByAsc('a.id');
         $this->assertCount(3, $query->execute()->fetchAll('assoc'));
 
         $query = $connection->selectQuery();
-        $query->select(['author_id', 'total' => $query->func()->count('*')])->from('articles')
+        $query->select(['author_id', 'total' => func()->count('*')])->from('articles')
             ->groupBy('author_id')->having(['COUNT(*)' => greaterThan(1, 'integer')]);
         $this->assertCount(1, $query->execute()->fetchAll('assoc'));
 
-        $filter = $connection->selectQuery()->func()->count('*')->filter(['id' => greaterThan(1)]);
+        $filter = func()->count('*')->filter(['id' => greaterThan(1)]);
         $binder = new ValueBinder();
         $this->assertStringContainsString('FILTER (WHERE id > :c0)', $filter->sql($binder));
     }

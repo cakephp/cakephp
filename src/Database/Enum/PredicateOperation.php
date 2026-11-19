@@ -18,9 +18,27 @@ namespace Cake\Database\Enum;
 
 /**
  * Defines the operations supported by deferred condition predicates.
+ * Comparisons and boolean combinators share the same predicate dispatcher.
+ *
+ * @mago-expect lint:too-many-enum-cases
  */
 enum PredicateOperation
 {
+    /**
+     * Conjunction of predicates for the same field.
+     */
+    case ALL_OF;
+
+    /**
+     * Disjunction of predicates for the same field.
+     */
+    case ANY_OF;
+
+    /**
+     * Negation of a predicate for the same field.
+     */
+    case NOT;
+
     /**
      * Equality comparison.
      */
