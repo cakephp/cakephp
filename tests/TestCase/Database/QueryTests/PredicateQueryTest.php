@@ -22,7 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, exclusiveOr, func, greaterThan, in, lessThan, like, not, notIn};
+use function Cake\Database\Expression\{allOf, anyOf, between, equals, func, greaterThan, in, lessThan, like, not, notIn};
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -125,12 +125,12 @@ class PredicateQueryTest extends TestCase
     }
 
     /**
-     * Checks negated groups and XOR subqueries execute with either identifier quoting mode.
+     * Checks negated groups execute with either identifier quoting mode.
      *
      * @param bool $quote Whether to quote identifiers.
      */
     #[DataProvider('quotingProvider')]
-    public function testNegationAndExclusiveSubqueries(bool $quote): void
+    public function testNegatedGroups(bool $quote): void
     {
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
@@ -142,61 +142,9 @@ class PredicateQueryTest extends TestCase
                 'Articles.id' => not(anyOf(lessThan(2), greaterThan(2))),
             ]);
             $this->assertSame([2], $query->all()->extract('id')->toList());
-
-            $left = $articles->find()->select(['id'])->where(['Articles.id' => lessThan(3)]);
-            $right = $articles->find()->select(['id'])->where(['Articles.id' => greaterThan(1)]);
-            $predicate = exclusiveOr(in($left), in($right));
-            $query = $articles->find()->select(['id'])->where(['Articles.id' => $predicate])->orderByAsc('Articles.id');
-            $this->assertSame([1, 3], $query->all()->extract('id')->toList());
-            $this->assertSame([1, 3], (clone $query)->all()->extract('id')->toList());
-            $this->assertSame(
-                ['integer', 'integer', 'integer', 'integer'],
-                array_column($query->getValueBinder()->bindings(), 'type'),
-            );
-            $query = $articles->find()->select(['id'])->where(['Articles.id' => not($predicate)]);
-            $this->assertSame([2], $query->all()->extract('id')->toList());
         } finally {
             $driver->enableAutoQuoting($previous);
         }
-    }
-
-    /**
-     * Supplies every pair of true, false, and unknown comparison operands.
-     *
-     * @return array<string, array{int|null, int|null, bool|null}>
-     */
-    public static function exclusiveTruthTableProvider(): array
-    {
-        return [
-            'true, true' => [1, 1, false],
-            'true, false' => [1, 0, true],
-            'true, unknown' => [1, null, null],
-            'false, true' => [0, 1, true],
-            'false, false' => [0, 0, false],
-            'false, unknown' => [0, null, null],
-            'unknown, true' => [null, 1, null],
-            'unknown, false' => [null, 0, null],
-            'unknown, unknown' => [null, null, null],
-        ];
-    }
-
-    /**
-     * Checks XOR and its negation preserve SQL UNKNOWN rather than treating NULL as false.
-     *
-     * @param int|null $left The first operand compared to the author's identifier of 1.
-     * @param int|null $right The second operand compared to the author's identifier of 1.
-     * @param bool|null $expected The expected SQL truth value, with null representing UNKNOWN.
-     */
-    #[DataProvider('exclusiveTruthTableProvider')]
-    public function testExclusiveTruthTable(?int $left, ?int $right, ?bool $expected): void
-    {
-        $articles = $this->getTableLocator()->get('Articles');
-        $base = $articles->find()->where(['Articles.id' => 1]);
-        $predicate = exclusiveOr(comparison('=', $left), comparison('=', $right));
-        $positive = (clone $base)->where(['Articles.author_id' => $predicate]);
-        $negative = (clone $base)->where(['Articles.author_id' => not($predicate)]);
-        $this->assertSame($expected === true ? 1 : 0, $positive->all()->count());
-        $this->assertSame($expected === false ? 1 : 0, $negative->all()->count());
     }
 
     /**

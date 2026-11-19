@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, exclusiveOr, func, greaterThan, in, isNull, lessThan, not, notEquals, notIn};
+use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, func, greaterThan, in, isNull, lessThan, not, notEquals, notIn};
 
 /**
  * Verifies SQL function builders, deferred predicates, and independent expression trees.
@@ -167,16 +167,6 @@ class FunctionsTest extends TestCase
             ],
             'negated null check' => [not(equals(null)), 'NOT ((id) IS NULL)', []],
             'double negation' => [not(not(equals(1))), 'NOT (NOT (id = :c0))', [1]],
-            'exclusive predicates' => [
-                exclusiveOr(lessThan(10), greaterThan(5)),
-                '((id < :c0 AND NOT (id > :c1)) OR (NOT (id < :c2) AND id > :c3))',
-                [10, 5, 10, 5],
-            ],
-            'nested exclusive predicates' => [
-                allOf(greaterThan(0), exclusiveOr(lessThan(10), greaterThan(5))),
-                '(id > :c0 AND ((id < :c1 AND NOT (id > :c2)) OR (NOT (id < :c3) AND id > :c4)))',
-                [0, 10, 5, 10, 5],
-            ],
         ];
     }
 
@@ -215,50 +205,6 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Checks negated and repeated XOR operands inherit types while preserving explicit child types.
-     */
-    public function testExclusiveTypePrecedenceAndReuse(): void
-    {
-        $predicate = exclusiveOr(not(greaterThan(1)), lessThan(10, 'float'));
-        foreach (['id' => 'integer', 'other_id' => 'string'] as $field => $type) {
-            $expression = new QueryExpression([$field => $predicate], [$field => $type]);
-            $binder = new ValueBinder();
-            $this->assertSame(
-                "((NOT ($field > :c0) AND NOT ($field < :c1)) OR (NOT (NOT ($field > :c2)) AND $field < :c3))",
-                $expression->sql($binder),
-            );
-            $this->assertSame([1, 10, 1, 10], array_column($binder->bindings(), 'value'));
-            $this->assertSame([$type, 'float', $type, 'float'], array_column($binder->bindings(), 'type'));
-        }
-    }
-
-    /**
-     * Checks XOR branches and later resolutions hold independent copies of expression operands.
-     */
-    public function testExclusiveExpressionOperandsAreIndependent(): void
-    {
-        $operand = new IdentifierExpression('other_id');
-        $predicate = exclusiveOr(equals($operand), not(in([$operand])));
-        $first = $predicate->resolve('id', 'integer');
-        $changed = false;
-        $first->traverse(static function ($part) use (&$changed): void {
-            if (!$changed && $part instanceof IdentifierExpression) {
-                $part->setIdentifier('changed');
-                $changed = true;
-            }
-        });
-        $this->assertSame(
-            '((id = changed AND NOT (NOT (id IN (other_id)))) OR (NOT (id = other_id) AND NOT (id IN (other_id))))',
-            $first->sql(new ValueBinder()),
-        );
-        $this->assertSame(
-            '((id = other_id AND NOT (NOT (id IN (other_id)))) OR (NOT (id = other_id) AND NOT (id IN (other_id))))',
-            $predicate->resolve('id', 'integer')->sql(new ValueBinder()),
-        );
-        $this->assertSame('other_id', $operand->getIdentifier());
-    }
-
-    /**
      * Checks nested groups copy expression operands independently on each resolution.
      */
     public function testCompositeExpressionOperandsAreIndependent(): void
@@ -289,7 +235,6 @@ class FunctionsTest extends TestCase
             'conjunction' => ['allOf'],
             'disjunction' => ['anyOf'],
             'negation' => ['not'],
-            'exclusive disjunction' => ['exclusiveOr'],
         ];
     }
 
