@@ -31,6 +31,40 @@ function func(): FunctionsBuilder
 }
 
 /**
+ * Creates a database identifier expression without requiring a query instance.
+ *
+ * Identifier names must not contain untrusted user input. The SQL compiler
+ * quotes identifiers when identifier quoting is enabled.
+ *
+ * @param string $identifier The identifier, including any table alias.
+ * @param string|null $collation The optional identifier collation.
+ * @return \Cake\Database\Expression\IdentifierExpression
+ */
+function identifier(string $identifier, ?string $collation = null): IdentifierExpression
+{
+    return new IdentifierExpression($identifier, $collation);
+}
+
+/**
+ * Creates a CASE expression without requiring a query instance.
+ *
+ * Omit the value to evaluate WHEN conditions, or supply a value to compare
+ * against each WHEN value. An explicitly passed null selects the latter form.
+ *
+ * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The optional case value.
+ * @param string|null $type The case value type, inferred from the value when omitted.
+ * @return \Cake\Database\Expression\CaseStatementExpression
+ */
+function caseStatement(mixed $value = null, ?string $type = null): CaseStatementExpression
+{
+    if (func_num_args() > 0) {
+        return new CaseStatementExpression($value, $type);
+    }
+
+    return new CaseStatementExpression();
+}
+
+/**
  * Creates a predicate requiring every child predicate to match the same field.
  *
  * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with AND.

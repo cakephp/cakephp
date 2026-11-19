@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, func, greaterThan, in, isNull, lessThan, not, notEquals, notIn};
+use function Cake\Database\Expression\{allOf, anyOf, between, caseStatement, comparison, equals, func, greaterThan, identifier, in, isNull, lessThan, not, notEquals, notIn};
 
 /**
  * Verifies SQL function builders, deferred predicates, and independent expression trees.
@@ -47,6 +47,71 @@ class FunctionsTest extends TestCase
         $this->assertSame('string', $concat->getReturnType());
         $this->assertSame([' suffix'], array_column($binder->bindings(), 'value'));
         $this->assertSame(['string'], array_column($binder->bindings(), 'type'));
+    }
+
+    /**
+     * Checks identifier operands remain column references and preserve optional collations without bindings.
+     */
+    public function testIdentifierExpressions(): void
+    {
+        $expression = new QueryExpression(['Articles.author_id' => equals(identifier('Authors.id'))]);
+        $binder = new ValueBinder();
+
+        $this->assertSame('Articles.author_id = Authors.id', $expression->sql($binder));
+        $this->assertSame([], $binder->bindings());
+
+        $collated = identifier('Articles.title', 'utf8mb4_bin');
+        $this->assertSame('Articles.title COLLATE utf8mb4_bin', $collated->sql($binder));
+        $this->assertSame([], $binder->bindings());
+    }
+
+    /**
+     * Checks omitted case values create searched expressions with typed predicates and bound results.
+     */
+    public function testSearchedCaseStatement(): void
+    {
+        $expression = caseStatement()
+            ->when(['price' => greaterThan(100, 'decimal')])->then('premium')
+            ->when(['price' => greaterThan(10, 'decimal')])->then('standard')
+            ->else('budget');
+        $binder = new ValueBinder();
+
+        $this->assertSame(
+            'CASE WHEN price > :c0 THEN :c1 WHEN price > :c2 THEN :c3 ELSE :c4 END',
+            $expression->sql($binder),
+        );
+        $this->assertSame([100, 'premium', 10, 'standard', 'budget'], array_column($binder->bindings(), 'value'));
+        $this->assertSame(
+            ['decimal', 'string', 'decimal', 'string', 'string'],
+            array_column($binder->bindings(), 'type'),
+        );
+        $this->assertSame('string', $expression->getReturnType());
+    }
+
+    /**
+     * Checks simple case values honor explicit types and bind SQL-shaped strings as data.
+     */
+    public function testSimpleCaseStatement(): void
+    {
+        $input = "draft' OR 1=1 --";
+        $expression = caseStatement(value: 1, type: 'string')->when($input)->then('matched');
+        $binder = new ValueBinder();
+
+        $this->assertSame('CASE :c0 WHEN :c1 THEN :c2 ELSE NULL END', $expression->sql($binder));
+        $this->assertSame([1, $input, 'matched'], array_column($binder->bindings(), 'value'));
+        $this->assertSame(['string', 'string', 'string'], array_column($binder->bindings(), 'type'));
+    }
+
+    /**
+     * Checks an explicit null case value remains distinct from an omitted value.
+     */
+    public function testNullCaseStatementValue(): void
+    {
+        $expression = caseStatement(null)->when(1)->then('one');
+        $binder = new ValueBinder();
+
+        $this->assertSame('CASE NULL WHEN :c0 THEN :c1 ELSE NULL END', $expression->sql($binder));
+        $this->assertSame([1, 'one'], array_column($binder->bindings(), 'value'));
     }
 
     /**
