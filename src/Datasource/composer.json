@@ -39,7 +39,8 @@
         }
     },
     "suggest": {
-        "cakephp/cache": "If you decide to use Query caching."
+        "cakephp/cache": "If you decide to use Query caching.",
+        "cakephp/database": "To use the ConnectionManager default className or database-backed datasources."
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
