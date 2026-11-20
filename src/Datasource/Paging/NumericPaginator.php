@@ -78,6 +78,10 @@ class NumericPaginator implements PaginatorInterface
      *   from the query params passed to paginate(). Scopes allow namespacing the
      *   paging options and allows paginating multiple models in the same action.
      *   Default `null`.
+     * - `maxSortKeys` - The maximum number of sort keys a request can sort by
+     *   using a comma separated list (`?sort=-created,title`). Only valid, unique
+     *   keys are counted, further keys are ignored. A sort key mapped to multiple
+     *   fields in `sortableFields` counts as one key. Defaults to 3.
      *
      * @var array<string, mixed>
      */
@@ -89,6 +93,7 @@ class NumericPaginator implements PaginatorInterface
         'sortableFields' => null,
         'finder' => 'all',
         'scope' => null,
+        'maxSortKeys' => 3,
     ];
 
     /**
@@ -114,6 +119,8 @@ class NumericPaginator implements PaginatorInterface
         'direction' => null,
         'directionDefault' => null,
         'completeSort' => null,
+        'sorts' => null,
+        'sortQuery' => null,
         'alias' => null,
         'scope' => null,
     ];
@@ -490,6 +497,8 @@ class NumericPaginator implements PaginatorInterface
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'completeSort' => $order,
+            'sorts' => $data['options']['sorts'] ?? null,
+            'sortQuery' => $data['options']['sortQuery'] ?? null,
         ] + $this->pagingParams;
     }
 
@@ -641,7 +650,16 @@ class NumericPaginator implements PaginatorInterface
             }
         }
 
-        if (isset($options['sort'])) {
+        if (isset($options['sort']) && !is_string($options['sort'])) {
+            // Only strings are supported, e.g. `?sort[]=title` is ignored.
+            $options['sort'] = null;
+        }
+
+        $sortEntries = isset($options['sort']) ? $this->splitSortParam($options['sort']) : [];
+        if (count($sortEntries) > 1) {
+            $options = $this->resolveMultiSort($object, $builder, $sortEntries, $options);
+        } elseif (isset($options['sort'])) {
+            $options['sort'] = $sortEntries[0] ?? $options['sort'];
             // Parse sort and direction parameters
             $sortParams = $this->parseSortParams($options);
 
@@ -666,32 +684,9 @@ class NumericPaginator implements PaginatorInterface
                 }
 
                 // Merge with existing order - existing order comes AFTER our resolved order
-                $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-                $modelAlias = $object->getAlias();
-                // Only keep fields from existing order that aren't already in our resolved order
-                // Account for prefixed vs unprefixed field names (e.g., 'modified' vs 'Alerts.modified')
-                foreach ($existingOrder as $field => $dir) {
-                    // Check if this field is already in $order, accounting for
-                    // prefixed vs unprefixed names in either direction (e.g.
-                    // `modified` vs `Alerts.modified`). Both must be deduped,
-                    // otherwise _prefix() later collapses them and the existing
-                    // (default) entry would override the requested sort.
-                    $alreadyInOrder = isset($order[$field]);
-                    if (!$alreadyInOrder && str_contains($field, '.')) {
-                        [$alias, $fieldName] = explode('.', $field, 2);
-                        if ($alias === $modelAlias && isset($order[$fieldName])) {
-                            $alreadyInOrder = true;
-                        }
-                    }
-                    if (!$alreadyInOrder && !str_contains($field, '.') && isset($order[$modelAlias . '.' . $field])) {
-                        $alreadyInOrder = true;
-                    }
-                    if (!$alreadyInOrder) {
-                        $order[$field] = $dir;
-                    }
-                }
-                $options['order'] = $order;
+                $options['order'] = $this->mergeOrder($object, $order, $options['order'] ?? null);
                 $options['sortDirection'] = $sortParams['direction'];
+                $options['sorts'] = [$sortParams['sortKey'] => (string)reset($order)];
             } else {
                 // No sortableFields configured - allow any field (default behavior)
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
@@ -700,6 +695,7 @@ class NumericPaginator implements PaginatorInterface
                 }
 
                 $options['order'] = [$sortParams['sortKey'] => $sortParams['direction']] + $order;
+                $options['sorts'] = [$sortParams['sortKey'] => $sortParams['direction']];
             }
         } else {
             $options['sort'] = null;
@@ -812,8 +808,8 @@ class NumericPaginator implements PaginatorInterface
      * Parse sort parameters from options.
      *
      * Extracts and normalizes sort key and direction from pagination options.
-     * Supports both traditional format (?sort=field&direction=asc) and
-     * combined format (?sort=field-asc).
+     * Supports the traditional format (?sort=field&direction=asc), the
+     * combined format (?sort=field-asc) and the prefix format (?sort=-field).
      *
      * @param array<string, mixed> $options The options array
      * @return array{sortKey: string, direction: string, directionSpecified: bool}
@@ -823,6 +819,15 @@ class NumericPaginator implements PaginatorInterface
         $sortKey = $options['sort'];
         $direction = isset($options['direction']) ? strtolower($options['direction']) : SortField::ASC;
         $directionSpecified = isset($options['direction']);
+
+        // Check for the prefix format (e.g. '-title')
+        if (str_starts_with($sortKey, '-') && strlen($sortKey) > 1) {
+            return [
+                'sortKey' => substr($sortKey, 1),
+                'direction' => SortField::DESC,
+                'directionSpecified' => true,
+            ];
+        }
 
         // Check for combined sort-direction format (e.g., 'title-asc' or 'title-desc')
         if (preg_match('/^(.+)-(asc|desc)$/i', $sortKey, $matches)) {
@@ -841,6 +846,139 @@ class NumericPaginator implements PaginatorInterface
             'direction' => $direction,
             'directionSpecified' => $directionSpecified,
         ];
+    }
+
+    /**
+     * Split a comma separated sort parameter (`-created,title`) into its entries.
+     *
+     * @param string $sort The sort parameter.
+     * @return list<string>
+     */
+    protected function splitSortParam(string $sort): array
+    {
+        if (!str_contains($sort, ',')) {
+            return [$sort];
+        }
+
+        return array_values(array_filter(
+            array_map(trim(...), explode(',', $sort)),
+            fn(string $entry): bool => $entry !== '',
+        ));
+    }
+
+    /**
+     * Resolve a list of sort keys (`?sort=-created,title`) into an order.
+     *
+     * Each entry may be prefixed with `-` for descending order or use the combined
+     * `field-desc` format. Invalid and duplicate keys are skipped and don't count
+     * towards `maxSortKeys`. The `direction` request parameter is ignored.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object Repository object.
+     * @param \Cake\Datasource\Paging\SortableFieldsBuilder|null $builder Sortable fields builder.
+     * @param list<string> $entries The sort entries.
+     * @param array<string, mixed> $options The pagination options being used for this request.
+     * @return array<string, mixed>
+     */
+    protected function resolveMultiSort(
+        RepositoryInterface $object,
+        ?SortableFieldsBuilder $builder,
+        array $entries,
+        array $options,
+    ): array {
+        $maxSortKeys = max((int)($options['maxSortKeys'] ?? 3), 1);
+        $modelAlias = $object->getAlias();
+
+        $order = [];
+        $sorts = [];
+        $requested = [];
+        foreach ($entries as $entry) {
+            if (count($sorts) >= $maxSortKeys) {
+                break;
+            }
+
+            $sortParams = $this->parseSortParams(['sort' => $entry]);
+            $sortKey = $sortParams['sortKey'];
+            if ($builder !== null) {
+                $resolved = $builder->resolve($sortKey, $sortParams['direction'], $sortParams['directionSpecified']);
+            } else {
+                // Without sortableFields only columns of the repository can be sorted.
+                if (str_starts_with($sortKey, $modelAlias . '.')) {
+                    $sortKey = substr($sortKey, strlen($modelAlias) + 1);
+                }
+                $resolved = $object->hasField($sortKey) ? [$sortKey => $sortParams['direction']] : null;
+            }
+            if (!$resolved || isset($sorts[$sortKey])) {
+                continue;
+            }
+
+            // Report the applied direction, which differs from the requested one
+            // for sortable fields with default or locked directions.
+            $sorts[$sortKey] = (string)reset($resolved);
+            $requested[$sortKey] = $sortParams['direction'];
+            foreach ($resolved as $field => $direction) {
+                $order[$field] ??= $direction;
+            }
+        }
+
+        if ($sorts === []) {
+            $options['sort'] = null;
+
+            return $options;
+        }
+
+        $sortQuery = [];
+        foreach ($requested as $sortKey => $direction) {
+            $sortQuery[] = ($direction === SortField::DESC ? '-' : '') . $sortKey;
+        }
+
+        $options['order'] = $this->mergeOrder($object, $order, $options['order'] ?? null);
+        $options['sort'] = (string)array_key_first($sorts);
+        $options['sortDirection'] = $requested[$options['sort']];
+        $options['sorts'] = $sorts;
+        $options['sortQuery'] = implode(',', $sortQuery);
+
+        return $options;
+    }
+
+    /**
+     * Append the fields of an existing (default) order that are not already part
+     * of the requested order.
+     *
+     * Prefixed and unprefixed names (e.g. `modified` vs `Articles.modified`) are
+     * treated as the same field, otherwise `_prefix()` would later collapse them
+     * and the existing entry would override the requested sort.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object Repository object.
+     * @param array $order The requested order.
+     * @param mixed $existingOrder The existing (default) order.
+     * @return array
+     */
+    protected function mergeOrder(RepositoryInterface $object, array $order, mixed $existingOrder): array
+    {
+        if (!is_array($existingOrder)) {
+            return $order;
+        }
+
+        $modelAlias = $object->getAlias();
+        foreach ($existingOrder as $field => $dir) {
+            if (is_int($field)) {
+                $order[] = $dir;
+                continue;
+            }
+            $alreadyInOrder = isset($order[$field]);
+            if (!$alreadyInOrder && str_contains($field, '.')) {
+                [$alias, $fieldName] = explode('.', $field, 2);
+                $alreadyInOrder = $alias === $modelAlias && isset($order[$fieldName]);
+            }
+            if (!$alreadyInOrder && !str_contains($field, '.')) {
+                $alreadyInOrder = isset($order[$modelAlias . '.' . $field]);
+            }
+            if (!$alreadyInOrder) {
+                $order[$field] = $dir;
+            }
+        }
+
+        return $order;
     }
 
     /**
