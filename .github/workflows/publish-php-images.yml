@@ -70,6 +70,16 @@ jobs:
             arch: arm64
             platform: linux/arm64
             runner: ubuntu-24.04-arm
+          - php: '8.6'
+            base: '8.6-fpm-alpine'
+            arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - php: '8.6'
+            base: '8.6-fpm-alpine'
+            arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -135,7 +145,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.2', '8.3', '8.4', '8.5', '8.6']
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
