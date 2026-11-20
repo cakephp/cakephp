@@ -138,6 +138,16 @@ class ConsoleIo
     }
 
     /**
+     * Return whether prompts are interactive.
+     *
+     * @since 5.5.0
+     */
+    public function isInteractive(): bool
+    {
+        return $this->interactive;
+    }
+
+    /**
      * Get/set the current output level.
      *
      * @param int|null $level The current output level.

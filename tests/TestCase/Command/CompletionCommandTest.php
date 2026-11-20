@@ -182,6 +182,7 @@ class CompletionCommandTest extends TestCase
         $expected = [
             '--connection -c',
             '--help -h',
+            '--no-interaction',
             '--quiet -q',
             '--verbose -v',
         ];
@@ -203,6 +204,7 @@ class CompletionCommandTest extends TestCase
 
         $expected = [
             '--help -h',
+            '--no-interaction',
             '--quiet -q',
             '--verbose -v',
         ];
