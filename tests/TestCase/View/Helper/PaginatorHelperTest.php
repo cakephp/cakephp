@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Datasource\Paging\CursorPaginatedResultSet;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\Paging\SortField;
 use Cake\Http\ServerRequest;
@@ -3707,5 +3708,45 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->generateUrl(['page' => 2]);
         $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test next/prev links for cursor paginated results.
+     */
+    public function testCursorLinks(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/',
+            'query' => ['cursor' => 'current', 'sort' => 'title', 'foo' => 'bar'],
+            'params' => ['plugin' => null, 'controller' => 'Articles', 'action' => 'index'],
+        ]);
+        Router::setRequest($request);
+        $view = new View($request);
+        $paginator = new PaginatorHelper($view);
+        $paginator->setPaginated(new CursorPaginatedResultSet(new ResultSet([]), [
+            'alias' => 'Articles',
+            'currentPage' => 1,
+            'count' => 2,
+            'perPage' => 2,
+            'totalCount' => null,
+            'pageCount' => null,
+            'sort' => 'title',
+            'direction' => 'asc',
+            'hasPrevPage' => true,
+            'hasNextPage' => true,
+            'cursor' => 'current',
+            'nextCursor' => 'nextToken',
+            'prevCursor' => 'prevToken',
+        ]));
+
+        $result = $paginator->next('Next');
+        $this->assertStringContainsString('href="/?foo=bar&amp;cursor=nextToken&amp;sort=title&amp;direction=asc"', $result);
+
+        $result = $paginator->prev('Prev');
+        $this->assertStringContainsString('href="/?foo=bar&amp;cursor=prevToken&amp;sort=title&amp;direction=asc"', $result);
+
+        // Sort links restart from the first page.
+        $result = $paginator->sort('body');
+        $this->assertStringContainsString('href="/?foo=bar&amp;sort=body&amp;direction=asc"', $result);
     }
 }
