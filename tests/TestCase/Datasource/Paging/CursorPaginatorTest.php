@@ -22,6 +22,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Datasource\Paging\CursorPaginatedInterface;
 use Cake\Datasource\Paging\CursorPaginator;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 class CursorPaginatorTest extends TestCase
 {
@@ -158,6 +159,47 @@ class CursorPaginatorTest extends TestCase
         $result = $this->Paginator->paginate($table, ['cursor' => $cursor, 'sort' => 'title'], $settings);
         $this->assertSame($cursor, $result->pagingParam('cursor'));
         $this->assertTrue($result->hasPrevPage());
+    }
+
+    public function testCursorsAreSigned(): void
+    {
+        $table = $this->getTableLocator()->get('Posts');
+        $settings = ['limit' => 3];
+
+        $cursor = $this->Paginator->paginate($table, [], $settings)->nextCursor();
+        $this->assertMatchesRegularExpression('/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/', $cursor);
+        [$payload, $signature] = explode('.', $cursor);
+
+        $result = $this->Paginator->paginate($table, ['cursor' => $cursor], $settings);
+        $this->assertSame([4, 5, 6], $result->items()->extract('id')->toList());
+
+        // A modified payload with the original signature is rejected.
+        $data = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
+        $data['v'] = [5];
+        $forged = rtrim(strtr(base64_encode(json_encode($data)), '+/', '-_'), '=');
+        $invalid = [
+            $forged . '.' . $signature,
+            $forged,
+            $payload,
+            $payload . '.',
+            $payload . '.' . $signature . '.' . $signature,
+            $payload . '.' . strrev($signature),
+        ];
+        foreach ($invalid as $cursorValue) {
+            $result = $this->Paginator->paginate($table, ['cursor' => $cursorValue], $settings);
+            $this->assertSame([1, 2, 3], $result->items()->extract('id')->toList(), $cursorValue);
+            $this->assertNull($result->pagingParam('cursor'));
+        }
+
+        // Changing the salt invalidates existing cursors.
+        $salt = Security::getSalt();
+        Security::setSalt('another-salt-that-is-long-enough-for-hmac');
+        try {
+            $result = $this->Paginator->paginate($table, ['cursor' => $cursor], $settings);
+            $this->assertSame([1, 2, 3], $result->items()->extract('id')->toList());
+        } finally {
+            Security::setSalt($salt);
+        }
     }
 
     public function testEmptyResult(): void
