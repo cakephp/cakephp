@@ -39,6 +39,12 @@ class ConsoleOptionParserTest extends TestCase
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
     }
 
+    public function testDefaultNoInteractionOption(): void
+    {
+        $this->assertArrayHasKey('no-interaction', (new ConsoleOptionParser('test'))->options());
+        $this->assertArrayNotHasKey('no-interaction', (new ConsoleOptionParser('test', false))->options());
+    }
+
     /**
      * test setting the console description
      */
@@ -1083,11 +1089,12 @@ TEXT;
 
         $options = $result['options'];
         $this->assertArrayHasKey('quiet', $options);
+        $this->assertArrayHasKey('no-interaction', $options);
         $this->assertArrayHasKey('test', $options);
         $this->assertArrayHasKey('file', $options);
         $this->assertArrayHasKey('output', $options);
 
         $this->assertCount(2, $result['arguments']);
-        $this->assertCount(6, $result['options']);
+        $this->assertCount(7, $result['options']);
     }
 }

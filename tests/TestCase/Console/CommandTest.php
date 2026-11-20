@@ -334,6 +334,14 @@ class CommandTest extends TestCase
         $this->assertEquals(['Result: Default!'], $output->messages());
     }
 
+    public function testExecuteCommandNoInteractionKeepsNormalOutput(): void
+    {
+        $output = new StubConsoleOutput();
+        $command = new Command();
+        $command->executeCommand(NonInteractiveCommand::class, ['--no-interaction'], $this->getMockIo($output));
+        $this->assertEquals(['Result: Default!', 'Normal: Default!'], $output->messages());
+    }
+
     public function testExecuteCommandWithDI(): void
     {
         $output = new StubConsoleOutput();

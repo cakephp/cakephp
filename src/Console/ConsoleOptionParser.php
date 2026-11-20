@@ -140,8 +140,7 @@ class ConsoleOptionParser
      * Construct an OptionParser so you can define its behavior
      *
      * @param string $command The command name this parser is for. The command name is used for generating help.
-     * @param bool $defaultOptions Whether you want the verbose and quiet options set. Setting
-     *  this to false will prevent the addition of `--verbose` & `--quiet` options.
+     * @param bool $defaultOptions Whether to add `--verbose`, `--quiet`, and `--no-interaction`.
      */
     public function __construct(string $command = '', bool $defaultOptions = true)
     {
@@ -162,6 +161,9 @@ class ConsoleOptionParser
                 'short' => 'q',
                 'help' => 'Enable quiet output and non-interactive mode.',
                 'boolean' => true,
+            ])->addOption('no-interaction', [
+                'help' => 'Disable interactive prompts. Prompts use their default value.',
+                'boolean' => true,
             ]);
         }
     }
@@ -170,7 +172,7 @@ class ConsoleOptionParser
      * Static factory method for creating new OptionParsers so you can chain methods off of them.
      *
      * @param string $command The command name this parser is for. The command name is used for generating help.
-     * @param bool $defaultOptions Whether you want the verbose and quiet options set.
+     * @param bool $defaultOptions Whether to add `--verbose`, `--quiet`, and `--no-interaction`.
      * @return static
      */
     public static function create(string $command, bool $defaultOptions = true): static
@@ -195,7 +197,7 @@ class ConsoleOptionParser
      * ```
      *
      * @param array<string, mixed> $spec The spec to build the OptionParser with.
-     * @param bool $defaultOptions Whether you want the verbose and quiet options set.
+     * @param bool $defaultOptions Whether to add `--verbose`, `--quiet`, and `--no-interaction`.
      * @return static
      */
     public static function buildFromArray(array $spec, bool $defaultOptions = true): static
