@@ -78,6 +78,17 @@ class NumericPaginator implements PaginatorInterface
      *   from the query params passed to paginate(). Scopes allow namespacing the
      *   paging options and allows paginating multiple models in the same action.
      *   Default `null`.
+     * - `stableSort` - Append a tiebreaker to the order so that rows with equal
+     *   sort values are returned in a deterministic order across pages. Set to
+     *   `true` to use the repository's primary key, or pass a field name or list
+     *   of field names to use instead. Defaults to `false`.
+     *
+     *   Appending the tiebreaker changes the generated `ORDER BY`. An index that
+     *   only covers the sort field can no longer be used to avoid sorting, you
+     *   need a composite index on the sort field and the tiebreaker. Finders that
+     *   use `GROUP BY` or aggregates can fail under `ONLY_FULL_GROUP_BY` when the
+     *   tiebreaker is not part of the grouping, configure the fields explicitly in
+     *   that case.
      *
      * @var array<string, mixed>
      */
@@ -89,6 +100,7 @@ class NumericPaginator implements PaginatorInterface
         'sortableFields' => null,
         'finder' => 'all',
         'scope' => null,
+        'stableSort' => false,
     ];
 
     /**
@@ -359,6 +371,7 @@ class NumericPaginator implements PaginatorInterface
 
         $options = $this->mergeOptions($params, $defaults);
         $options = $this->validateSort($object, $options);
+        $options = $this->addStableSort($object, $options);
         $options = $this->checkLimit($options);
 
         $options['page'] = max((int)$options['page'], 1);
@@ -729,6 +742,67 @@ class NumericPaginator implements PaginatorInterface
         $options['order'] = $this->_prefix($object, $options['order'], $sortAllowed);
 
         return $options;
+    }
+
+    /**
+     * Append a tiebreaker to the order so pages are stable when sort values repeat.
+     *
+     * @param \Cake\Datasource\RepositoryInterface $object Repository object.
+     * @param array<string, mixed> $options The pagination options being used for this request.
+     * @return array<string, mixed>
+     */
+    protected function addStableSort(RepositoryInterface $object, array $options): array
+    {
+        $stableSort = $options['stableSort'] ?? false;
+        if (!$stableSort || !is_array($options['order'] ?? null)) {
+            return $options;
+        }
+
+        if ($stableSort === true) {
+            if (!method_exists($object, 'getPrimaryKey')) {
+                return $options;
+            }
+            $fields = (array)$object->getPrimaryKey();
+        } else {
+            $fields = (array)$stableSort;
+        }
+
+        $modelAlias = $object->getAlias();
+        foreach ($fields as $field) {
+            if (!is_string($field)) {
+                continue;
+            }
+            $qualified = str_contains($field, '.') ? $field : $modelAlias . '.' . $field;
+            if ($this->hasOrderField($options['order'], $qualified, $modelAlias)) {
+                continue;
+            }
+            $options['order'][$qualified] = SortField::ASC;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Check whether an order already contains a field, accounting for prefixed
+     * and unprefixed names of the given model alias.
+     *
+     * @param array $order Order array.
+     * @param string $field Field name.
+     * @param string $modelAlias Model alias.
+     * @return bool
+     */
+    protected function hasOrderField(array $order, string $field, string $modelAlias): bool
+    {
+        if (isset($order[$field])) {
+            return true;
+        }
+        if (str_contains($field, '.')) {
+            [$alias, $fieldName] = explode('.', $field, 2);
+
+            return $alias === $modelAlias && isset($order[$fieldName]);
+        }
+
+        return isset($order[$modelAlias . '.' . $field]);
     }
 
     /**
