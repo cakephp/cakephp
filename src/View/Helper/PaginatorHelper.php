@@ -532,6 +532,12 @@ class PaginatorHelper extends Helper
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $this->param('alias'));
         }
 
+        // Preserve a multi-key sort (`?sort=-created,title`) unless a new sort was requested.
+        if (!array_key_exists('sort', $options) && !empty($paging['sortQuery'])) {
+            $options['sort'] = $paging['sortQuery'];
+            $options['direction'] = null;
+        }
+
         $options += array_intersect_key(
             $paging,
             ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],

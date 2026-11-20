@@ -289,6 +289,7 @@ trait PaginatorTestTrait
         $this->assertEquals($settings + [
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
         ], $result);
 
         $defaults = $this->Paginator->getDefaults('Posts', $settings);
@@ -300,6 +301,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -335,6 +337,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'scope' => null,
+            'maxSortKeys' => 3,
         ];
         $this->assertEquals($expected, $result);
 
@@ -355,6 +358,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'nonexistent',
             'sortableFields' => null,
+            'maxSortKeys' => 3,
         ];
         $this->assertEquals($expected, $result);
 
@@ -375,6 +379,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
             'sortableFields' => null,
+            'maxSortKeys' => 3,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -404,6 +409,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'scope' => null,
+            'maxSortKeys' => 3,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -431,6 +437,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -463,6 +470,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -498,6 +506,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -522,6 +531,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -540,6 +550,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -570,6 +581,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -594,6 +606,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
             'finder' => 'all',
+            'maxSortKeys' => 3,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -997,6 +1010,7 @@ trait PaginatorTestTrait
             'order' => [
                 'model.created' => 'desc',
             ],
+            'sorts' => ['created' => 'desc'],
         ];
         $this->assertEquals($expected, $result);
     }
