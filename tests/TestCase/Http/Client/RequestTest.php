@@ -42,6 +42,33 @@ class RequestTest extends TestCase
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
 
+    public static function newlineValueProvider(): array
+    {
+        return [
+            ["one\ntwo\n", 'onetwo'],
+            ["one\rtwo\r", 'onetwo'],
+            ["one\r\ntwo\r\n", 'onetwo'],
+            ["one\r two\r\n three", 'one two three'],
+        ];
+    }
+
+    /**
+     * test header values are stripped of newlines
+     */
+    #[DataProvider('newlineValueProvider')]
+    public function testConstructorStripNewlines(string $value, string $expected): void
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            'X-inject' => $value,
+        ];
+        $request = new Request('http://example.com', 'POST', $headers);
+
+        $this->assertSame('http://example.com', (string)$request->getUri());
+        $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertSame($expected, $request->getHeaderLine('X-inject'));
+    }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
