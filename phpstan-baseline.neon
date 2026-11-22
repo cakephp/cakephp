@@ -1,437 +1,824 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Constructor of class Cake\\\\Auth\\\\Storage\\\\SessionStorage has an unused parameter \\$response\\.$#"
+			message: '#^Constructor of class Cake\\Auth\\Storage\\SessionStorage has an unused parameter \$response\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Auth/Storage/SessionStorage.php
 
 		-
-			message: "#^PHPDoc tag @mixin contains invalid type Cake\\\\Core\\\\InstanceConfigTrait\\.$#"
+			message: '#^PHPDoc tag @mixin contains invalid type Cake\\Core\\InstanceConfigTrait\.$#'
+			identifier: mixin.trait
 			count: 1
 			path: src/Auth/Storage/StorageInterface.php
 
 		-
-			message: "#^Method Redis\\:\\:connect\\(\\) invoked with 7 parameters, 1\\-6 required\\.$#"
+			message: '#^Instanceof between Cake\\Collection\\Collection and OuterIterator will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
-			path: src/Cache/Engine/RedisEngine.php
+			path: src/Collection/Collection.php
 
 		-
-			message: "#^Method Redis\\:\\:pconnect\\(\\) invoked with 7 parameters, 1\\-5 required\\.$#"
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: "#^Call to an undefined method Traversable\\:\\:getArrayCopy\\(\\)\\.$#"
-			count: 1
-			path: src/Collection/Iterator/ExtractIterator.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$items of class Cake\\\\Collection\\\\Iterator\\\\TreePrinter constructor expects RecursiveIterator, Iterator\\<mixed, mixed\\> given\\.$#"
+			message: '#^Instanceof between Cake\\Collection\\Collection and OuterIterator will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Collection/Iterator/TreeIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$iterator of method MultipleIterator\\:\\:attachIterator\\(\\) expects Iterator, Traversable given\\.$#"
+			message: '#^Parameter \#1 \$items of class Cake\\Collection\\Iterator\\TreePrinter constructor expects RecursiveIterator, Iterator\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: '#^Parameter \#2 \$mode of method RecursiveIteratorIterator\<RecursiveIterator\>\:\:__construct\(\) expects 0\|1\|2, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: '#^Parameter \#3 \$flags of method RecursiveIteratorIterator\<RecursiveIterator\>\:\:__construct\(\) expects 0\|16, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Collection/Iterator/TreeIterator.php
+
+		-
+			message: '#^Instanceof between Cake\\Collection\\Collection and OuterIterator will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
+			message: '#^Parameter \#2 \$mode of method RecursiveIteratorIterator\<RecursiveIterator\>\:\:__construct\(\) expects 0\|1\|2, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Collection/Iterator/TreePrinter.php
+
+		-
+			message: '#^Instanceof between Cake\\Collection\\Collection and OuterIterator will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Collection/Iterator/ZipIterator.php
 
 		-
-			message: "#^Strict comparison using \\!\\=\\= between null and null will always evaluate to false\\.$#"
+			message: '#^Parameter \#1 \$iterator of method MultipleIterator\:\:attachIterator\(\) expects Iterator, Traversable given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Collection/Iterator/ZipIterator.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between null and null will always evaluate to false\.$#'
+			identifier: notIdentical.alwaysFalse
 			count: 2
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^PHPDoc tag @var with type array\<SplFileInfo\> is not subtype of native type Iterator\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Console/CommandScanner.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Dead catch \\- Cake\\\\Console\\\\Exception\\\\StopException is never thrown in the try block\\.$#"
+			message: '#^Dead catch \- Cake\\Console\\Exception\\StopException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
 			count: 1
 			path: src/Console/ShellDispatcher.php
 
 		-
-			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$request \\(Cake\\\\Http\\\\ServerRequest\\) on left side of \\?\\? is not nullable\\.$#"
+			message: '#^Property Cake\\Controller\\Controller\:\:\$request \(Cake\\Http\\ServerRequest\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: src/Controller/Controller.php
 
 		-
-			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) does not accept Psr\\\\Http\\\\Message\\\\ResponseInterface\\.$#"
+			message: '#^Property Cake\\Controller\\Controller\:\:\$response \(Cake\\Http\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Controller/Controller.php
 
 		-
-			message: "#^Property Cake\\\\Controller\\\\Controller\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) on left side of \\?\\? is not nullable\\.$#"
+			message: '#^Property Cake\\Controller\\Controller\:\:\$response \(Cake\\Http\\Response\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: src/Controller/Controller.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\Controller\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$request of method Cake\\Controller\\Controller\:\:setRequest\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:getControllerClass\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$request of method Cake\\Controller\\ControllerFactory\:\:getControllerClass\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of method Cake\\\\Controller\\\\ControllerFactory\\:\\:missingController\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$request of method Cake\\Controller\\ControllerFactory\:\:missingController\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 2
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Property Cake\\\\Database\\\\Driver\\:\\:\\$_connection \\(PDO\\) does not accept null\\.$#"
+			message: '#^Property Cake\\Database\\Driver\:\:\$_connection \(PDO\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 2
 			path: src/Database/Driver.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Instanceof between mixed and \(int\|string\) results in an error\.$#'
+			identifier: instanceof.invalidExprType
+			count: 1
+			path: src/Database/Driver/Postgres.php
+
+		-
+			message: '#^Instanceof between mixed and \(int\|string\) results in an error\.$#'
+			identifier: instanceof.invalidExprType
+			count: 1
+			path: src/Database/Driver/Sqlite.php
+
+		-
+			message: '#^Instanceof between mixed and \(int\|string\) results in an error\.$#'
+			identifier: instanceof.invalidExprType
+			count: 1
+			path: src/Database/Driver/Sqlserver.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/BetweenExpression.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/CaseExpression.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/CaseStatementExpression.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/ComparisonExpression.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/FunctionExpression.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^PHPDoc type array\\<string\\|null\\> of property Cake\\\\Database\\\\Expression\\\\TupleComparison\\:\\:\\$_type is not covariant with PHPDoc type string\\|null of overridden property Cake\\\\Database\\\\Expression\\\\ComparisonExpression\\:\\:\\$_type\\.$#"
+			message: '#^PHPDoc type array\<string\|null\> of property Cake\\Database\\Expression\\TupleComparison\:\:\$_type is not covariant with PHPDoc type string\|null of overridden property Cake\\Database\\Expression\\ComparisonExpression\:\:\$_type\.$#'
+			identifier: property.phpDocType
 			count: 1
 			path: src/Database/Expression/TupleComparison.php
 
 		-
-			message: "#^Access to an undefined property Exception\\:\\:\\$queryString\\.$#"
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/ValuesExpression.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\{\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Database/Expression/WhenThenExpression.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Database\\Type\\ExpressionTypeInterface is not subtype of native type Cake\\Database\\Type\\ExpressionTypeInterface&Cake\\Database\\TypeInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Database/Expression/WhenThenExpression.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$dataType$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/Database/FunctionsBuilder.php
+
+		-
+			message: '#^Access to an undefined property Exception\:\:\$queryString\.$#'
+			identifier: property.notFound
 			count: 1
 			path: src/Database/Log/LoggingStatement.php
 
 		-
-			message: "#^PHPDoc type PDOStatement of property Cake\\\\Database\\\\Statement\\\\PDOStatement\\:\\:\\$_statement is not covariant with PHPDoc type Cake\\\\Database\\\\StatementInterface of overridden property Cake\\\\Database\\\\Statement\\\\StatementDecorator\\:\\:\\$_statement\\.$#"
+			message: '#^Access to an undefined property Cake\\Database\\StatementInterface\:\:\$queryString\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Database/Statement/BufferedStatement.php
+
+		-
+			message: '#^PHPDoc type PDOStatement of property Cake\\Database\\Statement\\PDOStatement\:\:\$_statement is not covariant with PHPDoc type Cake\\Database\\StatementInterface of overridden property Cake\\Database\\Statement\\StatementDecorator\:\:\$_statement\.$#'
+			identifier: property.phpDocType
 			count: 1
 			path: src/Database/Statement/PDOStatement.php
 
 		-
-			message: "#^Property PDOStatement\\:\\:\\$queryString \\(string\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Access to an undefined property Cake\\Database\\StatementInterface\:\:\$queryString\.$#'
+			identifier: property.notFound
 			count: 1
-			path: src/Database/Statement/PDOStatement.php
+			path: src/Database/Statement/SqliteStatement.php
 
 		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			message: '#^Access to an undefined property Cake\\Database\\StatementInterface\:\:\$queryString\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Database/Statement/StatementDecorator.php
+
+		-
+			message: '#^Parameter \#1 \$value of function strval expects bool\|float\|int\|resource\|string\|null, object given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Database/Type/DecimalType.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Error\\ErrorLoggerInterface and ''logError'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Error/ErrorTrap.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Error\\ErrorLoggerInterface and ''logException'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Error/ExceptionTrap.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<70400, 80599\> and 70400 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: src/Error/Middleware/ErrorHandlerMiddleware.php
+
+		-
+			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Call to function unset\\(\\) contains undefined variable \\$directory\\.$#"
+			message: '#^Call to function unset\(\) contains undefined variable \$directory\.$#'
+			identifier: unset.variable
 			count: 2
 			path: src/Filesystem/Folder.php
 
 		-
-			message: "#^Call to function unset\\(\\) contains undefined variable \\$iterator\\.$#"
+			message: '#^Call to function unset\(\) contains undefined variable \$iterator\.$#'
+			identifier: unset.variable
 			count: 2
 			path: src/Filesystem/Folder.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$request of static method Cake\\Routing\\Router\:\:setRequest\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/BaseApplication.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Client.php
 
 		-
-			message: "#^Parameter \\$ch of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:exec\\(\\) has invalid type CurlHandle\\.$#"
-			count: 1
-			path: src/Http/Client/Adapter/Curl.php
-
-		-
-			message: "#^Parameter \\$handle of method Cake\\\\Http\\\\Client\\\\Adapter\\\\Curl\\:\\:createResponse\\(\\) has invalid type CurlHandle\\.$#"
-			count: 1
-			path: src/Http/Client/Adapter/Curl.php
-
-		-
-			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
+			message: '#^Constructor of class Cake\\Http\\Client\\Auth\\Digest has an unused parameter \$options\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method DateTimeInterface\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Method Cake\\Http\\Cookie\\Cookie\:\:createFromHeaderString\(\) should return static\(Cake\\Http\\Cookie\\Cookie\) but returns Cake\\Http\\Cookie\\Cookie\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Http/Cookie/Cookie.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^PHPDoc tag @var with type mixed is not subtype of native type Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Http/Middleware/CsrfProtectionMiddleware.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<Cake\\Http\\Cookie\\CookieInterface\> is not subtype of native type Cake\\Http\\Cookie\\CookieCollection\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Http/Middleware/EncryptedCookieMiddleware.php
+
+		-
+			message: '#^Call to an undefined method DateTimeInterface\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Http/Response.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Comparison operation "\>\=" between int\<70400, 80599\> and 70300 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: src/Http/ResponseEmitter.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: src/Http/ResponseEmitter.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<70400, 80599\> and 70300 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
 			count: 1
 			path: src/Http/Session.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:dateAgoInWords\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/Http/Session.php
+
+		-
+			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/TestSuite/HttpClientTrait.php
+
+		-
+			message: '#^Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface\:\:dateAgoInWords\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/I18n/Date.php
 
 		-
-			message: "#^Access to an undefined static property static\\(Cake\\\\I18n\\\\FrozenDate\\)\\:\\:\\$diffFormatter\\.$#"
-			count: 2
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Cake\\\\I18n\\\\FrozenDate\\:\\:__construct\\(\\) calls parent\\:\\:__construct\\(\\) but Cake\\\\I18n\\\\FrozenDate does not extend any class\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:dateAgoInWords\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Call to an undefined static method static\\(Cake\\\\I18n\\\\FrozenDate\\)\\:\\:getTestNow\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Call to an undefined static method static\\(Cake\\\\I18n\\\\FrozenDate\\)\\:\\:hasTestNow\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Parameter \\#1 \\$date of method Cake\\\\I18n\\\\FrozenDate\\:\\:_formatObject\\(\\) expects DateTime\\|DateTimeImmutable, static\\(Cake\\\\I18n\\\\FrozenDate\\) given\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/I18n/FrozenDate.php
-
-		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface\:\:timeAgoInWords\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/I18n/FrozenTime.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\DifferenceFormatterInterface\\:\\:timeAgoInWords\\(\\)\\.$#"
+			message: '#^PHPDoc tag @var with type int is not subtype of native type int\<0, max\>\|false\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/I18n/Parser/PoFileParser.php
+
+		-
+			message: '#^Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface\:\:timeAgoInWords\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Static property Cake\\\\Log\\\\Log\\:\\:\\$_registry \\(Cake\\\\Log\\\\LogEngineRegistry\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Regex pattern is invalid\: Compilation failed\: length of lookbehind assertion is not limited at offset 0 in pattern\: /\(\?\<\!\(\?\:\.\*\)\)\\\{\(\[a\-z0\-9\-_\]\+\)\\\}/i$#'
+			identifier: regexp.pattern
+			count: 1
+			path: src/Log/Engine/BaseLog.php
+
+		-
+			message: '#^Static property Cake\\Log\\Log\:\:\$_registry \(Cake\\Log\\LogEngineRegistry\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 3
 			path: src/Log/Log.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Mailer/Email.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Access to an undefined static property static\(Cake\\Mailer\\Mailer\)\:\:\$_registry\.$#'
+			identifier: staticProperty.notFound
+			count: 1
+			path: src/Mailer/Mailer.php
+
+		-
+			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Mailer/MailerAwareTrait.php
+
+		-
+			message: '#^Parameter &\$errNum by\-ref type of method Cake\\Network\\Socket\:\:_getStreamSocketClient\(\) expects int, int\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Network/Socket.php
+
+		-
+			message: '#^Parameter &\$errStr by\-ref type of method Cake\\Network\\Socket\:\:_getStreamSocketClient\(\) expects string, string\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Network/Socket.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTime constructor expects string, Cake\\I18n\\FrozenTime given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/ORM/Behavior/TimestampBehavior.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTimeImmutable constructor expects string, Cake\\I18n\\FrozenTime given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/ORM/Behavior/TimestampBehavior.php
+
+		-
+			message: '#^Instanceof between Cake\\Datasource\\EntityInterface and Cake\\Datasource\\EntityInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/ORM/Behavior/Translate/ShadowTableStrategy.php
+
+		-
+			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/ORM/Behavior/Translate/TranslateTrait.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: "#^Parameter \\#1 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_belongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
+			message: '#^Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller\:\:_belongsToMany\(\) expects Cake\\ORM\\Association\\BelongsToMany, Cake\\ORM\\Association given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Parameter \\#2 \\$assoc of method Cake\\\\ORM\\\\Marshaller\\:\\:_mergeBelongsToMany\\(\\) expects Cake\\\\ORM\\\\Association\\\\BelongsToMany, Cake\\\\ORM\\\\Association given\\.$#"
+			message: '#^Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller\:\:_mergeBelongsToMany\(\) expects Cake\\ORM\\Association\\BelongsToMany, Cake\\ORM\\Association given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/ORM/Marshaller.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Query\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\) but returns Cake\\\\ORM\\\\Query\\.$#"
+			message: '#^Method Cake\\ORM\\Query\:\:find\(\) should return static\(Cake\\ORM\\Query\) but returns Cake\\ORM\\Query\.$#'
+			identifier: return.type
 			count: 1
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Property Cake\\\\ORM\\\\Query\\:\\:\\$_repository \\(Cake\\\\ORM\\\\Table\\) does not accept Cake\\\\Datasource\\\\RepositoryInterface\\.$#"
+			message: '#^PHPDoc tag @method for method Cake\\ORM\\Query\:\:max\(\) parameter \#2 \$sort default value contains unresolvable type\.$#'
+			identifier: methodTag.unresolvableType
 			count: 1
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^PHPDoc tag @method for method Cake\\ORM\\Query\:\:min\(\) parameter \#2 \$sort default value contains unresolvable type\.$#'
+			identifier: methodTag.unresolvableType
 			count: 1
 			path: src/ORM/Query.php
 
 		-
-			message: "#^Parameter \\#1 \\$rules of method Cake\\\\ORM\\\\Table\\:\\:buildRules\\(\\) expects Cake\\\\ORM\\\\RulesChecker, Cake\\\\Datasource\\\\RulesChecker given\\.$#"
+			message: '#^PHPDoc tag @method for method Cake\\ORM\\Query\:\:sortBy\(\) parameter \#2 \$order default value contains unresolvable type\.$#'
+			identifier: methodTag.unresolvableType
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: '#^PHPDoc tag @method for method Cake\\ORM\\Query\:\:sortBy\(\) parameter \#3 \$sort default value contains unresolvable type\.$#'
+			identifier: methodTag.unresolvableType
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: '#^Parameter \#1 \$table of method Cake\\ORM\\Query\:\:addDefaultTypes\(\) expects Cake\\ORM\\Table, Cake\\Datasource\\RepositoryInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/ORM/Query.php
+
+		-
+			message: '#^Instanceof between Cake\\Collection\\Collection and OuterIterator will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/ORM/ResultSet.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Database\\DriverInterface and ''getMaxAliasLength'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/ORM/Table.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:parseRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$rules of method Cake\\ORM\\Table\:\:buildRules\(\) expects Cake\\ORM\\RulesChecker, Cake\\Datasource\\RulesChecker given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: '#^Parameter \#1 \$request of static method Cake\\Routing\\Router\:\:parseRequest\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
 
 		-
-			message: "#^Parameter \\#1 \\$request of static method Cake\\\\Routing\\\\Router\\:\\:setRequest\\(\\) expects Cake\\\\Http\\\\ServerRequest, Psr\\\\Http\\\\Message\\\\ServerRequestInterface given\\.$#"
+			message: '#^Parameter \#1 \$request of static method Cake\\Routing\\Router\:\:setRequest\(\) expects Cake\\Http\\ServerRequest, Psr\\Http\\Message\\ServerRequestInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Routing/Middleware/RoutingMiddleware.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_err \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleOutput\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\ConsoleIntegrationTestCase\:\:\$_err \(Cake\\Console\\TestSuite\\StubConsoleOutput\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_in \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleInput\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\ConsoleIntegrationTestCase\:\:\$_in \(Cake\\Console\\TestSuite\\StubConsoleInput\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\ConsoleIntegrationTestCase\\:\\:\\$_out \\(Cake\\\\Console\\\\TestSuite\\\\StubConsoleOutput\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\ConsoleIntegrationTestCase\:\:\$_out \(Cake\\Console\\TestSuite\\StubConsoleOutput\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/ConsoleIntegrationTestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:addConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/EmailTrait.php
+
+		-
+			message: '#^Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface\:\:addConstraintSql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:createSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			message: '#^Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface\:\:createSql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropConstraintSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			message: '#^Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface\:\:dropConstraintSql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:dropSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			message: '#^Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface\:\:dropSql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Parameter \\#1 \\$connection of method Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface\\:\\:truncateSql\\(\\) expects Cake\\\\Database\\\\Connection, Cake\\\\Datasource\\\\ConnectionInterface given\\.$#"
+			message: '#^Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface\:\:truncateSql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\Fixture\\\\TestFixture\\:\\:\\$_schema \\(Cake\\\\Database\\\\Schema\\\\SqlGeneratorInterface&Cake\\\\Database\\\\Schema\\\\TableSchemaInterface\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Property Cake\\TestSuite\\Fixture\\TestFixture\:\:\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 2
 			path: src/TestSuite/Fixture/TestFixture.php
 
 		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEncryptedEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
+			message: '#^Parameter \#1 \$response of class Cake\\TestSuite\\Constraint\\Response\\CookieEncryptedEquals constructor expects Cake\\Http\\Response\|null, Psr\\Http\\Message\\ResponseInterface\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$response of class Cake\\\\TestSuite\\\\Constraint\\\\Response\\\\CookieEquals constructor expects Cake\\\\Http\\\\Response\\|null, Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null given\\.$#"
+			message: '#^Parameter \#1 \$response of class Cake\\TestSuite\\Constraint\\Response\\CookieEquals constructor expects Cake\\Http\\Response\|null, Psr\\Http\\Message\\ResponseInterface\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_layoutName \\(string\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\IntegrationTestCase\:\:\$_layoutName \(string\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_requestSession \\(Cake\\\\Http\\\\Session\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\IntegrationTestCase\:\:\$_requestSession \(Cake\\Http\\Session\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Property Cake\\\\TestSuite\\\\IntegrationTestCase\\:\\:\\$_viewName \\(string\\) does not accept null\\.$#"
+			message: '#^Property Cake\\TestSuite\\IntegrationTestCase\:\:\$_viewName \(string\) does not accept null\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/TestSuite/IntegrationTestCase.php
 
 		-
-			message: "#^Access to an undefined property Cake\\\\Error\\\\PhpError\\:\\:\\$_capturedError\\.$#"
+			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/StringCompareTrait.php
+
+		-
+			message: '#^Access to an undefined property Cake\\Error\\PhpError\:\:\$_capturedError\.$#'
+			identifier: property.notFound
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Offset 0 does not exist on array\\<string, mixed\\>\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
+			identifier: method.impossibleType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Offset 1 does not exist on array\\<string, mixed\\>\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''%%s'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Offset 2 does not exist on array\\<string, mixed\\>\\.$#"
+			message: '#^Offset 0 does not exist on array\<string, mixed\>\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unsafe access to private property Cake\\\\TestSuite\\\\TestEmailTransport\\:\\:\\$messages through static\\:\\:\\.$#"
+			message: '#^Offset 1 does not exist on array\<string, mixed\>\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Offset 2 does not exist on array\<string, mixed\>\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Error\\PhpError is not subtype of native type \$this\(Cake\\TestSuite\\TestCase\)\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\Http\\BaseApplication is not subtype of native type PHPUnit\\Framework\\MockObject\\MockObject\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^PHPDoc tag @var with type Cake\\ORM\\Table is not subtype of native type PHPUnit\\Framework\\MockObject\\MockObject\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<string, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\?\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Unsafe access to private property Cake\\TestSuite\\TestEmailTransport\:\:\$messages through static\:\:\.$#'
+			identifier: staticClassAccess.privateProperty
 			count: 3
 			path: src/TestSuite/TestEmailTransport.php
 
 		-
-			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
+			message: '#^Call to function is_callable\(\) with array\{object, ''toArray''\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: src/Utility/Xml.php
+
+		-
+			message: '#^Dead catch \- Error is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
 			count: 1
 			path: src/View/Cell.php
 
 		-
-			message: "#^Property Cake\\\\View\\\\Cell\\:\\:\\$request \\(Cake\\\\Http\\\\ServerRequest\\) on left side of \\?\\? is not nullable\\.$#"
+			message: '#^Property Cake\\View\\Cell\:\:\$request \(Cake\\Http\\ServerRequest\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: src/View/Cell.php
 
 		-
-			message: "#^Property Cake\\\\View\\\\Cell\\:\\:\\$response \\(Cake\\\\Http\\\\Response\\) on left side of \\?\\? is not nullable\\.$#"
+			message: '#^Property Cake\\View\\Cell\:\:\$response \(Cake\\Http\\Response\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: src/View/Cell.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/View/Form/ContextFactory.php
 
 		-
-			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
+			message: '#^Constructor of class Cake\\View\\Form\\NullContext has an unused parameter \$context\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/View/Form/NullContext.php
+
+		-
+			message: '#^Class Cake\\Utility\\Text does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 1
+			path: src/View/Helper/TextHelper.php
+
+		-
+			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/View.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\|false is not subtype of native type array\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/View/View.php
+
+		-
+			message: '#^Call to function is_numeric\(\) with float\|int\|numeric\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/Widget/DateTimeWidget.php
 
