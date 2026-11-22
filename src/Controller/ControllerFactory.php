@@ -86,21 +86,19 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // `has()` also returns true for any existing class due to auto-wiring,
         // so `hasDefinition()` is used here to check for an explicit registration only.
         if ($this->container->hasDefinition($className)) {
-            $controller = $this->container->get($className);
-        } else {
-            $components = $this->container->get(ComponentRegistry::class);
-            $constructor = $reflection->getConstructor();
-            assert($constructor !== null);
-
-            $arguments = [];
-            foreach ($constructor->getParameters() as $parameter) {
-                $arguments += $this->resolveConstructorArgument($parameter, $request, $components);
-            }
-
-            $controller = $reflection->newInstanceArgs($arguments);
+            return $this->container->get($className);
         }
 
-        return $controller;
+        $components = $this->container->get(ComponentRegistry::class);
+        $constructor = $reflection->getConstructor();
+        assert($constructor !== null);
+
+        $arguments = [];
+        foreach ($constructor->getParameters() as $parameter) {
+            $arguments += $this->resolveConstructorArgument($parameter, $request, $components);
+        }
+
+        return $reflection->newInstanceArgs($arguments);
     }
 
     /**
