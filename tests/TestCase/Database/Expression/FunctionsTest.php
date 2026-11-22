@@ -20,18 +20,62 @@ use ArgumentCountError;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\Predicate;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{allOf, anyOf, between, caseStatement, comparison, equals, func, greaterThan, identifier, in, isNull, lessThan, not, notEquals, notIn};
+use function Cake\Database\Expression\{allOf, anyOf, between, comparison, equals, expr, func, greaterThan, identifier, in, isNull, lessThan, not, notEquals, notIn};
 
 /**
  * Verifies SQL function builders, deferred predicates, and independent expression trees.
  */
 class FunctionsTest extends TestCase
 {
+    /**
+     * Checks standalone expressions support fluent methods, raw SQL, and expression operands independently.
+     */
+    public function testExpressionBuilderExpressions(): void
+    {
+        $expression = expr()->equalFields('Articles.author_id', 'Authors.id');
+        $sql = 'Articles.author_id = Authors.id';
+
+        $this->assertSame($sql, $expression->sql(new ValueBinder()));
+        $this->assertSame($sql, expr($sql)->sql(new ValueBinder()));
+        $this->assertSame($sql, expr($expression)->sql(new ValueBinder()));
+        $this->assertSame('', expr()->sql(new ValueBinder()));
+    }
+
+    /**
+     * Checks standalone condition arrays honor field types and the requested conjunction.
+     */
+    public function testExpressionBuilderConditions(): void
+    {
+        $expression = expr(
+            ['price' => greaterThan(10), 'stock >' => 0],
+            ['price' => 'decimal', 'stock' => 'integer'],
+            'OR',
+        );
+        $binder = new ValueBinder();
+
+        $this->assertSame('(price > :c0 OR stock > :c1)', $expression->sql($binder));
+        $this->assertSame([10, 0], array_column($binder->bindings(), 'value'));
+        $this->assertSame(['decimal', 'integer'], array_column($binder->bindings(), 'type'));
+    }
+
+    /**
+     * Checks an explicit type map supplies types for fluent expression conditions.
+     */
+    public function testExpressionBuilderTypeMap(): void
+    {
+        $expression = expr(types: new TypeMap(['id' => 'integer']))->equals('id', 1);
+        $binder = new ValueBinder();
+
+        $this->assertSame('id = :c0', $expression->sql($binder));
+        $this->assertSame(['integer'], array_column($binder->bindings(), 'type'));
+    }
+
     /**
      * Checks standalone builders produce typed aggregate and bound function expressions.
      */
@@ -70,7 +114,7 @@ class FunctionsTest extends TestCase
      */
     public function testSearchedCaseStatement(): void
     {
-        $expression = caseStatement()
+        $expression = expr()->case()
             ->when(['price' => greaterThan(100, 'decimal')])->then('premium')
             ->when(['price' => greaterThan(10, 'decimal')])->then('standard')
             ->else('budget');
@@ -94,7 +138,7 @@ class FunctionsTest extends TestCase
     public function testSimpleCaseStatement(): void
     {
         $input = "draft' OR 1=1 --";
-        $expression = caseStatement(value: 1, type: 'string')->when($input)->then('matched');
+        $expression = expr()->case(value: 1, type: 'string')->when($input)->then('matched');
         $binder = new ValueBinder();
 
         $this->assertSame('CASE :c0 WHEN :c1 THEN :c2 ELSE NULL END', $expression->sql($binder));
@@ -107,7 +151,7 @@ class FunctionsTest extends TestCase
      */
     public function testNullCaseStatementValue(): void
     {
-        $expression = caseStatement(null)->when(1)->then('one');
+        $expression = expr()->case(null)->when(1)->then('one');
         $binder = new ValueBinder();
 
         $this->assertSame('CASE NULL WHEN :c0 THEN :c1 ELSE NULL END', $expression->sql($binder));

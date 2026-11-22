@@ -21,7 +21,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Cake\Database\Expression\{allOf, anyOf, between, caseStatement, equals, func, greaterThan, identifier, in, lessThan, like, not, notIn};
+use function Cake\Database\Expression\{allOf, anyOf, between, equals, expr, func, greaterThan, identifier, in, lessThan, like, not, notIn};
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -166,10 +166,10 @@ class PredicateQueryTest extends TestCase
             $query = $this->getTableLocator()->get('Articles')->find();
             $query->select([
                 'id',
-                'simple' => caseStatement(identifier('Articles.id'))
+                'simple' => expr()->case(identifier('Articles.id'))
                     ->when(1, 'integer')->then('first')
                     ->when(2, 'integer')->then('second'),
-                'searched' => caseStatement()
+                'searched' => expr()->case()
                     ->when(['Articles.id' => allOf(greaterThan(1, 'integer'), lessThan(3, 'integer'))])
                     ->then('second')
                     ->when(['Articles.id' => greaterThan(1, 'integer')])->then('later')
@@ -191,7 +191,7 @@ class PredicateQueryTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         $query = $connection->selectQuery();
-        $case = caseStatement()->when(['a.id' => greaterThan(1)])->then(1)->else(0);
+        $case = expr()->case()->when(['a.id' => greaterThan(1)])->then(1)->else(0);
         $query->select(['id' => 'a.id', 'selected' => $case])->from(['a' => 'articles'])
             ->innerJoin(['b' => 'articles'], ['b.id' => equals(identifier('a.id'))])
             ->where(['a.title' => like('%Article')])->orderByAsc('a.id');

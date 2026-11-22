@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\Enum\PredicateOperation;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\FunctionsBuilder;
+use Cake\Database\TypeMap;
 
 /**
  * Creates a SQL functions builder without requiring a query instance.
@@ -46,22 +47,22 @@ function identifier(string $identifier, ?string $collation = null): IdentifierEx
 }
 
 /**
- * Creates a CASE expression without requiring a query instance.
+ * Creates a query expression without requiring a query instance.
  *
- * Omit the value to evaluate WHEN conditions, or supply a value to compare
- * against each WHEN value. An explicitly passed null selects the latter form.
+ * Standalone expressions do not inherit a query type map. Supply field types
+ * explicitly when needed. Raw SQL strings must not contain untrusted user input.
  *
- * @param \Cake\Database\ExpressionInterface|object|scalar|null $value The optional case value.
- * @param string|null $type The case value type, inferred from the value when omitted.
- * @return \Cake\Database\Expression\CaseStatementExpression
+ * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions to add to the expression.
+ * @param \Cake\Database\TypeMap|array $types The field types used to bind condition values.
+ * @param string $conjunction The conjunction used to join conditions.
+ * @return \Cake\Database\Expression\QueryExpression
  */
-function caseStatement(mixed $value = null, ?string $type = null): CaseStatementExpression
-{
-    if (func_num_args() > 0) {
-        return new CaseStatementExpression($value, $type);
-    }
-
-    return new CaseStatementExpression();
+function expr(
+    ExpressionInterface|array|string $conditions = [],
+    TypeMap|array $types = [],
+    string $conjunction = 'AND',
+): QueryExpression {
+    return new QueryExpression($conditions, $types, $conjunction);
 }
 
 /**
