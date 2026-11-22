@@ -46,7 +46,7 @@ use JsonException;
  * The order is always made unique by appending the primary key (see the
  * `stableSort` option). Only plain field based orders are supported. Sort
  * fields must not contain `NULL` values, as databases don't agree on how to
- * order them.
+ * order them. An offset set on the paginated query is removed.
  *
  * ```
  * $articles = $this->paginate($this->Articles, [
@@ -137,12 +137,13 @@ class CursorPaginator extends NumericPaginator
         $queryData['options']['order'] = [];
         $queryData['options']['limit'] = $limit + 1;
         $query = $this->getQuery($target, $query, $queryData);
-        $query->orderBy($queryOrder, true);
+        // An offset would be applied after the keyset conditions and skip rows on every page.
+        $query->orderBy($queryOrder, true)->offset(null);
 
         if ($cursor !== null) {
             $types = $this->getFieldTypes($query, array_keys($order));
             $query->where(
-                $this->buildConditions($queryOrder, $cursor['values'], $types),
+                $this->buildConditions($queryOrder, $cursor['values'], $types, $cursor['inclusive']),
                 $types,
             );
         }
@@ -168,6 +169,14 @@ class CursorPaginator extends NumericPaginator
             }
             if ($hasPrevPage) {
                 $prevCursor = $this->encodeCursor($rows[0], $order, static::PREV);
+            }
+        } elseif ($cursor !== null) {
+            // The rows past the cursor are gone (e.g. deleted). Link back to the
+            // rows on the other side of the cursor boundary, including the boundary row.
+            if ($backward) {
+                $nextCursor = $this->encodePayload($cursor['values'], $order, static::NEXT, true);
+            } else {
+                $prevCursor = $this->encodePayload($cursor['values'], $order, static::PREV, true);
             }
         }
 
@@ -245,13 +254,15 @@ class CursorPaginator extends NumericPaginator
      * Build the keyset conditions selecting the rows after the cursor values.
      *
      * For an order of `a ASC, b DESC` this generates `a > :a OR (a = :a AND b < :b)`.
+     * When inclusive, the last comparison also matches the cursor row itself (`b <= :b`).
      *
      * @param array<string, string> $order The order used by the query.
      * @param array $values The cursor values, in order.
      * @param array<string, string> $types Field types.
+     * @param bool $inclusive Whether to include the row matching the cursor values.
      * @return array
      */
-    protected function buildConditions(array $order, array $values, array $types): array
+    protected function buildConditions(array $order, array $values, array $types, bool $inclusive = false): array
     {
         $values = array_combine(array_keys($order), $values);
         foreach ($values as $field => $value) {
@@ -262,8 +273,12 @@ class CursorPaginator extends NumericPaginator
 
         $conditions = [];
         $equal = [];
+        $last = array_key_last($order);
         foreach ($order as $field => $direction) {
             $operator = $direction === SortField::ASC ? '>' : '<';
+            if ($inclusive && $field === $last) {
+                $operator .= '=';
+            }
             $conditions[] = $equal + [$field . ' ' . $operator => $values[$field]];
             $equal[$field] = $values[$field];
         }
@@ -311,10 +326,25 @@ class CursorPaginator extends NumericPaginator
             $values[] = $this->serializeValue($field, $this->extractValue($row, $field));
         }
 
-        $json = json_encode(
-            ['d' => $direction, 'k' => $this->orderKey($order), 'v' => $values],
-            JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION,
-        );
+        return $this->encodePayload($values, $order, $direction);
+    }
+
+    /**
+     * Encode and sign a cursor for already serialized values.
+     *
+     * @param array $values The serialized sort field values, in order.
+     * @param array<string, string> $order The order.
+     * @param string $direction Either `CursorPaginator::NEXT` or `CursorPaginator::PREV`.
+     * @param bool $inclusive Whether the row matching the values is part of the page.
+     * @return string
+     */
+    protected function encodePayload(array $values, array $order, string $direction, bool $inclusive = false): string
+    {
+        $data = ['d' => $direction, 'k' => $this->orderKey($order), 'v' => $values];
+        if ($inclusive) {
+            $data['i'] = 1;
+        }
+        $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION);
 
         $payload = $this->base64UrlEncode($json);
 
@@ -364,7 +394,7 @@ class CursorPaginator extends NumericPaginator
      *
      * @param mixed $cursor The cursor from the request.
      * @param array<string, string> $order The current order.
-     * @return array{direction: string, values: array}|null
+     * @return array{direction: string, values: array, inclusive: bool}|null
      */
     protected function decodeCursor(mixed $cursor, array $order): ?array
     {
@@ -399,6 +429,7 @@ class CursorPaginator extends NumericPaginator
             || !is_array($data['v'] ?? null)
             || !array_is_list($data['v'])
             || count($data['v']) !== count($order)
+            || !in_array($data['i'] ?? 0, [0, 1], true)
         ) {
             return null;
         }
@@ -408,7 +439,7 @@ class CursorPaginator extends NumericPaginator
             }
         }
 
-        return ['direction' => $data['d'], 'values' => $data['v']];
+        return ['direction' => $data['d'], 'values' => $data['v'], 'inclusive' => ($data['i'] ?? 0) === 1];
     }
 
     /**

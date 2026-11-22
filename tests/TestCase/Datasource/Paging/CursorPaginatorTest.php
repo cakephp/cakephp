@@ -240,6 +240,54 @@ class CursorPaginatorTest extends TestCase
         $this->assertSame($sql, $query->sql());
     }
 
+    public function testQueryOffsetIsRemoved(): void
+    {
+        $query = $this->getTableLocator()->get('Posts')->find()->offset(1);
+        [$forward, $backward] = $this->walk($query, [], ['limit' => 2]);
+
+        $this->assertSame([[1, 2], [3, 4], [5, 6], [7]], $forward);
+        $this->assertSame($forward, $backward);
+    }
+
+    public function testEmptyPageAfterDeleteLinksBack(): void
+    {
+        $table = $this->getTableLocator()->get('Posts');
+        $settings = ['limit' => 2];
+
+        $first = $this->Paginator->paginate($table, [], $settings);
+        $second = $this->Paginator->paginate($table, ['cursor' => $first->nextCursor()], $settings);
+        $this->assertSame([3, 4], $second->items()->extract('id')->toList());
+
+        // Everything after the second page is deleted before following Next.
+        $table->deleteAll(['id >' => 4]);
+        $empty = $this->Paginator->paginate($table, ['cursor' => $second->nextCursor()], $settings);
+        $this->assertSame(0, $empty->count());
+        $this->assertNull($empty->nextCursor());
+        $this->assertFalse($empty->hasNextPage());
+        $this->assertTrue($empty->hasPrevPage());
+
+        // Previous includes the boundary row.
+        $prev = $this->Paginator->paginate($table, ['cursor' => $empty->prevCursor()], $settings);
+        $this->assertSame([3, 4], $prev->items()->extract('id')->toList());
+        $this->assertTrue($prev->hasPrevPage());
+        // Backward pages always link forward, which leads to the empty page again.
+        $this->assertNotNull($prev->nextCursor());
+
+        $prev = $this->Paginator->paginate($table, ['cursor' => $prev->prevCursor()], $settings);
+        $this->assertSame([1, 2], $prev->items()->extract('id')->toList());
+        $this->assertFalse($prev->hasPrevPage());
+
+        // Same when walking backward and the earlier rows are deleted.
+        $table->deleteAll(['id <' => 3]);
+        $empty = $this->Paginator->paginate($table, ['cursor' => $second->prevCursor()], $settings);
+        $this->assertSame(0, $empty->count());
+        $this->assertNull($empty->prevCursor());
+        $this->assertTrue($empty->hasNextPage());
+
+        $next = $this->Paginator->paginate($table, ['cursor' => $empty->nextCursor()], $settings);
+        $this->assertSame([3, 4], $next->items()->extract('id')->toList());
+    }
+
     public function testPageParamIsIgnored(): void
     {
         $table = $this->getTableLocator()->get('Posts');
