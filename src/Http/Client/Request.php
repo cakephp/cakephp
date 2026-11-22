@@ -71,7 +71,10 @@ class Request extends Message implements RequestInterface
     {
         foreach ($headers as $key => $val) {
             $normalized = strtolower($key);
-            $this->headers[$key] = (array)$val;
+            $this->headers[$key] = array_map(
+                fn(string $item): string => str_replace(["\r", "\n"], '', $item),
+                (array)$val,
+            );
             $this->headerNames[$normalized] = $key;
         }
     }
