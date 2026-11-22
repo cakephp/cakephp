@@ -55,18 +55,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
-			identifier: argument.unknown
-			count: 1
-			path: src/Controller/ControllerFactory.php
-
-		-
-			message: '#^Unknown parameter \$request in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
-			identifier: argument.unknown
-			count: 1
-			path: src/Controller/ControllerFactory.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 9
