@@ -30,7 +30,9 @@ use stdClass;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
 use TestApp\Controller\CakesController;
+use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
+use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
 
@@ -296,6 +298,25 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
         $this->assertInstanceOf(DependenciesController::class, $controller);
         $this->assertSame($controller->inject, $this->container->get(stdClass::class));
+    }
+
+    /**
+     * Test create() auto-wires required constructor dependencies
+     * on controllers that are not defined in the container.
+     */
+    public function testCreateAutoWiresRequiredConstructorDependencies(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'ConstructorDependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertInstanceOf(ConstructorDependenciesController::class, $controller);
+        $this->assertInstanceOf(ReflectionDependency::class, $controller->dependency);
+        $this->assertSame($request, $controller->getRequest());
     }
 
     /**

@@ -91,27 +91,54 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             $components = $this->container->get(ComponentRegistry::class);
             $constructor = $reflection->getConstructor();
             assert($constructor !== null);
-            $hasComponents = false;
+
+            $arguments = [];
             foreach ($constructor->getParameters() as $parameter) {
-                $paramType = $parameter->getType();
-                // TODO: In a future minor release it would be good to start requiring the components parameter
-                if (
-                    $parameter->getName() === 'components' &&
-                    $paramType instanceof ReflectionNamedType &&
-                    $paramType->getName() === ComponentRegistry::class
-                ) {
-                    $hasComponents = true;
-                    break;
-                }
+                $arguments += $this->resolveConstructorArgument($parameter, $request, $components);
             }
-            if ($hasComponents) {
-                $controller = $reflection->newInstance(request: $request, components: $components);
-            } else {
-                $controller = $reflection->newInstance($request);
-            }
+
+            $controller = $reflection->newInstanceArgs($arguments);
         }
 
         return $controller;
+    }
+
+    /**
+     * Resolve the argument for a single controller constructor parameter.
+     *
+     * Returns an empty array when the parameter should keep its default value.
+     *
+     * @param \ReflectionParameter $parameter The constructor parameter.
+     * @param \Cake\Http\ServerRequest $request The request.
+     * @param \Cake\Controller\ComponentRegistry $components The component registry.
+     * @return array<string, mixed>
+     */
+    protected function resolveConstructorArgument(
+        ReflectionParameter $parameter,
+        ServerRequest $request,
+        ComponentRegistry $components,
+    ): array {
+        $name = $parameter->getName();
+        $type = $parameter->getType();
+        // TODO: In a future minor release it would be good to start requiring the components parameter
+        if (
+            $name === 'components' &&
+            $type instanceof ReflectionNamedType &&
+            $type->getName() === ComponentRegistry::class
+        ) {
+            return [$name => $components];
+        }
+        if ($type instanceof ReflectionNamedType && $type->getName() === ServerRequest::class) {
+            return [$name => $request];
+        }
+        if ($parameter->isDefaultValueAvailable()) {
+            return [];
+        }
+        if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+            return [$name => $this->container->get($type->getName())];
+        }
+
+        return [];
     }
 
     /**
