@@ -266,6 +266,55 @@ class ClientTest extends TestCase
         $this->assertSame($result, $response);
     }
 
+    public static function newlineValueProvider(): array
+    {
+        return [
+            ["one\ntwo\n", 'onetwo'],
+            ["one\rtwo\r", 'onetwo'],
+            ["one\r\ntwo\r\n", 'onetwo'],
+            ["one\r two\r\n three", 'one two three'],
+        ];
+    }
+
+    /**
+     * test simple get request with headers & cookies.
+     *
+     * @dataProvider newlineValueProvider
+     */
+    public function testGetSimpleWithHeadersStripNewlines(string $value, string $expected): void
+    {
+        $response = new Response();
+
+        $headers = [
+            'User-Agent' => 'Cake',
+            'Connection' => 'close',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'X-inject' => $value,
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($expected) {
+                $this->assertInstanceOf(Request::class, $request);
+                $this->assertSame(Request::METHOD_GET, $request->getMethod());
+                $this->assertSame('2', $request->getProtocolVersion());
+                $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertSame($expected, $request->getHeaderLine('X-inject'));
+
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
+        $result = $http->get('http://cakephp.org/test.html', [], [
+            'headers' => $headers,
+        ]);
+        $this->assertSame($result, $response);
+    }
+
     /**
      * test get request with no data
      */
