@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Datasource\Paging\CursorPaginatedInterface;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\Paging\SortField;
 use Cake\Utility\Hash;
@@ -280,10 +281,16 @@ class PaginatorHelper extends Helper
             return $out;
         }
 
-        $url = $this->generateUrl(
-            ['page' => $this->paginated()->currentPage() + $options['step']],
-            $options['url'],
-        );
+        $paginated = $this->paginated();
+        if ($paginated instanceof CursorPaginatedInterface) {
+            $paging = [
+                'cursor' => $options['step'] > 0 ? $paginated->nextCursor() : $paginated->prevCursor(),
+                'page' => null,
+            ];
+        } else {
+            $paging = ['page' => $paginated->currentPage() + $options['step']];
+        }
+        $url = $this->generateUrl($paging, $options['url']);
 
         $out = $templater->format($template, [
             'url' => $url,
@@ -549,6 +556,14 @@ class PaginatorHelper extends Helper
             $options['sort'] = $options['direction'] = null;
         }
         $baseUrl = $this->_config['options']['url'] ?? [];
+        if ($this->paginated() instanceof CursorPaginatedInterface) {
+            // Only next/prev links carry a cursor, every other link starts from the first page.
+            if (!empty($paging['scope'])) {
+                unset($baseUrl['?'][$paging['scope']]['cursor']);
+            } else {
+                unset($baseUrl['?']['cursor']);
+            }
+        }
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             if (isset($baseUrl['?'][$scope]) && is_array($baseUrl['?'][$scope])) {
