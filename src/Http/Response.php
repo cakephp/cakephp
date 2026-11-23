@@ -21,7 +21,6 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Link\LinkProvider;
-use Cake\I18n\DateTime as CakeDateTime;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -578,7 +577,7 @@ class Response implements ResponseInterface, Stringable
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', CakeDateTime::parse(time())->toRfc7231String())
+            ->withHeader('Last-Modified', $this->getRfc7231())
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -600,7 +599,7 @@ class Response implements ResponseInterface, Stringable
             }
         }
 
-        return $this->withHeader('Date', CakeDateTime::parse(time())->toRfc7231String())
+        return $this->withHeader('Date', $this->getRfc7231())
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -1266,7 +1265,11 @@ class Response implements ResponseInterface, Stringable
     protected function validateFile(string $path): SplFileInfo
     {
         if (str_contains($path, '../') || str_contains($path, '..\\')) {
-            throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
+            throw new NotFoundException(
+                function_exists('Cake\I18n\__d')
+                    ? __d('cake', 'The requested file contains `..` and will not be read.')
+                    : 'The requested file contains `..` and will not be read.',
+            );
         }
 
         $file = new SplFileInfo($path);
@@ -1274,7 +1277,11 @@ class Response implements ResponseInterface, Stringable
             if (Configure::read('debug')) {
                 throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
             }
-            throw new NotFoundException(__d('cake', 'The requested file was not found'));
+            throw new NotFoundException(
+                function_exists('Cake\I18n\__d')
+                    ? __d('cake', 'The requested file was not found')
+                    : 'The requested file was not found',
+            );
         }
 
         return $file;

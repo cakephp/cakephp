@@ -246,7 +246,11 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     {
         $token = $session->read($this->_config['key']);
         if (!$token || !is_string($token)) {
-            throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF session key'));
+            throw new InvalidCsrfTokenException(
+                function_exists('Cake\I18n\__d')
+                    ? __d('cake', 'Missing or incorrect CSRF session key')
+                    : 'Missing or incorrect CSRF session key',
+            );
         }
 
         $body = $request->getParsedBody();
@@ -264,10 +268,15 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             return;
         }
 
-        throw new InvalidCsrfTokenException(__d(
-            'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.',
-        ));
+        $message = 'CSRF token from either the request body or request headers did not match or is missing.';
+        if (function_exists('Cake\I18n\__d')) {
+            $message = __d(
+                'cake',
+                'CSRF token from either the request body or request headers did not match or is missing.',
+            );
+        }
+
+        throw new InvalidCsrfTokenException($message);
     }
 
     /**
