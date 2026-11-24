@@ -226,7 +226,7 @@ abstract class BaseApplication implements
         if (!Router::routes() && file_exists($this->configDir . 'routes.php')) {
             $return = require $this->configDir . 'routes.php';
             if ($return instanceof Closure) {
-                $return($routes);
+                $return($routes, $this);
             }
         }
     }
