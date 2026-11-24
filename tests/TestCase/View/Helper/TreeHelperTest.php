@@ -156,7 +156,7 @@ TEXT;
      */
     public function testGenerateWithFindAll(): void
     {
-        $tree = $this->table->find('all', ...['order' => ['lft' => 'ASC']])->toArray();
+        $tree = $this->table->find('all', order: ['lft' => 'ASC'])->toArray();
 
         $output = $this->tree->generate($tree);
         $expected = <<<TEXT
@@ -500,7 +500,7 @@ TEXT;
 
         $tree = $this->table->find('threaded')->toArray();
         $id = 6;
-        $nodes = $this->table->find('path', ...['for' => $id])->toArray();
+        $nodes = $this->table->find('path', for: $id)->toArray();
         $path = Hash::extract($nodes, '{n}.id');
 
         $output = $this->tree->generate($tree, ['autoPath' => [6, 11], 'hideUnrelated' => true, 'treePath' => $path, 'callback' => $this->myCallback(...)]); // Two-SubA
@@ -559,7 +559,7 @@ TEXT;
         $tree = $this->table->find('threaded')->toArray();
 
         $id = 6; // Two-SubA
-        $nodes = $this->table->find('path', ...['for' => $id])->toArray();
+        $nodes = $this->table->find('path', for: $id)->toArray();
         $path = Hash::extract($nodes, '{n}.id');
 
         $output = $this->tree->generate($tree, [
@@ -658,7 +658,7 @@ TEXT;
         $tree = $this->table->find('threaded')->toArray();
 
         $id = 6;
-        $nodes = $this->table->find('path', ...['for' => $id])->toArray();
+        $nodes = $this->table->find('path', for: $id)->toArray();
         $path = Hash::extract($nodes, '{n}.id');
 
         $output = $this->tree->generate($tree, [
@@ -833,6 +833,57 @@ TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateEscapesNodeContent(): void
+    {
+        $treeData = [
+            [
+                'name' => '<script>alert("xss")</script>',
+                'children' => [
+                    [
+                        'name' => "O'Reilly & Sons",
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $output = $this->tree->generate($treeData, ['indent' => false]);
+        $expected = '<ul><li>&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
+            . '<ul><li>O&#039;Reilly &amp; Sons</li></ul></li></ul>';
+
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateEscapesAttributes(): void
+    {
+        $treeData = [
+            [
+                'name' => '<script>alert("attribute")</script>',
+                'children' => [],
+            ],
+        ];
+
+        $output = $this->tree->generate($treeData, [
+            'indent' => false,
+            'class' => '"><script>alert("class")</script>',
+            'callback' => function (array $data): string {
+                $this->tree->addItemAttribute('title', $data['data']['name']);
+
+                return 'Foo';
+            },
+        ]);
+        $expected = '<ul class="&quot;&gt;&lt;script&gt;alert(&quot;class&quot;)&lt;/script&gt;">'
+            . '<li title="&lt;script&gt;alert(&quot;attribute&quot;)&lt;/script&gt;">Foo</li></ul>';
+
+        $this->assertSame($expected, $output);
     }
 
     /**
