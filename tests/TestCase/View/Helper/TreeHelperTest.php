@@ -921,7 +921,7 @@ TEXT;
         };
 
         $levels = ['A' => 0, 'B' => 1, 'C' => 2, 'D' => 0];
-        $nodes = array_map(fn($row) => $row + ['lvl' => $levels[$row['name']]], $this->flatTree());
+        $nodes = array_map(fn(array $row) => $row + ['lvl' => $levels[$row['name']]], $this->flatTree());
         $config = ['indent' => false, 'level' => 'lvl', 'callback' => $callback];
 
         $output = $this->tree->generate($nodes, $config);
