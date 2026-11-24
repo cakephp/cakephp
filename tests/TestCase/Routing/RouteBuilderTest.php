@@ -1010,6 +1010,59 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test covering the behavior of static prefixes that define
+     * a controller scope, that also use fallback routes.
+     *
+     * When middleware are scoped to prefixes, the fallback routes can expose
+     * the same controllers without middleware.
+     *
+     * Using fallback routes is not-recommended for production applications.
+     */
+    public function testScopeMiddlewarePathMatchWithFallbackRoutes(): void
+    {
+        $gate = function () {
+            return new Response(['body' => 'no', 'status' => 403]);
+        };
+
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setRouteClass(DashedRoute::class);
+        $routes->registerMiddleware('gate', $gate);
+        $routes->scope('/admin', function (RouteBuilder $routes): void {
+            $routes->applyMiddleware('gate');
+            $routes->connect('/{action}', ['controller' => 'Admin']);
+        });
+        $routes->fallbacks();
+
+        // standard match request
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/admin/secret',
+        ]));
+        $this->assertEquals(['gate'], $result['_route']->getMiddleware());
+        $this->assertEquals('/admin/{action}', $result['_route']->template);
+        $this->assertEquals('Admin', $result['controller']);
+        $this->assertEquals('secret', $result['action']);
+
+        // Camelcase prefix (hits fallback routes)
+        // This is an application configuration issue, not a framework security issue.
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/Admin/secret',
+        ]));
+        $this->assertEquals([], $result['_route']->getMiddleware());
+        $this->assertEquals('/{controller}/{action}/*', $result['_route']->template);
+        $this->assertEquals('Admin', $result['controller']);
+        $this->assertEquals('secret', $result['action']);
+
+        // Hyphen suffix, hits fallback route with invalid controller name.
+        $result = $this->collection->parseRequest(new ServerRequest([
+            'url' => '/admin-/secret',
+        ]));
+        $this->assertEquals([], $result['_route']->getMiddleware());
+        $this->assertEquals('/{controller}/{action}/*', $result['_route']->template);
+        $this->assertEquals('Admin-', $result['controller']);
+        $this->assertEquals('secret', $result['action']);
+    }
+
+    /**
      * Test adding middleware to the collection.
      */
     public function testRegisterMiddleware(): void
