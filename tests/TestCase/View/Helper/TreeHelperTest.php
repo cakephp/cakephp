@@ -911,6 +911,36 @@ TEXT;
     /**
      * @return void
      */
+    public function testGenerateFlatWithLevelField(): void
+    {
+        $depths = [];
+        $callback = function (array $data) use (&$depths): string {
+            $depths[$data['data']['name']] = $data['depth'];
+
+            return $data['data']['name'];
+        };
+
+        $levels = ['A' => 0, 'B' => 1, 'C' => 2, 'D' => 0];
+        $nodes = array_map(fn($row) => $row + ['lvl' => $levels[$row['name']]], $this->flatTree());
+        $config = ['indent' => false, 'level' => 'lvl', 'callback' => $callback];
+
+        $output = $this->tree->generate($nodes, $config);
+        $this->assertSame('<ul><li>A<ul><li>B<ul><li>C</li></ul></li></ul></li><li>D</li></ul>', $output);
+        $this->assertSame(['A' => 0, 'B' => 1, 'C' => 2, 'D' => 0], $depths);
+
+        // Depth is relative to the first row, as when rendering the descendants of a node
+        $depths = [];
+        $output = $this->tree->generate(array_slice($nodes, 1, 2), $config);
+        $this->assertSame('<ul><li>B<ul><li>C</li></ul></li></ul>', $output);
+        $this->assertSame(['B' => 0, 'C' => 1], $depths);
+
+        $output = $this->tree->generate($nodes, ['maxDepth' => 1] + $config);
+        $this->assertSame('<ul><li>A<ul><li>B</li></ul></li><li>D</li></ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
     public function testGenerateFlatCallbackSkipsKeepMarkupBalanced(): void
     {
         $skip = fn(array $data): ?string => in_array($data['data']['name'], ['B', 'C'], true) ? null : $data['data']['name'];

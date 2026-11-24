@@ -52,6 +52,7 @@ class TreeHelper extends Helper
         'hideUnrelated' => false,
         'treePath' => [],
         'nodeKey' => 'id',
+        'level' => null,
         'left' => 'lft',
         'right' => 'rght',
         'depth' => 0,
@@ -97,6 +98,9 @@ class TreeHelper extends Helper
      *    'treePath' => list of node keys from the root to the current node. Inserted into callback/element and
      *      used to find the branch that stays open when 'hideUnrelated' is enabled.
      *    'nodeKey' => name of the field identifying a node, matched against 'treePath'. Defaults to `id`.
+     *    'level' => name of the field holding the depth of a node, same as the TreeBehavior `level` config.
+     *      If set, the depth of flat rows is read from it, relative to the first row, instead of being derived
+     *      from the nesting. MPTT only.
      *    'left' => name of the 'lft' field if not lft. only applies to MPTT data
      *    'right' => name of the 'rght' field if not rght. only applies to MPTT data
      *    'depth' => used internally when running recursively, can be used to override the depth in either mode.
@@ -186,6 +190,8 @@ class TreeHelper extends Helper
         $this->currentConfig['totalNodes'] = count($dataArray);
         $keys = array_keys($dataArray);
         $isFlat = $this->isFlat($dataArray);
+        $levelField = $this->currentConfig['level'];
+        $baseLevel = $isFlat && $levelField ? (int)($dataArray[0][$levelField] ?? 0) : 0;
 
         if ($hideUnrelated === true || is_numeric($hideUnrelated)) {
             if ($parent === null) {
@@ -258,6 +264,9 @@ class TreeHelper extends Helper
             }
             $top = count($stack) - 1;
             $rowDepth = $depth + $top;
+            if ($isFlat && $levelField && isset($row[$levelField])) {
+                $rowDepth = $depth + (int)$row[$levelField] - $baseLevel;
+            }
 
             $hasChildren = false;
             $firstChild = false;
@@ -619,6 +628,8 @@ class TreeHelper extends Helper
     protected function flatParents(array $nodes): array
     {
         $right = $this->currentConfig['right'];
+        $levelField = $this->currentConfig['level'];
+        $baseLevel = $levelField ? (int)($nodes[0][$levelField] ?? 0) : 0;
         $parents = [];
         $levels = [];
         $ancestors = [];
@@ -628,7 +639,9 @@ class TreeHelper extends Helper
                 array_pop($ancestors);
             }
             $parents[$i] = $ancestors ? $ancestors[count($ancestors) - 1][0] : -1;
-            $levels[$i] = count($ancestors);
+            $levels[$i] = $levelField && isset($node[$levelField])
+                ? (int)$node[$levelField] - $baseLevel
+                : count($ancestors);
             if (isset($nodes[$i + 1]) && $nodes[$i + 1][$right] < $node[$right]) {
                 $ancestors[] = [$i, $node[$right]];
             }
