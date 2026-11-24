@@ -51,6 +51,7 @@ class TreeHelper extends Helper
         'autoPathClass' => 'active',
         'hideUnrelated' => false,
         'treePath' => [],
+        'nodeKey' => 'id',
         'left' => 'lft',
         'right' => 'rght',
         'depth' => 0,
@@ -90,8 +91,12 @@ class TreeHelper extends Helper
      *    'callback' => callback to use to get node contents. e.g. array(&$anObject, 'methodName') or 'floatingMethod'
      *    'autoPath' => [$left, $right, $classToAdd = 'active'] if set any item in the path will have the class $classToAdd added. MPTT only.
      *      You can also just pass the current entity and it will extract lft and rght properties based on the config.
-     *    'hideUnrelated' => if unrelated (not children, not siblings) should be hidden, needs 'treePath', true/false or array/string for callback
-     *    'treePath' => treePath to insert into callback/element
+     *    'hideUnrelated' => if unrelated (not children, not siblings) should be hidden, needs 'treePath', true/false,
+     *      an integer (number of levels that are always shown) or a callable that marks nodes itself.
+     *      Hidden nodes are skipped automatically, the nodes passed to callbacks are never modified.
+     *    'treePath' => list of node keys from the root to the current node. Inserted into callback/element and
+     *      used to find the branch that stays open when 'hideUnrelated' is enabled.
+     *    'nodeKey' => name of the field identifying a node, matched against 'treePath'. Defaults to `id`.
      *    'left' => name of the 'lft' field if not lft. only applies to MPTT data
      *    'right' => name of the 'rght' field if not rght. only applies to MPTT data
      *    'depth' => used internally when running recursively, can be used to override the depth in either mode.
@@ -101,7 +106,7 @@ class TreeHelper extends Helper
      *        example: useful if you have 30 items to display, and you'd prefer they appeared in the source as 3 lists of 10 to be able to
      *        style/float them.
      *    'splitCount' => the number of "parallel" types. defaults to null (disabled) set the splitCount,
-     *        and optionally set the splitDepth to get parallel lists
+     *        and optionally set the splitDepth to get parallel lists. Each list of siblings is split on its own.
      *
      * @param iterable $data Data to loop over
      * @param array<string, mixed> $config Config
@@ -117,6 +122,7 @@ class TreeHelper extends Helper
      * @param iterable $data
      * @param array<string, mixed> $config
      * @param \Cake\Datasource\EntityInterface|iterable|array|null $parent
+     * @param array<int, array<string, mixed>> $visibility Visibility of the nodes in `$data`, see `calculateVisibility()`
      * @throws \Exception
      * @return string
      */
@@ -124,6 +130,7 @@ class TreeHelper extends Helper
         iterable $data,
         array $config,
         EntityInterface|iterable|null $parent = null,
+        array $visibility = [],
     ): string {
         $dataArray = iterator_to_array($data, false);
         if ($dataArray === []) {
@@ -151,6 +158,7 @@ class TreeHelper extends Helper
         $autoPath = $this->currentConfig['autoPath'];
         $hideUnrelated = $this->currentConfig['hideUnrelated'];
         $treePath = $this->currentConfig['treePath'];
+        $nodeKey = $this->currentConfig['nodeKey'];
         $left = $this->currentConfig['left'];
         $right = $this->currentConfig['right'];
         $depth = $this->currentConfig['depth'];
@@ -166,7 +174,6 @@ class TreeHelper extends Helper
             $this->typeAttributes = [];
             $this->typeAttributesNext = [];
         }
-        $stack = [];
         if ($depth == 0) {
             if ($class) {
                 $this->addTypeAttribute('class', $class, null, 'previous');
@@ -176,15 +183,54 @@ class TreeHelper extends Helper
             }
         }
         $return = '';
-        $addType = true;
         $this->currentConfig['totalNodes'] = count($dataArray);
         $keys = array_keys($dataArray);
+        $isFlat = $this->isFlat($dataArray);
 
         if ($hideUnrelated === true || is_numeric($hideUnrelated)) {
-            $this->markUnrelatedAsHidden($dataArray, $treePath);
+            if ($parent === null) {
+                $visibility = $this->calculateVisibility($dataArray, $isFlat);
+            }
         } elseif ($hideUnrelated && is_callable($hideUnrelated)) {
             $hideUnrelated($dataArray, $treePath);
         }
+
+        $splitCount = (int)$this->currentConfig['splitCount'];
+        $splitDepth = $this->currentConfig['splitDepth'];
+        $groupSize = static function (int $level, int $count) use ($splitCount, $splitDepth): int {
+            if ($splitCount < 1 || $count < 1 || ($splitDepth && $splitDepth != $level)) {
+                return 0;
+            }
+
+            return (int)ceil($count / $splitCount);
+        };
+
+        // Number of visible items in each list of siblings, keyed by parent index (-1 for the root list).
+        $groupCounts = [];
+        if ($splitCount > 0) {
+            if ($isFlat) {
+                foreach ($this->flatParents($dataArray)['parents'] as $i => $parentIndex) {
+                    if (empty($visibility[$i]['hide'])) {
+                        $groupCounts[$parentIndex] = ($groupCounts[$parentIndex] ?? 0) + 1;
+                    }
+                }
+            } else {
+                $groupCounts[-1] = count($dataArray) - count(array_filter(array_column($visibility, 'hide')));
+            }
+        }
+
+        // Each entry describes a list of siblings. The first one is the list being generated, the others
+        // belong to the flat rows that are still open. Hidden or skipped rows are tracked with `rendered`
+        // set to false so that their descendants are skipped as well.
+        /** @var list<array{right: mixed, rendered: bool, opened: bool, count: int, size: int}> $stack */
+        $stack = [[
+            'right' => null,
+            'rendered' => true,
+            'opened' => false,
+            'count' => 0,
+            'size' => $groupSize($depth, $groupCounts[-1] ?? 0),
+        ]];
+        $skipped = ['rendered' => false, 'opened' => false, 'count' => 0, 'size' => 0];
 
         $whiteSpace = '';
         foreach ($dataArray as $i => $result) {
@@ -192,28 +238,37 @@ class TreeHelper extends Helper
 
             // Close open items as appropriate
             // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found
-            while ($stack && ($stack[count($stack) - 1] < $row[$right])) {
-                array_pop($stack);
-                if ($indent) {
-                    $whiteSpace = str_repeat((string)$indentWith, count($stack));
-                    $return .= "\r\n" . $whiteSpace . $indentWith;
+            while (count($stack) > 1 && ($stack[count($stack) - 1]['right'] < $row[$right])) {
+                $closed = array_pop($stack);
+                if (!$closed['rendered']) {
+                    continue;
                 }
-                if ($type) {
-                    $return .= '</' . $type . '>';
+                if ($closed['opened']) {
+                    if ($indent) {
+                        $whiteSpace = str_repeat((string)$indentWith, count($stack) - 1);
+                        $return .= "\r\n" . $whiteSpace . $indentWith;
+                    }
+                    if ($type) {
+                        $return .= '</' . $type . '>';
+                    }
                 }
                 if ($itemType) {
                     $return .= '</' . $itemType . '>';
                 }
             }
+            $top = count($stack) - 1;
+            $rowDepth = $depth + $top;
+
             $hasChildren = false;
             $firstChild = false;
             $lastChild = false;
             $hasVisibleChildren = false;
+            $hasNestedRows = false;
             $numberOfDirectChildren = null;
             $numberOfTotalChildren = null;
 
             if (isset($result['children'])) {
-                if ($result['children'] && $depth < $maxDepth) {
+                if ($result['children'] && $rowDepth < $maxDepth) {
                     $hasChildren = true;
                     $hasVisibleChildren = true;
                     $numberOfDirectChildren = count($result['children']);
@@ -222,21 +277,28 @@ class TreeHelper extends Helper
                 $firstChild = $i === $keys[0];
                 $lastChild = $i === $keys[count($keys) - 1];
             } elseif (isset($row[$left])) {
-                if ($row[$left] != ($row[$right] - 1) && $depth < $maxDepth) {
+                $hasNestedRows = isset($dataArray[$i + 1]) && $dataArray[$i + 1][$right] < $row[$right];
+                if ($row[$left] != ($row[$right] - 1) && $rowDepth < $maxDepth) {
                     $hasChildren = true;
                     $numberOfTotalChildren = ($row[$right] - $row[$left] - 1) / 2;
-                    if (isset($dataArray[$i + 1]) && $dataArray[$i + 1][$right] < $row[$right]) {
-                        $hasVisibleChildren = true;
-                    }
+                    $hasVisibleChildren = $hasNestedRows;
                 }
                 if (!isset($dataArray[$i - 1]) || ($dataArray[$i - 1][$left] == $row[$left] - 1)) {
                     $firstChild = true;
                 }
-                if (!isset($dataArray[$i + 1]) || ($stack && $stack[count($stack) - 1] == $row[$right] + 1)) {
+                if (!isset($dataArray[$i + 1]) || ($top > 0 && $stack[$top]['right'] == $row[$right] + 1)) {
                     $lastChild = true;
                 }
             } else {
                 throw new RuntimeException('Invalid Tree Structure: ' . print_r($result, true));
+            }
+
+            // Skip rows hidden by `hideUnrelated` and the descendants of skipped rows
+            if (!$stack[$top]['rendered'] || !empty($visibility[$i]['hide'])) {
+                if ($hasNestedRows) {
+                    $stack[] = ['right' => $row[$right]] + $skipped;
+                }
+                continue;
             }
 
             $activePathElement = null;
@@ -250,12 +312,15 @@ class TreeHelper extends Helper
                 }
             }
 
-            $depth = $depth ?: count($stack);
+            $onTreePath = $hideUnrelated
+                && $rowDepth === 0
+                && !empty($treePath[0])
+                && ($row[$nodeKey] ?? null) == $treePath[0];
 
             $elementData = [
                 'data' => $result,
                 'parent' => $parent,
-                'depth' => $depth,
+                'depth' => $rowDepth,
                 'hasChildren' => $hasChildren,
                 'numberOfDirectChildren' => $numberOfDirectChildren,
                 'numberOfTotalChildren' => $numberOfTotalChildren,
@@ -263,12 +328,10 @@ class TreeHelper extends Helper
                 'lastChild' => $lastChild,
                 'hasVisibleChildren' => $hasVisibleChildren,
                 'activePathElement' => $activePathElement,
-                'isSibling' => $depth == 0 && !$activePathElement,
+                'isSibling' => $rowDepth == 0 && !$activePathElement && !$onTreePath,
             ];
 
-            if ($elementData['isSibling'] && $hideUnrelated) {
-                $result['children'] = [];
-            }
+            $collapse = $hideUnrelated && $elementData['isSibling'];
 
             $this->currentConfig = $elementData + $this->currentConfig;
             if ($this->currentConfig['fullSettings']) {
@@ -285,6 +348,10 @@ class TreeHelper extends Helper
             }
 
             if (in_array($content, [null, false, ''], true)) {
+                $this->itemAttributes = [];
+                if ($hasNestedRows) {
+                    $stack[] = ['right' => $row[$right]] + $skipped;
+                }
                 continue;
             }
 
@@ -302,13 +369,14 @@ class TreeHelper extends Helper
                 $content = (string)$content;
             }
 
-            $whiteSpace = str_repeat((string)$indentWith, $depth);
+            $whiteSpace = str_repeat((string)$indentWith, $rowDepth);
             if ($indent && strpos($content, "\r\n", 1)) {
                 $content = str_replace("\r\n", "\n" . $whiteSpace . $indentWith, $content);
             }
 
             // Prefix
-            if ($addType) {
+            if (!$stack[$top]['opened']) {
+                $stack[$top]['opened'] = true;
                 if ($indent) {
                     $return .= "\r\n" . $whiteSpace;
                 }
@@ -316,7 +384,11 @@ class TreeHelper extends Helper
                     $typeAttributes = $this->attributes($type, ['data' => $elementData]);
                     $return .= '<' . $type . $typeAttributes . '>';
                 }
+            } elseif ($type && $stack[$top]['size'] > 0 && $stack[$top]['count'] % $stack[$top]['size'] === 0) {
+                // The previous item is already closed at this point, so the lists stay balanced
+                $return .= '</' . $type . '><' . $type . '>';
             }
+            $stack[$top]['count']++;
             if ($indent) {
                 $return .= "\r\n" . $whiteSpace . $indentWith;
             }
@@ -327,41 +399,55 @@ class TreeHelper extends Helper
             $return .= $element || $callback ? $content : h($content);
 
             // Suffix
-            $addType = false;
-            if ($hasVisibleChildren) {
-                if ($numberOfDirectChildren) {
-                    $config['depth'] = $depth + 1;
-                    $children = $result['children'];
-
-                    $return .= $this->suffix();
-                    $return .= $this->generateSubTree($children, $config, $result);
-                    if ($itemType) {
-                        if ($indent) {
-                            $return .= $whiteSpace . $indentWith;
-                        }
-                        $return .= '</' . $itemType . '>';
-                    }
-                } elseif ($numberOfTotalChildren) {
-                    $addType = true;
-                    $stack[] = $row[$right];
-                }
-            } else {
+            if ($hasVisibleChildren && $numberOfDirectChildren && !$collapse) {
+                $childConfig = ['depth' => $rowDepth + 1] + $config;
+                $return .= $this->generateSubTree(
+                    $result['children'],
+                    $childConfig,
+                    $result,
+                    $visibility[$i]['children'] ?? [],
+                );
                 if ($itemType) {
+                    if ($indent) {
+                        $return .= $whiteSpace . $indentWith;
+                    }
                     $return .= '</' . $itemType . '>';
                 }
-                $return .= $this->suffix();
+            } elseif ($hasNestedRows) {
+                if ($collapse || $rowDepth >= $maxDepth) {
+                    if ($itemType) {
+                        $return .= '</' . $itemType . '>';
+                    }
+                    $stack[] = ['right' => $row[$right]] + $skipped;
+                } else {
+                    $stack[] = [
+                        'right' => $row[$right],
+                        'rendered' => true,
+                        'opened' => false,
+                        'count' => 0,
+                        'size' => $groupSize($rowDepth + 1, $groupCounts[$i] ?? 0),
+                    ];
+                }
+            } elseif ($itemType) {
+                $return .= '</' . $itemType . '>';
             }
         }
 
         // Cleanup
-        while ($stack) {
-            array_pop($stack);
-            if ($indent) {
-                $whiteSpace = str_repeat((string)$indentWith, count($stack));
-                $return .= "\r\n" . $whiteSpace . $indentWith;
+        // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found
+        while (count($stack) > 1) {
+            $closed = array_pop($stack);
+            if (!$closed['rendered']) {
+                continue;
             }
-            if ($type) {
-                $return .= '</' . $type . '>';
+            if ($closed['opened']) {
+                if ($indent) {
+                    $whiteSpace = str_repeat((string)$indentWith, count($stack) - 1);
+                    $return .= "\r\n" . $whiteSpace . $indentWith;
+                }
+                if ($type) {
+                    $return .= '</' . $type . '>';
+                }
             }
             if ($itemType) {
                 $return .= '</' . $itemType . '>';
@@ -451,60 +537,6 @@ class TreeHelper extends Helper
     }
 
     /**
-     * Suffix method.
-     *
-     * Used to close and reopen a ul/ol to allow easier listings
-     *
-     * @param bool $reset Reset
-     * @return string
-     */
-    protected function suffix(bool $reset = false): string
-    {
-        static $splitCounter = 0;
-
-        if ($reset) {
-            $splitCounter = 0;
-        }
-        $splitCount = $this->currentConfig['splitCount'];
-        $splitDepth = $this->currentConfig['splitDepth'];
-        $totalNodes = $this->currentConfig['totalNodes'];
-        $depth = $this->currentConfig['depth'];
-        $type = $this->currentConfig['type'];
-        $lastChild = $this->currentConfig['lastChild'];
-        $numberOfDirectChildren = $this->currentConfig['numberOfDirectChildren'];
-        $numberOfTotalChildren = $this->currentConfig['numberOfTotalChildren'];
-        if ($splitDepth || $splitCount) {
-            if (!$splitDepth) {
-                $splitCount = $totalNodes / $splitCount;
-                $rounded = (int)$splitCount;
-                if ($rounded < $splitCount) {
-                    $splitCount = $rounded + 1;
-                }
-            } elseif ($depth == $splitDepth - 1) {
-                $total = $numberOfDirectChildren ?: $numberOfTotalChildren;
-                if ($total) {
-                    $splitCounter = 0;
-                    $splitCount = $total / $splitCount;
-                    $rounded = (int)$splitCount;
-                    if ($rounded < $splitCount) {
-                        $splitCount = $rounded + 1;
-                    }
-                }
-            }
-            if (!$splitDepth || $depth == $splitDepth) {
-                $splitCounter++;
-                if ($type && ($splitCounter % $splitCount) === 0 && !$lastChild) {
-                    unset($this->currentConfig['callback']);
-
-                    return '</' . $type . '><' . $type . '>';
-                }
-            }
-        }
-
-        return '';
-    }
-
-    /**
      * Attributes function.
      *
      * Logic to apply styles to tags.
@@ -566,48 +598,131 @@ class TreeHelper extends Helper
     }
 
     /**
-     * Mark unrelated records as hidden using `'hide' => 1`.
-     * In the callback or element you can then return early in this case.
+     * Whether the nodes are a flat MPTT result instead of nested `children`.
      *
-     * @param array $tree Tree
-     * @param array $path Tree path
-     * @param int $level Level
-     * @throws \Exception
-     * @return void
+     * @param array $nodes Nodes
+     * @return bool
      */
-    protected function markUnrelatedAsHidden(array &$tree, array $path, int $level = 0): void
+    protected function isFlat(array $nodes): bool
+    {
+        $first = $nodes[0] ?? null;
+
+        return $first !== null && !isset($first['children']) && isset($first[$this->currentConfig['left']]);
+    }
+
+    /**
+     * Find the parent (`-1` for roots) and level of each row of a flat MPTT result.
+     *
+     * @param array $nodes Nodes
+     * @return array{parents: array<int, int>, levels: array<int, int>}
+     */
+    protected function flatParents(array $nodes): array
+    {
+        $right = $this->currentConfig['right'];
+        $parents = [];
+        $levels = [];
+        $ancestors = [];
+        foreach ($nodes as $i => $node) {
+            // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found
+            while ($ancestors && $ancestors[count($ancestors) - 1][1] < $node[$right]) {
+                array_pop($ancestors);
+            }
+            $parents[$i] = $ancestors ? $ancestors[count($ancestors) - 1][0] : -1;
+            $levels[$i] = count($ancestors);
+            if (isset($nodes[$i + 1]) && $nodes[$i + 1][$right] < $node[$right]) {
+                $ancestors[] = [$i, $node[$right]];
+            }
+        }
+
+        return ['parents' => $parents, 'levels' => $levels];
+    }
+
+    /**
+     * Calculate which unrelated nodes are hidden when `hideUnrelated` is enabled.
+     *
+     * This leaves the nodes untouched, the result is only used to skip nodes while rendering.
+     * It is keyed like `$nodes` and, for threaded data, nested through `children`.
+     *
+     * @param array $nodes Nodes
+     * @param bool $flat Whether the nodes are a flat MPTT result
+     * @return array<int, array{show: bool, hide: bool, children?: array}>
+     */
+    protected function calculateVisibility(array $nodes, bool $flat): array
+    {
+        if ($flat) {
+            return $this->flatVisibility($nodes);
+        }
+
+        return $this->threadedVisibility($nodes, 0, false);
+    }
+
+    /**
+     * @param array $nodes Nodes
+     * @param int $level Level
+     * @param bool $parentShown Whether the parent is part of the tree path
+     * @return array<int, array{show: bool, hide: bool, children: array}>
+     */
+    protected function threadedVisibility(array $nodes, int $level, bool $parentShown): array
     {
         $hideUnrelated = $this->currentConfig['hideUnrelated'];
-        $siblingIsActive = false;
-        foreach ($tree as &$subTree) {
-            if (is_object($subTree) && method_exists($subTree, 'toArray')) {
-                $subTree = $subTree->toArray();
-            }
-            if (!isset($subTree['children'])) {
-                throw new RuntimeException(
-                    'Only works with threaded (nested children) results: '
-                        . print_r($subTree, true),
-                );
-            }
+        $path = $this->currentConfig['treePath'];
+        $nodeKey = $this->currentConfig['nodeKey'];
 
-            if (!empty($path[$level]) && $subTree['id'] == $path[$level]) {
-                $subTree['show'] = 1;
-                $siblingIsActive = true;
+        $siblingIsActive = is_numeric($hideUnrelated) && $hideUnrelated > $level;
+        $shown = [];
+        foreach ($nodes as $i => $node) {
+            if (!isset($node['children'])) {
+                throw new RuntimeException('Invalid Tree Structure: ' . print_r($node, true));
             }
-            if (!empty($subTree['show'])) {
-                foreach ($subTree['children'] as &$v) {
-                    $v['parent_show'] = 1;
-                }
-            }
-            if (is_numeric($hideUnrelated) && $hideUnrelated > $level) {
-                $siblingIsActive = true;
+            $shown[$i] = !empty($path[$level]) && ($node[$nodeKey] ?? null) == $path[$level];
+            $siblingIsActive = $siblingIsActive || $shown[$i];
+        }
+
+        $visibility = [];
+        foreach ($nodes as $i => $node) {
+            $hide = $level > 0 && !$siblingIsActive && !$parentShown;
+            $visibility[$i] = [
+                'show' => $shown[$i],
+                'hide' => $hide,
+                'children' => $hide ? [] : $this->threadedVisibility($node['children'], $level + 1, $shown[$i]),
+            ];
+        }
+
+        return $visibility;
+    }
+
+    /**
+     * @param array $nodes Nodes
+     * @return array<int, array{show: bool, hide: bool}>
+     */
+    protected function flatVisibility(array $nodes): array
+    {
+        $hideUnrelated = $this->currentConfig['hideUnrelated'];
+        $path = $this->currentConfig['treePath'];
+        $nodeKey = $this->currentConfig['nodeKey'];
+        ['parents' => $parents, 'levels' => $levels] = $this->flatParents($nodes);
+
+        $shown = [];
+        $activeParents = [];
+        foreach ($nodes as $i => $node) {
+            $shown[$i] = !empty($path[$levels[$i]]) && ($node[$nodeKey] ?? null) == $path[$levels[$i]];
+            if ($shown[$i]) {
+                $activeParents[$parents[$i]] = true;
             }
         }
-        foreach ($tree as &$subTree) {
-            if ($level && !$siblingIsActive && !isset($subTree['parent_show'])) {
-                $subTree['hide'] = 1;
-            }
-            $this->markUnrelatedAsHidden($subTree['children'], $path, $level + 1);
+
+        $visibility = [];
+        foreach ($nodes as $i => $node) {
+            $level = $levels[$i];
+            $siblingIsActive = (is_numeric($hideUnrelated) && $hideUnrelated > $level)
+                || isset($activeParents[$parents[$i]]);
+            $parentShown = $parents[$i] >= 0 && $shown[$parents[$i]];
+            $visibility[$i] = [
+                'show' => $shown[$i],
+                'hide' => $level > 0 && !$siblingIsActive && !$parentShown,
+            ];
         }
+
+        return $visibility;
     }
 }

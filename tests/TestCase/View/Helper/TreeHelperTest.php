@@ -100,16 +100,6 @@ class TreeHelperTest extends TestCase
     /**
      * @return void
      */
-    public function tearDown(): void
-    {
-        unset($this->table);
-
-        parent::tearDown();
-    }
-
-    /**
-     * @return void
-     */
     public function testGenerate(): void
     {
         $tree = $this->table->find('threaded')->toArray();
@@ -602,11 +592,8 @@ TEXT;
     {
         /** @var \Cake\ORM\Entity $entity */
         $entity = $data['data'];
-        if (!empty($entity['hide'])) {
-            return null;
-        }
 
-        return $data['data']['name'] . ($data['activePathElement'] ? ' (active)' : '');
+        return $entity['name'] . ($data['activePathElement'] ? ' (active)' : '');
     }
 
     /**
@@ -618,9 +605,6 @@ TEXT;
         /** @var \Cake\ORM\Entity $entity */
         $entity = $data['data'];
 
-        if (!empty($entity['hide'])) {
-            return null;
-        }
         if ($data['depth'] == 0 && $data['isSibling']) {
             return $entity['name'] . ' (sibling)';
         }
@@ -884,6 +868,233 @@ TEXT;
             . '<li title="&lt;script&gt;alert(&quot;attribute&quot;)&lt;/script&gt;">Foo</li></ul>';
 
         $this->assertSame($expected, $output);
+    }
+
+    /**
+     * A(1-6) > B(2-5) > C(3-4), D(7-8)
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function flatTree(): array
+    {
+        return [
+            ['id' => 1, 'name' => 'A', 'lft' => 1, 'rght' => 6],
+            ['id' => 2, 'name' => 'B', 'lft' => 2, 'rght' => 5],
+            ['id' => 3, 'name' => 'C', 'lft' => 3, 'rght' => 4],
+            ['id' => 4, 'name' => 'D', 'lft' => 7, 'rght' => 8],
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateFlatDepthAndMaxDepth(): void
+    {
+        $depths = [];
+        $callback = function (array $data) use (&$depths): string {
+            $depths[] = $data['depth'];
+
+            return $data['data']['name'];
+        };
+
+        $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'callback' => $callback]);
+        $this->assertSame('<ul><li>A<ul><li>B<ul><li>C</li></ul></li></ul></li><li>D</li></ul>', $output);
+        $this->assertSame([0, 1, 2, 0], $depths);
+
+        $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'maxDepth' => 1]);
+        $this->assertSame('<ul><li>A<ul><li>B</li></ul></li><li>D</li></ul>', $output);
+
+        $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'maxDepth' => 0]);
+        $this->assertSame('<ul><li>A</li><li>D</li></ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateFlatCallbackSkipsKeepMarkupBalanced(): void
+    {
+        $skip = fn(array $data): ?string => in_array($data['data']['name'], ['B', 'C'], true) ? null : $data['data']['name'];
+        $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'callback' => $skip]);
+        $this->assertSame('<ul><li>A</li><li>D</li></ul>', $output);
+
+        $skip = fn(array $data): ?string => $data['data']['name'] === 'C' ? null : $data['data']['name'];
+        $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'callback' => $skip]);
+        $this->assertSame('<ul><li>A<ul><li>B</li></ul></li><li>D</li></ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateSkippedItemDoesNotLeakAttributes(): void
+    {
+        $treeData = [
+            ['name' => 'One', 'children' => []],
+            ['name' => 'Two', 'children' => []],
+        ];
+        $callback = function (array $data): ?string {
+            if ($data['data']['name'] === 'One') {
+                $this->tree->addItemAttribute('class', 'leaked');
+
+                return null;
+            }
+
+            return 'Two';
+        };
+
+        $output = $this->tree->generate($treeData, ['indent' => false, 'callback' => $callback]);
+        $this->assertSame('<ul><li>Two</li></ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateSplitCount(): void
+    {
+        $treeData = [];
+        foreach (range(1, 5) as $i) {
+            $treeData[] = ['name' => (string)$i, 'children' => []];
+        }
+        $expected = '<ul><li>1</li><li>2</li><li>3</li></ul><ul><li>4</li><li>5</li></ul>';
+
+        $first = $this->tree->generate($treeData, ['indent' => false, 'splitCount' => 2]);
+        $second = $this->tree->generate($treeData, ['indent' => false, 'splitCount' => 2]);
+
+        $this->assertSame($expected, $first);
+        $this->assertSame($first, $second);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateSplitDepth(): void
+    {
+        $children = [];
+        foreach (range(1, 5) as $i) {
+            $children[] = ['name' => 'c' . $i, 'children' => []];
+        }
+        $treeData = [
+            ['name' => 'One', 'children' => $children],
+            ['name' => 'Two', 'children' => []],
+        ];
+
+        $output = $this->tree->generate($treeData, ['indent' => false, 'splitDepth' => 1, 'splitCount' => 2]);
+        $expected = '<ul><li>One<ul><li>c1</li><li>c2</li><li>c3</li></ul><ul><li>c4</li><li>c5</li></ul></li>'
+            . '<li>Two</li></ul>';
+        $this->assertSame($expected, $output);
+
+        $output = $this->tree->generate($treeData, ['indent' => false, 'splitDepth' => 1]);
+        $this->assertStringNotContainsString('</ul><ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateSplitCountClosesParentItemFirst(): void
+    {
+        $treeData = [
+            ['name' => 'One', 'children' => [['name' => 'Sub', 'children' => []]]],
+            ['name' => 'Two', 'children' => []],
+        ];
+
+        $output = $this->tree->generate($treeData, ['indent' => false, 'splitCount' => 2]);
+        $expected = '<ul><li>One<ul><li>Sub</li></ul></li></ul><ul><li>Two</li></ul>';
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateSplitCountFlat(): void
+    {
+        $treeData = $this->flatTree();
+        $treeData[] = ['id' => 5, 'name' => 'E', 'lft' => 9, 'rght' => 10];
+
+        $output = $this->tree->generate($treeData, ['indent' => false, 'splitCount' => 2]);
+        $expected = '<ul><li>A<ul><li>B<ul><li>C</li></ul></li></ul></li><li>D</li></ul><ul><li>E</li></ul>';
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateHideUnrelatedWithTreePathOnly(): void
+    {
+        $tree = $this->table->find('threaded')->toArray();
+
+        $output = $this->tree->generate($tree, [
+            'indent' => false,
+            'hideUnrelated' => true,
+            'treePath' => [2, 6],
+        ]);
+        $expected = '<ul><li>One</li><li>Two<ul><li>Two-SubA<ul><li>Two-SubA-1</li></ul></li></ul></li>'
+            . '<li>Three</li><li>Four</li></ul>';
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateHideUnrelatedKeepsEntitiesIntact(): void
+    {
+        $tree = $this->table->find('threaded')->toArray();
+        $seen = [];
+        $callback = function (array $data) use (&$seen): string {
+            $seen[] = $data['data']->get('name');
+
+            return $data['data']->name;
+        };
+
+        $config = [
+            'indent' => false,
+            'hideUnrelated' => true,
+            'treePath' => [2],
+            'callback' => $callback,
+        ];
+        $first = $this->tree->generate($tree, $config);
+        $second = $this->tree->generate($tree, $config);
+
+        $this->assertSame($first, $second);
+        $this->assertSame(['One', 'Two', 'Two-SubA', 'Three', 'Four'], array_slice($seen, 0, 5));
+        $this->assertCount(1, $tree[1]->get('children'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateHideUnrelatedFlat(): void
+    {
+        $output = $this->tree->generate($this->flatTree(), [
+            'indent' => false,
+            'hideUnrelated' => true,
+            'treePath' => [1, 2],
+        ]);
+        $this->assertSame('<ul><li>A<ul><li>B<ul><li>C</li></ul></li></ul></li><li>D</li></ul>', $output);
+
+        $output = $this->tree->generate($this->flatTree(), [
+            'indent' => false,
+            'hideUnrelated' => true,
+            'treePath' => [4],
+        ]);
+        $this->assertSame('<ul><li>A</li><li>D</li></ul>', $output);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGenerateHideUnrelatedWithNodeKey(): void
+    {
+        $treeData = [
+            ['category_id' => 10, 'name' => 'A', 'children' => [['category_id' => 11, 'name' => 'A1', 'children' => []]]],
+            ['category_id' => 20, 'name' => 'B', 'children' => [['category_id' => 21, 'name' => 'B1', 'children' => []]]],
+        ];
+
+        $output = $this->tree->generate($treeData, [
+            'indent' => false,
+            'hideUnrelated' => true,
+            'nodeKey' => 'category_id',
+            'treePath' => [20],
+        ]);
+        $this->assertSame('<ul><li>A</li><li>B<ul><li>B1</li></ul></li></ul>', $output);
     }
 
     /**
