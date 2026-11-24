@@ -578,6 +578,8 @@ class ConsoleOptionParser
      *
      * @param array $argv Array of args (argv) to parse.
      * @param \Cake\Console\ConsoleIo|null $io A ConsoleIo instance or null. If null prompt options will error.
+     *   Prompts are skipped when `--quiet` or `--no-interaction` is passed; a required option
+     *   left without a value then fails like any other missing required option.
      * @return array [$params, $args]
      * @throws \Cake\Console\Exception\ConsoleException When an invalid parameter is encountered.
      */
@@ -625,6 +627,8 @@ class ConsoleOptionParser
                 }
             }
         }
+        // Decided from argv before prompting so `prompt` options cannot block non-interactive runs.
+        $interactive = !($params['quiet'] ?? false) && !($params['no-interaction'] ?? false);
         foreach ($this->_options as $option) {
             $name = $option->name();
             $isBoolean = $option->isBoolean();
@@ -638,7 +642,7 @@ class ConsoleOptionParser
                 $params[$name] = false;
             }
             $prompt = $option->prompt();
-            if (!isset($params[$name]) && $prompt) {
+            if (!isset($params[$name]) && $prompt && $interactive) {
                 if (!$io) {
                     throw new ConsoleException(
                         'Cannot use interactive option prompts without a ConsoleIo instance. ' .
