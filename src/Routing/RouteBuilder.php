@@ -18,6 +18,7 @@ namespace Cake\Routing;
 
 use BadMethodCallException;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Routing\Route\RedirectRoute;
@@ -27,6 +28,7 @@ use Closure;
 use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
 use function Cake\Core\deprecationWarning;
+use function Cake\Core\triggerWarning;
 
 /**
  * Provides features for building routes and parsing/matching URLs to routes.
@@ -1030,6 +1032,12 @@ class RouteBuilder
      */
     public function fallbacks(?string $routeClass = null)
     {
+        if (!Configure::read('debug')) {
+            triggerWarning(
+                'Using fallbacks() routes in non-development mode is dangerous certain configurations.' .
+                'It is recommended that you only use fallbacks() for prototyping and local development.',
+            );
+        }
         $routeClass = $routeClass ?: $this->_routeClass;
         $this->connect('/{controller}', ['action' => 'index'], compact('routeClass'));
         $this->connect('/{controller}/{action}/*', [], compact('routeClass'));
