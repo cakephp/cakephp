@@ -4,10 +4,10 @@ parameters:
 			message: '#^Access to constant [A-Z_]+ on an unknown class Pdo\\Mysql\.$#'
 			identifier: class.notFound
 			count: 4
-			path: ../src/Database/Driver/Mysql.php
+			path: Database/Driver/MysqlTest.php
 
 		-
 			message: '#^Access to constant [A-Z_]+ on an unknown class Pdo\\Mysql\.$#'
 			identifier: class.notFound
 			count: 2
-			path: ../src/Database/Statement/MysqlStatement.php
+			path: Database/Driver/MysqlTest.php
