@@ -39,7 +39,7 @@ class TreeHelper extends Helper
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'alias' => 'name',
         'type' => 'ul',
         'itemType' => 'li',
@@ -349,7 +349,7 @@ class TreeHelper extends Helper
 
             // Main Content
             if ($element) {
-                $content = $this->_View->element($element, $elementData);
+                $content = $this->View->element($element, $elementData);
             } elseif ($callback) {
                 [$content] = array_map($callback, [$elementData]);
             } else {
