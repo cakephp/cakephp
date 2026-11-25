@@ -41,7 +41,9 @@
     "suggest": {
         "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
         "cakephp/cache": "To use Configure::store() and restore().",
-        "league/container": "To use Container and ServiceProvider classes"
+        "cakephp/container": "To use the `cake` value of `App.container`.",
+        "cakephp/console": "To use ConsoleApplicationInterface or console plugin interfaces.",
+        "cakephp/http": "To use HttpApplicationInterface or HTTP plugin interfaces."
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

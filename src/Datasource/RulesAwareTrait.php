@@ -104,7 +104,9 @@ trait RulesAwareTrait
          * @phpstan-ignore-next-line
          */
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
-        $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+        if ($this instanceof EventDispatcherInterface) {
+            $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
+        }
 
         return $this->_rulesChecker;
     }
