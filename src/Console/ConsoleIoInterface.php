@@ -111,22 +111,22 @@ interface ConsoleIoInterface
     public function comment(array|string $message, int $newlines = 1, int $level = self::NORMAL): ?int;
 
     /**
-     * Convenience method for err() that wraps message between <warning> tag
+     * Writes messages to stderr wrapped in <warning> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::err
+     * @see https://book.cakephp.org/5/en/console-commands/input-output.html#creating-output
      */
     public function warning(array|string $message, int $newlines = 1): int;
 
     /**
-     * Convenience method for err() that wraps message between <error> tag
+     * Writes messages to stderr wrapped in <error> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::err
+     * @see https://book.cakephp.org/5/en/console-commands/input-output.html#creating-output
      */
     public function error(array|string $message, int $newlines = 1): int;
 
@@ -167,16 +167,6 @@ interface ConsoleIoInterface
      * @return void
      */
     public function overwrite(array|string $message, int $newlines = 1, ?int $size = null): void;
-
-    /**
-     * Outputs a single or multiple error messages to stderr. If no parameters
-     * are passed outputs just a newline.
-     *
-     * @param array<string>|string $message A string or an array of strings to output
-     * @param int $newlines Number of newlines to append
-     * @return int The number of bytes returned from writing to stderr.
-     */
-    public function err(array|string $message = '', int $newlines = 1): int;
 
     /**
      * Returns a single or multiple linefeeds sequences.

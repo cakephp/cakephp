@@ -221,19 +221,25 @@ class ConsoleIoTest extends TestCase
     }
 
     /**
-     * testErr method
+     * testError method
      */
     #[TestWith(['Just a test'])]
     #[TestWith([['Just', 'a', 'test']])]
     #[TestWith([['Just', 'a', 'test'], 2])]
     #[TestWith([''])]
-    public function testErr(string|array $message, int $newLines = 1): void
+    public function testError(string|array $message, int $newLines = 1): void
     {
+        if (is_array($message)) {
+            $expected = array_map(fn($value) => "<error>{$value}</error>", $message);
+        } else {
+            $expected = "<error>{$message}</error>";
+        }
+
         $this->err->shouldReceive('write')
-            ->with($message, $newLines)
+            ->with($expected, $newLines)
             ->once();
 
-        $this->io->err($message, $newLines);
+        $this->io->error($message, $newLines);
     }
 
     /**

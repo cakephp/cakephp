@@ -64,7 +64,7 @@ class PluginUnloadCommand extends Command
             return static::CODE_SUCCESS;
         }
 
-        $this->io->err($result);
+        $this->io->error($result);
 
         return static::CODE_ERROR;
     }

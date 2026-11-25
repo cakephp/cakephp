@@ -43,7 +43,8 @@
         ]
     },
     "suggest": {
-        "cakephp/cache": "Require this if you want automatic caching of translators"
+        "cakephp/cache": "Require this if you want automatic caching of translators",
+        "psr/http-server-middleware": "To use LocaleSelectorMiddleware"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

@@ -81,6 +81,42 @@ class RequestTest extends TestCase
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
 
+    public static function invalidNewlineValueProvider(): array
+    {
+        return [
+            ["one\ntwo\n"],
+            ["one\rtwo\r"],
+            ["one\r\ntwo\r\n"],
+            ["one\r two\r\n three"],
+        ];
+    }
+
+    /**
+     * Newlines in header values are rejected to prevent header injection.
+     */
+    #[DataProvider('invalidNewlineValueProvider')]
+    public function testConstructorRejectsNewlines(string $value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Request('http://example.com', 'POST', [
+            'Content-Type' => 'application/json',
+            'X-inject' => $value,
+        ]);
+    }
+
+    /**
+     * Obsolete line folding is normalized to a single space.
+     */
+    public function testConstructorNormalizesFoldedHeaderValue(): void
+    {
+        $request = new Request('http://example.com', 'POST', [
+            'X-inject' => "one\r\n two",
+        ]);
+
+        $this->assertSame('one two', $request->getHeaderLine('X-inject'));
+    }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.

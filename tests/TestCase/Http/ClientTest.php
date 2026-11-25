@@ -326,6 +326,30 @@ class ClientTest extends TestCase
         $this->assertSame($result, $response);
     }
 
+    public static function invalidNewlineValueProvider(): array
+    {
+        return [
+            ["one\ntwo\n"],
+            ["one\rtwo\r"],
+            ["one\r\ntwo\r\n"],
+            ["one\r two\r\n three"],
+        ];
+    }
+
+    /**
+     * Newlines in header values are rejected to prevent header injection.
+     */
+    #[DataProvider('invalidNewlineValueProvider')]
+    public function testGetWithHeadersRejectsNewlines(string $value): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $http = new Client(['adapter' => Mockery::mock(Stream::class)]);
+        $http->get('http://cakephp.org/test.html', [], [
+            'headers' => ['X-inject' => $value],
+        ]);
+    }
+
     /**
      * test get request with no data
      */

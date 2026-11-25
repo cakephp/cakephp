@@ -470,4 +470,45 @@ class BaseApplicationTest extends TestCase
         $app->routes($routes);
         $this->assertSame([], Router::routes());
     }
+
+    /**
+     * Test that routes.php closures receive the application instance.
+     */
+    public function testRoutesFileClosureReceivesApplication(): void
+    {
+        Router::reload();
+
+        $configDir = TMP . 'cake-routes-' . uniqid() . DS;
+        mkdir($configDir, 0777, true);
+        file_put_contents(
+            $configDir . 'routes.php',
+            <<<'PHP'
+<?php
+use Cake\Http\BaseApplication;
+use Cake\Routing\RouteBuilder;
+
+return function (RouteBuilder $routes, BaseApplication $app): void {
+    $app->receivedApp = $app;
+};
+PHP,
+        );
+
+        try {
+            $app = new class ($configDir) extends BaseApplication {
+                public ?BaseApplication $receivedApp = null;
+
+                public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+                {
+                    return $middlewareQueue;
+                }
+            };
+
+            $app->routes(new RouteBuilder(new RouteCollection(), '/'));
+
+            $this->assertSame($app, $app->receivedApp);
+        } finally {
+            unlink($configDir . 'routes.php');
+            rmdir($configDir);
+        }
+    }
 }

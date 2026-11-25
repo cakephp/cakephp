@@ -62,7 +62,7 @@ class I18nCommand extends Command
                     // Do nothing
                     break;
                 default:
-                    $this->io->err(
+                    $this->io->error(
                         'You have made an invalid selection. ' .
                         'Please choose a command to execute by entering E, I, H, or Q.',
                     );

@@ -12,7 +12,7 @@ class BridgeCommand extends Command
         $name = $this->io->ask('What is your name');
 
         if ($name !== 'cake') {
-            $this->io->err('No!');
+            $this->io->error('No!');
 
             return static::CODE_ERROR;
         }
@@ -20,7 +20,7 @@ class BridgeCommand extends Command
         $color = $this->io->ask('What is your favorite color?');
 
         if ($color !== 'blue') {
-            $this->io->err('Wrong! <blink>Aaaahh</blink>');
+            $this->io->error('Wrong! <blink>Aaaahh</blink>');
 
             return static::CODE_ERROR;
         }
