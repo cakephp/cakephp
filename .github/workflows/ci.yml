@@ -152,7 +152,7 @@ jobs:
           vendor/bin/phpunit --order-by=random --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         elif [[ ${{ matrix.php-version }} == '8.5' && ${{ matrix.dependencies }} == 'lowest' ]]; then
           vendor/bin/phpunit --order-by=random
-          CAKE_TEST_AUTOQUOTE=1 --order-by=random vendor/bin/phpunit --testsuite=database
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --order-by=random --testsuite=database
         else
           vendor/bin/phpunit --order-by=random --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --order-by=random --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
