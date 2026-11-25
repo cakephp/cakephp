@@ -521,6 +521,7 @@ SQL;
 
     public function testDescribeTableFunctionalIndex(): void
     {
+        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
         $connection->execute('DROP TABLE IF EXISTS functional_index');
         $table = <<<SQL
