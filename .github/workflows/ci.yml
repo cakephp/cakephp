@@ -265,7 +265,7 @@ jobs:
 
     - name: Run phpstan for tests
       if: always()
-      run: tools/phpstan analyse -c tests/phpstan.neon
+      run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
 
     - name: Run class deprecation aliasing validaton script
       if: always()
