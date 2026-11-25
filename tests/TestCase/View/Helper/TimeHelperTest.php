@@ -468,6 +468,7 @@ class TimeHelperTest extends TestCase
 
         $result = $this->Time->format($time, IntlDateFormatter::FULL);
         $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertStringStartsWith($expected, $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
@@ -509,6 +510,7 @@ class TimeHelperTest extends TestCase
 
         $time = strtotime('Thu Jan 14 8:59:28 2010 UTC');
         $result = $this->Time->i18nFormat($time, [IntlDateFormatter::SHORT, IntlDateFormatter::FULL]);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $expected = '1/14/10, 12:59:28 AM';
         $this->assertStringStartsWith($expected, $result);
     }
@@ -551,6 +553,7 @@ class TimeHelperTest extends TestCase
      */
     public function assertTimeFormat($expected, $result): void
     {
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertSame(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),
             str_replace([',', '(', ')', ' at', ' à'], '', $result)
