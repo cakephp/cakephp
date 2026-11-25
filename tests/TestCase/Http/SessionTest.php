@@ -48,7 +48,7 @@ class SessionTest extends TestCase
     {
         $_SESSION = null;
 
-        $this->deprecated(function () {
+        $callback = function () {
             $config = [
                 'cookie' => 'test',
                 'checkAgent' => false,
@@ -63,7 +63,13 @@ class SessionTest extends TestCase
             $this->assertSame('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
             $this->assertSame('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
             $this->assertSame('test', ini_get('session.name'), 'Ini value is incorrect');
-        });
+        };
+
+        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            $this->deprecated($callback);
+        } else {
+            $callback();
+        }
     }
 
     /**
@@ -588,7 +594,7 @@ class SessionTest extends TestCase
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
 
-        $this->deprecated(function () {
+        $callback = function () {
             $session = new TestWebSession([
                 'ini' => [
                     'session.use_cookies' => 1,
@@ -599,7 +605,12 @@ class SessionTest extends TestCase
             $this->assertFalse($session->started());
             $session->check('something');
             $this->assertTrue($session->started());
-        });
+        };
+        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            $this->deprecated($callback);
+        } else {
+            $callback();
+        }
     }
 
     /**
