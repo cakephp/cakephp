@@ -3708,4 +3708,26 @@ class PaginatorHelperTest extends TestCase
         $expected = '/Articles/index/whatever/3?article%5Bpage%5D=2';
         $this->assertSame($expected, $result);
     }
+
+    /**
+     * Test that pagination links keep a multi-key sort and sort links replace it.
+     */
+    public function testMultiSortUrls(): void
+    {
+        $this->setPaginatedResult([
+            'sort' => 'author_id',
+            'direction' => 'asc',
+            'sorts' => ['author_id' => 'asc', 'title' => 'desc'],
+            'sortQuery' => 'author_id,-title',
+        ]);
+
+        $result = $this->Paginator->generateUrl(['page' => 2]);
+        $this->assertSame('/?page=2&amp;sort=author_id%2C-title', $result);
+
+        $result = $this->Paginator->next('Next');
+        $this->assertStringContainsString('href="/?page=2&amp;sort=author_id%2C-title"', $result);
+
+        $result = $this->Paginator->sort('title');
+        $this->assertStringContainsString('href="/?sort=title&amp;direction=asc"', $result);
+    }
 }

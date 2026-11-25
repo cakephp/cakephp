@@ -642,4 +642,146 @@ class NumericPaginatorTest extends TestCase
             'PaginatorPosts.body' => 'asc', // Default desc, inverted to asc
         ], $pagingParams['completeSort']);
     }
+
+    /**
+     * Test sorting by a comma separated list of keys.
+     */
+    public function testMultiSort(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'author_id,-title']);
+        $this->assertSame(['Third Post', 'First Post', 'Second Post'], $result->items()->extract('title')->toList());
+
+        $pagingParams = $result->pagingParams();
+        $this->assertSame('author_id', $pagingParams['sort']);
+        $this->assertSame('asc', $pagingParams['direction']);
+        $this->assertSame(['author_id' => 'asc', 'title' => 'desc'], $pagingParams['sorts']);
+        $this->assertSame('author_id,-title', $pagingParams['sortQuery']);
+        $this->assertSame([
+            'PaginatorPosts.author_id' => 'asc',
+            'PaginatorPosts.title' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test the prefix format for a single sort key.
+     */
+    public function testSortPrefixFormat(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $result = $this->Paginator->paginate($table, ['sort' => '-title', 'direction' => 'asc']);
+        $pagingParams = $result->pagingParams();
+        $this->assertSame('title', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame(['title' => 'desc'], $pagingParams['sorts']);
+        $this->assertNull($pagingParams['sortQuery']);
+        $this->assertSame(['PaginatorPosts.title' => 'desc'], $pagingParams['completeSort']);
+
+        $result = $this->Paginator->paginate($table, ['sort' => '-title'], ['sortableFields' => ['title']]);
+        $this->assertSame(['PaginatorPosts.title' => 'desc'], $result->pagingParam('completeSort'));
+
+        // A trailing comma is not a multi sort.
+        $result = $this->Paginator->paginate($table, ['sort' => '-title,']);
+        $this->assertSame(['PaginatorPosts.title' => 'desc'], $result->pagingParam('completeSort'));
+        $this->assertNull($result->pagingParam('sortQuery'));
+    }
+
+    /**
+     * Test that multi sort supports the combined format, ignores the direction
+     * param, skips invalid and duplicate keys and keeps the default order.
+     */
+    public function testMultiSortNormalization(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $params = [
+            'sort' => 'author_id-desc, nope,,author_id,PaginatorPosts.title,Other.title',
+            'direction' => 'desc',
+        ];
+        $settings = ['order' => ['PaginatorPosts.author_id' => 'asc', 'id' => 'desc']];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame('author_id', $pagingParams['sort']);
+        $this->assertSame('desc', $pagingParams['direction']);
+        $this->assertSame(['author_id' => 'desc', 'title' => 'asc'], $pagingParams['sorts']);
+        $this->assertSame('-author_id,title', $pagingParams['sortQuery']);
+        $this->assertSame([
+            'PaginatorPosts.author_id' => 'desc',
+            'PaginatorPosts.title' => 'asc',
+            'PaginatorPosts.id' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test that invalid sorts fall back to the default order.
+     */
+    public function testMultiSortInvalid(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+        $settings = ['order' => ['id' => 'desc']];
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'nope,-'], $settings);
+        $this->assertSame('id', $result->pagingParam('sort'));
+        $this->assertNull($result->pagingParam('sorts'));
+        $this->assertSame(['PaginatorPosts.id' => 'desc'], $result->pagingParam('completeSort'));
+
+        // Arrays are not supported.
+        $result = $this->Paginator->paginate($table, ['sort' => ['title']], $settings);
+        $this->assertSame('id', $result->pagingParam('sort'));
+        $this->assertSame(['PaginatorPosts.id' => 'desc'], $result->pagingParam('completeSort'));
+    }
+
+    /**
+     * Test that maxSortKeys counts valid, unique keys and not resolved fields.
+     */
+    public function testMultiSortMaxSortKeys(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $settings = [
+            'sortableFields' => [
+                'author' => ['author_id', 'body'],
+                'newest' => [SortField::desc('id', locked: true)],
+                'title',
+            ],
+            'maxSortKeys' => 2,
+        ];
+        $params = ['sort' => 'x,y,author,author,z,-newest,title'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertSame(['author' => 'asc', 'newest' => 'desc'], $pagingParams['sorts']);
+        $this->assertSame('author,-newest', $pagingParams['sortQuery']);
+        $this->assertSame([
+            'PaginatorPosts.author_id' => 'asc',
+            'PaginatorPosts.body' => 'asc',
+            'PaginatorPosts.id' => 'desc',
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test that sorts reports the applied direction for default and locked directions.
+     */
+    public function testSortsReportsAppliedDirection(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+        $settings = [
+            'sortableFields' => [
+                'newest' => [SortField::desc('id')],
+                'locked' => [SortField::asc('title', locked: true)],
+            ],
+        ];
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'newest,-locked'], $settings);
+        $this->assertSame(['newest' => 'desc', 'locked' => 'asc'], $result->pagingParam('sorts'));
+        $this->assertSame('asc', $result->pagingParam('direction'));
+        $this->assertSame('newest,-locked', $result->pagingParam('sortQuery'));
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'newest'], $settings);
+        $this->assertSame(['newest' => 'desc'], $result->pagingParam('sorts'));
+        $this->assertSame(['PaginatorPosts.id' => 'desc'], $result->pagingParam('completeSort'));
+    }
 }
