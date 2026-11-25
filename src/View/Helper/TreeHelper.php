@@ -494,7 +494,7 @@ class TreeHelper extends Helper
     {
         if ($value !== null) {
             $this->itemAttributes[$id][$key] = $value;
-        } elseif (!(isset($this->itemAttributes[$id]) && in_array($key, $this->itemAttributes[$id]))) {
+        } elseif (!(isset($this->itemAttributes[$id]) && in_array($key, $this->itemAttributes[$id], true))) {
             $this->itemAttributes[$id][] = $key;
         }
     }
@@ -540,7 +540,7 @@ class TreeHelper extends Helper
         }
         if ($value !== null) {
             $this->{$var}[$id][$key] = $value;
-        } elseif (!(isset($this->{$var}[$id]) && in_array($key, $this->{$var}[$id]))) {
+        } elseif (!(isset($this->{$var}[$id]) && in_array($key, $this->{$var}[$id], true))) {
             $this->{$var}[$id][] = $key;
         }
     }

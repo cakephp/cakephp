@@ -53,7 +53,7 @@ class Mariadb extends Mysql
      */
     public function schemaDialect(): SchemaDialect
     {
-        return $this->schemaDialect ?? ($this->schemaDialect = new MariadbSchemaDialect($this));
+        return $this->schemaDialect ??= new MariadbSchemaDialect($this);
     }
 
     /**
@@ -61,34 +61,32 @@ class Mariadb extends Mysql
      */
     public function supports(DriverFeature $feature): bool
     {
-        $versionCompare = function () use ($feature) {
-            return version_compare(
-                $this->version(),
-                $this->featureVersionMap[$feature->value],
-                '>=',
-            );
-        };
+        $versionCompare = fn() => version_compare(
+            $this->version(),
+            $this->featureVersionMap[$feature->value],
+            '>=',
+        );
 
         return match ($feature) {
             DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
+            DriverFeature::GROUP_CONCAT,
+            DriverFeature::SET_OPERATIONS_ORDER_BY,
+            DriverFeature::OPTIMIZER_HINT_COMMENT,
+            DriverFeature::SUBQUERY_FILTER_DISTINCT,
             DriverFeature::SAVEPOINT => true,
 
-            DriverFeature::TRUNCATE_WITH_CONSTRAINTS => false,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
 
             DriverFeature::CTE,
             DriverFeature::JSON,
-            DriverFeature::WINDOW => $versionCompare(),
-            DriverFeature::STRING_AGG => $versionCompare(),
-            DriverFeature::GROUP_CONCAT => true,
-            DriverFeature::INTERSECT => $versionCompare(),
-            DriverFeature::INTERSECT_ALL => $versionCompare(),
-            DriverFeature::EXCEPT => $versionCompare(),
-            DriverFeature::EXCEPT_ALL => $versionCompare(),
+            DriverFeature::WINDOW,
+            DriverFeature::STRING_AGG,
+            DriverFeature::INTERSECT,
+            DriverFeature::INTERSECT_ALL,
+            DriverFeature::EXCEPT,
+            DriverFeature::EXCEPT_ALL,
             DriverFeature::CHECK_CONSTRAINTS => $versionCompare(),
-            DriverFeature::SET_OPERATIONS_ORDER_BY => true,
-            DriverFeature::OPTIMIZER_HINT_COMMENT => true,
-            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
-            DriverFeature::SUBQUERY_FILTER_DISTINCT => true,
         };
     }
 

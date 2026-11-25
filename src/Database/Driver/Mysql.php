@@ -307,7 +307,7 @@ class Mysql extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        return $this->schemaDialect ?? ($this->schemaDialect = new MysqlSchemaDialect($this));
+        return $this->schemaDialect ??= new MysqlSchemaDialect($this);
     }
 
     /**
