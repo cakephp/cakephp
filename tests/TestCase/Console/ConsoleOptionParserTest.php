@@ -25,6 +25,7 @@ use Cake\Console\TestSuite\StubConsoleInput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * ConsoleOptionParserTest
@@ -37,6 +38,12 @@ class ConsoleOptionParserTest extends TestCase
     {
         parent::setUp();
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
+    }
+
+    public function testDefaultNoInteractionOption(): void
+    {
+        $this->assertArrayHasKey('no-interaction', (new ConsoleOptionParser('test'))->options());
+        $this->assertArrayNotHasKey('no-interaction', (new ConsoleOptionParser('test', false))->options());
     }
 
     /**
@@ -517,6 +524,48 @@ class ConsoleOptionParserTest extends TestCase
         $expected = "<question>What is your favorite?</question> (red/green/blue) \n> ";
         $this->assertEquals($expected, $messages[0]);
         $this->assertEquals($expected, $messages[1]);
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function nonInteractiveFlagProvider(): array
+    {
+        return [
+            'no-interaction' => ['--no-interaction'],
+            'quiet' => ['--quiet'],
+        ];
+    }
+
+    #[DataProvider('nonInteractiveFlagProvider')]
+    public function testAddOptionWithPromptSkippedWhenNonInteractive(string $flag): void
+    {
+        $parser = new ConsoleOptionParser('test');
+        $parser->addOption('color', [
+            'prompt' => 'What is your favorite?',
+            'choices' => ['red', 'green', 'blue'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse([$flag], $io);
+        $this->assertNull($result[0]['color'] ?? null);
+        $this->assertSame([], $out->messages());
+    }
+
+    #[DataProvider('nonInteractiveFlagProvider')]
+    public function testAddOptionWithPromptAndRequiredFailsWhenNonInteractive(string $flag): void
+    {
+        $parser = new ConsoleOptionParser('test');
+        $parser->addOption('color', [
+            'required' => true,
+            'prompt' => 'What is your favorite?',
+        ]);
+        $io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Missing required option. The `color` option is required');
+        $parser->parse([$flag], $io);
     }
 
     /**
@@ -1083,11 +1132,12 @@ TEXT;
 
         $options = $result['options'];
         $this->assertArrayHasKey('quiet', $options);
+        $this->assertArrayHasKey('no-interaction', $options);
         $this->assertArrayHasKey('test', $options);
         $this->assertArrayHasKey('file', $options);
         $this->assertArrayHasKey('output', $options);
 
         $this->assertCount(2, $result['arguments']);
-        $this->assertCount(6, $result['options']);
+        $this->assertCount(7, $result['options']);
     }
 }
