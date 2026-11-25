@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing;
 
 use BadMethodCallException;
+use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
@@ -862,6 +863,21 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
         $routes->fallbacks();
+
+        $all = $this->collection->routes();
+        $this->assertSame('/api/{controller}', $all[0]->template);
+        $this->assertSame('/api/{controller}/{action}/*', $all[1]->template);
+        $this->assertInstanceOf(Route::class, $all[0]);
+    }
+
+    /**
+     * Test connecting fallback routes.
+     */
+    public function testFallbacksWarnsDebugFalse(): void
+    {
+        Configure::write('debug', false);
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
+        $this->expectWarningMessageMatches('/is dangerous/', fn() => $routes->fallbacks());
 
         $all = $this->collection->routes();
         $this->assertSame('/api/{controller}', $all[0]->template);

@@ -92,7 +92,8 @@ class Application extends BaseApplication
                 // do nothing. This happens when one test does multiple requests.
             }
             $routes->redirect('/redirect', 'http://example.com/test.html');
-            $routes->fallbacks();
+            $routes->connect('/{controller}', ['action' => 'index']);
+            $routes->connect('/{controller}/{action}/*');
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
         $routes->connect('/bake/{controller}/{action}', ['plugin' => 'Bake']);
