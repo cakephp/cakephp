@@ -642,4 +642,52 @@ class NumericPaginatorTest extends TestCase
             'PaginatorPosts.body' => 'asc', // Default desc, inverted to asc
         ], $pagingParams['completeSort']);
     }
+
+    /**
+     * Test the stableSort option.
+     */
+    public function testStableSort(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'author_id']);
+        $this->assertSame(['PaginatorPosts.author_id' => 'asc'], $result->pagingParam('completeSort'));
+
+        $result = $this->Paginator->paginate($table, ['sort' => 'author_id'], ['stableSort' => true]);
+        $this->assertSame([
+            'PaginatorPosts.author_id' => 'asc',
+            'PaginatorPosts.id' => 'asc',
+        ], $result->pagingParam('completeSort'));
+        $this->assertSame('author_id', $result->pagingParam('sort'));
+        $this->assertSame([1, 3, 2], $result->items()->extract('id')->toList());
+
+        // Primary key already part of the order, prefixed or not.
+        $result = $this->Paginator->paginate($table, ['sort' => 'id', 'direction' => 'desc'], ['stableSort' => true]);
+        $this->assertSame(['PaginatorPosts.id' => 'desc'], $result->pagingParam('completeSort'));
+
+        // No sort at all.
+        $result = $this->Paginator->paginate($table, [], ['stableSort' => true]);
+        $this->assertSame(['PaginatorPosts.id' => 'asc'], $result->pagingParam('completeSort'));
+        $this->assertNull($result->pagingParam('sort'));
+
+        // Custom tiebreaker fields.
+        $result = $this->Paginator->paginate($table, ['sort' => 'author_id'], ['stableSort' => ['title', 'id']]);
+        $this->assertSame([
+            'PaginatorPosts.author_id' => 'asc',
+            'PaginatorPosts.title' => 'asc',
+            'PaginatorPosts.id' => 'asc',
+        ], $result->pagingParam('completeSort'));
+
+        // Works together with sortableFields and default orders.
+        $settings = [
+            'stableSort' => true,
+            'sortableFields' => ['title'],
+            'order' => ['PaginatorPosts.title' => 'desc'],
+        ];
+        $result = $this->Paginator->paginate($table, [], $settings);
+        $this->assertSame([
+            'PaginatorPosts.title' => 'desc',
+            'PaginatorPosts.id' => 'asc',
+        ], $result->pagingParam('completeSort'));
+    }
 }
