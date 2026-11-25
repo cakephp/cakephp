@@ -147,7 +147,7 @@ parameters:
 		-
 			message: '#^Access to constant [A-Z_]+ on an unknown class Pdo\\Mysql\.$#'
 			identifier: class.notFound
-			count: 6
+			count: 4
 			path: src/Database/Driver/Mysql.php
 
 		-
@@ -233,12 +233,6 @@ parameters:
 			identifier: varTag.nativeType
 			count: 1
 			path: src/Database/Expression/WhenThenExpression.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$dataType$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/Database/FunctionsBuilder.php
 
 		-
 			message: '#^Access to an undefined property Exception\:\:\$queryString\.$#'
