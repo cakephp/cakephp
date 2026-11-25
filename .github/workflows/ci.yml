@@ -38,7 +38,7 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.2'
             db-type: 'mysql'
-          - php-version: '8.5'
+          - php-version: '8.4'
             db-type: 'mysql'
 
     services:
@@ -107,7 +107,7 @@ jobs:
 
     - name: Composer install
       run: |
-        if ${{ matrix.php-version == '8.5' }}; then
+        if ${{ matrix.php-version == '8.4' }}; then
           composer update --ignore-platform-req=php
         elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable --no-security-blocking
