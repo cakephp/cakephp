@@ -140,6 +140,7 @@ class PaginatorHelper extends Helper
      * Get pagination instance.
      *
      * @return \Cake\Datasource\Paging\PaginatedInterface<array-key, mixed>
+     * @throws \Cake\Core\Exception\CakeException If no pagination instance is set or found in the view variables.
      */
     protected function paginated(): PaginatedInterface
     {
@@ -627,7 +628,7 @@ class PaginatorHelper extends Helper
      *
      * @param int $page The page number - if not set defaults to 1.
      * @return bool True if the given result set has the specified page number.
-     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\CakeException If no pagination instance is available.
      * @link https://book.cakephp.org/5/en/views/helpers/paginator.html#checking-the-pagination-state
      */
     public function hasPage(int $page = 1): bool
