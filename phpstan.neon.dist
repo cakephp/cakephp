@@ -20,10 +20,6 @@ parameters:
             identifier: missingType.iterableValue
         -
             identifier: missingType.generics
-        -
-            identifier: include.fileNotFound
-        -
-            identifier: method.internalClass
 
 services:
     -

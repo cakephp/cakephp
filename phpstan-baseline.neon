@@ -145,6 +145,18 @@ parameters:
 			path: src/Database/Driver.php
 
 		-
+			message: '#^Access to constant [A-Z_]+ on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 6
+			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Access to constant [A-Z_]+ on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Database/Statement/MysqlStatement.php
+
+		-
 			message: '#^Instanceof between mixed and \(int\|string\) results in an error\.$#'
 			identifier: instanceof.invalidExprType
 			count: 1
