@@ -48,7 +48,9 @@ class LocaleSelectorMiddlewareTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Locale::setDefault($this->locale);
+        // Go through I18n so the translator registry locale is restored too,
+        // the middleware changes it with I18n::setLocale()
+        I18n::setLocale($this->locale);
     }
 
     /**
