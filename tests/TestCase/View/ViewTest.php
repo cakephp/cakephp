@@ -673,21 +673,24 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Changing the configured template roots refreshes element lookups on the same view.
+     * Explicitly refreshing the template roots invalidates resolved elements.
      */
-    public function testElementLookupRefreshesAfterTemplatePathChange(): void
+    public function testElementLookupRefreshesWithTemplatePaths(): void
     {
-        $this->assertSame('this is the test element', $this->View->element('test_element'));
+        $view = new TestView(new ServerRequest());
+        $this->assertSame('this is the test element', $view->element('test_element'));
 
         $paths = App::path('templates');
         try {
             Configure::write('App.paths.templates', [Plugin::templatePath('TestTheme'), ...$paths]);
-            $this->assertSame("Hi, I'm the test element.", $this->View->element('test_element'));
+            $view->paths(cached: false);
+            $this->assertSame("Hi, I'm the test element.", $view->element('test_element'));
         } finally {
             Configure::write('App.paths.templates', $paths);
         }
 
-        $this->assertSame('this is the test element', $this->View->element('test_element'));
+        $view->paths(cached: false);
+        $this->assertSame('this is the test element', $view->element('test_element'));
     }
 
     /**

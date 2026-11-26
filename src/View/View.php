@@ -251,18 +251,6 @@ class View implements EventDispatcherInterface
     protected array $_pathsForPlugin = [];
 
     /**
-     * Application paths used to build the cached template roots.
-     *
-     * @var array<int|string, string>|null
-     */
-    private ?array $configuredTemplatePaths = null;
-
-    /**
-     * Theme used to build the cached template roots.
-     */
-    private ?string $templatePathsTheme = null;
-
-    /**
      * Routing prefix used by the cached element lookups.
      */
     private mixed $elementPathPrefix = null;
@@ -603,6 +591,11 @@ class View implements EventDispatcherInterface
      */
     public function setTheme(?string $theme)
     {
+        if ($this->theme !== $theme) {
+            $this->_paths = [];
+            $this->_pathsForPlugin = [];
+            $this->elementFileNames = [];
+        }
         $this->theme = $theme;
 
         return $this;
@@ -1554,7 +1547,6 @@ class View implements EventDispatcherInterface
         $useCache = $this->canCacheElementFileNames();
         $pluginKey = $plugin ?? '';
         if ($useCache) {
-            $this->refreshTemplatePathContext();
             $prefix = $this->request->getParam('prefix');
             if ($prefix !== $this->elementPathPrefix) {
                 $this->elementPathPrefix = $prefix;
@@ -1682,7 +1674,7 @@ class View implements EventDispatcherInterface
         } else {
             unset($this->elementFileNames[$plugin ?? '']);
         }
-        $templatePaths = array_values($this->refreshTemplatePathContext());
+        $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
         $pluginPaths = [];
         $themePaths = [];
         if ($plugin) {
@@ -1722,27 +1714,6 @@ class View implements EventDispatcherInterface
         }
 
         return $this->_paths = $paths;
-    }
-
-    /**
-     * Invalidate cached paths and filenames when the theme or application template roots change.
-     *
-     * @return array<int|string, string>
-     */
-    private function refreshTemplatePathContext(): array
-    {
-        $templatePaths = App::path(static::NAME_TEMPLATE);
-        if ($this->configuredTemplatePaths !== $templatePaths || $this->templatePathsTheme !== $this->theme) {
-            if ($this->configuredTemplatePaths !== null) {
-                $this->_paths = [];
-                $this->_pathsForPlugin = [];
-                $this->elementFileNames = [];
-            }
-            $this->configuredTemplatePaths = $templatePaths;
-            $this->templatePathsTheme = $this->theme;
-        }
-
-        return $templatePaths;
     }
 
     /**
