@@ -258,7 +258,7 @@ abstract class TestCase extends BaseTestCase
 
         $previousHandler = set_error_handler(
             function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
-                if ($code == E_USER_DEPRECATED) {
+                if ($code == E_USER_DEPRECATED || $code == E_DEPRECATED) {
                     $deprecation = true;
 
                     return true;

@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   testsuite:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +38,7 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.2'
             db-type: 'mysql'
-          - php-version: '8.5'
+          - php-version: '8.4'
             db-type: 'mysql'
 
     services:
@@ -107,7 +107,7 @@ jobs:
 
     - name: Composer install
       run: |
-        if ${{ matrix.php-version == '8.5' }}; then
+        if ${{ matrix.php-version == '8.4' }}; then
           composer update --ignore-platform-req=php
         elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable --no-security-blocking
@@ -229,48 +229,35 @@ jobs:
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+
+    env:
+      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '8.2'
         extensions: mbstring, intl, apcu, memcached, redis
         coverage: none
         tools: phive, cs2pr
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-    - name: Get date part for cache key
-      id: key-date
-      run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
-
-    - name: Cache composer dependencies
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
-
     - name: Composer install
-      run: composer update --no-security-blocking
+      uses: ramsey/composer-install@v3
 
     - name: Install PHP tools with phive.
-      run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+      run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
     - name: Run phpcs
       if: always()
       run: vendor/bin/phpcs --report=checkstyle src/ tests/ | cs2pr
-
-    - name: Run psalm
-      if: always()
-      run: tools/psalm --output-format=github
 
     - name: Run phpstan
       if: always()

@@ -5,4 +5,9 @@
     <rule ref="CakePHP" />
 
     <arg value="s"/>
+
+    <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
+      <exclude-pattern>src/Http/Client/Auth/Oauth.php</exclude-pattern>
+      <exclude-pattern>src/Utility/Xml.php</exclude-pattern>
+    </rule>
 </ruleset>

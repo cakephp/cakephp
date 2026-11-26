@@ -940,6 +940,7 @@ class TimeTest extends TestCase
 
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
         $result = str_replace(['  '], ' ', $result);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
 
         $this->assertSame($expected, $result, $message);
     }

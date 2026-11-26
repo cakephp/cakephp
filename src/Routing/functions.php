@@ -67,6 +67,8 @@ if (!getenv('CAKE_DISABLE_GLOBAL_FUNCS')) {
  * urldecode all of the segments in a path, but skip over %2f
  * because applications can use %2f in a segment.
  *
+ * @param string $url The url to decode
+ * @return string
  * @internal
  */
 function urldecodeSegments(string $url): string

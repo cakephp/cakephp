@@ -139,7 +139,7 @@ class FunctionsBuilder
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
-     * @param string $dataType The SQL data type.
+     * @param string $type The SQL data type.
      * @return \Cake\Database\Expression\FunctionExpression
      */
     public function cast($field, string $type = ''): FunctionExpression

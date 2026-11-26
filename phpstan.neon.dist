@@ -1,31 +1,30 @@
 includes:
-	- phpstan-baseline.neon
+    - phpstan-baseline.neon
 
 parameters:
-	level: 6
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
-	treatPhpDocTypesAsCertain: false
-	bootstrapFiles:
-		- tests/bootstrap.php
-	paths:
-		- src/
-	earlyTerminatingMethodCalls:
-		Cake\Console\Shell:
-			- abort
-		Cake\Command\BaseCommand:
-			- abort
-	excludePaths:
-		- src/I18n/FrozenDate
+    level: 6
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+        - tests/bootstrap.php
+    paths:
+        - src/
+    earlyTerminatingMethodCalls:
+        Cake\Console\Shell:
+            - abort
+        Cake\Command\BaseCommand:
+            - abort
+    excludePaths:
+        - src/I18n/FrozenDate.php
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
 
 services:
-	-
-		class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
-		tags:
-			- phpstan.broker.methodsClassReflectionExtension
-			- phpstan.broker.propertiesClassReflectionExtension
+    -
+        class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+            - phpstan.broker.propertiesClassReflectionExtension
 
-	-
-		class: Cake\PHPStan\PhpDoc\TableAssociationTypeNodeResolverExtension
-		tags:
-			- phpstan.phpDoc.typeNodeResolverExtension

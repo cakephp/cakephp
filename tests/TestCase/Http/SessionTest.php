@@ -48,20 +48,28 @@ class SessionTest extends TestCase
     {
         $_SESSION = null;
 
-        $config = [
-            'cookie' => 'test',
-            'checkAgent' => false,
-            'timeout' => 86400,
-            'ini' => [
-                'session.referer_check' => 'example.com',
-                'session.use_trans_sid' => false,
-            ],
-        ];
+        $callback = function () {
+            $config = [
+                'cookie' => 'test',
+                'checkAgent' => false,
+                'timeout' => 86400,
+                'ini' => [
+                    'session.referer_check' => 'example.com',
+                    'session.use_trans_sid' => false,
+                ],
+            ];
 
-        Session::create($config);
-        $this->assertSame('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
-        $this->assertSame('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
-        $this->assertSame('test', ini_get('session.name'), 'Ini value is incorrect');
+            Session::create($config);
+            $this->assertSame('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
+            $this->assertSame('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
+            $this->assertSame('test', ini_get('session.name'), 'Ini value is incorrect');
+        };
+
+        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            $this->deprecated($callback);
+        } else {
+            $callback();
+        }
     }
 
     /**
@@ -586,16 +594,23 @@ class SessionTest extends TestCase
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
 
-        $session = new TestWebSession([
-            'ini' => [
-                'session.use_cookies' => 1,
-                'session.use_trans_sid' => 1,
-            ],
-        ]);
+        $callback = function () {
+            $session = new TestWebSession([
+                'ini' => [
+                    'session.use_cookies' => 1,
+                    'session.use_trans_sid' => 1,
+                ],
+            ]);
 
-        $this->assertFalse($session->started());
-        $session->check('something');
-        $this->assertTrue($session->started());
+            $this->assertFalse($session->started());
+            $session->check('something');
+            $this->assertTrue($session->started());
+        };
+        if (version_compare(PHP_VERSION, '8.4.0', '>=')) {
+            $this->deprecated($callback);
+        } else {
+            $callback();
+        }
     }
 
     /**
