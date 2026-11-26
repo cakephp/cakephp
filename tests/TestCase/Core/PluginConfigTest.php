@@ -37,6 +37,7 @@ class PluginConfigTest extends TestCase
         // Clearing the plugins loads the installer config, so delete it afterwards
         $this->clearPlugins();
         Configure::delete('plugins');
+        PluginConfig::clearCache();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
