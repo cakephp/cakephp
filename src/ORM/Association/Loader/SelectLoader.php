@@ -529,6 +529,8 @@ class SelectLoader
         $fields = $group;
 
         $columns = $query->clause('select');
+        // A query that groups already has a SELECT list valid for its own GROUP BY, so only the keys join it.
+        $extendGroup = !$query->clause('group');
 
         /** @var \Cake\Database\Expression\QueryExpression|null $order */
         $order = $query->clause('order');
@@ -545,6 +547,7 @@ class SelectLoader
                 &$group,
                 $columns,
                 $includeOrderFields,
+                $extendGroup,
             ) {
                 // A numeric key carries its own column and must not be read as a SELECT offset.
                 if (is_string($field) && isset($columns[$field])) {
@@ -569,7 +572,7 @@ class SelectLoader
                     $fields[] = $selectColumn;
                 }
 
-                if (!$this->isAggregate($column) && !in_array($column, $group, true)) {
+                if ($extendGroup && !$this->isAggregate($column) && !in_array($column, $group, true)) {
                     $group[] = $column;
                 }
 
@@ -598,7 +601,7 @@ class SelectLoader
                 }
                 $fields[$alias] = $column;
 
-                if (!$this->isAggregate($column)) {
+                if ($extendGroup && !$this->isAggregate($column)) {
                     $group[] = $column;
                 }
             }

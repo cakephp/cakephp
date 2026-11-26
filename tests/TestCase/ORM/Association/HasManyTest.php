@@ -959,6 +959,39 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Subquery strategy + HAVING on an aggregate alias written as raw SQL.
+     */
+    public function testSubqueryWithHavingOnRawAggregateAlias(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(
+            $driver instanceof Postgres || $driver instanceof Sqlserver,
+            'HAVING cannot reference a raw SQL SELECT alias on this database',
+        );
+
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
+
+        $query = $Authors->find();
+        $result = $query
+            ->select([
+                'Authors.id',
+                'article_count' => $query->expr('COUNT(Articles.id)'),
+                'max_article' => 'MAX(Articles.id)',
+            ])
+            ->leftJoinWith('Articles')
+            ->contain('Articles')
+            ->groupBy(['Authors.id'])
+            ->having(
+                ['article_count >' => 0, 'max_article >' => 0],
+                ['article_count' => 'integer', 'max_article' => 'integer'],
+            )
+            ->toArray();
+
+        $this->assertNotEmpty($result);
+    }
+
+    /**
      * Tests subquery strategy when the parent query uses HAVING on a SELECT alias.
      *
      * The alias must be preserved in the generated subquery SELECT, otherwise the
