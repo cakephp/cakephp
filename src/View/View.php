@@ -18,6 +18,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\AttributeDeclarationsTrait;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
@@ -75,6 +76,7 @@ use function Cake\Core\pluginSplit;
  */
 class View implements EventDispatcherInterface
 {
+    use AttributeDeclarationsTrait;
     use CellTrait {
         cell as public;
     }
@@ -375,6 +377,11 @@ class View implements EventDispatcherInterface
         $this->response = $response ?: new Response();
         $this->Blocks = new $this->viewBlockClass();
         $this->initialize();
+        foreach ($this->attributeDeclarations()['helper'] ?? [] as $alias => $declaration) {
+            if (!isset($this->helpers[$alias]) && !$this->helpers()->has($alias)) {
+                $this->helpers[$alias] = $declaration->getOptions();
+            }
+        }
         $this->loadHelpers();
     }
 

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
+use Cake\Core\AttributeDeclarationsTrait;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 
@@ -44,6 +45,7 @@ use Cake\Event\EventListenerInterface;
  */
 class Helper implements EventListenerInterface
 {
+    use AttributeDeclarationsTrait;
     use InstanceConfigTrait;
 
     /**
@@ -79,6 +81,10 @@ class Helper implements EventListenerInterface
 
         if ($this->helpers) {
             $this->helpers = $this->View->helpers()->normalizeArray($this->helpers);
+        }
+
+        foreach ($this->attributeDeclarations()['helper'] ?? [] as $alias => $declaration) {
+            $this->helpers[$alias] ??= $declaration->getOptions();
         }
 
         $this->initialize($config);
