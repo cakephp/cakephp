@@ -587,9 +587,16 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         return array_all((array)$field, function ($prop) {
-            return array_key_exists($prop, $this->dynamicFields)
-                || isset($this->assignedProps[$prop])
-                || static::accessor($prop, 'get');
+            if (array_key_exists($prop, $this->dynamicFields) || isset($this->assignedProps[$prop])) {
+                return true;
+            }
+
+            $rp = static::getReflectionProperty($prop);
+            if ($rp && $rp->isInitialized($this)) {
+                return true;
+            }
+
+            return (bool)static::accessor($prop, 'get');
         });
     }
 
