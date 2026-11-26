@@ -37,6 +37,7 @@ class PluginConfigTest extends TestCase
         // Clearing the plugins loads the installer config, so delete it afterwards
         $this->clearPlugins();
         Configure::delete('plugins');
+        PluginConfig::clearCache();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
@@ -60,6 +61,16 @@ class PluginConfigTest extends TestCase
             unlink($this->pluginsListPath);
         }
         file_put_contents($this->pluginsConfigPath, $this->originalPluginsConfigContent);
+    }
+
+    public function testSetUpClearsCachedPlugins(): void
+    {
+        Configure::write('plugins', ['StalePlugin' => '/stale/']);
+        $this->assertArrayHasKey('StalePlugin', PluginConfig::getInstalledPlugins());
+
+        $this->setUp();
+        Configure::write('plugins', ['FreshPlugin' => '/fresh/']);
+        $this->assertArrayHasKey('FreshPlugin', PluginConfig::getInstalledPlugins());
     }
 
     public function testSimpleConfig(): void
