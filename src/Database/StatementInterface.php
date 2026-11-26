@@ -20,7 +20,7 @@ use IteratorAggregate;
 use PDO;
 
 /**
- * @template-extends \IteratorAggregate<array>
+ * @template-extends \IteratorAggregate<mixed, array<array-key, mixed>>
  */
 interface StatementInterface extends IteratorAggregate
 {

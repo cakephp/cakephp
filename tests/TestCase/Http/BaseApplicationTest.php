@@ -34,6 +34,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
@@ -445,5 +446,63 @@ class BaseApplicationTest extends TestCase
         $app->getEventManager()->dispatch('DynamicPlugin.event');
 
         $this->assertTrue($app->pluginEventFired);
+    }
+
+    /**
+     * Applications may define all routes in code or plugins without a routes.php file.
+     */
+    public function testMissingRoutesFileIsOptional(): void
+    {
+        Router::reload();
+        $app = new class(TMP . 'cake-no-routes-' . uniqid() . DS) extends BaseApplication {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $routes = new RouteBuilder(new RouteCollection(), '/');
+        $app->routes($routes);
+        $this->assertSame([], Router::routes());
+    }
+
+    /**
+     * Test that routes.php closures receive the application instance.
+     */
+    public function testRoutesFileClosureReceivesApplication(): void
+    {
+        Router::reload();
+
+        $configDir = TMP . 'cake-routes-' . uniqid() . DS;
+        mkdir($configDir, 0777, true);
+        file_put_contents(
+            $configDir . 'routes.php',
+            <<<'PHP'
+                <?php
+                use Cake\Http\BaseApplication;
+                use Cake\Routing\RouteBuilder;
+
+                return function (RouteBuilder $routes, BaseApplication $app): void {
+                    $app->receivedApp = $app;
+                };
+                PHP,
+        );
+
+        try {
+            $app = new class($configDir) extends BaseApplication {
+                public ?BaseApplication $receivedApp = null;
+
+                public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+                {
+                    return $middlewareQueue;
+                }
+            };
+
+            $app->routes(new RouteBuilder(new RouteCollection(), '/'));
+
+            $this->assertSame($app, $app->receivedApp);
+        } finally {
+            unlink($configDir . 'routes.php');
+            rmdir($configDir);
+        }
     }
 }

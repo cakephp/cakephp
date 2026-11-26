@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Cache\Cache;
 use Cake\Command\Command;
 use Cake\Command\SchemacacheBuildCommand;
 use Cake\Command\SchemacacheClearCommand;
@@ -33,6 +34,7 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleHelpHeaderProviderInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
@@ -374,7 +376,13 @@ class CommandRunnerTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $runner = $this->getRunner();
-        $result = $runner->run(['cake', 'schema_cache', 'build'], $this->getMockIo($output));
+        try {
+            $result = $runner->run(['cake', 'schema_cache', 'build'], $this->getMockIo($output));
+        } finally {
+            // Building the schema cache enables metadata caching on the shared test connection
+            ConnectionManager::get('test')->cacheMetadata(false);
+            Cache::clear('_cake_model_');
+        }
         $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
@@ -576,17 +584,22 @@ class CommandRunnerTest extends TestCase
         $runner = $this->getRunner();
         $startedEventTriggered = false;
         $finishedEventTriggered = false;
-        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args, $io) use (
-            &$startedEventTriggered,
-        ): void {
+        $runner->getEventManager()->on('Command.beforeExecute', function (
+            $event,
+            $args,
+            $io,
+        ) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $this->assertInstanceOf(ConsoleIo::class, $io);
             $startedEventTriggered = true;
         });
-        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $io, $result) use (
-            &$finishedEventTriggered,
-        ): void {
+        $runner->getEventManager()->on('Command.afterExecute', function (
+            $event,
+            $args,
+            $io,
+            $result,
+        ) use (&$finishedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
             $this->assertInstanceOf(ConsoleIo::class, $io);

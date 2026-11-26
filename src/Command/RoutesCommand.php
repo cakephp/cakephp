@@ -50,9 +50,11 @@ class RoutesCommand extends Command
 
         $availableRoutes = Router::routes();
         $output = [];
+        /** @var array<string, array<string, int>> $duplicateRoutesCounter */
         $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
+            /** @var array<string> $methods */
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             $item = [
@@ -69,8 +71,9 @@ class RoutesCommand extends Command
                 $item[] = implode(', ', $route->getMiddleware());
             }
             if ($this->args->getOption('verbose')) {
-                ksort($route->defaults);
-                $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
+                $defaults = $route->defaults;
+                ksort($defaults);
+                $item[] = json_encode($defaults, JSON_THROW_ON_ERROR);
             }
 
             $output[] = $item;
@@ -95,6 +98,7 @@ class RoutesCommand extends Command
         $duplicateRoutes = [];
 
         foreach ($availableRoutes as $route) {
+            /** @var array<string> $methods */
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
 
             foreach ($methods as $method) {

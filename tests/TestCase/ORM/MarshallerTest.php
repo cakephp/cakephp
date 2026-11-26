@@ -30,6 +30,7 @@ use TestApp\Model\Entity\OpenArticleEntity;
 use TestApp\Model\Entity\OpenTag;
 use TestApp\Model\Entity\ProtectedArticle;
 use TestApp\Model\Table\GreedyCommentsTable;
+use function Cake\Database\Expression\greaterThanOrEquals;
 
 /**
  * Marshaller test case
@@ -1934,7 +1935,7 @@ class MarshallerTest extends TestCase
         $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
-            $query->leftJoin(['a' => 'tags'], $query->expr()->eq($left, $right));
+            $query->leftJoin(['a' => 'tags'], $query->expr()->equals($left, $right));
         });
 
         $marshall = new Marshaller($this->articles);
@@ -1997,7 +1998,7 @@ class MarshallerTest extends TestCase
             ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
-                $query->where(['Tags.id >=' => 1]);
+                $query->where(['Tags.id' => greaterThanOrEquals(1)]);
             });
 
         $entity = new Entity([

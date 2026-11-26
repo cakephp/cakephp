@@ -18,6 +18,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
+use Cake\View\HtmlStringable;
 use Cake\View\StringTemplate;
 use Traversable;
 use function Cake\Core\h;
@@ -149,14 +150,14 @@ class RadioWidget extends BasicWidget
      * Renders a single radio input and label.
      *
      * @param string|int $val The value of the radio input.
-     * @param array<string, mixed>|string|int $text The label text, or complex radio type.
+     * @param \Cake\View\HtmlStringable|array<string, mixed>|string|int $text The label text, or complex radio type.
      * @param array<string, mixed> $data Additional options for input generation.
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */
     protected function renderInput(
         string|int $val,
-        array|string|int $text,
+        HtmlStringable|array|string|int $text,
         array $data,
         ContextInterface $context,
     ): string {

@@ -18,6 +18,9 @@ namespace Cake\TestSuite;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\Constraint\Constraint;
 
+/**
+ * @require-extends \PHPUnit\Framework\TestCase
+ */
 trait PHPUnitConsecutiveTrait
 {
     /**

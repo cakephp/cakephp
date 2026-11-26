@@ -391,7 +391,7 @@ class SelectBoxWidgetTest extends TestCase
                     'beaver' => 'Beaver',
                     'elk' => 'Elk',
                 ],
-                'Bird' => [
+                'Bird <b>' => [
                     'budgie' => 'Budgie',
                     'eagle' => 'Eagle',
                 ],
@@ -410,7 +410,7 @@ class SelectBoxWidgetTest extends TestCase
             'Elk',
             '/option',
             '/optgroup',
-            ['optgroup' => ['label' => 'Bird']],
+            ['optgroup' => ['label' => 'Bird &lt;b&gt;']],
             ['option' => ['value' => 'budgie']],
             'Budgie',
             '/option',

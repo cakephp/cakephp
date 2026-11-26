@@ -20,11 +20,11 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Response;
+use Cake\Http\Response\RedirectResponse;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
+use Cake\Http\Uri;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Response\RedirectResponse;
-use Laminas\Diactoros\Uri;
 use TestApp\Http\TestRequestHandler;
 use UnexpectedValueException;
 
@@ -137,7 +137,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertSame(301, $result->getStatusCode());
-        $this->assertEquals(['location' => ['https://localhost/foo']], $result->getHeaders());
+        $this->assertEquals(['Location' => ['https://localhost/foo']], $result->getHeaders());
 
         $middleware = new HttpsEnforcerMiddleware([
             'statusCode' => 302,
@@ -148,7 +148,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $this->assertSame(302, $result->getStatusCode());
         $this->assertEquals(
             [
-                'location' => ['https://localhost/foo'],
+                'Location' => ['https://localhost/foo'],
                 'X-Foo' => ['bar'],
             ],
             $result->getHeaders(),
@@ -172,7 +172,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertSame(301, $result->getStatusCode());
-        $this->assertEquals(['location' => ['https://localhost/base/articles']], $result->getHeaders());
+        $this->assertEquals(['Location' => ['https://localhost/base/articles']], $result->getHeaders());
     }
 
     /**

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\ExpressionTypeCasterTrait;
 use Cake\Database\TypedResultInterface;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
@@ -31,7 +30,6 @@ use LogicException;
 class CaseStatementExpression implements ExpressionInterface, TypedResultInterface
 {
     use CaseExpressionTrait;
-    use ExpressionTypeCasterTrait;
     use TypeMapTrait;
 
     /**

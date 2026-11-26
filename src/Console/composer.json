@@ -32,7 +32,8 @@
     },
     "suggest": {
         "cakephp/datasource": "To use the Command base classes",
-        "cakephp/orm": "To use the Command base classes"
+        "cakephp/orm": "To use the Command base classes",
+        "phpunit/phpunit": "To use the console test constraints and ConsoleIntegrationTestTrait"
     },
     "autoload": {
         "psr-4": {

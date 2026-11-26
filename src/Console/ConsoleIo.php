@@ -223,7 +223,7 @@ class ConsoleIo implements ConsoleIoInterface
     }
 
     /**
-     * Convenience method for err() that wraps message between <warning> tag
+     * Writes messages to stderr wrapped in <warning> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -235,11 +235,11 @@ class ConsoleIo implements ConsoleIoInterface
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
 
-        return $this->err($message, $newlines);
+        return $this->err->write($message, $newlines);
     }
 
     /**
-     * Convenience method for err() that wraps message between <error> tag
+     * Writes messages to stderr wrapped in <error> tags.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -251,7 +251,7 @@ class ConsoleIo implements ConsoleIoInterface
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
 
-        return $this->err($message, $newlines);
+        return $this->err->write($message, $newlines);
     }
 
     /**
@@ -345,20 +345,6 @@ class ConsoleIo implements ConsoleIoInterface
         if ($fill > 0) {
             $this->lastWritten = $newBytes + $fill;
         }
-    }
-
-    /**
-     * Outputs a single or multiple error messages to stderr. If no parameters
-     * are passed outputs just a newline.
-     *
-     * @param array<string>|string $message A string or an array of strings to output
-     * @param int $newlines Number of newlines to append
-     * @return int The number of bytes returned from writing to stderr.
-     * @link https://book.cakephp.org/5/en/console-commands/input-output.html#creating-output
-     */
-    public function err(array|string $message = '', int $newlines = 1): int
-    {
-        return $this->err->write($message, $newlines);
     }
 
     /**

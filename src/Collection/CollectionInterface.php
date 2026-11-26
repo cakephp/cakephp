@@ -215,9 +215,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback A callback receiving `($value, $key, $iterator)` that
+     * @template TMapped
+     * @param callable(TValue, TKey, \Iterator<TKey, TValue>): TMapped $callback A callback receiving `($value, $key, $iterator)` that
      *   returns the transformed value for each element.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<TKey, TMapped>
      */
     public function map(callable $callback): self;
 
@@ -1042,9 +1043,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback A callable function that will receive
+     * @template TResultKey
+     * @template TResultValue
+     * @param callable(\Cake\Collection\CollectionInterface<TKey, TValue>): iterable<TResultKey, TResultValue> $callback A callable function that will receive
      * this collection as first argument.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return \Cake\Collection\CollectionInterface<TResultKey, TResultValue>
      */
     public function through(callable $callback): self;
 
@@ -1081,7 +1084,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```
      *
-     * @param iterable ...$items The collections to zip.
+     * @param iterable $items The collections to zip.
      * @param callable $callback The function to use for zipping the elements together.
      * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */

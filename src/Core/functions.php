@@ -267,7 +267,7 @@ if (!function_exists('Cake\Core\env')) {
 
         $val = $_SERVER[$key] ?? $_ENV[$key] ?? null;
         assert($val === null || is_scalar($val));
-        if ($val == null && getenv($key) !== false) {
+        if ($val === null && getenv($key) !== false) {
             $val = (string)getenv($key);
         }
 

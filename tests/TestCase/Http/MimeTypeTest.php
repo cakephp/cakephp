@@ -18,12 +18,38 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\MimeType;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 
 /**
  * Tests MIME type lookup and extension mapping.
  */
 class MimeTypeTest extends TestCase
 {
+    /**
+     * The mime type map before the test, restored after it.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $mimeTypes = [];
+
+    /**
+     * Saves the MIME type mappings before each test.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->mimeTypes = new ReflectionProperty(MimeType::class, 'mimeTypes')->getValue();
+    }
+
+    /**
+     * Restores the MIME type mappings after each test.
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        new ReflectionProperty(MimeType::class, 'mimeTypes')->setValue(null, $this->mimeTypes);
+    }
+
     /**
      * Tests modern image MIME types and their preferred file extensions.
      */

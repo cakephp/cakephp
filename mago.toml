@@ -40,3 +40,24 @@ excessive-parameter-list = { enabled = false }
 
 no-literal-password = { enabled = false } # This complains even when you mask a password value like `'password' => '********'` in `__debugInfo()`
 prefer-early-continue = { enabled = false } # This rule at times requires adding negated conditions and `continue` statements, which can make code less readable.
+
+[analyzer]
+ignore = [
+    "mixed-argument",
+    "mixed-operand",
+    "mixed-property-type-coercion",
+    "mixed-array-index",
+    "mixed-return-statement",
+    "mixed-array-access",
+    "mixed-array-assignment",
+    "mixed-assignment",
+    "mixed-method-access",
+    "property-type-coercion",
+    "possibly-false-argument",
+    "missing-magic-method",
+    "less-specific-argument",
+    "less-specific-nested-argument-type",
+    "less-specific-nested-return-statement",
+    "less-specific-return-statement",
+    "avoid-catching-error",
+]

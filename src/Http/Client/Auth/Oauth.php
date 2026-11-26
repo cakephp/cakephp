@@ -20,7 +20,6 @@ use Cake\Http\Client\Request;
 use Cake\Utility\Security;
 use Psr\Http\Message\UriInterface;
 use SensitiveParameter;
-use Uri\WhatWg\Url;
 
 /**
  * Oauth 1 authentication strategy for Cake\Http\Client
@@ -32,7 +31,7 @@ use Uri\WhatWg\Url;
  * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'oauth'
  */
-class Oauth
+class Oauth implements AuthenticationInterface
 {
     /**
      * Add headers for Oauth authorization.
@@ -170,6 +169,9 @@ class Oauth
         if (!function_exists('openssl_pkey_get_private')) {
             throw new CakeException('RSA-SHA1 signature method requires the OpenSSL extension.');
         }
+        // The OpenSSL error queue is per process, so drop errors left by earlier unrelated calls
+        while (openssl_error_string() !== false) {
+        }
 
         $nonce = $credentials['nonce'] ?? bin2hex(Security::randomBytes(16));
         $timestamp = $credentials['timestamp'] ?? time();
@@ -281,8 +283,7 @@ class Oauth
      */
     protected function normalizedParams(Request $request, array $oauthValues): string
     {
-        $query = new Url((string)$request->getUri())->getQuery();
-        parse_str((string)$query, $queryArgs);
+        parse_str($request->getUri()->getQuery(), $queryArgs);
 
         $post = [];
         $contentType = $request->getHeaderLine('Content-Type');

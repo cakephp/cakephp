@@ -72,7 +72,9 @@ use function Cake\Core\triggerWarning;
  */
 class Cache
 {
-    use StaticConfigTrait;
+    use StaticConfigTrait {
+        drop as protected dropConfig;
+    }
 
     /**
      * Flag for tracking whether caching is enabled.
@@ -211,6 +213,24 @@ class Cache
                 sort(static::$groups[$group]);
             }
         }
+    }
+
+    /**
+     * Drops a constructed cache engine and removes it from the group mappings.
+     *
+     * @param string $config An existing configuration you wish to remove.
+     * @return bool Success of the removal, returns false when the config does not exist.
+     */
+    public static function drop(string $config): bool
+    {
+        foreach (static::$groups as $group => $configs) {
+            static::$groups[$group] = array_values(array_diff($configs, [$config]));
+            if (static::$groups[$group] === []) {
+                unset(static::$groups[$group]);
+            }
+        }
+
+        return static::dropConfig($config);
     }
 
     /**
@@ -587,12 +607,13 @@ class Cache
      * });
      * ```
      *
+     * @template T
      * @param string $key The cache key to read/store data at.
-     * @param \Closure $default The callback that provides data in the case when
+     * @param \Closure(): T $default The callback that provides data in the case when
      *   the cache key is empty.
      * @param string $config The cache configuration to use for this operation.
      *   Defaults to default.
-     * @return mixed If the key is found: the cached data.
+     * @return T If the key is found: the cached data.
      *   If the key is not found the value returned by the default callback.
      */
     public static function remember(string $key, Closure $default, string $config = 'default'): mixed

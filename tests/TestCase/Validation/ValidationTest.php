@@ -20,6 +20,7 @@ use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Http\UploadedFile;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime as CakeDateTime;
 use Cake\I18n\I18n;
@@ -28,7 +29,6 @@ use Cake\Validation\Validation;
 use DateTime;
 use DateTimeImmutable;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
 use Locale;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
@@ -44,11 +44,27 @@ require_once __DIR__ . '/stubs.php';
 class ValidationTest extends TestCase
 {
     /**
-     * tearDown method
+     * ICU default locale before the test, restored after it.
+     */
+    protected string $locale;
+
+    /**
+     * Saves the locale before each validation test.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->locale = Locale::getDefault();
+    }
+
+    /**
+     * Restores the locale after each validation test.
      */
     protected function tearDown(): void
     {
         parent::tearDown();
+        // Restore ICU first, I18n derives its default locale from it on first use
+        Locale::setDefault($this->locale);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 

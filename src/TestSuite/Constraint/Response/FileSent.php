@@ -15,8 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use Psr\Http\Message\ResponseInterface;
-
 /**
  * FileSent
  *
@@ -25,11 +23,6 @@ use Psr\Http\Message\ResponseInterface;
 class FileSent extends ResponseBase
 {
     /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
-
-    /**
      * Checks assertion
      *
      * @param mixed $other Expected type
@@ -37,7 +30,7 @@ class FileSent extends ResponseBase
      */
     public function matches(mixed $other): bool
     {
-        return $this->response->getFile() !== null;
+        return $this->getResponse()->getFile() !== null;
     }
 
     /**

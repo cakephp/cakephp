@@ -25,6 +25,8 @@ use Cake\Event\EventDispatcherInterface;
  *
  * @property \Cake\Http\ServerRequest|null $request The request being handled.
  * @property \Cake\Http\Response|null $response The response being built.
+ * @property string|null $name The controller or cell name.
+ * @property string|null $plugin The plugin name.
  */
 trait ViewVarsTrait
 {
@@ -85,8 +87,10 @@ trait ViewVarsTrait
     {
         if (is_array($name)) {
             if (is_array($value)) {
+                /** @var array<string> $name */
                 $data = array_combine($name, $value);
             } else {
+                /** @var array<string, mixed> $name */
                 $data = $name;
             }
         } else {

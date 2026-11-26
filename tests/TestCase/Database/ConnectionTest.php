@@ -719,10 +719,19 @@ class ConnectionTest extends TestCase
                 );
             });
 
+        $errorConfig = Log::getConfig('error');
+        Log::drop('error');
         Log::setConfig('error', $logger);
 
-        // Destroy the connection
-        unset($connection);
+        try {
+            // Destroy the connection
+            unset($connection);
+        } finally {
+            Log::drop('error');
+            if ($errorConfig !== null) {
+                Log::setConfig('error', $errorConfig);
+            }
+        }
     }
 
     /**
@@ -1006,7 +1015,6 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalWithException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
         $driver = $this->getDriver();
         $connection = new class(['driver' => $driver]) extends Connection {
             public bool $beginIsCalled = false;
@@ -1034,10 +1042,11 @@ class ConnectionTest extends TestCase
                 $this->assertSame($connection, $conn);
                 throw new InvalidArgumentException();
             });
-        } finally {
-            $this->assertTrue($connection->beginIsCalled);
-            $this->assertTrue($connection->rollbackIsCalled);
+            $this->fail('The exception from the callback should propagate.');
+        } catch (InvalidArgumentException) {
         }
+        $this->assertTrue($connection->beginIsCalled);
+        $this->assertTrue($connection->rollbackIsCalled);
     }
 
     /**

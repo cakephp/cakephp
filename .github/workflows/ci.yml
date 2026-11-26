@@ -22,7 +22,6 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
-    continue-on-error: ${{ matrix.php-version == '8.6' }}
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +31,10 @@ jobs:
         include:
           - php-version: '8.5'
             db-type: 'mariadb'
+            dependencies: highest
+
+          - php-version: '8.5'
+            db-type: 'mariadb-mysql'
             dependencies: highest
 
           - php-version: '8.5'
@@ -80,7 +83,7 @@ jobs:
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
     - name: Setup MariaDB 11.8
-      if: matrix.db-type == 'mariadb'
+      if: matrix.db-type == 'mariadb' || matrix.db-type == 'mariadb-mysql'
       run: |
         docker run -d --name=mariadb \
           -e MARIADB_ROOT_PASSWORD=root \
@@ -123,7 +126,7 @@ jobs:
       uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
       with:
         dependency-versions: ${{ matrix.dependencies }}
-        composer-options: "${{ matrix.php-version == '8.6' && '--ignore-platform-req=php' || matrix.composer-options }}"
+        composer-options: "${{ matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.5' && matrix.db-type == 'mysql' && matrix.dependencies != 'lowest'
@@ -137,21 +140,22 @@ jobs:
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
-        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mariadb://root:root@127.0.0.1/cakephp'; fi
+        if [[ ${{ matrix.db-type }} == 'mariadb-mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
         if [[ ${{ matrix.php-version }} == '8.5' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
-          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database-autoquote.xml
-          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+          vendor/bin/phpunit --order-by=random --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
+          vendor/bin/phpunit --order-by=random --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --order-by=random --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database-autoquote.xml
+          vendor/bin/phpunit --order-by=random --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
         elif [[ ${{ matrix.php-version }} == '8.5' && ${{ matrix.dependencies }} == 'lowest' ]]; then
-          vendor/bin/phpunit
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
+          vendor/bin/phpunit --order-by=random
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --order-by=random --testsuite=database
         else
-          vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
+          vendor/bin/phpunit --order-by=random --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --order-by=random --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
         fi
 
     - name: Submit code coverage
@@ -180,7 +184,7 @@ jobs:
 
     - name: Setup PHP extensions cache
       id: php-ext-cache
-      uses: shivammathur/cache-extensions@2abd2f0f7e31e52e198f67f882dea153f87bc11b # 1.15.3
+      uses: shivammathur/cache-extensions@695b1b465eba861efe67cbbc31252c27f5ed253d # 1.15.11
       with:
         php-version: ${{ env.PHP_VERSION }}
         extensions: ${{ env.EXTENSIONS }}

@@ -26,6 +26,7 @@ use RecursiveIterator;
  * making it more efficient than filtering after traversal.
  *
  * @internal
+ * @extends \RecursiveFilterIterator<string, \SplFileInfo, \RecursiveIterator<string, \SplFileInfo>>
  */
 final class ExcludeDirectoryFilterIterator extends RecursiveFilterIterator
 {

@@ -24,6 +24,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UnhydratedSelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use function Cake\Database\Expression\greaterThan;
 
 /**
  * Tests the type-safe non-hydrated query path: Table::unhydratedFind() and
@@ -152,7 +153,7 @@ class UnhydratedSelectQueryTest extends TestCase
      */
     public function testFinderReceivesUnhydratedSelectQuery(): void
     {
-        $query = $this->articles->unhydratedFind('all')->where(['id >' => 0]);
+        $query = $this->articles->unhydratedFind('all')->where(['id' => greaterThan(0)]);
 
         $this->assertInstanceOf(UnhydratedSelectQuery::class, $query);
         $rows = $query->orderBy(['id' => 'ASC'])->limit(2)->toArray();

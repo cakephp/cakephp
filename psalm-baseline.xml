@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+<files psalm-version="7.1.0@d43883d6651b6a69e89028c65b36dcfdbb79105f">
   <file src="src/Controller/Component/FlashComponent.php">
     <MethodSignatureMismatch>
       <code><![CDATA[public function configShallow(array|string $key, mixed $value = null): static]]></code>
@@ -45,26 +45,6 @@
     <UnsupportedPropertyReferenceUsage>
       <code><![CDATA[$value = &$this->dynamicFields[$field]]]></code>
     </UnsupportedPropertyReferenceUsage>
-  </file>
-  <file src="src/ORM/Query/SelectQuery.php">
-    <MethodSignatureMismatch>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-      <code><![CDATA[SelectQuery]]></code>
-    </MethodSignatureMismatch>
-  </file>
-  <file src="src/ORM/Query/UnhydratedSelectQuery.php">
-    <MethodSignatureMismatch>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-      <code><![CDATA[UnhydratedSelectQuery]]></code>
-    </MethodSignatureMismatch>
   </file>
   <file src="src/TestSuite/TestCase.php">
     <NoValue>

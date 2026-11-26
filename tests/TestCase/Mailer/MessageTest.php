@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
+use Cake\Http\UploadedFile;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Laminas\Diactoros\UploadedFile;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use TestApp\Mailer\TestMessage;

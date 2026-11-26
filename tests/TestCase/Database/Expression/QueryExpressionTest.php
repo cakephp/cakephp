@@ -16,10 +16,18 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\isDistinctFrom;
+use function Cake\Database\Expression\isNotDistinctFrom;
+use function Cake\Database\Expression\lessThanOrEquals;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests QueryExpression class
@@ -48,10 +56,10 @@ class QueryExpressionTest extends TestCase
      */
     public function testMultiWordOperators(): void
     {
-        $expr = new QueryExpression(['FUNC(Users.first + Users.last) is not' => 'me']);
+        $expr = new QueryExpression(['FUNC(Users.first + Users.last)' => notEquals('me')]);
         $this->assertSame('FUNC(Users.first + Users.last) != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern']);
+        $expr = new QueryExpression(['FUNC(Users.name + Users.id)' => comparison('NOT SIMILAR TO', 'pattern')]);
         $this->assertSame('FUNC(Users.name + Users.id) NOT SIMILAR TO :c0', $expr->sql(new ValueBinder()));
     }
 
@@ -62,35 +70,106 @@ class QueryExpressionTest extends TestCase
      */
     public function testSymbolOperators(): void
     {
-        $expr = new QueryExpression(['Users.name =' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => equals('pattern')]);
         $this->assertSame('Users.name = :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name !=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
         $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name <>' => 'pattern']);
-        $this->assertSame('Users.name <> :c0', $expr->sql(new ValueBinder()));
+        $expr = new QueryExpression(['Users.name' => notEquals('pattern')]);
+        $this->assertSame('Users.name != :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name >=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => greaterThanOrEquals('pattern')]);
         $this->assertSame('Users.name >= :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name <=' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => lessThanOrEquals('pattern')]);
         $this->assertSame('Users.name <= :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name !~' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('!~', 'pattern')]);
         $this->assertSame('Users.name !~ :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name *' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('*', 'pattern')]);
         $this->assertSame('Users.name * :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name -' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('-', 'pattern')]);
         $this->assertSame('Users.name - :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name \\' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('\\', 'pattern')]);
         $this->assertSame('Users.name \\ :c0', $expr->sql(new ValueBinder()));
 
-        $expr = new QueryExpression(['Users.name @>' => 'pattern']);
+        $expr = new QueryExpression(['Users.name' => comparison('@>', 'pattern')]);
         $this->assertSame('Users.name @> :c0', $expr->sql(new ValueBinder()));
+    }
+
+    /**
+     * Supplies operator-bearing condition keys and their expected SQL.
+     *
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function operatorKeyProvider(): array
+    {
+        return [
+            'multi word is not' => [
+                ['FUNC(Users.first + Users.last) is not' => 'me'],
+                'FUNC(Users.first + Users.last) != :c0',
+            ],
+            'multi word not similar to' => [
+                ['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern'],
+                'FUNC(Users.name + Users.id) NOT SIMILAR TO :c0',
+            ],
+            'equals' => [['Users.name =' => 'pattern'], 'Users.name = :c0'],
+            'not equals' => [['Users.name !=' => 'pattern'], 'Users.name != :c0'],
+            'not equals ansi' => [['Users.name <>' => 'pattern'], 'Users.name <> :c0'],
+            'greater than or equals' => [['Users.name >=' => 'pattern'], 'Users.name >= :c0'],
+            'less than or equals' => [['Users.name <=' => 'pattern'], 'Users.name <= :c0'],
+            'regex not match' => [['Users.name !~' => 'pattern'], 'Users.name !~ :c0'],
+            'multiply' => [['Users.name *' => 'pattern'], 'Users.name * :c0'],
+            'minus' => [['Users.name -' => 'pattern'], 'Users.name - :c0'],
+            'backslash' => [['Users.name \\' => 'pattern'], 'Users.name \\ :c0'],
+            'contains' => [['Users.name @>' => 'pattern'], 'Users.name @> :c0'],
+            'like' => [['Users.name LIKE' => 'pat%'], 'Users.name LIKE :c0'],
+            'not like' => [['Users.name NOT LIKE' => 'pat%'], 'Users.name NOT LIKE :c0'],
+            'in' => [['Users.id IN' => [1, 2]], 'Users.id IN (:c0,:c1)'],
+            'not in' => [['Users.id NOT IN' => [1, 2]], 'Users.id NOT IN (:c0,:c1)'],
+            'is null' => [['Users.deleted IS' => null], '(Users.deleted) IS NULL'],
+            'is not null' => [['Users.deleted IS NOT' => null], '(Users.deleted) IS NOT NULL'],
+            'is with value' => [['Users.deleted IS' => 1], 'Users.deleted = :c0'],
+            'is not with value' => [['Users.deleted IS NOT' => 1], 'Users.deleted != :c0'],
+            'is distinct from' => [['deleted_at IS DISTINCT FROM' => '2021-01-01'], 'deleted_at IS DISTINCT FROM :c0'],
+            'is not distinct from' => [
+                ['deleted_at IS NOT DISTINCT FROM' => null],
+                'deleted_at IS NOT DISTINCT FROM :c0',
+            ],
+        ];
+    }
+
+    /**
+     * Tests conditions with operators inside the condition key.
+     *
+     * @param array<string, mixed> $conditions The conditions.
+     * @param string $expected The expected SQL.
+     */
+    #[DataProvider('operatorKeyProvider')]
+    public function testOperatorKeys(array $conditions, string $expected): void
+    {
+        $expr = new QueryExpression($conditions);
+        $this->assertEqualsSql($expected, $expr->sql(new ValueBinder()));
+    }
+
+    /**
+     * Tests operator keys and predicate functions can be mixed.
+     */
+    public function testOperatorKeysMixedWithPredicates(): void
+    {
+        $expr = new QueryExpression([
+            'Users.id >' => 1,
+            'Users.name' => notEquals('me'),
+            'OR' => ['Users.deleted IS' => null, 'Users.created' => greaterThanOrEquals('2021-01-01')],
+        ]);
+        $this->assertEqualsSql(
+            '(Users.id > :c0 AND Users.name != :c1 AND ((Users.deleted) IS NULL OR Users.created >= :c2))',
+            $expr->sql(new ValueBinder()),
+        );
     }
 
     /**
@@ -192,6 +271,64 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
+     * Provides comparison methods and their SQL operators.
+     *
+     * @return array<string, array{string, string}>
+     */
+    public static function comparisonMethodsProvider(): array
+    {
+        return [
+            'equality' => ['equals', '='],
+            'inequality' => ['notEquals', '!='],
+            'greater than' => ['greaterThan', '>'],
+            'less than' => ['lessThan', '<'],
+            'greater than or equal' => ['greaterThanOrEquals', '>='],
+            'less than or equal' => ['lessThanOrEquals', '<='],
+        ];
+    }
+
+    /**
+     * Checks replacement comparisons preserve chaining, inferred types, and explicit type overrides.
+     *
+     * @param string $method The comparison method name.
+     * @param string $operator The SQL comparison operator.
+     */
+    #[DataProvider('comparisonMethodsProvider')]
+    public function testComparisonMethods(string $method, string $operator): void
+    {
+        foreach ([null, 'float'] as $type) {
+            $expr = new QueryExpression([], ['score' => 'integer']);
+            $this->assertSame($expr, $expr->$method('score', 7, $type));
+
+            $binder = new ValueBinder();
+            $this->assertSame('score ' . $operator . ' :c0', $expr->sql($binder));
+            $this->assertSame([7], array_column($binder->bindings(), 'value'));
+            $this->assertSame([$type ?? 'integer'], array_column($binder->bindings(), 'type'));
+        }
+
+        $expr = new QueryExpression();
+        $expr->$method(new IdentifierExpression('score'), new IdentifierExpression('other_score'));
+        $binder = new ValueBinder();
+        $this->assertSame('score ' . $operator . ' other_score', $expr->sql($binder));
+        $this->assertSame([], $binder->bindings());
+    }
+
+    /**
+     * Checks equality replacements retain expansion of array binding types.
+     */
+    public function testComparisonArrayTypes(): void
+    {
+        foreach (['equals' => '=', 'notEquals' => '!='] as $method => $operator) {
+            $expr = new QueryExpression([], ['id' => 'integer[]']);
+            $expr->$method('id', [1, 2]);
+            $binder = new ValueBinder();
+            $this->assertSame('id ' . $operator . ' (:c0,:c1)', $expr->sql($binder));
+            $this->assertSame([1, 2], array_column($binder->bindings(), 'value'));
+            $this->assertSame(['integer', 'integer'], array_column($binder->bindings(), 'type'));
+        }
+    }
+
+    /**
      * Returns the list of specific comparison methods
      *
      * @return array
@@ -199,12 +336,12 @@ class QueryExpressionTest extends TestCase
     public static function methodsProvider(): array
     {
         return [
-            ['eq'],
-            ['notEq'],
-            ['gt'],
-            ['lt'],
-            ['gte'],
-            ['lte'],
+            ['equals'],
+            ['notEquals'],
+            ['greaterThan'],
+            ['lessThan'],
+            ['greaterThanOrEquals'],
+            ['lessThanOrEquals'],
             ['like'],
             ['notLike'],
             ['in'],
@@ -349,13 +486,13 @@ class QueryExpressionTest extends TestCase
      */
     public function testParseIsDistinctFrom(): void
     {
-        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => '2021-01-01']);
+        $expr = new QueryExpression(['deleted_at' => isDistinctFrom('2021-01-01')]);
         $this->assertEqualsSql(
             'deleted_at IS DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
         );
 
-        $expr = new QueryExpression(['deleted_at IS DISTINCT FROM' => null]);
+        $expr = new QueryExpression(['deleted_at' => isDistinctFrom(null)]);
         $this->assertEqualsSql(
             'deleted_at IS DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
@@ -367,13 +504,13 @@ class QueryExpressionTest extends TestCase
      */
     public function testParseIsNotDistinctFrom(): void
     {
-        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => '2021-01-01']);
+        $expr = new QueryExpression(['deleted_at' => isNotDistinctFrom('2021-01-01')]);
         $this->assertEqualsSql(
             'deleted_at IS NOT DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),
         );
 
-        $expr = new QueryExpression(['deleted_at IS NOT DISTINCT FROM' => null]);
+        $expr = new QueryExpression(['deleted_at' => isNotDistinctFrom(null)]);
         $this->assertEqualsSql(
             'deleted_at IS NOT DISTINCT FROM :c0',
             $expr->sql(new ValueBinder()),

@@ -469,7 +469,10 @@ class ExceptionTrapTest extends TestCase
     #[RunInSeparateProcess]
     public function testIncreaseMemoryLimit($initial): void
     {
-        ini_set('memory_limit', $initial);
+        $this->skipIf(
+            ini_set('memory_limit', $initial) === false,
+            'memory_limit cannot be set below the memory this process already uses.',
+        );
         $this->assertEquals($initial, ini_get('memory_limit'));
 
         $trap = new ExceptionTrap([

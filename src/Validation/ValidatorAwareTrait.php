@@ -29,6 +29,7 @@ use InvalidArgumentException;
  *
  * Classes using this trait can declare these constants:
  *
+ * - `DEFAULT_VALIDATOR` - Override the interface default validator name if required.
  * - `VALIDATOR_PROVIDER_NAME ` - The provider name the including class is assigned
  *   in validators.
  * - `BUILD_VALIDATOR_EVENT` - The name of the event to be triggered when validators
@@ -119,12 +120,17 @@ trait ValidatorAwareTrait
         }
 
         $validator = new $this->validatorClass();
+        if (defined(static::class . '::VALIDATOR_PROVIDER_NAME')) {
+            $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
+        }
+
         if ($this instanceof EventDispatcherInterface) {
             $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
                 ? static::BUILD_VALIDATOR_EVENT
                 : 'Model.buildValidator';
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
+
         $validator = $this->$method($validator);
 
         assert(
@@ -160,7 +166,10 @@ trait ValidatorAwareTrait
      */
     public function setValidator(string $name, Validator $validator): static
     {
-        if (defined(static::class . '::VALIDATOR_PROVIDER_NAME')) {
+        if (
+            defined(static::class . '::VALIDATOR_PROVIDER_NAME')
+            && !isset($this->validators[$name])
+        ) {
             $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
         }
 

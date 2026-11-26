@@ -230,7 +230,7 @@ class Filesystem
             $this->mkdir($destination);
         }
 
-        /** @var \FilesystemIterator<\SplFileInfo> $iterator */
+        /** @var \Iterator<mixed, \SplFileInfo> $iterator */
         $iterator = new FilesystemIterator($source);
 
         $result = true;

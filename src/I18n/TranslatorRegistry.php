@@ -105,9 +105,9 @@ class TranslatorRegistry
      * A CacheEngine object that is used to remember translator across
      * requests.
      *
-     * @var (\Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface)|null
+     * @var \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
-    protected $cacher;
+    protected CacheInterface&CacheEngineInterface $cacher;
 
     /**
      * Constructor.
@@ -304,7 +304,7 @@ class TranslatorRegistry
             return $this->registry[$bucket][$name][$locale];
         }
 
-        if ($this->cacher === null) {
+        if (!isset($this->cacher)) {
             return $this->registry[$bucket][$name][$locale] = $this->getTranslator($name, $locale);
         }
 

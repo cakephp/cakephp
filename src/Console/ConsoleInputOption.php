@@ -269,6 +269,7 @@ class ConsoleInputOption
     public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $option = $parent->addChild('option');
+        assert($option !== null);
         $option->addAttribute('name', '--' . $this->name);
         $short = '';
         if ($this->short !== '') {
@@ -286,6 +287,7 @@ class ConsoleInputOption
         $option->addAttribute('required', (string)(int)$this->required);
         $option->addChild('default', (string)$default);
         $choices = $option->addChild('choices');
+        assert($choices !== null);
         foreach ($this->choices as $valid) {
             $choices->addChild('choice', $valid);
         }

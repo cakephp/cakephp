@@ -24,7 +24,7 @@ use SensitiveParameter;
  * Generally not directly constructed, but instead used by {@link \Cake\Http\Client}
  * when $options['auth']['type'] is 'basic'
  */
-class Basic
+class Basic implements AuthenticationInterface, ProxyAuthenticationInterface
 {
     /**
      * Add Authorization header to the request.

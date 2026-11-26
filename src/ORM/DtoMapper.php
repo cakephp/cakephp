@@ -20,6 +20,7 @@ use Cake\ORM\Attribute\CollectionOf;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
+use RuntimeException;
 
 /**
  * Maps array data to DTO objects using reflection.
@@ -85,6 +86,14 @@ class DtoMapper
                 if ($paramInfo['dtoClass'] !== null && is_array($value)) {
                     $value = $this->map($value, $paramInfo['dtoClass']);
                 } elseif ($paramInfo['collectionOf'] !== null) {
+                    if (!is_iterable($value)) {
+                        throw new RuntimeException(sprintf(
+                            'Parameter `%s` in class `%s` is marked as a collection but the value is not iterable.',
+                            $name,
+                            $dtoClass,
+                        ));
+                    }
+
                     // Handle collection - inline loop avoids closure creation overhead
                     $collectionClass = $paramInfo['collectionOf'];
                     $mapped = [];

@@ -2069,6 +2069,7 @@ class PostgresSchemaDialectTest extends TestCase
         $this->needsConnection();
 
         $connection = ConnectionManager::get('test');
+        $this->createTables($connection);
         $dialect = new PostgresSchemaDialect($connection->getDriver());
         $this->assertTrue($dialect->hasIndex('schema_authors', [], 'schema_authors_pkey'));
     }

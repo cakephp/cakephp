@@ -630,11 +630,13 @@ class Session
      */
     protected function hasSession(): bool
     {
+        $sessionName = session_name();
+
         return (
             !ini_get('session.use_cookies')
-                || isset($_COOKIE[session_name()])
+                || ($sessionName !== false && isset($_COOKIE[$sessionName]))
                 || $this->isCLI
-                || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]))
+                || (ini_get('session.use_trans_sid') && $sessionName !== false && isset($_GET[$sessionName]))
         );
     }
 

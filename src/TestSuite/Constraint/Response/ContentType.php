@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\MimeType;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * ContentType
@@ -25,11 +24,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ContentType extends ResponseBase
 {
-    /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
-
     /**
      * Checks assertion
      *
@@ -43,7 +37,7 @@ class ContentType extends ResponseBase
             $other = $mimeType;
         }
 
-        return $other === $this->response->getType();
+        return $other === $this->getResponse()->getType();
     }
 
     /**
@@ -53,6 +47,6 @@ class ContentType extends ResponseBase
      */
     public function toString(): string
     {
-        return 'is set as the Content-Type (`' . $this->response->getType() . '`)';
+        return 'is set as the Content-Type (`' . $this->getResponse()->getType() . '`)';
     }
 }

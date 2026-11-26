@@ -24,6 +24,8 @@ use InvalidArgumentException;
  * A trait for reading and writing instance config
  *
  * Implementing objects are expected to declare a `$defaultConfig` property.
+ *
+ * @property array<string, mixed> $defaultConfig
  */
 trait InstanceConfigTrait
 {

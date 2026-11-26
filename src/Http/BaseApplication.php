@@ -223,7 +223,7 @@ abstract class BaseApplication implements
         if (file_exists($this->configDir . 'routes.php')) {
             $return = include $this->configDir . 'routes.php';
             if ($return instanceof Closure) {
-                $return($routes);
+                $return($routes, $this);
             }
         }
     }

@@ -100,18 +100,23 @@ class FormData implements Countable, Stringable
      */
     public function add(FormDataPart|string $name, mixed $value = null): static
     {
-        if (is_string($name)) {
-            if (is_array($value)) {
-                $this->addRecursive($name, $value);
-            } elseif (is_resource($value) || $value instanceof UploadedFileInterface) {
-                $this->addFile($name, $value);
-            } else {
-                $this->parts[] = $this->newPart($name, (string)$value);
-            }
-        } else {
+        if ($name instanceof FormDataPart) {
             $this->hasComplexPart = true;
             $this->parts[] = $name;
+
+            return $this;
         }
+        if (is_array($value)) {
+            $this->addRecursive($name, $value);
+
+            return $this;
+        }
+        if (is_resource($value) || $value instanceof UploadedFileInterface) {
+            $this->addFile($name, $value);
+
+            return $this;
+        }
+        $this->parts[] = $this->newPart($name, (string)$value);
 
         return $this;
     }
@@ -121,7 +126,7 @@ class FormData implements Countable, Stringable
      *
      * Iterates the parameter and adds all the key/values.
      *
-     * @param array $data Array of data to add.
+     * @param array<string, mixed> $data Array of data to add.
      * @return $this
      */
     public function addMany(array $data): static
@@ -191,10 +196,10 @@ class FormData implements Countable, Stringable
      * Recursively add data.
      *
      * @param string $name The name to use.
-     * @param mixed $value The value to add.
+     * @param array $value The value to add.
      * @return void
      */
-    public function addRecursive(string $name, mixed $value): void
+    public function addRecursive(string $name, array $value): void
     {
         foreach ($value as $key => $item) {
             $key = $name . '[' . $key . ']';

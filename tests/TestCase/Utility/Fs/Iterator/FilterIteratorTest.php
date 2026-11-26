@@ -23,6 +23,7 @@ use Cake\Utility\Fs\Iterator\CallbackFilterIterator;
 use Cake\Utility\Fs\Iterator\ExcludeDirectoryFilterIterator;
 use Cake\Utility\Fs\Iterator\FileTypeFilterIterator;
 use Cake\Utility\Fs\Iterator\HiddenFileFilterIterator;
+use Cake\Utility\Fs\Iterator\SymlinkLoopFilterIterator;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -66,6 +67,9 @@ class FilterIteratorTest extends TestCase
                 ],
             ],
         ]);
+
+        // Link to a parent directory
+        symlink($this->root, FsFixture::path('root/src/up'));
     }
 
     protected function tearDown(): void
@@ -243,5 +247,28 @@ class FilterIteratorTest extends TestCase
         $this->assertContains('file.php', $files);
         $this->assertContains('Controller.php', $files);
         $this->assertNotContains('visible.txt', $files);
+    }
+
+    /**
+     * Test SymlinkLoopFilterIterator with a link causing a loop
+     */
+    public function testSymlinkLoopFilterIterator(): void
+    {
+        $directory = new RecursiveDirectoryIterator(
+            $this->root,
+            FilesystemIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS,
+        );
+
+        $filtered = new SymlinkLoopFilterIterator($directory);
+        $iterator = new RecursiveIteratorIterator($filtered, RecursiveIteratorIterator::SELF_FIRST);
+
+        $files = [];
+        foreach ($iterator as $file) {
+            $files[] = $file->getFilename();
+        }
+
+        // The link is returned, but the parent directory is not traversed a second time
+        $this->assertContains('up', $files);
+        $this->assertCount(1, array_keys($files, 'visible.txt'));
     }
 }

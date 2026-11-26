@@ -223,7 +223,7 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        return $this->schemaDialect ?? ($this->schemaDialect = new SqliteSchemaDialect($this));
+        return $this->schemaDialect ??= new SqliteSchemaDialect($this);
     }
 
     /**

@@ -425,12 +425,16 @@ class EntityWithConcretePropertiesTest extends TestCase
             protected $name;
             protected $foo;
             protected ?string $typed;
+            public string $readonly {
+                get => 'virtual';
+            }
         };
         $entity->name = 'Juan';
         $entity->foo = null;
         $this->assertTrue($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertTrue($entity->has('foo'));
+        $this->assertTrue($entity->has('readonly'));
         $this->assertFalse($entity->has('typed'));
         $this->assertFalse($entity->has('last_name'));
 

@@ -23,6 +23,10 @@ use function Cake\Core\pluginSplit;
 
 /**
  * Provides cell() method for usage in Controller and View classes.
+ *
+ * @require-implements \Cake\Event\EventDispatcherInterface
+ * @property \Cake\Http\ServerRequest $request
+ * @property \Cake\Http\Response $response
  */
 trait CellTrait
 {
@@ -67,9 +71,10 @@ trait CellTrait
         }
 
         [$plugin] = pluginSplit($pluginAndCell);
+        /** @var class-string<\Cake\View\Cell>|null $className */
         $className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
-        if (!$className) {
+        if ($className === null) {
             throw new MissingCellException(['className' => $pluginAndCell . 'Cell']);
         }
 
@@ -81,7 +86,7 @@ trait CellTrait
     /**
      * Create and configure the cell instance.
      *
-     * @param string $className The cell classname.
+     * @param class-string<\Cake\View\Cell> $className The cell classname.
      * @param string $action The action name.
      * @param string|null $plugin The plugin name.
      * @param array<string, mixed> $options The constructor options for the cell.
@@ -93,7 +98,6 @@ trait CellTrait
             $options['plugin'] = $plugin;
         }
 
-        /** @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
 
         $builder = $instance->viewBuilder();
@@ -116,10 +120,13 @@ trait CellTrait
         }
 
         if (method_exists($this, 'viewBuilder')) {
-            $builder->setTheme($this->viewBuilder()->getTheme());
+            /** @var \Cake\View\ViewBuilder $viewBuilder */
+            $viewBuilder = $this->viewBuilder();
 
-            if ($this->viewBuilder()->getClassName() !== null) {
-                $builder->setClassName($this->viewBuilder()->getClassName());
+            $builder->setTheme($viewBuilder->getTheme());
+
+            if ($viewBuilder->getClassName() !== null) {
+                $builder->setClassName($viewBuilder->getClassName());
             }
         }
 

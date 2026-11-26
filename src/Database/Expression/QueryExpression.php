@@ -149,7 +149,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function eq(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function equals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -166,7 +166,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * will be created, one per each value in the array.
      * @return $this
      */
-    public function notEq(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function notEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -181,7 +181,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function gt(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function greaterThan(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -196,7 +196,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function lt(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function lessThan(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -211,7 +211,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function gte(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function greaterThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -226,7 +226,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
-    public function lte(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
+    public function lessThanOrEquals(ExpressionInterface|string $field, mixed $value, ?string $type = null): static
     {
         $type ??= $this->calculateType($field);
 
@@ -580,7 +580,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new IdentifierExpression($field);
         };
 
-        return $this->eq($wrapIdentifier($leftField), $wrapIdentifier($rightField));
+        return $this->equals($wrapIdentifier($leftField), $wrapIdentifier($rightField));
     }
 
     /**
@@ -684,6 +684,10 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
+            if ($c instanceof Predicate && ($numericKey || in_array(strtolower($k), [...$operators, 'not'], true))) {
+                throw new InvalidArgumentException('Predicate functions require a field-keyed condition.');
+            }
+
             if ($c instanceof Closure) {
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
@@ -739,6 +743,10 @@ class QueryExpression implements ExpressionInterface, Countable
      * generating the placeholders and replacing the values by them, while storing
      * the value elsewhere for future binding.
      *
+     * When the value is a predicate created by one of the `Cake\Database\Expression`
+     * predicate functions, the key must only contain the field and the predicate
+     * supplies the operator.
+     *
      * @param string $condition The value from which the actual field and operator will
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
@@ -748,6 +756,23 @@ class QueryExpression implements ExpressionInterface, Countable
     protected function parseCondition(string $condition, mixed $value): ExpressionInterface|string
     {
         $expression = trim($condition);
+
+        if ($value instanceof Predicate) {
+            $symbolOperators = '[!<>=~@#%^&|?+*\\\\\\/-]+';
+            $isOperators = 'IS(?: NOT)?(?: DISTINCT FROM)?';
+            $keywordOperators = '(?:NOT )?(?:IN|LIKE|ILIKE|BETWEEN|REGEXP|RLIKE|SIMILAR TO|GLOB|MATCH|OVERLAPS)';
+            $operatorPattern = '/\\s+(?:' . $symbolOperators . '|' . $isOperators . '|' . $keywordOperators . ')$/i';
+            if (preg_match($operatorPattern, $expression)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Condition key `%s` cannot contain an operator when used with a predicate function. '
+                        . 'Use the field name as key and let the predicate supply the operator.',
+                    $condition,
+                ));
+            }
+
+            return $value->resolve($expression, $this->getTypeMap()->type($expression));
+        }
+
         $operator = '=';
 
         $spaces = substr_count($expression, ' ');
@@ -824,7 +849,7 @@ class QueryExpression implements ExpressionInterface, Countable
             throw new InvalidArgumentException(sprintf(
                 'Expression `%s` has invalid `null` value.'
                     . ' If `null` is a valid value, operator (IS, IS NOT, IS DISTINCT FROM, IS NOT DISTINCT FROM)'
-                    . ' is missing.',
+                    . ' is missing or a null-aware predicate such as isNull() or equals() is required.',
                 $expression,
             ));
         }

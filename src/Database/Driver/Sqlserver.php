@@ -359,7 +359,7 @@ class Sqlserver extends Driver
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
-        /** @var \Cake\Database\Expression\OrderByExpression $originalOrder */
+        /** @var \Cake\Database\Expression\OrderByExpression|null $originalOrder */
         $originalOrder = $original->clause('order');
         if ($originalOrder) {
             // SQL server does not support column aliases in OVER clauses.  But
@@ -575,7 +575,9 @@ class Sqlserver extends Driver
                     })
                         ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);
                 }
-
+                break;
+            case 'JSON_EXISTS':
+                $expression->setName('JSON_PATH_EXISTS');
                 break;
         }
     }

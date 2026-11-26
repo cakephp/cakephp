@@ -66,13 +66,13 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @return array<string|bool>
+     * @return array<string|bool|array<string>>
      */
     protected function splitArgs(): array
     {
         $out = [];
         foreach ($this->args->getArguments() as $arg) {
-            if (str_contains($arg, ':')) {
+            if (is_string($arg) && str_contains($arg, ':')) {
                 [$key, $value] = explode(':', $arg, 2);
                 if (in_array($value, ['true', 'false'], true)) {
                     $value = $value === 'true';

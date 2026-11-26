@@ -22,6 +22,8 @@ use function Cake\Core\pluginSplit;
 
 /**
  * Trait providing utility methods for file based config engines.
+ *
+ * @property-read string $extension The file extension used by the engine.
  */
 trait FileConfigTrait
 {

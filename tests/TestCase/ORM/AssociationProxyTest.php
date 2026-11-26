@@ -98,8 +98,8 @@ class AssociationProxyTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
 
-        $articles = $this->getTableLocator()->get('articles');
-        $authors = $this->getTableLocator()->get('authors');
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $this->getTableLocator()->get('Authors');
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 
@@ -132,8 +132,8 @@ class AssociationProxyTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
 
-        $articles = $this->getTableLocator()->get('articles');
-        $authors = $this->getTableLocator()->get('authors');
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors = $this->getTableLocator()->get('Authors');
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 

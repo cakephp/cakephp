@@ -309,8 +309,10 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     {
         $resolved = $this->resolveArguments($this->arguments);
         $reflection = new ReflectionClass($concrete);
+        $instance = $reflection->newInstanceArgs($resolved);
+        assert($instance !== null);
 
-        return $reflection->newInstanceArgs($resolved);
+        return $instance;
     }
 
     /**

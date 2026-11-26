@@ -31,6 +31,8 @@ use PDO;
  */
 class PostgresTest extends TestCase
 {
+    protected array $fixtures = ['core.Comments'];
+
     /**
      * Test connecting to Postgres with default configuration
      */
@@ -185,7 +187,7 @@ class PostgresTest extends TestCase
             'post_count' => $query->func()->count('posts.id'),
         ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('post_count', 2, 'integer')]);
+            ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')]);
 
         $expected =
             'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
@@ -215,7 +217,7 @@ class PostgresTest extends TestCase
             'post_count' => $query->func()->count('posts.id'),
         ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('posts.author_id', 2, 'integer')]);
+            ->having([$query->expr()->greaterThanOrEquals('posts.author_id', 2, 'integer')]);
 
         $expected =
             'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
@@ -246,6 +248,33 @@ class PostgresTest extends TestCase
         $this->assertSame(
             'SELECT (STRING_AGG(name, :param0 ORDER BY sort_order DESC)) AS "names" FROM authors',
             $query->sql(),
+        );
+    }
+
+    public function testJsonValueLegacyTranslation(): void
+    {
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
+
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
+        $query = new SelectQuery($connection);
+        $query->select([
+            'score' => $query->func()->jsonValue('comment', '$.scores[1]'),
+        ])->from('comments');
+
+        $this->assertSame(
+            'SELECT (JSONB_PATH_QUERY(comment::jsonb, :param0)) AS "score" FROM comments',
+            $query->sql(),
+        );
+        $this->assertSame(
+            ['value' => '$.scores[1]', 'type' => 'string', 'placeholder' => 'param0'],
+            $query->getValueBinder()->bindings()[':param0'],
         );
     }
 
@@ -338,11 +367,12 @@ class PostgresTest extends TestCase
             ['comment' => 'json'],
         );
         $this->assertEquals(1, $stmt->rowCount());
+        $id = $stmt->fetch('assoc')['id'];
 
         $query = new SelectQuery($connection);
         $query->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
             ->from('comments')
-            ->where(['id' => 1]);
+            ->where(['id' => $id]);
 
         $result = $query->execute();
         $comment = $result->fetchAll('assoc');
@@ -352,7 +382,7 @@ class PostgresTest extends TestCase
         $query = new SelectQuery($connection);
         $query->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
             ->from('comments')
-            ->where(['id' => 1]);
+            ->where(['id' => $id]);
 
         $this->expectException(QueryException::class);
         $this->expectExceptionMessage('syntax error at end of jsonpath input');

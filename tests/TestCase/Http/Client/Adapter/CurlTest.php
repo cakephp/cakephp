@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -49,19 +50,24 @@ class CurlTest extends TestCase
     }
 
     /**
+     * Streaming must not silently fall back to buffering.
+     */
+    public function testStreamingUnsupported(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Live response streaming requires');
+        $this->curl->send(new Request('http://localhost'), ['stream' => true]);
+    }
+
+    /**
      * Test the send method
      */
     public function testSendLive(): void
     {
-        $request = new Request('http://localhost', 'GET', [
+        $responses = $this->sendToLocalServer([
             'User-Agent' => 'CakePHP TestSuite',
             'Cookie' => 'testing=value',
         ]);
-        try {
-            $responses = $this->curl->send($request, []);
-        } catch (NetworkException) {
-            $this->markTestSkipped('Could not connect to localhost, skipping');
-        }
         $this->assertCount(1, $responses);
 
         /** @var \Cake\Http\Response $response */
@@ -75,19 +81,13 @@ class CurlTest extends TestCase
      */
     public function testSendLiveResponseCheck(): void
     {
-        $request = new Request('https://api.cakephp.org/3.0/', 'GET', [
-            'User-Agent' => 'CakePHP TestSuite',
-        ]);
-        try {
-            $responses = $this->curl->send($request, []);
-        } catch (NetworkException) {
-            $this->markTestSkipped('Could not connect to api.cakephp.org, skipping');
-        }
+        $responses = $this->sendToLocalServer(['User-Agent' => 'CakePHP TestSuite']);
         $this->assertCount(1, $responses);
 
         /** @var \Cake\Http\Response $response */
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
+        $this->skipIf($response->getStatusCode() >= 500, 'api.cakephp.org is unavailable, skipping');
         $this->assertTrue($response->hasHeader('Date'));
         $this->assertTrue($response->hasHeader('Content-type'));
         $this->assertStringContainsString('<html', $response->getBody()->getContents());
@@ -113,9 +113,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Cookie: testing=value',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Cookie: testing=value',
+                'Host: localhost',
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_TIMEOUT => 5,
@@ -160,9 +161,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Cookie: testing=value',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Cookie: testing=value',
+                'Host: localhost',
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_POSTFIELDS => '{"some":"body"}',
@@ -192,9 +194,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Cookie: testing=value',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Cookie: testing=value',
+                'Host: localhost',
                 'Content-Type: application/x-www-form-urlencoded',
             ],
             CURLOPT_POST => true,
@@ -222,9 +225,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Cookie: testing=value',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Cookie: testing=value',
+                'Host: localhost',
             ],
             CURLOPT_POST => true,
             CURLOPT_CUSTOMREQUEST => 'PUT',
@@ -253,9 +257,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Content-type: application/json',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Content-type: application/json',
+                'Host: localhost',
             ],
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $content,
@@ -287,6 +292,7 @@ class CurlTest extends TestCase
             CURLOPT_HTTPHEADER => [
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Host: localhost',
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_SSL_VERIFYPEER => true,
@@ -318,6 +324,7 @@ class CurlTest extends TestCase
             CURLOPT_HTTPHEADER => [
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Host: localhost',
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_CAINFO => $this->caFile,
@@ -345,9 +352,10 @@ class CurlTest extends TestCase
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
-                'Cookie: testing=value',
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Cookie: testing=value',
+                'Host: localhost',
             ],
             CURLOPT_NOBODY => true,
             CURLOPT_CAINFO => $this->caFile,
@@ -377,6 +385,7 @@ class CurlTest extends TestCase
             CURLOPT_HTTPHEADER => [
                 'Connection: close',
                 'User-Agent: CakePHP',
+                'Host: localhost',
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_CAINFO => $this->caFile,
@@ -440,5 +449,49 @@ class CurlTest extends TestCase
             CURL_HTTP_VERSION_3,
             $result[CURLOPT_HTTP_VERSION],
         );
+    }
+
+    /**
+     * Exercise the cURL transport without relying on an external server.
+     *
+     * @param array<string, string> $headers Request headers.
+     * @return non-empty-list<\Cake\Http\Client\Response>
+     */
+    protected function sendToLocalServer(array $headers): array
+    {
+        if (!function_exists('proc_open')) {
+            $this->markTestSkipped('proc_open is required for the local HTTP server.');
+        }
+        $process = proc_open(
+            [PHP_BINARY, TEST_APP . 'TestApp/Http/Client/http_server.php'],
+            [
+                ['pipe', 'r'],
+                ['pipe', 'w'],
+                ['pipe', 'w'],
+            ],
+            $pipes,
+        );
+        $this->assertIsResource($process);
+        try {
+            stream_set_blocking($pipes[1], false);
+            $deadline = microtime(true) + 5;
+            $address = false;
+            do {
+                $address = fgets($pipes[1]);
+                if ($address !== false || !proc_get_status($process)['running']) {
+                    break;
+                }
+                usleep(10000);
+            } while (microtime(true) < $deadline);
+            $this->assertIsString($address, 'Local HTTP server did not start.');
+
+            return $this->curl->send(new Request('http://' . trim($address), 'GET', $headers), ['timeout' => 5]);
+        } finally {
+            foreach ($pipes as $pipe) {
+                fclose($pipe);
+            }
+            proc_terminate($process);
+            proc_close($process);
+        }
     }
 }

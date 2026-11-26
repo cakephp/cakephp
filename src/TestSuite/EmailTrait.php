@@ -35,6 +35,8 @@ use PHPUnit\Framework\Attributes\Before;
  * After adding the trait to your test case, all mail transports will be replaced
  * with TestEmailTransport which is used for making assertions and will *not* actually
  * send emails.
+ *
+ * @require-extends \PHPUnit\Framework\TestCase
  */
 trait EmailTrait
 {

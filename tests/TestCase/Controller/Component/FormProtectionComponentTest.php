@@ -323,7 +323,9 @@ class FormProtectionComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('error description');
 
-        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtectionException $exception): void {
+        $this->FormProtection->setConfig('validationFailureCallback', function (
+            FormProtectionException $exception,
+        ): void {
             throw new NotFoundException('error description');
         });
 

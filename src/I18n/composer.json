@@ -31,6 +31,7 @@
         "php": ">=8.5",
         "ext-intl": "*",
         "cakephp/core": "6.0.*@dev",
+        "cakephp/utility": "6.0.*@dev",
         "cakephp/chronos": "^3.3"
     },
     "autoload": {
@@ -42,7 +43,8 @@
         ]
     },
     "suggest": {
-        "cakephp/cache": "Require this if you want automatic caching of translators"
+        "cakephp/cache": "Require this if you want automatic caching of translators",
+        "psr/http-server-middleware": "To use LocaleSelectorMiddleware"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

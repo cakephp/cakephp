@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n\Middleware;
 
+use Cake\Http\ServerRequestFactory;
 use Cake\I18n\I18n;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\ServerRequestFactory;
 use Locale;
 use TestApp\Http\TestRequestHandler;
 
@@ -48,7 +48,9 @@ class LocaleSelectorMiddlewareTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Locale::setDefault($this->locale);
+        // Go through I18n so the translator registry locale is restored too,
+        // the middleware changes it with I18n::setLocale()
+        I18n::setLocale($this->locale);
     }
 
     /**

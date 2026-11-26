@@ -654,7 +654,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of template file in the `templates/element/` folder,
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
-     * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
+     * @param array<string, mixed> $data Array of data to be made available to the rendered view (i.e. the Element)
      * @param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options Array of options. Possible keys are:
      *
      * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
@@ -884,7 +884,7 @@ class View implements EventDispatcherInterface
     /**
      * Saves a variable or an associative array of variables for use inside a template.
      *
-     * @param array|string $name A string or an array of data.
+     * @param array<string>|string $name A string or an array of data.
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
@@ -895,11 +895,6 @@ class View implements EventDispatcherInterface
         if (is_array($name)) {
             if (is_array($value)) {
                 $data = array_combine($name, $value);
-                if ($data === false) {
-                    throw new CakeException(
-                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.',
-                    );
-                }
             } else {
                 $data = $name;
             }
@@ -1142,7 +1137,7 @@ class View implements EventDispatcherInterface
      * array of data. Handles parent/extended templates.
      *
      * @param string $templateFile Filename of the template
-     * @param array $data Data to include in rendered view. If empty the current
+     * @param array<string, mixed> $data Data to include in rendered view. If empty the current
      *   View::$viewVars will be used.
      * @return string Rendered output
      * @throws \LogicException When a block is left open.
@@ -1190,7 +1185,7 @@ class View implements EventDispatcherInterface
      * Sandbox method to evaluate a template / view script in.
      *
      * @param string $templateFile Filename of the template.
-     * @param array $dataForView Data to include in rendered view.
+     * @param array<string, mixed> $dataForView Data to include in rendered view.
      * @return string Rendered output
      */
     protected function evaluate(string $templateFile, array $dataForView): string
@@ -1503,7 +1498,7 @@ class View implements EventDispatcherInterface
      * Get an iterator for layout paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<string>
      */
     protected function getLayoutPaths(?string $plugin): Generator
     {
@@ -1547,7 +1542,7 @@ class View implements EventDispatcherInterface
      * Get an iterator for element paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<string>
      */
     protected function getElementPaths(?string $plugin): Generator
     {
@@ -1701,7 +1696,7 @@ class View implements EventDispatcherInterface
      * and writes to the cache if a cache is used
      *
      * @param string $file Element file path
-     * @param array $data Data to render
+     * @param array<string, mixed> $data Data to render
      * @param array<string, mixed> $options Element options
      * @return string
      * @triggers View.beforeRender $this, [$file]

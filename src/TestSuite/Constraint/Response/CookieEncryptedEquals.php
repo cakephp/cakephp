@@ -17,7 +17,6 @@ namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * CookieEncryptedEquals
@@ -27,11 +26,6 @@ use Psr\Http\Message\ResponseInterface;
 class CookieEncryptedEquals extends CookieEquals
 {
     use CookieCryptTrait;
-
-    /**
-     * @var \Cake\Http\Response
-     */
-    protected ResponseInterface $response;
 
     /**
      * Constructor.
@@ -54,7 +48,7 @@ class CookieEncryptedEquals extends CookieEquals
      */
     public function matches(mixed $other): bool
     {
-        $cookie = $this->response->getCookie($this->cookieName);
+        $cookie = $this->readCookie($this->cookieName);
 
         return $cookie !== null && $this->decrypt($cookie['value'], $this->mode) === $other;
     }

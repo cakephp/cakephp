@@ -154,7 +154,7 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        return $this->schemaDialect ?? ($this->schemaDialect = new PostgresSchemaDialect($this));
+        return $this->schemaDialect ??= new PostgresSchemaDialect($this);
     }
 
     /**

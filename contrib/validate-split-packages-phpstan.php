@@ -17,11 +17,14 @@ foreach (glob($root . '/src/*/composer.json') ?: [] as $file) {
         throw new RuntimeException(sprintf('Cannot read package manifest `%s`.', $file));
     }
 
-    /** @var array{name: string, extra: array{'branch-alias': non-empty-array<string, string>}} $manifest */
+    /** @var array{name: string, extra?: array{'branch-alias'?: array<string, string>}} $manifest */
     $manifest = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
     $packages[$path] = basename(dirname($file));
     $manifests[$path] = $contents;
-    $versions[$manifest['name']] = array_first($manifest['extra']['branch-alias']);
+    $aliases = $manifest['extra']['branch-alias'] ?? [];
+    if ($aliases !== []) {
+        $versions[$manifest['name']] = array_first($aliases);
+    }
 }
 ksort($packages);
 

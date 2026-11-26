@@ -50,6 +50,10 @@ use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TagsTable;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests SelectQuery class
@@ -984,7 +988,7 @@ class SelectQueryTest extends TestCase
             'order' => ['a' => 'ASC'],
             'offset' => 5,
             'group' => ['field_a'],
-            'having' => ['field_a >' => 100],
+            'having' => ['field_a' => greaterThan(100)],
             'contain' => ['articles'],
             'join' => ['table_a' => ['conditions' => ['a > b']]],
         ];
@@ -1608,7 +1612,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame(3, $result);
 
         $query = $table->find('all')
-            ->where(['id >' => 1])
+            ->where(['id' => greaterThan(1)])
             ->limit(1);
         $result = $query->count();
         $this->assertSame(2, $result);
@@ -1744,7 +1748,7 @@ class SelectQueryTest extends TestCase
                 $query->contain([
                     'Authors' => [
                         'queryBuilder' => function (SelectQuery $q) use ($query): SelectQuery {
-                            return $q->where([$query->getRepository()->aliasField('id') . ' IS NOT' => null]);
+                            return $q->where([$query->getRepository()->aliasField('id') => notEquals(null)]);
                         },
                     ],
                 ]);
@@ -1856,7 +1860,7 @@ class SelectQueryTest extends TestCase
                     'distinct' => $query->select(['grp'])->distinct(),
                     'having' => $query->select(['grp'])
                         ->groupBy(['grp'])
-                        ->having(['COUNT(*) >' => 1], ['COUNT(*)' => 'integer']),
+                        ->having(['COUNT(*)' => greaterThan(1)], ['COUNT(*)' => 'integer']),
                     'union' => $query->select(['grp'])
                         ->where(['id' => 1])
                         ->union($table->find()->select(['grp'])->where(['id' => 3])),
@@ -1892,7 +1896,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find('all');
         $query->select(['author_id', 's' => $query->func()->sum('id')])
-            ->where(['id >' => 2])
+            ->where(['id' => greaterThan(2)])
             ->groupBy(['author_id'])
             ->counter(function ($q) use ($query) {
                 $this->assertNotSame($q, $query);
@@ -1982,7 +1986,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles');
 
         $result = $table->deleteQuery()
-            ->where(['id >=' => 1])
+            ->where(['id' => greaterThanOrEquals(1)])
             ->execute();
 
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -2324,10 +2328,10 @@ class SelectQueryTest extends TestCase
 
         $authors->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, SelectQuery $targetQuery) use (
-                &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery,
-            ): void {
+            function (
+                $event,
+                SelectQuery $targetQuery,
+            ) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2397,10 +2401,10 @@ class SelectQueryTest extends TestCase
 
         $tags->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, SelectQuery $targetQuery) use (
-                &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery,
-            ): void {
+            function (
+                $event,
+                SelectQuery $targetQuery,
+            ) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2829,7 +2833,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = $table->find()
-            ->where(['id > ' => 1])
+            ->where(['id' => greaterThan(1)])
             ->enableHydration(false)
             ->matching('articles')
             ->applyOptions(['foo' => 'bar'])
@@ -3347,7 +3351,7 @@ class SelectQueryTest extends TestCase
     public function testCustomBindings(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = $table->find()->where(['id >' => 1]);
+        $query = $table->find()->where(['id' => greaterThan(1)]);
         $query->where(function (QueryExpression $exp) {
             return $exp->add('author_id = :author');
         });
@@ -3568,14 +3572,14 @@ class SelectQueryTest extends TestCase
 
         $results = $table->find()
             ->leftJoinWith('articles')
-            ->where(['articles.id IS' => null]);
+            ->where(['articles.id' => equals(null)]);
 
         $this->assertEquals([2, 4], $results->all()->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
 
         $results = $table->find()
             ->leftJoinWith('articles')
-            ->where(['articles.id IS NOT' => null])
+            ->where(['articles.id' => notEquals(null)])
             ->orderBy(['authors.id']);
 
         $this->assertEquals([1, 1, 3], $results->all()->extract('id')->toList());
@@ -3719,7 +3723,7 @@ class SelectQueryTest extends TestCase
         $results = $table->unhydratedFind()
             ->contain('Authors')
             ->leftJoinWith('Authors')
-            ->where(['Articles.author_id is' => null])
+            ->where(['Articles.author_id' => equals(null)])
             ->all();
         $expected = [
             [
@@ -4057,7 +4061,7 @@ class SelectQueryTest extends TestCase
             'post_count' => $query->func()->count('posts.id'),
         ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->expr()->gte('post_count', 2, 'integer')])
+            ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')])
             ->enableHydration(false)
             ->toArray();
 

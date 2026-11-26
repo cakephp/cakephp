@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use function Cake\Core\h;
 
 /**
  * Input widget for creating checkbox widgets.
@@ -36,6 +37,7 @@ class CheckboxWidget extends BasicWidget
         'value' => 1,
         'val' => null,
         'disabled' => false,
+        'escape' => true,
         'templateVars' => [],
     ];
 
@@ -59,6 +61,7 @@ class CheckboxWidget extends BasicWidget
     public function render(array $data, ContextInterface $context): string
     {
         $data += $this->mergeDefaults($data, $context);
+        $escape = $data['escape'];
 
         if ($this->isChecked($data)) {
             $data['checked'] = true;
@@ -72,7 +75,7 @@ class CheckboxWidget extends BasicWidget
 
         return $this->templates->format('checkbox', [
             'name' => $data['name'],
-            'value' => $data['value'],
+            'value' => $escape ? h($data['value']) : $data['value'],
             'templateVars' => $data['templateVars'],
             'attrs' => $attrs,
         ]);

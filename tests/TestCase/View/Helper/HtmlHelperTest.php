@@ -25,7 +25,10 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
+use Cake\View\HtmlString;
+use Cake\View\HtmlStringable;
 use Cake\View\View;
+use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Core\h;
@@ -343,6 +346,66 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->link('Home', '/', ['fullBase' => false]);
         $expected = ['a' => ['href' => '/'], 'Home', '/a'];
         $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Preserve trusted content without disabling attribute escaping.
+     */
+    public function testLinkTrustedHtml(): void
+    {
+        $content = Mockery::mock(HtmlStringable::class);
+        $content->shouldReceive('__toString')->andReturn('<strong>Save</strong>');
+        foreach ([true, false, 'UTF-8'] as $escape) {
+            $result = $this->Html->link($content, '/save', [
+                'escape' => $escape,
+                'title' => new HtmlString('"Save" & continue'),
+            ]);
+            $this->assertSame(
+                '<a href="/save" title="&quot;Save&quot; &amp; continue"><strong>Save</strong></a>',
+                $result,
+            );
+        }
+
+        $this->assertSame(
+            '<a href="/save">&lt;strong&gt;Save&lt;/strong&gt;</a>',
+            $this->Html->link(h($content), '/save', ['escape' => false]),
+        );
+        $this->assertSame(
+            '<a href="/articles"><strong>Save</strong></a>',
+            $this->Html->linkFromPath(new HtmlString('<strong>Save</strong>'), 'Articles::index'),
+        );
+    }
+
+    /**
+     * Prevent trusted markup from being interpreted as a link URL.
+     */
+    public function testLinkTrustedHtmlRequiresUrl(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('An explicit URL is required for trusted HTML link content.');
+        $this->Html->link(new HtmlString('<strong>Save</strong>'));
+    }
+
+    /**
+     * Recognize trusted content in tag, div, and paragraph helpers.
+     */
+    public function testContainersTrustedHtml(): void
+    {
+        $html = new HtmlString('<em>Content</em>');
+        $options = ['escape' => true, 'title' => new HtmlString('"Title" & more')];
+        $this->assertSame(
+            '<section title="&quot;Title&quot; &amp; more"><em>Content</em></section>',
+            $this->Html->tag('section', $html, $options),
+        );
+        $this->assertSame(
+            '<div title="&quot;Title&quot; &amp; more"><em>Content</em></div>',
+            $this->Html->div(null, $html, $options),
+        );
+        $this->assertSame(
+            '<p title="&quot;Title&quot; &amp; more"><em>Content</em></p>',
+            $this->Html->para(null, $html, $options),
+        );
+        $this->assertSame('<div></div>', $this->Html->div(null, new HtmlString('')));
     }
 
     public function testLinkFromPath(): void
@@ -2364,7 +2427,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = ['td content 1', 'td content 2', 'td content 3'];
-        $result = $this->Html->tableCells($tr, null, null, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']],
@@ -2381,7 +2444,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $tr = ['td content 1', 'td content 2', 'td content 3'];
-        $result = $this->Html->tableCells($tr, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']],
@@ -2431,7 +2494,7 @@ class HtmlHelperTest extends TestCase
             'td content 2',
             ['td content 3', ['class' => 'foo']],
         ];
-        $result = $this->Html->tableCells($tr, null, null, true);
+        $result = $this->Html->tableCells($tr, useCount: true);
         $expected = [
             '<tr',
             ['td' => ['class' => 'column-1']],

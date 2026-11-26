@@ -26,6 +26,7 @@ use InvalidArgumentException;
  * Trait for symlinking / copying plugin assets to app's webroot.
  *
  * @internal
+ * @require-extends \Cake\Command\Command
  */
 trait PluginAssetsTrait
 {

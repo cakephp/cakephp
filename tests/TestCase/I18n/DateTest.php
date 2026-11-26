@@ -22,8 +22,10 @@ use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\TestSuite\TestCase;
+use Closure;
 use IntlDateFormatter;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
 
 /**
  * DateTest class
@@ -31,12 +33,19 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class DateTest extends TestCase
 {
     /**
+     * The JSON encode format before the test, restored after it.
+     */
+    protected Closure|string|int $jsonEncodeFormat;
+
+    /**
      * setup
      */
     protected function setUp(): void
     {
         parent::setUp();
+        $this->jsonEncodeFormat = new ReflectionProperty(Date::class, 'jsonEncodeFormat')->getValue();
 
+        I18n::clear();
         Cache::clear('_cake_translations_');
         I18n::setTranslator(
             'cake',
@@ -58,6 +67,8 @@ class DateTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        I18n::setLocale(I18n::getDefaultLocale());
+        new ReflectionProperty(Date::class, 'jsonEncodeFormat')->setValue(null, $this->jsonEncodeFormat);
         DateTime::setDefaultLocale();
         date_default_timezone_set('UTC');
     }
