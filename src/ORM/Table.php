@@ -31,6 +31,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Datasource\RulesAwareTrait;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -1562,6 +1563,118 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options['keyField'],
             $options['parentField'],
             $nestingKey,
+        ));
+    }
+
+    /**
+     * Project query results into DTO instances.
+     *
+     * The query only fetches array rows; the mapping into `$class` happens here,
+     * after all result formatters have run. Stack finders on `$query` first when
+     * needed, then hand it here to execute the projection. The passed query is
+     * not modified.
+     *
+     * Rows are mapped from the raw selected columns, so entity visibility and
+     * accessors do not affect the DTO data.
+     *
+     * ```
+     * $dtos = $articles->projectAs(ArticleDto::class);
+     *
+     * $dtos = $articles->projectAs(
+     *     ArticleDto::class,
+     *     $articles->find()->where(['published' => true])->contain('Authors'),
+     * );
+     * ```
+     *
+     * @template T of object
+     * @param class-string<T> $class The DTO class to map each row into.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @return \Cake\Datasource\ResultSetInterface<array-key, T>
+     * @throws \Cake\Core\Exception\CakeException When a row does not map to an instance of `$class`,
+     *   for example a `createFromArray()` factory returning another type.
+     * @since 5.5.0
+     */
+    public function projectAs(string $class, ?SelectQuery $query = null): ResultSetInterface
+    {
+        $query = $this->projectionQuery($query);
+        $factory = $query->resultSetFactory();
+        $hydrator = $factory->getDtoHydrator($class);
+
+        $results = [];
+        foreach ($query->all() as $key => $row) {
+            $results[$key] = $this->assertProjected(is_array($row) ? $hydrator($row) : $row, $class);
+        }
+
+        return $factory->createResultSet($results);
+    }
+
+    /**
+     * Project the first query result into a DTO instance.
+     *
+     * Single-row counterpart to {@see \Cake\ORM\Table::projectAs()}. Like
+     * `SelectQuery::first()`, it limits the query to one row.
+     *
+     * ```
+     * $dto = $articles->projectOne(
+     *     ArticleDto::class,
+     *     $articles->find()->where(['Articles.id' => $id]),
+     * );
+     * ```
+     *
+     * @template T of object
+     * @param class-string<T> $class The DTO class to map the row into.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query
+     *   A pre-built query, or null to start from `find()`.
+     * @return T|null The DTO, or null when the query has no result.
+     * @throws \Cake\Core\Exception\CakeException When the row does not map to an instance of `$class`.
+     * @since 5.5.0
+     */
+    public function projectOne(string $class, ?SelectQuery $query = null): ?object
+    {
+        $query = $this->projectionQuery($query);
+
+        $row = $query->first();
+        if ($row === null) {
+            return null;
+        }
+        if (is_array($row)) {
+            $row = $query->resultSetFactory()->getDtoHydrator($class)($row);
+        }
+
+        return $this->assertProjected($row, $class);
+    }
+
+    /**
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|null $query The query to project.
+     * @return \Cake\ORM\Query\SelectQuery<array> A copy that fetches array rows.
+     */
+    protected function projectionQuery(?SelectQuery $query): SelectQuery
+    {
+        $query = $query === null ? $this->find() : clone $query;
+
+        /** @var \Cake\ORM\Query\SelectQuery<array> */
+        return $query->enableHydration(false);
+    }
+
+    /**
+     * @template T of object
+     * @param mixed $result The projected row.
+     * @param class-string<T> $class The expected DTO class.
+     * @return T
+     * @throws \Cake\Core\Exception\CakeException
+     */
+    protected function assertProjected(mixed $result, string $class): object
+    {
+        if ($result instanceof $class) {
+            return $result;
+        }
+
+        throw new CakeException(sprintf(
+            'Projected result for `%s` is `%s`, expected an instance of `%s`.',
+            static::class,
+            get_debug_type($result),
+            $class,
         ));
     }
 
