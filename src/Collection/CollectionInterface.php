@@ -475,9 +475,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @param callable|string $path The column name to use for grouping or callback that returns the value.
      * or a function returning the grouping key out of the provided element
+     * @param bool $preserveKeys Whether to preserve the keys of the existing collection when the values are grouped.
+     * Defaults to false.
      * @return \Cake\Collection\CollectionInterface<array-key, array<TValue>>
      */
-    public function groupBy(callable|string $path): self;
+    public function groupBy(callable|string $path, bool $preserveKeys = false): self;
 
     /**
      * Given a list and a callback function that returns a key for each element
