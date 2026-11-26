@@ -35,6 +35,7 @@ use Cake\View\Exception\MissingTemplateException;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
+use ReflectionClass;
 use Throwable;
 use function Cake\Core\pluginSplit;
 
@@ -248,6 +249,30 @@ class View implements EventDispatcherInterface
      * @var array<string, array<string>>
      */
     protected array $_pathsForPlugin = [];
+
+    /**
+     * Application paths used to build the cached template roots.
+     *
+     * @var array<int|string, string>|null
+     */
+    private ?array $configuredTemplatePaths = null;
+
+    /**
+     * Theme used to build the cached template roots.
+     */
+    private ?string $templatePathsTheme = null;
+
+    /**
+     * Routing prefix used by the cached element lookups.
+     */
+    private mixed $elementPathPrefix = null;
+
+    /**
+     * Successfully resolved element filenames by plugin and name with extension.
+     *
+     * @var array<string, array<string, string>>
+     */
+    private array $elementFileNames = [];
 
     /**
      * The names of views and their parents used with View::extend();
@@ -1526,15 +1551,70 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $name .= $this->_ext;
-        $paths = iterator_to_array($this->getElementPaths($plugin));
+        $useCache = $this->canCacheElementFileNames();
+        $pluginKey = $plugin ?? '';
+        if ($useCache) {
+            $this->refreshTemplatePathContext();
+            $prefix = $this->request->getParam('prefix');
+            if ($prefix !== $this->elementPathPrefix) {
+                $this->elementPathPrefix = $prefix;
+                $this->elementFileNames = [];
+            }
+
+            if (isset($this->elementFileNames[$pluginKey][$name])) {
+                $file = $this->elementFileNames[$pluginKey][$name];
+                if (is_file($file)) {
+                    return $this->_checkFilePath($file, $plugin);
+                }
+                unset($this->elementFileNames[$pluginKey][$name]);
+            }
+        }
+
+        $paths = $this->getElementPaths($plugin);
+        if (!$useCache) {
+            $paths = iterator_to_array($paths);
+        }
         foreach ($paths as $path) {
             $filepath = $path . $name;
             if (is_file($filepath)) {
-                return $this->_checkFilePath($filepath, $plugin);
+                $file = $this->_checkFilePath($filepath, $plugin);
+                if ($useCache) {
+                    $this->elementFileNames[$pluginKey][$name] = $filepath;
+                }
+
+                return $file;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Check whether the view uses the built-in element path resolution.
+     *
+     * Subclasses can derive their paths from state outside the core lookup context.
+     */
+    private function canCacheElementFileNames(): bool
+    {
+        if (static::class === self::class) {
+            return true;
+        }
+
+        static $usesCorePaths = [];
+
+        $class = static::class;
+        if (isset($usesCorePaths[$class])) {
+            return $usesCorePaths[$class];
+        }
+
+        $reflection = new ReflectionClass($class);
+        foreach (['getElementPaths', '_getSubPaths', '_paths'] as $method) {
+            if ($reflection->getMethod($method)->getDeclaringClass()->getName() !== self::class) {
+                return $usesCorePaths[$class] = false;
+            }
+        }
+
+        return $usesCorePaths[$class] = true;
     }
 
     /**
@@ -1599,8 +1679,10 @@ class View implements EventDispatcherInterface
             if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {
                 return $this->_pathsForPlugin[$plugin];
             }
+        } else {
+            unset($this->elementFileNames[$plugin ?? '']);
         }
-        $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
+        $templatePaths = array_values($this->refreshTemplatePathContext());
         $pluginPaths = [];
         $themePaths = [];
         if ($plugin) {
@@ -1640,6 +1722,27 @@ class View implements EventDispatcherInterface
         }
 
         return $this->_paths = $paths;
+    }
+
+    /**
+     * Invalidate cached paths and filenames when the theme or application template roots change.
+     *
+     * @return array<int|string, string>
+     */
+    private function refreshTemplatePathContext(): array
+    {
+        $templatePaths = App::path(static::NAME_TEMPLATE);
+        if ($this->configuredTemplatePaths !== $templatePaths || $this->templatePathsTheme !== $this->theme) {
+            if ($this->configuredTemplatePaths !== null) {
+                $this->_paths = [];
+                $this->_pathsForPlugin = [];
+                $this->elementFileNames = [];
+            }
+            $this->configuredTemplatePaths = $templatePaths;
+            $this->templatePathsTheme = $this->theme;
+        }
+
+        return $templatePaths;
     }
 
     /**

@@ -37,6 +37,7 @@ use Cake\View\HelperRegistry;
 use Cake\View\View;
 use Error;
 use Exception;
+use Generator;
 use InvalidArgumentException;
 use LogicException;
 use Mockery;
@@ -645,6 +646,71 @@ class ViewTest extends TestCase
 
         $result = $this->View->element('plugin_element', [], ['plugin' => false]);
         $this->assertSame("Plugin element overridden in app\n", $result);
+    }
+
+    /**
+     * Reusing an element filename still renders with the data supplied for each call.
+     */
+    public function testRepeatedElementUsesCurrentData(): void
+    {
+        $this->assertTrue($this->View->elementExists('type_check'));
+        $this->assertSame('string', $this->View->element('type_check', ['form' => 'value']));
+        $this->assertSame('integer', $this->View->element('type_check', ['form' => 1]));
+    }
+
+    /**
+     * Changing a theme invalidates previously resolved elements.
+     */
+    public function testElementLookupRefreshesAfterThemeChange(): void
+    {
+        $this->assertSame('this is the test element', $this->View->element('test_element'));
+
+        $this->View->setTheme('TestTheme');
+        $this->assertSame("Hi, I'm the test element.", $this->View->element('test_element'));
+
+        $this->View->setTheme(null);
+        $this->assertSame('this is the test element', $this->View->element('test_element'));
+    }
+
+    /**
+     * Changing the configured template roots refreshes element lookups on the same view.
+     */
+    public function testElementLookupRefreshesAfterTemplatePathChange(): void
+    {
+        $this->assertSame('this is the test element', $this->View->element('test_element'));
+
+        $paths = App::path('templates');
+        try {
+            Configure::write('App.paths.templates', [Plugin::templatePath('TestTheme'), ...$paths]);
+            $this->assertSame("Hi, I'm the test element.", $this->View->element('test_element'));
+        } finally {
+            Configure::write('App.paths.templates', $paths);
+        }
+
+        $this->assertSame('this is the test element', $this->View->element('test_element'));
+    }
+
+    /**
+     * A view with custom element paths can return different paths between renders.
+     */
+    public function testElementLookupRespectsCustomPaths(): void
+    {
+        $view = Mockery::mock(View::class . '[getElementPaths]', [new ServerRequest()])
+            ->shouldAllowMockingProtectedMethods();
+        $view->shouldReceive('getElementPaths')
+            ->with(null)
+            ->twice()
+            ->andReturnUsing(
+                static function (): Generator {
+                    yield TEST_APP . 'templates' . DS . 'element' . DS;
+                },
+                static function (): Generator {
+                    yield Plugin::templatePath('TestTheme') . 'element' . DS;
+                },
+            );
+
+        $this->assertSame('this is the test element', $view->element('test_element'));
+        $this->assertSame("Hi, I'm the test element.", $view->element('test_element'));
     }
 
     /**
