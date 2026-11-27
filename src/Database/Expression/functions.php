@@ -18,6 +18,87 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\Enum\PredicateOperation;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\FunctionsBuilder;
+use Cake\Database\TypeMap;
+
+/**
+ * Creates a SQL functions builder without requiring a query instance.
+ *
+ * @return \Cake\Database\FunctionsBuilder
+ */
+function func(): FunctionsBuilder
+{
+    return new FunctionsBuilder();
+}
+
+/**
+ * Creates a database identifier expression without requiring a query instance.
+ *
+ * Identifier names must not contain untrusted user input. The SQL compiler
+ * quotes identifiers when identifier quoting is enabled.
+ *
+ * @param string $identifier The identifier, including any table alias.
+ * @param string|null $collation The optional identifier collation.
+ * @return \Cake\Database\Expression\IdentifierExpression
+ */
+function identifier(string $identifier, ?string $collation = null): IdentifierExpression
+{
+    return new IdentifierExpression($identifier, $collation);
+}
+
+/**
+ * Creates a query expression without requiring a query instance.
+ *
+ * Standalone expressions do not inherit a query type map. Supply field types
+ * explicitly when needed. Raw SQL strings must not contain untrusted user input.
+ *
+ * @param \Cake\Database\ExpressionInterface|array|string $conditions The conditions to add to the expression.
+ * @param \Cake\Database\TypeMap|array $types The field types used to bind condition values.
+ * @param string $conjunction The conjunction used to join conditions.
+ * @return \Cake\Database\Expression\QueryExpression
+ */
+function expr(
+    ExpressionInterface|array|string $conditions = [],
+    TypeMap|array $types = [],
+    string $conjunction = 'AND',
+): QueryExpression {
+    return new QueryExpression($conditions, $types, $conjunction);
+}
+
+/**
+ * Creates a predicate requiring every child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with AND.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function allOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ALL_OF, [$predicate, ...$predicates]);
+}
+
+/**
+ * Creates a predicate requiring at least one child predicate to match the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The first predicate to combine with OR.
+ * @param \Cake\Database\Expression\Predicate ...$predicates Additional predicates for the same field.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function anyOf(Predicate $predicate, Predicate ...$predicates): Predicate
+{
+    return new Predicate(PredicateOperation::ANY_OF, [$predicate, ...$predicates]);
+}
+
+/**
+ * Creates a predicate negating a single predicate or group for the same field.
+ *
+ * @param \Cake\Database\Expression\Predicate $predicate The predicate to negate.
+ * @return \Cake\Database\Expression\Predicate
+ */
+function not(Predicate $predicate): Predicate
+{
+    return new Predicate(PredicateOperation::NOT, [$predicate]);
+}
 
 /**
  * Creates an equality predicate, using IS NULL when the value is null.
