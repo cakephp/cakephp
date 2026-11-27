@@ -34,6 +34,7 @@ use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
 use TestApp\Controller\OptionalRequestController;
 use TestApp\Controller\RequestInterfaceController;
+use TestApp\Controller\RequestNotFirstController;
 use TestApp\Controller\UntypedRequestController;
 use TestApp\Controller\VariadicPluginsController;
 use TestApp\ReflectionDependency;
@@ -284,6 +285,20 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->assertInstanceOf(UntypedRequestController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function TestCreatePassesRequestToParameterInAnyPosition(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'RequestNotFirst',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(RequestNotFirstController::class, $controller);
+        $this->assertInstanceOf(RequestNotFirstController::class, $controller->dependency);
         $this->assertSame($request, $controller->getRequest());
     }
 
