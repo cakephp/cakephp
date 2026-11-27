@@ -92,7 +92,7 @@ class RequestTest extends TestCase
             $key => 'value',
         ];
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIsOrContains($key . '` is not a valid header key');
+        $this->expectExceptionMessage($key . '` is not a valid header key');
         new Request('http://example.com', 'POST', $headers);
     }
 

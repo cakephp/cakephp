@@ -362,7 +362,7 @@ HTML;
     public function testHeadersStringInvalidKey(string $invalid): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIsOrContains($invalid . '` is not a valid header key');
+        $this->expectExceptionMessage($invalid . '` is not a valid header key');
         $this->message->setHeaders([$invalid => 'nice']);
     }
 
