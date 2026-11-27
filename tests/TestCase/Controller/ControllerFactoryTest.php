@@ -21,6 +21,7 @@ use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -300,6 +301,18 @@ class ControllerFactoryTest extends TestCase
         $this->assertInstanceOf(RequestNotFirstController::class, $controller);
         $this->assertInstanceOf(RequestNotFirstController::class, $controller->dependency);
         $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function testCreateThrowsWhenSeveralRequiredParametersNeedTheRequest(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessageIsOrContains('`$other`');
+
+        $this->factory->create(new ServerRequest([
+            'params' => [
+                'controller' => 'TwoRequiredRequests',
+            ],
+        ]));
     }
 
     public function testSlashedControllerFailure(): void

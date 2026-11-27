@@ -20,6 +20,7 @@ use Cake\Container\ContainerInterface;
 use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
@@ -100,10 +101,20 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             if ($parameter->isVariadic()) {
                 break;
             }
-            if (!$requestBound && $this->acceptRequest($parameter, $request)) {
-                $arguments[$parameter->getName()] = $request;
-                $requestBound = true;
-                continue;
+            if ($this->acceptRequest($parameter, $request)) {
+                if (!$requestBound) {
+                    $arguments[$parameter->getName()] = $request;
+                    $requestBound = true;
+                    continue;
+                }
+                if (!$parameter->isDefaultValueAvailable()) {
+                    throw new CakeException(sprintf(
+                        'Cannot resolve parameter `$%s` of `%s::__construct()`. '
+                        . 'The active request is already passed to another parameter.',
+                        $parameter->getName(),
+                        $reflection->getName(),
+                    ));
+                }
             }
             $value = $this->resolveConstructorArgument($parameter, $components);
             if ($value !== null) {
