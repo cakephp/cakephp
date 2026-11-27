@@ -137,8 +137,8 @@ class AssetMiddlewareTest extends TestCase
         $handler = new TestRequestHandler();
 
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
-        $expires = strtotime('+4 hours');
-        $time = time();
+        $time = DateTime::now()->getTimestamp();
+        $expires = strtotime('+4 hours', $time);
 
         $middleware = new AssetMiddleware(['cacheTime' => '+4 hours']);
         $res = $middleware->process($request, $handler);
@@ -163,6 +163,28 @@ class AssetMiddlewareTest extends TestCase
             DateTime::parse($expires)->toRfc7231String(),
             $res->getHeaderLine('Expires'),
         );
+    }
+
+    /**
+     * Test that the cache headers use the test clock
+     */
+    public function testPluginAssetHeadersWithTestNow(): void
+    {
+        $now = DateTime::getTestNow();
+        DateTime::setTestNow('2021-03-04 05:06:07');
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/root.js']);
+        $handler = new TestRequestHandler();
+
+        $middleware = new AssetMiddleware(['cacheTime' => '+4 hours']);
+        try {
+            $res = $middleware->process($request, $handler);
+        } finally {
+            DateTime::setTestNow($now);
+        }
+
+        $this->assertSame('Thu, 04 Mar 2021 05:06:07 GMT', $res->getHeaderLine('Date'));
+        $this->assertSame('public,max-age=14400', $res->getHeaderLine('Cache-Control'));
+        $this->assertSame('Thu, 04 Mar 2021 09:06:07 GMT', $res->getHeaderLine('Expires'));
     }
 
     /**
