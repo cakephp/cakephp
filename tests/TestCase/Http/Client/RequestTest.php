@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -67,6 +68,32 @@ class RequestTest extends TestCase
         $this->assertSame('http://example.com', (string)$request->getUri());
         $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertSame($expected, $request->getHeaderLine('X-inject'));
+    }
+
+    public static function invalidKeyProvider(): array
+    {
+        return [
+            ["part-\ntwo"],
+            ["part-\rtwo"],
+            ["part-\r\ntwo"],
+            ["part-\ttwo"],
+            ['part two'],
+        ];
+    }
+
+    /**
+     * test invalid header keys are rejected by the constructor.
+     */
+    #[DataProvider('invalidKeyProvider')]
+    public function testConstructorRejectInvalidKey(string $key): void
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            $key => 'value',
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($key . '` is not a valid header key');
+        new Request('http://example.com', 'POST', $headers);
     }
 
     /**
