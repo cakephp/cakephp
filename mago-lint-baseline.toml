@@ -370,7 +370,7 @@ count = 1
 file = "src/Database/Driver/Mysql.php"
 code = "no-duplicate-match-arm"
 message = "This `match` arm has the same result as an earlier arm."
-count = 4
+count = 3
 
 [[issues]]
 file = "src/Database/Driver/Mysql.php"
@@ -382,12 +382,6 @@ count = 1
 file = "src/Database/Driver/Mysql.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "src/Database/Driver/Mysql.php"
-code = "tagged-todo"
-message = "TODO should be tagged with (@username) or (#issue)."
 count = 1
 
 [[issues]]
@@ -544,7 +538,7 @@ count = 5
 file = "src/Database/Schema/MysqlSchemaDialect.php"
 code = "tagged-todo"
 message = "TODO should be tagged with (@username) or (#issue)."
-count = 4
+count = 2
 
 [[issues]]
 file = "src/Database/Schema/PostgresSchemaDialect.php"

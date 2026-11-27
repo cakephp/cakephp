@@ -54,9 +54,6 @@ class FunctionsQueryTest extends TestCase
         $driverVersion = $driver->version();
 
         $driverClass = $driver::class;
-        if ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB')) {
-            $driverClass = Mariadb::class;
-        }
 
         $version = $versions[$driverClass] ?? null;
         if ($version === null) {

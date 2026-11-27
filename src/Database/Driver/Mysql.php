@@ -29,7 +29,6 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\StatementInterface;
 use PDO;
 use Pdo\Mysql as PdoMysql;
-use function Cake\Core\deprecationWarning;
 
 /**
  * MySQL Driver
@@ -98,7 +97,7 @@ class Mysql extends Driver
         switch ($expression->getName()) {
             case 'JSON_EXISTS':
                 // MariaDB supports JSON_EXISTS natively
-                if ($this->isMariadb()) {
+                if ($this instanceof Mariadb) {
                     break;
                 }
 
@@ -124,22 +123,6 @@ class Mysql extends Driver
      * @inheritDoc
      */
     protected const int MAX_ALIAS_LENGTH = 256;
-
-    /**
-     * Server type MySQL
-     *
-     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
-     * @var string
-     */
-    protected const string SERVER_TYPE_MYSQL = 'mysql';
-
-    /**
-     * Server type MariaDB
-     *
-     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
-     * @var string
-     */
-    protected const string SERVER_TYPE_MARIADB = 'mariadb';
 
     /**
      * Base configuration settings for MySQL driver
@@ -174,45 +157,20 @@ class Mysql extends Driver
     protected string $endQuote = '`';
 
     /**
-     * Server type.
-     *
-     * If the underlying server is MariaDB, its value will get set to `'mariadb'`
-     * after `version()` method is called.
-     *
-     * @var string
-     * @deprecated 5.5.0 Use Mariadb Driver instead of this symbol.
-     */
-    protected string $serverType = self::SERVER_TYPE_MYSQL;
-
-    /**
      * Mapping of feature to db server version for feature availability checks.
      *
-     * @var array<string, array<string, string>>
-     * @todo Simplify this in 6.x when MySQL and Maria separation is completed.
+     * @var array<string, string>
      */
     protected array $featureVersions = [
-        'mysql' => [
-            'json' => '5.7.0',
-            'cte' => '8.0.0',
-            'window' => '8.0.0',
-            'string-agg' => '99.0.0',
-            'intersect' => '8.0.31',
-            'intersect-all' => '8.0.31',
-            'except' => '8.0.31',
-            'except-all' => '8.0.31',
-            'check-constraints' => '8.0.16',
-        ],
-        'mariadb' => [
-            'json' => '10.2.7',
-            'cte' => '10.2.1',
-            'window' => '10.2.0',
-            'string-agg' => '10.5.0',
-            'intersect' => '10.3.0',
-            'intersect-all' => '10.5.0',
-            'except' => '10.3.0',
-            'except-all' => '10.5.0',
-            'check-constraints' => '10.2.1',
-        ],
+        'json' => '5.7.0',
+        'cte' => '8.0.0',
+        'window' => '8.0.0',
+        'string-agg' => '99.0.0',
+        'intersect' => '8.0.31',
+        'intersect-all' => '8.0.31',
+        'except' => '8.0.31',
+        'except-all' => '8.0.31',
+        'check-constraints' => '8.0.16',
     ];
 
     /**
@@ -344,7 +302,7 @@ class Mysql extends Driver
         $versionCompare = function () use ($feature) {
             return version_compare(
                 $this->version(),
-                $this->featureVersions[$this->serverType][$feature->value],
+                $this->featureVersions[$feature->value],
                 '>=',
             );
         };
@@ -353,7 +311,9 @@ class Mysql extends Driver
             DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
             DriverFeature::SAVEPOINT => true,
 
-            DriverFeature::TRUNCATE_WITH_CONSTRAINTS => false,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
+            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS,
+            DriverFeature::SUBQUERY_FILTER_DISTINCT => false,
 
             DriverFeature::CTE,
             DriverFeature::JSON,
@@ -367,50 +327,6 @@ class Mysql extends Driver
             DriverFeature::CHECK_CONSTRAINTS => $versionCompare(),
             DriverFeature::SET_OPERATIONS_ORDER_BY => true,
             DriverFeature::OPTIMIZER_HINT_COMMENT => true,
-            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
-            DriverFeature::SUBQUERY_FILTER_DISTINCT => $this->isMariaDb(),
         };
-    }
-
-    /**
-     * Returns true if the connected server is MariaDB.
-     *
-     * @return bool
-     */
-    public function isMariadb(): bool
-    {
-        $this->version();
-
-        $isMaria = $this->serverType === static::SERVER_TYPE_MARIADB;
-        if ($isMaria) {
-            deprecationWarning(
-                '5.5.0',
-                'MySQL and Mariadb now have separate drivers.' .
-                'Use `instanceof Mariadb` instead for runtime checks, ' .
-                'and set `"driver" => Mariadb::class` in your connection configuration.',
-            );
-        }
-
-        return $isMaria;
-    }
-
-    /**
-     * Returns connected server version.
-     *
-     * @return string
-     */
-    public function version(): string
-    {
-        if ($this->version === null) {
-            $this->version = (string)$this->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION);
-
-            if (preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->version, $matches)) {
-                // TODO remove this in 6.x when mysql and mariadb separation is complete.
-                $this->serverType = static::SERVER_TYPE_MARIADB;
-                $this->version = $matches[1];
-            }
-        }
-
-        return $this->version;
     }
 }
