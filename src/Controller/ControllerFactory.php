@@ -95,7 +95,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
         $arguments = [];
         foreach ($constructor->getParameters() as $parameter) {
-            $arguments += $this->resolveConstructorArgument($parameter, $request, $components);
+            $value =  $this->resolveConstructorArgument($parameter, $request, $components);
+            if ($value !== null) {
+                $arguments[$parameter->getName()] = $value;
+            }
         }
 
         return $reflection->newInstanceArgs($arguments);
@@ -115,7 +118,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         ReflectionParameter $parameter,
         ServerRequest $request,
         ComponentRegistry $components,
-    ): array {
+    ): mixed {
         $name = $parameter->getName();
         $type = $parameter->getType();
         // TODO: In a future minor release it would be good to start requiring the components parameter
@@ -124,19 +127,19 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             $type instanceof ReflectionNamedType &&
             $type->getName() === ComponentRegistry::class
         ) {
-            return [$name => $components];
+            return $components;
         }
         if ($type instanceof ReflectionNamedType && $type->getName() === ServerRequest::class) {
-            return [$name => $request];
+            return $request;
         }
         if ($parameter->isDefaultValueAvailable()) {
-            return [];
+            return null;
         }
         if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-            return [$name => $this->container->get($type->getName())];
+            return $this->container->get($type->getName());
         }
 
-        return [];
+        return null;
     }
 
     /**
