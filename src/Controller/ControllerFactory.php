@@ -62,10 +62,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Create a controller for a given request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
-     * @return \Cake\Controller\Controller
+     * @return object|string
      * @throws \Cake\Http\Exception\MissingControllerException
      */
-    public function create(ServerRequestInterface $request): Controller
+    public function create(ServerRequestInterface $request): object|string
     {
         assert($request instanceof ServerRequest);
         $className = $this->getControllerClass($request);
@@ -99,7 +99,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             if ($parameter->isVariadic()) {
                 break;
             }
-            if (!$requestBound && $this->acceptRequest($parameter)) {
+            if (!$requestBound && $this->acceptRequest($parameter, $request)) {
                 $arguments[$parameter->getName()] = $request;
                 $requestBound = true;
                 continue;
@@ -117,13 +117,18 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Check whether a constructor parameter can receive the active request.
      *
      * @param \ReflectionParameter $parameter The constructor parameter.
+     * @param \Cake\Http\ServerRequest $request Server request
      * @return bool
      */
-    private function acceptRequest(ReflectionParameter $parameter): bool
+    private function acceptRequest(ReflectionParameter $parameter, ServerRequest $request): bool
     {
         $type = $parameter->getType();
+        if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
+            return false;
+        }
+        $typeName = $type->getName();
 
-        return $type instanceof ReflectionNamedType && $type->getName() === ServerRequest::class;
+        return $request instanceof $typeName;
     }
 
     /**

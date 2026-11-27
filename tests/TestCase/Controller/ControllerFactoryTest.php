@@ -27,6 +27,7 @@ use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Controller\OvensController;
+use Psr\Http\Message\RequestInterface;
 use stdClass;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
@@ -34,6 +35,7 @@ use TestApp\Controller\CakesController;
 use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
 use TestApp\Controller\OptionalRequestController;
+use TestApp\Controller\RequestInterfaceController;
 use TestApp\Controller\VariadicPluginsController;
 use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
@@ -258,6 +260,19 @@ class ControllerFactoryTest extends TestCase
         $this->assertInstanceOf(OptionalRequestController::class, $controller);
         $this->assertSame($request, $controller->getRequest());
         $this->assertNull($controller->originalRequest);
+    }
+
+    public function testCreatePassesRequestToInterfaceTypedParameters(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'RequestInterface'
+            ]
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(RequestInterfaceController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
     }
 
     public function testSlashedControllerFailure(): void
