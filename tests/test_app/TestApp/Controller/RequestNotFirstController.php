@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace TestApp\Controller;
 
@@ -10,7 +11,8 @@ use TestApp\ReflectionDependency;
  * Controller fixture whose request parameter is not the first one,
  * to verify the request is bound by type regardless of its position.
  */
-class RequestNotFirstController extends Controller {
+class RequestNotFirstController extends Controller
+{
     /**
      * @param \TestApp\ReflectionDependency $dependency Dependency resolved from the container.
      * @param \Cake\Http\ServerRequest $request The active request.
