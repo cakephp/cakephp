@@ -23,6 +23,7 @@ use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
+use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Controller\OvensController;
@@ -32,6 +33,7 @@ use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
 use TestApp\Controller\CakesController;
 use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
+use TestApp\Controller\OptionalRequestController;
 use TestApp\Controller\VariadicPluginsController;
 use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
@@ -189,7 +191,7 @@ class ControllerFactoryTest extends TestCase
     public function testAbstractClassFailure(): void
     {
         $this->expectException(MissingControllerException::class);
-        $this->expectExceptionMessage('Controller class `Abstract` could not be found.');
+        $this->expectExceptionMessageIsOrContains('Controller class `Abstract` could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
@@ -203,7 +205,7 @@ class ControllerFactoryTest extends TestCase
     public function testInterfaceFailure(): void
     {
         $this->expectException(MissingControllerException::class);
-        $this->expectExceptionMessage('Controller class `Interface` could not be found.');
+        $this->expectExceptionMessageIsOrContains('Controller class `Interface` could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -217,7 +219,7 @@ class ControllerFactoryTest extends TestCase
     public function testMissingClassFailure(): void
     {
         $this->expectException(MissingControllerException::class);
-        $this->expectExceptionMessage('Controller class `Invisible` could not be found.');
+        $this->expectExceptionMessageIsOrContains('Controller class `Invisible` could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -242,10 +244,26 @@ class ControllerFactoryTest extends TestCase
         $this->assertSame([], $controller->plugins);
     }
 
+    public function testCreateKeepDefaultsForAdditionalRequestParameters(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'OptionalRequest',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(OptionalRequestController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+        $this->assertNull($controller->originalRequest);
+    }
+
     public function testSlashedControllerFailure(): void
     {
         $this->expectException(MissingControllerException::class);
-        $this->expectExceptionMessage('Controller class `Admin/Posts` could not be found.');
+        $this->expectExceptionMessageIsOrContains('Controller class `Admin/Posts` could not be found.');
         $request = new ServerRequest([
             'url' => 'admin/posts/index',
             'params' => [
@@ -259,7 +277,7 @@ class ControllerFactoryTest extends TestCase
     public function testAbsoluteReferenceFailure(): void
     {
         $this->expectException(MissingControllerException::class);
-        $this->expectExceptionMessage('Controller class `TestApp\Controller\CakesController` could not be found.');
+        $this->expectExceptionMessageIsOrContains('Controller class `TestApp\Controller\CakesController` could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
