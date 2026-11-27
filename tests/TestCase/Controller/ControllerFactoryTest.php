@@ -23,11 +23,9 @@ use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
-use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\Controller\OvensController;
-use Psr\Http\Message\RequestInterface;
 use stdClass;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
@@ -36,6 +34,7 @@ use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
 use TestApp\Controller\OptionalRequestController;
 use TestApp\Controller\RequestInterfaceController;
+use TestApp\Controller\UntypedRequestController;
 use TestApp\Controller\VariadicPluginsController;
 use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
@@ -266,12 +265,25 @@ class ControllerFactoryTest extends TestCase
     {
         $request = new ServerRequest([
             'params' => [
-                'controller' => 'RequestInterface'
-            ]
+                'controller' => 'RequestInterface',
+            ],
         ]);
         $controller = $this->factory->create($request);
 
         $this->assertInstanceOf(RequestInterfaceController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function testCreatePassesRequestToUntypedFirstParameter(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'UntypedRequest',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(UntypedRequestController::class, $controller);
         $this->assertSame($request, $controller->getRequest());
     }
 

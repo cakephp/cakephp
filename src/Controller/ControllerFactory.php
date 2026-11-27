@@ -64,6 +64,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
      * @return object|string
      * @throws \Cake\Http\Exception\MissingControllerException
+     * @throws \ReflectionException
      */
     public function create(ServerRequestInterface $request): object|string
     {
@@ -116,6 +117,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Check whether a constructor parameter can receive the active request.
      *
+     * Typed parameters accept the request in any position when the request satisfies
+     * their type. Untyped parameters only accept it in the first position, mirroring
+     * the previous positional `newInstance($request)` call.
+     *
      * @param \ReflectionParameter $parameter The constructor parameter.
      * @param \Cake\Http\ServerRequest $request Server request
      * @return bool
@@ -123,6 +128,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     private function acceptRequest(ReflectionParameter $parameter, ServerRequest $request): bool
     {
         $type = $parameter->getType();
+        if ($type === null) {
+            return $parameter->getPosition() === 0;
+        }
         if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
             return false;
         }
