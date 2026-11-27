@@ -319,10 +319,10 @@ HTML;
         $result = $this->message->setHeaders([]);
         $this->assertInstanceOf(Message::class, $result);
 
-        $this->message->setHeaders(['x-test' => ['foo']]);
-        $this->message->addHeaders(['x-test' => ['bar']]);
+        $this->message->setHeaders(['test-multi' => ['foo']]);
+        $this->message->addHeaders(['test-multi' => ['bar']]);
         $result = $this->message->getHeaders();
-        $this->assertEquals(['foo', 'bar'], $result['x-test']);
+        $this->assertEquals(['foo', 'bar'], $result['test-multi']);
     }
 
     /**
