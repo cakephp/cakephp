@@ -95,7 +95,10 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
         $arguments = [];
         foreach ($constructor->getParameters() as $parameter) {
-            $value =  $this->resolveConstructorArgument($parameter, $request, $components);
+            if ($parameter->isVariadic()) {
+                break;
+            }
+            $value = $this->resolveConstructorArgument($parameter, $request, $components);
             if ($value !== null) {
                 $arguments[$parameter->getName()] = $value;
             }

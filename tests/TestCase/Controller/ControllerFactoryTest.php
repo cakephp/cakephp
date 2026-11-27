@@ -32,6 +32,7 @@ use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
 use TestApp\Controller\CakesController;
 use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
+use TestApp\Controller\VariadicPluginsController;
 use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
@@ -225,6 +226,20 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $this->factory->create($request);
+    }
+
+    public function testCreateLeavesVariadicParametersEmpty(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'VariadicPlugins',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertInstanceOf(VariadicPluginsController::class, $controller);
+        $this->assertSame([], $controller->plugins);
     }
 
     public function testSlashedControllerFailure(): void
