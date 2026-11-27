@@ -846,6 +846,7 @@ class Message implements JsonSerializable
      */
     public function setHeaders(array $headers)
     {
+        $this->validateHeaderKeys($headers);
         $this->headers = $headers;
 
         return $this;
@@ -859,9 +860,26 @@ class Message implements JsonSerializable
      */
     public function addHeaders(array $headers)
     {
+        $this->validateHeaderKeys($headers);
         $this->headers = Hash::merge($this->headers, $headers);
 
         return $this;
+    }
+
+    /**
+     * Validate that all the header keys don't contain characters that could
+     * be used to inject headers.
+     *
+     * @param array<string, mixed> $headers The map of headers.
+     * @return void
+     */
+    private function validateHeaderKeys(array $headers): void
+    {
+        foreach (array_keys($headers) as $key) {
+            if (!preg_match('/^[A-Za-z][A-Za-z0-9-_]+$/', $key)) {
+                throw new InvalidArgumentException("The key `{$key}` is not a valid header key.");
+            }
+        }
     }
 
     /**

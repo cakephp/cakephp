@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client;
 
 use Cake\Utility\Xml;
+use InvalidArgumentException;
 use Laminas\Diactoros\RequestTrait;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\RequestInterface;
@@ -71,6 +72,9 @@ class Request extends Message implements RequestInterface
     {
         foreach ($headers as $key => $val) {
             $normalized = strtolower($key);
+            if (!preg_match('/^[A-Za-z][A-Za-z0-9-_:]+$/', $key)) {
+                throw new InvalidArgumentException("The key `{$key}` is not a valid header key.");
+            }
             $this->headers[$key] = array_map(
                 fn(string $item): string => str_replace(["\r", "\n"], '', $item),
                 (array)$val,

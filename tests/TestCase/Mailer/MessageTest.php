@@ -319,10 +319,10 @@ HTML;
         $result = $this->message->setHeaders([]);
         $this->assertInstanceOf(Message::class, $result);
 
-        $this->message->setHeaders(['o:tag' => ['foo']]);
-        $this->message->addHeaders(['o:tag' => ['bar']]);
+        $this->message->setHeaders(['x-test' => ['foo']]);
+        $this->message->addHeaders(['x-test' => ['bar']]);
         $result = $this->message->getHeaders();
-        $this->assertEquals(['foo', 'bar'], $result['o:tag']);
+        $this->assertEquals(['foo', 'bar'], $result['x-test']);
     }
 
     /**
@@ -342,6 +342,28 @@ HTML;
             'Content-Transfer-Encoding: 8bit',
         ];
         $this->assertSame(implode("\r\n", $expected), $this->message->getHeadersString());
+    }
+
+    public static function invalidKeyProvider(): array
+    {
+        return [
+            ["part-\ntwo"],
+            ["part-\rtwo"],
+            ["part-\r\ntwo"],
+            ["part-\ttwo"],
+            ['part two'],
+        ];
+    }
+
+    /**
+     * test that header keys cannot contain newlines.
+     */
+    #[DataProvider('invalidKeyProvider')]
+    public function testHeadersStringInvalidKey(string $invalid): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageIsOrContains($invalid . '` is not a valid header key');
+        $this->message->setHeaders([$invalid => 'nice']);
     }
 
     /**
