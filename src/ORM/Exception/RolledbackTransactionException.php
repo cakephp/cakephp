@@ -24,6 +24,7 @@ class RolledbackTransactionException extends CakeException
     /**
      * @var string
      */
-    protected string $messageTemplate = 'The afterSave event in `%s` is aborting the transaction'
-        . ' before the save process is done.';
+    protected string $messageTemplate =
+        'The afterSave event in `%s` is aborting the transaction'
+            . ' before the save process is done.';
 }

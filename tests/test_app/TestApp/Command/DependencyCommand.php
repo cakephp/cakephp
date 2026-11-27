@@ -10,8 +10,7 @@ class DependencyCommand extends Command
 {
     public function __construct(
         public stdClass $inject,
-    ) {
-    }
+    ) {}
 
     public function execute(): int
     {

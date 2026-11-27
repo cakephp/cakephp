@@ -9,7 +9,5 @@ use TestApp\Attribute\Resolver\TestAttributeWithoutConstructor;
 class TestClassWithNoConstructorAttribute
 {
     #[TestAttributeWithoutConstructor]
-    public function methodWithAttribute(): void
-    {
-    }
+    public function methodWithAttribute(): void {}
 }

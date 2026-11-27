@@ -115,10 +115,10 @@ class PluginUnloadCommand extends Command
         $parser->setDescription(
             static::getDescription(),
         )
-        ->addArgument('plugin', [
-            'help' => 'Name of the plugin to unload.',
-            'required' => true,
-        ]);
+            ->addArgument('plugin', [
+                'help' => 'Name of the plugin to unload.',
+                'required' => true,
+            ]);
 
         return $parser;
     }

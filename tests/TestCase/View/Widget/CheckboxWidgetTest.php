@@ -309,7 +309,6 @@ class CheckboxWidgetTest extends TestCase
             'class' => 'my-class',
             'data-ref' => 'custom-attr',
             'value' => 1,
-
         ], $this->context);
 
         $expected = [

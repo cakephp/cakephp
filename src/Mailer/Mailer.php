@@ -380,7 +380,9 @@ class Mailer implements EventListenerInterface
         }
 
         $viewBuilderMethods = [
-            'template', 'layout', 'theme',
+            'template',
+            'layout',
+            'theme',
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
@@ -449,7 +451,7 @@ class Mailer implements EventListenerInterface
         if ($this->transport === null) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
-                . 'You must set on using setTransport() or set `transport` option in your mailer profile.',
+                    . 'You must set on using setTransport() or set `transport` option in your mailer profile.',
             );
         }
 

@@ -112,7 +112,9 @@ class ConsoleInputOptionTest extends TestCase
     public function testSetDefaultAndPrompt(): void
     {
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('You cannot set both `prompt` and `default` options. Use either a static `default` or interactive `prompt`');
+        $this->expectExceptionMessage(
+            'You cannot set both `prompt` and `default` options. Use either a static `default` or interactive `prompt`',
+        );
         new ConsoleInputOption('color', '', '', false, 'red', [], false, false, 'color ?');
     }
 
@@ -269,8 +271,12 @@ class ConsoleInputOptionTest extends TestCase
      * @param string $value
      */
     #[DataProvider('dataValidateChoiceSeparatorSuccess')]
-    public function testValidateChoiceSeparatorSuccess(array $choices, ?string $separator, bool $isBoolean, string $value): void
-    {
+    public function testValidateChoiceSeparatorSuccess(
+        array $choices,
+        ?string $separator,
+        bool $isBoolean,
+        string $value,
+    ): void {
         $this->expectNotToPerformAssertions();
 
         $input = new ConsoleInputOption(
@@ -307,8 +313,12 @@ class ConsoleInputOptionTest extends TestCase
      * @param string $value
      */
     #[DataProvider('dataValidateChoiceSeparatorFail')]
-    public function testValidateChoiceSeparatorFail(array $choices, ?string $separator, bool $isBoolean, string $value): void
-    {
+    public function testValidateChoiceSeparatorFail(
+        array $choices,
+        ?string $separator,
+        bool $isBoolean,
+        string $value,
+    ): void {
         $input = new ConsoleInputOption(
             'colors',
             '',
@@ -345,10 +355,10 @@ class ConsoleInputOptionTest extends TestCase
         $xml = $input->xml($parent);
 
         $expected = <<<XML
-<?xml version="1.0"?>
-<options><option name="--colors" short="-c" help="flower colors" boolean="0" required="1"><default>red</default><choices><choice>red</choice><choice>blue</choice></choices></option></options>
+            <?xml version="1.0"?>
+            <options><option name="--colors" short="-c" help="flower colors" boolean="0" required="1"><default>red</default><choices><choice>red</choice><choice>blue</choice></choices></option></options>
 
-XML;
+            XML;
 
         $this->assertEquals($expected, (string)$xml->asXML());
     }
@@ -369,10 +379,10 @@ XML;
         $xml = $input->xml($parent);
 
         $expected = <<<XML
-<?xml version="1.0"?>
-<options><option name="--verbose" short="" help="" boolean="1" required="0"><default>true</default><choices/></option></options>
+            <?xml version="1.0"?>
+            <options><option name="--verbose" short="" help="" boolean="1" required="0"><default>true</default><choices/></option></options>
 
-XML;
+            XML;
 
         $this->assertEquals($expected, (string)$xml->asXML());
     }
@@ -393,10 +403,10 @@ XML;
         $xml = $input->xml($parent);
 
         $expected = <<<XML
-<?xml version="1.0"?>
-<options><option name="--verbose" short="" help="" boolean="1" required="0"><default>false</default><choices/></option></options>
+            <?xml version="1.0"?>
+            <options><option name="--verbose" short="" help="" boolean="1" required="0"><default>false</default><choices/></option></options>
 
-XML;
+            XML;
 
         $this->assertEquals($expected, (string)$xml->asXML());
     }

@@ -33,8 +33,7 @@ class Package
         protected string $formatter = 'default',
         protected ?string $fallback = null,
         protected array $messages = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the messages for this package.

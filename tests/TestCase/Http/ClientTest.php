@@ -319,10 +319,14 @@ class ClientTest extends TestCase
             ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
-        $result = $http->get('http://cakephp.org/test.html', [], [
-            'headers' => $headers,
-            'cookies' => $cookies,
-        ]);
+        $result = $http->get(
+            'http://cakephp.org/test.html',
+            [],
+            [
+                'headers' => $headers,
+                'cookies' => $cookies,
+            ],
+        );
         $this->assertSame($result, $response);
     }
 
@@ -345,9 +349,13 @@ class ClientTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $http = new Client(['adapter' => Mockery::mock(Stream::class)]);
-        $http->get('http://cakephp.org/test.html', [], [
-            'headers' => ['X-inject' => $value],
-        ]);
+        $http->get(
+            'http://cakephp.org/test.html',
+            [],
+            [
+                'headers' => ['X-inject' => $value],
+            ],
+        );
     }
 
     /**
@@ -487,9 +495,13 @@ class ClientTest extends TestCase
             'host' => 'cakephp.org',
             'adapter' => $mock,
         ]);
-        $http->get('/', [], [
-            'auth' => ['type' => 'horribly broken'],
-        ]);
+        $http->get(
+            '/',
+            [],
+            [
+                'auth' => ['type' => 'horribly broken'],
+            ],
+        );
     }
 
     /**
@@ -520,10 +532,14 @@ class ClientTest extends TestCase
             'host' => 'cakephp.org',
             'adapter' => $mock,
         ]);
-        $result = $http->get('/', [], [
-            'auth' => ['username' => 'mark', 'password' => 'secret'],
-            'proxy' => ['username' => 'mark', 'password' => 'pass'],
-        ]);
+        $result = $http->get(
+            '/',
+            [],
+            [
+                'auth' => ['username' => 'mark', 'password' => 'secret'],
+                'proxy' => ['username' => 'mark', 'password' => 'pass'],
+            ],
+        );
         $this->assertSame($result, $response);
     }
 
@@ -860,10 +876,15 @@ class ClientTest extends TestCase
     public function testRedirectsResolveAgainstRequestUri(string $location, string $expected): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
-            new Response(['HTTP/1.1 302 Found', 'Location: ' . $location]),
-        ]);
-        $adapter->shouldReceive('send')->once()->ordered()
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
+            ->andReturn([
+                new Response(['HTTP/1.1 302 Found', 'Location: ' . $location]),
+            ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
             ->withArgs(function (RequestInterface $request, array $options) use ($expected): bool {
                 $this->assertSame($expected, (string)$request->getUri());
 
@@ -878,9 +899,11 @@ class ClientTest extends TestCase
     public function testRedirectRejectsInvalidUri(): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->andReturn([
-            new Response(['HTTP/1.1 302 Found', 'Location: http://[invalid]/']),
-        ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->andReturn([
+                new Response(['HTTP/1.1 302 Found', 'Location: http://[invalid]/']),
+            ]);
         $client = new Client(['adapter' => $adapter]);
 
         $this->expectException(InvalidArgumentException::class);
@@ -1036,11 +1059,15 @@ class ClientTest extends TestCase
         $client->addCookie(Cookie::create('second-domain', 'not-cake', ['domain' => 'notcakephp.org']));
         $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
 
-        $result = $client->get($url, [], [
-            'headers' => ['Authorization' => 'Bearer abc123'],
-            'cookies' => ['sessionid' => 'cakephp-session'],
-            'redirect' => 2,
-        ]);
+        $result = $client->get(
+            $url,
+            [],
+            [
+                'headers' => ['Authorization' => 'Bearer abc123'],
+                'cookies' => ['sessionid' => 'cakephp-session'],
+                'redirect' => 2,
+            ],
+        );
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($result->isOk());
@@ -1112,11 +1139,15 @@ class ClientTest extends TestCase
         $client->addCookie(Cookie::create('secure', 'secure-cake', ['secure' => true, 'domain' => 'cakephp.org']));
         $client->addCookie(Cookie::create('match-cake', '1', ['domain' => 'cakephp.org']));
 
-        $result = $client->get($url, [], [
-            'headers' => ['Authorization' => 'Bearer abc123'],
-            'cookies' => ['sessionid' => 'cakephp-session'],
-            'redirect' => 2,
-        ]);
+        $result = $client->get(
+            $url,
+            [],
+            [
+                'headers' => ['Authorization' => 'Bearer abc123'],
+                'cookies' => ['sessionid' => 'cakephp-session'],
+                'redirect' => 2,
+            ],
+        );
 
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($result->isOk());
@@ -1169,7 +1200,12 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
+            function (
+                ClientEvent $event,
+                Request $request,
+                array $adapterOptions,
+                int $redirects,
+            ) use (&$eventTriggered): void {
                 $eventTriggered = true;
             },
         );
@@ -1359,9 +1395,11 @@ class ClientTest extends TestCase
     public function testRedirectRejectsUnsupportedScheme(string $url): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->andReturn([
-            new Response(['HTTP/1.1 302 Found', 'Location: ' . $url]),
-        ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->andReturn([
+                new Response(['HTTP/1.1 302 Found', 'Location: ' . $url]),
+            ]);
         $client = new Client(['adapter' => $adapter]);
 
         $this->expectException(InvalidArgumentException::class);
@@ -1626,22 +1664,31 @@ class ClientTest extends TestCase
     public function testIdnRedirectPreservesSameOriginCredentials(): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
-            new Response(['HTTP/1.1 302 Found', 'Location: /next']),
-        ]);
-        $adapter->shouldReceive('send')->once()->ordered()
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
+            ->andReturn([
+                new Response(['HTTP/1.1 302 Found', 'Location: /next']),
+            ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
             ->withArgs(function (RequestInterface $request, array $options): bool {
                 $this->assertSame('https://xn--bcher-kva.example/next', (string)$request->getUri());
                 $this->assertSame('Bearer secret', $request->getHeaderLine('Authorization'));
                 $this->assertSame('session=secret', $request->getHeaderLine('Cookie'));
 
                 return true;
-            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+            })
+            ->andReturn([new Response(['HTTP/1.1 200 OK'])]);
         $client = new Client(['adapter' => $adapter]);
-        $client->send(new Request('https://xn--bcher-kva.example/start', 'GET', [
-            'Authorization' => 'Bearer secret',
-            'Cookie' => 'session=secret',
-        ]), ['redirect' => 1]);
+        $client->send(
+            new Request('https://xn--bcher-kva.example/start', 'GET', [
+                'Authorization' => 'Bearer secret',
+                'Cookie' => 'session=secret',
+            ]),
+            ['redirect' => 1],
+        );
     }
 
     public static function requestBodyAdapters(): array
@@ -1687,13 +1734,20 @@ class ClientTest extends TestCase
         return [
             'sibling path' => ['https://example.com/api/*', 'https://example.com/api/item', 'https://example.com/api2'],
             'sibling domain' => ['https://example.com/*', 'https://example.com/item', 'https://example.com.evil/'],
-            'encoded wildcard' => ['https://example.com/api/%2A', 'https://example.com/api/item', 'https://example.com/api2'],
+            'encoded wildcard' => [
+                'https://example.com/api/%2A',
+                'https://example.com/api/item',
+                'https://example.com/api2',
+            ],
         ];
     }
 
     #[DataProvider('mockWildcardBoundaries')]
-    public function testMockWildcardDoesNotMatchSiblingPathsOrDomains(string $pattern, string $match, string $miss): void
-    {
+    public function testMockWildcardDoesNotMatchSiblingPathsOrDomains(
+        string $pattern,
+        string $match,
+        string $miss,
+    ): void {
         $adapter = new Mock();
         $response = new Response(['HTTP/1.1 200 OK']);
         $adapter->addResponse(new Request($pattern), $response, []);
@@ -1716,16 +1770,22 @@ class ClientTest extends TestCase
     public function testIdnRedirectRetainsResponseCookies(string $url, string $cookie): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
-            new Response(['HTTP/1.1 302 Found', 'Location: /next', 'Set-Cookie: ' . $cookie]),
-        ]);
-        $adapter->shouldReceive('send')->once()->ordered()
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
+            ->andReturn([
+                new Response(['HTTP/1.1 302 Found', 'Location: /next', 'Set-Cookie: ' . $cookie]),
+            ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
             ->withArgs(function (RequestInterface $request, array $options): bool {
                 $this->assertSame('session=abc', $request->getHeaderLine('Cookie'));
                 $this->assertSame('https://xn--bcher-kva.example/next', (string)$request->getUri());
 
                 return true;
-            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+            })
+            ->andReturn([new Response(['HTTP/1.1 200 OK'])]);
         new Client(['adapter' => $adapter])->send(new Request($url), ['redirect' => 1]);
     }
 
@@ -1738,10 +1798,15 @@ class ClientTest extends TestCase
     public function testRedirectMethodAndBodySemantics(int $status, string $method, string $body): void
     {
         $adapter = Mockery::mock(Stream::class);
-        $adapter->shouldReceive('send')->once()->ordered()->andReturn([
-            new Response(['HTTP/1.1 ' . $status . ' Redirect', 'Location: /next']),
-        ]);
-        $adapter->shouldReceive('send')->once()->ordered()
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
+            ->andReturn([
+                new Response(['HTTP/1.1 ' . $status . ' Redirect', 'Location: /next']),
+            ]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->ordered()
             ->withArgs(function (RequestInterface $request, array $options) use ($method, $body, $status): bool {
                 $this->assertSame($method, $request->getMethod());
                 $this->assertSame($body, (string)$request->getBody());
@@ -1749,9 +1814,19 @@ class ClientTest extends TestCase
                 $this->assertSame($status !== 303, $request->hasHeader('Content-Length'));
 
                 return true;
-            })->andReturn([new Response(['HTTP/1.1 200 OK'])]);
-        new Client(['adapter' => $adapter])->send(new Request('https://example.com/start', 'POST', [
-            'Content-Type' => 'text/plain', 'Content-Length' => '7',
-        ], 'payload'), ['redirect' => 1]);
+            })
+            ->andReturn([new Response(['HTTP/1.1 200 OK'])]);
+        new Client(['adapter' => $adapter])->send(
+            new Request(
+                'https://example.com/start',
+                'POST',
+                [
+                    'Content-Type' => 'text/plain',
+                    'Content-Length' => '7',
+                ],
+                'payload',
+            ),
+            ['redirect' => 1],
+        );
     }
 }

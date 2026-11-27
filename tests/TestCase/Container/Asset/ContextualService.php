@@ -9,6 +9,5 @@ class ContextualService
         #[ContextualValueAttribute('resolved-value')]
         public readonly string $injected,
         public readonly Bar $dependency,
-    ) {
-    }
+    ) {}
 }

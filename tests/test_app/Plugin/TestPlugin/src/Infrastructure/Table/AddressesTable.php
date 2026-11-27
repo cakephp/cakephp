@@ -19,6 +19,4 @@ use Cake\ORM\Table;
 /**
  * Addresses table class
  */
-class AddressesTable extends Table
-{
-}
+class AddressesTable extends Table {}

@@ -458,8 +458,7 @@ class RateLimitMiddleware implements MiddlewareInterface
      */
     protected function addRateLimitHeaders(ResponseInterface $response, array $result): ResponseInterface
     {
-        return $response
-            ->withHeader('X-RateLimit-Limit', (string)$result['limit'])
+        return $response->withHeader('X-RateLimit-Limit', (string)$result['limit'])
             ->withHeader('X-RateLimit-Remaining', (string)$result['remaining'])
             ->withHeader('X-RateLimit-Reset', (string)$result['reset'])
             ->withHeader('X-RateLimit-Reset-Date', date('c', $result['reset']));

@@ -257,10 +257,10 @@ class ConsoleInputArgumentTest extends TestCase
         $xml = $input->xml($parent);
 
         $expected = <<<XML
-<?xml version="1.0"?>
-<options><argument name="colors" help="flower colors" required="1" separator="," default="red"><choices><choice>red</choice><choice>blue</choice></choices></argument></options>
+            <?xml version="1.0"?>
+            <options><argument name="colors" help="flower colors" required="1" separator="," default="red"><choices><choice>red</choice><choice>blue</choice></choices></argument></options>
 
-XML;
+            XML;
 
         $this->assertEquals($expected, (string)$xml->asXML());
     }

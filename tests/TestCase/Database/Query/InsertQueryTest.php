@@ -114,8 +114,8 @@ class InsertQueryTest extends TestCase
 
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+            'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?'
+                . 'VALUES \(:c0\)',
             $result,
             !$this->autoQuote,
         );
@@ -135,8 +135,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?'
+                . 'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote,
         );
@@ -174,8 +174,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0\)',
+            'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?'
+                . 'VALUES \(:c0\)',
             $result,
             !$this->autoQuote,
         );
@@ -195,8 +195,8 @@ class InsertQueryTest extends TestCase
             ]);
         $result = $query->sql();
         $this->assertQuotedQuery(
-            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
-            'VALUES \(:c0, :c1\)',
+            'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?'
+                . 'VALUES \(:c0, :c1\)',
             $result,
             !$this->autoQuote,
         );
@@ -277,8 +277,8 @@ class InsertQueryTest extends TestCase
             ['title', 'body', 'author_id'],
             ['title' => 'string', 'body' => 'string', 'author_id' => 'integer'],
         )
-        ->into('articles')
-        ->values($select);
+            ->into('articles')
+            ->values($select);
 
         $result = $query->sql();
         $this->assertQuotedQuery(
@@ -414,8 +414,7 @@ class InsertQueryTest extends TestCase
     public function testInsertModifiers(): void
     {
         $query = new InsertQuery($this->connection);
-        $result = $query
-            ->insert(['title'])
+        $result = $query->insert(['title'])
             ->into('articles')
             ->values(['title' => 'foo'])
             ->modifier('IGNORE');
@@ -426,8 +425,7 @@ class InsertQueryTest extends TestCase
         );
 
         $query = new InsertQuery($this->connection);
-        $result = $query
-            ->insert(['title'])
+        $result = $query->insert(['title'])
             ->into('articles')
             ->values(['title' => 'foo'])
             ->modifier(['IGNORE', 'LOW_PRIORITY']);
@@ -441,8 +439,7 @@ class InsertQueryTest extends TestCase
     public function testCloneValuesExpression(): void
     {
         $query = new InsertQuery($this->connection);
-        $query
-            ->insert(['column'])
+        $query->insert(['column'])
             ->into('table')
             ->values(['column' => $query->expr('value')]);
 
@@ -461,8 +458,7 @@ class InsertQueryTest extends TestCase
     public function testAppendInsert(): void
     {
         $query = new InsertQuery($this->connection);
-        $sql = $query
-            ->insert(['id', 'title'])
+        $sql = $query->insert(['id', 'title'])
             ->into('articles')
             ->values([1, 'a title'])
             ->epilog('RETURNING id')

@@ -344,8 +344,8 @@ class Validation
     public static function comparison(mixed $check1, string $operator, mixed $check2): bool
     {
         if (
-            (!is_numeric($check1) || !is_numeric($check2)) &&
-            !in_array($operator, static::COMPARE_STRING, true)
+            (!is_numeric($check1) || !is_numeric($check2))
+            && !in_array($operator, static::COMPARE_STRING, true)
         ) {
             return false;
         }
@@ -481,25 +481,64 @@ class Validation
         // 4 digit leap year sub-pattern
         $fourDigitLeapYear = '(?:(?:(?:(?!0000)[012]\\d)(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))';
 
-        $regex['dmy'] = '%^(?:(?:31(\\/|-|\\.|\\x20)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)' .
-            $separator . '(?:0?[13-9]|1[0-2])\\2))' . $year . '$|^(?:29' .
-            $separator . '0?2\\3' . $leapYear . ')$|^(?:0?[1-9]|1\\d|2[0-8])' .
-            $separator . '(?:(?:0?[1-9])|(?:1[0-2]))\\4' . $year . '$%';
+        $regex['dmy'] =
+            '%^(?:(?:31(\\/|-|\\.|\\x20)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)'
+            . $separator
+            . '(?:0?[13-9]|1[0-2])\\2))'
+            . $year
+            . '$|^(?:29'
+            . $separator
+            . '0?2\\3'
+            . $leapYear
+            . ')$|^(?:0?[1-9]|1\\d|2[0-8])'
+            . $separator
+            . '(?:(?:0?[1-9])|(?:1[0-2]))\\4'
+            . $year
+            . '$%';
 
-        $regex['mdy'] = '%^(?:(?:(?:0?[13578]|1[02])(\\/|-|\\.|\\x20)31)\\1|(?:(?:0?[13-9]|1[0-2])' .
-            $separator . '(?:29|30)\\2))' . $year . '$|^(?:0?2' . $separator . '29\\3' . $leapYear . ')$|^(?:(?:0?[1-9])|(?:1[0-2]))' .
-            $separator . '(?:0?[1-9]|1\\d|2[0-8])\\4' . $year . '$%';
+        $regex['mdy'] =
+            '%^(?:(?:(?:0?[13578]|1[02])(\\/|-|\\.|\\x20)31)\\1|(?:(?:0?[13-9]|1[0-2])'
+            . $separator
+            . '(?:29|30)\\2))'
+            . $year
+            . '$|^(?:0?2'
+            . $separator
+            . '29\\3'
+            . $leapYear
+            . ')$|^(?:(?:0?[1-9])|(?:1[0-2]))'
+            . $separator
+            . '(?:0?[1-9]|1\\d|2[0-8])\\4'
+            . $year
+            . '$%';
 
-        $regex['ymd'] = '%^(?:(?:' . $leapYear .
-            $separator . '(?:0?2\\1(?:29)))|(?:' . $year .
-            $separator . '(?:(?:(?:0?[13578]|1[02])\\2(?:31))|(?:(?:0?[13-9]|1[0-2])\\2(29|30))|(?:(?:0?[1-9])|(?:1[0-2]))\\2(?:0?[1-9]|1\\d|2[0-8]))))$%';
+        $regex['ymd'] =
+            '%^(?:(?:'
+            . $leapYear
+            . $separator
+            . '(?:0?2\\1(?:29)))|(?:'
+            . $year
+            . $separator
+            . '(?:(?:(?:0?[13578]|1[02])\\2(?:31))|(?:(?:0?[13-9]|1[0-2])\\2(29|30))|(?:(?:0?[1-9])|(?:1[0-2]))\\2(?:0?[1-9]|1\\d|2[0-8]))))$%';
 
-        $regex['dMy'] = '/^((31(?!\\ (Feb(ruary)?|Apr(il)?|June?|(Sep(?=\\b|t)t?|Nov)(ember)?)))|((30|29)(?!\\ Feb(ruary)?))|(29(?=\\ Feb(ruary)?\\ ' . $fourDigitLeapYear . '))|(0?[1-9])|1\\d|2[0-8])\\ (Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)\\ ' . $fourDigitYear . '$/';
+        $regex['dMy'] =
+            '/^((31(?!\\ (Feb(ruary)?|Apr(il)?|June?|(Sep(?=\\b|t)t?|Nov)(ember)?)))|((30|29)(?!\\ Feb(ruary)?))|(29(?=\\ Feb(ruary)?\\ '
+            . $fourDigitLeapYear
+            . '))|(0?[1-9])|1\\d|2[0-8])\\ (Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)\\ '
+            . $fourDigitYear
+            . '$/';
 
-        $regex['Mdy'] = '/^(?:(((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)\\ 31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep)(tember)?|(Nov|Dec)(ember)?)\\ (0?[1-9]|([12]\\d)|30))|(Feb(ruary)?\\ (0?[1-9]|1\\d|2[0-8]|(29(?=,?\\ ' . $fourDigitLeapYear . ')))))\\,?\\ ' . $fourDigitYear . ')$/';
+        $regex['Mdy'] =
+            '/^(?:(((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)\\ 31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep)(tember)?|(Nov|Dec)(ember)?)\\ (0?[1-9]|([12]\\d)|30))|(Feb(ruary)?\\ (0?[1-9]|1\\d|2[0-8]|(29(?=,?\\ '
+            . $fourDigitLeapYear
+            . ')))))\\,?\\ '
+            . $fourDigitYear
+            . ')$/';
 
-        $regex['My'] = '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)' .
-            $separator . $fourDigitYear . '$%';
+        $regex['My'] =
+            '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)'
+            . $separator
+            . $fourDigitYear
+            . '$%';
         // phpcs:enable Generic.Files.LineLength
 
         $regex['my'] = '%^(' . $month . $separator . $year . ')$%';
@@ -844,7 +883,10 @@ class Validation
         }
 
         // phpcs:ignore Generic.Files.LineLength
-        $regex ??= '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$pattern['hostname'] . '$/ui';
+        $regex ??=
+            '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@'
+            . self::$pattern['hostname']
+            . '$/ui';
 
         $return = static::check($check, $regex);
         if ($deep === false || $deep === null) {
@@ -931,8 +973,8 @@ class Validation
     protected static function checkEnum(mixed $check, string $enumClassName, array $options = []): bool
     {
         if (
-            $check instanceof $enumClassName &&
-            $check instanceof BackedEnum
+            $check instanceof $enumClassName
+            && $check instanceof BackedEnum
         ) {
             return static::isValidEnum($check, $options);
         }
@@ -1339,11 +1381,26 @@ class Validation
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
         // phpcs:disable Generic.Files.LineLength
-        $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . ($strict ? '' : '?') .
-            '(?:' . static::$pattern['IPv4'] . '|\[' . static::$pattern['IPv6'] . '\]|' . static::$pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
-            '(?:\/' . $path . '*)?' .
-            '(?:\?' . $fragmentAndQuery . '*)?' .
-            '(?:#' . $fragmentAndQuery . '*)?$/iu';
+        $regex =
+            '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)'
+            . ($strict ? '' : '?')
+            . '(?:'
+            . static::$pattern['IPv4']
+            . '|\['
+            . static::$pattern['IPv6']
+            . '\]|'
+            . static::$pattern['hostname']
+            . ')(?::[1-9][0-9]{0,4})?'
+            . '(?:\/'
+            . $path
+            . '*)?'
+            . '(?:\?'
+            . $fragmentAndQuery
+            . '*)?'
+            . '(?:#'
+            . $fragmentAndQuery
+            . '*)?$/iu';
+
         // phpcs:enable Generic.Files.LineLength
 
         return static::check($check, $regex);
@@ -1579,7 +1636,7 @@ class Validation
      */
     public static function uploadedFile(mixed $file, array $options = []): bool
     {
-        if (!($file instanceof UploadedFileInterface)) {
+        if (!$file instanceof UploadedFileInterface) {
             return false;
         }
 
@@ -1903,8 +1960,8 @@ class Validation
     public static function iban(mixed $check): bool
     {
         if (
-            !is_string($check) ||
-            !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
+            !is_string($check)
+            || !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
         ) {
             return false;
         }
@@ -1941,11 +1998,11 @@ class Validation
     {
         $formatted = '';
         if (
-            isset($value['year'], $value['month'], $value['day']) &&
-            (
-                is_numeric($value['year']) &&
-                is_numeric($value['month']) &&
-                is_numeric($value['day'])
+            isset($value['year'], $value['month'], $value['day'])
+            && (
+                is_numeric($value['year'])
+                && is_numeric($value['month'])
+                && is_numeric($value['day'])
             )
         ) {
             $formatted .= sprintf('%d-%02d-%02d ', $value['year'], $value['month'], $value['day']);
@@ -1960,10 +2017,10 @@ class Validation
             }
             $value += ['minute' => 0, 'second' => 0, 'microsecond' => 0];
             if (
-                is_numeric($value['hour']) &&
-                is_numeric($value['minute']) &&
-                is_numeric($value['second']) &&
-                is_numeric($value['microsecond'])
+                is_numeric($value['hour'])
+                && is_numeric($value['minute'])
+                && is_numeric($value['second'])
+                && is_numeric($value['microsecond'])
             ) {
                 $formatted .= sprintf(
                     '%02d:%02d:%02d.%06d',
@@ -2008,6 +2065,7 @@ class Validation
             $pattern = '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])';
             static::$pattern['IPv4'] = $pattern;
         }
+
         // phpcs:enable Generic.Files.LineLength
     }
 

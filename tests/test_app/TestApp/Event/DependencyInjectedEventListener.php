@@ -10,9 +10,7 @@ class DependencyInjectedEventListener implements EventListenerInterface
 {
     public ?string $lastGreeting = null;
 
-    public function __construct(protected GreeterService $greeter)
-    {
-    }
+    public function __construct(protected GreeterService $greeter) {}
 
     public function implementedEvents(): array
     {

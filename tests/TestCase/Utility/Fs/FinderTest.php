@@ -115,8 +115,7 @@ class FinderTest extends TestCase
     public function testMultiplePaths(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->in(FsFixture::path('root/tests'))
             ->files();
 
@@ -131,8 +130,7 @@ class FinderTest extends TestCase
     public function testNamePattern(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->files();
 
@@ -149,8 +147,7 @@ class FinderTest extends TestCase
     public function testExclude(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->exclude('tests')
             ->exclude('webroot')
             ->files();
@@ -168,8 +165,7 @@ class FinderTest extends TestCase
     public function testDepth(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(3, DepthOperator::LESS_THAN)
             ->files();
 
@@ -182,8 +178,7 @@ class FinderTest extends TestCase
         $this->assertEquals(5, $count);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(1)
             ->files();
 
@@ -199,8 +194,7 @@ class FinderTest extends TestCase
     public function testPath(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->path('Controller')
             ->files();
 
@@ -216,8 +210,7 @@ class FinderTest extends TestCase
     public function testNotPath(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->notPath('Controller')
             ->files();
 
@@ -233,8 +226,7 @@ class FinderTest extends TestCase
     public function testIgnoreHiddenFiles(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->ignoreHiddenFiles(false)
             ->files();
 
@@ -249,8 +241,7 @@ class FinderTest extends TestCase
     public function testIgnoreHiddenFilesByDefault(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->files();
 
         $paths = [];
@@ -267,8 +258,7 @@ class FinderTest extends TestCase
     public function testChaining(): void
     {
         $finder = new Finder();
-        $result = $finder
-            ->in(FsFixture::path('root/src'))
+        $result = $finder->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->exclude('View')
             ->depth(3, DepthOperator::LESS_THAN);
@@ -279,8 +269,7 @@ class FinderTest extends TestCase
     public function testGlobPatternSimpleWildcard(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->name('*.css')
             ->files();
 
@@ -296,8 +285,7 @@ class FinderTest extends TestCase
     public function testGlobPatternRecursiveWildcard(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->files();
 
@@ -313,8 +301,7 @@ class FinderTest extends TestCase
     public function testGlobPatternWithPath(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('User*.php')
             ->files();
 
@@ -334,8 +321,7 @@ class FinderTest extends TestCase
         $finder = new Finder();
 
         // Test .js files
-        $jsFiles = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $jsFiles = $finder->in(FsFixture::path('root/webroot'))
             ->name('*.js')
             ->files();
 
@@ -348,8 +334,7 @@ class FinderTest extends TestCase
 
         // Test .css files
         $finder2 = new Finder();
-        $cssFiles = $finder2
-            ->in(FsFixture::path('root/webroot'))
+        $cssFiles = $finder2->in(FsFixture::path('root/webroot'))
             ->name('*.css')
             ->files();
 
@@ -364,8 +349,7 @@ class FinderTest extends TestCase
     public function testGlobPatternWithExclude(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->exclude('Controller')
             ->files();
@@ -383,8 +367,7 @@ class FinderTest extends TestCase
     public function testGlobPatternSpecificDirectory(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->path('Controller')
             ->name('*Controller.php')
             ->files();
@@ -402,8 +385,7 @@ class FinderTest extends TestCase
     public function testPatternMethod(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('src/**/*.php')
             ->files();
 
@@ -419,8 +401,7 @@ class FinderTest extends TestCase
     public function testPatternMethodControllers(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('src/Controller/*.php')
             ->files();
 
@@ -437,8 +418,7 @@ class FinderTest extends TestCase
     public function testPatternMethodMultiple(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('src/**/*Controller.php')
             ->files();
 
@@ -455,8 +435,7 @@ class FinderTest extends TestCase
     public function testPatternMethodCssFiles(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('webroot/**/*.css')
             ->files();
 
@@ -472,8 +451,7 @@ class FinderTest extends TestCase
     public function testPatternWithExclude(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('src/**/*.php')
             ->exclude('Controller')
             ->files();
@@ -491,8 +469,7 @@ class FinderTest extends TestCase
     public function testPatternWithDepth(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->pattern('**/*.php')
             ->depth(1)
             ->files();
@@ -511,8 +488,7 @@ class FinderTest extends TestCase
     public function testMultiplePatterns(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('**/*.css')
             ->pattern('**/*.js')
             ->files();
@@ -530,8 +506,7 @@ class FinderTest extends TestCase
     public function testComplexFiltering(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->path('Model')
             ->notPath('Entity')
@@ -551,8 +526,7 @@ class FinderTest extends TestCase
     public function testMultipleInPaths(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src/Controller'))
+        $files = $finder->in(FsFixture::path('root/src/Controller'))
             ->in(FsFixture::path('root/src/View'))
             ->name('*.php')
             ->files();
@@ -569,8 +543,7 @@ class FinderTest extends TestCase
     public function testPatternWithMultipleInPaths(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->in(FsFixture::path('root/tests'))
             ->pattern('**/*Controller*.php')
             ->files();
@@ -588,8 +561,7 @@ class FinderTest extends TestCase
     public function testNoMatches(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->pattern('**/*.nonexistent')
             ->files();
 
@@ -604,8 +576,7 @@ class FinderTest extends TestCase
     public function testNameAndPathCombination(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->name('User*.php')
             ->path('Table')
             ->files();
@@ -623,8 +594,7 @@ class FinderTest extends TestCase
     public function testDepthZero(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->depth(0)
             ->files();
 
@@ -640,8 +610,7 @@ class FinderTest extends TestCase
     public function testExcludeMultiple(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->name('*.php')
             ->exclude('tests')
             ->exclude('webroot')
@@ -663,8 +632,7 @@ class FinderTest extends TestCase
     public function testNotName(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*.php')
             ->notName('*Controller.php')
             ->files();
@@ -684,8 +652,7 @@ class FinderTest extends TestCase
     public function testNotNameMultiple(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->name('*.*')
             ->notName('*.php')
             ->notName('.htaccess')
@@ -705,8 +672,7 @@ class FinderTest extends TestCase
     public function testNameWithNotName(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('User*.php')
             ->notName('*Table.php')
             ->files();
@@ -726,8 +692,7 @@ class FinderTest extends TestCase
     public function testRecursiveFalse(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->recursive(false)
             ->files();
 
@@ -753,8 +718,7 @@ class FinderTest extends TestCase
         ]);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('test'))
+        $files = $finder->in(FsFixture::path('test'))
             ->recursive(false)
             ->files();
 
@@ -778,8 +742,7 @@ class FinderTest extends TestCase
         ]);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('test'))
+        $files = $finder->in(FsFixture::path('test'))
             ->recursive(false)
             ->name('*.php')
             ->files();
@@ -803,8 +766,7 @@ class FinderTest extends TestCase
         ]);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('test'))
+        $files = $finder->in(FsFixture::path('test'))
             ->recursive(false)
             ->files();
 
@@ -830,8 +792,7 @@ class FinderTest extends TestCase
         ]);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('test/dir1'))
+        $files = $finder->in(FsFixture::path('test/dir1'))
             ->in(FsFixture::path('test/dir2'))
             ->recursive(false)
             ->files();
@@ -871,8 +832,7 @@ class FinderTest extends TestCase
         FsFixture::setup('exclude_test', $structure);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('exclude_test/project'))
+        $files = $finder->in(FsFixture::path('exclude_test/project'))
             ->exclude('vendor')
             ->files();
 
@@ -917,8 +877,7 @@ class FinderTest extends TestCase
     public function testDirectoriesNonRecursive(): void
     {
         $finder = new Finder();
-        $directories = $finder
-            ->in(FsFixture::path('root/src'))
+        $directories = $finder->in(FsFixture::path('root/src'))
             ->recursive(false)
             ->directories();
 
@@ -941,8 +900,7 @@ class FinderTest extends TestCase
     public function testDirectoriesWithExclude(): void
     {
         $finder = new Finder();
-        $directories = $finder
-            ->in(FsFixture::path('root/src'))
+        $directories = $finder->in(FsFixture::path('root/src'))
             ->exclude('Model')
             ->directories();
 
@@ -963,8 +921,7 @@ class FinderTest extends TestCase
     public function testDirectoriesWithDepth(): void
     {
         $finder = new Finder();
-        $directories = $finder
-            ->in(FsFixture::path('root/src'))
+        $directories = $finder->in(FsFixture::path('root/src'))
             ->depth(0)
             ->directories();
 
@@ -983,8 +940,7 @@ class FinderTest extends TestCase
     public function testDirectoriesWithNamePattern(): void
     {
         $finder = new Finder();
-        $directories = $finder
-            ->in(FsFixture::path('root/tests'))
+        $directories = $finder->in(FsFixture::path('root/tests'))
             ->name('*Case')
             ->recursive(false)
             ->directories();
@@ -1002,8 +958,7 @@ class FinderTest extends TestCase
     public function testAllMode(): void
     {
         $finder = new Finder();
-        $items = $finder
-            ->in(FsFixture::path('root/src'))
+        $items = $finder->in(FsFixture::path('root/src'))
             ->depth(0)
             ->all();
 
@@ -1028,8 +983,7 @@ class FinderTest extends TestCase
     public function testAllModeRecursive(): void
     {
         $finder = new Finder();
-        $items = $finder
-            ->in(FsFixture::path('root/src/Model'))
+        $items = $finder->in(FsFixture::path('root/src/Model'))
             ->all();
 
         $files = [];
@@ -1053,8 +1007,7 @@ class FinderTest extends TestCase
     public function testRegexPathPattern(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->path('/Controller/')
             ->files();
 
@@ -1072,8 +1025,7 @@ class FinderTest extends TestCase
     public function testRegexPathPatternWithDelimiters(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->path('#Model/(Entity|Table)#')
             ->files();
 
@@ -1091,8 +1043,7 @@ class FinderTest extends TestCase
     public function testMultipleNamePatterns(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->name('*.css')
             ->name('*.js')
             ->files();
@@ -1111,8 +1062,7 @@ class FinderTest extends TestCase
     public function testDepthNotEqual(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::NOT_EQUAL)
             ->files();
 
@@ -1134,8 +1084,7 @@ class FinderTest extends TestCase
     public function testDepthGreaterThan(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::GREATER_THAN)
             ->files();
 
@@ -1156,8 +1105,7 @@ class FinderTest extends TestCase
     public function testDepthLessThanOrEqual(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(1, DepthOperator::LESS_THAN_OR_EQUAL)
             ->files();
 
@@ -1177,8 +1125,7 @@ class FinderTest extends TestCase
     public function testDepthGreaterThanOrEqual(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(1, DepthOperator::GREATER_THAN_OR_EQUAL)
             ->files();
 
@@ -1197,8 +1144,7 @@ class FinderTest extends TestCase
     public function testDepthRangeQuery(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->depth(0, DepthOperator::GREATER_THAN) // Greater than 0
             ->depth(2, DepthOperator::LESS_THAN) // Less than 2
             ->files();
@@ -1218,8 +1164,7 @@ class FinderTest extends TestCase
     public function testIgnoreHiddenFilesFalse(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->ignoreHiddenFiles(false)
             ->recursive(false)
             ->files();
@@ -1240,8 +1185,7 @@ class FinderTest extends TestCase
         FsFixture::create(['empty' => []], $this->root);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/empty'))
+        $files = $finder->in(FsFixture::path('root/empty'))
             ->files();
 
         $count = 0;
@@ -1256,8 +1200,7 @@ class FinderTest extends TestCase
     public function testConflictingNameFilters(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->notName('*Controller.php')
             ->files();
@@ -1274,8 +1217,7 @@ class FinderTest extends TestCase
     public function testMultiplePathPatternsOr(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->path('Controller')
             ->path('Entity')
             ->files();
@@ -1299,8 +1241,7 @@ class FinderTest extends TestCase
     public function testFilterSingleCallback(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->filter(function (SplFileInfo $file) {
                 // Only files with "Controller" in name
                 return str_contains($file->getFilename(), 'Controller');
@@ -1323,8 +1264,7 @@ class FinderTest extends TestCase
     public function testFilterMultipleCallbacks(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->filter(fn(SplFileInfo $file) => str_contains($file->getFilename(), 'User'))
             ->filter(fn(SplFileInfo $file) => !str_contains($file->getFilename(), 'Table'))
             ->files();
@@ -1347,8 +1287,7 @@ class FinderTest extends TestCase
     public function testFilterWithRelativePath(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->filter(function (SplFileInfo $file, string $relativePath) {
                 // Only files in src directory
                 return str_starts_with($relativePath, 'src');
@@ -1370,8 +1309,7 @@ class FinderTest extends TestCase
     public function testFilterWithOtherFilters(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->name('*Controller.php')
             ->filter(fn(SplFileInfo $file) => strlen($file->getFilename()) > 18)
             ->files();
@@ -1393,8 +1331,7 @@ class FinderTest extends TestCase
     public function testFilterNoMatches(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/src'))
+        $files = $finder->in(FsFixture::path('root/src'))
             ->filter(fn(SplFileInfo $file) => str_contains($file->getFilename(), 'NonExistent'))
             ->files();
 
@@ -1412,8 +1349,7 @@ class FinderTest extends TestCase
     public function testLinksAreNotFollowedByDefault(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->all();
 
         $filenames = [];
@@ -1427,8 +1363,7 @@ class FinderTest extends TestCase
         $this->assertNotContains('User.php', $filenames);
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->followLinks()
             ->followLinks(false)
             ->all();
@@ -1449,8 +1384,7 @@ class FinderTest extends TestCase
     public function testFollowLinks(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->followLinks()
             ->all();
 
@@ -1473,8 +1407,7 @@ class FinderTest extends TestCase
     public function testFollowLinksWithDepth(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root/webroot'))
+        $files = $finder->in(FsFixture::path('root/webroot'))
             ->followLinks()
             ->depth(1)
             ->all();
@@ -1498,8 +1431,7 @@ class FinderTest extends TestCase
     public function testFollowLinksDoesNotLoop(): void
     {
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->followLinks()
             ->all();
 
@@ -1513,8 +1445,7 @@ class FinderTest extends TestCase
         $this->assertCount(1, array_keys($filenames, 'webroot'));
 
         $finder = new Finder();
-        $files = $finder
-            ->in(FsFixture::path('root'))
+        $files = $finder->in(FsFixture::path('root'))
             ->followLinks()
             ->files();
 

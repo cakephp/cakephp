@@ -62,9 +62,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * @param \Cake\Container\ContainerInterface $container The container to add services to.
      * @return void
      */
-    public function bootstrap(ContainerInterface $container): void
-    {
-    }
+    public function bootstrap(ContainerInterface $container): void {}
 
     /**
      * Call the abstract services() method.

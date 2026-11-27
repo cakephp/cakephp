@@ -40,8 +40,7 @@ class CallbackStreamTest extends TestCase
 
     public function testClose(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $stream->close();
 
@@ -74,8 +73,7 @@ class CallbackStreamTest extends TestCase
 
     public function testEof(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
         $this->assertFalse($stream->eof());
 
         $stream->getContents();
@@ -84,16 +82,14 @@ class CallbackStreamTest extends TestCase
 
     public function testGetSize(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->assertNull($stream->getSize());
     }
 
     public function testTell(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->expectException(RuntimeException::class);
 
@@ -102,32 +98,28 @@ class CallbackStreamTest extends TestCase
 
     public function testIsSeekable(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->assertFalse($stream->isSeekable());
     }
 
     public function testIsWritable(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->assertFalse($stream->isWritable());
     }
 
     public function testIsReadable(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->assertFalse($stream->isReadable());
     }
 
     public function testSeek(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->expectException(RuntimeException::class);
 
@@ -136,8 +128,7 @@ class CallbackStreamTest extends TestCase
 
     public function testRewind(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->expectException(RuntimeException::class);
 
@@ -146,8 +137,7 @@ class CallbackStreamTest extends TestCase
 
     public function testWrite(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->expectException(RuntimeException::class);
 
@@ -156,8 +146,7 @@ class CallbackStreamTest extends TestCase
 
     public function testRead(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->expectException(RuntimeException::class);
 
@@ -198,17 +187,19 @@ class CallbackStreamTest extends TestCase
 
     public function testGetMetadata(): void
     {
-        $stream = new CallbackStream(function (): void {
-        });
+        $stream = new CallbackStream(function (): void {});
 
         $this->assertSame('callback', $stream->getMetadata('stream_type'));
         $this->assertFalse($stream->getMetadata('seekable'));
         $this->assertFalse($stream->getMetadata('eof'));
-        $this->assertSame([
-            'eof' => false,
-            'stream_type' => 'callback',
-            'seekable' => false,
-        ], $stream->getMetadata());
+        $this->assertSame(
+            [
+                'eof' => false,
+                'stream_type' => 'callback',
+                'seekable' => false,
+            ],
+            $stream->getMetadata(),
+        );
         $this->assertNull($stream->getMetadata('boo'));
 
         $stream->getContents();
@@ -238,12 +229,15 @@ class CallbackStreamTest extends TestCase
             'static-method' => [[$class, 'sampleStaticCallback'], $class . '::sampleStaticCallback'],
             'static-string' => [$class . '::sampleStaticCallback', $class . '::sampleStaticCallback'],
             'function-name' => ['phpversion', PHP_VERSION],
-            'invokable' => [new class {
-                public function __invoke(): string
-                {
-                    return 'invoked';
-                }
-            }, 'invoked'],
+            'invokable' => [
+                new class {
+                    public function __invoke(): string
+                    {
+                        return 'invoked';
+                    }
+                },
+                'invoked',
+            ],
         ];
     }
 

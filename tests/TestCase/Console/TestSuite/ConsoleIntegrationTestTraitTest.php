@@ -214,7 +214,9 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      */
     public function testCommandStringToArgs(): void
     {
-        $result = $this->commandStringToArgs('command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'');
+        $result = $this->commandStringToArgs(
+            'command --something=nothing --with-spaces="quote me on that" \'quoted \"arg\"\'',
+        );
         $expected = [
             'command',
             '--something=nothing',
@@ -258,15 +260,55 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     public static function assertionFailureMessagesProvider(): array
     {
         return [
-            'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
-            'assertExitCodeOutput' => ['assertExitCode', 'STDOUT.*Route name.*STDERR', 'routes', CommandInterface::CODE_ERROR],
+            'assertExitCode' => [
+                'assertExitCode',
+                'Failed asserting that `1` matches exit code `0`',
+                'routes',
+                CommandInterface::CODE_ERROR,
+            ],
+            'assertExitCodeOutput' => [
+                'assertExitCode',
+                'STDOUT.*Route name.*STDERR',
+                'routes',
+                CommandInterface::CODE_ERROR,
+            ],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
-            'assertOutputContains' => ['assertOutputContains', "Failed asserting that 'missing' is in output", 'routes', 'missing'],
-            'assertOutputNotContains' => ['assertOutputNotContains', "Failed asserting that 'controller' is not in output", 'routes', 'controller'],
-            'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'],
-            'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `.*` row was in output', 'routes', ['test', 'missing']],
-            'assertErrorContains' => ['assertErrorContains', "Failed asserting that 'test' is in error output", 'routes', 'test'],
-            'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
+            'assertOutputContains' => [
+                'assertOutputContains',
+                "Failed asserting that 'missing' is in output",
+                'routes',
+                'missing',
+            ],
+            'assertOutputNotContains' => [
+                'assertOutputNotContains',
+                "Failed asserting that 'controller' is not in output",
+                'routes',
+                'controller',
+            ],
+            'assertOutputRegExp' => [
+                'assertOutputRegExp',
+                'Failed asserting that `/missing/` PCRE pattern found in output',
+                'routes',
+                '/missing/',
+            ],
+            'assertOutputContainsRow' => [
+                'assertOutputContainsRow',
+                'Failed asserting that `.*` row was in output',
+                'routes',
+                ['test', 'missing'],
+            ],
+            'assertErrorContains' => [
+                'assertErrorContains',
+                "Failed asserting that 'test' is in error output",
+                'routes',
+                'test',
+            ],
+            'assertErrorRegExp' => [
+                'assertErrorRegExp',
+                'Failed asserting that `/test/` PCRE pattern found in error output',
+                'routes',
+                '/test/',
+            ],
         ];
     }
 
@@ -288,19 +330,19 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $line = __LINE__ - 5;
 
         $expected = <<<TEXT
-{$file} on {$line}
-########## debugOutput() ##########
-Exit Code
-0
+            {$file} on {$line}
+            ########## debugOutput() ##########
+            Exit Code
+            0
 
-STDOUT
-This is the main method called from SampleCommand
+            STDOUT
+            This is the main method called from SampleCommand
 
-STDERR
+            STDERR
 
-###################################
+            ###################################
 
-TEXT;
+            TEXT;
         $this->assertEquals($expected, str_replace("\r\n", "\n", $result));
     }
 }

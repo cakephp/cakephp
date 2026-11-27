@@ -46,7 +46,9 @@ class SessionTest extends TestCase
     public function testInvalidDefaultsNameException(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Invalid session defaults name `derp`. Valid values are: php, cake, cache, database.');
+        $this->expectExceptionMessage(
+            'Invalid session defaults name `derp`. Valid values are: php, cake, cache, database.',
+        );
 
         Session::create(['defaults' => 'derp']);
     }
@@ -60,19 +62,23 @@ class SessionTest extends TestCase
     {
         $_SESSION = null;
 
-        $this->deprecated(function (): void {
-            $config = [
-                'cookie' => 'test',
-                'checkAgent' => false,
-                'timeout' => 86400,
-                'ini' => [
-                    'session.referer_check' => 'example.com',
-                    'session.use_trans_sid' => false,
-                ],
-            ];
+        $this->deprecated(
+            function (): void {
+                $config = [
+                    'cookie' => 'test',
+                    'checkAgent' => false,
+                    'timeout' => 86400,
+                    'ini' => [
+                        'session.referer_check' => 'example.com',
+                        'session.use_trans_sid' => false,
+                    ],
+                ];
 
-            Session::create($config);
-        }, E_DEPRECATED, '8.4');
+                Session::create($config);
+            },
+            E_DEPRECATED,
+            '8.4',
+        );
 
         $this->assertSame('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
         $this->assertSame('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
@@ -654,18 +660,22 @@ class SessionTest extends TestCase
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
 
-        $this->deprecated(function (): void {
-            $session = new TestWebSession([
-                'ini' => [
-                    'session.use_cookies' => 1,
-                    'session.use_trans_sid' => 1,
-                ],
-            ]);
+        $this->deprecated(
+            function (): void {
+                $session = new TestWebSession([
+                    'ini' => [
+                        'session.use_cookies' => 1,
+                        'session.use_trans_sid' => 1,
+                    ],
+                ]);
 
-            $this->assertFalse($session->started());
-            $session->check('something');
-            $this->assertTrue($session->started());
-        }, E_DEPRECATED, '8.4');
+                $this->assertFalse($session->started());
+                $session->check('something');
+                $this->assertTrue($session->started());
+            },
+            E_DEPRECATED,
+            '8.4',
+        );
     }
 
     /**

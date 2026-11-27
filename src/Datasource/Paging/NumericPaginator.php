@@ -240,8 +240,11 @@ class NumericPaginator implements PaginatorInterface
 
         assert(
             $target instanceof RepositoryInterface,
-            'Pagination target must be an instance of `' . QueryInterface::class
-                . '` or `' . RepositoryInterface::class . '`.',
+            'Pagination target must be an instance of `'
+                . QueryInterface::class
+                . '` or `'
+                . RepositoryInterface::class
+                . '`.',
         );
 
         $data = $this->extractData($target, $params, $settings);
@@ -352,8 +355,10 @@ class NumericPaginator implements PaginatorInterface
         if ($extraSettings) {
             triggerWarning(
                 'Passing query options as paginator settings is no longer supported.'
-                . ' Use a custom finder through the `finder` config or pass a SelectQuery instance to paginate().'
-                . ' Extra keys found are: `' . implode('`, `', array_keys($extraSettings)) . '`.',
+                    . ' Use a custom finder through the `finder` config or pass a SelectQuery instance to paginate().'
+                    . ' Extra keys found are: `'
+                    . implode('`, `', array_keys($extraSettings))
+                    . '`.',
             );
         }
 
@@ -375,13 +380,14 @@ class NumericPaginator implements PaginatorInterface
      */
     protected function buildParams(array $data): array
     {
-        $this->pagingParams = [
-            'perPage' => $data['options']['limit'],
-            'requestedPage' => $data['options']['page'],
-            'alias' => $data['alias'],
-            'scope' => $data['options']['scope'],
-            'maxLimit' => $data['options']['maxLimit'],
-        ] + $this->pagingParams;
+        $this->pagingParams =
+            [
+                'perPage' => $data['options']['limit'],
+                'requestedPage' => $data['options']['page'],
+                'alias' => $data['alias'],
+                'scope' => $data['options']['scope'],
+                'maxLimit' => $data['options']['maxLimit'],
+            ] + $this->pagingParams;
 
         $this->addPageCountParams($data);
         $this->addStartEndParams($data);
@@ -456,7 +462,8 @@ class NumericPaginator implements PaginatorInterface
         if ($this->pagingParams['totalCount'] === null) {
             $this->pagingParams['hasNextPage'] = true;
         } else {
-            $this->pagingParams['hasNextPage'] = $this->pagingParams['totalCount']
+            $this->pagingParams['hasNextPage'] =
+                $this->pagingParams['totalCount']
                 > $this->pagingParams['currentPage'] * $this->pagingParams['perPage'];
         }
     }
@@ -484,13 +491,14 @@ class NumericPaginator implements PaginatorInterface
             $direction = isset($data['options']['sort']) && count($order) ? current($order) : null;
         }
 
-        $this->pagingParams = [
-            'sort' => $data['options']['sort'],
-            'direction' => $direction,
-            'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault,
-            'completeSort' => $order,
-        ] + $this->pagingParams;
+        $this->pagingParams =
+            [
+                'sort' => $data['options']['sort'],
+                'direction' => $direction,
+                'sortDefault' => $sortDefault,
+                'directionDefault' => $directionDefault,
+                'completeSort' => $order,
+            ] + $this->pagingParams;
     }
 
     /**
@@ -557,7 +565,7 @@ class NumericPaginator implements PaginatorInterface
      * also be sanitized. Lastly sort + direction keys will be converted into
      * the model friendly order key.
      *
-     /**
+     * /**
      * You can use the allowedParameters option to control which columns/fields are
      * available for sorting via URL parameters. This helps prevent users from ordering large
      * result sets on un-indexed values.
@@ -790,7 +798,7 @@ class NumericPaginator implements PaginatorInterface
             if (str_contains($key, '.')) {
                 [$alias, $field] = explode('.', $key);
             }
-            $correctAlias = ($tableAlias === $alias);
+            $correctAlias = $tableAlias === $alias;
 
             if ($correctAlias && $allowed) {
                 // Disambiguate fields in schema. As id is quite common.

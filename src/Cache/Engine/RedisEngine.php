@@ -166,6 +166,7 @@ class RedisEngine extends CacheEngine
             if (class_exists(Log::class)) {
                 Log::error('RedisEngine requires one or more nodes in cluster mode');
             }
+
             // @codeCoverageIgnoreEnd
 
             return false;
@@ -210,6 +211,7 @@ class RedisEngine extends CacheEngine
             if (class_exists(Log::class)) {
                 Log::error('RedisEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
             }
+
             // @codeCoverageIgnoreEnd
         }
 
@@ -372,7 +374,10 @@ class RedisEngine extends CacheEngine
         if ($duration === 0) {
             $success = $this->Redis->set($key, $value);
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-                'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+                'key' => $key,
+                'value' => $value,
+                'success' => $success,
+                'ttl' => $duration,
             ]);
 
             return $success;
@@ -380,7 +385,10 @@ class RedisEngine extends CacheEngine
 
         $success = $this->Redis->setEx($key, $duration, $value);
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;
@@ -444,7 +452,10 @@ class RedisEngine extends CacheEngine
 
         $this->eventClass = CacheAfterIncrementEvent::class;
         $this->dispatchEvent(CacheAfterIncrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $value !== false,
+            'value' => $value,
         ]);
         if ($duration > 0) {
             $this->Redis->expire($key, $duration);
@@ -471,7 +482,10 @@ class RedisEngine extends CacheEngine
 
         $this->eventClass = CacheAfterDecrementEvent::class;
         $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $value !== false,
+            'value' => $value,
         ]);
         if ($duration > 0) {
             $this->Redis->expire($key, $duration);
@@ -572,7 +586,7 @@ class RedisEngine extends CacheEngine
 
         foreach ($this->scanKeys($pattern) as $key) {
             // Blocking delete
-            $isDeleted = ((int)$this->Redis->del($key) > 0);
+            $isDeleted = (int)$this->Redis->del($key) > 0;
             $isAllDeleted = $isAllDeleted && $isDeleted;
         }
         $this->eventClass = CacheClearedEvent::class;
@@ -599,19 +613,27 @@ class RedisEngine extends CacheEngine
 
         $this->eventClass = CacheBeforeAddEvent::class;
         $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
-            'key' => $key, 'value' => $origValue, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $origValue,
+            'ttl' => $duration,
         ]);
 
         $this->eventClass = CacheAfterAddEvent::class;
         if ($this->Redis->set($key, $value, ['nx', 'ex' => $duration])) {
             $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-                'key' => $key, 'value' => $origValue, 'success' => true, 'ttl' => $duration,
+                'key' => $key,
+                'value' => $origValue,
+                'success' => true,
+                'ttl' => $duration,
             ]);
 
             return true;
         }
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $origValue, 'success' => false, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $origValue,
+            'success' => false,
+            'ttl' => $duration,
         ]);
 
         return false;

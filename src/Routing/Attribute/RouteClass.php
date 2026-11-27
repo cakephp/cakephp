@@ -29,7 +29,5 @@ readonly class RouteClass
      *
      * @param string $className Route class name.
      */
-    public function __construct(public string $className)
-    {
-    }
+    public function __construct(public string $className) {}
 }

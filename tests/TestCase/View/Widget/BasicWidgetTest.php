@@ -145,7 +145,9 @@ class BasicWidgetTest extends TestCase
                 'class' => 'form-control',
                 'required' => 'required',
             ],
-            '<span', 'SOS', '/span',
+            '<span',
+            'SOS',
+            '/span',
         ];
         $this->assertHtml($expected, $result);
     }

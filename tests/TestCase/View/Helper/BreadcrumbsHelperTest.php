@@ -369,7 +369,12 @@ class BreadcrumbsHelperTest extends TestCase
         $expected = [
             ['ol' => ['itemtype' => 'http://schema.org/BreadcrumbList', 'data-stuff' => 'foo and bar']],
             ['li' => ['itemprop' => 'itemListElement', 'itemtype' => 'http://schema.org/ListItem', 'class' => 'first']],
-            ['a' => ['itemtype' => 'http://schema.org/Thing', 'itemprop' => 'item', 'href' => '/', 'data-foo' => 'bar']],
+            ['a' => [
+                'itemtype' => 'http://schema.org/Thing',
+                'itemprop' => 'item',
+                'href' => '/',
+                'data-foo' => 'bar',
+            ]],
             ['span' => ['itemprop' => 'name']],
             'Home',
             '/span',
@@ -398,8 +403,16 @@ class BreadcrumbsHelperTest extends TestCase
             ],
         ]);
         $this->breadcrumbs
-            ->add('Home', '/', ['class' => 'first', 'innerAttrs' => ['data-foo' => 'bar'], 'templateVars' => ['foo' => 'barbaz']])
-            ->add('Final crumb', null, ['class' => 'final', 'innerAttrs' => ['class' => 'final-link'], 'templateVars' => ['barbaz' => 'foo']]);
+            ->add('Home', '/', [
+                'class' => 'first',
+                'innerAttrs' => ['data-foo' => 'bar'],
+                'templateVars' => ['foo' => 'barbaz'],
+            ])
+            ->add('Final crumb', null, [
+                'class' => 'final',
+                'innerAttrs' => ['class' => 'final-link'],
+                'templateVars' => ['barbaz' => 'foo'],
+            ]);
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar', 'templateVars' => ['thing' => 'somestuff']],
@@ -409,7 +422,12 @@ class BreadcrumbsHelperTest extends TestCase
             'somestuff',
             ['ol' => ['itemtype' => 'http://schema.org/BreadcrumbList', 'data-stuff' => 'foo and bar']],
             ['li' => ['itemprop' => 'itemListElement', 'itemtype' => 'http://schema.org/ListItem', 'class' => 'first']],
-            ['a' => ['itemtype' => 'http://schema.org/Thing', 'itemprop' => 'item', 'href' => '/', 'data-foo' => 'bar']],
+            ['a' => [
+                'itemtype' => 'http://schema.org/Thing',
+                'itemprop' => 'item',
+                'href' => '/',
+                'data-foo' => 'bar',
+            ]],
             ['span' => ['itemprop' => 'name']],
             'Home',
             '/span',

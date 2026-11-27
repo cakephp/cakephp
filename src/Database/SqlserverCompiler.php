@@ -48,8 +48,22 @@ class SqlserverCompiler extends QueryCompiler
      * @var array<string>
      */
     protected array $selectParts = [
-        'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'offset', 'limit', 'union', 'except', 'epilog', 'intersect',
+        'comment',
+        'with',
+        'select',
+        'from',
+        'join',
+        'where',
+        'group',
+        'having',
+        'window',
+        'order',
+        'offset',
+        'limit',
+        'union',
+        'except',
+        'epilog',
+        'intersect',
     ];
 
     /**
@@ -88,8 +102,8 @@ class SqlserverCompiler extends QueryCompiler
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
-                'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.',
+                'Could not compile insert query. No table was specified. '
+                    . 'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

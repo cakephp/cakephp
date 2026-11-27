@@ -28,18 +28,15 @@ class ArgumentResolverTest extends TestCase
 
         $container = Mockery::mock(Container::class);
 
-        $container
-            ->shouldReceive('has')
+        $container->shouldReceive('has')
             ->with('alias1')
             ->andReturn(true);
 
-        $container
-            ->shouldReceive('get')
+        $container->shouldReceive('get')
             ->with('alias1')
             ->andReturn($resolver);
 
-        $container
-            ->shouldReceive('has')
+        $container->shouldReceive('has')
             ->with('alias2')
             ->andReturn(false);
 
@@ -61,14 +58,12 @@ class ArgumentResolverTest extends TestCase
 
         $container = $this->getMockBuilder(Container::class)->getMock();
 
-        $container
-            ->expects($this->once())
+        $container->expects($this->once())
             ->method('has')
             ->with(self::equalTo('alias1'))
             ->willReturn(true);
 
-        $container
-            ->expects($this->once())
+        $container->expects($this->once())
             ->method('get')
             ->with(self::equalTo('alias1'))
             ->willReturn(new StringArgument('value1'));

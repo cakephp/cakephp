@@ -52,8 +52,7 @@ class AttributesListCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
+        $parser->setDescription(static::getDescription())
             ->addOption('attribute', [
                 'short' => 'a',
                 'help' => 'Filter by attribute class name (partial match supported).',

@@ -191,8 +191,8 @@ class FileLog extends BaseLog
         clearstatcache(true, $filePath);
 
         if (
-            !is_file($filePath) ||
-            filesize($filePath) < $this->size
+            !is_file($filePath)
+            || filesize($filePath) < $this->size
         ) {
             return null;
         }

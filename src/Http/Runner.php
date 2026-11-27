@@ -69,8 +69,8 @@ class Runner implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (
-            $this->fallbackHandler instanceof RoutingApplicationInterface &&
-            $request instanceof ServerRequest
+            $this->fallbackHandler instanceof RoutingApplicationInterface
+            && $request instanceof ServerRequest
         ) {
             Router::setRequest($request);
         }
@@ -87,8 +87,9 @@ class Runner implements RequestHandlerInterface
         }
 
         return new Response([
-            'body' => 'Middleware queue was exhausted without returning a response '
-                . 'and no fallback request handler was set for Runner',
+            'body' =>
+                'Middleware queue was exhausted without returning a response '
+                    . 'and no fallback request handler was set for Runner',
             'status' => 500,
         ]);
     }

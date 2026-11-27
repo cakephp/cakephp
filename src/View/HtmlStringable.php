@@ -24,6 +24,4 @@ use Stringable;
  * Implementations must escape any untrusted values included in their markup.
  * This contract does not bypass attribute escaping or explicit calls to h().
  */
-interface HtmlStringable extends Stringable
-{
-}
+interface HtmlStringable extends Stringable {}

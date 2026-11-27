@@ -78,7 +78,7 @@ abstract class SerializedView extends View
         if ($serialize !== false) {
             try {
                 return $this->serialize($serialize);
-            } catch (Exception | TypeError $e) {
+            } catch (Exception|TypeError $e) {
                 throw new SerializationFailureException(
                     'Serialization of View data failed.',
                     null,

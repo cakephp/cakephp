@@ -183,8 +183,7 @@ class EmailTraitTest extends TestCase
      */
     public function testAssertUsingRegExpCharacters(): void
     {
-        new Mailer()
-            ->setTo('to3@example.com')
+        new Mailer()->setTo('to3@example.com')
             ->setCc('cc3@example.com')
             ->deliver('email with regexp chars $/[]');
 
@@ -216,21 +215,81 @@ class EmailTraitTest extends TestCase
     {
         return [
             'assertMailCount' => ['assertMailCount', 'Failed asserting that 2 emails were sent.', [2]],
-            'assertMailSentTo' => ['assertMailSentTo', "Failed asserting that 'missing@example.com' was sent an email.", ['missing@example.com']],
-            'assertMailSentToAt' => ['assertMailSentToAt', "Failed asserting that 'missing@example.com' was sent email #1.", [1, 'missing@example.com']],
-            'assertMailSentFrom' => ['assertMailSentFrom', "Failed asserting that 'missing@example.com' sent an email.", ['missing@example.com']],
-            'assertMailSentFromAt' => ['assertMailSentFromAt', "Failed asserting that 'missing@example.com' sent email #1.", [1, 'missing@example.com']],
-            'assertMailSentWith' => ['assertMailSentWith', "Failed asserting that 'Missing' is in an email `subject`.", ['Missing', 'subject']],
-            'assertMailSentWithAt' => ['assertMailSentWithAt', "Failed asserting that 'Missing' is in email #1 `subject`.", [1, 'Missing', 'subject']],
-            'assertMailContains' => ['assertMailContains', "Failed asserting that 'Missing' is in an email" . PHP_EOL . 'was: .', ['Missing']],
-            'assertMailContainsAttachment' => ['assertMailContainsAttachment', "Failed asserting that 'no_existing_file.php' is an attachment of an email.", ['no_existing_file.php']],
-            'assertMailContainsHtml' => ['assertMailContainsHtml', "Failed asserting that 'Missing' is in the html message of an email" . PHP_EOL . 'was: .', ['Missing']],
-            'assertMailContainsText' => ['assertMailContainsText', "Failed asserting that 'Missing' is in the text message of an email" . PHP_EOL . 'was: .', ['Missing']],
-            'assertMailContainsAt' => ['assertMailContainsAt', "Failed asserting that 'Missing' is in email #1" . PHP_EOL . 'was: .', [1, 'Missing']],
-            'assertMailContainsHtmlAt' => ['assertMailContainsHtmlAt', "Failed asserting that 'Missing' is in the html message of email #1" . PHP_EOL . 'was: .', [1, 'Missing']],
-            'assertMailContainsTextAt' => ['assertMailContainsTextAt', "Failed asserting that 'Missing' is in the text message of email #1" . PHP_EOL . 'was: .', [1, 'Missing']],
-            'assertMailSubjectContains' => ['assertMailSubjectContains', "Failed asserting that 'Missing' is in an email subject" . PHP_EOL . 'was: .', ['Missing']],
-            'assertMailSubjectContainsAt' => ['assertMailSubjectContainsAt', "Failed asserting that 'Missing' is in an email subject #1" . PHP_EOL . 'was: .', [1, 'Missing']],
+            'assertMailSentTo' => [
+                'assertMailSentTo',
+                "Failed asserting that 'missing@example.com' was sent an email.",
+                ['missing@example.com'],
+            ],
+            'assertMailSentToAt' => [
+                'assertMailSentToAt',
+                "Failed asserting that 'missing@example.com' was sent email #1.",
+                [1, 'missing@example.com'],
+            ],
+            'assertMailSentFrom' => [
+                'assertMailSentFrom',
+                "Failed asserting that 'missing@example.com' sent an email.",
+                ['missing@example.com'],
+            ],
+            'assertMailSentFromAt' => [
+                'assertMailSentFromAt',
+                "Failed asserting that 'missing@example.com' sent email #1.",
+                [1, 'missing@example.com'],
+            ],
+            'assertMailSentWith' => [
+                'assertMailSentWith',
+                "Failed asserting that 'Missing' is in an email `subject`.",
+                ['Missing', 'subject'],
+            ],
+            'assertMailSentWithAt' => [
+                'assertMailSentWithAt',
+                "Failed asserting that 'Missing' is in email #1 `subject`.",
+                [1, 'Missing', 'subject'],
+            ],
+            'assertMailContains' => [
+                'assertMailContains',
+                "Failed asserting that 'Missing' is in an email" . PHP_EOL . 'was: .',
+                ['Missing'],
+            ],
+            'assertMailContainsAttachment' => [
+                'assertMailContainsAttachment',
+                "Failed asserting that 'no_existing_file.php' is an attachment of an email.",
+                ['no_existing_file.php'],
+            ],
+            'assertMailContainsHtml' => [
+                'assertMailContainsHtml',
+                "Failed asserting that 'Missing' is in the html message of an email" . PHP_EOL . 'was: .',
+                ['Missing'],
+            ],
+            'assertMailContainsText' => [
+                'assertMailContainsText',
+                "Failed asserting that 'Missing' is in the text message of an email" . PHP_EOL . 'was: .',
+                ['Missing'],
+            ],
+            'assertMailContainsAt' => [
+                'assertMailContainsAt',
+                "Failed asserting that 'Missing' is in email #1" . PHP_EOL . 'was: .',
+                [1, 'Missing'],
+            ],
+            'assertMailContainsHtmlAt' => [
+                'assertMailContainsHtmlAt',
+                "Failed asserting that 'Missing' is in the html message of email #1" . PHP_EOL . 'was: .',
+                [1, 'Missing'],
+            ],
+            'assertMailContainsTextAt' => [
+                'assertMailContainsTextAt',
+                "Failed asserting that 'Missing' is in the text message of email #1" . PHP_EOL . 'was: .',
+                [1, 'Missing'],
+            ],
+            'assertMailSubjectContains' => [
+                'assertMailSubjectContains',
+                "Failed asserting that 'Missing' is in an email subject" . PHP_EOL . 'was: .',
+                ['Missing'],
+            ],
+            'assertMailSubjectContainsAt' => [
+                'assertMailSubjectContainsAt',
+                "Failed asserting that 'Missing' is in an email subject #1" . PHP_EOL . 'was: .',
+                [1, 'Missing'],
+            ],
         ];
     }
 
@@ -239,8 +298,7 @@ class EmailTraitTest extends TestCase
      */
     private function sendEmails(): void
     {
-        new Mailer()
-            ->setSender(['sender@example.com' => 'Sender'])
+        new Mailer()->setSender(['sender@example.com' => 'Sender'])
             ->setTo(['to@example.com' => 'Foo Bar'])
             ->addTo('alsoto@example.com')
             ->setReplyTo(['replyto@example.com' => 'Reply to me'])
@@ -251,14 +309,12 @@ class EmailTraitTest extends TestCase
             ->setEmailFormat(Message::MESSAGE_TEXT)
             ->deliver('text');
 
-        new Mailer('alternate')
-            ->setTo('to2@example.com')
+        new Mailer('alternate')->setTo('to2@example.com')
             ->setCc('cc2@example.com')
             ->setEmailFormat(Message::MESSAGE_HTML)
             ->deliver('html');
 
-        new Mailer('alternate')
-            ->setTo(['to3@example.com' => null])
+        new Mailer('alternate')->setTo(['to3@example.com' => null])
             ->deliver('html');
     }
 
@@ -268,8 +324,7 @@ class EmailTraitTest extends TestCase
     private function sendMultipleEmails(): void
     {
         $reusableMailer = new Mailer();
-        $reusableMailer
-            ->setEmailFormat(Message::MESSAGE_TEXT)
+        $reusableMailer->setEmailFormat(Message::MESSAGE_TEXT)
             ->setFrom('reusable-mailer@example.com');
 
         $emails = [

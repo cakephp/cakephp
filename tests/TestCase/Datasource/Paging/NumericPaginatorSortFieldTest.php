@@ -118,7 +118,7 @@ class NumericPaginatorSortFieldTest extends TestCase
         // When direction is explicitly specified, toggleable fields should use it
         $expected = [
             'Articles.title' => 'desc',
-            'Articles.published' => 'asc',// Reverse desc
+            'Articles.published' => 'asc', // Reverse desc
         ];
 
         $this->assertEquals('newest', $pagingParams['sort']);
@@ -475,12 +475,11 @@ class NumericPaginatorSortFieldTest extends TestCase
     public function testSortsFactory(): void
     {
         $factory = new SortableFieldsBuilder();
-        $factory
-            ->add(
-                'newest',
-                SortField::desc('published'),
-                SortField::asc('title'),
-            )
+        $factory->add(
+            'newest',
+            SortField::desc('published'),
+            SortField::asc('title'),
+        )
             ->add(
                 'popular',
                 SortField::desc('published', locked: true),
@@ -528,7 +527,7 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $expected = [
             'Articles.published' => 'desc',
-            'Articles.author_id' => 'asc',//Reverse on direction desc
+            'Articles.author_id' => 'asc', //Reverse on direction desc
         ];
 
         $this->assertEquals('popular', $pagingParams['sort']);
@@ -549,8 +548,7 @@ class NumericPaginatorSortFieldTest extends TestCase
     public function testSortsFactoryShorthand(): void
     {
         $factory = new SortableFieldsBuilder();
-        $factory
-            ->add('title') // Shorthand - uses 'title' as field
+        $factory->add('title') // Shorthand - uses 'title' as field
             ->add('published') // Shorthand - uses 'published' as field
             ->add('author_id'); // Shorthand - uses 'author_id' as field
 
@@ -663,10 +661,13 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('newest', $pagingParams['sort']);
         $this->assertSame('asc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.title' => 'asc',
-            'Articles.published' => 'desc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'asc',
+                'Articles.published' => 'desc',
+            ],
+            $pagingParams['completeSort'],
+        );
 
         // Reversing the default direction reverses non-locked fields
         $settings['order'] = ['newest' => 'desc'];
@@ -675,10 +676,13 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('newest', $pagingParams['sort']);
         $this->assertSame('desc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.title' => 'desc',
-            'Articles.published' => 'asc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'desc',
+                'Articles.published' => 'asc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -703,10 +707,13 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('newest', $pagingParams['sort']);
         $this->assertSame('desc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.title' => 'desc',
-            'Articles.published' => 'asc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'desc',
+                'Articles.published' => 'asc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -730,10 +737,13 @@ class NumericPaginatorSortFieldTest extends TestCase
         $pagingParams = $result->pagingParams();
 
         $this->assertSame('popular', $pagingParams['sort']);
-        $this->assertSame([
-            'Articles.published' => 'desc', // locked, not reversed
-            'Articles.title' => 'desc', // toggleable, reversed
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.published' => 'desc', // locked, not reversed
+                'Articles.title' => 'desc', // toggleable, reversed
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -783,11 +793,14 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('id', $pagingParams['sort']);
         $this->assertSame('desc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.id' => 'desc',
-            'Articles.title' => 'asc',
-            'Articles.published' => 'desc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.id' => 'desc',
+                'Articles.title' => 'asc',
+                'Articles.published' => 'desc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -815,10 +828,13 @@ class NumericPaginatorSortFieldTest extends TestCase
         // 'published' => 'asc' overrides newest's published => desc, so the
         // result is not equivalent to clicking the `newest` header.
         $this->assertSame('title', $pagingParams['sort']);
-        $this->assertSame([
-            'Articles.title' => 'asc',
-            'Articles.published' => 'asc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'asc',
+                'Articles.published' => 'asc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -849,11 +865,14 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('author_id', $pagingParams['sort']);
         $this->assertSame('desc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.author_id' => 'desc',
-            'Articles.title' => 'asc',
-            'Articles.published' => 'desc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.author_id' => 'desc',
+                'Articles.title' => 'asc',
+                'Articles.published' => 'desc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -913,11 +932,14 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $this->assertSame('mixed', $pagingParams['sort']);
         $this->assertSame('desc', $pagingParams['direction']);
-        $this->assertSame([
-            'Articles.published' => 'asc', // reversed (desc default toggled)
-            'Articles.author_id' => 'desc', // plain string uses requested direction
-            'Articles.title' => 'asc', // locked, ignores requested direction
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.published' => 'asc', // reversed (desc default toggled)
+                'Articles.author_id' => 'desc', // plain string uses requested direction
+                'Articles.title' => 'asc', // locked, ignores requested direction
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 
     /**
@@ -943,10 +965,13 @@ class NumericPaginatorSortFieldTest extends TestCase
         $pagingParams = $result->pagingParams();
 
         $this->assertSame('newest', $pagingParams['sort']);
-        $this->assertSame([
-            'Articles.title' => 'asc',
-            'Articles.published' => 'desc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'asc',
+                'Articles.published' => 'desc',
+            ],
+            $pagingParams['completeSort'],
+        );
 
         // Explicitly requesting the alias yields the same resolved order
         $result = $this->paginator->paginate(
@@ -957,9 +982,12 @@ class NumericPaginatorSortFieldTest extends TestCase
         $pagingParams = $result->pagingParams();
 
         $this->assertSame('newest', $pagingParams['sort']);
-        $this->assertSame([
-            'Articles.title' => 'asc',
-            'Articles.published' => 'desc',
-        ], $pagingParams['completeSort']);
+        $this->assertSame(
+            [
+                'Articles.title' => 'asc',
+                'Articles.published' => 'desc',
+            ],
+            $pagingParams['completeSort'],
+        );
     }
 }

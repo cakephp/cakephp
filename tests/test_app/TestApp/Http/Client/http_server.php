@@ -17,7 +17,13 @@ if ($line !== "\r\n") {
     exit(3);
 }
 $body = '<html><body>Local HTTP response</body></html>';
-fwrite($connection, "HTTP/1.1 200 OK\r\nDate: Sat, 01 Jan 2000 00:00:00 GMT\r\n"
-    . "Content-Type: text/html\r\nContent-Length: " . strlen($body) . "\r\nConnection: close\r\n\r\n" . $body);
+fwrite(
+    $connection,
+    "HTTP/1.1 200 OK\r\nDate: Sat, 01 Jan 2000 00:00:00 GMT\r\n"
+        . "Content-Type: text/html\r\nContent-Length: "
+        . strlen($body)
+        . "\r\nConnection: close\r\n\r\n"
+        . $body,
+);
 fclose($connection);
 fclose($server);

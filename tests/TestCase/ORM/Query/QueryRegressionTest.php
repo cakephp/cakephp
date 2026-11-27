@@ -35,7 +35,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
-use function Cake\Database\Expression\{greaterThan, greaterThanOrEquals, in, lessThan, like, notEquals, notIn};
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\lessThan;
+use function Cake\Database\Expression\like;
+use function Cake\Database\Expression\notEquals;
+use function Cake\Database\Expression\notIn;
 
 /**
  * Contains regression test for the Query builder
@@ -81,7 +87,10 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsToMany('ArticlesTags');
-        $results = $table->find()->where(['id' => greaterThan(100)])->contain('ArticlesTags')->toArray();
+        $results = $table->find()
+            ->where(['id' => greaterThan(100)])
+            ->contain('ArticlesTags')
+            ->toArray();
         $this->assertEmpty($results);
     }
 
@@ -93,12 +102,14 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
         $result = $table->find()
-            ->contain(['Authors' => [
-                'fields' => [
-                    'id',
-                    'Authors__aliased_name' => 'name',
+            ->contain([
+                'Authors' => [
+                    'fields' => [
+                        'id',
+                        'Authors__aliased_name' => 'name',
+                    ],
                 ],
-            ]])
+            ])
             ->where(['Articles.id' => 1])
             ->first();
         $this->assertInstanceOf(EntityInterface::class, $result);
@@ -292,9 +303,13 @@ class QueryRegressionTest extends TestCase
         $articles->belongsToMany('Tags');
         $tags->belongsToMany('Articles');
 
-        $sub = $articles->Tags->find()->select(['Tags.id'])->matching('Articles', function ($q) {
-            return $q->where(['Articles.id' => 1]);
-        });
+        $sub = $articles
+            ->Tags
+            ->find()
+            ->select(['Tags.id'])
+            ->matching('Articles', function ($q) {
+                return $q->where(['Articles.id' => 1]);
+            });
 
         $query = $articles->Tags->find()->where(['Tags.id' => notIn($sub)]);
         $this->assertSame(1, $query->count());
@@ -356,7 +371,8 @@ class QueryRegressionTest extends TestCase
         ];
         $options = [
             'associated' => [
-                'Highlights._joinData.Authors', 'Highlights.Authors',
+                'Highlights._joinData.Authors',
+                'Highlights.Authors',
             ],
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
@@ -446,7 +462,8 @@ class QueryRegressionTest extends TestCase
         ];
         $options = [
             'associated' => [
-                'Highlights._joinData', 'Highlights.TopArticles',
+                'Highlights._joinData',
+                'Highlights.TopArticles',
             ],
         ];
         $entity = $articles->patchEntity($entity, $data, $options);
@@ -578,7 +595,9 @@ class QueryRegressionTest extends TestCase
         ]);
         $table->Articles->belongsTo('Authors');
 
-        $result = $table->Articles->find()
+        $result = $table
+            ->Articles
+            ->find()
             ->where(['Authors.id' => greaterThan(1)])
             ->contain(['Authors.Tags'])
             ->toArray();
@@ -611,15 +630,13 @@ class QueryRegressionTest extends TestCase
             'foreignKey' => 'id',
             'strategy' => 'select',
         ]);
-        $findViaSelect = $featuredTags
-            ->find()
+        $findViaSelect = $featuredTags->find()
             ->where(['FeaturedTags.tag_id' => 2])
             ->contain('Tags.TagsTranslations')
             ->all();
 
         $tags->TagsTranslations->setStrategy('subquery');
-        $findViaSubquery = $featuredTags
-            ->find()
+        $findViaSubquery = $featuredTags->find()
             ->where(['FeaturedTags.tag_id' => 2])
             ->contain('Tags.TagsTranslations')
             ->all();
@@ -640,8 +657,7 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors', ['joinType' => 'inner']);
-        $count = $table
-            ->find()
+        $count = $table->find()
             ->contain(['Authors' => function ($q) {
                 return $q->where(['Authors.id' => 1]);
             }])
@@ -657,8 +673,7 @@ class QueryRegressionTest extends TestCase
     public function testCountWithBind(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(['title', 'id'])
             ->where('title LIKE :val')
             ->groupBy(['id', 'title'])
@@ -703,8 +718,7 @@ class QueryRegressionTest extends TestCase
             ->where('title LIKE :val')
             ->bind(':val', 'Second %');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(['title'])
             ->where(['id' => notIn($sub)]);
         $result = $query->toArray();
@@ -876,8 +890,7 @@ class QueryRegressionTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Tags');
 
-        $result = $comments
-            ->find()
+        $result = $comments->find()
             ->matching('Articles.Tags', function ($q) {
                 return $q->where(['Tags.id' => 2]);
             })
@@ -905,8 +918,7 @@ class QueryRegressionTest extends TestCase
         $articles->belongsTo('Authors');
         $articles->belongsToMany('Tags');
 
-        $result = $comments
-            ->find()
+        $result = $comments->find()
             ->matching('Articles.Tags', function ($q) {
                 return $q->where(['Tags.id' => 2]);
             })
@@ -1007,13 +1019,15 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Users');
         $table->hasMany('Comments');
 
-        $query = $table->find()->contain([
-            'Comments' => function ($q) {
-                return $q->select([
-                    'concat' => $q->func()->concat(['red', 'blue']),
-                    'user_id',
-                ]);
-            }])
+        $query = $table->find()
+            ->contain([
+                'Comments' => function ($q) {
+                    return $q->select([
+                        'concat' => $q->func()->concat(['red', 'blue']),
+                        'user_id',
+                    ]);
+                },
+            ])
             ->where(['Users.id' => 2]);
 
         $results = $query->toArray();
@@ -1077,8 +1091,7 @@ class QueryRegressionTest extends TestCase
                 $countToFloat = $query->expr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
                 return [
-                    'ratio' => $query
-                        ->expr($countToFloat)
+                    'ratio' => $query->expr($countToFloat)
                         ->add($allCommentsCount)
                         ->setConjunction('/'),
                 ];
@@ -1101,11 +1114,13 @@ class QueryRegressionTest extends TestCase
         $table->Articles->belongsTo('Authors');
         $table->Articles->Authors->belongsToMany('Tags');
 
-        $query = $table->find()->where(['Comments.id' => 5])->contain(['Articles' => function ($q) {
-            return $q->contain(['Authors' => function ($q) {
-                return $q->contain('Tags');
+        $query = $table->find()
+            ->where(['Comments.id' => 5])
+            ->contain(['Articles' => function ($q) {
+                return $q->contain(['Authors' => function ($q) {
+                    return $q->contain('Tags');
+                }]);
             }]);
-        }]);
         $this->assertCount(2, $query->first()->article->author->tags);
     }
 
@@ -1275,7 +1290,7 @@ class QueryRegressionTest extends TestCase
 
         $query = $Tags->find()
             ->notMatching('Articles', function ($q) {
-                return $q ->where(['ArticlesTags.tag_id' => notEquals(3) ]);
+                return $q->where(['ArticlesTags.tag_id' => notEquals(3)]);
             })
             ->where([
                 'Tags.created' => lessThan(new NativeDateTime('2016-01-02 00:00:00')),
@@ -1395,8 +1410,7 @@ class QueryRegressionTest extends TestCase
         $specialTags->belongsTo('Authors');
         $specialTags->belongsTo('Tags');
 
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->select(['name' => 'Authors.name', 'tag' => 'Tags.name'])
             ->matching('Articles.SpecialTags.Tags')
             ->matching('Articles.SpecialTags.Authors', function ($q) {
@@ -1555,15 +1569,12 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
-                    'value' => $q
-                        ->func()
+                    'value' => $q->func()
                         ->ABS([
-                            $table
-                                ->getConnection()
+                            $table->getConnection()
                                 ->selectQuery(-1),
                         ])
                         ->setReturnType('integer'),
@@ -1582,13 +1593,11 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->UPPER([
-                        $table
-                            ->getAssociation('Authors')
+                        $table->getAssociation('Authors')
                             ->find()
                             ->select(['Authors.name'])
                             ->where(function (QueryExpression $exp) {
@@ -1609,16 +1618,13 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
-                    'value' => $q
-                        ->func()
+                    'value' => $q->func()
                         ->ROUND(
                             [
-                                $table
-                                    ->getConnection()
+                                $table->getConnection()
                                     ->selectQuery(1.23456),
                                 2,
                             ],
@@ -1645,13 +1651,11 @@ class QueryRegressionTest extends TestCase
             $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3]),
         );
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->coalesce([
-                        $table
-                            ->getAssociation('Authors')
+                        $table->getAssociation('Authors')
                             ->find()
                             ->select(['Authors.name'])
                             ->where(function (QueryExpression $exp) {
@@ -1674,13 +1678,11 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->concat([
-                        $table
-                            ->getAssociation('Authors')
+                        $table->getAssociation('Authors')
                             ->find()
                             ->select(['Authors.name'])
                             ->where(['Authors.id' => 1]),
@@ -1701,13 +1703,11 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo('Authors');
 
-        $query = $table
-            ->find()
+        $query = $table->find()
             ->select(function (SelectQuery $q) use ($table) {
                 return [
                     'value' => $q->func()->concat([
-                        $table
-                            ->getAssociation('Authors')
+                        $table->getAssociation('Authors')
                             ->find()
                             ->select(['Authors.name'])
                             ->where(function (QueryExpression $exp) {
@@ -1892,7 +1892,9 @@ class QueryRegressionTest extends TestCase
             'strategy' => Association::STRATEGY_SUBQUERY,
         ]);
 
-        $results = $this->getTableLocator()->get('Authors')->find()
+        $results = $this->getTableLocator()
+            ->get('Authors')
+            ->find()
             ->contain(['Articles', 'Comments'])
             ->orderBy(['Authors.id' => 'DESC'])
             ->limit(2)

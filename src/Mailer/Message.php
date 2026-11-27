@@ -307,10 +307,26 @@ class Message implements JsonSerializable
      * @var array<string>
      */
     protected array $serializableProperties = [
-        'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
-        'returnPath', 'readReceipt', 'emailFormat', 'emailPattern', 'domain',
-        'attachments', 'messageId', 'headers', 'appCharset', 'charset', 'headerCharset',
-        'textMessage', 'htmlMessage',
+        'to',
+        'from',
+        'sender',
+        'replyTo',
+        'cc',
+        'bcc',
+        'subject',
+        'returnPath',
+        'readReceipt',
+        'emailFormat',
+        'emailPattern',
+        'domain',
+        'attachments',
+        'messageId',
+        'headers',
+        'appCharset',
+        'charset',
+        'headerCharset',
+        'textMessage',
+        'htmlMessage',
     ];
 
     /**
@@ -890,8 +906,15 @@ class Message implements JsonSerializable
         }
         $defaults = array_fill_keys(
             [
-                'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
-                'to', 'cc', 'bcc', 'subject',
+                'from',
+                'sender',
+                'replyTo',
+                'readReceipt',
+                'returnPath',
+                'to',
+                'cc',
+                'bcc',
+                'subject',
             ],
             false,
         );
@@ -1307,10 +1330,10 @@ class Message implements JsonSerializable
     protected function createBoundary(): void
     {
         if (
-            $this->boundary === null &&
-            (
-                $this->attachments ||
-                $this->emailFormat === static::MESSAGE_BOTH
+            $this->boundary === null
+            && (
+                $this->attachments
+                || $this->emailFormat === static::MESSAGE_BOTH
             )
         ) {
             $this->boundary = hash('xxh128', Security::randomBytes(16));
@@ -1331,7 +1354,7 @@ class Message implements JsonSerializable
         $hasInlineAttachments = $contentIds !== [];
         $hasAttachments = $this->attachments !== [];
         $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
-        $multiPart = ($hasAttachments || $hasMultipleTypes);
+        $multiPart = $hasAttachments || $hasMultipleTypes;
 
         $boundary = $this->boundary ?? '';
         $relBoundary = $boundary;
@@ -1426,10 +1449,9 @@ class Message implements JsonSerializable
                 continue;
             }
             $data = $fileInfo['data'] ?? $this->readFile($fileInfo['file']);
-            $hasDisposition = (
-                !isset($fileInfo['contentDisposition']) ||
-                $fileInfo['contentDisposition']
-            );
+            $hasDisposition =
+                !isset($fileInfo['contentDisposition'])
+                || $fileInfo['contentDisposition'];
             $part = new FormDataPart('', $data, '', $this->getHeaderCharset());
 
             if ($hasDisposition) {
@@ -1509,9 +1531,22 @@ class Message implements JsonSerializable
     public function setConfig(array $config): static
     {
         $simpleMethods = [
-            'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
-            'cc', 'bcc', 'messageId', 'domain', 'subject', 'attachments',
-            'emailFormat', 'emailPattern', 'charset', 'headerCharset',
+            'from',
+            'sender',
+            'to',
+            'replyTo',
+            'readReceipt',
+            'returnPath',
+            'cc',
+            'bcc',
+            'messageId',
+            'domain',
+            'subject',
+            'attachments',
+            'emailFormat',
+            'emailPattern',
+            'charset',
+            'headerCharset',
             'transferEncoding',
         ];
         foreach ($simpleMethods as $method) {
@@ -1652,7 +1687,7 @@ class Message implements JsonSerializable
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $lines = explode("\n", $message);
         $formatted = [];
-        $cut = ($wrapLength === static::LINE_LENGTH_MUST);
+        $cut = $wrapLength === static::LINE_LENGTH_MUST;
 
         foreach ($lines as $line) {
             if ($line === '') {

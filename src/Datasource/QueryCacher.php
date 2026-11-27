@@ -38,8 +38,7 @@ class QueryCacher
     public function __construct(
         protected Closure|string $key,
         protected CacheInterface|string $config,
-    ) {
-    }
+    ) {}
 
     /**
      * Load the cached results from the cache or run the query.

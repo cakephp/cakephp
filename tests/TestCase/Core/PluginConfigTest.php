@@ -66,23 +66,23 @@ class PluginConfigTest extends TestCase
     public function testSimpleConfig(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'TestPlugin',
-    'OtherPlugin',
-];
-PHP;
+            <?php
+            return [
+                'TestPlugin',
+                'OtherPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');
@@ -118,22 +118,22 @@ PHP;
     public function testOnlyOnePlugin(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'TestPlugin',
-];
-PHP;
+            <?php
+            return [
+                'TestPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         $result = [
@@ -159,23 +159,23 @@ PHP;
     public function testSpecificEnvironmentsAndHooks(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'OtherPlugin' => '/config/path/',
-        'AnotherPlugin' => '/config/path/'
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'OtherPlugin' => '/config/path/',
+                    'AnotherPlugin' => '/config/path/'
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => false, 'optional' => true],
-    'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false, 'events' => false],
-];
-PHP;
+            <?php
+            return [
+                'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => false, 'optional' => true],
+                'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false, 'events' => false],
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         $result = [
@@ -210,60 +210,66 @@ PHP;
     public function testUnknownPlugin(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'UnknownPlugin',
-];
-PHP;
+            <?php
+            return [
+                'UnknownPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
-        $this->assertSame([
-            'TestPlugin' => [
-                'isLoaded' => false,
+        $this->assertSame(
+            [
+                'TestPlugin' => [
+                    'isLoaded' => false,
+                ],
+                'OtherPlugin' => [
+                    'isLoaded' => false,
+                ],
+                'UnknownPlugin' => [
+                    'isLoaded' => false,
+                    'isUnknown' => true,
+                ],
             ],
-            'OtherPlugin' => [
-                'isLoaded' => false,
-            ],
-            'UnknownPlugin' => [
-                'isLoaded' => false,
-                'isUnknown' => true,
-            ],
-        ], PluginConfig::getAppConfig());
+            PluginConfig::getAppConfig(),
+        );
     }
 
     public function testNoPluginConfig(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/config/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/config/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
         unlink($this->pluginsConfigPath);
 
-        $this->assertSame([
-            'TestPlugin' => [
-                'isLoaded' => false,
+        $this->assertSame(
+            [
+                'TestPlugin' => [
+                    'isLoaded' => false,
+                ],
+                'OtherPlugin' => [
+                    'isLoaded' => false,
+                ],
             ],
-            'OtherPlugin' => [
-                'isLoaded' => false,
-            ],
-        ], PluginConfig::getAppConfig());
+            PluginConfig::getAppConfig(),
+        );
     }
 
     public function testGetVersions(): void
@@ -286,23 +292,23 @@ PHP;
     public function testSimpleConfiWithVersions(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'Chronos' => ROOT .  DS . 'vendor' . DS . 'cakephp' . DS . 'chronos',
-        'CodeSniffer' => ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp-codesniffer'
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'Chronos' => ROOT .  DS . 'vendor' . DS . 'cakephp' . DS . 'chronos',
+                    'CodeSniffer' => ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp-codesniffer'
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'Chronos',
-    'CodeSniffer'
-];
-PHP;
+            <?php
+            return [
+                'Chronos',
+                'CodeSniffer'
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');
@@ -358,61 +364,64 @@ PHP;
     {
         $pathToTestPlugin = ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'TestPlugin',
-];
-PHP;
+            <?php
+            return [
+                'TestPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         file_put_contents($pathToTestPlugin . 'composer.json', 'invalid-json');
 
-        $this->assertSame([
-            'TestPlugin' => [
-                'isLoaded' => true,
-                'onlyDebug' => false,
-                'onlyCli' => false,
-                'optional' => false,
-                'bootstrap' => true,
-                'console' => true,
-                'middleware' => true,
-                'routes' => true,
-                'services' => true,
-                'events' => true,
+        $this->assertSame(
+            [
+                'TestPlugin' => [
+                    'isLoaded' => true,
+                    'onlyDebug' => false,
+                    'onlyCli' => false,
+                    'optional' => false,
+                    'bootstrap' => true,
+                    'console' => true,
+                    'middleware' => true,
+                    'routes' => true,
+                    'services' => true,
+                    'events' => true,
+                ],
             ],
-        ], PluginConfig::getAppConfig());
+            PluginConfig::getAppConfig(),
+        );
         unlink($pathToTestPlugin . 'composer.json');
     }
 
     public function testGetInstalledPluginsSimple(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/',
-        'OtherPlugin' => '/other/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/',
+                    'OtherPlugin' => '/other/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'TestPlugin',
-];
-PHP;
+            <?php
+            return [
+                'TestPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');
@@ -443,25 +452,25 @@ PHP;
     public function testGetInstalledPluginsWithOptions(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'DebugPlugin' => '/debug/path/',
-        'CliPlugin' => '/cli/path/',
-        'OptionalPlugin' => '/optional/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'DebugPlugin' => '/debug/path/',
+                    'CliPlugin' => '/cli/path/',
+                    'OptionalPlugin' => '/optional/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'DebugPlugin' => ['onlyDebug' => true],
-    'CliPlugin' => ['onlyCli' => true],
-    'OptionalPlugin' => ['optional' => true, 'bootstrap' => false],
-];
-PHP;
+            <?php
+            return [
+                'DebugPlugin' => ['onlyDebug' => true],
+                'CliPlugin' => ['onlyCli' => true],
+                'OptionalPlugin' => ['optional' => true, 'bootstrap' => false],
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');
@@ -514,13 +523,13 @@ PHP;
     public function testGetInstalledPluginsNoPluginsConfig(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/test/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/test/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         // Delete plugins.php to test fallback
@@ -543,22 +552,22 @@ PHP;
     public function testGetInstalledPluginsUnknownPlugin(): void
     {
         $file = <<<PHP
-<?php
-return [
-    'plugins' => [
-        'TestPlugin' => '/test/path/',
-    ]
-];
-PHP;
+            <?php
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/test/path/',
+                ]
+            ];
+            PHP;
         file_put_contents($this->pluginsListPath, $file);
 
         $config = <<<PHP
-<?php
-return [
-    'TestPlugin',
-    'UnknownPlugin',
-];
-PHP;
+            <?php
+            return [
+                'TestPlugin',
+                'UnknownPlugin',
+            ];
+            PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         Configure::delete('plugins');

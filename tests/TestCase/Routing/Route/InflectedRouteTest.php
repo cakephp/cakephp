@@ -106,7 +106,8 @@ class InflectedRouteTest extends TestCase
         $this->assertNull($result);
 
         $route = new InflectedRoute('/admin/subscriptions/{action}/*', [
-            'controller' => 'Subscribe', 'prefix' => 'Admin',
+            'controller' => 'Subscribe',
+            'prefix' => 'Admin',
         ]);
         $result = $route->match([
             'controller' => 'Subscribe',

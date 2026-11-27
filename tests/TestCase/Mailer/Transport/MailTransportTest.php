@@ -53,7 +53,9 @@ class MailTransportTest extends TestCase
     public function testSendWithoutRecipient(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.');
+        $this->expectExceptionMessage(
+            'You must specify at least one recipient. Use one of `setTo`, `setCc` or `setBcc` to define a recipient.',
+        );
 
         $message = new Message();
         $this->MailTransport->send($message);
@@ -100,7 +102,9 @@ class MailTransportTest extends TestCase
         $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
         $data .= 'Content-Transfer-Encoding: 8bit';
 
-        $this->MailTransport->expects($this->once())->method('mail')
+        $this->MailTransport
+            ->expects($this->once())
+            ->method('mail')
             ->with(
                 'CakePHP <cake@cakephp.org>',
                 $encoded,
@@ -147,7 +151,9 @@ class MailTransportTest extends TestCase
         $data .= "Content-Type: text/plain; charset=UTF-8{$eol}";
         $data .= 'Content-Transfer-Encoding: 8bit';
 
-        $this->MailTransport->expects($this->once())->method('mail')
+        $this->MailTransport
+            ->expects($this->once())
+            ->method('mail')
             ->with(
                 'CakePHP <cake@cakephp.org>',
                 'injected headers',

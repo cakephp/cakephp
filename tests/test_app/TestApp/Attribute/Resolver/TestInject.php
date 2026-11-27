@@ -8,7 +8,5 @@ use Attribute;
 #[Attribute]
 class TestInject
 {
-    public function __construct(public string $service)
-    {
-    }
+    public function __construct(public string $service) {}
 }

@@ -155,7 +155,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      */
     public function add(string $name, ValidationRule|array $rule): static
     {
-        if (!($rule instanceof ValidationRule)) {
+        if (!$rule instanceof ValidationRule) {
             $rule += ['name' => $name];
             $rule = new ValidationRule(...$rule);
         }

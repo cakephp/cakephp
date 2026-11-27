@@ -97,7 +97,7 @@ class MoFileParser
             $context = null;
             $plurals = null;
 
-            fseek($stream, $offsetId + $i * 8);
+            fseek($stream, $offsetId + ($i * 8));
 
             $length = $this->readLong($stream, $isBigEndian);
             $offset = $this->readLong($stream, $isBigEndian);
@@ -117,7 +117,7 @@ class MoFileParser
                 [$singularId, $pluralId] = explode("\000", $singularId);
             }
 
-            fseek($stream, $offsetTranslated + $i * 8);
+            fseek($stream, $offsetTranslated + ($i * 8));
             $length = $this->readLong($stream, $isBigEndian);
             if ($length < 1) {
                 throw new CakeException('Length must be > 0');

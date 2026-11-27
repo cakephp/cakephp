@@ -8,6 +8,5 @@ class AttributeClient
     public function __construct(
         #[FakeAttribute('resolved-value')]
         public readonly string $value,
-    ) {
-    }
+    ) {}
 }

@@ -38,8 +38,9 @@ class UploadedFile implements UploadedFileInterface
     public const array ERROR_MESSAGES = [
         UPLOAD_ERR_OK => 'There is no error, the file uploaded with success',
         UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-        UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was '
-            . 'specified in the HTML form',
+        UPLOAD_ERR_FORM_SIZE =>
+            'The uploaded file exceeds the MAX_FILE_SIZE directive that was '
+                . 'specified in the HTML form',
         UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
         UPLOAD_ERR_NO_FILE => 'No file was uploaded',
         UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
@@ -150,9 +151,9 @@ class UploadedFile implements UploadedFileInterface
             $targetStat = stat($targetPath);
             $sameFile = realpath($sourcePath) === realpath($targetPath);
             if ($sourceStat !== false && $targetStat !== false && $sourceStat['ino'] !== 0) {
-                $sameFile = $sameFile || (
-                    $sourceStat['dev'] === $targetStat['dev'] && $sourceStat['ino'] === $targetStat['ino']
-                );
+                $sameFile =
+                    $sameFile
+                    || ($sourceStat['dev'] === $targetStat['dev'] && $sourceStat['ino'] === $targetStat['ino']);
             }
             if ($sameFile) {
                 throw new RuntimeException('The upload source and target paths must differ.');
@@ -263,7 +264,7 @@ class UploadedFile implements UploadedFileInterface
                 fclose($handle);
             }
             $mode = is_file($path) ? fileperms($path) : false;
-            $mode = $mode === false ? 0o666 & ~umask() : ($mode & 0o777);
+            $mode = $mode === false ? 0o666 & ~umask() : $mode & 0o777;
             set_error_handler(static function (int $severity, string $message): never {
                 throw new RuntimeException($message);
             });

@@ -150,6 +150,7 @@ class Sqlite extends Driver
         if ($chmodFile) {
             // phpcs:disable
             @chmod($config['database'], $config['mask']);
+
             // phpcs:enable
         }
 
@@ -196,13 +197,10 @@ class Sqlite extends Driver
         return match ($feature) {
             DriverFeature::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
             DriverFeature::SAVEPOINT,
-            DriverFeature::TRUNCATE_WITH_CONSTRAINTS => true,
-
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
+                => true,
             DriverFeature::JSON => false,
-
-            DriverFeature::CTE,
-            DriverFeature::STRING_AGG,
-            DriverFeature::WINDOW => version_compare(
+            DriverFeature::CTE, DriverFeature::STRING_AGG, DriverFeature::WINDOW => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature->value],
                 '>=',
@@ -249,8 +247,7 @@ class Sqlite extends Driver
      */
     protected function transformStringAggExpression(StringAggExpression $expression): void
     {
-        $expression
-            ->setName($this->supports(DriverFeature::STRING_AGG) ? 'STRING_AGG' : 'GROUP_CONCAT')
+        $expression->setName($this->supports(DriverFeature::STRING_AGG) ? 'STRING_AGG' : 'GROUP_CONCAT')
             ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
     }
 
@@ -269,8 +266,7 @@ class Sqlite extends Driver
                 $expression->setName('')->setConjunction(' ||');
                 break;
             case 'DATEDIFF':
-                $expression
-                    ->setName('ROUND')
+                $expression->setName('ROUND')
                     ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
@@ -280,8 +276,7 @@ class Sqlite extends Driver
                 $expression->setName('DATETIME')->add(["'now'" => 'literal']);
                 break;
             case 'RAND':
-                $expression
-                    ->setName('ABS')
+                $expression->setName('ABS')
                     ->add(['RANDOM() % 1' => 'literal'], [], true);
                 break;
             case 'CURRENT_DATE':
@@ -291,8 +286,7 @@ class Sqlite extends Driver
                 $expression->setName('TIME')->add(["'now'" => 'literal']);
                 break;
             case 'EXTRACT':
-                $expression
-                    ->setName('STRFTIME')
+                $expression->setName('STRFTIME')
                     ->setConjunction(' ,')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
@@ -306,8 +300,7 @@ class Sqlite extends Driver
                     });
                 break;
             case 'DATE_ADD':
-                $expression
-                    ->setName('DATE')
+                $expression->setName('DATE')
                     ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
@@ -318,8 +311,7 @@ class Sqlite extends Driver
                     });
                 break;
             case 'DAYOFWEEK':
-                $expression
-                    ->setName('STRFTIME')
+                $expression->setName('STRFTIME')
                     ->setConjunction(' ')
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1

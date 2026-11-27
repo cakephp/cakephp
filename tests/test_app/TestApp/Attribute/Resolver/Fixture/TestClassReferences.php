@@ -11,6 +11,4 @@ use TestApp\Attribute\Resolver\TestStatus;
  * Declaring class preceded by an array of class references.
  */
 #[TestClassReference([TestRoute::class, TestStatus::class])]
-class TestClassReferences
-{
-}
+class TestClassReferences {}

@@ -32,6 +32,4 @@ namespace Cake\Console;
  * }
  * ```
  */
-interface CommandHiddenInterface
-{
-}
+interface CommandHiddenInterface {}

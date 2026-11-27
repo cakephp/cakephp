@@ -69,14 +69,19 @@ class ArrayEngine extends CacheEngine
 
         $this->eventClass = CacheBeforeSetEvent::class;
         $this->dispatchEvent(CacheBeforeSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'ttl' => $this->duration($ttl),
+            'key' => $key,
+            'value' => $value,
+            'ttl' => $this->duration($ttl),
         ]);
 
         $this->data[$key] = ['exp' => $expires, 'val' => $value];
 
         $this->eventClass = CacheAfterSetEvent::class;
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => true, 'ttl' => $this->duration($ttl),
+            'key' => $key,
+            'value' => $value,
+            'success' => true,
+            'ttl' => $this->duration($ttl),
         ]);
 
         return true;
@@ -139,7 +144,10 @@ class ArrayEngine extends CacheEngine
 
         $this->eventClass = CacheAfterIncrementEvent::class;
         $this->dispatchEvent('Cache.afterIncrement', [
-            'key' => $key, 'offset' => $offset, 'success' => true, 'value' => $val,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => true,
+            'value' => $val,
         ]);
 
         return $val;
@@ -165,7 +173,10 @@ class ArrayEngine extends CacheEngine
 
         $this->eventClass = CacheAfterDecrementEvent::class;
         $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => true, 'value' => $this->data[$key]['val'],
+            'key' => $key,
+            'offset' => $offset,
+            'success' => true,
+            'value' => $this->data[$key]['val'],
         ]);
 
         return $this->data[$key]['val'];

@@ -21,9 +21,13 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-
-use function Cake\Database\Expression\{comparison, equals, greaterThanOrEquals, isDistinctFrom, isNotDistinctFrom};
-use function Cake\Database\Expression\{lessThanOrEquals, notEquals};
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\isDistinctFrom;
+use function Cake\Database\Expression\isNotDistinctFrom;
+use function Cake\Database\Expression\lessThanOrEquals;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests QueryExpression class
@@ -105,8 +109,14 @@ class QueryExpressionTest extends TestCase
     public static function operatorKeyProvider(): array
     {
         return [
-            'multi word is not' => [['FUNC(Users.first + Users.last) is not' => 'me'], 'FUNC(Users.first + Users.last) != :c0'],
-            'multi word not similar to' => [['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern'], 'FUNC(Users.name + Users.id) NOT SIMILAR TO :c0'],
+            'multi word is not' => [
+                ['FUNC(Users.first + Users.last) is not' => 'me'],
+                'FUNC(Users.first + Users.last) != :c0',
+            ],
+            'multi word not similar to' => [
+                ['FUNC(Users.name + Users.id) NOT SIMILAR TO' => 'pattern'],
+                'FUNC(Users.name + Users.id) NOT SIMILAR TO :c0',
+            ],
             'equals' => [['Users.name =' => 'pattern'], 'Users.name = :c0'],
             'not equals' => [['Users.name !=' => 'pattern'], 'Users.name != :c0'],
             'not equals ansi' => [['Users.name <>' => 'pattern'], 'Users.name <> :c0'],
@@ -126,7 +136,10 @@ class QueryExpressionTest extends TestCase
             'is with value' => [['Users.deleted IS' => 1], 'Users.deleted = :c0'],
             'is not with value' => [['Users.deleted IS NOT' => 1], 'Users.deleted != :c0'],
             'is distinct from' => [['deleted_at IS DISTINCT FROM' => '2021-01-01'], 'deleted_at IS DISTINCT FROM :c0'],
-            'is not distinct from' => [['deleted_at IS NOT DISTINCT FROM' => null], 'deleted_at IS NOT DISTINCT FROM :c0'],
+            'is not distinct from' => [
+                ['deleted_at IS NOT DISTINCT FROM' => null],
+                'deleted_at IS NOT DISTINCT FROM :c0',
+            ],
         ];
     }
 
@@ -323,8 +336,20 @@ class QueryExpressionTest extends TestCase
     public static function methodsProvider(): array
     {
         return [
-            ['equals'], ['notEquals'], ['greaterThan'], ['lessThan'], ['greaterThanOrEquals'], ['lessThanOrEquals'], ['like'],
-            ['notLike'], ['in'], ['notIn'], ['inOrNull'], ['notInOrNull'], ['isDistinctFrom'], ['isNotDistinctFrom'],
+            ['equals'],
+            ['notEquals'],
+            ['greaterThan'],
+            ['lessThan'],
+            ['greaterThanOrEquals'],
+            ['lessThanOrEquals'],
+            ['like'],
+            ['notLike'],
+            ['in'],
+            ['notIn'],
+            ['inOrNull'],
+            ['notInOrNull'],
+            ['isDistinctFrom'],
+            ['isNotDistinctFrom'],
         ];
     }
 
@@ -494,8 +519,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithoutValue(): void
     {
-        $expression = new QueryExpression()
-            ->case()
+        $expression = new QueryExpression()->case()
             ->when(1)
             ->then(2);
 
@@ -507,8 +531,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithNullValue(): void
     {
-        $expression = new QueryExpression()
-            ->case(null)
+        $expression = new QueryExpression()->case(null)
             ->when(1)
             ->then('Yes');
 
@@ -520,8 +543,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithValueAndType(): void
     {
-        $expression = new QueryExpression()
-            ->case('1', 'integer')
+        $expression = new QueryExpression()->case('1', 'integer')
             ->when(1)
             ->then('Yes');
 

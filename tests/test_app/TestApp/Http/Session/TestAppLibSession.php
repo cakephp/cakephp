@@ -20,9 +20,7 @@ class TestAppLibSession extends AbstractSession
     /**
      * @inheritDoc
      */
-    public function read($id): string|false
-    {
-    }
+    public function read($id): string|false {}
 
     /**
      * @inheritDoc

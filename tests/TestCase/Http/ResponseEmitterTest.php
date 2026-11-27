@@ -59,14 +59,16 @@ class ResponseEmitterTest extends TestCase
             ->shouldAllowMockingProtectedMethods();
         $this->emitter->__construct();
 
-        $this->emitter->shouldReceive('setCookie')
+        $this->emitter
+            ->shouldReceive('setCookie')
             ->zeroOrMoreTimes()
             ->andReturnUsing(function ($cookie) {
                 if (is_string($cookie)) {
                     $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
                 }
 
-                $GLOBALS['mockedCookies'][] = ['name' => $cookie->getName(), 'value' => $cookie->getValue()]
+                $GLOBALS['mockedCookies'][] =
+                    ['name' => $cookie->getName(), 'value' => $cookie->getValue()]
                     + $cookie->getOptions();
 
                 return true;
@@ -126,8 +128,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseSimple(): void
     {
-        $response = new Response()
-            ->withStatus(201)
+        $response = new Response()->withStatus(201)
             ->withHeader('Content-Type', 'text/html')
             ->withHeader('Location', 'http://example.com/cake/1');
         $response->getBody()->write('It worked');
@@ -150,8 +151,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitNoContentResponse(): void
     {
-        $response = new Response()
-            ->withHeader('X-testing', 'value')
+        $response = new Response()->withHeader('X-testing', 'value')
             ->withStatus(204);
         $response->getBody()->write('It worked');
 
@@ -172,8 +172,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseArrayCookies(): void
     {
-        $response = new Response()
-            ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
+        $response = new Response()->withCookie(new Cookie('simple', 'val', null, '/', '', true))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
@@ -216,8 +215,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseCookies(): void
     {
-        $response = new Response()
-            ->withAddedHeader('Set-Cookie', "simple=val;\tSecure")
+        $response = new Response()->withAddedHeader('Set-Cookie', "simple=val;\tSecure")
             ->withAddedHeader('Set-Cookie', 'people=jim,jack,jonny";";Path=/accounts')
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly; samesite=Strict')
             ->withAddedHeader('Set-Cookie', 'a=b;  Expires=Wed, 13 Jan 2021 22:23:01 GMT; Domain=www.example.com;')
@@ -296,8 +294,7 @@ class ResponseEmitterTest extends TestCase
         $stream = new CallbackStream(function (): void {
             echo 'It worked';
         });
-        $response = new Response()
-            ->withStatus(201)
+        $response = new Response()->withStatus(201)
             ->withBody($stream)
             ->withHeader('Content-Type', 'text/plain');
 
@@ -318,8 +315,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRange(): void
     {
-        $response = new Response()
-            ->withHeader('Content-Type', 'text/plain')
+        $response = new Response()->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 1-4/9');
         $response->getBody()->write('It worked');
 
@@ -341,8 +337,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeComplete(): void
     {
-        $response = new Response()
-            ->withHeader('Content-Type', 'text/plain')
+        $response = new Response()->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 0-20/9');
         $response->getBody()->write('It worked');
 
@@ -358,8 +353,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeOverflow(): void
     {
-        $response = new Response()
-            ->withHeader('Content-Type', 'text/plain')
+        $response = new Response()->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 5-20/9');
         $response->getBody()->write('It worked');
 
@@ -375,8 +369,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeMalformed(): void
     {
-        $response = new Response()
-            ->withHeader('Content-Type', 'text/plain')
+        $response = new Response()->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 9-ba/a');
         $response->getBody()->write('It worked');
 
@@ -395,8 +388,7 @@ class ResponseEmitterTest extends TestCase
         $stream = new CallbackStream(function () {
             return 'It worked';
         });
-        $response = new Response()
-            ->withStatus(201)
+        $response = new Response()->withStatus(201)
             ->withBody($stream)
             ->withHeader('Content-Range', 'bytes 1-4/9')
             ->withHeader('Content-Type', 'text/plain');
@@ -419,8 +411,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinks(): void
     {
-        $response = new Response()
-            ->withHeader('Content-Type', 'text/html')
+        $response = new Response()->withHeader('Content-Type', 'text/html')
             ->withLink(new Link('/api/users', 'self'))
             ->withLink(new Link('/api/users?page=2', 'next'));
         $response->getBody()->write('ok');
@@ -443,8 +434,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithAttributes(): void
     {
-        $link = new Link('/css/app.css')
-            ->withRel('preload')
+        $link = new Link('/css/app.css')->withRel('preload')
             ->withAttribute('as', 'style')
             ->withAttribute('crossorigin', 'anonymous');
         $response = new Response()
@@ -468,8 +458,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithBooleanAttributes(): void
     {
-        $link = new Link('/script.js')
-            ->withRel('preload')
+        $link = new Link('/script.js')->withRel('preload')
             ->withAttribute('as', 'script')
             ->withAttribute('nopush', true)
             ->withAttribute('disabled', false);
@@ -494,8 +483,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithArrayAttributes(): void
     {
-        $link = new Link('/api/resource')
-            ->withRel('self')
+        $link = new Link('/api/resource')->withRel('self')
             ->withAttribute('hreflang', ['en', 'de']);
         $response = new Response()
             ->withLink($link);
@@ -518,8 +506,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksEscapesValues(): void
     {
-        $link = new Link('/api/users')
-            ->withRel('self')
+        $link = new Link('/api/users')->withRel('self')
             ->withAttribute('title', 'A "quoted" value');
         $response = new Response()
             ->withLink($link);
@@ -588,7 +575,8 @@ class ResponseEmitterTest extends TestCase
         $body = new ResponseStream($resource, new Request('https://example.com'));
         $response = new Response()->withStatus(206)
             ->withHeader('Content-Range', 'bytes 100-199/1000')
-            ->withHeader('Content-Length', '100')->withBody($body);
+            ->withHeader('Content-Length', '100')
+            ->withBody($body);
         ob_start();
         ob_start();
         try {
@@ -602,9 +590,15 @@ class ResponseEmitterTest extends TestCase
 
     public function testNestedBuffersCanBeDrainedForLiveEmission(): void
     {
-        $process = proc_open([PHP_BINARY, TEST_APP . 'TestApp/Http/live_emitter.php'], [
-            0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w'],
-        ], $pipes);
+        $process = proc_open(
+            [PHP_BINARY, TEST_APP . 'TestApp/Http/live_emitter.php'],
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w'],
+            ],
+            $pipes,
+        );
         $this->assertIsResource($process);
         fclose($pipes[0]);
         $output = stream_get_contents($pipes[1]);
@@ -617,9 +611,13 @@ class ResponseEmitterTest extends TestCase
 
     public function testBufferedClientPartialResponseIsNotSlicedAgain(): void
     {
-        $response = new ClientResponse([
-            'HTTP/1.1 206 Partial Content', 'Content-Range: bytes 100-199/1000',
-        ], str_repeat('R', 100));
+        $response = new ClientResponse(
+            [
+                'HTTP/1.1 206 Partial Content',
+                'Content-Range: bytes 100-199/1000',
+            ],
+            str_repeat('R', 100),
+        );
         ob_start();
         try {
             $this->emitter->emit($response);
@@ -645,13 +643,14 @@ class ResponseEmitterTest extends TestCase
 
     public function testExplicitRangeStateHandlesUnknownSizeFullBody(): void
     {
-        $stream = new class ('data://text/plain,0123456789') extends Stream {
+        $stream = new class('data://text/plain,0123456789') extends Stream {
             public function getSize(): ?int
             {
                 return null;
             }
         };
-        $response = new Response()->withHeader('Content-Range', 'bytes 2-4/10')->withBody($stream);
+        $response = new Response()->withHeader('Content-Range', 'bytes 2-4/10')
+            ->withBody($stream);
         ob_start();
         try {
             $this->emitter->emit($response, bodyIsRange: false);
@@ -670,7 +669,8 @@ class ResponseEmitterTest extends TestCase
 
                 return 'must not be emitted';
             });
-            $response = new Response()->withStatus($code)->withBody($body)
+            $response = new Response()->withStatus($code)
+                ->withBody($body)
                 ->withHeader('Content-Range', 'bytes 1-4/20');
             ob_start();
             try {

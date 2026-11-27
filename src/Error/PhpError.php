@@ -65,8 +65,7 @@ class PhpError
         private ?string $file = null,
         private ?int $line = null,
         private array $trace = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Get the PHP error constant.

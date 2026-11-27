@@ -231,7 +231,7 @@ class AttributeEventListenerConnector
         if ($this->managerResolver === null) {
             throw new EventAttributeException(sprintf(
                 'Event manager "%s" cannot be resolved because no manager resolver is configured. '
-                . 'Declared on event "%s" in %s at line %d.',
+                    . 'Declared on event "%s" in %s at line %d.',
                 $registration['manager'],
                 $registration['event'],
                 $registration['filePath'],
@@ -257,7 +257,7 @@ class AttributeEventListenerConnector
         if (!$eventManager instanceof EventManagerInterface) {
             throw new EventAttributeException(sprintf(
                 'Event manager resolver must return an instance of %s for "%s". '
-                . 'Declared on event "%s" in %s at line %d.',
+                    . 'Declared on event "%s" in %s at line %d.',
                 EventManagerInterface::class,
                 $registration['manager'],
                 $registration['event'],
@@ -300,8 +300,8 @@ class AttributeEventListenerConnector
         if (!method_exists($className, $methodName)) {
             throw new EventAttributeException(sprintf(
                 'Method "%s::%s()" does not exist. '
-                . "Declare it or update the `method` argument of `#[EventListener('%s')]` "
-                . 'in %s at line %d.',
+                    . "Declare it or update the `method` argument of `#[EventListener('%s')]` "
+                    . 'in %s at line %d.',
                 $className,
                 $methodName,
                 $attribute->event,
@@ -316,7 +316,7 @@ class AttributeEventListenerConnector
         if (!$isPublic) {
             throw new EventAttributeException(sprintf(
                 'Method "%s::%s()" must be public to be used as an event listener. '
-                . 'Declared on event "%s" in %s at line %d.',
+                    . 'Declared on event "%s" in %s at line %d.',
                 $className,
                 $methodName,
                 $attribute->event,

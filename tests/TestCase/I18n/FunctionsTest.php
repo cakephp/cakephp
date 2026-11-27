@@ -56,14 +56,22 @@ class FunctionsTest extends TestCase
         return [
             // DateTime input types
             '(datetime) DateTime object' => [new DateTime($now), DateTimeInterface::ATOM, $date],
-            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable($now), DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, $now)],
+            '(datetime) DateTimeImmutable object' => [
+                new DateTimeImmutable($now),
+                DateTimeInterface::ATOM,
+                DateTime::createFromFormat(DateTimeInterface::ATOM, $now),
+            ],
 
             // Date input types
             '(date) Date object' => [new Date($now), DateTimeInterface::ATOM, $date->setTime(0, 0, 0)],
 
             // string input types
             '(string) valid datetime string' => [$now, DateTimeInterface::ATOM, $date],
-            '(string) valid datetime string with custom format' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00')],
+            '(string) valid datetime string with custom format' => [
+                '01-07-2024 14:30:00',
+                'd-m-Y H:i:s',
+                DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00'),
+            ],
             '(string) empty string' => ['', DateTimeInterface::ATOM, null],
             '(string) space' => [' ', DateTimeInterface::ATOM, null],
             '(string) non-date string' => ['abc', DateTimeInterface::ATOM, null],
@@ -71,7 +79,11 @@ class FunctionsTest extends TestCase
             '(string) single 0' => ['0', DateTimeInterface::ATOM, DateTime::createFromTimestamp(0)],
             '(string) false' => ['false', DateTimeInterface::ATOM, null],
             '(string) true' => ['true', DateTimeInterface::ATOM, null],
-            '(string) partially valid date' => ['2024-07-01T14:30:00', 'Y-m-d\TH:i:s', DateTime::createFromFormat('Y-m-d\TH:i:s', '2024-07-01T14:30:00')],
+            '(string) partially valid date' => [
+                '2024-07-01T14:30:00',
+                'Y-m-d\TH:i:s',
+                DateTime::createFromFormat('Y-m-d\TH:i:s', '2024-07-01T14:30:00'),
+            ],
 
             // int input types
             '(int) valid timestamp' => [$timestamp, DateTimeInterface::ATOM, $date],
@@ -95,14 +107,34 @@ class FunctionsTest extends TestCase
             '(other) simple object' => [new stdClass(), DateTimeInterface::ATOM, null],
 
             // mixed valid cases
-            '(mixed) DateTimeImmutable string input' => ['2024-07-01T14:30:00Z', DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, '2024-07-01T14:30:00Z')],
-            '(mixed) integer string input' => ['1719844200', DateTimeInterface::ATOM, DateTime::createFromTimestamp(1719844200)],
+            '(mixed) DateTimeImmutable string input' => [
+                '2024-07-01T14:30:00Z',
+                DateTimeInterface::ATOM,
+                DateTime::createFromFormat(DateTimeInterface::ATOM, '2024-07-01T14:30:00Z'),
+            ],
+            '(mixed) integer string input' => [
+                '1719844200',
+                DateTimeInterface::ATOM,
+                DateTime::createFromTimestamp(1719844200),
+            ],
 
             // Custom format cases
             '(custom format) valid date' => ['01-07-2024', 'd-m-Y', DateTime::createFromFormat('d-m-Y', '01-07-2024')],
-            '(custom format) valid datetime' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00')],
-            '(custom format) invalid date' => ['31-02-2024', 'd-m-Y', DateTime::createFromFormat('d-m-Y', '02-03-2024')],
-            '(custom format) partially valid datetime' => ['01-07-2024 14:30', 'd-m-Y H:i', DateTime::createFromFormat('d-m-Y H:i', '01-07-2024 14:30')],
+            '(custom format) valid datetime' => [
+                '01-07-2024 14:30:00',
+                'd-m-Y H:i:s',
+                DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00'),
+            ],
+            '(custom format) invalid date' => [
+                '31-02-2024',
+                'd-m-Y',
+                DateTime::createFromFormat('d-m-Y', '02-03-2024'),
+            ],
+            '(custom format) partially valid datetime' => [
+                '01-07-2024 14:30',
+                'd-m-Y H:i',
+                DateTime::createFromFormat('d-m-Y H:i', '01-07-2024 14:30'),
+            ],
             '(custom format) valid month/year' => ['07-2024', 'm-Y', DateTime::createFromFormat('m-Y', '07-2024')],
         ];
     }
@@ -135,7 +167,11 @@ class FunctionsTest extends TestCase
 
             // DateTime input types
             '(datetime) DateTime object' => [new DateTime('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
-            '(datetime) DateTimeImmutable object' => [new DateTimeImmutable('2024-07-01'), 'Y-m-d', Date::create(2024, 7, 1)],
+            '(datetime) DateTimeImmutable object' => [
+                new DateTimeImmutable('2024-07-01'),
+                'Y-m-d',
+                Date::create(2024, 7, 1),
+            ],
 
             // string input types
             '(string) valid date string' => ['2024-07-01', 'Y-m-d', $date],

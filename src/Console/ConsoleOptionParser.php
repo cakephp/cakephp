@@ -639,8 +639,8 @@ class ConsoleOptionParser
             if (!isset($params[$name]) && $prompt) {
                 if (!$io) {
                     throw new ConsoleException(
-                        'Cannot use interactive option prompts without a ConsoleIo instance. ' .
-                        'Please provide a `$io` parameter to `parse()`.',
+                        'Cannot use interactive option prompts without a ConsoleIo instance. '
+                            . 'Please provide a `$io` parameter to `parse()`.',
                     );
                 }
                 $choices = $option->choices();

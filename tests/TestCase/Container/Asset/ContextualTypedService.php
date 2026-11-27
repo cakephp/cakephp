@@ -8,6 +8,5 @@ class ContextualTypedService
     public function __construct(
         #[ContextualFromContainerAttribute]
         public readonly Bar $bar,
-    ) {
-    }
+    ) {}
 }

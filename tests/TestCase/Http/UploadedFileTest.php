@@ -398,7 +398,7 @@ class UploadedFileTest extends TestCase
     {
         $this->orgFile = $this->createTempFile();
         file_put_contents($this->orgFile, 'original contents');
-        $upload = new class ($this->orgFile, null, UPLOAD_ERR_OK) extends UploadedFile {
+        $upload = new class($this->orgFile, null, UPLOAD_ERR_OK) extends UploadedFile {
             public function copyTo(string $path): void
             {
                 $handle = fopen($path, 'wb');

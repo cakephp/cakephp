@@ -33,7 +33,7 @@ class DefinitionAggregate implements DefinitionAggregateInterface
      */
     public function add(string $id, $definition): DefinitionInterface
     {
-        if (!($definition instanceof DefinitionInterface)) {
+        if (!$definition instanceof DefinitionInterface) {
             $definition = new Definition($id, $definition);
         }
 

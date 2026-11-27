@@ -152,7 +152,7 @@ class StreamTest extends TestCase
     public function testCanReadContentFromNotSeekableResource(): void
     {
         $resource = fopen($this->createTempFile(), 'r');
-        $stream = new class ($resource) extends Stream {
+        $stream = new class($resource) extends Stream {
             public function isSeekable(): bool
             {
                 return false;
@@ -526,7 +526,9 @@ class StreamTest extends TestCase
     public function testAttachWithNonStringNonResourceRaisesException(mixed $resource): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid stream provided; must be a string stream identifier or stream resource.');
+        $this->expectExceptionMessage(
+            'Invalid stream provided; must be a string stream identifier or stream resource.',
+        );
 
         $this->stream->attach($resource);
     }

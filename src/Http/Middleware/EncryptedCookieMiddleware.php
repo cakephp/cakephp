@@ -53,8 +53,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
         protected array $cookieNames,
         protected string $key,
         protected string $cipherType = 'aes',
-    ) {
-    }
+    ) {}
 
     /**
      * Apply cookie encryption/decryption.

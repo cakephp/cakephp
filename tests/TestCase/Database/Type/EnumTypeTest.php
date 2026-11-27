@@ -107,7 +107,9 @@ class EnumTypeTest extends TestCase
     public function testInvalidEnumClass(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Unable to use `TestApp\Model\Entity\Article` for type `invalid`. Class "TestApp\Model\Entity\Article" is not an enum');
+        $this->expectExceptionMessage(
+            'Unable to use `TestApp\Model\Entity\Article` for type `invalid`. Class "TestApp\Model\Entity\Article" is not an enum',
+        );
         new EnumType('invalid', Article::class);
     }
 
@@ -127,7 +129,9 @@ class EnumTypeTest extends TestCase
     public function testInvalidEnumWithoutBackingType(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Unable to use enum `TestApp\Model\Enum\NonBacked` for type `invalid`, must be a backed enum');
+        $this->expectExceptionMessage(
+            'Unable to use enum `TestApp\Model\Enum\NonBacked` for type `invalid`, must be a backed enum',
+        );
 
         new EnumType('invalid', NonBacked::class);
     }
@@ -168,7 +172,9 @@ class EnumTypeTest extends TestCase
     public function testToDatabaseInValidValueType(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Given value `1` of type `int` does not match associated `string` backed enum in `TestApp\Model\Enum\ArticleStatus`');
+        $this->expectExceptionMessage(
+            'Given value `1` of type `int` does not match associated `string` backed enum in `TestApp\Model\Enum\ArticleStatus`',
+        );
         $this->stringType->toDatabase(1, $this->driver);
     }
 

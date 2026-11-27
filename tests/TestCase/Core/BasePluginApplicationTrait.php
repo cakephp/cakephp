@@ -46,9 +46,7 @@ trait BasePluginApplicationTrait
         return $this;
     }
 
-    public function pluginBootstrap(): void
-    {
-    }
+    public function pluginBootstrap(): void {}
 
     public function pluginRoutes(RouteBuilder $routes): RouteBuilder
     {

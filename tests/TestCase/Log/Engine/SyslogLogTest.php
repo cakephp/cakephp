@@ -66,7 +66,9 @@ class SyslogLogTest extends TestCase
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
         $log->__construct();
-        $log->shouldReceive('write')->once()->with($expected, $type . ': Foo');
+        $log->shouldReceive('write')
+            ->once()
+            ->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
     }
 

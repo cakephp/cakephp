@@ -187,9 +187,7 @@ class Helper implements EventListenerInterface
      * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
-    public function initialize(array $config): void
-    {
-    }
+    public function initialize(array $config): void {}
 
     /**
      * Returns an array that can be used to describe the internal state of this

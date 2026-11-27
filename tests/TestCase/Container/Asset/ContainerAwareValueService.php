@@ -8,6 +8,5 @@ class ContainerAwareValueService
     public function __construct(
         #[ContainerAwareValueAttribute]
         public readonly Bar $bar,
-    ) {
-    }
+    ) {}
 }

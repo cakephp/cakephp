@@ -20,7 +20,5 @@ class ClassLevelNonPublicMethodListener
      * @param \Cake\Event\EventInterface $event Event being dispatched.
      * @return void
      */
-    protected function handle(EventInterface $event): void
-    {
-    }
+    protected function handle(EventInterface $event): void {}
 }

@@ -5,6 +5,4 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Table;
 
-class SessionsTable extends Table
-{
-}
+class SessionsTable extends Table {}

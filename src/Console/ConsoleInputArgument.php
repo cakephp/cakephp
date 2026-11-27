@@ -74,8 +74,10 @@ class ConsoleInputArgument
      */
     public function isEqualTo(self $argument): bool
     {
-        return $this->name() === $argument->name() &&
-            $this->usage() === $argument->usage();
+        return (
+            $this->name() === $argument->name()
+                && $this->usage() === $argument->usage()
+        );
     }
 
     /**

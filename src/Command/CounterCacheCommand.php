@@ -85,7 +85,8 @@ class CounterCacheCommand extends Command
             ->addArgument('model', [
                 'help' => 'The model to update the counter cache for.',
                 'required' => true,
-            ])->addOption('assoc', [
+            ])
+            ->addOption('assoc', [
                 'help' => 'The association to update the counter cache for. By default all associations are updated.',
                 'short' => 'a',
                 'default' => null,

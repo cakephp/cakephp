@@ -73,11 +73,9 @@ class Mariadb extends Mysql
             DriverFeature::SET_OPERATIONS_ORDER_BY,
             DriverFeature::OPTIMIZER_HINT_COMMENT,
             DriverFeature::SUBQUERY_FILTER_DISTINCT,
-            DriverFeature::SAVEPOINT => true,
-
-            DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
-
+            DriverFeature::SAVEPOINT,
+                => true,
+            DriverFeature::TRUNCATE_WITH_CONSTRAINTS, DriverFeature::CASE_SENSITIVE_QUOTED_IDENTIFIERS => false,
             DriverFeature::CTE,
             DriverFeature::JSON,
             DriverFeature::WINDOW,
@@ -86,7 +84,8 @@ class Mariadb extends Mysql
             DriverFeature::INTERSECT_ALL,
             DriverFeature::EXCEPT,
             DriverFeature::EXCEPT_ALL,
-            DriverFeature::CHECK_CONSTRAINTS => $versionCompare(),
+            DriverFeature::CHECK_CONSTRAINTS,
+                => $versionCompare(),
         };
     }
 
@@ -116,8 +115,8 @@ class Mariadb extends Mysql
     {
         deprecationWarning(
             '5.5.0',
-            'The isMariadb() method is deprecated.' .
-            'Use `instanceof Mariadb` instead for runtime checks.',
+            'The isMariadb() method is deprecated.'
+                . 'Use `instanceof Mariadb` instead for runtime checks.',
         );
 
         return true;

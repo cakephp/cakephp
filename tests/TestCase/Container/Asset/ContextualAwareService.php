@@ -8,6 +8,5 @@ class ContextualAwareService
     public function __construct(
         #[ContextualContainerAwareAttribute]
         public readonly Bar $bar,
-    ) {
-    }
+    ) {}
 }

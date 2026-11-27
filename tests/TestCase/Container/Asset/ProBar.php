@@ -5,9 +5,7 @@ namespace Cake\Test\TestCase\Container\Asset;
 
 class ProBar implements BarInterface
 {
-    protected function __construct()
-    {
-    }
+    protected function __construct() {}
 
     public static function factory(): self
     {

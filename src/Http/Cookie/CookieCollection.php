@@ -94,10 +94,12 @@ class CookieCollection implements IteratorAggregate, Countable
                     $hostOnly = $cookie->getDomain() === '';
                     $cookieDomain = $hostOnly ? $sourceDomain : static::normalizeDomain($cookie->getDomain());
                     $cookie = $cookie->withDomain($cookieDomain);
-                    $domainMatch = $cookieDomain === $sourceDomain || (
-                        filter_var(trim($sourceDomain, '[]'), FILTER_VALIDATE_IP) === false &&
-                        str_ends_with($sourceDomain, ".{$cookieDomain}")
-                    );
+                    $domainMatch =
+                        $cookieDomain === $sourceDomain
+                        || (
+                            filter_var(trim($sourceDomain, '[]'), FILTER_VALIDATE_IP) === false
+                            && str_ends_with($sourceDomain, ".{$cookieDomain}")
+                        );
                     if (!str_starts_with($cookie->getPath(), '/')) {
                         $cookie = $cookie->withPath($defaults['path'] ?? '/');
                     }
@@ -110,7 +112,7 @@ class CookieCollection implements IteratorAggregate, Countable
                         unset($hostOnlyDomains[$cookie->getId()]);
                     }
                 }
-            } catch (Exception | TypeError) {
+            } catch (Exception|TypeError) {
                 // @mago-expect lint:no-empty-catch-clause Don't blow up on invalid cookies
             }
         }

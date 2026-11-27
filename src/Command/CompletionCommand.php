@@ -73,25 +73,29 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
 
         $parser->setDescription(
             static::getDescription(),
-        )->addArgument('mode', [
-            'help' => 'The type of thing to get completion on.',
-            'required' => true,
-            'choices' => array_keys($modes),
-        ])->addArgument('command', [
-            'help' => 'The command name to get information on.',
-            'required' => false,
-        ])->addArgument('subcommand', [
-            'help' => 'The sub-command related to command to get information on.',
-            'required' => false,
-        ])->setEpilog([
-            'The various modes allow you to get help information on commands and their arguments.',
-            'The available modes are:',
-            '',
-            $modeHelp,
-            '',
-            'This command is not intended to be called manually, and should be invoked from a ' .
-                'terminal completion script.',
-        ]);
+        )
+            ->addArgument('mode', [
+                'help' => 'The type of thing to get completion on.',
+                'required' => true,
+                'choices' => array_keys($modes),
+            ])
+            ->addArgument('command', [
+                'help' => 'The command name to get information on.',
+                'required' => false,
+            ])
+            ->addArgument('subcommand', [
+                'help' => 'The sub-command related to command to get information on.',
+                'required' => false,
+            ])
+            ->setEpilog([
+                'The various modes allow you to get help information on commands and their arguments.',
+                'The available modes are:',
+                '',
+                $modeHelp,
+                '',
+                'This command is not intended to be called manually, and should be invoked from a '
+                    . 'terminal completion script.',
+            ]);
 
         return $parser;
     }
@@ -148,8 +152,8 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             if (!$verbose && str_contains($commandName, '.')) {
                 $shortName = explode('.', $commandName)[1];
                 if (
-                    isset($commandClasses[$shortName], $commandClasses[$commandName]) &&
-                    $commandClasses[$shortName] === $commandClasses[$commandName]
+                    isset($commandClasses[$shortName], $commandClasses[$commandName])
+                    && $commandClasses[$shortName] === $commandClasses[$commandName]
                 ) {
                     continue;
                 }

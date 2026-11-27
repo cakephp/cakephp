@@ -15,8 +15,8 @@ use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-
-use function Cake\Database\Expression\{isDistinctFrom, isNotDistinctFrom};
+use function Cake\Database\Expression\isDistinctFrom;
+use function Cake\Database\Expression\isNotDistinctFrom;
 
 class NullSafeComparisonTest extends TestCase
 {
@@ -31,8 +31,11 @@ class NullSafeComparisonTest extends TestCase
     }
 
     #[DataProvider('dialectProvider')]
-    public function testNullSafeComparisonSql(string $driverClass, string $expectedDistinct, string $expectedNotDistinct): void
-    {
+    public function testNullSafeComparisonSql(
+        string $driverClass,
+        string $expectedDistinct,
+        string $expectedNotDistinct,
+    ): void {
         $driver = Mockery::mock($driverClass)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -47,9 +50,10 @@ class NullSafeComparisonTest extends TestCase
         $connection->shouldReceive('role')->andReturn('write');
         $connection->shouldReceive('configName')->andReturn('test');
         $connection->shouldReceive('getDriver')->andReturn($driver);
-        $connection->shouldReceive('selectQuery')->andReturnUsing(function () use ($connection) {
-            return new SelectQuery($connection);
-        });
+        $connection->shouldReceive('selectQuery')
+            ->andReturnUsing(function () use ($connection) {
+                return new SelectQuery($connection);
+            });
 
         $binder = new ValueBinder();
 

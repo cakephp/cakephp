@@ -96,7 +96,9 @@ class Uri implements UriInterface, Stringable
                 $queryParts = explode('?', $fragmentParts[0], 2);
                 $encoded = $this->encode(
                     $queryParts[0],
-                    '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS
+                    '/(?:[^'
+                        . static::CHAR_UNRESERVED
+                        . static::CHAR_SUB_DELIMS
                         . ':\/\[\]@%]+|%(?![A-Fa-f0-9]{2}))/',
                 );
                 if (isset($queryParts[1])) {

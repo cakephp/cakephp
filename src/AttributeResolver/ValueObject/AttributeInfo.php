@@ -55,8 +55,7 @@ readonly class AttributeInfo implements JsonSerializable
         public AttributeTarget $target,
         public int $fileTime = 0,
         public ?string $pluginName = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Convert to array for serialization.
@@ -119,7 +118,7 @@ readonly class AttributeInfo implements JsonSerializable
             ));
         }
 
-        $instance = new ($this->attributeName)(...$this->arguments);
+        $instance = new $this->attributeName(...$this->arguments);
 
         if ($expectedClass !== null && !$instance instanceof $expectedClass) {
             throw new InvalidArgumentException(sprintf(

@@ -133,7 +133,10 @@ class FileEngine extends CacheEngine
         $this->eventClass = CacheAfterSetEvent::class;
         if ($this->setKey($key, true) === false) {
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-                'key' => $key, 'value' => $value, 'success' => false, 'ttl' => $duration,
+                'key' => $key,
+                'value' => $value,
+                'success' => false,
+                'ttl' => $duration,
             ]);
 
             return false;
@@ -152,9 +155,10 @@ class FileEngine extends CacheEngine
         }
 
         $this->File->rewind();
-        $success = $this->File->ftruncate(0) &&
-            $this->File->fwrite($contents) &&
-            $this->File->fflush();
+        $success =
+            $this->File->ftruncate(0)
+            && $this->File->fwrite($contents)
+            && $this->File->fflush();
 
         if ($this->config['lock']) {
             $this->File->flock(LOCK_UN);
@@ -162,7 +166,10 @@ class FileEngine extends CacheEngine
         unset($this->File);
 
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $origValue, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $origValue,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;
@@ -264,6 +271,7 @@ class FileEngine extends CacheEngine
 
         // phpcs:disable
         return @unlink($path);
+
         // phpcs:enable
     }
 
@@ -359,6 +367,7 @@ class FileEngine extends CacheEngine
                 if ($filePath !== false) {
                     // phpcs:disable
                     @unlink($filePath);
+
                     // phpcs:enable
                 }
             }
@@ -419,9 +428,9 @@ class FileEngine extends CacheEngine
             return false;
         }
         if (
-            !isset($this->File) ||
-            $this->File->getBasename() !== $key ||
-            $this->File->valid() === false
+            !isset($this->File)
+            || $this->File->getBasename() !== $key
+            || $this->File->valid() === false
         ) {
             $exists = is_file($path->getPathname());
             try {
@@ -458,10 +467,11 @@ class FileEngine extends CacheEngine
         if (!is_dir($path)) {
             // phpcs:disable
             $success = @mkdir($path, $this->config['dirMask'] ^ umask(), true);
+
             // phpcs:enable
         }
 
-        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        $isWritableDir = $dir->isDir() && $dir->isWritable();
         if (!$success || ($this->init && !$isWritableDir)) {
             $this->init = false;
             triggerWarning(sprintf(

@@ -56,7 +56,7 @@ abstract class Driver implements LoggerAwareInterface
     /**
      * Maximum alias length or null if no limit
      */
-    protected const int|null MAX_ALIAS_LENGTH = null;
+    protected const ?int MAX_ALIAS_LENGTH = null;
 
     /**
      * @var array<int>  DB-specific error codes that allow connect retry
@@ -681,8 +681,8 @@ abstract class Driver implements LoggerAwareInterface
     {
         if ($query->clause('join')) {
             throw new DatabaseException(
-                'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-                'this can break references to joined tables.',
+                'Aliases are being removed from conditions for UPDATE/DELETE queries, '
+                    . 'this can break references to joined tables.',
             );
         }
 
@@ -693,8 +693,8 @@ abstract class Driver implements LoggerAwareInterface
                 if ($expression instanceof ComparisonExpression) {
                     $field = $expression->getField();
                     if (
-                        is_string($field) &&
-                        str_contains($field, '.')
+                        is_string($field)
+                        && str_contains($field, '.')
                     ) {
                         [, $unaliasedField] = explode('.', $field, 2);
                         $expression->setField($unaliasedField);
@@ -806,15 +806,13 @@ abstract class Driver implements LoggerAwareInterface
             return str_replace(',', '.', (string)$value);
         }
         if (
-            (
-                is_int($value) ||
-                $value === '0'
-            ) ||
-            (
-                is_numeric($value) &&
-                !str_contains($value, ',') &&
-                !str_starts_with($value, '0') &&
-                !str_contains($value, 'e')
+            is_int($value)
+            || $value === '0'
+            || (
+                is_numeric($value)
+                && !str_contains($value, ',')
+                && !str_starts_with($value, '0')
+                && !str_contains($value, 'e')
             )
         ) {
             return (string)$value;
@@ -987,8 +985,8 @@ abstract class Driver implements LoggerAwareInterface
         $className = App::className($className, 'Cake/Log', 'Log');
         if ($className === null) {
             throw new CakeException(
-                'For logging you must either set the `log` config to a FQCN which implements Psr\Log\LoggerInterface' .
-                ' or require the cakephp/log package in your composer config.',
+                'For logging you must either set the `log` config to a FQCN which implements Psr\Log\LoggerInterface'
+                    . ' or require the cakephp/log package in your composer config.',
             );
         }
 

@@ -73,15 +73,14 @@ class BaseLogTest extends TestCase
             'array' => ['arr'],
             'array-obj' => new ArrayObject(['x' => 'y']),
             'debug-info' => ConnectionManager::get('test'),
-            'obj' => function (): void {
-            },
+            'obj' => function (): void {},
             'to-string' => new Response(['body' => 'response body']),
             'to-array' => new TypeMap(['my-type']),
         ];
         $this->logger->log(
             LogLevel::INFO,
             '1: {string}, 2: {bool}, 3: {json}, 4: {not a placeholder}, 5: {array}, '
-            . '6: {array-obj} 7: {obj}, 8: {debug-info} 9: {valid-ph-not-in-context}',
+                . '6: {array-obj} 7: {obj}, 8: {debug-info} 9: {valid-ph-not-in-context}',
             $context,
         );
 

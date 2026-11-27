@@ -440,11 +440,10 @@ class PaginatorHelper extends Helper
             $field = $table;
             $table = $alias;
         }
-        $isSorted = (
-            $sortKey === $table . '.' . $field ||
-            $sortKey === $alias . '.' . $key ||
-            $table . '.' . $field === $alias . '.' . $sortKey
-        );
+        $isSorted =
+            $sortKey === $table . '.' . $field
+            || $sortKey === $alias . '.' . $key
+            || $table . '.' . $field === $alias . '.' . $sortKey;
 
         $template = 'sort';
         $dir = $defaultDir;
@@ -722,8 +721,12 @@ class PaginatorHelper extends Helper
     public function numbers(array $options = []): string
     {
         $defaults = [
-            'before' => null, 'after' => null,
-            'modulus' => 8, 'first' => null, 'last' => null, 'url' => [],
+            'before' => null,
+            'after' => null,
+            'modulus' => 8,
+            'first' => null,
+            'last' => null,
+            'url' => [],
         ];
         $options += $defaults;
 
@@ -765,7 +768,7 @@ class PaginatorHelper extends Helper
         $end = max(1 + $options['modulus'], $params['currentPage'] + $half);
         $start = min(
             $params['pageCount'] - $options['modulus'],
-            $params['currentPage'] - $half - $options['modulus'] % 2,
+            $params['currentPage'] - $half - ($options['modulus'] % 2),
         );
 
         if ($options['first']) {
@@ -1222,14 +1225,18 @@ class PaginatorHelper extends Helper
         $out .= $this->generateHiddenFields($hiddenFields);
 
         $limit = $this->View->getRequest()->getQuery('limit');
-        $out .= $this->Form->control($scope . 'limit', $options + [
-            'type' => 'select',
-            'label' => __('View'),
-            'default' => $default,
-            'value' => $limit === null ? null : (int)$limit,
-            'options' => $limits,
-            'onChange' => 'this.form.requestSubmit()',
-        ]);
+        $out .= $this->Form->control(
+            $scope . 'limit',
+            $options
+                + [
+                    'type' => 'select',
+                    'label' => __('View'),
+                    'default' => $default,
+                    'value' => $limit === null ? null : (int)$limit,
+                    'options' => $limits,
+                    'onChange' => 'this.form.requestSubmit()',
+                ],
+        );
 
         $out .= $this->Form->end();
 
@@ -1251,8 +1258,8 @@ class PaginatorHelper extends Helper
         if ($steps !== null) {
             if ($limits !== []) {
                 throw new InvalidArgumentException(
-                    'Cannot use both `steps` option and explicit `$limits` array. ' .
-                    'Use one or the other.',
+                    'Cannot use both `steps` option and explicit `$limits` array. '
+                        . 'Use one or the other.',
                 );
             }
 
@@ -1267,7 +1274,8 @@ class PaginatorHelper extends Helper
         }
 
         // Apply default limits if none provided
-        $limits = $limits ?: [
+        $limits = $limits
+        ?: [
             '20' => '20',
             '50' => '50',
             '100' => '100',

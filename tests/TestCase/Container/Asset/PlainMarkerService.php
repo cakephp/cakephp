@@ -10,6 +10,5 @@ class PlainMarkerService
     public function __construct(
         #[SensitiveParameter]
         public readonly Bar $bar,
-    ) {
-    }
+    ) {}
 }

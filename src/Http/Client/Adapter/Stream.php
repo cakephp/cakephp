@@ -313,16 +313,15 @@ class Stream implements AdapterInterface
             $last = array_key_last($responses);
             $response = $responses[$last];
             if (
-                strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip' &&
-                strtoupper($request->getMethod()) !== 'HEAD' &&
-                $response->getStatusCode() >= 200 &&
-                !in_array($response->getStatusCode(), [204, 205, 206, 304], true) &&
-                !$response->hasHeader('Content-Range') &&
-                !$response->hasHeader('Transfer-Encoding')
+                strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip'
+                && strtoupper($request->getMethod()) !== 'HEAD'
+                && $response->getStatusCode() >= 200
+                && !in_array($response->getStatusCode(), [204, 205, 206, 304], true)
+                && !$response->hasHeader('Content-Range')
+                && !$response->hasHeader('Transfer-Encoding')
             ) {
                 $body->decodeGzip();
-                $responses[$last] = $response
-                    ->withoutHeader('Content-Encoding')
+                $responses[$last] = $response->withoutHeader('Content-Encoding')
                     ->withoutHeader('Content-Length');
             }
             if (isset($options['readTimeout'])) {

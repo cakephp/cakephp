@@ -49,8 +49,7 @@ class CommonTableExpressionTest extends TestCase
         $cte = new CommonTableExpression('test', $this->connection->selectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
 
-        $cte = new CommonTableExpression()
-            ->name('test')
+        $cte = new CommonTableExpression()->name('test')
             ->query($this->connection->selectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
     }
@@ -60,8 +59,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testFields(): void
     {
-        $cte = new CommonTableExpression('test', $this->connection->selectQuery())
-            ->field('col1')
+        $cte = new CommonTableExpression('test', $this->connection->selectQuery())->field('col1')
             ->field([new IdentifierExpression('col2')]);
         $this->assertEqualsSql('test(col1, col2) AS ()', $cte->sql(new ValueBinder()));
     }

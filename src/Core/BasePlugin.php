@@ -137,9 +137,7 @@ class BasePlugin implements PluginInterface
      *
      * @return void
      */
-    public function initialize(): void
-    {
-    }
+    public function initialize(): void {}
 
     /**
      * @inheritDoc
@@ -312,9 +310,7 @@ class BasePlugin implements PluginInterface
      * @param \Cake\Container\ContainerInterface $container The container to add services to.
      * @return void
      */
-    public function services(ContainerInterface $container): void
-    {
-    }
+    public function services(ContainerInterface $container): void {}
 
     /**
      * Define global event listeners for the plugin.

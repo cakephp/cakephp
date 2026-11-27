@@ -375,8 +375,11 @@ class EntityContextTest extends TestCase
         $this->assertNull($context->type('0.nope'));
 
         $expected = [
-            'length' => 255, 'precision' => null,
-            'null' => null, 'default' => null, 'comment' => null,
+            'length' => 255,
+            'precision' => null,
+            'null' => null,
+            'default' => null,
+            'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('0.user.username'));
     }
@@ -684,8 +687,7 @@ class EntityContextTest extends TestCase
     public function testValAssociatedJoinTableSchemaDefault(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $joinTable = $table
-            ->belongsToMany('Tags')
+        $joinTable = $table->belongsToMany('Tags')
             ->setThrough('ArticlesTags')
             ->junction();
         $joinTable->getSchema()->addColumn('column', [
@@ -1073,26 +1075,38 @@ class EntityContextTest extends TestCase
         ]);
 
         $expected = [
-            'length' => 255, 'precision' => null,
-            'null' => null, 'default' => null, 'comment' => null,
+            'length' => 255,
+            'precision' => null,
+            'null' => null,
+            'default' => null,
+            'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('title'));
 
         $expected = [
-            'length' => null, 'precision' => null,
-            'null' => null, 'default' => null, 'comment' => null,
+            'length' => null,
+            'precision' => null,
+            'null' => null,
+            'default' => null,
+            'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('body'));
 
         $expected = [
-            'length' => 10, 'precision' => 3,
-            'null' => null, 'default' => null, 'comment' => null,
+            'length' => 10,
+            'precision' => 3,
+            'null' => null,
+            'default' => null,
+            'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('user.rating'));
 
         $expected = [
-            'length' => 11, 'precision' => null,
-            'null' => false, 'default' => null, 'comment' => null,
+            'length' => 11,
+            'precision' => null,
+            'null' => false,
+            'default' => null,
+            'comment' => null,
         ];
         $this->assertEquals($expected, $context->attributes('tags.0._joinData.article_id'));
     }
@@ -1329,9 +1343,10 @@ class EntityContextTest extends TestCase
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])
-        ->add('body', 'maxlength', [
-            'rule' => ['maxlength', 1000],
-        ])->allowEmptyString('body');
+            ->add('body', 'maxlength', [
+                'rule' => ['maxlength', 1000],
+            ])
+            ->allowEmptyString('body');
         $articles->setValidator('create', $validator);
 
         $validator = new Validator();

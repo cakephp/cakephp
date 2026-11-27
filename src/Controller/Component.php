@@ -124,9 +124,7 @@ class Component implements EventListenerInterface
      * @param array<string, mixed> $config The configuration settings provided to this component.
      * @return void
      */
-    public function initialize(array $config): void
-    {
-    }
+    public function initialize(array $config): void {}
 
     /**
      * Magic method for lazy loading $components.

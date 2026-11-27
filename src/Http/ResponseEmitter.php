@@ -42,8 +42,7 @@ class ResponseEmitter
     public function __construct(
         protected int $maxBufferLength = 8192,
         protected bool $flushOutputBuffers = false,
-    ) {
-    }
+    ) {}
 
     /**
      * Emit a response.

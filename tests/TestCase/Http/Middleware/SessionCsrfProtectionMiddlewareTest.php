@@ -54,7 +54,13 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
     public static function httpMethodProvider(): array
     {
         return [
-            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],
+            ['OPTIONS'],
+            ['PATCH'],
+            ['PUT'],
+            ['POST'],
+            ['DELETE'],
+            ['PURGE'],
+            ['INVALIDMETHOD'],
         ];
     }
 

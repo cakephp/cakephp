@@ -5,7 +5,5 @@ namespace Cake\Test\TestCase\Container\Asset;
 
 class Baz
 {
-    public function __construct(public ?BarInterface $bar = null)
-    {
-    }
+    public function __construct(public ?BarInterface $bar = null) {}
 }

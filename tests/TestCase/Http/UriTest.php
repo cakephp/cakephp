@@ -78,7 +78,9 @@ class UriTest extends TestCase
 
     public function testUserInfoAndPortCanBeSetBeforeHost(): void
     {
-        $uri = new Uri()->withUserInfo('user', 'pass')->withPort(8080)->withHost('example.com');
+        $uri = new Uri()->withUserInfo('user', 'pass')
+            ->withPort(8080)
+            ->withHost('example.com');
         $this->assertSame('//user:pass@example.com:8080', (string)$uri);
     }
 
@@ -537,8 +539,7 @@ class UriTest extends TestCase
     #[DataProvider('standardSchemePortCombinations')]
     public function testAuthorityOmitsPortForStandardSchemePortCombinations(string $scheme, int $port): void
     {
-        $uri = new Uri()
-            ->withHost('example.com')
+        $uri = new Uri()->withHost('example.com')
             ->withScheme($scheme)
             ->withPort($port);
         $this->assertSame('example.com', $uri->getAuthority());
@@ -728,8 +729,7 @@ class UriTest extends TestCase
 
     public function testReservedCharsInPathUnencoded(): void
     {
-        $uri = new Uri()
-            ->withScheme('https')
+        $uri = new Uri()->withScheme('https')
             ->withHost('api.linkedin.com')
             ->withPath('/v1/people/~:(first-name,last-name,email-address,picture-url)');
 

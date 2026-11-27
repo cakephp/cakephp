@@ -24,8 +24,9 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
-
-use function Cake\Database\Expression\{equals, in, notEquals};
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -184,9 +185,9 @@ class EavStrategy implements TranslateStrategyInterface
                 $q->where([$table->aliasField('locale') => $locale]);
 
                 if (
-                    $query->isAutoFieldsEnabled() ||
-                    in_array($field, $select, true) ||
-                    in_array($this->table->aliasField($field), $select, true)
+                    $query->isAutoFieldsEnabled()
+                    || in_array($field, $select, true)
+                    || in_array($this->table->aliasField($field), $select, true)
                 ) {
                     $q->select(['id', 'content']);
                 }
@@ -200,8 +201,9 @@ class EavStrategy implements TranslateStrategyInterface
         $alias = $this->table->getAlias();
         $select = $query->clause('select');
 
-        $changeFilter = isset($options['filterByCurrentLocale']) &&
-            $options['filterByCurrentLocale'] !== $this->config['onlyTranslated'];
+        $changeFilter =
+            isset($options['filterByCurrentLocale'])
+            && $options['filterByCurrentLocale'] !== $this->config['onlyTranslated'];
 
         foreach ($fields as $field) {
             $name = $alias . '_' . $field . '_translation';
@@ -296,7 +298,8 @@ class EavStrategy implements TranslateStrategyInterface
         $preexistent = [];
         if ($key) {
             /** @var \Traversable<string, \Cake\Datasource\EntityInterface> $preexistent */
-            $preexistent = $this->translationTable->find()
+            $preexistent = $this->translationTable
+                ->find()
                 ->select(['id', 'field'])
                 ->where([
                     'field' => in($fields),
@@ -528,7 +531,8 @@ class EavStrategy implements TranslateStrategyInterface
     {
         $association = $this->table->getAssociation($this->translationTable->getAlias());
 
-        $query = $association->getTarget()->unhydratedFind()
+        $query = $association->getTarget()
+            ->unhydratedFind()
             ->select(['id', 'num' => 0])
             ->where($association->getConditions())
             ->where(current($ruleSet));

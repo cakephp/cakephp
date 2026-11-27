@@ -218,8 +218,7 @@ class BasePluginTest extends TestCase
 
     public function testServerBuildMiddlewareEventIsCalledOnBootstrap(): void
     {
-        $basePlugin = new class extends BasePlugin
-        {
+        $basePlugin = new class extends BasePlugin {
             public bool $isCalled = false;
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
@@ -230,8 +229,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -251,8 +249,7 @@ class BasePluginTest extends TestCase
 
     public function testMiddlewareEventIsCaughtByPluginEventsListener(): void
     {
-        $basePlugin = new class extends BasePlugin
-        {
+        $basePlugin = new class extends BasePlugin {
             public bool $isCalled = false;
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
@@ -263,8 +260,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2) . '/test_app/config') extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue->add(function (
@@ -301,8 +297,7 @@ class BasePluginTest extends TestCase
             'pass' => [],
         ]);
 
-        $basePlugin = new class extends BasePlugin
-        {
+        $basePlugin = new class extends BasePlugin {
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
                 $eventManager->on('testTrue', function ($event) {
@@ -313,8 +308,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -330,8 +324,7 @@ class BasePluginTest extends TestCase
     public function testConsoleEventsAreRegistered(): void
     {
         static::setAppNamespace();
-        $basePlugin = new class extends BasePlugin
-        {
+        $basePlugin = new class extends BasePlugin {
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
                 $eventManager->on('testTrue', function ($event) {
@@ -342,11 +335,8 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
+            public function routes(RouteBuilder $routes): void {}
 
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
@@ -367,8 +357,7 @@ class BasePluginTest extends TestCase
     {
         static::setAppNamespace();
 
-        $plugin = new class extends BasePlugin
-        {
+        $plugin = new class extends BasePlugin {
             public function eventListeners(): array
             {
                 return [CustomTestEventListenerInterface::class];
@@ -380,8 +369,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -407,8 +395,7 @@ class BasePluginTest extends TestCase
     {
         static::setAppNamespace();
 
-        $plugin = new class extends BasePlugin
-        {
+        $plugin = new class extends BasePlugin {
             public function eventListeners(): array
             {
                 return [DependencyInjectedEventListener::class];
@@ -422,8 +409,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -450,16 +436,14 @@ class BasePluginTest extends TestCase
      */
     public function testEventListenersInvalidClassThrows(): void
     {
-        $plugin = new class extends BasePlugin
-        {
+        $plugin = new class extends BasePlugin {
             public function eventListeners(): array
             {
                 return [stdClass::class];
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
@@ -477,8 +461,7 @@ class BasePluginTest extends TestCase
     {
         static::setAppNamespace();
 
-        $plugin = new class extends BasePlugin
-        {
+        $plugin = new class extends BasePlugin {
             public function eventListeners(): array
             {
                 return [CustomTestEventListenerInterface::class];
@@ -490,8 +473,7 @@ class BasePluginTest extends TestCase
             }
         };
 
-        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
-        {
+        $app = new class(dirname(__DIR__, 2)) extends BaseApplication {
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;

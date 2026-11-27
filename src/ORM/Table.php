@@ -375,9 +375,7 @@ class Table implements
      * @param array<string, mixed> $config Configuration options passed to the constructor
      * @return void
      */
-    public function initialize(array $config): void
-    {
-    }
+    public function initialize(array $config): void {}
 
     /**
      * Sets the database table name.
@@ -601,10 +599,10 @@ class Table implements
             if (strlen($table . '__' . $name) > $maxLength) {
                 $nameLength = $maxLength - 2;
                 throw new DatabaseException(
-                    'ORM queries generate field aliases using the table name/alias and column name. ' .
-                    "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
-                    'You must change the table schema in the database and shorten either the table or column ' .
-                    'identifier so they fit within the database alias limits.',
+                    'ORM queries generate field aliases using the table name/alias and column name. '
+                        . "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). "
+                        . 'You must change the table schema in the database and shorten either the table or column '
+                        . 'identifier so they fit within the database alias limits.',
                 );
             }
         }
@@ -689,10 +687,10 @@ class Table implements
         foreach ($schema->columns() as $column) {
             $columnSchema = $schema->getColumn($column);
             if (
-                $columnSchema &&
-                $columnSchema['null'] !== true &&
-                $columnSchema['type'] === 'string' &&
-                !preg_match('/pass|token|secret/i', $column)
+                $columnSchema
+                && $columnSchema['null'] !== true
+                && $columnSchema['type'] === 'string'
+                && !preg_match('/pass|token|secret/i', $column)
             ) {
                 return $this->displayField = $column;
             }
@@ -1391,8 +1389,8 @@ class Table implements
         if (!$result instanceof UnhydratedSelectQuery) {
             throw new CakeException(sprintf(
                 'The `%s` finder must return the query it was given when called via unhydratedFind(); '
-                . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
-                . 'non-hydrating contract - use find() for those.',
+                    . 'got `%s` instead. Finders that build a fresh query cannot preserve the '
+                    . 'non-hydrating contract - use find() for those.',
                 $type,
                 get_debug_type($result),
             ));
@@ -1493,10 +1491,10 @@ class Table implements
         $valueField ??= $this->getDisplayField();
 
         if (
-            !$query->clause('select') &&
-            !$keyField instanceof Closure &&
-            !$valueField instanceof Closure &&
-            !$groupField instanceof Closure
+            !$query->clause('select')
+            && !$keyField instanceof Closure
+            && !$valueField instanceof Closure
+            && !$groupField instanceof Closure
         ) {
             $fields = array_merge(
                 (array)$keyField,
@@ -1748,10 +1746,13 @@ class Table implements
         callable|array|null $callback = null,
         array $options = [],
     ): EntityInterface {
-        $options = new ArrayObject($options + [
-            'atomic' => true,
-            'defaults' => true,
-        ]);
+        $options = new ArrayObject(
+            $options
+                + [
+                    'atomic' => true,
+                    'defaults' => true,
+                ],
+        );
 
         $entity = $this->executeTransaction(
             fn() => $this->processFindOrCreate($search, $callback, $options->getArrayCopy()),
@@ -1968,10 +1969,10 @@ class Table implements
     {
         return (bool)count(
             $this->unhydratedFind()
-            ->select(['existing' => 1])
-            ->where($conditions)
-            ->limit(1)
-            ->toArray(),
+                ->select(['existing' => 1])
+                ->where($conditions)
+                ->limit(1)
+                ->toArray(),
         );
     }
 
@@ -2068,14 +2069,17 @@ class Table implements
         EntityInterface $entity,
         array $options = [],
     ): EntityInterface|false {
-        $options = new ArrayObject($options + [
-            'atomic' => true,
-            'associated' => true,
-            'checkRules' => true,
-            'checkExisting' => true,
-            '_primary' => true,
-            '_cleanOnSuccess' => true,
-        ]);
+        $options = new ArrayObject(
+            $options
+                + [
+                    'atomic' => true,
+                    'associated' => true,
+                    'checkRules' => true,
+                    'checkExisting' => true,
+                    '_primary' => true,
+                    '_cleanOnSuccess' => true,
+                ],
+        );
 
         if ($entity->hasErrors((bool)$options['associated'])) {
             return false;
@@ -2171,7 +2175,7 @@ class Table implements
                     $result instanceof EntityInterface,
                     sprintf(
                         'The result for the `Model.beforeSave` event must be `false` or `EntityInterface` instance.'
-                        . ' Got `%s` instead.',
+                            . ' Got `%s` instead.',
                         get_debug_type($result),
                     ),
                 );
@@ -2300,7 +2304,8 @@ class Table implements
             return false;
         }
 
-        $statement = $this->insertQuery()->insert(array_keys($data))
+        $statement = $this->insertQuery()
+            ->insert(array_keys($data))
             ->values($data)
             ->execute();
 
@@ -2444,11 +2449,12 @@ class Table implements
         array $options = [],
     ): iterable {
         $options = new ArrayObject(
-            $options + [
-                'atomic' => true,
-                'checkRules' => true,
-                '_primary' => true,
-            ],
+            $options
+                + [
+                    'atomic' => true,
+                    'checkRules' => true,
+                    '_primary' => true,
+                ],
         );
         $options['_cleanOnSuccess'] = false;
 
@@ -2553,11 +2559,14 @@ class Table implements
      */
     public function delete(EntityInterface $entity, array $options = []): bool
     {
-        $options = new ArrayObject($options + [
-            'atomic' => true,
-            'checkRules' => true,
-            '_primary' => true,
-        ]);
+        $options = new ArrayObject(
+            $options
+                + [
+                    'atomic' => true,
+                    'checkRules' => true,
+                    '_primary' => true,
+                ],
+        );
 
         $success = $this->executeTransaction(
             fn() => $this->processDelete($entity, $options),
@@ -2629,11 +2638,14 @@ class Table implements
      */
     protected function doDeleteMany(iterable $entities, array $options = []): ?EntityInterface
     {
-        $options = new ArrayObject($options + [
-                'atomic' => true,
-                'checkRules' => true,
-                '_primary' => true,
-            ]);
+        $options = new ArrayObject(
+            $options
+                + [
+                    'atomic' => true,
+                    'checkRules' => true,
+                    '_primary' => true,
+                ],
+        );
 
         $failed = $this->executeTransaction(function () use ($entities, $options) {
             foreach ($entities as $entity) {
@@ -2931,8 +2943,8 @@ class Table implements
         $association = $this->associations->get($property);
         if (!$association) {
             throw new DatabaseException(sprintf(
-                'Undefined property `%s`. ' .
-                'You have not defined the `%s` association on `%s`.',
+                'Undefined property `%s`. '
+                    . 'You have not defined the `%s` association on `%s`.',
                 $property,
                 $property,
                 static::class,

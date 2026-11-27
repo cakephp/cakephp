@@ -54,11 +54,7 @@ class Oauth implements AuthenticationInterface
 
         switch ($credentials['method']) {
             case 'HMAC-SHA1':
-                $hasKeys = isset(
-                    $credentials['consumerSecret'],
-                    $credentials['token'],
-                    $credentials['tokenSecret'],
-                );
+                $hasKeys = isset($credentials['consumerSecret'], $credentials['token'], $credentials['tokenSecret']);
                 if (!$hasKeys) {
                     return $request;
                 }
@@ -73,11 +69,7 @@ class Oauth implements AuthenticationInterface
                 break;
 
             case 'PLAINTEXT':
-                $hasKeys = isset(
-                    $credentials['consumerSecret'],
-                    $credentials['token'],
-                    $credentials['tokenSecret'],
-                );
+                $hasKeys = isset($credentials['consumerSecret'], $credentials['token'], $credentials['tokenSecret']);
                 if (!$hasKeys) {
                     return $request;
                 }

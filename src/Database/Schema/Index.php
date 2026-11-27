@@ -70,8 +70,7 @@ class Index
         protected ?array $include = null,
         protected ?string $where = null,
         protected ?string $accessMethod = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Serializes column data.

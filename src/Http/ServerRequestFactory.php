@@ -61,7 +61,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $server = static::normalizeServer($server ?? $_SERVER);
         ['uri' => $uri, 'base' => $base, 'webroot' => $webroot] = UriFactory::marshalUriAndBaseFromSapi($server);
 
-        $sessionConfig = (array)Configure::read('Session') + [
+        $sessionConfig = (array)Configure::read('Session')
+        + [
             'defaults' => 'php',
             'cookiePath' => $webroot,
         ];
@@ -110,8 +111,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $override = false;
 
         if (
-            in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
-            str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
+            in_array($method, ['PUT', 'DELETE', 'PATCH'], true)
+            && str_starts_with((string)$request->contentType(), 'application/x-www-form-urlencoded')
         ) {
             $data = (string)$request->getBody();
             parse_str($data, $parsedBody);
@@ -129,8 +130,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         if (
-            $override &&
-            !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+            $override
+            && !in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
         ) {
             $parsedBody = [];
         }
@@ -210,9 +211,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
                     ? $digest
                     : 'Digest ' . $digest;
             } elseif (isset($server['PHP_AUTH_USER'])) {
-                $server['HTTP_AUTHORIZATION'] = 'Basic ' . base64_encode(
-                    $server['PHP_AUTH_USER'] . ':' . ($server['PHP_AUTH_PW'] ?? ''),
-                );
+                $server['HTTP_AUTHORIZATION'] =
+                    'Basic '
+                    . base64_encode(
+                        $server['PHP_AUTH_USER'] . ':' . ($server['PHP_AUTH_PW'] ?? ''),
+                    );
             }
         }
 
@@ -261,8 +264,10 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function isFileSpecification(array $files): bool
     {
-        return isset($files['tmp_name'], $files['size'], $files['error']) &&
-            static::isFileAttributeTree($files['tmp_name'], $files['size'], $files['error']);
+        return (
+            isset($files['tmp_name'], $files['size'], $files['error'])
+                && static::isFileAttributeTree($files['tmp_name'], $files['size'], $files['error'])
+        );
     }
 
     /**
@@ -276,9 +281,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function isFileAttributeTree(mixed $tmpName, mixed $size, mixed $error): bool
     {
         if (!is_array($tmpName)) {
-            return is_string($tmpName) &&
-                (is_int($size) || (is_string($size) && ctype_digit($size))) &&
-                (is_int($error) || (is_string($error) && ctype_digit($error)));
+            return (
+                is_string($tmpName)
+                    && (is_int($size) || (is_string($size) && ctype_digit($size)))
+                    && (is_int($error) || (is_string($error) && ctype_digit($error)))
+            );
         }
         if (!is_array($size) || !is_array($error)) {
             return false;
@@ -286,8 +293,11 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
 
         return array_all(
             $tmpName,
-            static fn($value, $key): bool => array_key_exists($key, $size) && array_key_exists($key, $error) &&
-                static::isFileAttributeTree($value, $size[$key], $error[$key]),
+            static fn($value, $key): bool => (
+                array_key_exists($key, $size)
+                && array_key_exists($key, $error)
+                && static::isFileAttributeTree($value, $size[$key], $error[$key])
+            ),
         );
     }
 

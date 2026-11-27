@@ -176,8 +176,10 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadDuplicateMethodError(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate method `slugify`'
-        . ' which is already provided by `Sluggable`.');
+        $this->expectExceptionMessage(
+            '`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate method `slugify`'
+                . ' which is already provided by `Sluggable`.',
+        );
         $this->Behaviors->load('Sluggable', [
             'implementedMethods' => ['slugify' => 'slugify'],
         ]);
@@ -288,8 +290,10 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadDuplicateFinderError(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate finder `children`'
-        . ' which is already provided by `Tree`.');
+        $this->expectExceptionMessage(
+            '`TestApp\Model\Behavior\DuplicateBehavior` contains duplicate finder `children`'
+                . ' which is already provided by `Tree`.',
+        );
         $this->Behaviors->load('Tree');
         $this->Behaviors->load('Duplicate');
     }

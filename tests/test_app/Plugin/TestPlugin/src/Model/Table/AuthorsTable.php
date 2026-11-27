@@ -21,6 +21,4 @@ use Cake\ORM\Table;
 /**
  * AuthorsTable
  */
-class AuthorsTable extends Table
-{
-}
+class AuthorsTable extends Table {}

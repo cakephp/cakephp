@@ -41,8 +41,7 @@ class CommandRetry
     public function __construct(
         protected RetryStrategyInterface $strategy,
         protected int $maxRetries = 1,
-    ) {
-    }
+    ) {}
 
     /**
      * The number of retries to perform in case of failure
@@ -60,8 +59,8 @@ class CommandRetry
                 return $action();
             } catch (Exception $e) {
                 if (
-                    $this->numRetries < $this->maxRetries &&
-                    $this->strategy->shouldRetry($e, $this->numRetries)
+                    $this->numRetries < $this->maxRetries
+                    && $this->strategy->shouldRetry($e, $this->numRetries)
                 ) {
                     $this->numRetries++;
                     continue;

@@ -250,8 +250,8 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
     }
 
     if (
-        $value instanceof DateTimeInterface ||
-        $value instanceof Date
+        $value instanceof DateTimeInterface
+        || $value instanceof Date
     ) {
         return DateTime::parse($value);
     }

@@ -7,6 +7,5 @@ class UnannotatedService
 {
     public function __construct(
         public readonly Bar $dependency,
-    ) {
-    }
+    ) {}
 }

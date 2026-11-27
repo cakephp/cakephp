@@ -49,7 +49,7 @@ class ConsoleInput
      */
     public function __construct(string $handle = 'php://stdin')
     {
-        $this->canReadline = (extension_loaded('readline') && $handle === 'php://stdin');
+        $this->canReadline = extension_loaded('readline') && $handle === 'php://stdin';
         $input = fopen($handle, 'rb');
         if ($input === false) {
             throw new CakeException(sprintf('Cannot open handle `%s`', $handle));

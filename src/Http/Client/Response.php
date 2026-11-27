@@ -152,9 +152,12 @@ class Response extends Message implements ResponseInterface
             return;
         }
         if (
-            $body !== '' && strtolower($this->getHeaderLine('Content-Encoding')) === 'gzip' &&
-            $this->code >= 200 && !in_array($this->code, [204, 205, 206, 304], true) &&
-            !$this->hasHeader('Content-Range') && !$this->hasHeader('Transfer-Encoding')
+            $body !== ''
+            && strtolower($this->getHeaderLine('Content-Encoding')) === 'gzip'
+            && $this->code >= 200
+            && !in_array($this->code, [204, 205, 206, 304], true)
+            && !$this->hasHeader('Content-Range')
+            && !$this->hasHeader('Transfer-Encoding')
         ) {
             $body = $this->decodeGzipBody($body);
             $this->removeHeader('Content-Encoding');
@@ -259,8 +262,10 @@ class Response extends Message implements ResponseInterface
             static::STATUS_PERMANENT_REDIRECT,
         ];
 
-        return in_array($this->code, $codes, true) &&
-        $this->getHeaderLine('Location') !== '';
+        return (
+            in_array($this->code, $codes, true)
+                && $this->getHeaderLine('Location') !== ''
+        );
     }
 
     /**

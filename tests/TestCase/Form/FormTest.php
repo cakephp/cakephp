@@ -153,7 +153,7 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $expected = [
-           'field_name' => ['rule_name' => 'message'],
+            'field_name' => ['rule_name' => 'message'],
         ];
 
         $form->setErrors($expected);

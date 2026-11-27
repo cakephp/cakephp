@@ -176,7 +176,11 @@ class RouteTest extends TestCase
             '/fighters/{0id}',
             ['controller' => 'Fighters', 'action' => 'move'],
         );
-        $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'Placeholders must start with letter');
+        $this->assertDoesNotMatchRegularExpression(
+            $route->compile(),
+            '/fighters/123',
+            'Placeholders must start with letter',
+        );
 
         $route = new Route('/fighters/{Id}', ['controller' => 'Fighters', 'action' => 'move']);
         $this->assertMatchesRegularExpression($route->compile(), '/fighters/123');
@@ -282,8 +286,16 @@ class RouteTest extends TestCase
             ['/foo/bar.json', ['/foo/bar', 'json'], ['xml', 'json', 'xml.gz']],
             ['/foo/bar.xml.gz', ['/foo/bar', 'xml.gz'], ['xml', 'json', 'xml.gz']],
             ['/foo/with.dots.json.xml.zip', ['/foo/with.dots.json.xml', 'zip'], ['zip']],
-            ['/foo/confusing.extensions.dots.json.xml.zip', ['/foo/confusing.extensions.dots.json.xml', 'zip'], ['json', 'xml', 'zip']],
-            ['/foo/confusing.extensions.dots.json.xml', ['/foo/confusing.extensions.dots.json', 'xml'], ['json', 'xml', 'zip']],
+            [
+                '/foo/confusing.extensions.dots.json.xml.zip',
+                ['/foo/confusing.extensions.dots.json.xml', 'zip'],
+                ['json', 'xml', 'zip'],
+            ],
+            [
+                '/foo/confusing.extensions.dots.json.xml',
+                ['/foo/confusing.extensions.dots.json', 'xml'],
+                ['json', 'xml', 'zip'],
+            ],
             ['/foo/confusing.extensions.dots.json', ['/foo/confusing.extensions.dots', 'json'], ['json', 'xml', 'zip']],
         ];
     }
@@ -507,7 +519,10 @@ class RouteTest extends TestCase
         $this->assertMatchesRegularExpression($result, '/some_extra/page/this_is_the_slug');
         $this->assertMatchesRegularExpression($result, '/page/this_is_the_slug');
         $this->assertEquals(['slug', 'extra'], $route->keys);
-        $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
+        $this->assertEquals(
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []],
+            $route->options,
+        );
         $expected = [
             'controller' => 'Pages',
             'action' => 'view',
@@ -592,7 +607,8 @@ class RouteTest extends TestCase
         $this->assertNull($result);
 
         $route = new Route('/admin/subscriptions/{action}/*', [
-            'controller' => 'Subscribe', 'prefix' => 'Admin',
+            'controller' => 'Subscribe',
+            'prefix' => 'Admin',
         ]);
 
         $url = ['controller' => 'Subscribe', 'prefix' => 'Admin', 'action' => 'edit', 1];
@@ -793,7 +809,10 @@ class RouteTest extends TestCase
     {
         $route = new Route('/{controller}/{action}/*', ['plugin' => null]);
         $result = $route->match([
-            'controller' => 'Posts', 'action' => 'index', 'plugin' => null, 'admin' => false,
+            'controller' => 'Posts',
+            'action' => 'index',
+            'plugin' => null,
+            'admin' => false,
         ]);
         $this->assertSame('/Posts/index/', $result);
     }
@@ -940,7 +959,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             1,
             '_ext' => 'json',
-            '?' => ['id' => 'b', 'c' => 'd', ],
+            '?' => ['id' => 'b', 'c' => 'd'],
         ]);
         $this->assertSame('/Posts/view/1.json?id=b&c=d', $result);
 
@@ -1456,9 +1475,13 @@ class RouteTest extends TestCase
      */
     public function testPassArgRestructure(): void
     {
-        $route = new Route('/{controller}/{action}/{slug}', [], [
-            'pass' => ['slug'],
-        ]);
+        $route = new Route(
+            '/{controller}/{action}/{slug}',
+            [],
+            [
+                'pass' => ['slug'],
+            ],
+        );
         $result = $route->parse('/Posts/view/my-title', 'GET');
         $expected = [
             'controller' => 'Posts',

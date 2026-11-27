@@ -41,8 +41,9 @@ use stdClass;
 use TestApp\Database\Type\CustomExpressionType;
 use TestApp\View\Object\TestObjectWithToString;
 use TypeError;
-
-use function Cake\Database\Expression\{comparison, equals, notEquals};
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\notEquals;
 
 class CaseStatementExpressionTest extends TestCase
 {
@@ -52,8 +53,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         TypeFactory::map('custom', CustomExpressionType::class);
 
-        $expression = new CaseStatementExpression(1, 'custom')
-            ->when(1, 'custom')
+        $expression = new CaseStatementExpression(1, 'custom')->when(1, 'custom')
             ->then(2, 'custom')
             ->else(3, 'custom');
 
@@ -69,8 +69,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         TypeFactory::map('custom', CustomExpressionType::class);
 
-        $expression = new CaseStatementExpression(null, 'custom')
-            ->when(1, 'custom')
+        $expression = new CaseStatementExpression(null, 'custom')->when(1, 'custom')
             ->then(null, 'custom')
             ->else(null, 'custom');
 
@@ -86,8 +85,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         TypeFactory::map('custom', CustomExpressionType::class);
 
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column' => true], ['Table.column' => 'custom'])
+        $expression = new CaseStatementExpression()->when(['Table.column' => true], ['Table.column' => 'custom'])
             ->then(1, 'custom')
             ->else(2, 'custom');
 
@@ -103,8 +101,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         // all provided `then` and `else` types are the same, return
         // type can be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1, 'integer')
             ->when(['Table.column_b' => true])
             ->then(2, 'integer')
@@ -113,8 +110,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all provided `then` an `else` types are the same, one `then`
         // type is `null`, return type can be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1)
             ->when(['Table.column_b' => true])
             ->then(2, 'integer')
@@ -123,8 +119,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all `then` types are null, an `else` type was provided,
         // return type can be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1)
             ->when(['Table.column_b' => true])
             ->then(2)
@@ -133,8 +128,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all provided `then` types are the same, the `else` type is
         // `null`, return type can be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1, 'integer')
             ->when(['Table.column_b' => true])
             ->then(2, 'integer')
@@ -144,8 +138,7 @@ class CaseStatementExpressionTest extends TestCase
         // no `then` or `else` types were provided, they are all `null`,
         // and will be derived from the passed value, return type can be
         // inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1)
             ->when(['Table.column_b' => true])
             ->then(2)
@@ -159,8 +152,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'boolean',
             'Table.column_c' => 'boolean',
         ]);
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(['Table.column_a' => true])
             ->then(new IdentifierExpression('Table.column_a'))
             ->when(['Table.column_b' => true])
@@ -170,8 +162,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all `then` and `else` use the same custom type, return type
         // can be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1, 'custom')
             ->when(['Table.column_b' => true])
             ->then(2, 'custom')
@@ -180,8 +171,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all `then` and `else` types were provided, but an explicit
         // return type was set, return type will be overwritten
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(1, 'integer')
             ->when(['Table.column_b' => true])
             ->then(2, 'integer')
@@ -191,8 +181,7 @@ class CaseStatementExpressionTest extends TestCase
 
         // all `then` and `else` types are different, return type
         // cannot be inferred
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true])
             ->then(true)
             ->when(['Table.column_b' => true])
             ->then(1)
@@ -243,8 +232,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertNull($expression->getValueType());
 
-        $expression = new CaseStatementExpressionStub($value)
-            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
+        $expression = new CaseStatementExpressionStub($value)->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
             ->when(1)
             ->then(2);
 
@@ -287,8 +275,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertNull($expression->clause('when')[0]->getWhenType());
 
-        $expression->clause('when')[0]
-            ->when($value)
+        $expression->clause('when')[0]->when($value)
             ->then(1);
 
         $this->assertSame($type, $expression->clause('when')[0]->getWhenType());
@@ -319,16 +306,14 @@ class CaseStatementExpressionTest extends TestCase
     #[DataProvider('resultTypeInferenceDataProvider')]
     public function testInferResultType($value, ?string $type): void
     {
-        $expression = new CaseStatementExpressionStub()
-            ->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
+        $expression = new CaseStatementExpressionStub()->setTypeMap(new TypeMap(['Table.column' => 'boolean']))
             ->when(function (WhenThenExpression $whenThen) {
                 return $whenThen;
             });
 
         $this->assertNull($expression->clause('when')[0]->getResultType());
 
-        $expression->clause('when')[0]
-            ->when(['Table.column' => true])
+        $expression->clause('when')[0]->when(['Table.column' => true])
             ->then($value);
 
         $this->assertSame($type, $expression->clause('when')[0]->getResultType());
@@ -362,8 +347,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(['Table.column_a' => true])
             ->then(1)
             ->when(['Table.column_b' => 'foo'])
@@ -415,8 +399,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
             ->then(1)
             ->when(['Table.column_b' => 'foo'])
@@ -468,16 +451,13 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_a' => true])
+                return $whenThen->when(['Table.column_a' => true])
                     ->then(1);
             })
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_b' => 'foo'])
+                return $whenThen->when(['Table.column_b' => 'foo'])
                     ->then(2);
             })
             ->else(3);
@@ -527,16 +507,13 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_b' => 'string',
         ]);
 
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
+                return $whenThen->when(['Table.column_a' => 123], ['Table.column_a' => 'integer'])
                     ->then(1);
             })
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when(['Table.column_b' => 'foo'])
+                return $whenThen->when(['Table.column_b' => 'foo'])
                     ->then(2);
             })
             ->else(3);
@@ -583,12 +560,11 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using an array for the `$when` argument, the `$type` ' .
-            'argument must be an array too, `string` given.',
+            'When using an array for the `$when` argument, the `$type` '
+                . 'argument must be an array too, `string` given.',
         );
 
-        new CaseStatementExpression()
-            ->when(['Table.column' => 123], 'integer')
+        new CaseStatementExpression()->when(['Table.column' => 123], 'integer')
             ->then(1);
     }
 
@@ -596,12 +572,11 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using a non-array value for the `$when` argument, ' .
-            'the `$type` argument must be a string, `array` given.',
+            'When using a non-array value for the `$when` argument, '
+                . 'the `$type` argument must be a string, `array` given.',
         );
 
-        new CaseStatementExpression()
-            ->when(123, ['Table.column' => 'integer'])
+        new CaseStatementExpression()->when(123, ['Table.column' => 'integer'])
             ->then(1);
     }
 
@@ -611,8 +586,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column' => 'integer',
         ]);
 
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when(['Table.column' => 123])
             ->then(1)
             ->when(['Table.column' => 'foo'], ['Table.column' => 'string'])
@@ -667,8 +641,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedCaseValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --', 'integer')
-            ->when(1)
+        $expression = new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --', 'integer')->when(1)
             ->then(2);
 
         $valueBinder = new ValueBinder();
@@ -701,8 +674,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedCaseValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --')
-            ->when(1)
+        $expression = new CaseStatementExpression('1 THEN 1 END; DELETE * FROM foo; --')->when(1)
             ->then(2);
 
         $valueBinder = new ValueBinder();
@@ -735,8 +707,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedWhenValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression()
-            ->when('1 THEN 1 END; DELETE * FROM foo; --', 'integer')
+        $expression = new CaseStatementExpression()->when('1 THEN 1 END; DELETE * FROM foo; --', 'integer')
             ->then(1);
 
         $valueBinder = new ValueBinder();
@@ -766,19 +737,17 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'When using an array for the `$when` argument, the `$type` ' .
-            'argument must be an array too, `string` given.',
+            'When using an array for the `$when` argument, the `$type` '
+                . 'argument must be an array too, `string` given.',
         );
 
-        new CaseStatementExpression()
-            ->when(['1 THEN 1 END; DELETE * FROM foo;' => comparison('--', '123')], 'integer')
+        new CaseStatementExpression()->when(['1 THEN 1 END; DELETE * FROM foo;' => comparison('--', '123')], 'integer')
             ->then(1);
     }
 
     public function testSqlInjectionViaUntypedWhenValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression()
-            ->when('1 THEN 1 END; DELETE * FROM foo; --')
+        $expression = new CaseStatementExpression()->when('1 THEN 1 END; DELETE * FROM foo; --')
             ->then(1);
 
         $valueBinder = new ValueBinder();
@@ -806,8 +775,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedThenValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression(1)
-            ->when(2)
+        $expression = new CaseStatementExpression(1)->when(2)
             ->then('1 THEN 1 END; DELETE * FROM foo; --', 'integer');
 
         $valueBinder = new ValueBinder();
@@ -840,8 +808,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedThenValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression(1)
-            ->when(2)
+        $expression = new CaseStatementExpression(1)->when(2)
             ->then('1 THEN 1 END; DELETE * FROM foo; --');
 
         $valueBinder = new ValueBinder();
@@ -874,8 +841,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaTypedElseValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression(1)
-            ->when(2)
+        $expression = new CaseStatementExpression(1)->when(2)
             ->then(3)
             ->else('1 THEN 1 END; DELETE * FROM foo; --', 'integer');
 
@@ -914,8 +880,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSqlInjectionViaUntypedElseValueIsNotPossible(): void
     {
-        $expression = new CaseStatementExpression(1)
-            ->when(2)
+        $expression = new CaseStatementExpression(1)->when(2)
             ->then(3)
             ->else('1 THEN 1 END; DELETE * FROM foo; --');
 
@@ -982,8 +947,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertNull($expression->clause('value'));
 
-        $expression = new CaseStatementExpression(1)
-            ->when(1)
+        $expression = new CaseStatementExpression(1)->when(1)
             ->then(2);
 
         $this->assertSame(1, $expression->clause('value'));
@@ -996,8 +960,7 @@ class CaseStatementExpressionTest extends TestCase
         $expression = new CaseStatementExpression();
         $this->assertSame([], $expression->clause('when'));
 
-        $expression
-            ->when($when)
+        $expression->when($when)
             ->then(1);
 
         $this->assertCount(1, $expression->clause('when'));
@@ -1011,8 +974,7 @@ class CaseStatementExpressionTest extends TestCase
         $expression = new CaseStatementExpression();
         $this->assertSame([], $expression->clause('when'));
 
-        $expression
-            ->when($when)
+        $expression->when($when)
             ->then(1);
 
         $this->assertEquals(
@@ -1026,8 +988,7 @@ class CaseStatementExpressionTest extends TestCase
         $expression = new CaseStatementExpression();
         $this->assertSame([], $expression->clause('when'));
 
-        $expression
-            ->when(1)
+        $expression->when(1)
             ->then(2);
 
         $this->assertSame(1, $expression->clause('when')[0]->clause('when'));
@@ -1053,8 +1014,7 @@ class CaseStatementExpressionTest extends TestCase
 
         $this->assertNull($expression->clause('else'));
 
-        $expression
-            ->when(['Table.column' => true])
+        $expression->when(['Table.column' => true])
             ->then(1)
             ->else(2);
 
@@ -1067,8 +1027,7 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testWhenThenElse(): void
     {
-        $expression = new CaseStatementExpression()
-            ->when(['Table.column_a' => true, 'Table.column_b' => equals(null)])
+        $expression = new CaseStatementExpression()->when(['Table.column_a' => true, 'Table.column_b' => equals(null)])
             ->then(1)
             ->when(['Table.column_c' => true, 'Table.column_d' => notEquals(null)])
             ->then(2)
@@ -1077,11 +1036,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+                . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+                . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+                . 'ELSE :c4 '
+                . 'END',
             $sql,
         );
     }
@@ -1091,8 +1050,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot call `when()` between `when()` and `then()`.');
 
-        new CaseStatementExpression()
-            ->when(['Table.column_a' => true])
+        new CaseStatementExpression()->when(['Table.column_a' => true])
             ->when(['Table.column_b' => true]);
     }
 
@@ -1101,8 +1059,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot call `else()` between `when()` and `then()`.');
 
-        new CaseStatementExpression()
-            ->when(['Table.column' => true])
+        new CaseStatementExpression()->when(['Table.column' => true])
             ->else(1);
     }
 
@@ -1121,21 +1078,25 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testWhenCallables(): void
     {
-        $expression = new CaseStatementExpression()
+        $expression = new CaseStatementExpression()->when(function (WhenThenExpression $whenThen) {
+            return $whenThen->when([
+                'Table.column_a' => true,
+                'Table.column_b IS' => null,
+            ])
+                ->then(1);
+        })
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b' => equals(null),
-                    ])
+                return $whenThen->when([
+                    'Table.column_a' => true,
+                    'Table.column_b' => equals(null),
+                ])
                     ->then(1);
             })
             ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d' => notEquals(null),
-                    ])
+                return $whenThen->when([
+                    'Table.column_c' => true,
+                    'Table.column_d' => notEquals(null),
+                ])
                     ->then(2);
             })
             ->else(3);
@@ -1143,32 +1104,36 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+                . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+                . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+                . 'ELSE :c4 '
+                . 'END',
             $sql,
         );
     }
 
     public function testWhenCallablesWithCustomWhenThenExpressions(): void
     {
-        $expression = new CaseStatementExpression()
+        $expression = new CaseStatementExpression()->when(function () {
+            return new CustomWhenThenExpression()->when([
+                'Table.column_a' => true,
+                'Table.column_b IS' => null,
+            ])
+                ->then(1);
+        })
             ->when(function () {
-                return new CustomWhenThenExpression()
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b' => equals(null),
-                    ])
+                return new CustomWhenThenExpression()->when([
+                    'Table.column_a' => true,
+                    'Table.column_b' => equals(null),
+                ])
                     ->then(1);
             })
             ->when(function () {
-                return new CustomWhenThenExpression()
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d' => notEquals(null),
-                    ])
+                return new CustomWhenThenExpression()->when([
+                    'Table.column_c' => true,
+                    'Table.column_d' => notEquals(null),
+                ])
                     ->then(2);
             })
             ->else(3);
@@ -1176,11 +1141,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+                . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+                . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+                . 'ELSE :c4 '
+                . 'END',
             $sql,
         );
     }
@@ -1189,8 +1154,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
-            '`when()` callables must return an instance of ' .
-            '`\Cake\Database\Expression\WhenThenExpression`, `null` given.',
+            '`when()` callables must return an instance of '
+                . '`\Cake\Database\Expression\WhenThenExpression`, `null` given.',
         );
 
         new CaseStatementExpression()
@@ -1205,21 +1170,25 @@ class CaseStatementExpressionTest extends TestCase
 
     public function testSelfContainedWhenThenExpressions(): void
     {
-        $expression = new CaseStatementExpression()
+        $expression = new CaseStatementExpression()->when(
+            new WhenThenExpression()->when([
+                'Table.column_a' => true,
+                'Table.column_b IS' => null,
+            ])
+                ->then(1),
+        )
             ->when(
-                new WhenThenExpression()
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b' => equals(null),
-                    ])
+                new WhenThenExpression()->when([
+                    'Table.column_a' => true,
+                    'Table.column_b' => equals(null),
+                ])
                     ->then(1),
             )
             ->when(
-                new WhenThenExpression()
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d' => notEquals(null),
-                    ])
+                new WhenThenExpression()->when([
+                    'Table.column_c' => true,
+                    'Table.column_d' => notEquals(null),
+                ])
                     ->then(2),
             )
             ->else(3);
@@ -1227,32 +1196,36 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+                . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+                . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+                . 'ELSE :c4 '
+                . 'END',
             $sql,
         );
     }
 
     public function testSelfContainedCustomWhenThenExpressions(): void
     {
-        $expression = new CaseStatementExpression()
+        $expression = new CaseStatementExpression()->when(
+            new CustomWhenThenExpression()->when([
+                'Table.column_a' => true,
+                'Table.column_b IS' => null,
+            ])
+                ->then(1),
+        )
             ->when(
-                new CustomWhenThenExpression()
-                    ->when([
-                        'Table.column_a' => true,
-                        'Table.column_b' => equals(null),
-                    ])
+                new CustomWhenThenExpression()->when([
+                    'Table.column_a' => true,
+                    'Table.column_b' => equals(null),
+                ])
                     ->then(1),
             )
             ->when(
-                new CustomWhenThenExpression()
-                    ->when([
-                        'Table.column_c' => true,
-                        'Table.column_d' => notEquals(null),
-                    ])
+                new CustomWhenThenExpression()->when([
+                    'Table.column_c' => true,
+                    'Table.column_d' => notEquals(null),
+                ])
                     ->then(2),
             )
             ->else(3);
@@ -1260,11 +1233,11 @@ class CaseStatementExpressionTest extends TestCase
         $valueBinder = new ValueBinder();
         $sql = $expression->sql($valueBinder);
         $this->assertSame(
-            'CASE ' .
-            'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 ' .
-            'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 ' .
-            'ELSE :c4 ' .
-            'END',
+            'CASE '
+                . 'WHEN (Table.column_a = :c0 AND (Table.column_b) IS NULL) THEN :c1 '
+                . 'WHEN (Table.column_c = :c2 AND (Table.column_d) IS NOT NULL) THEN :c3 '
+                . 'ELSE :c4 '
+                . 'END',
             $sql,
         );
     }
@@ -1286,8 +1259,7 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        new CaseStatementExpression()
-            ->when(['Table.column' => true])
+        new CaseStatementExpression()->when(['Table.column' => true])
             ->sql(new ValueBinder());
     }
 
@@ -1296,10 +1268,9 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `when()`.');
 
-        new CaseStatementExpression()
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen->then(1);
-            })
+        new CaseStatementExpression()->when(function (WhenThenExpression $whenThen) {
+            return $whenThen->then(1);
+        })
             ->sql(new ValueBinder());
     }
 
@@ -1308,10 +1279,9 @@ class CaseStatementExpressionTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Case expression has incomplete when clause. Missing `then()` after `when()`.');
 
-        new CaseStatementExpression()
-            ->when(function (WhenThenExpression $whenThen) {
-                return $whenThen->when(1);
-            })
+        new CaseStatementExpression()->when(function (WhenThenExpression $whenThen) {
+            return $whenThen->when(1);
+        })
             ->sql(new ValueBinder());
     }
 
@@ -1348,8 +1318,7 @@ class CaseStatementExpressionTest extends TestCase
     #[DataProvider('validCaseValuesDataProvider')]
     public function testValidCaseValue($value, ?string $sqlValue, ?string $type): void
     {
-        $expression = new CaseStatementExpression($value)
-            ->when(1)
+        $expression = new CaseStatementExpression($value)->when(1)
             ->then(2);
 
         $valueBinder = new ValueBinder();
@@ -1511,8 +1480,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_a' => 'integer',
             'Table.column_b' => 'string',
         ]);
-        $expression = new CaseStatementExpression(true)
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression(true)->setTypeMap($typeMap)
             ->when($value)
             ->then(2);
 
@@ -1633,8 +1601,7 @@ class CaseStatementExpressionTest extends TestCase
             'Table.column_a' => 'integer',
             'Table.column_b' => 'string',
         ]);
-        $expression = new CaseStatementExpression()
-            ->setTypeMap($typeMap)
+        $expression = new CaseStatementExpression()->setTypeMap($typeMap)
             ->when($value)
             ->then(2);
 
@@ -1693,8 +1660,7 @@ class CaseStatementExpressionTest extends TestCase
     #[DataProvider('validThenValuesDataProvider')]
     public function testValidThenValue($value, ?string $sqlValue, ?string $type): void
     {
-        $expression = new CaseStatementExpression()
-            ->when(1)
+        $expression = new CaseStatementExpression()->when(1)
             ->then($value);
 
         $valueBinder = new ValueBinder();
@@ -1769,8 +1735,7 @@ class CaseStatementExpressionTest extends TestCase
     #[DataProvider('validElseValuesDataProvider')]
     public function testValidElseValue($value, ?string $sqlValue, ?string $type): void
     {
-        $expression = new CaseStatementExpression()
-            ->when(1)
+        $expression = new CaseStatementExpression()->when(1)
             ->then(2)
             ->else($value);
 
@@ -1839,8 +1804,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function (): void {
-                },
+                function (): void {},
                 'Closure',
             ],
             [$res, 'resource (closed)'],
@@ -1856,8 +1820,8 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$value` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$value` argument must be either `null`, a scalar value, an object, '
+                . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
         new CaseStatementExpression($value);
@@ -1870,8 +1834,7 @@ class CaseStatementExpressionTest extends TestCase
             'The `$when` argument must be a non-empty array',
         );
 
-        new CaseStatementExpression()
-            ->when([])
+        new CaseStatementExpression()->when([])
             ->then(1);
     }
 
@@ -1883,8 +1846,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function (): void {
-                },
+                function (): void {},
                 'Closure',
             ],
             [$res, 'resource (closed)'],
@@ -1900,12 +1862,11 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$result` argument must be either `null`, a scalar value, an object, '
+                . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
-        new CaseStatementExpression()
-            ->when(1)
+        new CaseStatementExpression()->when(1)
             ->then($value);
     }
 
@@ -1919,8 +1880,7 @@ class CaseStatementExpressionTest extends TestCase
             [1.0],
             [new stdClass()],
             [
-                function (): void {
-                },
+                function (): void {},
             ],
             [$res], // resource (closed)
         ];
@@ -1934,8 +1894,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        new CaseStatementExpression()
-            ->when(1)
+        new CaseStatementExpression()->when(1)
             ->then(1, $type);
     }
 
@@ -1947,8 +1906,7 @@ class CaseStatementExpressionTest extends TestCase
         return [
             [[], 'array'],
             [
-                function (): void {
-                },
+                function (): void {},
                 'Closure',
             ],
             [$res, 'resource (closed)'],
@@ -1964,12 +1922,11 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'The `$result` argument must be either `null`, a scalar value, an object, ' .
-            "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
+            'The `$result` argument must be either `null`, a scalar value, an object, '
+                . "or an instance of `\\Cake\\Database\\ExpressionInterface`, `{$typeName}` given.",
         );
 
-        new CaseStatementExpression()
-            ->when(1)
+        new CaseStatementExpression()->when(1)
             ->then(1)
             ->else($value);
     }
@@ -1985,8 +1942,7 @@ class CaseStatementExpressionTest extends TestCase
             [new stdClass()],
             [
                 // Closure
-                function (): void {
-                },
+                function (): void {},
             ],
             [
                 $res, //resource (closed)
@@ -2002,8 +1958,7 @@ class CaseStatementExpressionTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        new CaseStatementExpression()
-            ->when(1)
+        new CaseStatementExpression()->when(1)
             ->then(1)
             ->else(1, $type);
     }
@@ -2021,8 +1976,7 @@ class CaseStatementExpressionTest extends TestCase
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
-        $expression = new CaseStatementExpression($value)
-            ->when($conditionsA)
+        $expression = new CaseStatementExpression($value)->when($conditionsA)
             ->then($resultA)
             ->when($conditionsB)
             ->then($resultB)
@@ -2056,8 +2010,7 @@ class CaseStatementExpressionTest extends TestCase
             ->when(['Table.column' => true]);
 
         $expression->traverse(
-            function (): void {
-            },
+            function (): void {},
         );
     }
 
@@ -2074,8 +2027,7 @@ class CaseStatementExpressionTest extends TestCase
         $resultB = new QueryExpression('2');
         $else = new QueryExpression('3');
 
-        $expression = new CaseStatementExpression($value)
-            ->when($conditionsA)
+        $expression = new CaseStatementExpression($value)->when($conditionsA)
             ->then($resultA)
             ->when($conditionsB)
             ->then($resultB)

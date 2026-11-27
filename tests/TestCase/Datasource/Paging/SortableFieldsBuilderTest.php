@@ -148,8 +148,7 @@ class SortableFieldsBuilderTest extends TestCase
     public function testCreateFromCallable(): void
     {
         $builder = SortableFieldsBuilder::create(function ($factory) {
-            return $factory
-                ->add('name', SortField::asc('Users.name'))
+            return $factory->add('name', SortField::asc('Users.name'))
                 ->add('newest', SortField::desc('created'));
         });
 
@@ -434,7 +433,9 @@ class SortableFieldsBuilderTest extends TestCase
     public function testFromArrayWithInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid sortable field value type for key `invalid`. Expected string, array, or SortField, got `int`.');
+        $this->expectExceptionMessage(
+            'Invalid sortable field value type for key `invalid`. Expected string, array, or SortField, got `int`.',
+        );
 
         $config = [
             'invalid' => 123,
@@ -451,8 +452,7 @@ class SortableFieldsBuilderTest extends TestCase
     public function testFromCallable(): void
     {
         $builder = SortableFieldsBuilder::fromCallable(function ($factory) {
-            return $factory
-                ->add('name', 'Users.name')
+            return $factory->add('name', 'Users.name')
                 ->add('newest', SortField::desc('created'));
         });
 

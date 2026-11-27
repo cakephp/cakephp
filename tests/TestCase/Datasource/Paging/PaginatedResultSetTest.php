@@ -49,8 +49,7 @@ class PaginatedResultSetTest extends TestCase
 
     public function testItems(): void
     {
-        $resultSet = new class ([]) extends ResultSet {
-        };
+        $resultSet = new class([]) extends ResultSet {};
         $paginatedResults = new PaginatedResultSet(
             $resultSet,
             [],

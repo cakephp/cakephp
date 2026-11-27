@@ -29,9 +29,7 @@ class TemplateFileEquals extends Constraint
      *
      * @param string $filename Template file name
      */
-    public function __construct(protected string $filename)
-    {
-    }
+    public function __construct(protected string $filename) {}
 
     /**
      * Checks assertion

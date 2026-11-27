@@ -138,7 +138,10 @@ class PhpEngine extends CacheEngine
             ));
 
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-                'key' => $key, 'value' => $value, 'success' => false, 'ttl' => $duration,
+                'key' => $key,
+                'value' => $value,
+                'success' => false,
+                'ttl' => $duration,
             ]);
 
             return false;
@@ -155,7 +158,10 @@ class PhpEngine extends CacheEngine
         $success = $this->writeFile($path, $code);
 
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;
@@ -458,7 +464,7 @@ class PhpEngine extends CacheEngine
             $success = @mkdir($path, $this->config['dirMask'] ^ umask(), true);
         }
 
-        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        $isWritableDir = $dir->isDir() && $dir->isWritable();
         if (!$success || ($this->init && !$isWritableDir)) {
             $this->init = false;
             triggerWarning(sprintf(

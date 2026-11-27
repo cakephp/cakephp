@@ -10,6 +10,5 @@ class ConfigValueService
         public readonly string $fromConfig,
         #[ConfigValueAttribute('missing')]
         public readonly string $fromDefault = 'param-default',
-    ) {
-    }
+    ) {}
 }

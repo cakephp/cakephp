@@ -18,6 +18,4 @@ namespace Cake\Test\test_app\TestApp\Database\Expression;
 
 use Cake\Database\Expression\WhenThenExpression;
 
-class CustomWhenThenExpression extends WhenThenExpression
-{
-}
+class CustomWhenThenExpression extends WhenThenExpression {}

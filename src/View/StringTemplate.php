@@ -296,7 +296,8 @@ class StringTemplate
             $exclude = [];
         }
 
-        $exclude = ['escapeAttributes' => true, 'idPrefix' => true, 'templateVars' => true, 'fieldName' => true]
+        $exclude =
+            ['escapeAttributes' => true, 'idPrefix' => true, 'templateVars' => true, 'fieldName' => true]
             + array_flip($exclude);
         $escapeAttributes = $options['escapeAttributes'];
         unset($options['escape']);

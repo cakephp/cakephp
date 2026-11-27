@@ -186,7 +186,7 @@ class IniConfig implements ConfigEngineInterface
             null => 'null',
             true => 'true',
             false => 'false',
-            default => (string)$value
+            default => (string)$value,
         };
     }
 }

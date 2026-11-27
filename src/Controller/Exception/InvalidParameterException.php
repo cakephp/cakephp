@@ -33,8 +33,9 @@ class InvalidParameterException extends CakeException implements HttpErrorCodeIn
      */
     protected array $templates = [
         'failed_coercion' => 'Unable to coerce `%s` to `%s` for `%s` in action `%s::%s()`.',
-        'missing_dependency' => 'Failed to inject dependency from service container for parameter `%s` ' .
-            'with type `%s` in action `%s::%s()`.',
+        'missing_dependency' =>
+            'Failed to inject dependency from service container for parameter `%s` '
+                . 'with type `%s` in action `%s::%s()`.',
         'missing_parameter' => 'Missing passed parameter for `%s` in action `%s::%s()`.',
         'unsupported_type' => 'Type declaration for `%s` in action `%s::%s()` is unsupported.',
     ];

@@ -439,8 +439,7 @@ class CurlTest extends TestCase
             ->onlyMethods(['getProtocolVersion'])
             ->getMock();
 
-        $request
-            ->expects($this->once())
+        $request->expects($this->once())
             ->method('getProtocolVersion')
             ->willReturn('3');
 
@@ -463,9 +462,15 @@ class CurlTest extends TestCase
         if (!function_exists('proc_open')) {
             $this->markTestSkipped('proc_open is required for the local HTTP server.');
         }
-        $process = proc_open([PHP_BINARY, TEST_APP . 'TestApp/Http/Client/http_server.php'], [
-            ['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w'],
-        ], $pipes);
+        $process = proc_open(
+            [PHP_BINARY, TEST_APP . 'TestApp/Http/Client/http_server.php'],
+            [
+                ['pipe', 'r'],
+                ['pipe', 'w'],
+                ['pipe', 'w'],
+            ],
+            $pipes,
+        );
         $this->assertIsResource($process);
         try {
             stream_set_blocking($pipes[1], false);

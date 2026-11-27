@@ -46,9 +46,7 @@ class LabelWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(protected StringTemplate $templates)
-    {
-    }
+    public function __construct(protected StringTemplate $templates) {}
 
     /**
      * Render a label widget.
@@ -76,7 +74,7 @@ class LabelWidget implements WidgetInterface
         ];
 
         return $this->templates->format($this->labelTemplate, [
-            'text' => $data['escape'] && !($data['text'] instanceof HtmlStringable) ? h($data['text']) : $data['text'],
+            'text' => $data['escape'] && !$data['text'] instanceof HtmlStringable ? h($data['text']) : $data['text'],
             'input' => $data['input'],
             'hidden' => $data['hidden'],
             'templateVars' => $data['templateVars'],

@@ -106,13 +106,13 @@ class I18nInitCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(static::getDescription())
-           ->addOption('plugin', [
-               'help' => 'The plugin to create a PO file in.',
-               'short' => 'p',
-           ])
-           ->addArgument('language', [
-               'help' => 'Two-letter language code to create PO files for.',
-           ]);
+            ->addOption('plugin', [
+                'help' => 'The plugin to create a PO file in.',
+                'short' => 'p',
+            ])
+            ->addArgument('language', [
+                'help' => 'Two-letter language code to create PO files for.',
+            ]);
 
         return $parser;
     }

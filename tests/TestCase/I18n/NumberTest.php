@@ -311,7 +311,11 @@ class NumberTest extends TestCase
         $expected = '1,66 Kč';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->currency('1.665', 'CZK', ['locale' => 'cs_CZ', 'places' => 2, 'roundingMode' => NumberFormatter::ROUND_HALFUP]);
+        $result = $this->Number->currency('1.665', 'CZK', [
+            'locale' => 'cs_CZ',
+            'places' => 2,
+            'roundingMode' => NumberFormatter::ROUND_HALFUP,
+        ]);
         $expected = '1,67 Kč';
         $this->assertSame($expected, $result);
 
@@ -541,7 +545,7 @@ class NumberTest extends TestCase
         $expected = '524.29 KB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024) - 1);
         $expected = '1.05 MB';
         $this->assertSame($expected, $result);
 
@@ -549,7 +553,7 @@ class NumberTest extends TestCase
         $expected = '536.92 MB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024) - 1);
         $expected = '1.07 GB';
         $this->assertSame($expected, $result);
 
@@ -557,7 +561,7 @@ class NumberTest extends TestCase
         $expected = '549.76 GB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024 * 1024) - 1);
         $expected = '1.1 TB';
         $this->assertSame($expected, $result);
 
@@ -565,7 +569,7 @@ class NumberTest extends TestCase
         $expected = '562.95 TB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024 * 1024 * 1024) - 1);
         $expected = '1,125.9 TB';
         $this->assertSame($expected, $result);
 
@@ -603,7 +607,7 @@ class NumberTest extends TestCase
         $expected = '512 KiB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024) - 1);
         $expected = '1 MiB';
         $this->assertSame($expected, $result);
 
@@ -611,7 +615,7 @@ class NumberTest extends TestCase
         $expected = '512.05 MiB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024) - 1);
         $expected = '1 GiB';
         $this->assertSame($expected, $result);
 
@@ -619,7 +623,7 @@ class NumberTest extends TestCase
         $expected = '512 GiB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024 * 1024) - 1);
         $expected = '1 TiB';
         $this->assertSame($expected, $result);
 
@@ -627,7 +631,7 @@ class NumberTest extends TestCase
         $expected = '512 TiB';
         $this->assertSame($expected, $result);
 
-        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
+        $result = $this->Number->toReadableSize((1024 * 1024 * 1024 * 1024 * 1024) - 1);
         $expected = '1,024 TiB';
         $this->assertSame($expected, $result);
 

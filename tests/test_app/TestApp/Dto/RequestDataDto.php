@@ -8,9 +8,7 @@ class RequestDataDto
     /**
      * @param array<string, mixed> $data
      */
-    public function __construct(private readonly array $data)
-    {
-    }
+    public function __construct(private readonly array $data) {}
 
     /**
      * @param array<string, mixed> $data

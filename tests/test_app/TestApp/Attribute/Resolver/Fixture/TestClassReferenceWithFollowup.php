@@ -10,6 +10,4 @@ use TestApp\Attribute\Resolver\TestRoute;
  * Declaring class preceded by a class reference and another named argument.
  */
 #[TestClassReference(actions: ['index'], routeClass: TestRoute::class, name: 'list')]
-class TestClassReferenceWithFollowup
-{
-}
+class TestClassReferenceWithFollowup {}

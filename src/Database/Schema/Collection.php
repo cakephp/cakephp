@@ -40,9 +40,7 @@ class Collection implements CollectionInterface
      *
      * @param \Cake\Database\Connection $connection The connection instance.
      */
-    public function __construct(protected Connection $connection)
-    {
-    }
+    public function __construct(protected Connection $connection) {}
 
     /**
      * Get the list of tables, excluding any views, available in the current connection.

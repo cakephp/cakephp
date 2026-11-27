@@ -582,12 +582,16 @@ class ValidatorTest extends TestCase
         ];
         $this->assertEquals($expected, $errors);
 
-        $validator->requirePresence([
-            'title' => [
-                'message' => 'Test message',
+        $validator->requirePresence(
+            [
+                'title' => [
+                    'message' => 'Test message',
+                ],
+                'content',
             ],
-            'content',
-        ], true, 'Custom message');
+            true,
+            'Custom message',
+        );
         $errors = $validator->validate(['foo' => 'something']);
         $expected = [
             'title' => ['_required' => 'Test message'],
@@ -602,8 +606,7 @@ class ValidatorTest extends TestCase
     public function testAllowEmptyFor(): void
     {
         $validator = new Validator();
-        $validator
-            ->allowEmptyFor('title')
+        $validator->allowEmptyFor('title')
             ->minLength('title', 5, 'Min. length 5 chars');
 
         $results = $validator->validate(['title' => null]);
@@ -618,8 +621,7 @@ class ValidatorTest extends TestCase
         $results = $validator->validate(['title' => []]);
         $this->assertSame(['title' => ['minLength' => 'Min. length 5 chars']], $results);
 
-        $validator
-            ->allowEmptyFor('name', Validator::EMPTY_STRING)
+        $validator->allowEmptyFor('name', Validator::EMPTY_STRING)
             ->minLength('name', 5, 'Min. length 5 chars');
 
         $results = $validator->validate(['name' => null]);
@@ -1512,8 +1514,7 @@ class ValidatorTest extends TestCase
     public function testErrorsFromDefaultProvider(): void
     {
         $validator = new Validator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('email', 'notBlank', ['rule' => 'notBlank'])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
         $errors = $validator->validate(['email' => 'not an email!']);
@@ -1526,8 +1527,7 @@ class ValidatorTest extends TestCase
         $this->assertEquals($expected, $errors);
 
         $noI18nValidator = new NoI18nValidator();
-        $noI18nValidator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $noI18nValidator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('email', 'notBlank', ['rule' => 'notBlank'])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
         $errors = $noI18nValidator->validate(['email' => 'not an email!']);
@@ -1543,8 +1543,7 @@ class ValidatorTest extends TestCase
         $validator = $this->getValidator();
         $thing = $validator->getProvider('thing');
 
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
@@ -1655,8 +1654,7 @@ class ValidatorTest extends TestCase
     public function testErrorsWithLastRule(): void
     {
         $validator = new Validator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric', 'last' => true])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric', 'last' => true])
             ->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
         $errors = $validator->validate(['email' => 'not an email!']);
         $expected = [
@@ -1674,8 +1672,7 @@ class ValidatorTest extends TestCase
     public function testArrayAccessGet(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $this->assertSame($validator['email'], $validator->field('email'));
         $this->assertSame($validator['title'], $validator->field('title'));
@@ -1698,8 +1695,7 @@ class ValidatorTest extends TestCase
     public function testArrayAccessExists(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $this->assertArrayHasKey('email', $validator);
         $this->assertArrayHasKey('title', $validator);
@@ -1712,8 +1708,7 @@ class ValidatorTest extends TestCase
     public function testArrayAccessSet(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $validator['name'] = $validator->field('title');
         $this->assertSame($validator->field('title'), $validator->field('name'));
@@ -1727,8 +1722,7 @@ class ValidatorTest extends TestCase
     public function testArrayAccessUnset(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $this->assertArrayHasKey('title', $validator);
         unset($validator['title']);
@@ -1741,8 +1735,7 @@ class ValidatorTest extends TestCase
     public function testGetIterator(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $fieldIterator = $validator->getIterator();
         $this->assertInstanceOf(Traversable::class, $fieldIterator);
@@ -1755,8 +1748,7 @@ class ValidatorTest extends TestCase
     public function testCount(): void
     {
         $validator = $this->getValidator();
-        $validator
-            ->add('email', 'alpha', ['rule' => 'alphanumeric'])
+        $validator->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
         $this->assertCount(2, $validator);
     }
@@ -1821,7 +1813,9 @@ class ValidatorTest extends TestCase
     public function testAddMultipleNumericKeyArraysInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You cannot add validation rules without a name. Update your rules array to have string keys.');
+        $this->expectExceptionMessage(
+            'You cannot add validation rules without a name. Update your rules array to have string keys.',
+        );
 
         $validator = new Validator();
         $validator->add('title', [
@@ -2072,7 +2066,13 @@ class ValidatorTest extends TestCase
     public function testGreaterThanOrEqual(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanOrEqual', 5, [Validation::COMPARE_GREATER_OR_EQUAL, 5], 'comparison');
+        $this->assertProxyMethod(
+            $validator,
+            'greaterThanOrEqual',
+            5,
+            [Validation::COMPARE_GREATER_OR_EQUAL, 5],
+            'comparison',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 2]));
 
         $fieldName = 'field_name';
@@ -2104,7 +2104,13 @@ class ValidatorTest extends TestCase
     public function testLessThanOrEqual(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanOrEqual', 5, [Validation::COMPARE_LESS_OR_EQUAL, 5], 'comparison');
+        $this->assertProxyMethod(
+            $validator,
+            'lessThanOrEqual',
+            5,
+            [Validation::COMPARE_LESS_OR_EQUAL, 5],
+            'comparison',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 6]));
 
         $fieldName = 'field_name';
@@ -2170,7 +2176,13 @@ class ValidatorTest extends TestCase
     public function testNotSameAs(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notSameAs', 'other', ['other', Validation::COMPARE_NOT_SAME], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'notSameAs',
+            'other',
+            ['other', Validation::COMPARE_NOT_SAME],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
 
         $fieldName = 'field_name';
@@ -2186,7 +2198,13 @@ class ValidatorTest extends TestCase
     public function testEqualToField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'equalToField', 'other', ['other', Validation::COMPARE_EQUAL], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'equalToField',
+            'other',
+            ['other', Validation::COMPARE_EQUAL],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 'foo']));
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'bar']));
 
@@ -2203,7 +2221,13 @@ class ValidatorTest extends TestCase
     public function testNotEqualToField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'notEqualToField', 'other', ['other', Validation::COMPARE_NOT_EQUAL], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'notEqualToField',
+            'other',
+            ['other', Validation::COMPARE_NOT_EQUAL],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 'foo', 'other' => 'foo']));
 
         $fieldName = 'field_name';
@@ -2219,7 +2243,13 @@ class ValidatorTest extends TestCase
     public function testGreaterThanField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanField', 'other', ['other', Validation::COMPARE_GREATER], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'greaterThanField',
+            'other',
+            ['other', Validation::COMPARE_GREATER],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
 
@@ -2236,7 +2266,13 @@ class ValidatorTest extends TestCase
     public function testGreaterThanOrEqualToField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'greaterThanOrEqualToField', 'other', ['other', Validation::COMPARE_GREATER_OR_EQUAL], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'greaterThanOrEqualToField',
+            'other',
+            ['other', Validation::COMPARE_GREATER_OR_EQUAL],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 2]));
 
         $fieldName = 'field_name';
@@ -2252,7 +2288,13 @@ class ValidatorTest extends TestCase
     public function testLessThanField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanField', 'other', ['other', Validation::COMPARE_LESS], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'lessThanField',
+            'other',
+            ['other', Validation::COMPARE_LESS],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 1, 'other' => 1]));
         $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
 
@@ -2269,7 +2311,13 @@ class ValidatorTest extends TestCase
     public function testLessThanOrEqualToField(): void
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'lessThanOrEqualToField', 'other', ['other', Validation::COMPARE_LESS_OR_EQUAL], 'compareFields');
+        $this->assertProxyMethod(
+            $validator,
+            'lessThanOrEqualToField',
+            'other',
+            ['other', Validation::COMPARE_LESS_OR_EQUAL],
+            'compareFields',
+        );
         $this->assertNotEmpty($validator->validate(['username' => 2, 'other' => 1]));
 
         $fieldName = 'field_name';
@@ -3061,12 +3109,23 @@ class ValidatorTest extends TestCase
     public function testGetDefaultProvider(): void
     {
         Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
-        $this->assertEquals(Validator::getDefaultProvider('test-provider'), 'MyNameSpace\Validation\MyProvider', 'Default provider `test-provider` is missing');
+        $this->assertEquals(
+            Validator::getDefaultProvider('test-provider'),
+            'MyNameSpace\Validation\MyProvider',
+            'Default provider `test-provider` is missing',
+        );
 
-        $this->assertNull(Validator::getDefaultProvider('invalid-provider'), 'Default provider (`invalid-provider`) should be missing');
+        $this->assertNull(
+            Validator::getDefaultProvider('invalid-provider'),
+            'Default provider (`invalid-provider`) should be missing',
+        );
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
-        $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+        $this->assertEquals(
+            Validator::getDefaultProviders(),
+            ['test-provider', 'test-provider2'],
+            'Default providers incorrect',
+        );
     }
 
     /**

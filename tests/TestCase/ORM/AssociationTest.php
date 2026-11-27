@@ -59,7 +59,8 @@ class AssociationTest extends TestCase
             'propertyName' => 'associated',
         ];
         $this->association = Mockery::mock(
-            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            Association::class
+                . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
             ['Foo', $this->source, $config],
         )
             ->makePartial()
@@ -114,7 +115,9 @@ class AssociationTest extends TestCase
     public function testSetClassNameAfterTarget(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name `' . AuthorsTable::class . "` doesn't match the target table class name of");
+        $this->expectExceptionMessage(
+            'The class name `' . AuthorsTable::class . "` doesn't match the target table class name of",
+        );
         $this->association->getTarget();
         $this->association->setClassName(AuthorsTable::class);
     }
@@ -163,13 +166,15 @@ class AssociationTest extends TestCase
             'className' => 'Test',
         ];
         $this->association = Mockery::mock(
-            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            Association::class
+                . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
             ['Foo', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
-        $this->association->shouldReceive('type')
+        $this->association
+            ->shouldReceive('type')
             ->byDefault()
             ->andReturn(Association::MANY_TO_ONE);
 
@@ -188,13 +193,15 @@ class AssociationTest extends TestCase
             'className' => TestTable::class,
         ];
         $this->association = Mockery::mock(
-            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            Association::class
+                . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
             ['Test', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
-        $this->association->shouldReceive('type')
+        $this->association
+            ->shouldReceive('type')
             ->byDefault()
             ->andReturn(Association::MANY_TO_ONE);
         $this->association->setSource($this->getTableLocator()->get('Test'));
@@ -216,13 +223,15 @@ class AssociationTest extends TestCase
             'className' => $className,
         ];
         $this->association = Mockery::mock(
-            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            Association::class
+                . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
             ['Test', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
-        $this->association->shouldReceive('type')
+        $this->association
+            ->shouldReceive('type')
             ->byDefault()
             ->andReturn(Association::MANY_TO_ONE);
 
@@ -343,7 +352,8 @@ class AssociationTest extends TestCase
         )
             ->makePartial()
             ->shouldIgnoreMissing();
-        $this->association->shouldReceive('type')
+        $this->association
+            ->shouldReceive('type')
             ->byDefault()
             ->andReturn(Association::MANY_TO_ONE);
 
@@ -354,7 +364,10 @@ class AssociationTest extends TestCase
             $this->getTableLocator()->exists('TestPlugin.ThisAssociationName'),
             'The association class will use this registry key',
         );
-        $this->assertFalse($this->getTableLocator()->exists('TestPlugin.Comments'), 'The association class will NOT use this key');
+        $this->assertFalse(
+            $this->getTableLocator()->exists('TestPlugin.Comments'),
+            'The association class will NOT use this key',
+        );
         $this->assertFalse($this->getTableLocator()->exists('Comments'), 'Should also not be set');
         $this->assertFalse($this->getTableLocator()->exists('ThisAssociationName'), 'Should also not be set');
 

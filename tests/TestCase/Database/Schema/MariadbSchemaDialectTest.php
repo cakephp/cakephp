@@ -71,15 +71,17 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
         $driver->shouldReceive('quoteIdentifier')->andReturnUsing(fn($v) => "`{$v}`");
 
         $statement = Mockery::mock(StatementInterface::class);
-        $statement->shouldReceive('fetchAll')->with('assoc')->andReturn([[
-            'Field' => 'field',
-            'Type' => $type,
-            'Null' => 'YES',
-            'Default' => $default,
-            'Collation' => null,
-            'Comment' => '',
-            'Extra' => '',
-        ]]);
+        $statement->shouldReceive('fetchAll')
+            ->with('assoc')
+            ->andReturn([[
+                'Field' => 'field',
+                'Type' => $type,
+                'Null' => 'YES',
+                'Default' => $default,
+                'Collation' => null,
+                'Comment' => '',
+                'Extra' => '',
+            ]]);
         $driver->shouldReceive('execute')->andReturn($statement);
 
         $dialect = new MariadbSchemaDialect($driver);
@@ -326,13 +328,13 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
         $connection = ConnectionManager::get('test');
 
         $table = <<<SQL
-CREATE TABLE schema_geometry (
-    id INTEGER,
-    geo_line LINESTRING,
-    geo_geometry GEOMETRY,
-    geo_point POINT
-)
-SQL;
+            CREATE TABLE schema_geometry (
+                id INTEGER,
+                geo_line LINESTRING,
+                geo_geometry GEOMETRY,
+                geo_point POINT
+            )
+            SQL;
         $connection->execute($table);
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_geometry');
@@ -511,7 +513,7 @@ SQL;
                     $this->assertEquals((array)$value[1], $indexObject->getReferencedColumns());
                     continue;
                 }
-                if ($key === 'length' && !($indexObject instanceof UniqueKey)) {
+                if ($key === 'length' && !$indexObject instanceof UniqueKey) {
                     $this->assertEquals([], $value);
                     continue;
                 }
@@ -528,7 +530,8 @@ SQL;
         $this->needsConnection();
 
         $this->pdo = Mockery::mock(PDOMocked::class);
-        $this->pdo->shouldReceive('quote')
+        $this->pdo
+            ->shouldReceive('quote')
             ->andReturnUsing(function ($value) {
                 return "'{$value}'";
             });

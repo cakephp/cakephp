@@ -273,12 +273,24 @@ class FormProtectorTest extends TestCase
         $data = [
             'Addresses' => [
                 '0' => [
-                    'id' => '123456', 'title' => '', 'first_name' => '', 'last_name' => '',
-                    'address' => '', 'city' => '', 'phone' => '', 'primary' => '',
+                    'id' => '123456',
+                    'title' => '',
+                    'first_name' => '',
+                    'last_name' => '',
+                    'address' => '',
+                    'city' => '',
+                    'phone' => '',
+                    'primary' => '',
                 ],
                 '1' => [
-                    'id' => '654321', 'title' => '', 'first_name' => '', 'last_name' => '',
-                    'address' => '', 'city' => '', 'phone' => '', 'primary' => '',
+                    'id' => '654321',
+                    'title' => '',
+                    'first_name' => '',
+                    'last_name' => '',
+                    'address' => '',
+                    'city' => '',
+                    'phone' => '',
+                    'primary' => '',
                 ],
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
@@ -317,7 +329,9 @@ class FormProtectorTest extends TestCase
 
         $fields = '1e4c9269b64756e9b141d364497c5f037b428a37%3A';
         $data = [
-            'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
+            'User.password' => 'bar',
+            'User.name' => 'foo',
+            'User.is_valid' => '1',
             'Tag' => ['Tag' => [1]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
@@ -368,7 +382,9 @@ class FormProtectorTest extends TestCase
 
         $data = [
             'Model' => [
-                'username' => '', 'password' => '', 'hidden' => '0',
+                'username' => '',
+                'password' => '',
+                'hidden' => '0',
                 'other_hidden' => 'some hidden value',
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
@@ -500,7 +516,10 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
 
-        $this->validate($data, 'Missing field `Model.password` in POST data, Unexpected unlocked field `Model.password` in POST data');
+        $this->validate(
+            $data,
+            'Missing field `Model.password` in POST data, Unexpected unlocked field `Model.password` in POST data',
+        );
     }
 
     /**
@@ -534,12 +553,16 @@ class FormProtectorTest extends TestCase
         $data = [
             'Model' => [
                 [
-                    'username' => 'username', 'password' => 'password',
-                    'hidden' => 'value', 'valid' => '0',
+                    'username' => 'username',
+                    'password' => 'password',
+                    'hidden' => 'value',
+                    'valid' => '0',
                 ],
                 [
-                    'username' => 'username', 'password' => 'password',
-                    'hidden' => 'value', 'valid' => '0',
+                    'username' => 'username',
+                    'password' => 'password',
+                    'hidden' => 'value',
+                    'valid' => '0',
                 ],
             ],
             '_Token' => compact('fields', 'unlocked', 'debug'),
@@ -781,7 +804,10 @@ class FormProtectorTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ];
 
-        $this->validate($data, 'Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
+        $this->validate(
+            $data,
+            'Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)',
+        );
     }
 
     /**

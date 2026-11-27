@@ -37,7 +37,5 @@ class Command extends BaseCommand
      *
      * @return int|null|void The exit code or null for success
      */
-    public function execute()
-    {
-    }
+    public function execute() {}
 }

@@ -102,7 +102,11 @@ class ResponseTest extends TestCase
         $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
 
         $new = $response->withCharset('iso-8859-1');
-        $this->assertStringNotContainsString('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+        $this->assertStringNotContainsString(
+            'iso',
+            $response->getHeaderLine('Content-Type'),
+            'Old instance not changed',
+        );
         $this->assertSame('iso-8859-1', $new->getCharset());
 
         $this->assertSame('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
@@ -246,8 +250,7 @@ class ResponseTest extends TestCase
         );
 
         $response = new Response();
-        $new = $response
-            ->withHeader('Content-Type', 'application/json')
+        $new = $response->withHeader('Content-Type', 'application/json')
             ->withStatus(204);
         $this->assertFalse($new->hasHeader('Content-Type'), 'Should clear direct header');
         $this->assertSame('', $new->getType());
@@ -459,7 +462,10 @@ class ResponseTest extends TestCase
 
         $new = $response->withAddedLink('http://example.com?p=1', ['rel' => 'prev'])
             ->withAddedLink('http://example.com?p=2', ['rel' => 'next', 'foo' => 'bar']);
-        $this->assertSame('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
+        $this->assertSame(
+            '<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"',
+            $new->getHeaderLine('Link'),
+        );
     }
 
     /**
@@ -919,7 +925,10 @@ class ResponseTest extends TestCase
         $expiredCookie = $response->withExpiredCookie($cookie);
 
         $this->assertSame($expected['expires'], (string)$response->getCookie('testing')['expires']);
-        $this->assertLessThan(DateTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expires']);
+        $this->assertLessThan(
+            DateTime::createFromTimestamp(1),
+            (string)$expiredCookie->getCookie('testing')['expires'],
+        );
     }
 
     public function testWithExpiredCookieObject(): void
@@ -984,8 +993,7 @@ class ResponseTest extends TestCase
     public function testGetCookiesArrayValue(): void
     {
         $response = new Response();
-        $cookie = new Cookie('urmc')
-            ->withValue(['user_id' => 1, 'token' => 'abc123'])
+        $cookie = new Cookie('urmc')->withValue(['user_id' => 1, 'token' => 'abc123'])
             ->withHttpOnly(true);
 
         $new = $response->withCookie($cookie);
@@ -1202,34 +1210,48 @@ class ResponseTest extends TestCase
         return [
             // suffix-byte-range
             [
-                'bytes=-25', 25, 'bytes 13-37/38',
+                'bytes=-25',
+                25,
+                'bytes 13-37/38',
             ],
 
             [
-                'bytes=0-', 38, 'bytes 0-37/38',
+                'bytes=0-',
+                38,
+                'bytes 0-37/38',
             ],
 
             [
-                'bytes=10-', 28, 'bytes 10-37/38',
+                'bytes=10-',
+                28,
+                'bytes 10-37/38',
             ],
 
             [
-                'bytes=10-20', 11, 'bytes 10-20/38',
+                'bytes=10-20',
+                11,
+                'bytes 10-20/38',
             ],
 
             // Spaced out
             [
-                'bytes = 10 - 20', 11, 'bytes 10-20/38',
+                'bytes = 10 - 20',
+                11,
+                'bytes 10-20/38',
             ],
 
             // suffix-byte-range longer than the file
             [
-                'bytes=-50', 38, 'bytes 0-37/38',
+                'bytes=-50',
+                38,
+                'bytes 0-37/38',
             ],
 
             // last-pos past the end of the file
             [
-                'bytes=30-100', 8, 'bytes 30-37/38',
+                'bytes=30-100',
+                8,
+                'bytes 30-37/38',
             ],
         ];
     }
@@ -1637,8 +1659,7 @@ class ResponseTest extends TestCase
         $self = new Link('/api/users/1', 'self');
         $next = new Link('/api/users?page=2', 'next');
 
-        $new = $response
-            ->withLink($self)
+        $new = $response->withLink($self)
             ->withLink($next);
 
         $links = iterator_to_array($new->getLinks()->getLinks());

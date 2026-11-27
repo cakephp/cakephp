@@ -107,8 +107,10 @@ class TimeType extends BaseType implements BatchCastingInterface
 
         $value += ['hour' => null, 'minute' => null, 'second' => 0, 'microsecond' => 0];
         if (
-            !is_numeric($value['hour']) || !is_numeric($value['minute']) || !is_numeric($value['second']) ||
-            !is_numeric($value['microsecond'])
+            !is_numeric($value['hour'])
+            || !is_numeric($value['minute'])
+            || !is_numeric($value['second'])
+            || !is_numeric($value['microsecond'])
         ) {
             return null;
         }
@@ -231,8 +233,8 @@ class TimeType extends BaseType implements BatchCastingInterface
     public function useLocaleParser(bool $enable = true): static
     {
         if (
-            $enable &&
-            ($this->className !== Time::class && !is_subclass_of($this->className, Time::class))
+            $enable
+            && ($this->className !== Time::class && !is_subclass_of($this->className, Time::class))
         ) {
             throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
         }

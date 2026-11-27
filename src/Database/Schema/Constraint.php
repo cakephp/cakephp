@@ -56,8 +56,7 @@ class Constraint
         protected string $name,
         protected array $columns,
         protected string $type,
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the constraint columns.

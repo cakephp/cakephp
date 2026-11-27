@@ -39,4 +39,5 @@ class ValidationWithDefinerTable extends Table
         return $validator;
     }
 }
+
 // phpcs:enable

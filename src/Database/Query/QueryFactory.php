@@ -32,8 +32,7 @@ class QueryFactory
      */
     public function __construct(
         protected Connection $connection,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new SelectQuery instance.
@@ -50,8 +49,7 @@ class QueryFactory
     ): SelectQuery {
         $query = new SelectQuery($this->connection);
 
-        $query
-            ->select($fields)
+        $query->select($fields)
             ->from($table)
             ->setDefaultTypes($types);
 
@@ -76,8 +74,7 @@ class QueryFactory
 
         if ($values) {
             $columns = array_keys($values);
-            $query
-                ->insert($columns, $types)
+            $query->insert($columns, $types)
                 ->values($values);
         }
 

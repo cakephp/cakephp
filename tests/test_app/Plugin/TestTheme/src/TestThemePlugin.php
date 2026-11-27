@@ -17,6 +17,4 @@ namespace TestTheme;
 
 use Cake\Core\BasePlugin;
 
-class TestThemePlugin extends BasePlugin
-{
-}
+class TestThemePlugin extends BasePlugin {}

@@ -78,6 +78,5 @@ readonly class EventListener
         public ?int $priority = null,
         public ?string $method = null,
         public ?string $manager = null,
-    ) {
-    }
+    ) {}
 }

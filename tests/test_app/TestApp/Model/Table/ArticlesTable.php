@@ -70,21 +70,15 @@ class ArticlesTable extends Table
     /**
      * Example public method
      */
-    public function doSomething(): void
-    {
-    }
+    public function doSomething(): void {}
 
     /**
      * Example Secondary public method
      */
-    public function doSomethingElse(): void
-    {
-    }
+    public function doSomethingElse(): void {}
 
     /**
      * Example protected method
      */
-    protected function innerMethod(): void
-    {
-    }
+    protected function innerMethod(): void {}
 }

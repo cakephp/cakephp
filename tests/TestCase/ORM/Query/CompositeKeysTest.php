@@ -28,8 +28,8 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
-
-use function Cake\Database\Expression\{greaterThan, in};
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\in;
 
 /**
  * Integration tests for table operations involving composite keys
@@ -360,8 +360,7 @@ class CompositeKeysTest extends TestCase
         ]);
 
         $query = $table->find();
-        $results = $query
-            ->select(['sort_key' => 'SiteAuthors.name'])
+        $results = $query->select(['sort_key' => 'SiteAuthors.name'])
             ->enableAutoFields()
             ->contain('SiteArticles')
             ->orderBy(['sort_key' => 'ASC'])
@@ -403,8 +402,7 @@ class CompositeKeysTest extends TestCase
         ]);
 
         $query = $articles->find();
-        $results = $query
-            ->select(['sort_key' => 'SiteArticles.title'])
+        $results = $query->select(['sort_key' => 'SiteArticles.title'])
             ->enableAutoFields()
             ->contain('SiteTags')
             ->orderBy(['sort_key' => 'ASC'])
@@ -442,8 +440,7 @@ class CompositeKeysTest extends TestCase
         ]);
 
         $query = $table->find();
-        $results = $query
-            ->select(['name_length' => $query->func()->length(['SiteAuthors.name' => 'identifier'])])
+        $results = $query->select(['name_length' => $query->func()->length(['SiteAuthors.name' => 'identifier'])])
             ->enableAutoFields()
             ->contain('SiteArticles')
             ->groupBy(['SiteAuthors.id', 'SiteAuthors.site_id'])
@@ -488,8 +485,7 @@ class CompositeKeysTest extends TestCase
         ]);
 
         $query = $articles->find();
-        $results = $query
-            ->select(['title_length' => $query->func()->length(['SiteArticles.title' => 'identifier'])])
+        $results = $query->select(['title_length' => $query->func()->length(['SiteArticles.title' => 'identifier'])])
             ->enableAutoFields()
             ->contain('SiteTags')
             ->groupBy(['SiteArticles.id', 'SiteArticles.site_id'])
@@ -584,7 +580,9 @@ class CompositeKeysTest extends TestCase
     public function testSaveNewEntityMissingKey(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)');
+        $this->expectExceptionMessage(
+            'Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)',
+        );
         $entity = new Entity([
             'id' => 5,
             'title' => 'Fifth Article',

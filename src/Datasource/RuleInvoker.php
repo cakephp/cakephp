@@ -121,7 +121,7 @@ class RuleInvoker
             $message = [$message];
         }
 
-        $errorField = $this->options['errorField'] ?? ($this->name ?? '_rule');
+        $errorField = $this->options['errorField'] ?? $this->name ?? '_rule';
         $entity->setError($errorField, $message);
 
         if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {

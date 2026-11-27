@@ -32,11 +32,7 @@ class DuplicateBehavior extends Behavior
         ],
     ];
 
-    public function findChildren(): void
-    {
-    }
+    public function findChildren(): void {}
 
-    public function slugify(): void
-    {
-    }
+    public function slugify(): void {}
 }

@@ -182,16 +182,16 @@ class PostgresTest extends TestCase
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
-        $query
-            ->select([
-                'posts.author_id',
-                'post_count' => $query->func()->count('posts.id'),
-            ])
+        $query->select([
+            'posts.author_id',
+            'post_count' => $query->func()->count('posts.id'),
+        ])
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
-            'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
+        $expected =
+            'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
+            . 'GROUP BY posts.author_id HAVING COUNT(posts.id) >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 
@@ -212,16 +212,16 @@ class PostgresTest extends TestCase
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = new SelectQuery($connection);
-        $query
-            ->select([
-                'posts.author_id',
-                'post_count' => $query->func()->count('posts.id'),
-            ])
+        $query->select([
+            'posts.author_id',
+            'post_count' => $query->func()->count('posts.id'),
+        ])
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->greaterThanOrEquals('posts.author_id', 2, 'integer')]);
 
-        $expected = 'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" ' .
-            'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
+        $expected =
+            'SELECT posts.author_id, (COUNT(posts.id)) AS "post_count" '
+            . 'GROUP BY posts.author_id HAVING posts.author_id >= :c0';
         $this->assertSame($expected, $query->sql());
     }
 
@@ -284,17 +284,16 @@ class PostgresTest extends TestCase
         $this->skipIf(!$connection->getDriver() instanceof Postgres);
 
         $query = new SelectQuery($connection);
-        $query
-            ->select([
-                'title' => $query->func()->concat(['title' => 'identifier', "' string'" => 'literal', ' is ', 1]),
-            ])
+        $query->select([
+            'title' => $query->func()->concat(['title' => 'identifier', "' string'" => 'literal', ' is ', 1]),
+        ])
             ->from('articles')
             ->where(['id' => 1]);
 
         $this->assertEqualsSql(
             <<<'SQL'
-            SELECT (CONCAT(title, ' string', CAST(:param0 AS text), CAST(:param1 AS text))) AS title FROM articles WHERE id = :c2
-            SQL,
+                SELECT (CONCAT(title, ' string', CAST(:param0 AS text), CAST(:param1 AS text))) AS title FROM articles WHERE id = :c2
+                SQL,
             $query->sql(),
         );
     }
@@ -371,8 +370,7 @@ class PostgresTest extends TestCase
         $id = $stmt->fetch('assoc')['id'];
 
         $query = new SelectQuery($connection);
-        $query
-            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+        $query->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
             ->from('comments')
             ->where(['id' => $id]);
 
@@ -382,8 +380,7 @@ class PostgresTest extends TestCase
         $this->assertSame('36', $comment[0]['score']);
 
         $query = new SelectQuery($connection);
-        $query
-            ->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
+        $query->select(['score' => $query->func()->jsonValue('comment', "x')) > '0' OR (SELECT 1) --")])
             ->from('comments')
             ->where(['id' => $id]);
 

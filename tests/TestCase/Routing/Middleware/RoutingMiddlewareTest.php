@@ -84,7 +84,11 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testRedirectResponseWithHeaders(): void
     {
-        $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
+        $this->builder->connect(
+            '/testpath',
+            ['controller' => 'Articles', 'action' => 'index'],
+            ['routeClass' => HeaderRedirectRoute::class],
+        );
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $handler = new TestRequestHandler(function ($request) {
             return new Response();
@@ -196,7 +200,7 @@ class RoutingMiddlewareTest extends TestCase
         Router::reload();
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
-        $app = new class (CONFIG) extends Application {
+        $app = new class(CONFIG) extends Application {
             public function pluginRoutes(RouteBuilder $routes): RouteBuilder
             {
                 $routes->connect('/app/articles', ['controller' => 'Articles', 'action' => 'index']);
@@ -462,9 +466,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testAppWithoutContainerApplicationInterface(): void
     {
         $app = new class implements RoutingApplicationInterface {
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+            public function routes(RouteBuilder $routes): void {}
         };
         $this->builder->scope('/', function (RouteBuilder $routes): void {
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
@@ -503,12 +505,10 @@ class RoutingMiddlewareTest extends TestCase
      */
     protected function app(?callable $handleCallback = null): Application
     {
-        $app = new class (CONFIG) extends Application {
+        $app = new class(CONFIG) extends Application {
             public ?Closure $handleCallback = null;
 
-            public function routes(RouteBuilder $routes): void
-            {
-            }
+            public function routes(RouteBuilder $routes): void {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {

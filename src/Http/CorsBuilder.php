@@ -50,8 +50,7 @@ class CorsBuilder
         protected ResponseInterface $response,
         protected string $origin,
         protected bool $isSsl = false,
-    ) {
-    }
+    ) {}
 
     /**
      * Apply the queued headers to the response.

@@ -73,8 +73,8 @@ trait HeaderValidationTrait
             // Reject CRLF injection and non-visible characters. Only obsolete line
             // folding (CRLF followed by space or tab) is accepted (RFC 7230 section 3.2).
             if (
-                preg_match("#(?:(?<!\r)\n|\r(?!\n)|\r\n(?![ \t]))#", $value) ||
-                preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFF]/', $value)
+                preg_match("#(?:(?<!\r)\n|\r(?!\n)|\r\n(?![ \t]))#", $value)
+                || preg_match('/[^\x09\x0a\x0d\x20-\x7E\x80-\xFF]/', $value)
             ) {
                 throw new InvalidArgumentException(sprintf('`%s` is not a valid header value.', $value));
             }

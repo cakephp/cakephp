@@ -8,6 +8,4 @@ use Cake\Http\Exception\NotFoundException;
 /**
  * Exception class for testing app error handlers and custom errors.
  */
-class MissingWidgetThingException extends NotFoundException
-{
-}
+class MissingWidgetThingException extends NotFoundException {}

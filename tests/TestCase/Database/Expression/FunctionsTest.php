@@ -22,8 +22,13 @@ use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-
-use function Cake\Database\Expression\{between, comparison, equals, greaterThan, in, isNull, notEquals};
+use function Cake\Database\Expression\between;
+use function Cake\Database\Expression\comparison;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\isNull;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Verifies deferred predicates, field type inference, and independent expression trees.
@@ -38,8 +43,7 @@ class FunctionsTest extends TestCase
     public static function helpersProvider(): array
     {
         $cases = [];
-        foreach (
-            [
+        foreach ([
             'equals',
             'notEquals',
             'greaterThan',
@@ -50,8 +54,7 @@ class FunctionsTest extends TestCase
             'notLike',
             'isDistinctFrom',
             'isNotDistinctFrom',
-            ] as $method
-        ) {
+        ] as $method) {
             $cases[$method] = [$method, $method, [7]];
         }
         foreach (['in', 'notIn', 'inOrNull', 'notInOrNull'] as $method) {
@@ -125,7 +128,12 @@ class FunctionsTest extends TestCase
      */
     public function testNullableComparisons(): void
     {
-        foreach ([[equals(null), '(id) IS NULL'], [notEquals(null), '(id) IS NOT NULL'], [equals(1), 'id = :c0'], [notEquals(1), 'id != :c0']] as [$predicate, $sql]) {
+        foreach ([
+            [equals(null), '(id) IS NULL'],
+            [notEquals(null), '(id) IS NOT NULL'],
+            [equals(1), 'id = :c0'],
+            [notEquals(1), 'id != :c0'],
+        ] as [$predicate, $sql]) {
             $expression = new QueryExpression(['id' => $predicate]);
             $this->assertSame($sql, $expression->sql(new ValueBinder()));
         }

@@ -164,7 +164,7 @@ class SchemaDialectTest extends TestCase
 
     public function testDescribeOptionsMysql(): void
     {
-        $this->skipIf(!(ConnectionManager::get('test')->getDriver() instanceof Mysql), 'requires mysql');
+        $this->skipIf(!ConnectionManager::get('test')->getDriver() instanceof Mysql, 'requires mysql');
         $result = $this->dialect->describeOptions('orders');
         $this->assertTrue(is_array($result));
         $this->assertArrayHasKey('engine', $result);
@@ -209,7 +209,11 @@ class SchemaDialectTest extends TestCase
         $this->assertFalse($this->dialect->hasIndex('orders', ['product_id', 'product_category']));
 
         // Name is wrong
-        $this->assertFalse($this->dialect->hasIndex('orders', ['product_category', 'product_id'], 'product_category_index'));
+        $this->assertFalse($this->dialect->hasIndex(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_index',
+        ));
 
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id']));
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id'], 'product_category'));
@@ -228,9 +232,17 @@ class SchemaDialectTest extends TestCase
     public function testHasForeignKeyNamed(): void
     {
         // Name is wrong
-        $this->assertFalse($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_index'));
+        $this->assertFalse($this->dialect->hasForeignKey(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_index',
+        ));
 
-        $this->assertTrue($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_fk'));
+        $this->assertTrue($this->dialect->hasForeignKey(
+            'orders',
+            ['product_category', 'product_id'],
+            'product_category_fk',
+        ));
         $this->assertTrue($this->dialect->hasForeignKey('orders', [], 'product_category_fk'));
     }
 
@@ -242,15 +254,15 @@ class SchemaDialectTest extends TestCase
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
         $driverVersion = $driver->version();
-        $isMariadb = $driver instanceof Mariadb
+        $isMariadb =
+            $driver instanceof Mariadb
             || ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB'));
         $this->skipIf(
             $driver instanceof Mysql && !$isMariadb && version_compare($driverVersion, '8.0.13', '<'),
             'Expression defaults need MySQL 8.0.13 or newer.',
         );
 
-        $schema = new TableSchema('current_defaults')
-            ->addColumn('id', ['type' => 'integer', 'null' => false])
+        $schema = new TableSchema('current_defaults')->addColumn('id', ['type' => 'integer', 'null' => false])
             ->addColumn('start_date', ['type' => 'date', 'null' => false, 'default' => 'CURRENT_DATE'])
             ->addColumn('start_time', ['type' => 'time', 'null' => false, 'default' => 'CURRENT_TIME']);
         $execute = function (array $statements) use ($connection): void {

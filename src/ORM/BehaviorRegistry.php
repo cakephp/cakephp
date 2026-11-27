@@ -90,8 +90,10 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     public static function className(string $class): ?string
     {
-        return App::className($class, 'Model/Behavior', 'Behavior')
-            ?: App::className($class, 'ORM/Behavior', 'Behavior');
+        return (
+            App::className($class, 'Model/Behavior', 'Behavior')
+                ?: App::className($class, 'ORM/Behavior', 'Behavior')
+        );
     }
 
     /**

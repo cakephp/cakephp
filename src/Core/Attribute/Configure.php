@@ -47,9 +47,7 @@ readonly class Configure implements AttributeInterface
     /**
      * @param string $name
      */
-    public function __construct(protected string $name)
-    {
-    }
+    public function __construct(protected string $name) {}
 
     /**
      * @return mixed

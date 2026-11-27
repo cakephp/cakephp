@@ -45,6 +45,5 @@ readonly class Resource
         public string $id = '',
         public string $inflect = 'dasherize',
         public array $connectOptions = [],
-    ) {
-    }
+    ) {}
 }

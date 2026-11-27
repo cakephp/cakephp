@@ -44,8 +44,11 @@ class CommandScannerTest extends TestCase
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
-        $expectedFile = Plugin::classPath('Company/TestPluginThree')
-            . 'Command' . DIRECTORY_SEPARATOR . 'CompanyCommand.php';
+        $expectedFile =
+            Plugin::classPath('Company/TestPluginThree')
+            . 'Command'
+            . DIRECTORY_SEPARATOR
+            . 'CompanyCommand.php';
 
         $commandScanner = new CommandScanner();
         $result = $commandScanner->scanPlugin('Company/TestPluginThree');

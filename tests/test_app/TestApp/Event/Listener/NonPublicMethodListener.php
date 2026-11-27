@@ -20,7 +20,5 @@ class NonPublicMethodListener
      * @return void
      */
     #[EventListener('Order.afterPlace')]
-    protected function handle(EventInterface $event): void
-    {
-    }
+    protected function handle(EventInterface $event): void {}
 }

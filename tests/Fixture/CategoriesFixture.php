@@ -27,13 +27,53 @@ class CategoriesFixture extends TestFixture
      * @var array
      */
     public array $records = [
-        ['parent_id' => 0, 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 1, 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 1, 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 0, 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 0, 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 5, 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 2, 'name' => 'Category 1.1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
-        ['parent_id' => 2, 'name' => 'Category 1.1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'],
+        [
+            'parent_id' => 0,
+            'name' => 'Category 1',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 1,
+            'name' => 'Category 1.1',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 1,
+            'name' => 'Category 1.2',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 0,
+            'name' => 'Category 2',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 0,
+            'name' => 'Category 3',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 5,
+            'name' => 'Category 3.1',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 2,
+            'name' => 'Category 1.1.1',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
+        [
+            'parent_id' => 2,
+            'name' => 'Category 1.1.2',
+            'created' => '2007-03-18 15:30:23',
+            'updated' => '2007-03-18 15:32:31',
+        ],
     ];
 }

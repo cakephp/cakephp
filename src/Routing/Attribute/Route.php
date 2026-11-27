@@ -47,6 +47,5 @@ readonly class Route
         public array $persist = [],
         public ?string $host = null,
         public ?string $routeClass = null,
-    ) {
-    }
+    ) {}
 }

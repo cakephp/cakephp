@@ -45,6 +45,5 @@ readonly class CollectionOf
      */
     public function __construct(
         protected string $class,
-    ) {
-    }
+    ) {}
 }

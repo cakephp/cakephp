@@ -324,8 +324,12 @@ class TimeHelperTest extends TestCase
     {
         // A map of days which goes from -1 day of week to +1 day of week
         $map = [
-            'Mon' => [-1, 7], 'Tue' => [-2, 6], 'Wed' => [-3, 5],
-            'Thu' => [-4, 4], 'Fri' => [-5, 3], 'Sat' => [-6, 2],
+            'Mon' => [-1, 7],
+            'Tue' => [-2, 6],
+            'Wed' => [-3, 5],
+            'Thu' => [-4, 4],
+            'Fri' => [-5, 3],
+            'Sat' => [-6, 2],
             'Sun' => [-7, 1],
         ];
         $days = $map[date('D')];
@@ -346,9 +350,23 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($result);
         $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y') - mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(
+            0,
+            0,
+            0,
+            (int)date('m'),
+            mt_rand(1, 28),
+            (int)date('Y') - mt_rand(1, 12),
+        ));
         $this->assertFalse($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y') + mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(
+            0,
+            0,
+            0,
+            (int)date('m'),
+            mt_rand(1, 28),
+            (int)date('Y') + mt_rand(1, 12),
+        ));
         $this->assertFalse($result);
     }
 

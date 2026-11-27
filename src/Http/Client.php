@@ -508,7 +508,7 @@ class Client implements EventDispatcherInterface, ClientInterface
     {
         try {
             return $this->send($request, $this->config);
-        } catch (InvalidArgumentException | RuntimeException $error) {
+        } catch (InvalidArgumentException|RuntimeException $error) {
             if ($error instanceof ClientExceptionInterface) {
                 throw $error;
             }
@@ -585,12 +585,11 @@ class Client implements EventDispatcherInterface, ClientInterface
                 }
                 $locationUri = new Uri($locationUrl);
                 if (
-                    $locationUri->getScheme() !== $url->getScheme() ||
-                    strtolower($locationUri->getHost()) !== strtolower(new Url((string)$url)->getAsciiHost() ?? '') ||
-                    $locationUri->getPort() !== $url->getPort()
+                    $locationUri->getScheme() !== $url->getScheme()
+                    || strtolower($locationUri->getHost()) !== strtolower(new Url((string)$url)->getAsciiHost() ?? '')
+                    || $locationUri->getPort() !== $url->getPort()
                 ) {
-                    $request = $request
-                        ->withoutHeader('Authorization')
+                    $request = $request->withoutHeader('Authorization')
                         ->withoutHeader('Cookie');
                 }
                 if ($response->getStatusCode() === 303 && strtoupper($request->getMethod()) !== 'HEAD') {

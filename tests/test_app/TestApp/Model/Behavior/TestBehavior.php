@@ -10,42 +10,30 @@ class TestBehavior extends Behavior
     /**
      * Test for event bindings.
      */
-    public function beforeFind(): void
-    {
-    }
+    public function beforeFind(): void {}
 
     /**
      * Test for event bindings.
      */
-    public function beforeRules(): void
-    {
-    }
+    public function beforeRules(): void {}
 
     /**
      * Test for event bindings.
      */
-    public function afterRules(): void
-    {
-    }
+    public function afterRules(): void {}
 
     /**
      * Test for event bindings.
      */
-    public function buildRules(): void
-    {
-    }
+    public function buildRules(): void {}
 
     /**
      * Test for event bindings.
      */
-    public function afterSaveCommit(): void
-    {
-    }
+    public function afterSaveCommit(): void {}
 
     /**
      * Test for event bindings.
      */
-    public function afterDeleteCommit(): void
-    {
-    }
+    public function afterDeleteCommit(): void {}
 }

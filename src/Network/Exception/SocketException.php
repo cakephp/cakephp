@@ -20,6 +20,4 @@ use Cake\Core\Exception\CakeException;
  * Exception class for Socket. This exception will be thrown from Socket, Email, HttpSocket
  * SmtpTransport, MailTransport and HttpResponse when it encounters an error.
  */
-class SocketException extends CakeException
-{
-}
+class SocketException extends CakeException {}

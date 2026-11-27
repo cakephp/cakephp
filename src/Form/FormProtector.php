@@ -260,7 +260,7 @@ class FormProtector
 
         $token = urldecode($formData['_Token']['fields']);
         if (str_contains($token, ':')) {
-            [$token, ] = explode(':', $token, 2);
+            [$token] = explode(':', $token, 2);
         }
 
         return $token;
@@ -335,7 +335,7 @@ class FormProtector
             foreach ($unlockedFields as $off) {
                 $off = explode('.', $off);
                 $field = array_values(array_intersect(explode('.', $key), $off));
-                $isUnlocked = ($field === $off);
+                $isUnlocked = $field === $off;
                 if ($isUnlocked) {
                     break;
                 }

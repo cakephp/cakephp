@@ -504,8 +504,14 @@ class UriFactoryTest extends TestCase
 
     public static function enabledHttpsValues(): array
     {
-        return ['yes' => ['yes', 'https'], 'true' => ['true', 'https'], 'off' => ['off', 'http'],
-            'empty' => ['', 'http'], 'zero' => ['0', 'http'], 'false' => [false, 'http']];
+        return [
+            'yes' => ['yes', 'https'],
+            'true' => ['true', 'https'],
+            'off' => ['off', 'http'],
+            'empty' => ['', 'http'],
+            'zero' => ['0', 'http'],
+            'false' => [false, 'http'],
+        ];
     }
 
     #[DataProvider('enabledHttpsValues')]
@@ -519,7 +525,8 @@ class UriFactoryTest extends TestCase
     {
         foreach (['127.0.0.1', '2001:db8::2'] as $address) {
             $uri = UriFactory::marshalUriAndBaseFromSapi([
-                'SERVER_NAME' => '[2001:db8::1]', 'SERVER_ADDR' => $address,
+                'SERVER_NAME' => '[2001:db8::1]',
+                'SERVER_ADDR' => $address,
             ])['uri'];
             $this->assertSame('[2001:db8::1]', $uri->getHost());
         }

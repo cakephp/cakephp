@@ -80,7 +80,10 @@ class QueryTest extends TestCase
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->getConnectionRole());
 
         // Can set read role for select queries
-        $this->assertSame(Connection::ROLE_READ, $selectQuery->setConnectionRole(Connection::ROLE_READ)->getConnectionRole());
+        $this->assertSame(
+            Connection::ROLE_READ,
+            $selectQuery->setConnectionRole(Connection::ROLE_READ)->getConnectionRole(),
+        );
 
         // Can set read role for select queries
         $this->assertSame(Connection::ROLE_READ, $selectQuery->useReadRole()->getConnectionRole());
@@ -91,9 +94,7 @@ class QueryTest extends TestCase
 
     protected function newQuery(): Query
     {
-        return new class ($this->connection) extends Query
-        {
-        };
+        return new class($this->connection) extends Query {};
     }
 
     /**
@@ -101,8 +102,7 @@ class QueryTest extends TestCase
      */
     public function testWhereEmptyValues(): void
     {
-        $this->query->from('comments')
-            ->where('');
+        $this->query->from('comments')->where('');
 
         $this->assertCount(0, $this->query->clause('where'));
 
@@ -158,8 +158,7 @@ class QueryTest extends TestCase
                 ),
             )
             ->with(function (CommonTableExpression $cte, Query $query) {
-                return $cte
-                    ->name('cte2')
+                return $cte->name('cte2')
                     ->query($query);
             });
 
@@ -318,7 +317,9 @@ class QueryTest extends TestCase
     public function testClauseUndefined(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `nope` clause is not defined. Valid clauses are: `comment`, `delete`, `update`');
+        $this->expectExceptionMessage(
+            'The `nope` clause is not defined. Valid clauses are: `comment`, `delete`, `update`',
+        );
 
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');
@@ -389,8 +390,7 @@ class QueryTest extends TestCase
 
     public function testExpressionsVisitorAcceptsTwoArguments(): void
     {
-        $query = new class ($this->connection) extends Query
-        {
+        $query = new class($this->connection) extends Query {
             public function visitExpression(ExpressionInterface $expression, Closure $callback): void
             {
                 $this->visitedExpressions = new WeakMap();
@@ -413,8 +413,7 @@ class QueryTest extends TestCase
 
     public function testExpressionsVisitorRequiresVisitedExpressions(): void
     {
-        $query = new class ($this->connection) extends Query
-        {
+        $query = new class($this->connection) extends Query {
             public function visitExpression(ExpressionInterface $expression, Closure $callback): void
             {
                 $this->expressionsVisitor($expression, $callback);
@@ -422,8 +421,7 @@ class QueryTest extends TestCase
         };
 
         $this->expectException(CakeException::class);
-        $query->visitExpression(new QueryExpression(['a' => 1]), function (): void {
-        });
+        $query->visitExpression(new QueryExpression(['a' => 1]), function (): void {});
     }
 
     public function testTraverseExpressionsCanBeNested(): void

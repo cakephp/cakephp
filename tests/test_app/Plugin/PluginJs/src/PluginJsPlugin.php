@@ -17,6 +17,4 @@ namespace PluginJs;
 
 use Cake\Core\BasePlugin;
 
-class PluginJsPlugin extends BasePlugin
-{
-}
+class PluginJsPlugin extends BasePlugin {}

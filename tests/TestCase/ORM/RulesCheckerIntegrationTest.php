@@ -42,8 +42,15 @@ class RulesCheckerIntegrationTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'core.Articles', 'core.Tags', 'core.ArticlesTags', 'core.Authors', 'core.Comments',
-        'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
+        'core.Articles',
+        'core.Tags',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.Comments',
+        'core.SpecialTags',
+        'core.Categories',
+        'core.SiteArticles',
+        'core.SiteAuthors',
         'core.UniqueAuthors',
     ];
 
@@ -390,7 +397,10 @@ class RulesCheckerIntegrationTest extends TestCase
             'second_author_id' => 1,
         ]);
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['first_author_id' => ['isUnique' => 'This value is already in use']], $entity->getErrors());
+        $this->assertEquals(
+            ['first_author_id' => ['isUnique' => 'This value is already in use']],
+            $entity->getErrors(),
+        );
     }
 
     /**
@@ -420,7 +430,10 @@ class RulesCheckerIntegrationTest extends TestCase
             'second_author_id' => 1,
         ]);
         $this->assertFalse($table->save($entity));
-        $this->assertEquals(['first_author_id' => ['isUnique' => 'This value is already in use']], $entity->getErrors());
+        $this->assertEquals(
+            ['first_author_id' => ['isUnique' => 'This value is already in use']],
+            $entity->getErrors(),
+        );
     }
 
     /**
@@ -556,7 +569,9 @@ class RulesCheckerIntegrationTest extends TestCase
     public function testExistsInInvalidAssociation(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('ExistsIn rule for `author_id` is invalid. `NotValid` is not associated with `Cake\ORM\Table`.');
+        $this->expectExceptionMessage(
+            'ExistsIn rule for `author_id` is invalid. `NotValid` is not associated with `Cake\ORM\Table`.',
+        );
         $entity = new Entity([
             'title' => 'An Article',
             'author_id' => 500,
@@ -976,7 +991,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
-            'message' => 'will not error']));
+            'message' => 'will not error',
+        ]));
         $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
@@ -997,7 +1013,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
-            'message' => 'will error']));
+            'message' => 'will error',
+        ]));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['existsIn' => 'will error']], $entity->getErrors());
     }
@@ -1020,7 +1037,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
-            'message' => 'will error']));
+            'message' => 'will error',
+        ]));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['existsIn' => 'will error']], $entity->getErrors());
     }
@@ -1043,7 +1061,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
-            'message' => 'will error']));
+            'message' => 'will error',
+        ]));
         $this->assertFalse($table->save($entity));
         $this->assertEquals(['author_id' => ['existsIn' => 'will error']], $entity->getErrors());
     }
@@ -1073,7 +1092,8 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
-            'message' => 'will error with array_combine warning']));
+            'message' => 'will error with array_combine warning',
+        ]));
         $result = $table->saveMany($entities);
         $this->assertCount(2, $result);
 

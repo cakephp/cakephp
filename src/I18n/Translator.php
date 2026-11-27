@@ -41,8 +41,7 @@ class Translator
         protected Package $package,
         protected FormatterInterface $formatter,
         protected ?self $fallback = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Gets the message translation by its key.

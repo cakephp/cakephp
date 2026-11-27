@@ -92,11 +92,14 @@ class RedirectResponseTest extends TestCase
             'set-cookie' => 'third=three',
         ]);
 
-        $this->assertSame([
-            'first=one; Path=/; HttpOnly',
-            'second=two; Path=/admin',
-            'third=three',
-        ], $response->getHeader('Set-Cookie'));
+        $this->assertSame(
+            [
+                'first=one; Path=/; HttpOnly',
+                'second=two; Path=/admin',
+                'third=three',
+            ],
+            $response->getHeader('Set-Cookie'),
+        );
         $this->assertSame($response->getHeader('Set-Cookie'), $response->getHeaders()['set-cookie']);
         $this->assertCount(0, $response->getCookieCollection());
     }

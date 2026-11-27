@@ -225,36 +225,36 @@ trait StaticConfigTrait
         }
 
         $pattern = <<<'REGEXP'
-{
-    ^
-    (?P<_scheme>
-        (?P<scheme>[\w\\\\]+)://
-    )
-    (?P<_username>
-        (?P<username>.*?)
-        (?P<_password>
-            :(?P<password>.*?)
-        )?
-        @
-    )?
-    (?P<_host>
-        (?P<host>\[[^]]+]|[^?#/:@]+)
-        (?P<_port>
-            :(?P<port>\d+)
-        )?
-    )?
-    (?P<_path>
-        (?P<path>/[^?#]*)
-    )?
-    (?P<_query>
-        \?(?P<query>[^#]*)
-    )?
-    (?P<_fragment>
-        \#(?P<fragment>.*)
-    )?
-    $
-}x
-REGEXP;
+            {
+                ^
+                (?P<_scheme>
+                    (?P<scheme>[\w\\\\]+)://
+                )
+                (?P<_username>
+                    (?P<username>.*?)
+                    (?P<_password>
+                        :(?P<password>.*?)
+                    )?
+                    @
+                )?
+                (?P<_host>
+                    (?P<host>\[[^]]+]|[^?#/:@]+)
+                    (?P<_port>
+                        :(?P<port>\d+)
+                    )?
+                )?
+                (?P<_path>
+                    (?P<path>/[^?#]*)
+                )?
+                (?P<_query>
+                    \?(?P<query>[^#]*)
+                )?
+                (?P<_fragment>
+                    \#(?P<fragment>.*)
+                )?
+                $
+            }x
+            REGEXP;
 
         preg_match($pattern, $dsn, $parsed);
 
@@ -270,7 +270,7 @@ REGEXP;
             if (is_int($k)) {
                 unset($parsed[$k]);
             } elseif (str_starts_with($k, '_')) {
-                $exists[substr($k, 1)] = ($v !== '');
+                $exists[substr($k, 1)] = $v !== '';
                 unset($parsed[$k]);
             } elseif ($v === '' && !$exists[$k]) {
                 unset($parsed[$k]);

@@ -30,9 +30,7 @@ abstract class BaseType implements TypeInterface
      *
      * @param string|null $name The name identifying this type
      */
-    public function __construct(protected ?string $name = null)
-    {
-    }
+    public function __construct(protected ?string $name = null) {}
 
     /**
      * @inheritDoc

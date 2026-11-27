@@ -101,10 +101,7 @@ abstract class AbstractLocator implements LocatorInterface
      */
     public function remove(string $alias): void
     {
-        unset(
-            $this->instances[$alias],
-            $this->options[$alias],
-        );
+        unset($this->instances[$alias], $this->options[$alias]);
     }
 
     /**

@@ -29,49 +29,35 @@ class TestPluginCacheEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function set($key, $value, $ttl = null): bool
-    {
-    }
+    public function set($key, $value, $ttl = null): bool {}
 
     /**
      * @inheritDoc
      */
-    public function get($key, $default = null): mixed
-    {
-    }
+    public function get($key, $default = null): mixed {}
 
     /**
      * @inheritDoc
      */
-    public function increment(string $key, int $offset = 1): int|false
-    {
-    }
+    public function increment(string $key, int $offset = 1): int|false {}
 
     /**
      * @inheritDoc
      */
-    public function decrement(string $key, int $offset = 1): int|false
-    {
-    }
+    public function decrement(string $key, int $offset = 1): int|false {}
 
     /**
      * @inheritDoc
      */
-    public function delete($key): bool
-    {
-    }
+    public function delete($key): bool {}
 
     /**
      * @inheritDoc
      */
-    public function clear(): bool
-    {
-    }
+    public function clear(): bool {}
 
     /**
      * @inheritDoc
      */
-    public function clearGroup(string $group): bool
-    {
-    }
+    public function clearGroup(string $group): bool {}
 }

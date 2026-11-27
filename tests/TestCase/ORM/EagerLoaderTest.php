@@ -316,8 +316,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainClosure(): void
     {
-        $builder = function ($query): void {
-        };
+        $builder = function ($query): void {};
         $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
@@ -352,8 +351,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainSecondSignature(): void
     {
-        $builder = function ($query): void {
-        };
+        $builder = function ($query): void {};
         $loader = new EagerLoader();
         $loader->contain('clients', $builder);
 
@@ -372,8 +370,7 @@ class EagerLoaderTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $builder = function ($query): void {
-        };
+        $builder = function ($query): void {};
         $loader = new EagerLoader();
         $loader->contain(['clients'], $builder);
     }
@@ -424,10 +421,12 @@ class EagerLoaderTest extends TestCase
 
         $select = $query->clause('select');
         $expected = [
-            'foo.id', 'clients__name' => 'clients.name',
+            'foo.id',
+            'clients__name' => 'clients.name',
             'clients__company_id' => 'clients.company_id',
             'clients__telephone' => 'clients.telephone',
-            'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed',
+            'orders__total' => 'orders.total',
+            'orders__placed' => 'orders.placed',
             // Primary keys are added to ensure proper entity hydration
             'clients__id' => 'clients.id',
             'orders__id' => 'orders.id',
@@ -447,9 +446,12 @@ class EagerLoaderTest extends TestCase
         $query->select()->contain($contains)->sql();
         $select = $query->clause('select');
         $expected = [
-            'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
-            'clients__id' => 'clients.id', 'clients__phone' => 'clients.phone',
-            'orders__id' => 'orders.id', 'orders__total' => 'orders.total',
+            'foo__id' => 'foo.id',
+            'clients__name' => 'clients.name',
+            'clients__id' => 'clients.id',
+            'clients__phone' => 'clients.phone',
+            'orders__id' => 'orders.id',
+            'orders__total' => 'orders.total',
             'orders__placed' => 'orders.placed',
         ];
         $expected = $this->quoteArray($expected);

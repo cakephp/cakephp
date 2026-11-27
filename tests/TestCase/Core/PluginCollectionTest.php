@@ -257,14 +257,14 @@ class PluginCollectionTest extends TestCase
         $configPath = ROOT . DS . 'cakephp-plugins.php';
         $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
         $file = <<<PHP
-<?php
-declare(strict_types=1);
-return [
-    'plugins' => [
-        'TestPlugin' => '/config/path/'
-    ]
-];
-PHP;
+            <?php
+            declare(strict_types=1);
+            return [
+                'plugins' => [
+                    'TestPlugin' => '/config/path/'
+                ]
+            ];
+            PHP;
         file_put_contents($configPath, $file);
 
         $plugins = new PluginCollection();

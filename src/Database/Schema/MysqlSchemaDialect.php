@@ -142,8 +142,8 @@ class MysqlSchemaDialect extends SchemaDialect
             }
             // Depending on the MySQL Version the extra column can contain/start with DEFAULT_GENERATED as well
             if (
-                str_ends_with($extra, 'on update CURRENT_TIMESTAMP') ||
-                str_ends_with($extra, 'on update current_timestamp()')
+                str_ends_with($extra, 'on update CURRENT_TIMESTAMP')
+                || str_ends_with($extra, 'on update current_timestamp()')
             ) {
                 $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
@@ -200,8 +200,8 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         $default = $row['Default'];
         if (
-            is_string($default) &&
-            in_array(
+            is_string($default)
+            && in_array(
                 $type,
                 array_merge(
                     TableSchema::GEOSPATIAL_TYPES,
@@ -231,10 +231,10 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         if (
-            $this->driver instanceof Mysql &&
-            !($this->driver instanceof Mariadb) &&
-            $this->driver->isMariaDb() &&
-            $default === 'current_timestamp()'
+            $this->driver instanceof Mysql
+            && !$this->driver instanceof Mariadb
+            && $this->driver->isMariaDb()
+            && $default === 'current_timestamp()'
         ) {
             // TODO remove in 6.x when mysql driver drops support for mariadb
             return 'CURRENT_TIMESTAMP';
@@ -370,7 +370,7 @@ class MysqlSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BIT, 'length' => $length];
         }
 
-        $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
+        $unsigned = isset($matches[3]) && strtolower($matches[3]) === 'unsigned';
         if (str_contains($col, 'bigint')) {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
@@ -498,16 +498,16 @@ class MysqlSchemaDialect extends SchemaDialect
 
         [$schema, $name] = $this->splitTablename($tableName);
         $sql = <<<SQL
-        SELECT
-        cc.CONSTRAINT_NAME AS name,
-        cc.CHECK_CLAUSE AS expression
-        FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS cc
-        INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc ON (
-            tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
-            AND tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
-        )
-        WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'
-SQL;
+                    SELECT
+                    cc.CONSTRAINT_NAME AS name,
+                    cc.CHECK_CLAUSE AS expression
+                    FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS cc
+                    INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc ON (
+                        tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
+                        AND tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
+                    )
+                    WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'
+            SQL;
 
         $constraints = [];
         $statement = $this->driver->execute($sql, [$schema, $name]);
@@ -695,9 +695,9 @@ SQL;
         }
 
         if (
-            in_array($column['type'], $hasUnsigned, true) &&
-            isset($column['unsigned']) &&
-            $column['unsigned'] === true
+            in_array($column['type'], $hasUnsigned, true)
+            && isset($column['unsigned'])
+            && $column['unsigned'] === true
         ) {
             $out .= ' UNSIGNED';
         }
@@ -771,10 +771,10 @@ SQL;
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
-            isset($column['default']) &&
-            in_array($column['type'], $dateTimeTypes) &&
-            is_string($column['default']) &&
-            str_contains(strtolower($column['default']), 'current_timestamp')
+            isset($column['default'])
+            && in_array($column['type'], $dateTimeTypes)
+            && is_string($column['default'])
+            && str_contains(strtolower($column['default']), 'current_timestamp')
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
             if (isset($column['precision'])) {
@@ -834,9 +834,9 @@ SQL;
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            $schema->getPrimaryKey() === [$name] &&
-            $name === 'id'
+            in_array($data['type'], $autoIncrementTypes, true)
+            && $schema->getPrimaryKey() === [$name]
+            && $name === 'id'
         ) {
             $data['autoIncrement'] = true;
         }
@@ -952,14 +952,15 @@ SQL;
             }
         }
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
-            return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
-                implode(', ', $columns),
-                $this->driver->quoteIdentifier($data['references'][0]),
-                $this->convertConstraintColumns($data['references'][1]),
-                $this->foreignOnClause($data['update']),
-                $this->foreignOnClause($data['delete']),
-            );
+            return $prefix
+                . sprintf(
+                    ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+                    implode(', ', $columns),
+                    $this->driver->quoteIdentifier($data['references'][0]),
+                    $this->convertConstraintColumns($data['references'][1]),
+                    $this->foreignOnClause($data['update']),
+                    $this->foreignOnClause($data['delete']),
+                );
         }
 
         return $prefix . ' (' . implode(', ', $columns) . ')';

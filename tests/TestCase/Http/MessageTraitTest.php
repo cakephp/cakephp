@@ -49,7 +49,7 @@ class MessageTraitTest extends TestCase
      */
     protected function createMessage(StreamInterface $stream): MessageInterface
     {
-        return new class ($stream) implements MessageInterface {
+        return new class($stream) implements MessageInterface {
             use MessageTrait;
 
             public function __construct(StreamInterface $stream)
@@ -452,10 +452,13 @@ class MessageTraitTest extends TestCase
             ->withHeader('X-Test-Array', [$value])
             ->withHeader('X-Test-Scalar', $value);
 
-        $this->assertSame([
-            'X-Test-Array' => [(string)$value],
-            'X-Test-Scalar' => [(string)$value],
-        ], $message->getHeaders());
+        $this->assertSame(
+            [
+                'X-Test-Array' => [(string)$value],
+                'X-Test-Scalar' => [(string)$value],
+            ],
+            $message->getHeaders(),
+        );
     }
 
     public static function invalidHeaderValueTypes(): array

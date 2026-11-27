@@ -200,7 +200,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     protected function loadRoutes(): void
     {
         if (
-            !($this->app instanceof RoutingApplicationInterface)
+            !$this->app instanceof RoutingApplicationInterface
             || Router::routes()
         ) {
             return;

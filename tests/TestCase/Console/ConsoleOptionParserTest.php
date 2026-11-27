@@ -159,10 +159,9 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionDefault(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addOption('test', [
-                'default' => 'default value',
-            ])
+        $parser->addOption('test', [
+            'default' => 'default value',
+        ])
             ->addOption('no-default', []);
 
         $result = $parser->parse(['--test'], $this->io);
@@ -177,7 +176,11 @@ class ConsoleOptionParserTest extends TestCase
             'default' => 'default value',
         ]);
         $result = $parser->parse([], $this->io);
-        $this->assertEquals(['test' => 'default value', 'help' => false], $result[0], 'Default value did not parse out');
+        $this->assertEquals(
+            ['test' => 'default value', 'help' => false],
+            $result[0],
+            'Default value did not parse out',
+        );
     }
 
     /**
@@ -186,10 +189,9 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionNonStringDefault(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addOption('test_int', [
-                'default' => 1,
-            ])
+        $parser->addOption('test_int', [
+            'default' => 1,
+        ])
             ->addOption('test_float', [
                 'default' => 1.5,
             ])
@@ -343,12 +345,19 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionMultipleOptionsWithMultiple(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addOption('source', ['multiple' => true])
+        $parser->addOption('source', ['multiple' => true])
             ->addOption('name')
             ->addOption('export', ['boolean' => true]);
 
-        $result = $parser->parse(['--export', '--source', 'mysql', '--name', 'annual-report', '--source', 'postgres'], $this->io);
+        $result = $parser->parse([
+            '--export',
+            '--source',
+            'mysql',
+            '--name',
+            'annual-report',
+            '--source',
+            'postgres',
+        ], $this->io);
         $expected = [
             'export' => true,
             'source' => [
@@ -367,11 +376,10 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionRequiredDefaultValue(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addOption('test', [
-                'default' => 'default value',
-                'required' => true,
-            ])
+        $parser->addOption('test', [
+            'default' => 'default value',
+            'required' => true,
+        ])
             ->addOption('no-default', [
                 'required' => true,
             ]);
@@ -394,11 +402,10 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddOptionRequiredMissing(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addOption('test', [
-                'default' => 'default value',
-                'required' => true,
-            ])
+        $parser->addOption('test', [
+            'default' => 'default value',
+            'required' => true,
+        ])
             ->addOption('no-default', [
                 'required' => true,
             ]);
@@ -561,12 +568,12 @@ class ConsoleOptionParserTest extends TestCase
             $parser->parse(['--he', 'other'], $this->io);
         } catch (MissingOptionException $e) {
             $this->assertStringContainsString(
-                "Unknown option `he`.\n" .
-                "Did you mean: `help`?\n" .
-                "\n" .
-                "Other valid choices:\n" .
-                "\n" .
-                '- help',
+                "Unknown option `he`.\n"
+                    . "Did you mean: `help`?\n"
+                    . "\n"
+                    . "Other valid choices:\n"
+                    . "\n"
+                    . '- help',
                 $e->getFullMessage(),
             );
         }
@@ -647,8 +654,7 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddArgumentDuplicate(): void
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser
-            ->addArgument('first', ['help' => 'An argument', 'choices' => [1, 2]])
+        $parser->addArgument('first', ['help' => 'An argument', 'choices' => [1, 2]])
             ->addArgument('second', ['help' => 'An argument', 'choices' => [1, 2]]);
         $args = $parser->arguments();
         $this->assertCount(2, $args);
@@ -741,7 +747,9 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addArgument('name', ['help' => 'An argument']);
 
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Received too many arguments. Got `2` (or more) but only `1` arguments are defined.');
+        $this->expectExceptionMessage(
+            'Received too many arguments. Got `2` (or more) but only `1` arguments are defined.',
+        );
 
         $parser->parse(['one', 'two', 'three'], $this->io);
     }
@@ -962,23 +970,23 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->help();
         $expected = <<<TEXT
-A command!
+            A command!
 
-<info>Usage:</info>
-tool sample [-h] --reqd [--test] [<name>]
+            <info>Usage:</info>
+            tool sample [-h] --reqd [--test] [<name>]
 
-<info>Options:</info>
+            <info>Options:</info>
 
---help, -h  Display this help.
---reqd      A required option. <comment>(required)</comment>
---test      A test option.
+            --help, -h  Display this help.
+            --reqd      A required option. <comment>(required)</comment>
+            --test      A test option.
 
-<info>Arguments:</info>
+            <info>Arguments:</info>
 
-name  An argument <comment>(optional)</comment> <comment>default:
-      "foo"</comment>
+            name  An argument <comment>(optional)</comment> <comment>default:
+                  "foo"</comment>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
     }
 

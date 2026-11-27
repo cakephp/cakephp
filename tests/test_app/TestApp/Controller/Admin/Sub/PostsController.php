@@ -29,16 +29,12 @@ class PostsController extends Controller
      *
      * @return void
      */
-    public function index()
-    {
-    }
+    public function index() {}
 
     /**
      * index action
      *
      * @return void
      */
-    public function add()
-    {
-    }
+    public function add() {}
 }

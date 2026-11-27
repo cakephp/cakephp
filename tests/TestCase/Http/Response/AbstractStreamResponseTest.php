@@ -175,7 +175,7 @@ class AbstractStreamResponseTest extends TestCase
         array $options = [],
         bool $simulateSuccessfulFlush = false,
     ): object {
-        return new class ($data, $options, $simulateSuccessfulFlush) extends AbstractStreamResponse {
+        return new class($data, $options, $simulateSuccessfulFlush) extends AbstractStreamResponse {
             public int $flushCalls = 0;
 
             public function __construct(iterable $data, array $options, protected bool $simulateSuccessfulFlush)

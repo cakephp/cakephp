@@ -46,8 +46,7 @@ class SortField
         protected string $field,
         protected ?string $defaultDirection = null,
         protected bool $locked = false,
-    ) {
-    }
+    ) {}
 
     /**
      * Create a sort field with ascending default direction.

@@ -8,6 +8,5 @@ class TestConfig
     public function __construct(
         public string $name,
         public array $options = [],
-    ) {
-    }
+    ) {}
 }

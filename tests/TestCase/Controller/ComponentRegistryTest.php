@@ -97,8 +97,8 @@ class ComponentRegistryTest extends TestCase
 
             return new FlashComponent($registry, $config);
         })
-        ->addArgument(ComponentRegistry::class)
-        ->addArgument(['key' => 'customFlash']);
+            ->addArgument(ComponentRegistry::class)
+            ->addArgument(['key' => 'customFlash']);
 
         $flash = $components->load('Flash');
 

@@ -31,9 +31,7 @@ class ExitCode extends Constraint
      * @param array $out stdout stream
      * @param array $err stderr stream
      */
-    public function __construct(private ?int $exitCode, private array $out, private array $err)
-    {
-    }
+    public function __construct(private ?int $exitCode, private array $out, private array $err) {}
 
     /**
      * Checks if event is in fired array

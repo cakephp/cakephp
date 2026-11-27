@@ -15,9 +15,7 @@ class FakeConnection implements ConnectionInterface
      *
      * @param array $config configuration for connecting to database
      */
-    public function __construct(protected $config = [])
-    {
-    }
+    public function __construct(protected $config = []) {}
 
     /**
      * Returns the set config
@@ -51,9 +49,7 @@ class FakeConnection implements ConnectionInterface
         throw new RuntimeException('Not implemented');
     }
 
-    public function setLogger(LoggerInterface $logger): void
-    {
-    }
+    public function setLogger(LoggerInterface $logger): void {}
 
     public function setCacher(CacheInterface $cacher): never
     {

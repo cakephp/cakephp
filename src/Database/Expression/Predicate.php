@@ -36,8 +36,7 @@ final readonly class Predicate
         private PredicateOperation $operation,
         private array $values = [],
         private ?string $type = null,
-    ) {
-    }
+    ) {}
 
     /**
      * Builds an independent expression using the surrounding field and type.
@@ -57,14 +56,18 @@ final readonly class Predicate
             $operation = PredicateOperation::IS_NOT_NULL;
         }
         if (
-            in_array($operation, [
-                PredicateOperation::GREATER_THAN,
-                PredicateOperation::GREATER_THAN_OR_EQUALS,
-                PredicateOperation::LESS_THAN,
-                PredicateOperation::LESS_THAN_OR_EQUALS,
-                PredicateOperation::LIKE,
-                PredicateOperation::NOT_LIKE,
-            ], true)
+            in_array(
+                $operation,
+                [
+                    PredicateOperation::GREATER_THAN,
+                    PredicateOperation::GREATER_THAN_OR_EQUALS,
+                    PredicateOperation::LESS_THAN,
+                    PredicateOperation::LESS_THAN_OR_EQUALS,
+                    PredicateOperation::LIKE,
+                    PredicateOperation::NOT_LIKE,
+                ],
+                true,
+            )
             && $values[0] === null
         ) {
             throw new InvalidArgumentException(sprintf(

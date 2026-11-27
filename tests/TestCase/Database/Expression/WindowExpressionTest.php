@@ -124,10 +124,9 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()
-            ->orderBy(function () {
-                return 'test';
-            })
+        $w = new WindowExpression()->orderBy(function () {
+            return 'test';
+        })
             ->orderBy(function (QueryExpression $expr) {
                 return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
             });
@@ -407,7 +406,8 @@ class WindowExpressionTest extends TestCase
     {
         // Half the cases fail for partition, half for orderby
         $this->expectException(InvalidArgumentException::class);
-        new WindowExpression()->partition($start)->orderBy($end);
+        new WindowExpression()->partition($start)
+            ->orderBy($end);
     }
 
     #[DataProvider('invalidFrameProvider')]
@@ -428,19 +428,22 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->range(null)->excludeCurrent();
+        $w = new WindowExpression()->range(null)
+            ->excludeCurrent();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW',
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->range(null)->excludeGroup();
+        $w = new WindowExpression()->range(null)
+            ->excludeGroup();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP',
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->range(null)->excludeTies();
+        $w = new WindowExpression()->range(null)
+            ->excludeTies();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES',
             $w->sql(new ValueBinder()),
@@ -452,25 +455,32 @@ class WindowExpressionTest extends TestCase
      */
     public function testCombined(): void
     {
-        $w = new WindowExpression()->partition('test')->range(null);
+        $w = new WindowExpression()->partition('test')
+            ->range(null);
         $this->assertEqualsSql(
             'PARTITION BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->orderBy('test')->range(null);
+        $w = new WindowExpression()->orderBy('test')
+            ->range(null);
         $this->assertEqualsSql(
             'ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->partition('test')->orderBy('test')->range(null);
+        $w = new WindowExpression()->partition('test')
+            ->orderBy('test')
+            ->range(null);
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
             $w->sql(new ValueBinder()),
         );
 
-        $w = new WindowExpression()->partition('test')->orderBy('test')->range(null)->excludeCurrent();
+        $w = new WindowExpression()->partition('test')
+            ->orderBy('test')
+            ->range(null)
+            ->excludeCurrent();
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW',
             $w->sql(new ValueBinder()),
@@ -511,8 +521,7 @@ class WindowExpressionTest extends TestCase
      */
     public function testTraverse(): void
     {
-        $w = new WindowExpression('test1')
-            ->partition('test2')
+        $w = new WindowExpression('test1')->partition('test2')
             ->orderBy('test3')
             ->range(new QueryExpression("'1 day'"));
 

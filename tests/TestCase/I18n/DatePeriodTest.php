@@ -27,7 +27,9 @@ class DatePeriodTest extends TestCase
 {
     public function testDatePeriod(): void
     {
-        $period = new DatePeriod(new PhpDatePeriod(new DateTimeImmutable('2025-01-01 00:00:00'), new DateInterval('P1D'), 3));
+        $period = new DatePeriod(
+            new PhpDatePeriod(new DateTimeImmutable('2025-01-01 00:00:00'), new DateInterval('P1D'), 3),
+        );
         $output = [];
         foreach ($period as $key => $value) {
             $output[$key] = $value;

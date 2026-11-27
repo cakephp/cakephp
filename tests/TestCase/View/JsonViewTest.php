@@ -181,7 +181,10 @@ class JsonViewTest extends TestCase
                 ['rfc4627_escape' => '<tag> \'quote\' "double-quote" &'],
                 'rfc4627_escape',
                 null,
-                json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT),
+                json_encode(
+                    '<tag> \'quote\' "double-quote" &',
+                    JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT,
+                ),
             ],
 
             // Test render with _jsonOptions = false to be serialized.

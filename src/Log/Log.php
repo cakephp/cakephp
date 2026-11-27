@@ -398,8 +398,10 @@ class Log
             }
 
             $correctLevel = empty($levels) || in_array($level, $levels, true);
-            $inScope = $scopes === null && empty($context['scope']) || $scopes === [] ||
-                is_array($scopes) && array_intersect((array)$context['scope'], $scopes);
+            $inScope =
+                $scopes === null && empty($context['scope'])
+                || $scopes === []
+                || is_array($scopes) && array_intersect((array)$context['scope'], $scopes);
 
             if ($correctLevel && $inScope) {
                 if (isset(static::$writing[$streamName])) {

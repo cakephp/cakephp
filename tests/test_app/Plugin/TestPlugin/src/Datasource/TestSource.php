@@ -5,6 +5,4 @@ namespace TestPlugin\Datasource;
 
 use TestApp\Datasource\FakeConnection;
 
-class TestSource extends FakeConnection
-{
-}
+class TestSource extends FakeConnection {}

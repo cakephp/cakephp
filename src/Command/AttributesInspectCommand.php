@@ -53,8 +53,7 @@ class AttributesInspectCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser
-            ->setDescription(static::getDescription())
+        $parser->setDescription(static::getDescription())
             ->addArgument('attribute', [
                 'help' => 'Attribute class name to inspect (partial match supported).',
                 'required' => false,

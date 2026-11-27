@@ -67,7 +67,7 @@ abstract class AbstractTransport
         ) {
             throw new CakeException(
                 'You must specify at least one recipient.'
-                . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.',
+                    . ' Use one of `setTo`, `setCc` or `setBcc` to define a recipient.',
             );
         }
     }

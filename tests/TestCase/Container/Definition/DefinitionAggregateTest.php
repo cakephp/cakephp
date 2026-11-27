@@ -20,13 +20,11 @@ class DefinitionAggregateTest extends TestCase
         $container = new Container();
         $definition = Mockery::mock(DefinitionInterface::class);
 
-        $definition
-            ->shouldReceive('setAlias')
+        $definition->shouldReceive('setAlias')
             ->once()
             ->with('alias')
             ->andReturnSelf();
-        $definition
-            ->shouldReceive('getAlias')
+        $definition->shouldReceive('getAlias')
             ->andReturn('alias');
 
         $aggregate = new DefinitionAggregate()->setContainer($container);
@@ -87,42 +85,35 @@ class DefinitionAggregateTest extends TestCase
         $definition2 = Mockery::mock(DefinitionInterface::class);
         $container = new Container();
 
-        $definition1
-            ->shouldReceive('getAlias')
+        $definition1->shouldReceive('getAlias')
             ->once()
             ->andReturn('alias1');
 
-        $definition1
-            ->shouldReceive('setAlias')
+        $definition1->shouldReceive('setAlias')
             ->once()
             ->with('alias1')
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('getAlias')
+        $definition2->shouldReceive('getAlias')
             ->once()
             ->andReturn('alias2');
 
-        $definition2
-            ->shouldReceive('setContainer')
+        $definition2->shouldReceive('setContainer')
             ->once()
             ->with($container)
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('setShared')
+        $definition2->shouldReceive('setShared')
             ->once()
             ->with(true)
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('setAlias')
+        $definition2->shouldReceive('setAlias')
             ->once()
             ->with('alias2')
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('resolve')
+        $definition2->shouldReceive('resolve')
             ->once()
             ->andReturnSelf();
 
@@ -141,43 +132,35 @@ class DefinitionAggregateTest extends TestCase
         $definition2 = Mockery::mock(DefinitionInterface::class);
         $container = new Container();
 
-        $definition1
-            ->shouldReceive('getAlias')
+        $definition1->shouldReceive('getAlias')
             ->andReturn('definition1');
-        $definition1
-            ->shouldReceive('setContainer')
+        $definition1->shouldReceive('setContainer')
             ->once()
             ->with($container)
             ->andReturnSelf();
 
-        $definition1
-            ->shouldReceive('hasTag')
+        $definition1->shouldReceive('hasTag')
             ->twice()
             ->with('tag')
             ->andReturn(true);
 
-        $definition1
-            ->shouldReceive('resolve')
+        $definition1->shouldReceive('resolve')
             ->once()
             ->andReturn('definition1');
 
-        $definition2
-            ->shouldReceive('getAlias')
+        $definition2->shouldReceive('getAlias')
             ->andReturn('definition2');
-        $definition2
-            ->shouldReceive('setContainer')
+        $definition2->shouldReceive('setContainer')
             ->once()
             ->with($container)
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('hasTag')
+        $definition2->shouldReceive('hasTag')
             ->once()
             ->with('tag')
             ->andReturn(true);
 
-        $definition2
-            ->shouldReceive('resolve')
+        $definition2->shouldReceive('resolve')
             ->once()
             ->andReturn('definition2');
 
@@ -198,30 +181,25 @@ class DefinitionAggregateTest extends TestCase
         $definition2 = Mockery::mock(DefinitionInterface::class);
         $container = new Container();
 
-        $definition1
-            ->shouldReceive('getAlias')
+        $definition1->shouldReceive('getAlias')
             ->once()
             ->andReturn('alias1');
 
-        $definition1
-            ->shouldReceive('setAlias')
+        $definition1->shouldReceive('setAlias')
             ->once()
             ->with('alias1')
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('getAlias')
+        $definition2->shouldReceive('getAlias')
             ->once()
             ->andReturn('alias2');
 
-        $definition2
-            ->shouldReceive('setShared')
+        $definition2->shouldReceive('setShared')
             ->once()
             ->with(true)
             ->andReturnSelf();
 
-        $definition2
-            ->shouldReceive('setAlias')
+        $definition2->shouldReceive('setAlias')
             ->once()
             ->with('alias2')
             ->andReturnSelf();

@@ -24,7 +24,7 @@ class TestCollection extends IteratorIterator implements CollectionInterface
             $items = new ArrayIterator($items);
         }
 
-        if (!($items instanceof Traversable)) {
+        if (!$items instanceof Traversable) {
             $msg = 'Only an array or \Traversable is allowed for Collection';
             throw new InvalidArgumentException($msg);
         }

@@ -50,8 +50,10 @@ use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TagsTable;
-
-use function Cake\Database\Expression\{equals, greaterThan, greaterThanOrEquals, notEquals};
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\notEquals;
 
 /**
  * Tests SelectQuery class
@@ -178,37 +180,55 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = new UnhydratedSelectQuery($table);
-        $results = $query
-            ->selectAlso(['extra' => 'id'])
+        $results = $query->selectAlso(['extra' => 'id'])
             ->where(['author_id' => 3])
             ->first();
 
         $this->assertSame(
-            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            [
+                'extra' => 2,
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+            ],
             $results,
         );
 
         $query = new UnhydratedSelectQuery($table);
-        $results = $query
-            ->select('id')
+        $results = $query->select('id')
             ->selectAlso(['extra' => 'id'])
             ->where(['author_id' => 3])
             ->first();
 
         $this->assertSame(
-            ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            [
+                'id' => 2,
+                'extra' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+            ],
             $results,
         );
 
         $query = new UnhydratedSelectQuery($table);
-        $results = $query
-            ->selectAlso(['extra' => 'id'])
+        $results = $query->selectAlso(['extra' => 'id'])
             ->select('id')
             ->where(['author_id' => 3])
             ->first();
 
         $this->assertSame(
-            ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+            [
+                'extra' => 2,
+                'id' => 2,
+                'author_id' => 3,
+                'title' => 'Second Article',
+                'body' => 'Second Article Body',
+                'published' => 'Y',
+            ],
             $results,
         );
     }
@@ -792,7 +812,8 @@ class SelectQueryTest extends TestCase
         ]);
         $table->belongsToMany('Tags');
 
-        $results = $query->setRepository($table)->select()
+        $results = $query->setRepository($table)
+            ->select()
             ->matching('Tags', function ($q) {
                 return $q->where(['Tags.id' => 3]);
             })
@@ -984,9 +1005,12 @@ class SelectQueryTest extends TestCase
 
         $expected = new QueryExpression(['a > b'], $typeMap);
         $result = $query->clause('join');
-        $this->assertEquals([
-            'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected],
-        ], $result);
+        $this->assertEquals(
+            [
+                'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected],
+            ],
+            $result,
+        );
 
         $expected = new OrderByExpression(['a' => 'ASC']);
         $this->assertEquals($expected, $query->clause('order'));
@@ -1080,10 +1104,8 @@ class SelectQueryTest extends TestCase
      */
     public function testMapReduceOnlyMapper(): void
     {
-        $mapper1 = function (): void {
-        };
-        $mapper2 = function (): void {
-        };
+        $mapper1 = function (): void {};
+        $mapper2 = function (): void {};
         $query = new SelectQuery($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
@@ -1107,14 +1129,10 @@ class SelectQueryTest extends TestCase
      */
     public function testMapReduceBothMethods(): void
     {
-        $mapper1 = function (): void {
-        };
-        $mapper2 = function (): void {
-        };
-        $reducer1 = function (): void {
-        };
-        $reducer2 = function (): void {
-        };
+        $mapper1 = function (): void {};
+        $mapper2 = function (): void {};
+        $reducer1 = function (): void {};
+        $reducer2 = function (): void {};
         $query = new SelectQuery($this->table);
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
@@ -1137,14 +1155,10 @@ class SelectQueryTest extends TestCase
      */
     public function testOverwriteMapReduce(): void
     {
-        $mapper1 = function (): void {
-        };
-        $mapper2 = function (): void {
-        };
-        $reducer1 = function (): void {
-        };
-        $reducer2 = function (): void {
-        };
+        $mapper1 = function (): void {};
+        $mapper2 = function (): void {};
+        $reducer1 = function (): void {};
+        $reducer2 = function (): void {};
         $query = new SelectQuery($this->table);
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
@@ -1335,8 +1349,7 @@ class SelectQueryTest extends TestCase
         $table->belongsToMany('Tags');
         $query = new SelectQuery($table);
 
-        $results = $query
-            ->select()
+        $results = $query->select()
             ->contain('Tags')
             ->toArray();
 
@@ -1379,8 +1392,7 @@ class SelectQueryTest extends TestCase
         ]);
         $table->belongsToMany('Tags');
 
-        $articlesTags
-            ->getEventManager()
+        $articlesTags->getEventManager()
             ->on('Model.beforeFind', function (EventInterface $event, $query): void {
                 $query->formatResults(function ($results) {
                     foreach ($results as $result) {
@@ -1393,8 +1405,7 @@ class SelectQueryTest extends TestCase
 
         $query = new SelectQuery($table);
 
-        $results = $query
-            ->select()
+        $results = $query->select()
             ->contain('Tags')
             ->toArray();
 
@@ -1709,8 +1720,7 @@ class SelectQueryTest extends TestCase
         $table->hasMany('Comments');
         $table->getEventManager()
             ->on('Model.beforeFind', function (EventInterface $event, $query): void {
-                $query
-                    ->limit(1)
+                $query->limit(1)
                     ->orderBy(['Articles.title' => 'DESC']);
             });
 
@@ -1824,10 +1834,14 @@ class SelectQueryTest extends TestCase
 
         try {
             $connection = ConnectionManager::get('test_read_write');
-            $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+            $this->assertNotSame(
+                $connection->getDriver(Connection::ROLE_READ),
+                $connection->getDriver(Connection::ROLE_WRITE),
+            );
 
             // Only the read connection has rows, so counting on the write connection returns 0.
-            $connection->getDriver(Connection::ROLE_WRITE)->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
+            $connection->getDriver(Connection::ROLE_WRITE)
+                ->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
             $read = $connection->getDriver(Connection::ROLE_READ);
             $read->execute('CREATE TABLE role_items (id int PRIMARY KEY, grp int)');
             $read->execute('INSERT INTO role_items (id, grp) VALUES (1, 1), (2, 1), (3, 2)');
@@ -1881,8 +1895,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find('all');
-        $query
-            ->select(['author_id', 's' => $query->func()->sum('id')])
+        $query->select(['author_id', 's' => $query->func()->sum('id')])
             ->where(['id' => greaterThan(2)])
             ->groupBy(['author_id'])
             ->counter(function ($q) use ($query) {
@@ -1904,8 +1917,7 @@ class SelectQueryTest extends TestCase
         $query = $table->selectQuery();
 
         $query->select(['s' => $query->func()->rand()]);
-        $result = $query
-            ->all()
+        $result = $query->all()
             ->extract('s')
             ->first();
 
@@ -2067,8 +2079,7 @@ class SelectQueryTest extends TestCase
         $cacher = new FileEngine();
         $cacher->init();
 
-        $query
-            ->select(['id', 'title'])
+        $query->select(['id', 'title'])
             ->formatResults(function ($results) {
                 return $results->combine('id', 'title');
             })
@@ -2129,8 +2140,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = new SelectQuery($table);
-        $query
-            ->select()
+        $query->select()
             ->disableBufferedResults()
             ->contain([
                 'articles' => function ($q) {
@@ -2156,8 +2166,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = new SelectQuery($table);
-        $query
-            ->select()
+        $query->select()
             ->contain('articles', function ($q) {
                 return $q->where(['articles.id' => 1]);
             });
@@ -2176,8 +2185,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $query = new SelectQuery($table);
-        $query
-            ->select()
+        $query->select()
             ->contain('articles', function ($q) {
                 return $q->select(['test' => '(SELECT 20)'])
                     ->enableAutoFields(true);
@@ -2267,10 +2275,8 @@ class SelectQueryTest extends TestCase
      */
     public function testFormatResults(): void
     {
-        $callback1 = function (): void {
-        };
-        $callback2 = function (): void {
-        };
+        $callback1 = function (): void {};
+        $callback2 = function (): void {};
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
         $this->assertSame($query, $query->formatResults($callback1));
@@ -2294,7 +2300,8 @@ class SelectQueryTest extends TestCase
     {
         $resultFormatterQuery = null;
 
-        $query = $this->getTableLocator()->get('Authors')
+        $query = $this->getTableLocator()
+            ->get('Authors')
             ->find()
             ->formatResults(function ($results, $query) use (&$resultFormatterQuery) {
                 $resultFormatterQuery = $query;
@@ -2321,7 +2328,10 @@ class SelectQueryTest extends TestCase
 
         $authors->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, SelectQuery $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
+            function (
+                $event,
+                SelectQuery $targetQuery,
+            ) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2332,8 +2342,7 @@ class SelectQueryTest extends TestCase
             },
         );
 
-        $sourceQuery = $articles
-            ->find()
+        $sourceQuery = $articles->find()
             ->contain('Authors');
 
         $sourceQuery->firstOrFail();
@@ -2356,8 +2365,7 @@ class SelectQueryTest extends TestCase
         $resultFormatterTargetQuery = null;
         $resultFormatterSourceQuery = null;
 
-        $sourceQuery = $articles
-            ->find()
+        $sourceQuery = $articles->find()
             ->contain('Authors', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery,
@@ -2393,7 +2401,10 @@ class SelectQueryTest extends TestCase
 
         $tags->getEventManager()->on(
             'Model.beforeFind',
-            function ($event, SelectQuery $targetQuery) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
+            function (
+                $event,
+                SelectQuery $targetQuery,
+            ) use (&$resultFormatterTargetQuery, &$resultFormatterSourceQuery): void {
                 $resultFormatterTargetQuery = $targetQuery;
 
                 $targetQuery->formatResults(function ($results, $query) use (&$resultFormatterSourceQuery) {
@@ -2404,8 +2415,7 @@ class SelectQueryTest extends TestCase
             },
         );
 
-        $sourceQuery = $articles
-            ->find('all')
+        $sourceQuery = $articles->find('all')
             ->contain('Tags');
 
         $sourceQuery->firstOrFail();
@@ -2428,8 +2438,7 @@ class SelectQueryTest extends TestCase
         $resultFormatterTargetQuery = null;
         $resultFormatterSourceQuery = null;
 
-        $sourceQuery = $articles
-            ->find()
+        $sourceQuery = $articles->find()
             ->contain('Tags', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
                 &$resultFormatterSourceQuery,
@@ -2457,11 +2466,12 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results) {
-            $this->assertInstanceOf(ResultSet::class, $results);
+        $query->select()
+            ->formatResults(function ($results) {
+                $this->assertInstanceOf(ResultSet::class, $results);
 
-            return $results->indexBy('id');
-        });
+                return $results->indexBy('id');
+            });
         $this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
     }
 
@@ -2472,11 +2482,12 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
-        $query->select()->formatResults(function ($results) {
-            $this->assertInstanceOf(ResultSet::class, $results);
+        $query->select()
+            ->formatResults(function ($results) {
+                $this->assertInstanceOf(ResultSet::class, $results);
 
-            return $results->indexBy('id');
-        });
+                return $results->indexBy('id');
+            });
 
         $query->formatResults(function ($results) {
             return $results->extract('name');
@@ -2595,14 +2606,13 @@ class SelectQueryTest extends TestCase
         $query = $table->find()
             ->contain([
                 'authors' => function ($q) {
-                    return $q
-                        ->formatResults(function ($authors) {
-                            return $authors->map(function ($author) {
-                                $author->idCopy = $author->id;
+                    return $q->formatResults(function ($authors) {
+                        return $authors->map(function ($author) {
+                            $author->idCopy = $author->id;
 
-                                return $author;
-                            });
-                        })
+                            return $author;
+                        });
+                    })
                         ->formatResults(function ($authors) {
                             return $authors->map(function ($author) {
                                 $author->idCopy += 2;
@@ -2631,14 +2641,13 @@ class SelectQueryTest extends TestCase
         $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
         $builder = function ($q) {
-            return $q
-                ->formatResults(function ($results) {
-                    return $results->map(function ($result) {
-                        $result->idCopy = $result->id;
+            return $q->formatResults(function ($results) {
+                return $results->map(function ($result) {
+                    $result->idCopy = $result->id;
 
-                        return $result;
-                    });
-                })
+                    return $result;
+                });
+            })
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
                         $result->idCopy += 2;
@@ -2678,17 +2687,18 @@ class SelectQueryTest extends TestCase
         $articles->hasMany('articlesTags');
         $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $query = $table->find()->contain([
-            'articles.articlesTags.tags' => function ($q) {
-                return $q->formatResults(function ($results) {
-                    return $results->map(function ($tag) {
-                        $tag->name .= ' - visited';
+        $query = $table->find()
+            ->contain([
+                'articles.articlesTags.tags' => function ($q) {
+                    return $q->formatResults(function ($results) {
+                        return $results->map(function ($tag) {
+                            $tag->name .= ' - visited';
 
-                        return $tag;
+                            return $tag;
+                        });
                     });
-                });
-            },
-        ]);
+                },
+            ]);
 
         $query->mapReduce(function ($row, $key, $mr): void {
             foreach ((array)$row->articles as $article) {
@@ -2891,23 +2901,28 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = $table->find()->contain([
-            'articles' => function ($q) {
-                $this->assertTrue($q->isEagerLoaded());
+        $query = $table->find()
+            ->contain([
+                'articles' => function ($q) {
+                    $this->assertTrue($q->isEagerLoaded());
 
-                return $q;
-            },
-        ]);
+                    return $q;
+                },
+            ]);
         $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
             $this->assertTrue($primary);
         });
 
-        $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
-                $this->assertFalse($primary);
-            });
+        $this->getTableLocator()->get('articles')->getEventManager()->on('Model.beforeFind', function (
+            $e,
+            $q,
+            $o,
+            bool $primary,
+        ): void {
+            $this->assertFalse($primary);
+        });
         $query->all();
     }
 
@@ -2919,23 +2934,28 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $query = $table->find()->contain([
-            'articles' => function ($q) {
-                $this->assertTrue($q->isEagerLoaded());
+        $query = $table->find()
+            ->contain([
+                'articles' => function ($q) {
+                    $this->assertTrue($q->isEagerLoaded());
 
-                return $q;
-            },
-        ]);
+                    return $q;
+                },
+            ]);
         $this->assertFalse($query->isEagerLoaded());
 
         $table->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
             $this->assertTrue($primary);
         });
 
-        $this->getTableLocator()->get('articles')
-            ->getEventManager()->on('Model.beforeFind', function ($e, $q, $o, bool $primary): void {
-                $this->assertFalse($primary);
-            });
+        $this->getTableLocator()->get('articles')->getEventManager()->on('Model.beforeFind', function (
+            $e,
+            $q,
+            $o,
+            bool $primary,
+        ): void {
+            $this->assertFalse($primary);
+        });
         $query->all();
     }
 
@@ -2946,8 +2966,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
         $query = $table->find();
-        $results = $query
-            ->select(['title', 'person.name'])
+        $results = $query->select(['title', 'person.name'])
             ->join([
                 'person' => [
                     'table' => 'authors',
@@ -2976,8 +2995,7 @@ class SelectQueryTest extends TestCase
         $table->belongsTo('Articles', ['strategy' => $strategy]);
         $table->belongsTo('Tags', ['strategy' => $strategy]);
         $this->getTableLocator()->get('Tags')->belongsToMany('Articles');
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->contain(['Articles', 'Tags.Articles'])
             ->enableHydration(false)
             ->toArray();
@@ -2997,7 +3015,8 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->hasOne('ArticlesTags', ['strategy' => 'select']);
-        $article = $table->find()->where(['id' => 3])
+        $article = $table->find()
+            ->where(['id' => 3])
             ->enableHydration(false)
             ->contain('ArticlesTags')
             ->first();
@@ -3161,8 +3180,7 @@ class SelectQueryTest extends TestCase
         $table->hasMany('Comments');
         $table->getEventManager()
             ->on('Model.beforeFind', function (EventInterface $event, $query): void {
-                $query
-                    ->limit(5)
+                $query->limit(5)
                     ->orderBy(['Articles.title' => 'DESC']);
             });
 
@@ -3493,8 +3511,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->select(function ($q) {
                 return ['foo' => $q->expr('1 + 1')];
             })
@@ -3503,8 +3520,7 @@ class SelectQueryTest extends TestCase
             ->contain(['authors'])
             ->first();
 
-        $expected = $table
-            ->find()
+        $expected = $table->find()
             ->select(function ($q) {
                 return ['foo' => $q->expr('1 + 1')];
             })
@@ -3522,8 +3538,7 @@ class SelectQueryTest extends TestCase
     public function testSelectTypeInferSimpleAliases(): void
     {
         $table = $this->getTableLocator()->get('comments');
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->select(['created', 'updated_time' => 'updated'])
             ->first();
         $this->assertInstanceOf(DateTime::class, $result->created);
@@ -3539,8 +3554,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
         $table->articles->deleteAll(['author_id' => 4]);
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->select(['total_articles' => 'count(articles.id)'])
             ->enableAutoFields()
             ->leftJoinWith('articles')
@@ -3556,16 +3570,14 @@ class SelectQueryTest extends TestCase
         $fields = ['total_articles', 'id', 'name'];
         $this->assertEquals($fields, array_keys($results->first()->toArray()));
 
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->leftJoinWith('articles')
             ->where(['articles.id' => equals(null)]);
 
         $this->assertEquals([2, 4], $results->all()->extract('id')->toList());
         $this->assertEquals(['id', 'name'], array_keys($results->first()->toArray()));
 
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->leftJoinWith('articles')
             ->where(['articles.id' => notEquals(null)])
             ->orderBy(['authors.id']);
@@ -3584,8 +3596,7 @@ class SelectQueryTest extends TestCase
         $articles = $table->hasMany('articles');
         $articles->belongsToMany('tags');
 
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->select([
                 'authors.id',
                 'tagged_articles' => 'count(tags.id)',
@@ -3612,11 +3623,9 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
         $articles->belongsToMany('tags');
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->leftJoinWith('articles.tags', function ($q) {
-                return $q
-                    ->select(['articles.id', 'articles.title', 'tags.name'])
+                return $q->select(['articles.id', 'articles.title', 'tags.name'])
                     ->where(['tags.name' => 'tag3']);
             })
             ->enableAutoFields()
@@ -3642,8 +3651,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles');
         $table->belongsTo('authors');
 
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->leftJoinWith('authors', function ($q) {
                 return $q->enableAutoFields();
             })
@@ -3664,8 +3672,7 @@ class SelectQueryTest extends TestCase
             'published' => 'N',
         ]);
         $table->save($newArticle);
-        $results = $table
-            ->unhydratedFind()
+        $results = $table->unhydratedFind()
             ->contain('Authors')
             ->leftJoinWith('Authors')
             ->all();
@@ -3713,8 +3720,7 @@ class SelectQueryTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $results->toList());
-        $results = $table
-            ->unhydratedFind()
+        $results = $table->unhydratedFind()
             ->contain('Authors')
             ->leftJoinWith('Authors')
             ->where(['Articles.author_id' => equals(null)])
@@ -3732,8 +3738,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expected, $results->toList());
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `Tags` association is not defined on `Articles`.');
-        $table
-            ->unhydratedFind()
+        $table->unhydratedFind()
             ->contain('Tags')
             ->leftJoinWith('Tags')
             ->all();
@@ -3746,8 +3751,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->innerJoinWith('articles', function ($q) {
                 return $q->where(['articles.title' => 'Third Article']);
             });
@@ -3768,8 +3772,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $articles = $table->hasMany('articles');
         $articles->belongsToMany('tags');
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->innerJoinWith('articles.tags', function ($q) {
                 return $q->where(['tags.name' => 'tag3']);
             });
@@ -3789,16 +3792,14 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $table->hasMany('articles');
-        $results = $table
-            ->find()
+        $results = $table->find()
             ->enableAutoFields()
             ->innerJoinWith('articles', function ($q) {
                 return $q->select(['id', 'author_id', 'title', 'body', 'published']);
             })
             ->toArray();
 
-        $expected = $table
-            ->find()
+        $expected = $table->find()
             ->matching('articles')
             ->toArray();
         $this->assertEquals($expected, $results);
@@ -3817,8 +3818,7 @@ class SelectQueryTest extends TestCase
         $this->expectExceptionMessage('`Articles` association cannot contain() associations when using JOIN strategy');
         $comments->find()
             ->innerJoinWith('Articles', function (SelectQuery $q) {
-                return $q
-                    ->contain('ArticlesTranslations')
+                return $q->contain('ArticlesTranslations')
                     ->where(['ArticlesTranslations.title' => 'Titel #1']);
             })
             ->sql();
@@ -3965,8 +3965,7 @@ class SelectQueryTest extends TestCase
     public function testSelectAllExcept(): void
     {
         $table = $this->getTableLocator()->get('Articles');
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->selectAllExcept($table, ['body']);
         $selectedFields = $result->clause('select');
         $expected = [
@@ -3988,8 +3987,7 @@ class SelectQueryTest extends TestCase
         $table->hasMany('Comments');
         $table->belongsTo('Authors');
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->contain([
                 'Comments' => function (SelectQuery $query) use ($table) {
                     return $query->selectAllExcept($table->Comments, ['published']);
@@ -4011,8 +4009,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->selectAllExcept($table, ['body'])
             ->selectAllExcept($table, ['published']);
         $selectedFields = $result->clause('select');
@@ -4025,8 +4022,7 @@ class SelectQueryTest extends TestCase
         ];
         $this->assertEquals($expected, $selectedFields);
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->selectAllExcept($table, ['body'])
             ->selectAllExcept($table, ['published', 'body']);
         $selectedFields = $result->clause('select');
@@ -4038,8 +4034,7 @@ class SelectQueryTest extends TestCase
         ];
         $this->assertEquals($expected, $selectedFields);
 
-        $result = $table
-            ->find()
+        $result = $table->find()
             ->selectAllExcept($table, ['body'])
             ->selectAllExcept($table, ['published', 'body'], true);
         $selectedFields = $result->clause('select');
@@ -4061,11 +4056,10 @@ class SelectQueryTest extends TestCase
 
         $query = new SelectQuery($post);
 
-        $results = $query
-            ->select([
-                'posts.author_id',
-                'post_count' => $query->func()->count('posts.id'),
-            ])
+        $results = $query->select([
+            'posts.author_id',
+            'post_count' => $query->func()->count('posts.id'),
+        ])
             ->groupBy(['posts.author_id'])
             ->having([$query->expr()->greaterThanOrEquals('post_count', 2, 'integer')])
             ->enableHydration(false)
@@ -4092,35 +4086,34 @@ class SelectQueryTest extends TestCase
         );
         $this->skipIf(
             (
-                $this->connection->getDriver() instanceof Mysql ||
-                $this->connection->getDriver() instanceof Sqlite
-            ) &&
-            !$this->connection->getDriver()->supports(DriverFeature::WINDOW),
+                $this->connection->getDriver() instanceof Mysql
+                || $this->connection->getDriver() instanceof Sqlite
+            )
+                && !$this->connection->getDriver()->supports(DriverFeature::WINDOW),
             'The current driver does not support window functions.',
         );
 
         $table = $this->getTableLocator()->get('Articles');
 
-        $cteQuery = $table
-            ->find()
+        $cteQuery = $table->find()
             ->select(function (SelectQuery $query) use ($table) {
                 $columns = $table->getSchema()->columns();
 
-                return array_combine($columns, $columns) + [
-                        'row_num' => $query
-                            ->func()
-                            ->rowNumber()
-                            ->over()
-                            ->partition('author_id')
-                            ->orderBy(['id' => 'ASC']),
-                    ];
+                return (
+                    array_combine($columns, $columns)
+                        + [
+                            'row_num' => $query->func()
+                                ->rowNumber()
+                                ->over()
+                                ->partition('author_id')
+                                ->orderBy(['id' => 'ASC']),
+                        ]
+                );
             });
 
-        $query = $table
-            ->unhydratedFind()
+        $query = $table->unhydratedFind()
             ->with(function (CommonTableExpression $cte) use ($cteQuery) {
-                return $cte
-                    ->name('cte')
+                return $cte->name('cte')
                     ->query($cteQuery);
             })
             ->select(['row_num'])
@@ -4163,12 +4156,10 @@ class SelectQueryTest extends TestCase
         $tags->belongsToMany('Articles');
 
         $comments = $articles->hasMany('Comments');
-        $comments
-            ->belongsTo('Articles')
+        $comments->belongsTo('Articles')
             ->setStrategy(BelongsTo::STRATEGY_SELECT);
 
-        $articles
-            ->unhydratedFind()
+        $articles->unhydratedFind()
             ->contain('Comments', function (SelectQuery $query) {
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
@@ -4185,8 +4176,7 @@ class SelectQueryTest extends TestCase
                 $this->assertFalse($query->isHydrationEnabled());
                 $this->assertFalse($query->isResultsCastingEnabled());
 
-                return $query
-                    ->enableHydration()
+                return $query->enableHydration()
                     ->enableResultsCasting();
             })
             ->contain('Comments.Articles.Tags.Articles', function (SelectQuery $query) {
@@ -4204,7 +4194,8 @@ class SelectQueryTest extends TestCase
      */
     public function testFunctionWithOrmQuery(): void
     {
-        $query = $this->getTableLocator()->get('Articles')
+        $query = $this->getTableLocator()
+            ->get('Articles')
             ->setSchema(['column' => 'integer'])
             ->find()
             ->select(['column']);
@@ -4226,11 +4217,10 @@ class SelectQueryTest extends TestCase
             'foreignKey' => 'user_id',
         ]);
 
-        $comments
-            ->belongsTo('Articles', [
-                'className' => 'Articles',
-                'foreignKey' => 'article_id',
-            ])
+        $comments->belongsTo('Articles', [
+            'className' => 'Articles',
+            'foreignKey' => 'article_id',
+        ])
             ->getTarget()
             ->belongsTo('Authors', [
                 'className' => 'Authors',
@@ -4258,11 +4248,10 @@ class SelectQueryTest extends TestCase
             'foreignKey' => 'user_id',
         ]);
 
-        $comments
-            ->belongsTo('Articles', [
-                'className' => 'Articles',
-                'foreignKey' => 'article_id',
-            ])
+        $comments->belongsTo('Articles', [
+            'className' => 'Articles',
+            'foreignKey' => 'article_id',
+        ])
             ->getTarget()
             ->belongsTo('Authors', [
                 'className' => 'Authors',
@@ -4270,7 +4259,9 @@ class SelectQueryTest extends TestCase
             ]);
 
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
+        $this->expectExceptionMessage(
+            'You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.',
+        );
         $comments->unhydratedFind()
             ->leftJoinWith('Authors')
             ->leftJoinWith('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))
@@ -4287,11 +4278,10 @@ class SelectQueryTest extends TestCase
             'foreignKey' => 'user_id',
         ]);
 
-        $comments
-            ->belongsTo('Articles', [
-                'className' => 'Articles',
-                'foreignKey' => 'article_id',
-            ])
+        $comments->belongsTo('Articles', [
+            'className' => 'Articles',
+            'foreignKey' => 'article_id',
+        ])
             ->getTarget()
             ->belongsTo('Authors', [
                 'className' => 'Authors',
@@ -4299,7 +4289,9 @@ class SelectQueryTest extends TestCase
             ]);
 
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
+        $this->expectExceptionMessage(
+            'You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.',
+        );
         $comments->unhydratedFind()
             ->leftJoinWith('Authors')
             ->matching('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))

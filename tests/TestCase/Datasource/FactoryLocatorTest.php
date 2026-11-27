@@ -41,7 +41,9 @@ class FactoryLocatorTest extends TestCase
     public function testGetNonExistent(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown repository type `Test`. Make sure you register a type before trying to use it.');
+        $this->expectExceptionMessage(
+            'Unknown repository type `Test`. Make sure you register a type before trying to use it.',
+        );
         FactoryLocator::get('Test');
     }
 
@@ -60,7 +62,9 @@ class FactoryLocatorTest extends TestCase
     public function testDrop(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown repository type `Test`. Make sure you register a type before trying to use it.');
+        $this->expectExceptionMessage(
+            'Unknown repository type `Test`. Make sure you register a type before trying to use it.',
+        );
         FactoryLocator::drop('Test');
 
         FactoryLocator::get('Test');

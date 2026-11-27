@@ -20,6 +20,4 @@ namespace Cake\Console\Exception;
  *
  * @see \Cake\Console\BaseCommand::abort()
  */
-class StopException extends ConsoleException
-{
-}
+class StopException extends ConsoleException {}

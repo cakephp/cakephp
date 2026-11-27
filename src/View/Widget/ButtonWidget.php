@@ -35,9 +35,7 @@ class ButtonWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct(protected StringTemplate $templates)
-    {
-    }
+    public function __construct(protected StringTemplate $templates) {}
 
     /**
      * Render a button.
@@ -67,7 +65,7 @@ class ButtonWidget implements WidgetInterface
         ];
 
         return $this->templates->format('button', [
-            'text' => $data['escape'] && !($data['text'] instanceof HtmlStringable) ? h($data['text']) : $data['text'],
+            'text' => $data['escape'] && !$data['text'] instanceof HtmlStringable ? h($data['text']) : $data['text'],
             'templateVars' => $data['templateVars'],
             'attrs' => $this->templates->formatAttributes($data, ['text', 'escapeAttributes']),
         ]);

@@ -333,7 +333,13 @@ class RadioWidgetTest extends TestCase
             'Yes',
             '/label',
             ['label' => ['for' => 'model-field-0']],
-            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0', 'checked' => 'checked']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Model[field]',
+                'value' => '0',
+                'id' => 'model-field-0',
+                'checked' => 'checked',
+            ]],
             'No',
             '/label',
         ];
@@ -367,7 +373,13 @@ class RadioWidgetTest extends TestCase
 
         $expected = [
             ['label' => ['for' => 'model-field-1']],
-            ['input' => ['type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1', 'checked' => 'checked']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Model[field]',
+                'value' => '1',
+                'id' => 'model-field-1',
+                'checked' => 'checked',
+            ]],
             'Yes',
             '/label',
             ['label' => ['for' => 'model-field-0']],
@@ -404,13 +416,25 @@ class RadioWidgetTest extends TestCase
         $result = $radio->render($data, $this->context);
         $expected = [
             ['label' => ['for' => 'published-0']],
-            ['input' => ['type' => 'radio', 'name' => 'published', 'value' => '0',
-                'id' => 'published-0', 'required' => 'required', 'form' => 'my-form']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'published',
+                'value' => '0',
+                'id' => 'published-0',
+                'required' => 'required',
+                'form' => 'my-form',
+            ]],
             'option A',
             '/label',
             ['label' => ['for' => 'published-1']],
-            ['input' => ['type' => 'radio', 'name' => 'published', 'value' => '1',
-                'id' => 'published-1', 'required' => 'required', 'form' => 'my-form']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'published',
+                'value' => '1',
+                'id' => 'published-1',
+                'required' => 'required',
+                'form' => 'my-form',
+            ]],
             'option B',
             '/label',
         ];

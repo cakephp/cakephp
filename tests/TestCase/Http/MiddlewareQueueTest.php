@@ -56,8 +56,7 @@ class MiddlewareQueueTest extends TestCase
 
     public function testConstructorAddingMiddleware(): void
     {
-        $cb = function (): void {
-        };
+        $cb = function (): void {};
         $queue = new MiddlewareQueue([$cb]);
         $this->assertCount(1, $queue);
         $this->assertSame($cb, $queue->current()->getCallable());
@@ -69,8 +68,7 @@ class MiddlewareQueueTest extends TestCase
     public function testGet(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function (): void {
-        };
+        $cb = function (): void {};
         $queue->add($cb);
         $this->assertSame($cb, $queue->current()->getCallable());
     }
@@ -93,8 +91,7 @@ class MiddlewareQueueTest extends TestCase
     public function testAddReturn(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function (): void {
-        };
+        $cb = function (): void {};
         $this->assertSame($queue, $queue->add($cb));
     }
 
@@ -103,10 +100,8 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testAddOrdering(): void
     {
-        $one = function (): void {
-        };
-        $two = function (): void {
-        };
+        $one = function (): void {};
+        $two = function (): void {};
 
         $queue = new MiddlewareQueue();
         $this->assertCount(0, $queue);
@@ -127,8 +122,7 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testPrependReturn(): void
     {
-        $cb = function (): void {
-        };
+        $cb = function (): void {};
         $queue = new MiddlewareQueue();
         $this->assertSame($queue, $queue->prepend($cb));
     }
@@ -138,10 +132,8 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testPrependOrdering(): void
     {
-        $one = function (): void {
-        };
-        $two = function (): void {
-        };
+        $one = function (): void {};
+        $two = function (): void {};
 
         $queue = new MiddlewareQueue();
         $this->assertCount(0, $queue);
@@ -175,8 +167,7 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testAddingPrependingUsingArray(): void
     {
-        $one = function (): void {
-        };
+        $one = function (): void {};
 
         $queue = new MiddlewareQueue();
         $queue->add([$one]);
@@ -192,12 +183,9 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAt(): void
     {
-        $one = function (): void {
-        };
-        $two = function (): void {
-        };
-        $three = function (): void {
-        };
+        $one = function (): void {};
+        $two = function (): void {};
+        $three = function (): void {};
         $four = new SampleMiddleware();
 
         $queue = new MiddlewareQueue();
@@ -224,10 +212,8 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAtOutOfBounds(): void
     {
-        $one = function (): void {
-        };
-        $two = function (): void {
-        };
+        $one = function (): void {};
+        $two = function (): void {};
 
         $queue = new MiddlewareQueue();
         $queue->add($one)->insertAt(99, $two);
@@ -243,10 +229,8 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAtNegative(): void
     {
-        $one = function (): void {
-        };
-        $two = function (): void {
-        };
+        $one = function (): void {};
+        $two = function (): void {};
         $three = new SampleMiddleware();
 
         $queue = new MiddlewareQueue();
@@ -265,15 +249,16 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertBefore(): void
     {
-        $one = function (): void {
-        };
+        $one = function (): void {};
         $two = new SampleMiddleware();
-        $three = function (): void {
-        };
+        $three = function (): void {};
         $four = new DumbMiddleware();
 
         $queue = new MiddlewareQueue();
-        $queue->add($one)->add($two)->insertBefore(SampleMiddleware::class, $three)->insertBefore(SampleMiddleware::class, $four);
+        $queue->add($one)
+            ->add($two)
+            ->insertBefore(SampleMiddleware::class, $three)
+            ->insertBefore(SampleMiddleware::class, $four);
 
         $this->assertCount(4, $queue);
         $this->assertSame($one, $queue->current()->getCallable());
@@ -286,8 +271,7 @@ class MiddlewareQueueTest extends TestCase
 
         $two = SampleMiddleware::class;
         $queue = new MiddlewareQueue();
-        $queue
-            ->add($one)
+        $queue->add($one)
             ->add($two)
             ->insertBefore(SampleMiddleware::class, $three);
 
@@ -306,11 +290,9 @@ class MiddlewareQueueTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No middleware matching `InvalidClassName` could be found.');
-        $one = function (): void {
-        };
+        $one = function (): void {};
         $two = new SampleMiddleware();
-        $three = function (): void {
-        };
+        $three = function (): void {};
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertBefore('InvalidClassName', $three);
     }
@@ -321,14 +303,11 @@ class MiddlewareQueueTest extends TestCase
     public function testInsertAfter(): void
     {
         $one = new SampleMiddleware();
-        $two = function (): void {
-        };
-        $three = function (): void {
-        };
+        $two = function (): void {};
+        $three = function (): void {};
         $four = new DumbMiddleware();
         $queue = new MiddlewareQueue();
-        $queue
-            ->add($one)
+        $queue->add($one)
             ->add($two)
             ->insertAfter(SampleMiddleware::class, $three)
             ->insertAfter(SampleMiddleware::class, $four);
@@ -344,8 +323,7 @@ class MiddlewareQueueTest extends TestCase
 
         $one = 'Sample';
         $queue = new MiddlewareQueue();
-        $queue
-            ->add($one)
+        $queue->add($one)
             ->add($two)
             ->insertAfter('Sample', $three);
 
@@ -364,13 +342,10 @@ class MiddlewareQueueTest extends TestCase
     {
         $one = DumbMiddleware::class;
         $two = new SampleMiddleware();
-        $three = function (): void {
-        };
-        $four = function (): void {
-        };
+        $three = function (): void {};
+        $four = function (): void {};
         $queue = new MiddlewareQueue();
-        $queue
-            ->add($one)
+        $queue->add($one)
             ->add($two)
             ->insertBefore(SampleMiddleware::class, $three)
             ->insertAfter(SampleMiddleware::class, $four);
@@ -391,10 +366,8 @@ class MiddlewareQueueTest extends TestCase
     public function testInsertAfterInvalid(): void
     {
         $one = new SampleMiddleware();
-        $two = function (): void {
-        };
-        $three = function (): void {
-        };
+        $two = function (): void {};
+        $three = function (): void {};
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertAfter('InvalidClass', $three);
 

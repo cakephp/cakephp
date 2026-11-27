@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Template strings for testing.
  */

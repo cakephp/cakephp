@@ -27,8 +27,10 @@ use InvalidArgumentException;
 use Stringable;
 use Throwable;
 use WeakMap;
-
-use function Cake\Database\Expression\{equals, in, notEquals, notIn};
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\notEquals;
+use function Cake\Database\Expression\notIn;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -425,7 +427,7 @@ abstract class Query implements ExpressionInterface, Stringable
             if ($exp instanceof Closure) {
                 $query = $this->getConnection()->selectQuery();
                 $exp = $exp(new CommonTableExpression(), $query);
-                if (!($exp instanceof CommonTableExpression)) {
+                if (!$exp instanceof CommonTableExpression) {
                     throw new CakeException(
                         'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
                     );
@@ -646,7 +648,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 $t['conditions'] = $t['conditions']($this->expr(), $this);
             }
 
-            if (!($t['conditions'] instanceof ExpressionInterface)) {
+            if (!$t['conditions'] instanceof ExpressionInterface) {
                 $t['conditions'] = $this->expr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;

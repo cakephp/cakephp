@@ -60,8 +60,7 @@ class Event implements EventInterface
         protected string $name,
         protected ?object $subject = null,
         protected array $data = [],
-    ) {
-    }
+    ) {}
 
     /**
      * Returns the name of this event. This is usually used as the event identifier

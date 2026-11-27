@@ -41,7 +41,8 @@ class TreeIteratorTest extends TestCase
             ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]],
         ];
         $items = new NestIterator($items, 'stuff');
-        $result = new TreeIterator($items)->printer('name')->toArray();
+        $result = new TreeIterator($items)->printer('name')
+            ->toArray();
         $expected = [
             'a',
             '__b',
@@ -68,7 +69,8 @@ class TreeIteratorTest extends TestCase
             ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]],
         ];
         $items = new NestIterator($items, 'stuff');
-        $result = new TreeIterator($items)->printer('id', 'name', '@@')->toArray();
+        $result = new TreeIterator($items)->printer('id', 'name', '@@')
+            ->toArray();
         $expected = [
             'a' => '1',
             'b' => '@@2',
@@ -95,10 +97,13 @@ class TreeIteratorTest extends TestCase
             ['id' => 4, 'name' => 'd', 'stuff' => [['id' => 5, 'name' => 'e']]],
         ];
         $items = new NestIterator($items, 'stuff');
-        $result = new TreeIterator($items)
-            ->printer(function ($element, $key, $iterator) {
-                return ($iterator->getDepth() + 1 ) . '.' . $key . ' ' . $element['name'];
-            }, null, '')
+        $result = new TreeIterator($items)->printer(
+            function ($element, $key, $iterator) {
+                return ($iterator->getDepth() + 1) . '.' . $key . ' ' . $element['name'];
+            },
+            null,
+            '',
+        )
             ->toArray();
         $expected = [
             '1.0 a',

@@ -8,6 +8,4 @@ namespace TestApp\View\Object;
  *
  * An object without the magic method __toString() for testing with view blocks.
  */
-class TestObjectWithoutToString
-{
-}
+class TestObjectWithoutToString {}

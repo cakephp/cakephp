@@ -101,9 +101,9 @@ trait PluginAssetsTrait
             $this->io->hr();
 
             if (
-                $config['namespaced'] &&
-                !is_dir($config['destDir']) &&
-                !$this->createDirectory($config['destDir'])
+                $config['namespaced']
+                && !is_dir($config['destDir'])
+                && !$this->createDirectory($config['destDir'])
             ) {
                 continue;
             }

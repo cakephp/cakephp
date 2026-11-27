@@ -50,8 +50,7 @@ class UnaryExpression implements ExpressionInterface
         protected string $operator,
         protected mixed $value,
         protected int $position = self::PREFIX,
-    ) {
-    }
+    ) {}
 
     /**
      * @inheritDoc

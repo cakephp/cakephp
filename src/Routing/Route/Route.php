@@ -132,8 +132,10 @@ class Route
             foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
                 if (isset($defaults[$key]) && !is_string($defaults[$key])) {
                     throw new CakeException(
-                        'Value for `' . $key . '` in $defaults when connecting routes'
-                        . ' must be of type `string` or `null`',
+                        'Value for `'
+                            . $key
+                            . '` in $defaults when connecting routes'
+                            . ' must be of type `string` or `null`',
                     );
                 }
             }
@@ -328,7 +330,7 @@ class Route
      */
     protected function writeRoute(): void
     {
-        if (empty($this->template) || ($this->template === '/')) {
+        if (empty($this->template) || $this->template === '/') {
             $this->compiledRoute = '#^/*$#';
             $this->keys = [];
 
@@ -354,10 +356,13 @@ class Route
                 // phpcs:disable Generic.Files.LineLength
                 // Offset of the colon/braced placeholder in the full template string
                 if ($parsed[$matchArray[0][1] - 1] === '/') {
-                    $routeParams['/' . $search] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+                    $routeParams['/' . $search] =
+                        '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
-                    $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+                    $routeParams[$search] =
+                        '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 }
+
                 // phpcs:enable Generic.Files.LineLength
             } else {
                 $routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
@@ -478,8 +483,8 @@ class Route
         }
 
         if (
-            isset($this->defaults['_method']) &&
-            !in_array($method, (array)$this->defaults['_method'], true)
+            isset($this->defaults['_method'])
+            && !in_array($method, (array)$this->defaults['_method'], true)
         ) {
             return null;
         }
@@ -667,15 +672,15 @@ class Route
         // Check for properties that will cause an
         // absolute url. Copy the other properties over.
         if (
-            isset($hostOptions['_scheme']) ||
-            isset($hostOptions['_port']) ||
-            isset($hostOptions['_host'])
+            isset($hostOptions['_scheme'])
+            || isset($hostOptions['_port'])
+            || isset($hostOptions['_host'])
         ) {
             $hostOptions += $context;
 
             if (
-                $hostOptions['_scheme'] &&
-                getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
+                $hostOptions['_scheme']
+                && getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
             ) {
                 unset($hostOptions['_port']);
             }
@@ -769,8 +774,8 @@ class Route
 
         // Ensure controller/action keys are not null.
         if (
-            (isset($keyNames['controller']) && !isset($url['controller'])) ||
-            (isset($keyNames['action']) && !isset($url['action']))
+            (isset($keyNames['controller']) && !isset($url['controller']))
+            || (isset($keyNames['action']) && !isset($url['action']))
         ) {
             return null;
         }
@@ -855,9 +860,9 @@ class Route
 
         $out = str_replace('//', '/', $out);
         if (
-            isset($params['_scheme']) ||
-            isset($params['_host']) ||
-            isset($params['_port'])
+            isset($params['_scheme'])
+            || isset($params['_host'])
+            || isset($params['_port'])
         ) {
             $host = $params['_host'];
 

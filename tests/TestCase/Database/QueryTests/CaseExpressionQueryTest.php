@@ -29,8 +29,8 @@ use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-
-use function Cake\Database\Expression\{greaterThanOrEquals, lessThan};
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\lessThan;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -246,21 +246,19 @@ class CaseExpressionQueryTest extends TestCase
 
         $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
-        $query = new UpdateQuery($this->connection)
-            ->update('comments')
+        $query = new UpdateQuery($this->connection)->update('comments')
             ->set([
-                'published' =>
-                    $this->query->expr()
-                        ->case()
-                        ->when(['published' => 'Y'])
-                        ->then('N')
-                        ->else('Y'),
+                'published' => $this->query
+                    ->expr()
+                    ->case()
+                    ->when(['published' => 'Y'])
+                    ->then('N')
+                    ->else('Y'),
             ])
             ->where(['1 = 1'])
             ->execute();
 
-        $query = new SelectQuery($this->connection)
-            ->select(['count' => $this->query->func()->count('*')])
+        $query = new SelectQuery($this->connection)->select(['count' => $this->query->func()->count('*')])
             ->from('comments')
             ->where(['comments.published' => 'Y']);
 

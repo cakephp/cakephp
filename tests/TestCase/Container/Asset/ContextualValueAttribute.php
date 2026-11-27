@@ -15,9 +15,7 @@ use ReflectionParameter;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class ContextualValueAttribute implements ContextualAttributeInterface
 {
-    public function __construct(protected string $value = 'resolved-value')
-    {
-    }
+    public function __construct(protected string $value = 'resolved-value') {}
 
     public function resolve(ReflectionParameter $parameter, ContainerInterface $container): mixed
     {

@@ -210,7 +210,8 @@ class Postgres extends Driver
             DriverFeature::JSON,
             DriverFeature::SAVEPOINT,
             DriverFeature::TRUNCATE_WITH_CONSTRAINTS,
-            DriverFeature::WINDOW => true,
+            DriverFeature::WINDOW,
+                => true,
             DriverFeature::STRING_AGG => true,
             DriverFeature::GROUP_CONCAT => false,
             DriverFeature::INTERSECT => true,
@@ -268,8 +269,7 @@ class Postgres extends Driver
      */
     protected function transformStringAggExpression(StringAggExpression $expression): void
     {
-        $expression
-            ->setName('STRING_AGG')
+        $expression->setName('STRING_AGG')
             ->setSyntax(StringAggExpression::SYNTAX_STANDARD);
     }
 
@@ -302,8 +302,12 @@ class Postgres extends Driver
             case 'CONCAT':
                 $expression->iterateParts(function ($p) {
                     if (is_array($p)) {
-                        return new FunctionExpression('CAST', [$p['value']], array_filter([$p['type']]), 'string')
-                            ->setConjunction(' AS')
+                        return new FunctionExpression(
+                            'CAST',
+                            [$p['value']],
+                            array_filter([$p['type']]),
+                            'string',
+                        )->setConjunction(' AS')
                             ->add(['text' => 'literal']);
                     }
 
@@ -311,8 +315,7 @@ class Postgres extends Driver
                 });
                 break;
             case 'DATEDIFF':
-                $expression
-                    ->setName('')
+                $expression->setName('')
                     ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         if (is_string($p)) {
@@ -339,8 +342,7 @@ class Postgres extends Driver
                 $expression->setName('RANDOM');
                 break;
             case 'DATE_ADD':
-                $expression
-                    ->setName('')
+                $expression->setName('')
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
@@ -351,8 +353,7 @@ class Postgres extends Driver
                     });
                 break;
             case 'DAYOFWEEK':
-                $expression
-                    ->setName('EXTRACT')
+                $expression->setName('EXTRACT')
                     ->setConjunction(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1

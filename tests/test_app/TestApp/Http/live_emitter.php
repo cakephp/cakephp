@@ -17,7 +17,7 @@ ob_start(function (string $chunk) use (&$received): string {
 });
 ob_start();
 ob_start('ob_gzhandler');
-$body = new class ('data://text/plain,first second') extends Stream {
+$body = new class('data://text/plain,first second') extends Stream {
     private bool $read = false;
 
     public function isSeekable(): bool

@@ -11,6 +11,4 @@ use Cake\Event\Attribute\EventListener;
  * Used to verify that EventAttributeException is thrown during connection.
  */
 #[EventListener('Order.afterPlace', method: 'nonExistentMethod')]
-class MissingMethodListener
-{
-}
+class MissingMethodListener {}

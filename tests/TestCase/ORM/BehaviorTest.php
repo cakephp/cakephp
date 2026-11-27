@@ -333,7 +333,9 @@ class BehaviorTest extends TestCase
     public function testVerifyImplementedFindersInvalid(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The method `findNotDefined` is not callable on class `' . Test2Behavior::class . '`');
+        $this->expectExceptionMessage(
+            'The method `findNotDefined` is not callable on class `' . Test2Behavior::class . '`',
+        );
         $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
@@ -381,7 +383,9 @@ class BehaviorTest extends TestCase
     public function testVerifyImplementedMethodsInvalid(): void
     {
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('The method `iDoNotExist` is not callable on class `' . Test2Behavior::class . '`');
+        $this->expectExceptionMessage(
+            'The method `iDoNotExist` is not callable on class `' . Test2Behavior::class . '`',
+        );
         $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [

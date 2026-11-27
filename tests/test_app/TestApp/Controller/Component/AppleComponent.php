@@ -38,7 +38,5 @@ class AppleComponent extends Component
      * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function startup(EventInterface $event): void
-    {
-    }
+    public function startup(EventInterface $event): void {}
 }

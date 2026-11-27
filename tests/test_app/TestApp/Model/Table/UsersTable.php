@@ -8,6 +8,4 @@ use Cake\ORM\Table;
 /**
  * Used to test correct class is instantiated when using $this->getTableLocator()->get();
  */
-class UsersTable extends Table
-{
-}
+class UsersTable extends Table {}

@@ -313,7 +313,10 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('PluginAware');
 
-        $this->assertNull($cell->pluginFromInitialize, 'Plugin should be null for non-plugin cells during initialize()');
+        $this->assertNull(
+            $cell->pluginFromInitialize,
+            'Plugin should be null for non-plugin cells during initialize()',
+        );
 
         $output = $cell->render();
         $this->assertStringContainsString('Plugin from initialize: null', $output);
@@ -435,9 +438,13 @@ class CellTest extends TestCase
         Cache::setConfig('cell', ['className' => 'Array']);
         Cache::write('my_key', 'from cache', 'cell');
 
-        $cell = $this->View->cell('Articles', [], [
-            'cache' => ['key' => 'my_key', 'config' => 'cell'],
-        ]);
+        $cell = $this->View->cell(
+            'Articles',
+            [],
+            [
+                'cache' => ['key' => 'my_key', 'config' => 'cell'],
+            ],
+        );
         $result = $cell->render();
         $this->assertSame('from cache', $result);
         Cache::drop('cell');
@@ -505,13 +512,21 @@ class CellTest extends TestCase
         $beforeEventIsCalled = false;
         $afterEventIsCalled = false;
         $manager = $this->View->getEventManager();
-        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled): void {
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use (
+            $cell,
+            $args,
+            &$beforeEventIsCalled,
+        ): void {
             $this->assertSame($eventCell, $cell);
             $this->assertEquals('doEcho', $action);
             $this->assertEquals($args, $eventArgs);
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$afterEventIsCalled): void {
+        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use (
+            $cell,
+            $args,
+            &$afterEventIsCalled,
+        ): void {
             $this->assertSame($eventCell, $cell);
             $this->assertEquals('doEcho', $action);
             $this->assertEquals($args, $eventArgs);

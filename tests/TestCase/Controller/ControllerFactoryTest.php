@@ -287,7 +287,8 @@ class ControllerFactoryTest extends TestCase
         ]);
         $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
         $this->container->add(ServerRequest::class, $request);
-        $this->container->add(DependenciesController::class)
+        $this->container
+            ->add(DependenciesController::class)
             ->addArgument(ServerRequest::class)
             ->addArgument(null)
             ->addArgument(null)
@@ -1105,7 +1106,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce `true` to `float` for `one` in action `Dependencies::requiredTyped()`');
+        $this->expectExceptionMessage(
+            'Unable to coerce `true` to `float` for `one` in action `Dependencies::requiredTyped()`',
+        );
         $this->factory->invoke($controller);
     }
 
@@ -1126,7 +1129,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce `2.0` to `int` for `two` in action `Dependencies::requiredTyped()`');
+        $this->expectExceptionMessage(
+            'Unable to coerce `2.0` to `int` for `two` in action `Dependencies::requiredTyped()`',
+        );
         $this->factory->invoke($controller);
     }
 
@@ -1147,7 +1152,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce `true` to `bool` for `three` in action `Dependencies::requiredTyped()`');
+        $this->expectExceptionMessage(
+            'Unable to coerce `true` to `bool` for `three` in action `Dependencies::requiredTyped()`',
+        );
         $this->factory->invoke($controller);
     }
 
@@ -1168,7 +1175,9 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
 
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Unable to coerce `test` to `iterable` for `one` in action `Dependencies::unsupportedTyped()`');
+        $this->expectExceptionMessage(
+            'Unable to coerce `test` to `iterable` for `one` in action `Dependencies::unsupportedTyped()`',
+        );
         $this->factory->invoke($controller);
     }
 
@@ -1199,11 +1208,12 @@ class ControllerFactoryTest extends TestCase
      */
     public function testInvokeComponentFromContainer(): void
     {
-        $this->container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
-            return new FlashComponent($registry, $config);
-        })
-        ->addArgument(ComponentRegistry::class)
-        ->addArgument(['key' => 'customFlash']);
+        $this->container
+            ->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+                return new FlashComponent($registry, $config);
+            })
+            ->addArgument(ComponentRegistry::class)
+            ->addArgument(['key' => 'customFlash']);
 
         $request = new ServerRequest([
             'url' => 'test_plugin_three/component-test/flash',

@@ -14,9 +14,7 @@ use PHPStan\Type\Type;
 
 class TableFindByPropertyMethodReflection implements MethodReflection
 {
-    public function __construct(private string $name, private ClassReflection $declaringClass)
-    {
-    }
+    public function __construct(private string $name, private ClassReflection $declaringClass) {}
 
     public function getDeclaringClass(): ClassReflection
     {

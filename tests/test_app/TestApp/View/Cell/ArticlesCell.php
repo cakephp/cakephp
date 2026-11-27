@@ -41,9 +41,7 @@ class ArticlesCell extends Cell
     /**
      * Default cell action.
      */
-    public function display(): void
-    {
-    }
+    public function display(): void {}
 
     /**
      * Renders articles in teaser view mode.

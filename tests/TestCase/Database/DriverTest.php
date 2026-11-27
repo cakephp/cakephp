@@ -127,7 +127,8 @@ class DriverTest extends TestCase
             ->once()
             ->andReturn('string');
 
-        $this->driver->shouldReceive('createPdo')
+        $this->driver
+            ->shouldReceive('createPdo')
             ->once()
             ->andReturn($connection);
 
@@ -144,7 +145,8 @@ class DriverTest extends TestCase
             ->once()
             ->andReturn('all-the-bears');
 
-        $this->driver->shouldReceive('createPdo')
+        $this->driver
+            ->shouldReceive('createPdo')
             ->once()
             ->andReturn($connection);
 
@@ -163,7 +165,8 @@ class DriverTest extends TestCase
             ->once()
             ->andReturn(Mockery::mock(PDOStatement::class));
 
-        $this->driver->shouldReceive('createPdo')
+        $this->driver
+            ->shouldReceive('createPdo')
             ->once()
             ->andReturn($connection);
 
@@ -287,7 +290,8 @@ class DriverTest extends TestCase
         $statement->shouldReceive('execute')->andReturn(true);
         $statement->shouldReceive('getBoundParams')->andReturn([]);
 
-        $this->driver->shouldReceive('prepare')
+        $this->driver
+            ->shouldReceive('prepare')
             ->once()
             ->andReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
@@ -296,7 +300,10 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression(
+            '/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/',
+            $messages[0],
+        );
     }
 
     /**
@@ -323,7 +330,8 @@ class DriverTest extends TestCase
             });
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->shouldReceive('prepare')
+        $this->driver
+            ->shouldReceive('prepare')
             ->once()
             ->andReturn($statement);
 
@@ -338,7 +346,10 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression("/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/", $messages[0]);
+        $this->assertMatchesRegularExpression(
+            "/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo WHERE a='1' AND b='2013-01-01'$/",
+            $messages[0],
+        );
     }
 
     /**
@@ -353,7 +364,8 @@ class DriverTest extends TestCase
         $statement->shouldReceive('getBoundParams')->andReturn([]);
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->shouldReceive('prepare')
+        $this->driver
+            ->shouldReceive('prepare')
             ->once()
             ->andReturn($statement);
 
@@ -364,7 +376,10 @@ class DriverTest extends TestCase
 
         $messages = Log::engine('queries')->read();
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression(
+            '/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/',
+            $messages[0],
+        );
     }
 
     public function testGetLoggerDefault(): void
@@ -449,7 +464,8 @@ class DriverTest extends TestCase
         $statement->shouldReceive('execute')->andReturn(true);
         $statement->shouldReceive('getBoundParams')->andReturn([]);
 
-        $this->driver->shouldReceive('prepare')
+        $this->driver
+            ->shouldReceive('prepare')
             ->twice()
             ->andReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
@@ -461,6 +477,9 @@ class DriverTest extends TestCase
 
         $this->driver->execute('SELECT bar FROM foo');
         $this->assertCount(1, $messages);
-        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+        $this->assertMatchesRegularExpression(
+            '/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/',
+            $messages[0],
+        );
     }
 }

@@ -595,9 +595,12 @@ class CollectionTest extends TestCase
     public function testMaxCallable(iterable $items): void
     {
         $collection = new Collection($items);
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
-            return $e['a']['b']['c'] * -1;
-        }));
+        $this->assertEquals(
+            ['a' => ['b' => ['c' => 4]]],
+            $collection->max(function ($e) {
+                return $e['a']['b']['c'] * -1;
+            }),
+        );
     }
 
     /**
@@ -1041,7 +1044,8 @@ class CollectionTest extends TestCase
     #[DataProvider('simpleProvider')]
     public function testSample(iterable $data): void
     {
-        $result = new Collection($data)->sample(2)->toArray();
+        $result = new Collection($data)->sample(2)
+            ->toArray();
         $this->assertCount(2, $result);
         foreach ($result as $number) {
             $this->assertContains($number, [1, 2, 3, 4]);
@@ -1315,12 +1319,11 @@ class CollectionTest extends TestCase
         $collection = new Collection($items);
 
         $results = [];
-        $compiled = $collection
-            ->map(function ($value, $key) use (&$results) {
-                $results[] = [$key => $value];
+        $compiled = $collection->map(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
 
-                return $value + 3;
-            })
+            return $value + 3;
+        })
             ->compile();
         $this->assertSame(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
         $this->assertSame(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
@@ -1824,7 +1827,8 @@ class CollectionTest extends TestCase
             ['id' => 9, 'parent_id' => 6],
             ['id' => 10, 'parent_id' => 6],
         ];
-        $collection = new Collection($items)->nest('id', 'parent_id')->listNested($dir);
+        $collection = new Collection($items)->nest('id', 'parent_id')
+            ->listNested($dir);
         $this->assertEquals($expected, $collection->extract('id')->toArray(false));
     }
 
@@ -1841,7 +1845,8 @@ class CollectionTest extends TestCase
             ['id' => 5, 'parent_id' => 6, 'name' => 'Clown Fish'],
             ['id' => 6, 'parent_id' => null, 'name' => 'Fish'],
         ];
-        $collection = new Collection($items)->nest('id', 'parent_id')->listNested();
+        $collection = new Collection($items)->nest('id', 'parent_id')
+            ->listNested();
         $expected = [
             'Birds',
             '---Land Birds',
@@ -2040,13 +2045,12 @@ class CollectionTest extends TestCase
      */
     public function testComplexSortBy(): void
     {
-        $results = collection([3, 7])
-            ->unfold(function ($value) {
-                return [
-                    ['sorting' => $value * 2],
-                    ['sorting' => $value * 2],
-                ];
-            })
+        $results = collection([3, 7])->unfold(function ($value) {
+            return [
+                ['sorting' => $value * 2],
+                ['sorting' => $value * 2],
+            ];
+        })
             ->sortBy('sorting')
             ->extract('sorting')
             ->toList();
@@ -2143,10 +2147,13 @@ class CollectionTest extends TestCase
 
         $collection = new Collection([1, 2]);
         $zipped = $collection->zip([3, 4], [5, 6], [7, 8], [9, 10, 11]);
-        $this->assertEquals([
-            [1, 3, 5, 7, 9],
-            [2, 4, 6, 8, 10],
-        ], $zipped->toList());
+        $this->assertEquals(
+            [
+                [1, 3, 5, 7, 9],
+                [2, 4, 6, 8, 10],
+            ],
+            $zipped->toList(),
+        );
     }
 
     /**
@@ -2547,7 +2554,15 @@ class CollectionTest extends TestCase
      */
     public function testChunkWithKeysNested(): void
     {
-        $collection = new Collection(['a' => 1, 'b' => 2, 'c' => 3, 'd' => [4, 5], 'e' => 6, 'f' => [7, [8, 9], 10], 'g' => 11]);
+        $collection = new Collection([
+            'a' => 1,
+            'b' => 2,
+            'c' => 3,
+            'd' => [4, 5],
+            'e' => 6,
+            'f' => [7, [8, 9], 10],
+            'g' => 11,
+        ]);
         $chunked = $collection->chunkWithKeys(2)->toList();
         $expected = [['a' => 1, 'b' => 2], ['c' => 3, 'd' => [4, 5]], ['e' => 6, 'f' => [7, [8, 9], 10]], ['g' => 11]];
         $this->assertEquals($expected, $chunked);
@@ -2703,12 +2718,16 @@ class CollectionTest extends TestCase
         $collection = new Collection([
             [
                 'names' => [
-                    'alex', 'kostas', 'leon',
+                    'alex',
+                    'kostas',
+                    'leon',
                 ],
             ],
             [
                 'locations' => [
-                    'crete', 'london', 'paris',
+                    'crete',
+                    'london',
+                    'paris',
                 ],
             ],
         ]);
@@ -2809,8 +2828,7 @@ class CollectionTest extends TestCase
             ['id' => 3, 'name' => 'baz'],
         ];
 
-        $collection = new class ($items) extends Collection {
-        };
+        $collection = new class($items) extends Collection {};
 
         $count = 0;
         foreach ($collection as $item) {
@@ -2969,7 +2987,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->when(true, function ($collection) {
             return $collection->filter(fn($v) => $v > 2);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([3, 4, 5], $result);
     }
@@ -2984,7 +3003,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->when(false, function ($collection) {
             return $collection->filter(fn($v) => $v > 2);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([1, 2, 3, 4, 5], $result);
     }
@@ -2999,7 +3019,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->when(3, function ($collection, $threshold) {
             return $collection->filter(fn($v) => $v > $threshold);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([4, 5], $result);
     }
@@ -3014,7 +3035,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->when(0, function ($collection) {
             return $collection->filter(fn($v) => $v > 1);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([1, 2, 3], $result);
     }
@@ -3029,7 +3051,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->unless(false, function ($collection) {
             return $collection->filter(fn($v) => $v > 2);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([3, 4, 5], $result);
     }
@@ -3044,7 +3067,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->unless(true, function ($collection) {
             return $collection->filter(fn($v) => $v > 2);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([1, 2, 3, 4, 5], $result);
     }
@@ -3059,7 +3083,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->unless(null, function ($collection) {
             return $collection->filter(fn($v) => $v > 1);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([2, 3], $result);
     }
@@ -3074,7 +3099,8 @@ class CollectionTest extends TestCase
 
         $result = $collection->unless('', function ($collection) {
             return $collection->filter(fn($v) => $v > 1);
-        })->toList();
+        })
+            ->toList();
 
         $this->assertSame([2, 3], $result);
     }
@@ -3087,8 +3113,7 @@ class CollectionTest extends TestCase
         $items = [1, 2, 3, 4, 5];
         $collection = new Collection($items);
 
-        $result = $collection
-            ->when(true, fn($c) => $c->filter(fn($v) => $v > 1))
+        $result = $collection->when(true, fn($c) => $c->filter(fn($v) => $v > 1))
             ->unless(false, fn($c) => $c->filter(fn($v) => $v < 5))
             ->toList();
 

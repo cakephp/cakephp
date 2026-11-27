@@ -20,6 +20,4 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Custom fixture with a name that inflects differently
  * with 5.3 than it did with 5.2
  */
-class SpecialPkFixture extends TestFixture
-{
-}
+class SpecialPkFixture extends TestFixture {}

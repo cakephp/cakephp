@@ -43,10 +43,8 @@ class ApplicationWithExceptionsInMiddleware extends BaseApplication
             // Catch any exceptions in the lower layers,
             // and make an error page/response
             ->add(ErrorHandlerMiddleware::class)
-
             // Throw an error
             ->add(ThrowsExceptionMiddleware::class)
-
             // Add routing middleware.
             ->add(new RoutingMiddleware($this));
 

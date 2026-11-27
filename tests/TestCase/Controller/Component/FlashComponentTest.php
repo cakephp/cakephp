@@ -145,7 +145,11 @@ class FlashComponentTest extends TestCase
         $result = $this->Session->read('Flash.flash');
         $this->assertEquals($expected, $result);
 
-        $this->Flash->set('This is a test message', ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]]);
+        $this->Flash->set('This is a test message', [
+            'key' => 'escaped',
+            'escape' => false,
+            'params' => ['foo' => 'bar', 'escape' => true],
+        ]);
         $expected = [
             [
                 'message' => 'This is a test message',

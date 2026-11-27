@@ -244,7 +244,7 @@ class TreeHelper extends Helper
 
             // Close open items as appropriate
             // phpcs:ignore Squiz.PHP.DisallowSizeFunctionsInLoops.Found
-            while (count($stack) > 1 && ($stack[count($stack) - 1]['right'] < $row[$right])) {
+            while (count($stack) > 1 && $stack[count($stack) - 1]['right'] < $row[$right]) {
                 $closed = array_pop($stack);
                 if (!$closed['rendered']) {
                     continue;
@@ -287,12 +287,12 @@ class TreeHelper extends Helper
                 $lastChild = $i === $keys[count($keys) - 1];
             } elseif (isset($row[$left])) {
                 $hasNestedRows = isset($dataArray[$i + 1]) && $dataArray[$i + 1][$right] < $row[$right];
-                if ($row[$left] != ($row[$right] - 1) && $rowDepth < $maxDepth) {
+                if ($row[$left] != $row[$right] - 1 && $rowDepth < $maxDepth) {
                     $hasChildren = true;
                     $numberOfTotalChildren = ($row[$right] - $row[$left] - 1) / 2;
                     $hasVisibleChildren = $hasNestedRows;
                 }
-                if (!isset($dataArray[$i - 1]) || ($dataArray[$i - 1][$left] == $row[$left] - 1)) {
+                if (!isset($dataArray[$i - 1]) || $dataArray[$i - 1][$left] == $row[$left] - 1) {
                     $firstChild = true;
                 }
                 if (!isset($dataArray[$i + 1]) || ($top > 0 && $stack[$top]['right'] == $row[$right] + 1)) {
@@ -321,7 +321,8 @@ class TreeHelper extends Helper
                 }
             }
 
-            $onTreePath = $hideUnrelated
+            $onTreePath =
+                $hideUnrelated
                 && $rowDepth === 0
                 && !empty($treePath[0])
                 && ($row[$nodeKey] ?? null) == $treePath[0];
@@ -727,7 +728,8 @@ class TreeHelper extends Helper
         $visibility = [];
         foreach ($nodes as $i => $node) {
             $level = $levels[$i];
-            $siblingIsActive = (is_numeric($hideUnrelated) && $hideUnrelated > $level)
+            $siblingIsActive =
+                (is_numeric($hideUnrelated) && $hideUnrelated > $level)
                 || isset($activeParents[$parents[$i]]);
             $parentShown = $parents[$i] >= 0 && $shown[$parents[$i]];
             $visibility[$i] = [

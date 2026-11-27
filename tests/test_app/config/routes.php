@@ -23,7 +23,8 @@ return function (RouteBuilder $routes): void {
             '/some_alias',
             [
                 'controller' => 'tests_apps',
-                'action' => 'some_method'],
+                'action' => 'some_method',
+            ],
             [
                 '_name' => 'some_alias',
                 'routeClass' => 'InflectedRoute',

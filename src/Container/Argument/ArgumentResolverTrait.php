@@ -43,7 +43,7 @@ trait ArgumentResolverTrait
             }
 
             if (!is_string($argValue)) {
-                 continue;
+                continue;
             }
 
             // resolve the argument from the container, if it happens to be another
@@ -159,9 +159,11 @@ trait ArgumentResolverTrait
         try {
             $container = $this->getContainer();
         } catch (ContainerException) {
-            $container = $this instanceof PsrContainerInterface ? $this : throw new ContainerException(
-                'No container implementation has been set.',
-            );
+            $container = $this instanceof PsrContainerInterface
+                ? $this
+                : throw new ContainerException(
+                    'No container implementation has been set.',
+                );
         }
 
         /** @var \Cake\Container\Attribute\ContextualAttributeInterface $instance */

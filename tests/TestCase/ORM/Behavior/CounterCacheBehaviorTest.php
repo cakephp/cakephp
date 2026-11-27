@@ -250,8 +250,7 @@ class CounterCacheBehaviorTest extends TestCase
         ]);
 
         $before = $this->getUser();
-        $post = $this->post->find('all')
-            ->first();
+        $post = $this->post->find('all')->first();
         $this->post->delete($post, ['ignoreCounterCache' => true]);
         $after = $this->getUser();
 
@@ -373,7 +372,11 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                'posts_published' => function (
+                    EventInterface $orgEvent,
+                    EntityInterface $orgEntity,
+                    Table $orgTable,
+                ) use ($entity, $table) {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -402,7 +405,11 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable) use ($entity, $table) {
+                'posts_published' => function (
+                    EventInterface $orgEvent,
+                    EntityInterface $orgEntity,
+                    Table $orgTable,
+                ) use ($entity, $table) {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -431,7 +438,12 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $orgEvent, EntityInterface $orgEntity, Table $orgTable, $original) use ($entity, $table) {
+                'posts_published' => function (
+                    EventInterface $orgEvent,
+                    EntityInterface $orgEntity,
+                    Table $orgTable,
+                    $original,
+                ) use ($entity, $table) {
                     $this->assertSame($orgTable, $table);
                     $this->assertSame($orgEntity, $entity);
 
@@ -524,12 +536,14 @@ class CounterCacheBehaviorTest extends TestCase
             'UserCategoryPosts' => ['post_count'],
         ]);
 
-        $before = $this->userCategoryPosts->find()
+        $before = $this->userCategoryPosts
+            ->find()
             ->where(['user_id' => 1, 'category_id' => 2])
             ->first();
         $entity = $this->getEntity()->set('category_id', 2);
         $this->post->save($entity);
-        $after = $this->userCategoryPosts->find()
+        $after = $this->userCategoryPosts
+            ->find()
             ->where(['user_id' => 1, 'category_id' => 2])
             ->first();
 
@@ -561,7 +575,8 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
 
-        $post = $this->post->find('all')
+        $post = $this->post
+            ->find('all')
             ->contain('Users')
             ->where(['title' => 'Rock and Roll'])
             ->first();
@@ -602,7 +617,8 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
 
-        $post = $this->post->find('all')
+        $post = $this->post
+            ->find('all')
             ->contain('Users')
             ->where(['title' => 'Rock and Roll'])
             ->first();

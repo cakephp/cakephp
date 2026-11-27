@@ -99,16 +99,13 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
 
-            return new class implements ExceptionRendererInterface
-            {
+            return new class implements ExceptionRendererInterface {
                 public function render(): Response
                 {
                     return new Response();
                 }
 
-                public function write(string|ResponseInterface $output): void
-                {
-                }
+                public function write(string|ResponseInterface $output): void {}
             };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
@@ -367,16 +364,13 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
 
         $factory = function () {
-            return new class implements ExceptionRendererInterface
-            {
+            return new class implements ExceptionRendererInterface {
                 public function render(): ResponseInterface|string
                 {
                     throw new LogicException('Rendering failed');
                 }
 
-                public function write(string|ResponseInterface $output): void
-                {
-                }
+                public function write(string|ResponseInterface $output): void {}
             };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([

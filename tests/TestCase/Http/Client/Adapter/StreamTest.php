@@ -106,8 +106,7 @@ class StreamTest extends TestCase
         $stream = new Stream();
         $request = new Request('http://throw_exception/');
 
-        $currentHandler = set_error_handler(function (): void {
-        });
+        $currentHandler = set_error_handler(function (): void {});
         restore_error_handler();
 
         try {
@@ -115,8 +114,7 @@ class StreamTest extends TestCase
         } catch (Exception) {
         }
 
-        $newHandler = set_error_handler(function (): void {
-        });
+        $newHandler = set_error_handler(function (): void {});
         restore_error_handler();
 
         $this->assertEquals($currentHandler, $newHandler);
@@ -398,10 +396,13 @@ class StreamTest extends TestCase
 
     public function testDecodedTransferCodingIsRemoved(): void
     {
-        $responses = $this->stream->createResponses([
-            'HTTP/1.1 200 OK',
-            'Transfer-Encoding: gzip, Chunked',
-        ], 'compressed body');
+        $responses = $this->stream->createResponses(
+            [
+                'HTTP/1.1 200 OK',
+                'Transfer-Encoding: gzip, Chunked',
+            ],
+            'compressed body',
+        );
         $this->assertSame('gzip', $responses[0]->getHeaderLine('Transfer-Encoding'));
         $this->assertSame('compressed body', $responses[0]->getStringBody());
     }

@@ -34,8 +34,7 @@ class CachedCollection implements CollectionInterface
         protected CollectionInterface $collection,
         protected string $prefix,
         protected CacheInterface $cacher,
-    ) {
-    }
+    ) {}
 
     /**
      * @inheritDoc

@@ -29,8 +29,11 @@ use Cake\ORM\Query\DeleteQuery;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Closure;
-
-use function Cake\Database\Expression\{equals, greaterThan, greaterThanOrEquals, lessThan, lessThanOrEquals};
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\greaterThanOrEquals;
+use function Cake\Database\Expression\lessThan;
+use function Cake\Database\Expression\lessThanOrEquals;
 
 /**
  * Makes the table to which this is attached to behave like a nested set and
@@ -196,7 +199,7 @@ class TreeBehavior extends Behavior
             fields: [$this->getPrimaryKey(), $config['parent'], $config['level']],
             order: $config['left'],
         )
-        ->all();
+            ->all();
 
         foreach ($children as $node) {
             $parentIdValue = $node->get($config['parent']);
@@ -230,8 +233,7 @@ class TreeBehavior extends Behavior
                 /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $query */
                 $query = $this->scope($this->table->query())
                     ->where(
-                        fn(QueryExpression $exp) => $exp
-                            ->greaterThanOrEquals($config['leftField'], $left + 1)
+                        fn(QueryExpression $exp) => $exp->greaterThanOrEquals($config['leftField'], $left + 1)
                             ->lessThanOrEquals($config['leftField'], $right - 1),
                     );
 
@@ -242,8 +244,7 @@ class TreeBehavior extends Behavior
             } else {
                 $this->scope($this->table->deleteQuery())
                     ->where(
-                        fn(QueryExpression $exp) => $exp
-                            ->greaterThanOrEquals($config['leftField'], $left + 1)
+                        fn(QueryExpression $exp) => $exp->greaterThanOrEquals($config['leftField'], $left + 1)
                             ->lessThanOrEquals($config['leftField'], $right - 1),
                     )
                     ->execute();
@@ -365,8 +366,7 @@ class TreeBehavior extends Behavior
                 $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
 
-                return $exp
-                    ->equals($config['leftField'], $leftInverse->add($config['leftField']))
+                return $exp->equals($config['leftField'], $leftInverse->add($config['leftField']))
                     ->equals($config['rightField'], $rightInverse->add($config['rightField']));
             },
             fn(QueryExpression $exp) => $exp->lessThan($config['leftField'], 0),
@@ -536,11 +536,13 @@ class TreeBehavior extends Behavior
      */
     public function removeFromTree(EntityInterface $node): EntityInterface|false
     {
-        return $this->table->getConnection()->transactional(function () use ($node) {
-            $this->ensureFields($node);
+        return $this->table
+            ->getConnection()
+            ->transactional(function () use ($node) {
+                $this->ensureFields($node);
 
-            return $this->doRemoveFromTree($node);
-        });
+                return $this->doRemoveFromTree($node);
+            });
     }
 
     /**
@@ -601,11 +603,13 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->table->getConnection()->transactional(function () use ($node, $number) {
-            $this->ensureFields($node);
+        return $this->table
+            ->getConnection()
+            ->transactional(function () use ($node, $number) {
+                $this->ensureFields($node);
 
-            return $this->doMoveUp($node, $number);
-        });
+                return $this->doMoveUp($node, $number);
+            });
     }
 
     /**
@@ -689,11 +693,13 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        return $this->table->getConnection()->transactional(function () use ($node, $number) {
-            $this->ensureFields($node);
+        return $this->table
+            ->getConnection()
+            ->transactional(function () use ($node, $number) {
+                $this->ensureFields($node);
 
-            return $this->doMoveDown($node, $number);
-        });
+                return $this->doMoveDown($node, $number);
+            });
     }
 
     /**
@@ -796,9 +802,11 @@ class TreeBehavior extends Behavior
      */
     public function recover(): void
     {
-        $this->table->getConnection()->transactional(function (): void {
-            $this->recoverTree();
-        });
+        $this->table
+            ->getConnection()
+            ->transactional(function (): void {
+                $this->recoverTree();
+            });
     }
 
     /**
@@ -883,18 +891,19 @@ class TreeBehavior extends Behavior
             $exp = $query->expr();
 
             $movement = clone $exp;
-            $movement->add($field)->add((string)$shift)->setConjunction($dir);
+            $movement->add($field)
+                ->add((string)$shift)
+                ->setConjunction($dir);
 
             $inverse = clone $exp;
-            $movement = $mark ?
-                $inverse->add($movement)->setConjunction('*')->add('-1') :
-                $movement;
+            $movement = $mark
+                ? $inverse->add($movement)->setConjunction('*')->add('-1')
+                : $movement;
 
             $where = clone $exp;
             $where->add($field)->add($conditions)->setConjunction('');
 
-            $query
-                ->set($exp->equals($field, $movement))
+            $query->set($exp->equals($field, $movement))
                 ->where($where)
                 ->execute();
         }
@@ -972,7 +981,8 @@ class TreeBehavior extends Behavior
             $id = $entity->get($primaryKey);
         }
         $config = $this->getConfig();
-        $entity = $this->table->find('all')
+        $entity = $this->table
+            ->find('all')
             ->select([$config['left'], $config['right']])
             ->where([$primaryKey => $id])
             ->first();
@@ -981,10 +991,12 @@ class TreeBehavior extends Behavior
             return false;
         }
 
-        $query = $this->table->find('all')->where([
-            $config['left'] => lessThan($entity[$config['left']]),
-            $config['right'] => greaterThan($entity[$config['right']]),
-        ]);
+        $query = $this->table
+            ->find('all')
+            ->where([
+                $config['left'] => lessThan($entity[$config['left']]),
+                $config['right'] => greaterThan($entity[$config['right']]),
+            ]);
 
         return $this->scope($query)->count();
     }

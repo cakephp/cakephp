@@ -203,8 +203,7 @@ class PluginLoadCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        return $parser
-            ->setDescription(static::getDescription())
+        return $parser->setDescription(static::getDescription())
             ->addArgument('plugin', [
                 'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
                 'required' => true,

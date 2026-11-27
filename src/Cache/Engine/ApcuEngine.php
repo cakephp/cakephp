@@ -88,7 +88,10 @@ class ApcuEngine extends CacheEngine
 
         $this->eventClass = CacheAfterSetEvent::class;
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;
@@ -138,7 +141,10 @@ class ApcuEngine extends CacheEngine
 
         $this->eventClass = CacheAfterIncrementEvent::class;
         $this->dispatchEvent(CacheAfterIncrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $value !== false,
+            'value' => $value,
         ]);
 
         return $value;
@@ -162,7 +168,10 @@ class ApcuEngine extends CacheEngine
 
         $this->eventClass = CacheAfterDecrementEvent::class;
         $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $result !== false, 'value' => $result,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $result !== false,
+            'value' => $result,
         ]);
 
         return $result;
@@ -238,14 +247,19 @@ class ApcuEngine extends CacheEngine
         $duration = $this->getConfig('duration');
         $this->eventClass = CacheBeforeAddEvent::class;
         $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
-            'key' => $key, 'value' => $value, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'ttl' => $duration,
         ]);
 
         $result = apcu_add($key, $value, $duration);
 
         $this->eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $result, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $result,
+            'ttl' => $duration,
         ]);
 
         return $result;

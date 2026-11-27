@@ -91,4 +91,5 @@ class GetWithCustomFinderTable extends Table
         return $query;
     }
 }
+
 // phpcs:enable

@@ -78,104 +78,104 @@ class SqliteSchemaDialectTest extends TestCase
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
         if (
-            in_array('schema_articles', $result) &&
-            in_array('schema_authors', $result)
+            in_array('schema_articles', $result)
+            && in_array('schema_authors', $result)
         ) {
             return;
         }
 
         $table = <<<SQL
-CREATE TABLE schema_authors (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)
-SQL;
+            CREATE TABLE schema_authors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name VARCHAR(50),
+            bio TEXT,
+            created DATETIME
+            )
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_articles (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'Let ''em eat cake',
-body TEXT,
-author_id INT(11) NOT NULL,
-unique_id UNSIGNED INTEGER NOT NULL,
-published BOOLEAN DEFAULT 0,
-reviewed BOOLEAN DEFAULT TRUE,
-created DATETIME,
-field1 VARCHAR(10) DEFAULT NULL,
-field2 VARCHAR(10) DEFAULT 'NULL',
-location POINT_TEXT,
-CONSTRAINT "title_idx" UNIQUE ("title", "body")
-CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
-CONSTRAINT "author_value_chk" CHECK (author_id > 0)
-);
-SQL;
+            CREATE TABLE schema_articles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title VARCHAR(20) DEFAULT 'Let ''em eat cake',
+            body TEXT,
+            author_id INT(11) NOT NULL,
+            unique_id UNSIGNED INTEGER NOT NULL,
+            published BOOLEAN DEFAULT 0,
+            reviewed BOOLEAN DEFAULT TRUE,
+            created DATETIME,
+            field1 VARCHAR(10) DEFAULT NULL,
+            field2 VARCHAR(10) DEFAULT 'NULL',
+            location POINT_TEXT,
+            CONSTRAINT "title_idx" UNIQUE ("title", "body")
+            CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
+            CONSTRAINT "author_value_chk" CHECK (author_id > 0)
+            );
+            SQL;
         $connection->execute($table);
         $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
         $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
 
         $table = <<<SQL
-CREATE TABLE schema_no_rowid_pk (
-id INT PRIMARY KEY
-);
-SQL;
+            CREATE TABLE schema_no_rowid_pk (
+            id INT PRIMARY KEY
+            );
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_unique_constraint_variations (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-no_quotes INTEGER,
-'single_''quotes' INTEGER,
-"double_""quotes" INTEGER,
-`tick_``quotes` INTEGER,
-[bracket_[quotes] INTEGER,
-foo INTEGER,
-bar INTEGER,
-baz INTEGER,
-zap INTEGER,
-CONSTRAINT no_quotes_idx UNIQUE (no_quotes)
-CONSTRAINT duplicate_idx UNIQUE (no_quotes)
-CONSTRAINT 'single_''quotes_idx' UNIQUE ('single_''quotes')
-CONSTRAINT "double_""quotes_idx" UNIQUE ("double_""quotes")
-CONSTRAINT `tick_``quotes_idx` UNIQUE (`tick_``quotes`)
-CONSTRAINT [bracket_[quotes_idx] UNIQUE ([bracket_[quotes])
-CONSTraint
-    a_cat_walked_over_my_keyboard_idx     UNIque
-        (    id  ,'foo',
-            	    "bar",     `baz`,
-    [zap])
-);
-SQL;
+            CREATE TABLE schema_unique_constraint_variations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            no_quotes INTEGER,
+            'single_''quotes' INTEGER,
+            "double_""quotes" INTEGER,
+            `tick_``quotes` INTEGER,
+            [bracket_[quotes] INTEGER,
+            foo INTEGER,
+            bar INTEGER,
+            baz INTEGER,
+            zap INTEGER,
+            CONSTRAINT no_quotes_idx UNIQUE (no_quotes)
+            CONSTRAINT duplicate_idx UNIQUE (no_quotes)
+            CONSTRAINT 'single_''quotes_idx' UNIQUE ('single_''quotes')
+            CONSTRAINT "double_""quotes_idx" UNIQUE ("double_""quotes")
+            CONSTRAINT `tick_``quotes_idx` UNIQUE (`tick_``quotes`)
+            CONSTRAINT [bracket_[quotes_idx] UNIQUE ([bracket_[quotes])
+            CONSTraint
+                a_cat_walked_over_my_keyboard_idx     UNIque
+                    (    id  ,'foo',
+                        	    "bar",     `baz`,
+                [zap])
+            );
+            SQL;
         $connection->execute($table);
 
         $table = <<<SQL
-CREATE TABLE schema_foreign_key_variations (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-author_id INT(11),
-author_name VARCHAR(50),
-CONSTRAINT author_fk FOREIGN KEY (author_id) REFERENCES schema_authors (id) ON UPDATE CASCADE ON DELETE RESTRICT
-CONSTRAINT multi_col_author_fk FOREIGN KEY (author_id, author_name) REFERENCES schema_authors (id, name) ON UPDATE CASCADE
-);
-SQL;
+            CREATE TABLE schema_foreign_key_variations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            author_id INT(11),
+            author_name VARCHAR(50),
+            CONSTRAINT author_fk FOREIGN KEY (author_id) REFERENCES schema_authors (id) ON UPDATE CASCADE ON DELETE RESTRICT
+            CONSTRAINT multi_col_author_fk FOREIGN KEY (author_id, author_name) REFERENCES schema_authors (id, name) ON UPDATE CASCADE
+            );
+            SQL;
         $connection->execute($table);
 
         $sql = <<<SQL
-CREATE TABLE schema_composite (
-    "id" INTEGER NOT NULL,
-    "site_id" INTEGER NOT NULL,
-    "name" VARCHAR(255),
-    PRIMARY KEY("id", "site_id")
-);
-SQL;
+            CREATE TABLE schema_composite (
+                "id" INTEGER NOT NULL,
+                "site_id" INTEGER NOT NULL,
+                "name" VARCHAR(255),
+                PRIMARY KEY("id", "site_id")
+            );
+            SQL;
 
         $connection->execute($sql);
 
         $view = <<<SQL
-CREATE VIEW view_schema_articles AS
-    SELECT count(*) as total FROM schema_articles
-SQL;
+            CREATE VIEW view_schema_articles AS
+                SELECT count(*) as total FROM schema_articles
+            SQL;
 
         $connection->execute($view);
     }
@@ -325,10 +325,10 @@ SQL;
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection {$type}
-);
-SQL;
+            CREATE TABLE convert_columns (
+                reflection {$type}
+            );
+            SQL;
         $connection->execute($sql);
 
         $driver = $connection->getDriver();
@@ -1285,11 +1285,11 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-                'length' => 11,
-                'unsigned' => true,
-            ])
+            'type' => 'integer',
+            'null' => false,
+            'length' => 11,
+            'unsigned' => true,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1311,9 +1311,9 @@ SQL;
 
         $table = new TableSchema('articles');
         $table->addColumn('id', [
-                'type' => 'biginteger',
-                'null' => false,
-            ])
+            'type' => 'biginteger',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1346,32 +1346,52 @@ SQL;
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'cascade',
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'restrict',
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'setNull',
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
-                ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
             ],
             [
                 'author_id_idx',
@@ -1382,8 +1402,8 @@ SQL;
                     'update' => 'noAction',
                     'deferrable' => ForeignKey::DEFERRED,
                 ],
-                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") '
+                    . 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
             [
                 'author_id_check',
@@ -1405,9 +1425,11 @@ SQL;
         $table = new TableSchema('articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addConstraint($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addConstraint($name, $data);
 
         $this->assertEquals($expected, $schema->constraintSql($table, $name));
     }
@@ -1440,9 +1462,11 @@ SQL;
         $table = new TableSchema('articles')->addColumn('title', [
             'type' => 'string',
             'length' => 255,
-        ])->addColumn('author_id', [
-            'type' => 'integer',
-        ])->addIndex($name, $data);
+        ])
+            ->addColumn('author_id', [
+                'type' => 'integer',
+            ])
+            ->addIndex($name, $data);
 
         $this->assertEquals($expected, $schema->indexSql($table, $name));
     }
@@ -1458,9 +1482,9 @@ SQL;
             ->andReturn($driver);
 
         $table = new TableSchema('articles')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1478,14 +1502,14 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE "articles" (
-"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-"title" VARCHAR NOT NULL,
-"body" TEXT,
-"data" TEXT,
-"created" DATETIME
-)
-SQL;
+            CREATE TABLE "articles" (
+            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            "title" VARCHAR NOT NULL,
+            "body" TEXT,
+            "data" TEXT,
+            "created" DATETIME
+            )
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(2, $result);
         $this->assertTextEquals($expected, $result[0]);
@@ -1523,11 +1547,10 @@ SQL;
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
 
-        $table = new TableSchema('articles_tags')
-            ->addColumn('article_id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+        $table = new TableSchema('articles_tags')->addColumn('article_id', [
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('tag_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1538,24 +1561,23 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE "articles_tags" (
-"article_id" INTEGER NOT NULL,
-"tag_id" INTEGER NOT NULL,
-CONSTRAINT "primary" PRIMARY KEY ("article_id", "tag_id")
-)
-SQL;
+            CREATE TABLE "articles_tags" (
+            "article_id" INTEGER NOT NULL,
+            "tag_id" INTEGER NOT NULL,
+            CONSTRAINT "primary" PRIMARY KEY ("article_id", "tag_id")
+            )
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
         // Sqlite only supports AUTO_INCREMENT on single column primary
         // keys. Ensure that schema data follows the limitations of Sqlite.
-        $table = new TableSchema('composite_key')
-            ->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-                'autoIncrement' => true,
-            ])
+        $table = new TableSchema('composite_key')->addColumn('id', [
+            'type' => 'integer',
+            'null' => false,
+            'autoIncrement' => true,
+        ])
             ->addColumn('account_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1566,12 +1588,12 @@ SQL;
             ]);
 
         $expected = <<<SQL
-CREATE TABLE "composite_key" (
-"id" INTEGER NOT NULL,
-"account_id" INTEGER NOT NULL,
-CONSTRAINT "primary" PRIMARY KEY ("id", "account_id")
-)
-SQL;
+            CREATE TABLE "composite_key" (
+            "id" INTEGER NOT NULL,
+            "account_id" INTEGER NOT NULL,
+            CONSTRAINT "primary" PRIMARY KEY ("id", "account_id")
+            )
+            SQL;
         $result = $table->createSql($connection);
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
@@ -1604,7 +1626,8 @@ SQL;
             ->andReturn($driver);
 
         $statement = Mockery::mock(PDOStatement::class);
-        $this->pdo->shouldReceive('prepare')
+        $this->pdo
+            ->shouldReceive('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->once()
             ->andReturn($statement);
@@ -1631,7 +1654,8 @@ SQL;
             ->andReturn($driver);
 
         $statement = Mockery::mock(PDOStatement::class);
-        $this->pdo->shouldReceive('prepare')
+        $this->pdo
+            ->shouldReceive('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->once()
             ->andReturn($statement);
@@ -1654,7 +1678,8 @@ SQL;
         $this->needsConnection();
 
         $this->pdo = Mockery::mock(PDO::class);
-        $this->pdo->shouldReceive('quote')
+        $this->pdo
+            ->shouldReceive('quote')
             ->andReturnUsing(function ($value) {
                 return '"' . $value . '"';
             });

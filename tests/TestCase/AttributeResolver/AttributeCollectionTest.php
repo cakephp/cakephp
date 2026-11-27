@@ -73,7 +73,11 @@ class AttributeCollectionTest extends TestCase
     public function testAcceptsArrayOfAttributeInfoObjects(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
         ]);
 
         $this->assertCount(1, $collection);
@@ -115,8 +119,16 @@ class AttributeCollectionTest extends TestCase
     public function testFilterReturnsAttributeCollection(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
         ]);
         $filtered = $collection->filter(fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
 
@@ -127,9 +139,21 @@ class AttributeCollectionTest extends TestCase
     public function testWithAttributeFiltersByExactName(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\PostsController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\PostsController',
+                AttributeTargetType::CONSTANT,
+            ),
         ]);
         $filtered = $collection->withAttribute('App\Attribute\Route');
 
@@ -140,8 +164,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithAttributeAcceptsArrayWithOrLogic(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
             $this->createAttribute('App\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
         ]);
         $filtered = $collection->withAttribute(['App\Attribute\Route', 'App\Attribute\Cache']);
@@ -155,7 +187,11 @@ class AttributeCollectionTest extends TestCase
     public function testWithAttributeReturnsEmptyWhenNoMatches(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
         ]);
         $filtered = $collection->withAttribute('App\Attribute\NonExistent');
 
@@ -165,8 +201,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithNamespaceFiltersWithWildcards(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Controller\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Model\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
+            $this->createAttribute(
+                'App\Controller\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Model\Attribute\Validate',
+                'App\Model\Entity\User',
+                AttributeTargetType::PROPERTY,
+            ),
             $this->createAttribute('Plugin\Helper\Custom', 'App\View\Helper\MyHelper', AttributeTargetType::METHOD),
         ]);
         $filtered = $collection->withNamespace('App\Controller\*');
@@ -178,7 +222,11 @@ class AttributeCollectionTest extends TestCase
     public function testWithNamespaceExactMatch(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
             $this->createAttribute('App\Model\Route', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
         ]);
         $filtered = $collection->withNamespace('App\Attribute\Route');
@@ -189,9 +237,21 @@ class AttributeCollectionTest extends TestCase
     public function testWithNamespaceMultipleWildcards(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Controller\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Controller\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Model\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
+            $this->createAttribute(
+                'App\Controller\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Controller\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Model\Attribute\Validate',
+                'App\Model\Entity\User',
+                AttributeTargetType::PROPERTY,
+            ),
         ]);
         $filtered = $collection->withNamespace('App\*\Attribute\*');
 
@@ -201,9 +261,21 @@ class AttributeCollectionTest extends TestCase
     public function testWithTargetTypeFiltersBySingleEnum(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\PostsController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\PostsController',
+                AttributeTargetType::CONSTANT,
+            ),
         ]);
         $filtered = $collection->withTargetType(AttributeTargetType::CONSTANT);
 
@@ -214,8 +286,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithTargetTypeAcceptsArray(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
             $this->createAttribute('App\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
         ]);
         $filtered = $collection->withTargetType([AttributeTargetType::METHOD, AttributeTargetType::PROPERTY]);
@@ -226,9 +306,21 @@ class AttributeCollectionTest extends TestCase
     public function testWithClassNameFiltersByExactName(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
         ]);
         $filtered = $collection->withClassName('App\Controller\UsersController');
 
@@ -239,8 +331,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithClassNameAcceptsArray(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
             $this->createAttribute('App\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
         ]);
         $filtered = $collection->withClassName(['App\Controller\UsersController', 'App\Controller\PostsController']);
@@ -251,9 +351,21 @@ class AttributeCollectionTest extends TestCase
     public function testWithAttributeContainsPartialMatching(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
-            $this->createAttribute('Plugin\RouteAttribute', 'App\Controller\PostsController', AttributeTargetType::CONSTANT),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'Plugin\RouteAttribute',
+                'App\Controller\PostsController',
+                AttributeTargetType::CONSTANT,
+            ),
         ]);
         $filtered = $collection->withAttributeContains('Route');
 
@@ -263,8 +375,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithAttributeContainsCaseSensitive(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\route', 'App\Controller\PostsController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\route',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
         ]);
         $filtered = $collection->withAttributeContains('Route');
 
@@ -274,8 +394,16 @@ class AttributeCollectionTest extends TestCase
     public function testWithClassNameContainsPartialMatching(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
             $this->createAttribute('App\Attribute\Validate', 'App\Model\Entity\User', AttributeTargetType::PROPERTY),
         ]);
         $filtered = $collection->withClassNameContains('Controller');
@@ -286,9 +414,23 @@ class AttributeCollectionTest extends TestCase
     public function testWithPluginFiltersByPluginName(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('TestPlugin\Attribute\Route', 'TestPlugin\Controller\UsersController', AttributeTargetType::METHOD, 'TestPlugin'),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::METHOD),
-            $this->createAttribute('TestPlugin\Attribute\Cache', 'TestPlugin\Controller\PostsController', AttributeTargetType::METHOD, 'TestPlugin'),
+            $this->createAttribute(
+                'TestPlugin\Attribute\Route',
+                'TestPlugin\Controller\UsersController',
+                AttributeTargetType::METHOD,
+                'TestPlugin',
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'TestPlugin\Attribute\Cache',
+                'TestPlugin\Controller\PostsController',
+                AttributeTargetType::METHOD,
+                'TestPlugin',
+            ),
         ]);
         $filtered = $collection->withPlugin('TestPlugin');
 
@@ -299,9 +441,22 @@ class AttributeCollectionTest extends TestCase
     public function testWithPluginNullFiltersAppAttributes(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('TestPlugin\Attribute\Route', 'TestPlugin\Controller\UsersController', AttributeTargetType::METHOD, 'TestPlugin'),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'TestPlugin\Attribute\Route',
+                'TestPlugin\Controller\UsersController',
+                AttributeTargetType::METHOD,
+                'TestPlugin',
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
         ]);
         $filtered = $collection->withPlugin(null);
 
@@ -311,12 +466,23 @@ class AttributeCollectionTest extends TestCase
     public function testChainingMultipleFilters(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::CONSTANT),
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\PostsController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\UsersController', AttributeTargetType::METHOD),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::CONSTANT,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\PostsController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
         ]);
-        $filtered = $collection
-            ->withAttribute('App\Attribute\Route')
+        $filtered = $collection->withAttribute('App\Attribute\Route')
             ->withTargetType(AttributeTargetType::METHOD);
 
         $this->assertCount(1, $filtered);
@@ -330,8 +496,7 @@ class AttributeCollectionTest extends TestCase
         $filtered = $collection->withAttribute('NonExistent');
         $this->assertCount(0, $filtered);
 
-        $chained = $collection
-            ->withNamespace('App\*')
+        $chained = $collection->withNamespace('App\*')
             ->withTargetType(AttributeTargetType::METHOD);
         $this->assertCount(0, $chained);
     }
@@ -446,8 +611,7 @@ class AttributeCollectionTest extends TestCase
         $this->assertCount(2, $methods);
 
         // Chained filtering
-        $routeMethods = $collection
-            ->withAttribute('App\Attribute\Route')
+        $routeMethods = $collection->withAttribute('App\Attribute\Route')
             ->withTargetType(AttributeTargetType::METHOD);
         $this->assertCount(1, $routeMethods);
     }
@@ -498,8 +662,16 @@ class AttributeCollectionTest extends TestCase
     public function testGetCacheDataReturnsArraysAndIndexes(): void
     {
         $collection = new AttributeCollection([
-            $this->createAttribute('App\Attribute\Route', 'App\Controller\UsersController', AttributeTargetType::METHOD),
-            $this->createAttribute('App\Attribute\Cache', 'App\Controller\PostsController', AttributeTargetType::PROPERTY),
+            $this->createAttribute(
+                'App\Attribute\Route',
+                'App\Controller\UsersController',
+                AttributeTargetType::METHOD,
+            ),
+            $this->createAttribute(
+                'App\Attribute\Cache',
+                'App\Controller\PostsController',
+                AttributeTargetType::PROPERTY,
+            ),
         ]);
 
         $cacheData = $collection->getCacheData();

@@ -7,7 +7,5 @@ use Cake\Command\Command;
 
 class SampleCommand extends Command
 {
-    public function execute()
-    {
-    }
+    public function execute() {}
 }

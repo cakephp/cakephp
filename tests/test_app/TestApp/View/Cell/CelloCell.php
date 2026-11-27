@@ -22,7 +22,5 @@ use Cake\View\Cell;
  */
 class CelloCell extends Cell
 {
-    public function display(): void
-    {
-    }
+    public function display(): void {}
 }

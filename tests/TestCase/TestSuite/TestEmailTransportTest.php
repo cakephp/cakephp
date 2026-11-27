@@ -87,8 +87,7 @@ class TestEmailTransportTest extends TestCase
     {
         TestEmailTransport::replaceAllTransports();
 
-        new Mailer()
-            ->setTo('test@example.com')
+        new Mailer()->setTo('test@example.com')
             ->deliver('test');
         $this->assertCount(1, TestEmailTransport::getMessages());
 

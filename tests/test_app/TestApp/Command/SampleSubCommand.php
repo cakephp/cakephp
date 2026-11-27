@@ -30,7 +30,5 @@ class SampleSubCommand extends Command
         return 'sample sub';
     }
 
-    public function execute()
-    {
-    }
+    public function execute() {}
 }

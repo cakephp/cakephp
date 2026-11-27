@@ -31,9 +31,7 @@ abstract class MailConstraintBase extends Constraint
      *
      * @param int|null $at At
      */
-    public function __construct(protected ?int $at = null)
-    {
-    }
+    public function __construct(protected ?int $at = null) {}
 
     /**
      * Gets the email or emails to check

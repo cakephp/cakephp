@@ -72,9 +72,7 @@ class JsonPathExpression implements ExpressionInterface, TypedResultInterface
      *
      * @param string $path The json path
      */
-    public function __construct(protected string $path)
-    {
-    }
+    public function __construct(protected string $path) {}
 
     /**
      * Sets the RETURNING clause.

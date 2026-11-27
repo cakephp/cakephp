@@ -60,7 +60,7 @@ class JsonStreamResponseTest extends TestCase
     /**
      * @var bool|null
      */
-    protected bool|null $originalDebug = null;
+    protected ?bool $originalDebug = null;
 
     protected function setUp(): void
     {
@@ -349,7 +349,7 @@ class JsonStreamResponseTest extends TestCase
 
     public function testFlushEveryOptionFlushesInBatches(): void
     {
-        $response = new class ([
+        $response = new class([
             ['id' => 1],
             ['id' => 2],
             ['id' => 3],

@@ -55,8 +55,9 @@ class CacheClearGroupCommand extends Command
         $parser = parent::buildOptionParser($parser);
         $parser->setDescription(static::getDescription());
         $parser->addArgument('group', [
-            'help' => 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
-                'all cache items belonging to group "mygroup".',
+            'help' =>
+                'The cache group to clear. For example, `cake cache clear_group mygroup` will clear '
+                    . 'all cache items belonging to group "mygroup".',
             'required' => true,
         ]);
         $parser->addArgument('config', [

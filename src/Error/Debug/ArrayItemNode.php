@@ -27,9 +27,7 @@ class ArrayItemNode implements NodeInterface
      * @param \Cake\Error\Debug\NodeInterface $key The node for the item key
      * @param \Cake\Error\Debug\NodeInterface $value The node for the array value
      */
-    public function __construct(private NodeInterface $key, private NodeInterface $value)
-    {
-    }
+    public function __construct(private NodeInterface $key, private NodeInterface $value) {}
 
     /**
      * Get the value

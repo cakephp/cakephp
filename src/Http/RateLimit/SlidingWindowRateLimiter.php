@@ -36,9 +36,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
      *
      * @param \Psr\SimpleCache\CacheInterface $cache Cache instance
      */
-    public function __construct(protected CacheInterface $cache)
-    {
-    }
+    public function __construct(protected CacheInterface $cache) {}
 
     /**
      * @inheritDoc
@@ -62,7 +60,7 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
             $elapsed = $now - $windowStart;
         }
 
-        $used = $current + intdiv($previous * ($window - $elapsed) + $window - 1, $window);
+        $used = $current + intdiv(($previous * ($window - $elapsed)) + $window - 1, $window);
         $allowed = $used + $cost <= $limit;
         $reset = $windowStart + $window;
 
@@ -71,11 +69,15 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
         } else {
             $current += $cost;
             $used += $cost;
-            $this->cache->set($identifier, [
-                'window_start' => $windowStart,
-                'current' => $current,
-                'previous' => $previous,
-            ], $windowStart + 2 * $window - $now);
+            $this->cache->set(
+                $identifier,
+                [
+                    'window_start' => $windowStart,
+                    'current' => $current,
+                    'previous' => $previous,
+                ],
+                $windowStart + (2 * $window) - $now,
+            );
         }
 
         return [
@@ -106,10 +108,10 @@ class SlidingWindowRateLimiter implements RateLimiterInterface
 
         $room = $limit - $cost;
         if ($room < 0 || $current === 0) {
-            return $windowStart + 2 * $window;
+            return $windowStart + (2 * $window);
         }
 
-        return $windowStart + 2 * $window - intdiv($room * $window, $current);
+        return $windowStart + (2 * $window) - intdiv($room * $window, $current);
     }
 
     /**

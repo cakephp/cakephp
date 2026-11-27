@@ -155,8 +155,8 @@ class HasMany extends Association
         $isEmpty = in_array($targetEntities, [null, [], '', false], true);
         if ($isEmpty) {
             if (
-                $entity->isNew() ||
-                $this->getSaveStrategy() !== self::SAVE_REPLACE
+                $entity->isNew()
+                || $this->getSaveStrategy() !== self::SAVE_REPLACE
             ) {
                 return $entity;
             }
@@ -180,8 +180,8 @@ class HasMany extends Association
         $options['sourceTable'] = $this->getSource();
 
         if (
-            $this->saveStrategy === self::SAVE_REPLACE &&
-            !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
+            $this->saveStrategy === self::SAVE_REPLACE
+            && !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
         }
@@ -220,7 +220,7 @@ class HasMany extends Association
         $original = $entities;
 
         foreach ($entities as $k => $entity) {
-            if (!($entity instanceof EntityInterface)) {
+            if (!$entity instanceof EntityInterface) {
                 break;
             }
 
@@ -292,19 +292,18 @@ class HasMany extends Association
         } else {
             $pkFields = (array)$this->getTarget()->getPrimaryKey();
             /** @var array<\Cake\Datasource\EntityInterface> $targetEntities */
-            $targetEntities = new Collection($targetEntities)
-                ->reject(
-                    function (EntityInterface $entity) use ($currentEntities, $pkFields) {
-                        if ($entity->isNew()) {
-                            return false;
-                        }
+            $targetEntities = new Collection($targetEntities)->reject(
+                function (EntityInterface $entity) use ($currentEntities, $pkFields) {
+                    if ($entity->isNew()) {
+                        return false;
+                    }
 
-                        return array_any(
-                            $currentEntities,
-                            fn($cEntity) => $entity->extract($pkFields) === $cEntity->extract($pkFields),
-                        );
-                    },
-                )
+                    return array_any(
+                        $currentEntities,
+                        fn($cEntity) => $entity->extract($pkFields) === $cEntity->extract($pkFields),
+                    );
+                },
+            )
                 ->toList();
 
             $currentEntities = array_merge($currentEntities, $targetEntities);
@@ -313,7 +312,7 @@ class HasMany extends Association
         $sourceEntity->set($property, $currentEntities);
 
         $savedEntity = $this->getConnection()->transactional(fn() => $this->saveAssociated($sourceEntity, $options));
-        $ok = ($savedEntity instanceof EntityInterface);
+        $ok = $savedEntity instanceof EntityInterface;
 
         $this->setSaveStrategy($saveStrategy);
 
@@ -384,11 +383,10 @@ class HasMany extends Association
         $property = $this->getProperty();
 
         $conditions = [
-            'OR' => new Collection($targetEntities)
-                ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
-                    /** @var array<string> $targetPrimaryKey */
-                    return $entity->extract($targetPrimaryKey);
-                })
+            'OR' => new Collection($targetEntities)->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
+                /** @var array<string> $targetPrimaryKey */
+                return $entity->extract($targetPrimaryKey);
+            })
                 ->toList(),
         ];
 
@@ -401,13 +399,12 @@ class HasMany extends Association
         if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
-                new Collection($sourceEntity->get($property))
-                ->reject(
+                new Collection($sourceEntity->get($property))->reject(
                     function ($assoc) use ($targetEntities) {
                         return in_array($assoc, $targetEntities, true);
                     },
                 )
-                ->toList(),
+                    ->toList(),
             );
         }
 
@@ -466,7 +463,7 @@ class HasMany extends Association
         $saveStrategy = $this->getSaveStrategy();
         $this->setSaveStrategy(self::SAVE_REPLACE);
         $result = $this->saveAssociated($sourceEntity, $options);
-        $ok = ($result instanceof EntityInterface);
+        $ok = $result instanceof EntityInterface;
 
         if ($ok) {
             // phpcs:ignore SlevomatCodingStandard.Variables.UnusedVariable.UnusedVariable
@@ -503,12 +500,12 @@ class HasMany extends Association
                 return $ent->extract($primaryKey);
             },
         )
-        ->filter(
-            function ($v) {
-                return !in_array(null, $v, true);
-            },
-        )
-        ->toList();
+            ->filter(
+                function ($v) {
+                    return !in_array(null, $v, true);
+                },
+            )
+            ->toList();
 
         $conditions = $foreignKeyReference;
 
@@ -538,7 +535,7 @@ class HasMany extends Association
      */
     protected function doUnlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
     {
-        $mustBeDependent = (!$this->foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
+        $mustBeDependent = !$this->foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent();
 
         if ($mustBeDependent) {
             if ($this->cascadeCallbacks) {

@@ -21,8 +21,11 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-
-use function Cake\Database\Expression\{between, equals, greaterThan, in, like};
+use function Cake\Database\Expression\between;
+use function Cake\Database\Expression\equals;
+use function Cake\Database\Expression\greaterThan;
+use function Cake\Database\Expression\in;
+use function Cake\Database\Expression\like;
 
 /**
  * Exercises predicates through query compilation, execution, and ORM schema types.
@@ -60,13 +63,19 @@ class PredicateQueryTest extends TestCase
         $driver->enableAutoQuoting($quote);
         try {
             $input = "First Article' OR 1=1 --";
-            $query = $connection->selectQuery()->select('id')->from('articles')->where(['title' => equals($input)]);
+            $query = $connection->selectQuery()
+                ->select('id')
+                ->from('articles')
+                ->where(['title' => equals($input)]);
             $this->assertStringNotContainsString($input, $query->sql());
             $this->assertSame([], $query->execute()->fetchAll('assoc'));
             $this->assertSame([], (clone $query)->execute()->fetchAll('assoc'));
 
-            $query = $connection->selectQuery()->select('id')->from('articles')
-                ->where(['id' => between(1, 2, 'integer')])->orderByAsc('id');
+            $query = $connection->selectQuery()
+                ->select('id')
+                ->from('articles')
+                ->where(['id' => between(1, 2, 'integer')])
+                ->orderByAsc('id');
             $this->assertSame([1, 2], array_map('intval', array_column($query->execute()->fetchAll('assoc'), 'id')));
         } finally {
             $driver->enableAutoQuoting($previous);
@@ -79,9 +88,16 @@ class PredicateQueryTest extends TestCase
     public function testMembershipSubquery(): void
     {
         $connection = ConnectionManager::get('test');
-        $subquery = $connection->selectQuery()->select('id')->from('articles')->where(['id' => greaterThan(1)]);
+        $subquery = $connection->selectQuery()
+            ->select('id')
+            ->from('articles')
+            ->where(['id' => greaterThan(1)]);
         $predicate = in($subquery);
-        $query = $connection->selectQuery()->select('id')->from('articles')->where(['id' => $predicate])->orderByAsc('id');
+        $query = $connection->selectQuery()
+            ->select('id')
+            ->from('articles')
+            ->where(['id' => $predicate])
+            ->orderByAsc('id');
         $this->assertSame([2, 3], array_map('intval', array_column($query->execute()->fetchAll('assoc'), 'id')));
         $this->assertSame($query->sql(), (clone $query)->sql());
     }
@@ -93,18 +109,28 @@ class PredicateQueryTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         $query = $connection->selectQuery();
-        $case = new QueryExpression()->case()->when(['a.id' => greaterThan(1)])->then(1)->else(0);
-        $query->select(['id' => 'a.id', 'selected' => $case])->from(['a' => 'articles'])
+        $case = new QueryExpression()->case()
+            ->when(['a.id' => greaterThan(1)])
+            ->then(1)
+            ->else(0);
+        $query->select(['id' => 'a.id', 'selected' => $case])
+            ->from(['a' => 'articles'])
             ->innerJoin(['b' => 'articles'], ['b.id' => equals($query->identifier('a.id'))])
-            ->where(['a.title' => like('%Article')])->orderByAsc('a.id');
+            ->where(['a.title' => like('%Article')])
+            ->orderByAsc('a.id');
         $this->assertCount(3, $query->execute()->fetchAll('assoc'));
 
         $query = $connection->selectQuery();
-        $query->select(['author_id', 'total' => $query->func()->count('*')])->from('articles')
-            ->groupBy('author_id')->having(['COUNT(*)' => greaterThan(1, 'integer')]);
+        $query->select(['author_id', 'total' => $query->func()->count('*')])
+            ->from('articles')
+            ->groupBy('author_id')
+            ->having(['COUNT(*)' => greaterThan(1, 'integer')]);
         $this->assertCount(1, $query->execute()->fetchAll('assoc'));
 
-        $filter = $connection->selectQuery()->func()->count('*')->filter(['id' => greaterThan(1)]);
+        $filter = $connection->selectQuery()
+            ->func()
+            ->count('*')
+            ->filter(['id' => greaterThan(1)]);
         $binder = new ValueBinder();
         $this->assertStringContainsString('FILTER (WHERE id > :c0)', $filter->sql($binder));
     }
@@ -121,10 +147,16 @@ class PredicateQueryTest extends TestCase
         $this->assertSame(['integer', 'integer'], array_column($bindings, 'type'));
 
         $connection = ConnectionManager::get('test');
-        $updated = $connection->updateQuery()->update('articles')->set(['title' => 'Updated'])
-            ->where(['id' => equals(1, 'integer')])->execute();
+        $updated = $connection->updateQuery()
+            ->update('articles')
+            ->set(['title' => 'Updated'])
+            ->where(['id' => equals(1, 'integer')])
+            ->execute();
         $this->assertSame(1, $updated->rowCount());
-        $deleted = $connection->deleteQuery()->delete('articles')->where(['id' => greaterThan(2, 'integer')])->execute();
+        $deleted = $connection->deleteQuery()
+            ->delete('articles')
+            ->where(['id' => greaterThan(2, 'integer')])
+            ->execute();
         $this->assertSame(1, $deleted->rowCount());
     }
 }

@@ -271,15 +271,17 @@ class Response implements ResponseInterface, Stringable
             return;
         }
         $allowed = [
-            'application/javascript', 'application/xml', 'application/rss+xml',
+            'application/javascript',
+            'application/xml',
+            'application/rss+xml',
         ];
 
         $charset = false;
         if (
-            $this->charset &&
-            (
-                str_starts_with($type, 'text/') ||
-                in_array($type, $allowed, true)
+            $this->charset
+            && (
+                str_starts_with($type, 'text/')
+                || in_array($type, $allowed, true)
             )
         ) {
             $charset = true;
@@ -878,10 +880,12 @@ class Response implements ResponseInterface, Stringable
      */
     public function compress(): bool
     {
-        return ini_get('zlib.output_compression') !== '1' &&
-            extension_loaded('zlib') &&
-            str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip') &&
-            ob_start('ob_gzhandler');
+        return (
+            ini_get('zlib.output_compression') !== '1'
+                && extension_loaded('zlib')
+                && str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip')
+                && ob_start('ob_gzhandler')
+        );
     }
 
     /**
@@ -891,8 +895,10 @@ class Response implements ResponseInterface, Stringable
      */
     public function outputCompressed(): bool
     {
-        return str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip')
-            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
+        return (
+            str_contains((string)env('HTTP_ACCEPT_ENCODING'), 'gzip')
+                && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true))
+        );
     }
 
     /**
@@ -980,8 +986,9 @@ class Response implements ResponseInterface, Stringable
                 static fn(string $etag): string => (string)preg_replace('#^W/#', '', $etag),
                 $etags,
             );
-            $etagMatches = in_array('*', $etags, true) ||
-                in_array(preg_replace('#^W/#', '', $responseTag), $opaqueTags, true);
+            $etagMatches =
+                in_array('*', $etags, true)
+                || in_array(preg_replace('#^W/#', '', $responseTag), $opaqueTags, true);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');

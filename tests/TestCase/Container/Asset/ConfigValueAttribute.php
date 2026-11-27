@@ -21,9 +21,7 @@ class ConfigValueAttribute implements ContextualAttributeInterface
      * @param string $key Config key to look up.
      * @param array<string, mixed> $config Config values to read from.
      */
-    public function __construct(protected string $key, protected array $config = [])
-    {
-    }
+    public function __construct(protected string $key, protected array $config = []) {}
 
     public function resolve(ReflectionParameter $parameter, ContainerInterface $container): mixed
     {

@@ -166,7 +166,7 @@ abstract class SchemaDialect
         }
 
         $type = TypeFactory::build($columnType);
-        if (!($type instanceof ColumnSchemaAwareInterface)) {
+        if (!$type instanceof ColumnSchemaAwareInterface) {
             return null;
         }
 
@@ -189,7 +189,7 @@ abstract class SchemaDialect
         }
 
         $type = TypeFactory::build($columnType);
-        if (!($type instanceof ColumnSchemaAwareInterface)) {
+        if (!$type instanceof ColumnSchemaAwareInterface) {
             return null;
         }
 
@@ -497,7 +497,7 @@ abstract class SchemaDialect
     {
         try {
             $columns = $this->describeColumns($tableName);
-        } catch (PDOException | DatabaseException) {
+        } catch (PDOException|DatabaseException) {
             return false;
         }
 

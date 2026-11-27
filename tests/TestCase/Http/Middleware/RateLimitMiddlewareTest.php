@@ -50,8 +50,7 @@ class RateLimitMiddlewareTest extends TestCase
         ]);
 
         $this->handler = Mockery::mock(RequestHandlerInterface::class);
-        $this->handler->shouldReceive('handle')
-            ->andReturn(new Response());
+        $this->handler->shouldReceive('handle')->andReturn(new Response());
     }
 
     /**

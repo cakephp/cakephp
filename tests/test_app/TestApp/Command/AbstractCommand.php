@@ -5,6 +5,4 @@ namespace TestApp\Command;
 
 use Cake\Command\Command;
 
-abstract class AbstractCommand extends Command
-{
-}
+abstract class AbstractCommand extends Command {}

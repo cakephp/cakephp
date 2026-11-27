@@ -31,9 +31,7 @@ final readonly class HtmlString implements HtmlStringable, JsonSerializable
      *
      * @param string $value The trusted HTML.
      */
-    public function __construct(private string $value)
-    {
-    }
+    public function __construct(private string $value) {}
 
     /**
      * Return the original markup.

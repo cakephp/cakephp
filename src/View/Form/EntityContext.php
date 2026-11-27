@@ -151,7 +151,7 @@ class EntityContext implements ContextInterface
             $table = $this->getTableLocator()->get($table);
         }
 
-        if (!($table instanceof Table)) {
+        if (!$table instanceof Table) {
             throw new CakeException('Unable to find table class for current entity.');
         }
         $alias = $table->getAlias();
@@ -314,7 +314,8 @@ class EntityContext implements ContextInterface
         $table = $this->getTable($path, false);
         $primary = $table ? (array)$table->getPrimaryKey() : ['id'];
 
-        return new Collection($values)->extract($primary[0])->toArray();
+        return new Collection($values)->extract($primary[0])
+            ->toArray();
     }
 
     /**
@@ -354,7 +355,7 @@ class EntityContext implements ContextInterface
         for ($i = 0; $i < $len; $i++) {
             $prop = $path[$i];
             $next = $this->getProp($entity, $prop);
-            $isLast = ($i === $last);
+            $isLast = $i === $last;
             if (!$isLast && $next === null && $prop !== '_ids') {
                 $table = $this->getTable($path);
                 if ($table) {
@@ -362,10 +363,9 @@ class EntityContext implements ContextInterface
                 }
             }
 
-            $isTraversable = (
-                is_iterable($next) ||
-                $next instanceof EntityInterface
-            );
+            $isTraversable =
+                is_iterable($next)
+                || $next instanceof EntityInterface;
             if ($isLast || !$isTraversable) {
                 return $entity;
             }
@@ -428,10 +428,9 @@ class EntityContext implements ContextInterface
 
             // If we are at the end of traversable elements
             // return the last entity found.
-            $isTraversable = (
-                is_iterable($next) ||
-                $next instanceof EntityInterface
-            );
+            $isTraversable =
+                is_iterable($next)
+                || $next instanceof EntityInterface;
             if (!$isTraversable) {
                 return [$leafEntity, array_slice($path, $i)];
             }
@@ -632,9 +631,13 @@ class EntityContext implements ContextInterface
             return $this->tables[$this->rootName];
         }
 
-        $normalized = array_slice(array_filter($parts, function (string $part) {
-            return !is_numeric($part);
-        }), 0, -1);
+        $normalized = array_slice(
+            array_filter($parts, function (string $part) {
+                return !is_numeric($part);
+            }),
+            0,
+            -1,
+        );
 
         $path = implode('.', $normalized);
         if (isset($this->tables[$path])) {

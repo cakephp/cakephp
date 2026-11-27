@@ -53,7 +53,7 @@ class Mock implements AdapterInterface
      */
     public function addResponse(RequestInterface $request, Response $response, array $options): void
     {
-        if (isset($options['match']) && !($options['match'] instanceof Closure)) {
+        if (isset($options['match']) && !$options['match'] instanceof Closure) {
             $type = get_debug_type($options['match']);
             throw new InvalidArgumentException(sprintf(
                 'The `match` option must be a `Closure`. Got `%s`.',

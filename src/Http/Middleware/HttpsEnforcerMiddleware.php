@@ -89,8 +89,10 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
 
         if (
             $request->getUri()->getScheme() === 'https'
-            || ($this->config['disableOnDebug']
-                && Configure::read('debug'))
+            || (
+                $this->config['disableOnDebug']
+                && Configure::read('debug')
+            )
         ) {
             $response = $handler->handle($request);
             if ($this->config['hsts']) {

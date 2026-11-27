@@ -230,8 +230,7 @@ class FormContextTest extends TestCase
     public function testError(): void
     {
         $nestedValidator = new Validator();
-        $nestedValidator
-            ->add('password', 'length', ['rule' => ['minLength', 8]])
+        $nestedValidator->add('password', 'length', ['rule' => ['minLength', 8]])
             ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
         $form->getValidator()
@@ -273,8 +272,7 @@ class FormContextTest extends TestCase
     public function testHasError(): void
     {
         $nestedValidator = new Validator();
-        $nestedValidator
-            ->add('password', 'length', ['rule' => ['minLength', 8]])
+        $nestedValidator->add('password', 'length', ['rule' => ['minLength', 8]])
             ->add('confirm', 'length', ['rule' => ['minLength', 8]]);
         $form = new Form();
         $form->getValidator()

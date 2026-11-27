@@ -171,9 +171,9 @@ class SqliteSchemaDialect extends SchemaDialect
     protected function listTablesSql(array $config): array
     {
         return [
-            'SELECT name FROM sqlite_master ' .
-            'WHERE (type="table" OR type="view") ' .
-            'AND name != "sqlite_sequence" ORDER BY name',
+            'SELECT name FROM sqlite_master '
+                . 'WHERE (type="table" OR type="view") '
+                . 'AND name != "sqlite_sequence" ORDER BY name',
             [],
         ];
     }
@@ -188,8 +188,8 @@ class SqliteSchemaDialect extends SchemaDialect
     protected function listTablesWithoutViewsSql(array $config): array
     {
         return [
-            'SELECT name FROM sqlite_master WHERE type="table" ' .
-            'AND name != "sqlite_sequence" ORDER BY name',
+            'SELECT name FROM sqlite_master WHERE type="table" '
+                . 'AND name != "sqlite_sequence" ORDER BY name',
             [],
         ];
     }
@@ -604,8 +604,8 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         $primaryKey = $schema->getPrimaryKey();
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            $primaryKey === [$name]
+            in_array($data['type'], $autoIncrementTypes, true)
+            && $primaryKey === [$name]
         ) {
             $data['autoIncrement'] = true;
         }
@@ -671,9 +671,10 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            !$autoIncrement &&
-            isset($column['unsigned']) && $column['unsigned'] === true &&
-            in_array($column['type'], $hasUnsigned, true)
+            !$autoIncrement
+            && isset($column['unsigned'])
+            && $column['unsigned'] === true
+            && in_array($column['type'], $hasUnsigned, true)
         ) {
             $out .= ' UNSIGNED';
         }
@@ -696,8 +697,8 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' TEXT';
             $foundType = true;
         } elseif (
-            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-            $column['length'] === TableSchema::LENGTH_TINY
+            $column['type'] === TableSchemaInterface::TYPE_TEXT
+            && $column['length'] === TableSchema::LENGTH_TINY
         ) {
             $out .= ' VARCHAR';
             $hasLength[] = $column['type'];
@@ -714,10 +715,10 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $hasPrecision = [TableSchemaInterface::TYPE_FLOAT, TableSchemaInterface::TYPE_DECIMAL];
         if (
-            in_array($column['type'], $hasPrecision, true) &&
-            (
-                isset($column['length']) ||
-                isset($column['precision'])
+            in_array($column['type'], $hasPrecision, true)
+            && (
+                isset($column['length'])
+                || isset($column['precision'])
             )
         ) {
             $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
@@ -779,9 +780,9 @@ class SqliteSchemaDialect extends SchemaDialect
             assert($column !== null, 'Data does not exist');
 
             if (
-                $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
-                count($data['columns']) === 1 &&
-                $column['type'] === TableSchemaInterface::TYPE_INTEGER
+                $data['type'] === TableSchema::CONSTRAINT_PRIMARY
+                && count($data['columns']) === 1
+                && $column['type'] === TableSchemaInterface::TYPE_INTEGER
             ) {
                 return '';
             }

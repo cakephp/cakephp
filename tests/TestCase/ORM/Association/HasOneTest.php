@@ -39,7 +39,13 @@ class HasOneTest extends TestCase
      *
      * @var array<string>
      */
-    protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
+    protected array $fixtures = [
+        'core.Articles',
+        'core.Authors',
+        'core.NullableAuthors',
+        'core.Users',
+        'core.Profiles',
+    ];
 
     /**
      * @var \Cake\ORM\Table
@@ -84,15 +90,13 @@ class HasOneTest extends TestCase
     public function testDisableForeignKey(): void
     {
         $table = $this->getTableLocator()->get('Users');
-        $assoc = $table
-            ->hasOne('Profiles')
+        $assoc = $table->hasOne('Profiles')
             ->setForeignKey('user_id');
 
         $user = $table->find()->contain(['Profiles'])->orderByAsc('Users.id')->first();
         $this->assertSame('mariano', $user->profile->first_name);
 
-        $assoc
-            ->setForeignKey(false)
+        $assoc->setForeignKey(false)
             ->setConditions([
                 'Profiles.first_name' => 'larry',
             ]);
@@ -203,7 +207,9 @@ class HasOneTest extends TestCase
     public function testAttachToMultiPrimaryKeyMismatch(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
+        $this->expectExceptionMessage(
+            'Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`',
+        );
         $query = new SelectQuery($this->user);
         $config = [
             'targetTable' => $this->profile,
@@ -271,7 +277,12 @@ class HasOneTest extends TestCase
         $query = $this->user->find();
 
         $this->listenerCalled = false;
-        $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, bool $primary): void {
+        $this->profile->getEventManager()->on('Model.beforeFind', function (
+            $event,
+            $query,
+            $options,
+            bool $primary,
+        ): void {
             $this->listenerCalled = true;
             $this->assertInstanceOf(Event::class, $event);
             $this->assertInstanceOf(SelectQuery::class, $query);
@@ -362,7 +373,12 @@ class HasOneTest extends TestCase
         $association = $Authors->hasOne('Articles', $config);
 
         // create article with null foreign key
-        $entity = new Entity(['author_id' => null, 'title' => 'this has no author', 'body' => 'I am abandoned', 'published' => 'N']);
+        $entity = new Entity([
+            'author_id' => null,
+            'title' => 'this has no author',
+            'body' => 'I am abandoned',
+            'published' => 'N',
+        ]);
         $Articles->save($entity);
 
         // get author with null binding key

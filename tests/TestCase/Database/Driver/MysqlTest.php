@@ -51,14 +51,17 @@ class MysqlTest extends TestCase
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
-        $this->skipIf(!str_contains($config['driver'], $this->driverName), "Not using {$this->driverName} for test config");
+        $this->skipIf(
+            !str_contains($config['driver'], $this->driverName),
+            "Not using {$this->driverName} for test config",
+        );
     }
 
     protected function getDriver(): Driver
     {
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
-        $this->skipIf(!($driver instanceof $this->driverClass), "Requires {$this->driverClass} driver");
+        $this->skipIf(!$driver instanceof $this->driverClass, "Requires {$this->driverClass} driver");
 
         return $driver;
     }

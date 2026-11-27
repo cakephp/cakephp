@@ -98,8 +98,7 @@ class ClientStreamingTest extends TestCase
             $client = new Client(['adapter' => Stream::class, 'timeout' => 2]);
             $upstream = $client->get($url, [], ['stream' => true, 'readTimeout' => 2]);
             $body = $upstream->getBody();
-            $response = new Response()
-                ->withType('text/event-stream')
+            $response = new Response()->withType('text/event-stream')
                 ->withHeader('Cache-Control', 'no-cache')
                 ->withHeader('X-Accel-Buffering', 'no')
                 ->withBody($body);
@@ -249,13 +248,18 @@ class ClientStreamingTest extends TestCase
         try {
             $client = new Client(['adapter' => Stream::class]);
             $response = $client->send(new Request($url . $path, $method), [
-                'stream' => true, 'timeout' => 2, 'readTimeout' => 2,
+                'stream' => true,
+                'timeout' => 2,
+                'readTimeout' => 2,
             ]);
             $body = $response->getBody();
             $representation = gzencode('representation');
             $this->assertSame($status, $response->getStatusCode());
             $this->assertSame('gzip', $response->getHeaderLine('Content-Encoding'));
-            $this->assertSame((string)($status === 206 ? 10 : strlen($representation)), $response->getHeaderLine('Content-Length'));
+            $this->assertSame(
+                (string)($status === 206 ? 10 : strlen($representation)),
+                $response->getHeaderLine('Content-Length'),
+            );
             $this->assertSame($status === 206 ? substr($representation, 5, 10) : '', $body->getContents());
         } finally {
             $body?->close();

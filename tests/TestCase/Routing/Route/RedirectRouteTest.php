@@ -174,7 +174,11 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Tags/add/passme');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/my_controllers/{action}/*', ['controller' => 'Tags', 'action' => 'add'], ['persist' => true]);
+        $route = new RedirectRoute(
+            '/my_controllers/{action}/*',
+            ['controller' => 'Tags', 'action' => 'add'],
+            ['persist' => true],
+        );
         $route->parse('/my_controllers/do_something/passme');
     }
 
@@ -198,7 +202,11 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Tags/add');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/{lang}/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+        $route = new RedirectRoute(
+            '/{lang}/my_controllers',
+            ['controller' => 'Tags', 'action' => 'add'],
+            ['lang' => '(nl|en)', 'persist' => ['lang']],
+        );
         $route->parse('/nl/my_controllers/');
     }
 
@@ -211,8 +219,16 @@ class RedirectRouteTest extends TestCase
         $this->expectExceptionMessage('http://localhost/nl/preferred_controllers');
         $this->expectExceptionCode(301);
 
-        $this->builder->connect('/{lang}/preferred_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
-        $route = new RedirectRoute('/{lang}/my_controllers', ['controller' => 'Tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
+        $this->builder->connect(
+            '/{lang}/preferred_controllers',
+            ['controller' => 'Tags', 'action' => 'add'],
+            ['lang' => '(nl|en)', 'persist' => ['lang']],
+        );
+        $route = new RedirectRoute(
+            '/{lang}/my_controllers',
+            ['controller' => 'Tags', 'action' => 'add'],
+            ['lang' => '(nl|en)', 'persist' => ['lang']],
+        );
         $route->parse('/nl/my_controllers/');
     }
 

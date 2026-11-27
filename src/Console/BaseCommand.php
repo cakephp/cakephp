@@ -192,9 +192,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @return void
      */
-    public function initialize(): void
-    {
-    }
+    public function initialize(): void {}
 
     /**
      * Returns a list of all events that will fire in the command during its lifecycle.
@@ -220,9 +218,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
-    public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io): void
-    {
-    }
+    public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io): void {}
 
     /**
      * Called immediately after the command's run method, unless an exception occurs. You can use this method to
@@ -235,9 +231,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
-    public function afterExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io, ?int $result): void
-    {
-    }
+    public function afterExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io, ?int $result): void {}
 
     /**
      * @inheritDoc

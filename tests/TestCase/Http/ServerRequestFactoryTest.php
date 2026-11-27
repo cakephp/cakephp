@@ -38,7 +38,10 @@ class ServerRequestFactoryTest extends TestCase
 {
     public function testCreateServerRequestWithAdaptedNativeUri(): void
     {
-        $request = new ServerRequestFactory()->createServerRequest('GET', new Uri(new Rfc3986Uri('https://example.com/a%2fb')));
+        $request = new ServerRequestFactory()->createServerRequest(
+            'GET',
+            new Uri(new Rfc3986Uri('https://example.com/a%2fb')),
+        );
         $this->assertSame('https://example.com/a%2fb', (string)$request->getUri());
     }
 
@@ -1152,7 +1155,8 @@ class ServerRequestFactoryTest extends TestCase
         ];
 
         $request = ServerRequestFactory::fromGlobals($vars);
-        $expected = $vars + [
+        $expected = $vars
+        + [
             'CONTENT_TYPE' => null,
             'HTTP_CONTENT_TYPE' => null,
             'ORIGINAL_REQUEST_METHOD' => 'PUT',
@@ -1690,10 +1694,16 @@ class ServerRequestFactoryTest extends TestCase
         $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK, 'file.txt', 'text/plain');
         $nested = new UploadedFile(__FILE__, 456, UPLOAD_ERR_OK, 'nested.txt', 'text/plain');
 
-        $request = ServerRequestFactory::fromGlobals([], [], [], [], [
-            'file' => $file,
-            'form' => ['nested' => $nested],
-        ]);
+        $request = ServerRequestFactory::fromGlobals(
+            [],
+            [],
+            [],
+            [],
+            [
+                'file' => $file,
+                'form' => ['nested' => $nested],
+            ],
+        );
         $uploads = $request->getUploadedFiles();
 
         $this->assertSame($file, $uploads['file']);
@@ -1708,13 +1718,19 @@ class ServerRequestFactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value in files specification');
 
-        ServerRequestFactory::fromGlobals([], [], [], [], [
+        ServerRequestFactory::fromGlobals(
+            [],
+            [],
+            [],
+            [],
             [
-                'invalid' => [
-                    'data',
+                [
+                    'invalid' => [
+                        'data',
+                    ],
                 ],
             ],
-        ]);
+        );
     }
 
     public function testCreateServerRequest(): void
@@ -1755,7 +1771,10 @@ class ServerRequestFactoryTest extends TestCase
             'empty password' => [['PHP_AUTH_USER' => 'user'], 'Basic dXNlcjo='],
             'digest' => [['PHP_AUTH_DIGEST' => 'username="user"'], 'Digest username="user"'],
             'prefixed digest' => [['PHP_AUTH_DIGEST' => 'Digest username="user"'], 'Digest username="user"'],
-            'direct priority' => [['HTTP_AUTHORIZATION' => 'Bearer direct', 'PHP_AUTH_USER' => 'user'], 'Bearer direct'],
+            'direct priority' => [
+                ['HTTP_AUTHORIZATION' => 'Bearer direct', 'PHP_AUTH_USER' => 'user'],
+                'Bearer direct',
+            ],
         ];
     }
 
@@ -1769,11 +1788,13 @@ class ServerRequestFactoryTest extends TestCase
     public function testRecursivelyNormalizedUploadAttributesArePreserved(): void
     {
         $file = new UploadedFile(__FILE__, 123, UPLOAD_ERR_OK);
-        $files = ['form' => [
-            'tmp_name' => ['a' => ['b' => $file]],
-            'size' => ['a' => ['b' => $file]],
-            'error' => ['a' => ['b' => $file]],
-        ]];
+        $files = [
+            'form' => [
+                'tmp_name' => ['a' => ['b' => $file]],
+                'size' => ['a' => ['b' => $file]],
+                'error' => ['a' => ['b' => $file]],
+            ],
+        ];
         $request = ServerRequestFactory::fromGlobals([], [], [], [], $files);
         $this->assertSame($files, $request->getUploadedFiles());
     }
@@ -1781,9 +1802,15 @@ class ServerRequestFactoryTest extends TestCase
     public function testNestedRawSpecificationsMayUseAttributeNamesAsFields(): void
     {
         $spec = ['tmp_name' => 'php://temp', 'size' => 5, 'error' => UPLOAD_ERR_OK];
-        $request = ServerRequestFactory::fromGlobals([], [], [], [], [
-            'form' => ['tmp_name' => $spec, 'size' => $spec, 'error' => $spec],
-        ]);
+        $request = ServerRequestFactory::fromGlobals(
+            [],
+            [],
+            [],
+            [],
+            [
+                'form' => ['tmp_name' => $spec, 'size' => $spec, 'error' => $spec],
+            ],
+        );
         foreach (['tmp_name', 'size', 'error'] as $field) {
             $file = $request->getUploadedFiles()['form'][$field];
             $this->assertInstanceOf(UploadedFileInterface::class, $file);
@@ -1794,11 +1821,19 @@ class ServerRequestFactoryTest extends TestCase
 
     public function testParallelAttributesWithReservedFieldNamesRemainSpecifications(): void
     {
-        $request = ServerRequestFactory::fromGlobals([], [], [], [], ['form' => [
-            'tmp_name' => ['tmp_name' => 'php://temp', 'size' => 'php://temp', 'error' => 'php://temp'],
-            'size' => ['tmp_name' => 1, 'size' => 2, 'error' => 3],
-            'error' => ['tmp_name' => 0, 'size' => 0, 'error' => 0],
-        ]]);
+        $request = ServerRequestFactory::fromGlobals(
+            [],
+            [],
+            [],
+            [],
+            [
+                'form' => [
+                    'tmp_name' => ['tmp_name' => 'php://temp', 'size' => 'php://temp', 'error' => 'php://temp'],
+                    'size' => ['tmp_name' => 1, 'size' => 2, 'error' => 3],
+                    'error' => ['tmp_name' => 0, 'size' => 0, 'error' => 0],
+                ],
+            ],
+        );
         $files = $request->getUploadedFiles()['form'];
         $this->assertSame(1, $files['tmp_name']->getSize());
         $this->assertSame(2, $files['size']->getSize());

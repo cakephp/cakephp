@@ -301,7 +301,7 @@ class ServerRequest implements ServerRequestInterface
         if (!(is_array($post) || is_object($post) || $post === null)) {
             throw new InvalidArgumentException(sprintf(
                 '`post` key must be an array, object or null.'
-                . ' Got `%s` instead.',
+                    . ' Got `%s` instead.',
                 get_debug_type($post),
             ));
         }

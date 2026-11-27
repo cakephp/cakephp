@@ -22,6 +22,4 @@ use Cake\Core\Exception\CakeException;
  * Exception raised when cache writing failed for some reason.
  * Replaces triggering an error.
  */
-class CacheWriteException extends CakeException
-{
-}
+class CacheWriteException extends CakeException {}

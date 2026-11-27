@@ -41,8 +41,7 @@ class IdentifierQuoter
     public function __construct(
         protected string $startQuote,
         protected string $endQuote,
-    ) {
-    }
+    ) {}
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
@@ -123,11 +122,10 @@ class IdentifierQuoter
             $query instanceof SelectQuery => $this->quoteSelect($query),
             $query instanceof UpdateQuery => $this->quoteUpdate($query),
             $query instanceof DeleteQuery => $this->quoteDelete($query),
-            default =>
-                throw new DatabaseException(sprintf(
-                    'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
-                    get_debug_type($query),
-                ))
+            default => throw new DatabaseException(sprintf(
+                'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
+                get_debug_type($query),
+            )),
         };
 
         $query->traverseExpressions($this->quoteExpression(...));
@@ -147,7 +145,7 @@ class IdentifierQuoter
             $expression instanceof FieldInterface => $this->quoteComparison($expression),
             $expression instanceof OrderByExpression => $this->quoteOrderBy($expression),
             $expression instanceof IdentifierExpression => $this->quoteIdentifierExpression($expression),
-            default => null // Nothing to do if there is no match
+            default => null, // Nothing to do if there is no match
         };
     }
 

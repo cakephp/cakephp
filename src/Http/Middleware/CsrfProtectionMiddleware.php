@@ -123,7 +123,8 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();
-        $hasData = in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+        $hasData =
+            in_array($method, ['PUT', 'POST', 'DELETE', 'PATCH'], true)
             || $request->getParsedBody();
 
         if (
@@ -137,10 +138,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         }
         if ($request->getAttribute('csrfToken')) {
             throw new CakeException(
-                'A CSRF token is already set in the request.' .
-                "\n" .
-                'Ensure you do not have the CSRF middleware applied more than once. ' .
-                'Check both your `Application::middleware()` method and `config/routes.php`.',
+                'A CSRF token is already set in the request.'
+                    . "\n"
+                    . 'Ensure you do not have the CSRF middleware applied more than once. '
+                    . 'Check both your `Application::middleware()` method and `config/routes.php`.',
             );
         }
 

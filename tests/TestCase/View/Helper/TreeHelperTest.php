@@ -108,34 +108,34 @@ class TreeHelperTest extends TestCase
 
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li>Two
-    <ul>
-        <li>Two-SubA
-        <ul>
-            <li>Two-SubA-1
             <ul>
-                <li>Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li>Two
+                <ul>
+                    <li>Two-SubA
+                    <ul>
+                        <li>Two-SubA-1
+                        <ul>
+                            <li>Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
         $this->assertTrue(substr_count($output, '<ul>') === substr_count($output, '</ul>'));
         $this->assertTrue(substr_count($output, '<li>') === substr_count($output, '</li>'));
@@ -151,34 +151,34 @@ TEXT;
         $output = $this->tree->generate($tree);
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li>Two
-    <ul>
-        <li>Two-SubA
-        <ul>
-            <li>Two-SubA-1
             <ul>
-                <li>Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li>Two
+                <ul>
+                    <li>Two-SubA
+                    <ul>
+                        <li>Two-SubA-1
+                        <ul>
+                            <li>Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -194,34 +194,34 @@ TEXT;
         $output = $this->tree->generate($tree, ['depth' => 1]);
         $expected = <<<TEXT
 
-    <ul>
-        <li>One
-        <ul>
-            <li>One-SubA</li>
-        </ul>
-        </li>
-        <li>Two
-        <ul>
-            <li>Two-SubA
-            <ul>
-                <li>Two-SubA-1
                 <ul>
-                    <li>Two-SubA-1-1</li>
+                    <li>One
+                    <ul>
+                        <li>One-SubA</li>
+                    </ul>
+                    </li>
+                    <li>Two
+                    <ul>
+                        <li>Two-SubA
+                        <ul>
+                            <li>Two-SubA-1
+                            <ul>
+                                <li>Two-SubA-1-1</li>
+                            </ul>
+                            </li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                    <li>Three</li>
+                    <li>Four
+                    <ul>
+                        <li>Four-SubA</li>
+                    </ul>
+                    </li>
                 </ul>
-                </li>
-            </ul>
-            </li>
-        </ul>
-        </li>
-        <li>Three</li>
-        <li>Four
-        <ul>
-            <li>Four-SubA</li>
-        </ul>
-        </li>
-    </ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -235,34 +235,34 @@ TEXT;
         $output = $this->tree->generate($tree, ['class' => 'navi', 'id' => 'main', 'type' => 'ol']);
         $expected = <<<TEXT
 
-<ol class="navi" id="main">
-    <li>One
-    <ol>
-        <li>One-SubA</li>
-    </ol>
-    </li>
-    <li>Two
-    <ol>
-        <li>Two-SubA
-        <ol>
-            <li>Two-SubA-1
-            <ol>
-                <li>Two-SubA-1-1</li>
+            <ol class="navi" id="main">
+                <li>One
+                <ol>
+                    <li>One-SubA</li>
+                </ol>
+                </li>
+                <li>Two
+                <ol>
+                    <li>Two-SubA
+                    <ol>
+                        <li>Two-SubA-1
+                        <ol>
+                            <li>Two-SubA-1-1</li>
+                        </ol>
+                        </li>
+                    </ol>
+                    </li>
+                </ol>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ol>
+                    <li>Four-SubA</li>
+                </ol>
+                </li>
             </ol>
-            </li>
-        </ol>
-        </li>
-    </ol>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ol>
-        <li>Four-SubA</li>
-    </ol>
-    </li>
-</ol>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -276,34 +276,34 @@ TEXT;
         $output = $this->tree->generate($tree, ['type' => 'div', 'itemType' => 'div']);
         $expected = <<<TEXT
 
-<div>
-    <div>One
-    <div>
-        <div>One-SubA</div>
-    </div>
-    </div>
-    <div>Two
-    <div>
-        <div>Two-SubA
-        <div>
-            <div>Two-SubA-1
             <div>
-                <div>Two-SubA-1-1</div>
+                <div>One
+                <div>
+                    <div>One-SubA</div>
+                </div>
+                </div>
+                <div>Two
+                <div>
+                    <div>Two-SubA
+                    <div>
+                        <div>Two-SubA-1
+                        <div>
+                            <div>Two-SubA-1-1</div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div>Three</div>
+                <div>Four
+                <div>
+                    <div>Four-SubA</div>
+                </div>
+                </div>
             </div>
-            </div>
-        </div>
-        </div>
-    </div>
-    </div>
-    <div>Three</div>
-    <div>Four
-    <div>
-        <div>Four-SubA</div>
-    </div>
-    </div>
-</div>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -317,30 +317,30 @@ TEXT;
         $output = $this->tree->generate($tree, ['maxDepth' => 2]);
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li>Two
-    <ul>
-        <li>Two-SubA
-        <ul>
-            <li>Two-SubA-1</li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
+            <ul>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li>Two
+                <ul>
+                    <li>Two-SubA
+                    <ul>
+                        <li>Two-SubA-1</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
+            </ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -354,67 +354,67 @@ TEXT;
         $output = $this->tree->generate($tree, ['autoPath' => [7, 10]]); // Two-SubA-1
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li class="active">Two
-    <ul>
-        <li class="active">Two-SubA
-        <ul>
-            <li class="active">Two-SubA-1
             <ul>
-                <li>Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li class="active">Two
+                <ul>
+                    <li class="active">Two-SubA
+                    <ul>
+                        <li class="active">Two-SubA-1
+                        <ul>
+                            <li>Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
 
         $output = $this->tree->generate($tree, ['autoPath' => [8, 9]]); // Two-SubA-1-1
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li class="active">Two
-    <ul>
-        <li class="active">Two-SubA
-        <ul>
-            <li class="active">Two-SubA-1
             <ul>
-                <li class="active">Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li class="active">Two
+                <ul>
+                    <li class="active">Two-SubA
+                    <ul>
+                        <li class="active">Two-SubA-1
+                        <ul>
+                            <li class="active">Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -431,34 +431,34 @@ TEXT;
         $output = $this->tree->generate($tree, ['autoPath' => $entity]);
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li class="active">Two
-    <ul>
-        <li class="active">Two-SubA
-        <ul>
-            <li class="active">Two-SubA-1
             <ul>
-                <li>Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li class="active">Two
+                <ul>
+                    <li class="active">Two-SubA
+                    <ul>
+                        <li class="active">Two-SubA-1
+                        <ul>
+                            <li>Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $this->assertTextEquals($expected, $output);
     }
 
@@ -493,28 +493,33 @@ TEXT;
         $nodes = $this->table->find('path', for: $id)->toArray();
         $path = Hash::extract($nodes, '{n}.id');
 
-        $output = $this->tree->generate($tree, ['autoPath' => [6, 11], 'hideUnrelated' => true, 'treePath' => $path, 'callback' => $this->myCallback(...)]); // Two-SubA
+        $output = $this->tree->generate($tree, [
+            'autoPath' => [6, 11],
+            'hideUnrelated' => true,
+            'treePath' => $path,
+            'callback' => $this->myCallback(...),
+        ]); // Two-SubA
 
         $expected = <<<TEXT
 
-<ul>
-    <li>One</li>
-    <li class="active">Two (active)
-    <ul>
-        <li class="active">Two-SubA (active)
-        <ul>
-            <li>Two-SubA-1</li>
-        </ul>
-        </li>
-        <li>Two-SubB</li>
-        <li>Two-SubC</li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four</li>
-</ul>
+            <ul>
+                <li>One</li>
+                <li class="active">Two (active)
+                <ul>
+                    <li class="active">Two-SubA (active)
+                    <ul>
+                        <li>Two-SubA-1</li>
+                    </ul>
+                    </li>
+                    <li>Two-SubB</li>
+                    <li>Two-SubC</li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four</li>
+            </ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' '], '', $output);
         $expected = str_replace([' '], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -561,24 +566,24 @@ TEXT;
 
         $expected = <<<TEXT
 
-<ul>
-    <li>One (sibling)</li>
-    <li class="active">Two (active)
-    <ul>
-        <li class="active">Two-SubA (active)
-        <ul>
-            <li>Two-SubA-1</li>
-        </ul>
-        </li>
-        <li>Two-SubB</li>
-        <li>Two-SubC</li>
-    </ul>
-    </li>
-    <li>Three (sibling)</li>
-    <li>Four (sibling)</li>
-</ul>
+            <ul>
+                <li>One (sibling)</li>
+                <li class="active">Two (active)
+                <ul>
+                    <li class="active">Two-SubA (active)
+                    <ul>
+                        <li>Two-SubA-1</li>
+                    </ul>
+                    </li>
+                    <li>Two-SubB</li>
+                    <li>Two-SubC</li>
+                </ul>
+                </li>
+                <li>Three (sibling)</li>
+                <li>Four (sibling)</li>
+            </ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -653,36 +658,36 @@ TEXT;
 
         $expected = <<<TEXT
 
-<ul>
-    <li>One
-    <ul>
-        <li>One-SubA</li>
-    </ul>
-    </li>
-    <li class="active">Two (active)
-    <ul>
-        <li class="active">Two-SubA (active)
-        <ul>
-            <li>Two-SubA-1
             <ul>
-                <li>Two-SubA-1-1</li>
+                <li>One
+                <ul>
+                    <li>One-SubA</li>
+                </ul>
+                </li>
+                <li class="active">Two (active)
+                <ul>
+                    <li class="active">Two-SubA (active)
+                    <ul>
+                        <li>Two-SubA-1
+                        <ul>
+                            <li>Two-SubA-1-1</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                    <li>Two-SubB</li>
+                    <li>Two-SubC</li>
+                </ul>
+                </li>
+                <li>Three</li>
+                <li>Four
+                <ul>
+                    <li>Four-SubA</li>
+                </ul>
+                </li>
             </ul>
-            </li>
-        </ul>
-        </li>
-        <li>Two-SubB</li>
-        <li>Two-SubC</li>
-    </ul>
-    </li>
-    <li>Three</li>
-    <li>Four
-    <ul>
-        <li>Four-SubA</li>
-    </ul>
-    </li>
-</ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -717,20 +722,20 @@ TEXT;
         $output = $this->tree->generate($treeData);
         $expected = <<<TEXT
 
-<ul>
-    <li>Foo
-    <ul>
-        <li>Bar</li>
-        <li>Baz
-        <ul>
-            <li>Baz Child</li>
-        </ul>
-        </li>
-    </ul>
-    </li>
-</ul>
+            <ul>
+                <li>Foo
+                <ul>
+                    <li>Bar</li>
+                    <li>Baz
+                    <ul>
+                        <li>Baz Child</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+            </ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -802,18 +807,18 @@ TEXT;
         $output = $this->tree->generate($treeData);
         $expected = <<<TEXT
 
-<ul>
-    <li>Foo
-    <ul>
-        <li>Strict</li>
-        <li>Is High</li>
-        <li>2023-10-01 11:12:13</li>
-        <li>Foo Bar</li>
-    </ul>
-    </li>
-</ul>
+            <ul>
+                <li>Foo
+                <ul>
+                    <li>Strict</li>
+                    <li>Is High</li>
+                    <li>2023-10-01 11:12:13</li>
+                    <li>Foo Bar</li>
+                </ul>
+                </li>
+            </ul>
 
-TEXT;
+            TEXT;
         $output = str_replace([' ', "\r", "\n"], '', $output);
         $expected = str_replace([' ', "\r", "\n"], '', $expected);
         $this->assertTextEquals($expected, $output);
@@ -837,7 +842,8 @@ TEXT;
         ];
 
         $output = $this->tree->generate($treeData, ['indent' => false]);
-        $expected = '<ul><li>&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
+        $expected =
+            '<ul><li>&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
             . '<ul><li>O&#039;Reilly &amp; Sons</li></ul></li></ul>';
 
         $this->assertSame($expected, $output);
@@ -864,7 +870,8 @@ TEXT;
                 return 'Foo';
             },
         ]);
-        $expected = '<ul class="&quot;&gt;&lt;script&gt;alert(&quot;class&quot;)&lt;/script&gt;">'
+        $expected =
+            '<ul class="&quot;&gt;&lt;script&gt;alert(&quot;class&quot;)&lt;/script&gt;">'
             . '<li title="&lt;script&gt;alert(&quot;attribute&quot;)&lt;/script&gt;">Foo</li></ul>';
 
         $this->assertSame($expected, $output);
@@ -943,7 +950,9 @@ TEXT;
      */
     public function testGenerateFlatCallbackSkipsKeepMarkupBalanced(): void
     {
-        $skip = fn(array $data): ?string => in_array($data['data']['name'], ['B', 'C'], true) ? null : $data['data']['name'];
+        $skip = fn(array $data): ?string => in_array($data['data']['name'], ['B', 'C'], true)
+            ? null
+            : $data['data']['name'];
         $output = $this->tree->generate($this->flatTree(), ['indent' => false, 'callback' => $skip]);
         $this->assertSame('<ul><li>A</li><li>D</li></ul>', $output);
 
@@ -1008,7 +1017,8 @@ TEXT;
         ];
 
         $output = $this->tree->generate($treeData, ['indent' => false, 'splitDepth' => 1, 'splitCount' => 2]);
-        $expected = '<ul><li>One<ul><li>c1</li><li>c2</li><li>c3</li></ul><ul><li>c4</li><li>c5</li></ul></li>'
+        $expected =
+            '<ul><li>One<ul><li>c1</li><li>c2</li><li>c3</li></ul><ul><li>c4</li><li>c5</li></ul></li>'
             . '<li>Two</li></ul>';
         $this->assertSame($expected, $output);
 
@@ -1056,7 +1066,8 @@ TEXT;
             'hideUnrelated' => true,
             'treePath' => [2, 6],
         ]);
-        $expected = '<ul><li>One</li><li>Two<ul><li>Two-SubA<ul><li>Two-SubA-1</li></ul></li></ul></li>'
+        $expected =
+            '<ul><li>One</li><li>Two<ul><li>Two-SubA<ul><li>Two-SubA-1</li></ul></li></ul></li>'
             . '<li>Three</li><li>Four</li></ul>';
         $this->assertSame($expected, $output);
     }
@@ -1114,8 +1125,16 @@ TEXT;
     public function testGenerateHideUnrelatedWithNodeKey(): void
     {
         $treeData = [
-            ['category_id' => 10, 'name' => 'A', 'children' => [['category_id' => 11, 'name' => 'A1', 'children' => []]]],
-            ['category_id' => 20, 'name' => 'B', 'children' => [['category_id' => 21, 'name' => 'B1', 'children' => []]]],
+            [
+                'category_id' => 10,
+                'name' => 'A',
+                'children' => [['category_id' => 11, 'name' => 'A1', 'children' => []]],
+            ],
+            [
+                'category_id' => 20,
+                'name' => 'B',
+                'children' => [['category_id' => 21, 'name' => 'B1', 'children' => []]],
+            ],
         ];
 
         $output = $this->tree->generate($treeData, [

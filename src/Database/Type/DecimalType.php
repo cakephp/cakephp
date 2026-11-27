@@ -158,8 +158,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $this;
         }
         if (
-            static::$numberClass === Number::class ||
-            is_subclass_of(static::$numberClass, Number::class)
+            static::$numberClass === Number::class
+            || is_subclass_of(static::$numberClass, Number::class)
         ) {
             $this->useLocaleParser = $enable;
 

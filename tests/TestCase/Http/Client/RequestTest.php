@@ -395,26 +395,22 @@ class RequestTest extends TestCase
     {
         return [
             'absolute-uri' => [
-                new Request()
-                    ->withUri(new Uri('https://api.example.com/user'))
+                new Request()->withUri(new Uri('https://api.example.com/user'))
                     ->withMethod('POST'),
                 '/user',
             ],
             'absolute-uri-with-query' => [
-                new Request()
-                    ->withUri(new Uri('https://api.example.com/user?foo=bar'))
+                new Request()->withUri(new Uri('https://api.example.com/user?foo=bar'))
                     ->withMethod('POST'),
                 '/user?foo=bar',
             ],
             'relative-uri' => [
-                new Request()
-                    ->withUri(new Uri('/user'))
+                new Request()->withUri(new Uri('/user'))
                     ->withMethod('GET'),
                 '/user',
             ],
             'relative-uri-with-query' => [
-                new Request()
-                    ->withUri(new Uri('/user?foo=bar'))
+                new Request()->withUri(new Uri('/user?foo=bar'))
                     ->withMethod('GET'),
                 '/user?foo=bar',
             ],
@@ -521,8 +517,7 @@ class RequestTest extends TestCase
 
     public function testWithoutHeaderRemovesHostHeader(): void
     {
-        $request = new Request()
-            ->withUri(new Uri('http://example.com'))
+        $request = new Request()->withUri(new Uri('http://example.com'))
             ->withoutHeader('host');
         $this->assertFalse($request->hasHeader('Host'));
         $this->assertSame([], $request->getHeader('host'));
@@ -561,8 +556,7 @@ class RequestTest extends TestCase
     {
         $request = new Request()->withAddedHeader('Host', 'example.com');
 
-        $uri = new Uri()
-            ->withHost('www.example.com')
+        $uri = new Uri()->withHost('www.example.com')
             ->withPort(10081);
         $new = $request->withUri($uri);
 
@@ -640,7 +634,10 @@ class RequestTest extends TestCase
         $request = new Request('https://example.com:8443/path');
         $this->assertSame('example.com:8443', $request->getHeaderLine('Host'));
         $factory = new RequestFactory();
-        $this->assertSame('example.com', $factory->createRequest('GET', 'https://example.com:443')->getHeaderLine('Host'));
+        $this->assertSame(
+            'example.com',
+            $factory->createRequest('GET', 'https://example.com:443')->getHeaderLine('Host'),
+        );
         $request = new Request('https://example.com:8443', headers: ['host' => 'override.example']);
         $this->assertSame('override.example', $request->getHeaderLine('Host'));
     }
@@ -651,8 +648,10 @@ class RequestTest extends TestCase
         $uri = new Uri('https://new.example:8443');
         $this->assertSame('new.example:8443', $request->withUri($uri, true)->getHeaderLine('Host'));
         $this->assertSame('', $request->getHeaderLine('Host'));
-        $this->assertSame('explicit.example', $request->withHeader('Host', 'explicit.example')
-            ->withUri($uri, true)->getHeaderLine('Host'));
+        $this->assertSame(
+            'explicit.example',
+            $request->withHeader('Host', 'explicit.example')->withUri($uri, true)->getHeaderLine('Host'),
+        );
     }
 
     public function testDerivedHostUsesIdnaAndPreservesExplicitHeader(): void
@@ -660,7 +659,11 @@ class RequestTest extends TestCase
         $uri = new Uri('https://bücher.example:8443/');
         $request = new Request($uri);
         $this->assertSame('xn--bcher-kva.example:8443', $request->getHeaderLine('Host'));
-        $this->assertSame('xn--bcher-kva.example:8443', new Request()->withUri($uri)->getHeaderLine('Host'));
+        $this->assertSame(
+            'xn--bcher-kva.example:8443',
+            new Request()->withUri($uri)
+                ->getHeaderLine('Host'),
+        );
         $request = new Request($uri, headers: ['Host' => 'custom.example']);
         $this->assertSame('custom.example', $request->getHeaderLine('Host'));
         $this->assertSame('custom.example', $request->withUri($uri, true)->getHeaderLine('Host'));

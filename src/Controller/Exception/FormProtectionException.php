@@ -19,6 +19,4 @@ use Cake\Http\Exception\BadRequestException;
 /**
  * Form Protection exception - used when FormProtection detects any issue with the current request
  */
-class FormProtectionException extends BadRequestException
-{
-}
+class FormProtectionException extends BadRequestException {}

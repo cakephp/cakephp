@@ -53,8 +53,22 @@ class QueryCompiler
      * @var array<string>
      */
     protected array $selectParts = [
-        'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'limit', 'offset', 'union', 'except', 'epilog', 'intersect',
+        'comment',
+        'with',
+        'select',
+        'from',
+        'join',
+        'where',
+        'group',
+        'having',
+        'window',
+        'order',
+        'limit',
+        'offset',
+        'union',
+        'except',
+        'epilog',
+        'intersect',
     ];
 
     /**
@@ -69,8 +83,16 @@ class QueryCompiler
      *
      * @var array<string>
      */
-    protected array $deleteParts = ['comment', 'with', 'delete', 'optimizerHint', 'modifier', 'from', 'where',
-        'epilog'];
+    protected array $deleteParts = [
+        'comment',
+        'with',
+        'delete',
+        'optimizerHint',
+        'modifier',
+        'from',
+        'where',
+        'epilog',
+    ];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
@@ -132,9 +154,9 @@ class QueryCompiler
     {
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
-                $part === null ||
-                ($part === []) ||
-                ($part instanceof Countable && count($part) === 0)
+                $part === null
+                || $part === []
+                || ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
             }
@@ -192,8 +214,8 @@ class QueryCompiler
         $driver = $query->getDriver();
         $select = 'SELECT%s%s %s%s';
         if (
-            ($query->clause('union') || $query->clause('except') || $query->clause('intersect')) &&
-            $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
+            ($query->clause('union') || $query->clause('except') || $query->clause('intersect'))
+            && $driver->supports(DriverFeature::SET_OPERATIONS_ORDER_BY)
         ) {
             $select = '(SELECT%s%s %s%s';
         }
@@ -269,8 +291,8 @@ class QueryCompiler
         foreach ($parts as $join) {
             if (!isset($join['table'])) {
                 throw new DatabaseException(sprintf(
-                    'Could not compile join clause for alias `%s`. No table was specified. ' .
-                    'Use the `table` key to define a table.',
+                    'Could not compile join clause for alias `%s`. No table was specified. '
+                        . 'Use the `table` key to define a table.',
                     $join['alias'],
                 ));
             }
@@ -357,23 +379,25 @@ class QueryCompiler
         Query $query,
         ValueBinder $binder,
     ): string {
-        $setOperationsOrderBy = $query
-            ->getConnection()
+        $setOperationsOrderBy = $query->getConnection()
             ->getDriver($query->getConnectionRole())
             ->supports(DriverFeature::SET_OPERATIONS_ORDER_BY);
 
-        $parts = array_map(function (array $p) use ($binder, $setOperationsOrderBy) {
-            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
-            $expr = $p['query'];
-            $p['query'] = $expr->sql($binder);
-            $p['query'] = str_starts_with($p['query'], '(') ? trim($p['query'], '()') : $p['query'];
-            $prefix = $p['all'] ? 'ALL ' : '';
-            if ($setOperationsOrderBy) {
-                return "{$prefix}({$p['query']})";
-            }
+        $parts = array_map(
+            function (array $p) use ($binder, $setOperationsOrderBy) {
+                /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+                $expr = $p['query'];
+                $p['query'] = $expr->sql($binder);
+                $p['query'] = str_starts_with($p['query'], '(') ? trim($p['query'], '()') : $p['query'];
+                $prefix = $p['all'] ? 'ALL ' : '';
+                if ($setOperationsOrderBy) {
+                    return "{$prefix}({$p['query']})";
+                }
 
-            return $prefix . $p['query'];
-        }, $parts);
+                return $prefix . $p['query'];
+            },
+            $parts,
+        );
 
         if ($setOperationsOrderBy) {
             return sprintf(")\n{$operation} %s", implode("\n{$operation} ", $parts));
@@ -439,8 +463,8 @@ class QueryCompiler
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
-                'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.',
+                'Could not compile insert query. No table was specified. '
+                    . 'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

@@ -166,9 +166,9 @@ class MemcachedEngine extends CacheEngine
                 foreach ($serverList as $server) {
                     if (!in_array($server['host'] . ':' . $server['port'], $this->config['servers'], true)) {
                         throw new InvalidArgumentException(
-                            'Invalid cache configuration. Multiple persistent cache configurations are detected' .
-                            ' with different `servers` values. `servers` values for persistent cache configurations' .
-                            ' must be the same when using the same persistence id.',
+                            'Invalid cache configuration. Multiple persistent cache configurations are detected'
+                                . ' with different `servers` values. `servers` values for persistent cache configurations'
+                                . ' must be the same when using the same persistence id.',
                         );
                     }
                 }
@@ -234,8 +234,8 @@ class MemcachedEngine extends CacheEngine
         }
 
         if (
-            $serializer !== 'php' &&
-            !constant('Memcached::HAVE_' . strtoupper($serializer))
+            $serializer !== 'php'
+            && !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
                 sprintf('Memcached extension is not compiled with `%s` support.', $serializer),
@@ -249,8 +249,8 @@ class MemcachedEngine extends CacheEngine
 
         // Check for Amazon ElastiCache instance
         if (
-            defined('Memcached::OPT_CLIENT_MODE') &&
-            defined('Memcached::DYNAMIC_CLIENT_MODE')
+            defined('Memcached::OPT_CLIENT_MODE')
+            && defined('Memcached::DYNAMIC_CLIENT_MODE')
         ) {
             $this->Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
         }
@@ -329,7 +329,10 @@ class MemcachedEngine extends CacheEngine
 
         $this->eventClass = CacheAfterSetEvent::class;
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;
@@ -428,7 +431,10 @@ class MemcachedEngine extends CacheEngine
 
         $this->eventClass = CacheAfterIncrementEvent::class;
         $this->dispatchEvent(CacheAfterIncrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $value !== false,
+            'value' => $value,
         ]);
 
         return $value;
@@ -451,7 +457,10 @@ class MemcachedEngine extends CacheEngine
 
         $this->eventClass = CacheAfterDecrementEvent::class;
         $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
-            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+            'key' => $key,
+            'offset' => $offset,
+            'success' => $value !== false,
+            'value' => $value,
         ]);
 
         return $value;
@@ -544,7 +553,10 @@ class MemcachedEngine extends CacheEngine
 
         $this->eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            'key' => $key,
+            'value' => $value,
+            'success' => $success,
+            'ttl' => $duration,
         ]);
 
         return $success;

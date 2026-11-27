@@ -216,16 +216,16 @@ class IniConfigTest extends TestCase
         $this->assertGreaterThan(0, $result);
 
         $expected = <<<INI
-[One]
-two = value
-three.four = value four
-is_null = null
-bool_false = false
-bool_true = true
+            [One]
+            two = value
+            three.four = value four
+            is_null = null
+            bool_false = false
+            bool_true = true
 
-[Asset]
-timestamp = force
-INI;
+            [Asset]
+            timestamp = force
+            INI;
         $file = TMP . 'test.ini';
         $result = file_get_contents($file);
         unlink($file);

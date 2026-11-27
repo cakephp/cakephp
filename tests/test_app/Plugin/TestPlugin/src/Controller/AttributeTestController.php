@@ -9,12 +9,8 @@ use TestApp\Attribute\Resolver\TestRoute;
 class AttributeTestController
 {
     #[TestRoute('/index')]
-    public function index(): void
-    {
-    }
+    public function index(): void {}
 
     #[TestRoute('/view')]
-    public function view(): void
-    {
-    }
+    public function view(): void {}
 }

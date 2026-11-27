@@ -5,6 +5,4 @@ namespace TestApp\Datasource\Paging;
 
 use Cake\Datasource\Paging\NumericPaginator;
 
-class CustomPaginator extends NumericPaginator
-{
-}
+class CustomPaginator extends NumericPaginator {}
