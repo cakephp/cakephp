@@ -26,7 +26,6 @@ class ConstructorDependenciesController extends Controller
      * @param \Cake\Controller\ComponentRegistry|null $components Component registry.
      */
     public function __construct(
-        // Intentionally not named $request: the factory must resolve the request by type.
         ServerRequest $serverRequest,
         public readonly ReflectionDependency $dependency,
         ?ComponentRegistry $components = null,
