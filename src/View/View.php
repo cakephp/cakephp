@@ -1586,7 +1586,7 @@ class View implements EventDispatcherInterface
      *
      * Subclasses can derive their paths from state outside the core lookup context.
      */
-    private function canCacheElementFileNames(): bool
+    protected function canCacheElementFileNames(): bool
     {
         if (static::class === self::class) {
             return true;
