@@ -142,11 +142,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     /**
      * Resolve the argument for a single controller constructor parameter.
      *
-     * Returns an empty array when the parameter should keep its default value.
-     *
      * @param \ReflectionParameter $parameter The constructor parameter.
      * @param \Cake\Controller\ComponentRegistry $components The component registry.
-     * @return array<string, mixed>
+     * @return mixed The resolved value, or null when the parameter should keep its default value.
      */
     protected function resolveConstructorArgument(
         ReflectionParameter $parameter,
