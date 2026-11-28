@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\QueryTests;
 
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
@@ -300,7 +301,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         $this->skipIf(
-            $driver instanceof Mysql && $driver->isMariadb(),
+            $driver instanceof Mariadb,
             'MariaDB does not support CTEs in UPDATE query.',
         );
 
@@ -357,7 +358,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $driver = $this->connection->getDriver();
         $this->skipIf(
-            $driver instanceof Mysql && $driver->isMariadb(),
+            $driver instanceof Mariadb,
             'MariaDB does not support CTEs in DELETE query.',
         );
 

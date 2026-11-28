@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mariadb;
 use Cake\Database\Enum\DriverFeature;
@@ -40,7 +39,7 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     protected string $driverClass = Mariadb::class;
 
     /**
-     * Provides defaults to reflect without deprecated MariaDB detection.
+     * Provides default values to reflect.
      *
      * @return array<string, array{string, ?string, ?string}>
      */
@@ -55,17 +54,15 @@ class MariadbSchemaDialectTest extends MysqlSchemaDialectTest
     }
 
     /**
-     * Tests default reflection with the MariaDB driver without suppressing deprecations.
+     * Tests default reflection with the MariaDB driver.
      *
      * @param string $type The database column type.
      * @param string|null $default The reflected database default.
      * @param string|null $expected The normalized default.
      */
     #[DataProvider('columnDefaultProvider')]
-    public function testConvertColumnDefaultWithoutDeprecation(string $type, ?string $default, ?string $expected): void
+    public function testConvertColumnDefault(string $type, ?string $default, ?string $expected): void
     {
-        Configure::write('Error.ignoredDeprecationPaths', []);
-        Configure::write('Error.allowDuplicateDeprecations', true);
         $driver = Mockery::mock(Mariadb::class)->makePartial();
         $driver->shouldReceive('connect')->once();
         $driver->shouldReceive('quoteIdentifier')->andReturnUsing(fn($v) => "`{$v}`");

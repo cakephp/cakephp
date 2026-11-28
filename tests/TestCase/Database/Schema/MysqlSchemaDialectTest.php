@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver;
+use Cake\Database\Driver\Mariadb;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Expression\QueryExpression;
@@ -310,13 +311,13 @@ SQL;
         // MySQL 8.0.17+ strips display width from integer types, so
         // TINYINT(1) UNSIGNED becomes TINYINT UNSIGNED and maps to tinyinteger.
         // MariaDB and older MySQL preserve the display width, mapping to boolean.
-        if ($type === 'TINYINT(1) UNSIGNED' && !$driver->isMariadb() && version_compare($driver->version(), '8.0.17', '>=')) {
+        if ($type === 'TINYINT(1) UNSIGNED' && !($driver instanceof Mariadb) && version_compare($driver->version(), '8.0.17', '>=')) {
             $expected = ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true];
         }
 
         // MariaDB aliases JSON to LONGTEXT
         // https://mariadb.com/kb/en/json/
-        if ($type === 'JSON' && $driver->isMariadb()) {
+        if ($type === 'JSON' && $driver instanceof Mariadb) {
             $expected = ['type' => 'text', 'length' => 4294967295];
         }
 
@@ -412,7 +413,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
 
-        $isMaria = $driver->isMariaDb();
+        $isMaria = $driver instanceof Mariadb;
         $this->skipIf($isMaria, 'This test requires mysql');
 
         $sql = <<<SQL
@@ -441,7 +442,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
 
-        $isMaria = $driver->isMariaDb();
+        $isMaria = $driver instanceof Mariadb;
         $this->skipIf(!$isMaria, 'This test requires mariadb');
 
         $sql = <<<SQL
@@ -489,7 +490,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
         $this->createTables($connection);
-        $this->skipIf($driver->isMariadb(), 'Mariadb reflection is covered by MariadbSchemaDialectTest');
+        $this->skipIf($driver instanceof Mariadb, 'Mariadb reflection is covered by MariadbSchemaDialectTest');
 
         $dialect = $driver->schemaDialect();
         $result = $dialect->describe('schema_articles');
@@ -695,7 +696,7 @@ SQL;
         // MySQL 8.0.1 adds srid support while 8.0.13 adds default support
         $hasGeometry = version_compare($driver->version(), '8.0.13', '>=');
         $this->skipIf(
-            $driver->isMariadb() || !$hasGeometry,
+            $driver instanceof Mariadb || !$hasGeometry,
             'This test requires geometry type with srid support.',
         );
 
@@ -851,7 +852,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->createTables($connection);
         $driver = $connection->getDriver();
-        $this->skipIf($driver->isMariadb(), 'Mariadb reflection is covered by MariadbSchemaDialectTest');
+        $this->skipIf($driver instanceof Mariadb, 'Mariadb reflection is covered by MariadbSchemaDialectTest');
 
         $database = $driver->config()['database'];
         $dialect = $driver->schemaDialect();
@@ -2154,7 +2155,7 @@ SQL;
         $this->createTables($connection);
         $driver = $connection->getDriver();
         $this->skipIf(
-            $driver->isMariadb() || !$driver->supports(DriverFeature::JSON),
+            $driver instanceof Mariadb || !$driver->supports(DriverFeature::JSON),
             'Mysql version does not support reflecting json columns',
         );
 

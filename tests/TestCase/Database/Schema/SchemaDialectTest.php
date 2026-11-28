@@ -242,8 +242,7 @@ class SchemaDialectTest extends TestCase
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
         $driverVersion = $driver->version();
-        $isMariadb = $driver instanceof Mariadb
-            || ($driver instanceof Mysql && str_contains($driverVersion, 'MariaDB'));
+        $isMariadb = $driver instanceof Mariadb;
         $this->skipIf(
             $driver instanceof Mysql && !$isMariadb && version_compare($driverVersion, '8.0.13', '<'),
             'Expression defaults need MySQL 8.0.13 or newer.',

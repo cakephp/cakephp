@@ -20,7 +20,6 @@ use Cake\Database\Enum\DriverFeature;
 use Cake\Database\Schema\MariadbSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
 use PDO;
-use function Cake\Core\deprecationWarning;
 
 /**
  * Mariadb Driver
@@ -36,7 +35,7 @@ class Mariadb extends Mysql
      *
      * @var array<string, string>
      */
-    protected array $featureVersionMap = [
+    protected array $featureVersions = [
         'json' => '10.2.7',
         'cte' => '10.2.1',
         'window' => '10.2.0',
@@ -63,7 +62,7 @@ class Mariadb extends Mysql
     {
         $versionCompare = fn() => version_compare(
             $this->version(),
-            $this->featureVersionMap[$feature->value],
+            $this->featureVersions[$feature->value],
             '>=',
         );
 
@@ -107,19 +106,5 @@ class Mariadb extends Mysql
         }
 
         return $this->version;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isMariadb(): bool
-    {
-        deprecationWarning(
-            '5.5.0',
-            'The isMariadb() method is deprecated.' .
-            'Use `instanceof Mariadb` instead for runtime checks.',
-        );
-
-        return true;
     }
 }
