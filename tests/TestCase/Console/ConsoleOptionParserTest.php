@@ -42,8 +42,8 @@ class ConsoleOptionParserTest extends TestCase
 
     public function testDefaultNoInteractionOption(): void
     {
-        $this->assertArrayHasKey('no-interaction', (new ConsoleOptionParser('test'))->options());
-        $this->assertArrayNotHasKey('no-interaction', (new ConsoleOptionParser('test', false))->options());
+        $this->assertArrayHasKey('no-interaction', new ConsoleOptionParser('test')->options());
+        $this->assertArrayNotHasKey('no-interaction', new ConsoleOptionParser('test', false)->options());
     }
 
     /**

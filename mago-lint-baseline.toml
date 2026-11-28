@@ -1540,7 +1540,7 @@ count = 1
 file = "src/Validation/Validation.php"
 code = "strict-behavior"
 message = "Call to `in_array` must enforce strict comparison."
-count = 3
+count = 1
 
 [[issues]]
 file = "src/Validation/Validator.php"
