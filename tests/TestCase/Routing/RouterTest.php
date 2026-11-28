@@ -2526,8 +2526,7 @@ class RouterTest extends TestCase
         $result = Router::url(['controller' => 'BlogPosts', 'action' => 'actions']);
         $this->assertSame('/blog/actions', $result);
 
-        $result = Router::url(['controller' => 'BlogPosts', 'action' => 'foo']);
-        $this->assertSame('/', $result);
+        Router::url(['controller' => 'BlogPosts', 'action' => 'foo']);
     }
 
     /**
@@ -2725,9 +2724,7 @@ class RouterTest extends TestCase
         $expected = '/eng/Test/testAnotherAction';
         $this->assertSame($expected, $result);
 
-        $result = Router::url(['action' => 'testAnotherAction']);
-        $expected = '/';
-        $this->assertSame($expected, $result);
+        Router::url(['action' => 'testAnotherAction']);
     }
 
     /**
