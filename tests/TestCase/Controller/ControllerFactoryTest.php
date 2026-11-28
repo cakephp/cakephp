@@ -21,6 +21,7 @@ use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -30,7 +31,14 @@ use stdClass;
 use TestApp\Controller\Admin\PostsController;
 use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
 use TestApp\Controller\CakesController;
+use TestApp\Controller\ConstructorDependenciesController;
 use TestApp\Controller\DependenciesController;
+use TestApp\Controller\OptionalRequestController;
+use TestApp\Controller\RequestInterfaceController;
+use TestApp\Controller\RequestNotFirstController;
+use TestApp\Controller\UntypedRequestController;
+use TestApp\Controller\VariadicPluginsController;
+use TestApp\ReflectionDependency;
 use TestPlugin\Controller\Admin\CommentsController;
 use TestPlugin\Controller\TestPluginController;
 
@@ -225,6 +233,88 @@ class ControllerFactoryTest extends TestCase
         $this->factory->create($request);
     }
 
+    public function testCreateLeavesVariadicParametersEmpty(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'VariadicPlugins',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertInstanceOf(VariadicPluginsController::class, $controller);
+        $this->assertSame([], $controller->plugins);
+    }
+
+    public function testCreateKeepDefaultsForAdditionalRequestParameters(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'OptionalRequest',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(OptionalRequestController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+        $this->assertNull($controller->originalRequest);
+    }
+
+    public function testCreatePassesRequestToInterfaceTypedParameters(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'RequestInterface',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(RequestInterfaceController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function testCreatePassesRequestToUntypedFirstParameter(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'UntypedRequest',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(UntypedRequestController::class, $controller);
+        $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function TestCreatePassesRequestToParameterInAnyPosition(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'controller' => 'RequestNotFirst',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $this->assertInstanceOf(RequestNotFirstController::class, $controller);
+        $this->assertInstanceOf(RequestNotFirstController::class, $controller->dependency);
+        $this->assertSame($request, $controller->getRequest());
+    }
+
+    public function testCreateThrowsWhenSeveralRequiredParametersNeedTheRequest(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('`$other`');
+
+        $this->factory->create(new ServerRequest([
+            'params' => [
+                'controller' => 'TwoRequiredRequests',
+            ],
+        ]));
+    }
+
     public function testSlashedControllerFailure(): void
     {
         $this->expectException(MissingControllerException::class);
@@ -296,6 +386,25 @@ class ControllerFactoryTest extends TestCase
         $controller = $this->factory->create($request);
         $this->assertInstanceOf(DependenciesController::class, $controller);
         $this->assertSame($controller->inject, $this->container->get(stdClass::class));
+    }
+
+    /**
+     * Test create() auto-wires required constructor dependencies
+     * on controllers that are not defined in the container.
+     */
+    public function testCreateAutoWiresRequiredConstructorDependencies(): void
+    {
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'controller' => 'ConstructorDependencies',
+                'action' => 'index',
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $this->assertInstanceOf(ConstructorDependenciesController::class, $controller);
+        $this->assertInstanceOf(ReflectionDependency::class, $controller->dependency);
+        $this->assertSame($request, $controller->getRequest());
     }
 
     /**

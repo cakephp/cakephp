@@ -20,6 +20,7 @@ use Cake\Container\ContainerInterface;
 use Cake\Controller\Attribute\ParameterAttributeInterface;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\App;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\MiddlewareQueue;
@@ -62,10 +63,11 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Create a controller for a given request.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request to build a controller for.
-     * @return \Cake\Controller\Controller
+     * @return object|string
      * @throws \Cake\Http\Exception\MissingControllerException
+     * @throws \ReflectionException
      */
-    public function create(ServerRequestInterface $request): Controller
+    public function create(ServerRequestInterface $request): object|string
     {
         assert($request instanceof ServerRequest);
         $className = $this->getControllerClass($request);
@@ -86,32 +88,96 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         // `has()` also returns true for any existing class due to auto-wiring,
         // so `hasDefinition()` is used here to check for an explicit registration only.
         if ($this->container->hasDefinition($className)) {
-            $controller = $this->container->get($className);
-        } else {
-            $components = $this->container->get(ComponentRegistry::class);
-            $constructor = $reflection->getConstructor();
-            assert($constructor !== null);
-            $hasComponents = false;
-            foreach ($constructor->getParameters() as $parameter) {
-                $paramType = $parameter->getType();
-                // TODO: In a future minor release it would be good to start requiring the components parameter
-                if (
-                    $parameter->getName() === 'components' &&
-                    $paramType instanceof ReflectionNamedType &&
-                    $paramType->getName() === ComponentRegistry::class
-                ) {
-                    $hasComponents = true;
-                    break;
+            return $this->container->get($className);
+        }
+
+        $components = $this->container->get(ComponentRegistry::class);
+        $constructor = $reflection->getConstructor();
+        assert($constructor !== null);
+
+        $arguments = [];
+        $requestBound = false;
+        foreach ($constructor->getParameters() as $parameter) {
+            if ($parameter->isVariadic()) {
+                break;
+            }
+            if ($this->acceptRequest($parameter, $request)) {
+                if (!$requestBound) {
+                    $arguments[$parameter->getName()] = $request;
+                    $requestBound = true;
+                    continue;
+                }
+                if (!$parameter->isDefaultValueAvailable()) {
+                    throw new CakeException(sprintf(
+                        'Cannot resolve parameter `$%s` of `%s::__construct()`. '
+                        . 'The active request is already passed to another parameter.',
+                        $parameter->getName(),
+                        $reflection->getName(),
+                    ));
                 }
             }
-            if ($hasComponents) {
-                $controller = $reflection->newInstance(request: $request, components: $components);
-            } else {
-                $controller = $reflection->newInstance($request);
+            $value = $this->resolveConstructorArgument($parameter, $components);
+            if ($value !== null) {
+                $arguments[$parameter->getName()] = $value;
             }
         }
 
-        return $controller;
+        return $reflection->newInstanceArgs($arguments);
+    }
+
+    /**
+     * Check whether a constructor parameter can receive the active request.
+     *
+     * Typed parameters accept the request in any position when the request satisfies
+     * their type. Untyped parameters only accept it in the first position, mirroring
+     * the previous positional `newInstance($request)` call.
+     *
+     * @param \ReflectionParameter $parameter The constructor parameter.
+     * @param \Cake\Http\ServerRequest $request Server request
+     * @return bool
+     */
+    private function acceptRequest(ReflectionParameter $parameter, ServerRequest $request): bool
+    {
+        $type = $parameter->getType();
+        if ($type === null) {
+            return $parameter->getPosition() === 0;
+        }
+        if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
+            return false;
+        }
+        $typeName = $type->getName();
+
+        return $request instanceof $typeName;
+    }
+
+    /**
+     * Resolve the argument for a single controller constructor parameter.
+     *
+     * @param \ReflectionParameter $parameter The constructor parameter.
+     * @param \Cake\Controller\ComponentRegistry $components The component registry.
+     * @return mixed The resolved value, or null when the parameter should keep its default value.
+     */
+    protected function resolveConstructorArgument(
+        ReflectionParameter $parameter,
+        ComponentRegistry $components,
+    ): mixed {
+        $type = $parameter->getType();
+        // TODO: In a future minor release it would be good to start requiring the components parameter
+        if (
+            $parameter->getName() === 'components' &&
+            $type instanceof ReflectionNamedType &&
+            $type->getName() === ComponentRegistry::class
+        ) {
+            return $components;
+        }
+        if ($parameter->isDefaultValueAvailable()) {
+            return null;
+        }
+        if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+            return $this->container->get($type->getName());
+        }
+
+        return null;
     }
 
     /**
