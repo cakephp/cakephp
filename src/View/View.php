@@ -256,11 +256,11 @@ class View implements EventDispatcherInterface
     private mixed $elementPathPrefix = null;
 
     /**
-     * Successfully resolved element filenames by plugin and name with extension.
+     * Template roots, element search directories and resolved filenames for each plugin.
      *
-     * @var array<string, array<string, string>>
+     * @var array<string, array{roots: array<string>, paths?: array<string>, files: array<string, string>}>
      */
-    private array $elementFileNames = [];
+    private array $elementLookupCache = [];
 
     /**
      * The names of views and their parents used with View::extend();
@@ -594,7 +594,7 @@ class View implements EventDispatcherInterface
         if ($this->theme !== $theme) {
             $this->_paths = [];
             $this->_pathsForPlugin = [];
-            $this->elementFileNames = [];
+            $this->elementLookupCache = [];
         }
         $this->theme = $theme;
 
@@ -1546,23 +1546,33 @@ class View implements EventDispatcherInterface
         $name .= $this->_ext;
         $useCache = $this->canCacheElementFileNames();
         $pluginKey = $plugin ?? '';
+        $paths = null;
         if ($useCache) {
             $prefix = $this->request->getParam('prefix');
             if ($prefix !== $this->elementPathPrefix) {
                 $this->elementPathPrefix = $prefix;
-                $this->elementFileNames = [];
+                $this->elementLookupCache = [];
             }
 
-            if (isset($this->elementFileNames[$pluginKey][$name])) {
-                $file = $this->elementFileNames[$pluginKey][$name];
-                if (is_file($file)) {
-                    return $this->_checkFilePath($file, $plugin);
+            $roots = $this->_paths($plugin);
+            if (($this->elementLookupCache[$pluginKey]['roots'] ?? null) !== $roots) {
+                $this->elementLookupCache[$pluginKey] = ['roots' => $roots, 'files' => []];
+            } else {
+                $file = $this->elementLookupCache[$pluginKey]['files'][$name] ?? null;
+                if ($file !== null) {
+                    if (is_file($file)) {
+                        return $this->_checkFilePath($file, $plugin);
+                    }
+                    unset($this->elementLookupCache[$pluginKey]['files'][$name]);
                 }
-                unset($this->elementFileNames[$pluginKey][$name]);
+
+                $paths = $this->elementLookupCache[$pluginKey]['paths'] ??= iterator_to_array(
+                    $this->getElementPaths($plugin),
+                );
             }
         }
 
-        $paths = $this->getElementPaths($plugin);
+        $paths ??= $this->getElementPaths($plugin);
         if (!$useCache) {
             $paths = iterator_to_array($paths);
         }
@@ -1570,8 +1580,8 @@ class View implements EventDispatcherInterface
             $filepath = $path . $name;
             if (is_file($filepath)) {
                 $file = $this->_checkFilePath($filepath, $plugin);
-                if ($useCache) {
-                    $this->elementFileNames[$pluginKey][$name] = $filepath;
+                if ($useCache && isset($this->elementLookupCache[$pluginKey]['roots'])) {
+                    $this->elementLookupCache[$pluginKey]['files'][$name] = $filepath;
                 }
 
                 return $file;
@@ -1613,7 +1623,7 @@ class View implements EventDispatcherInterface
      * Get an iterator for element paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     protected function getElementPaths(?string $plugin): Generator
     {
@@ -1672,7 +1682,7 @@ class View implements EventDispatcherInterface
                 return $this->_pathsForPlugin[$plugin];
             }
         } else {
-            unset($this->elementFileNames[$plugin ?? '']);
+            unset($this->elementLookupCache[$plugin ?? '']);
         }
         $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
         $pluginPaths = [];

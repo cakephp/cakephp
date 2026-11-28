@@ -694,6 +694,26 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Changes to application and plugin template roots from inside a template affect subsequent element lookups.
+     */
+    public function testElementLookupRefreshesWhenTemplateChangesRoots(): void
+    {
+        $view = new View(new ServerRequest());
+        $this->assertSame('this is the test element', $view->element('test_element'));
+        $this->assertSame("Element in the TestPlugin\n", $view->element('TestPlugin.plugin_element'));
+        $this->assertSame('app override - non-prefixed', $view->element('TestPlugin.prefix_override_test'));
+
+        $appPaths = App::path('templates');
+        $view->element('set_element_template_roots', [
+            'appPaths' => [Plugin::templatePath('TestTheme'), ...$appPaths],
+            'pluginPaths' => [...$appPaths, Plugin::templatePath('TestPlugin')],
+        ]);
+
+        $this->assertSame("Hi, I'm the test element.", $view->element('test_element'));
+        $this->assertSame("Plugin element overridden in app\n", $view->element('TestPlugin.plugin_element'));
+    }
+
+    /**
      * A view with custom element paths can return different paths between renders.
      */
     public function testElementLookupRespectsCustomPaths(): void

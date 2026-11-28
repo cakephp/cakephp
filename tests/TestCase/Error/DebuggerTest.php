@@ -235,7 +235,7 @@ object(Cake\View\View) id:0 {
   [protected] _config => []
   [protected] _configInitialized => true
   [private] elementPathPrefix => null
-  [private] elementFileNames => []
+  [private] elementLookupCache => []
 }
 TEXT;
         $this->assertTextEquals($expected, $result);
