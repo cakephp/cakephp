@@ -509,6 +509,20 @@ class DateTimeTest extends TestCase
     }
 
     /**
+     * Tests that the abbreviations in listTimezones() use the test clock
+     */
+    public function testListTimezonesAbbrWithTestNow(): void
+    {
+        DateTime::setTestNow('2021-01-15 12:00:00');
+        $return = DateTime::listTimezones('#^Europe/Berlin$#', null, ['abbr' => true]);
+        $this->assertSame('Berlin - CET', $return['Europe']['Europe/Berlin']);
+
+        DateTime::setTestNow('2021-07-15 12:00:00');
+        $return = DateTime::listTimezones('#^Europe/Berlin$#', null, ['abbr' => true]);
+        $this->assertSame('Berlin - CEST', $return['Europe']['Europe/Berlin']);
+    }
+
+    /**
      * Tests that __toString uses the i18n formatter
      */
     public function testToString(): void

@@ -68,6 +68,13 @@ class ConsoleIoTest extends TestCase
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
     }
 
+    public function testIsInteractive(): void
+    {
+        $this->assertTrue($this->io->isInteractive());
+        $this->io->setInteractive(false);
+        $this->assertFalse($this->io->isInteractive());
+    }
+
     /**
      * teardown method
      */

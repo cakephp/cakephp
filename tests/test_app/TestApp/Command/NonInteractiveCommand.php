@@ -11,5 +11,6 @@ class NonInteractiveCommand extends Command
     {
         $result = $this->io->ask('What?', 'Default!');
         $this->io->quiet('Result: ' . $result);
+        $this->io->out('Normal: ' . $result);
     }
 }

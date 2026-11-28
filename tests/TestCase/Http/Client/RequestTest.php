@@ -117,6 +117,32 @@ class RequestTest extends TestCase
         $this->assertSame('one two', $request->getHeaderLine('X-inject'));
     }
 
+    public static function invalidKeyProvider(): array
+    {
+        return [
+            ["part-\ntwo"],
+            ["part-\rtwo"],
+            ["part-\r\ntwo"],
+            ["part-\ttwo"],
+            ['part two'],
+        ];
+    }
+
+    /**
+     * test invalid header keys are rejected by the constructor.
+     */
+    #[DataProvider('invalidKeyProvider')]
+    public function testConstructorRejectInvalidKey(string $key): void
+    {
+        $headers = [
+            'Content-Type' => 'application/json',
+            $key => 'value',
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('`' . $key . '` is not a valid header name');
+        new Request('http://example.com', 'POST', $headers);
+    }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.

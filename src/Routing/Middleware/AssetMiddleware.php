@@ -159,12 +159,12 @@ class AssetMiddleware implements MiddlewareInterface
 
         $contentType = MimeType::getMimeTypeForFile($file->getRealPath());
         $modified = $file->getMTime();
-        $expire = strtotime($this->cacheTime);
+        $now = DateTime::now()->getTimestamp();
+        $expire = strtotime($this->cacheTime, $now);
         if ($expire === false) {
             throw new CakeException(sprintf('Invalid cache time value `%s`', $this->cacheTime));
         }
 
-        $now = time();
         $maxAge = $expire - $now;
 
         return $response

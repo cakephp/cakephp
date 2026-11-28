@@ -1071,7 +1071,7 @@ class Validation
      * Validation of an IP address.
      *
      * @param mixed $check The string to test.
-     * @param string $type The IP Protocol version to validate against
+     * @param 'ipv4'|'ipv6'|'both' $type The IP Protocol version to validate against
      * @return bool Success
      */
     public static function ip(mixed $check, string $type = 'both'): bool
@@ -1096,7 +1096,7 @@ class Validation
      * Validation of an IP address or range (subnet).
      *
      * @param mixed $check The string to test.
-     * @param string $type The IP Protocol version to validate against
+     * @param 'ipv4'|'ipv6'|'both' $type The IP Protocol version to validate against
      * @return bool Success
      */
     public static function ipOrRange(mixed $check, string $type = 'both'): bool
@@ -1111,10 +1111,10 @@ class Validation
 
         [$ip, $mask] = explode('/', $check, 2);
 
-        if (in_array($type, ['both', 'ipv4', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        if (in_array($type, ['both', 'ipv4'], true) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return is_numeric($mask) && $mask >= 0 && $mask <= 32;
         }
-        if (in_array($type, ['both', 'ipv6', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        if (in_array($type, ['both', 'ipv6'], true) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             return is_numeric($mask) && $mask >= 0 && $mask <= 128;
         }
 

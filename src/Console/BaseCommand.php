@@ -258,17 +258,16 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         }
         $this->setOutputLevel();
 
+        if ($this->args->getOption('quiet') || $this->args->getOption('no-interaction')) {
+            $this->io->setInteractive(false);
+        }
+        $this->initialize();
+
         if ($this->args->getOption('help')) {
             $this->displayHelp($parser);
 
             return static::CODE_SUCCESS;
         }
-
-        if ($this->args->getOption('quiet')) {
-            $this->io->setInteractive(false);
-        }
-
-        $this->initialize();
 
         $this->dispatchEvent('Command.beforeExecute', ['args' => $this->args, 'io' => $this->io]);
         $result = $this->execute();

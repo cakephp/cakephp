@@ -556,7 +556,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
 
         if ($group) {
             $groupedIdentifiers = [];
-            $now = time();
+            $now = static::now()->getTimestamp();
             $before = $options['before'];
             $after = $options['after'];
             foreach ($identifiers as $tz) {
