@@ -35,6 +35,7 @@ use Cake\View\Exception\MissingTemplateException;
 use Generator;
 use InvalidArgumentException;
 use LogicException;
+use ReflectionClass;
 use Throwable;
 use function Cake\Core\pluginSplit;
 
@@ -248,6 +249,18 @@ class View implements EventDispatcherInterface
      * @var array<string, array<string>>
      */
     protected array $_pathsForPlugin = [];
+
+    /**
+     * Routing prefix used by the cached element lookups.
+     */
+    private mixed $elementPathPrefix = null;
+
+    /**
+     * Template roots, element search directories and resolved filenames for each plugin.
+     *
+     * @var array<string, array{roots: array<string>, paths?: array<string>, files: array<string, string>}>
+     */
+    private array $elementLookupCache = [];
 
     /**
      * The names of views and their parents used with View::extend();
@@ -578,6 +591,11 @@ class View implements EventDispatcherInterface
      */
     public function setTheme(?string $theme)
     {
+        if ($this->theme !== $theme) {
+            $this->_paths = [];
+            $this->_pathsForPlugin = [];
+            $this->elementLookupCache = [];
+        }
         $this->theme = $theme;
 
         return $this;
@@ -1526,11 +1544,47 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $name .= $this->_ext;
-        $paths = iterator_to_array($this->getElementPaths($plugin));
+        $useCache = $this->canCacheElementFileNames();
+        $pluginKey = $plugin ?? '';
+        $paths = null;
+        if ($useCache) {
+            $prefix = $this->request->getParam('prefix');
+            if ($prefix !== $this->elementPathPrefix) {
+                $this->elementPathPrefix = $prefix;
+                $this->elementLookupCache = [];
+            }
+
+            $roots = $this->_paths($plugin);
+            if (($this->elementLookupCache[$pluginKey]['roots'] ?? null) !== $roots) {
+                $this->elementLookupCache[$pluginKey] = ['roots' => $roots, 'files' => []];
+            } else {
+                $file = $this->elementLookupCache[$pluginKey]['files'][$name] ?? null;
+                if ($file !== null) {
+                    if (is_file($file)) {
+                        return $this->_checkFilePath($file, $plugin);
+                    }
+                    unset($this->elementLookupCache[$pluginKey]['files'][$name]);
+                }
+
+                $paths = $this->elementLookupCache[$pluginKey]['paths'] ??= iterator_to_array(
+                    $this->getElementPaths($plugin),
+                );
+            }
+        }
+
+        $paths ??= $this->getElementPaths($plugin);
+        if (!$useCache) {
+            $paths = iterator_to_array($paths);
+        }
         foreach ($paths as $path) {
             $filepath = $path . $name;
             if (is_file($filepath)) {
-                return $this->_checkFilePath($filepath, $plugin);
+                $file = $this->_checkFilePath($filepath, $plugin);
+                if ($useCache && isset($this->elementLookupCache[$pluginKey]['roots'])) {
+                    $this->elementLookupCache[$pluginKey]['files'][$name] = $filepath;
+                }
+
+                return $file;
             }
         }
 
@@ -1538,10 +1592,38 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Check whether the view uses the built-in element path resolution.
+     *
+     * Subclasses can derive their paths from state outside the core lookup context.
+     */
+    protected function canCacheElementFileNames(): bool
+    {
+        if (static::class === self::class) {
+            return true;
+        }
+
+        static $usesCorePaths = [];
+
+        $class = static::class;
+        if (isset($usesCorePaths[$class])) {
+            return $usesCorePaths[$class];
+        }
+
+        $reflection = new ReflectionClass($class);
+        foreach (['getElementPaths', '_getSubPaths', '_paths'] as $method) {
+            if ($reflection->getMethod($method)->getDeclaringClass()->getName() !== self::class) {
+                return $usesCorePaths[$class] = false;
+            }
+        }
+
+        return $usesCorePaths[$class] = true;
+    }
+
+    /**
      * Get an iterator for element paths.
      *
      * @param string|null $plugin The plugin to fetch paths for.
-     * @return \Generator
+     * @return \Generator<int, string>
      */
     protected function getElementPaths(?string $plugin): Generator
     {
@@ -1599,6 +1681,8 @@ class View implements EventDispatcherInterface
             if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {
                 return $this->_pathsForPlugin[$plugin];
             }
+        } else {
+            unset($this->elementLookupCache[$plugin ?? '']);
         }
         $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
         $pluginPaths = [];

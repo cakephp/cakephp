@@ -234,6 +234,8 @@ object(Cake\View\View) id:0 {
   [protected] _eventClass => 'Cake\Event\Event'
   [protected] _config => []
   [protected] _configInitialized => true
+  [private] elementPathPrefix => null
+  [private] elementLookupCache => []
 }
 TEXT;
         $this->assertTextEquals($expected, $result);
